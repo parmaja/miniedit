@@ -1,0 +1,78 @@
+0.10.3
+- Fix: Projects Manager, make Remove button work in all lists
+- Fix: Add Quick Search (^Q) thanks to Mandx
+- Fix: Debug now work with 5.2.8.8 xdebug 2.0.4
+- Fix: Open php.ini when define it in setting
+- Make select file with no project opened select from current folder only
+- Fix: Edit Color eat ;
+- Add: Execlude .svn from File list
+0.9.4
+- Fix: Double click on messages make out of index if there is no error after ols messages errors.
+- Add: Convert tabs to spaces when load file if the editor options is enabled
+- Fix: Dublicated variable on auto complete
+- Fix: When save new file folder list not refresh
+- Fix: Show extension of project when use file dialogs
+
+0.9.3
+- Fix: Reload changed file when application is activate.
+- Add: Compare to, in SVN menu
+- Fix: Enum files when select file, the files come first.
+- Fix: Open Folder in Folder list
+
+0.9.2
+- Fix: Make Status bar not show/hide with messages
+- Fix: Convert ImageList to 32bit color
+- Fix: Help now not stay on top of main form
+- Add: Save last goto line number
+- Improve: Select file, finish the search when press Ok not close if not results
+- Fix: Workspace in registery, check if found in exit, check it when launch
+- Fix, Enhance: Associate with .php .css .phpx
+
+0.9.0:
+- Add: Make Output to new file or to Bottom SynEdit
+- Add: Watches and Breakpoints
+- Add: Debug: integrated with XDebug
+- Add: WordWrap in Editor options
+- Add: Save as file
+- Fix: Save a new file to stored in recent file list
+- Rename: options.xml -> lpe-options.xml
+- Add: make run internal php by thread
+
+0.8.7:
+- Improve: Save desktop (save bookmarks)
+- Fix: Save desktop files when change the current project
+- Fix: # charachter not taked as line comment
+- Fix: New file must be mark as edited
+
+0.8.6
+- Fix: Open file already opned from folder list in sub directory
+
+0.8.5
+- Fix: Edit Color not work when cursor at after the last of word
+
+0.8.4
+- Add: Integrate with TSVN Commit, Update, Revert, Diff.
+
+0.8.3
+- Fix: Just remove some leak objects
+- Start adding xdebug server
+
+0.8.2
+- Add: Splite processors in units (preparing for add JavaScript processor in HTML)
+- Fix: Bug when inside a Range in php not reset whe set range to html section, the fix done inSetRange function and reset other processors when set range to main processor
+- Add: Edit color for all file CSS and other by implment GetWordAtRowColEx function
+
+0.8.1
+- Fix: Bug when search in non grouped files (without highlighter)
+- Fix: JavaScript highlighter
+
+0.8.0
+- Add: Open Color
+- Add: Revert file
+
+0.7.0
+- Add: Focus to folder when return back to it in Folder file list (by click ..)
+- Fix: Reorder tab order in forms
+- Add: Key down in Select files focus to the list files
+- Add: execlude file start with dot "." like as ".svn" folder and start with _vti_ wher select file
+
