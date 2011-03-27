@@ -211,8 +211,6 @@ type
     StepInto1: TMenuItem;
     StepOver1: TMenuItem;
     Reset2: TMenuItem;
-    ToolButton4: TToolButton;
-    ToolButton5: TToolButton;
     DBGActiveServerAct: TAction;
     DBGDetachAct: TAction;
     Detach1: TMenuItem;
@@ -482,7 +480,7 @@ uses
   mnXMLUtils, hh, StrUtils, ShellApi, SearchForms, mneProjectOptions, EditorOptions,
   EditorProfiles, mneResources, mneSetups, hh_funcs, Clipbrd,
   SelectFiles, mneSettings, mneConsts,
-  SynEditTypes, AboutForms, mneProjectForms, GotoForms, Types, dbgpServers,
+  SynEditTypes, AboutForms, mneProjectForms, GotoForms, Types,
   mnePHPIniForm, mnXMLBase64, mneBreakpoints, mneAssociateForm,
   SearchInFilesForms, SynHighlighterHTMLPHP;
 
@@ -618,7 +616,7 @@ begin
     begin
       Engine.Files.OpenFile(IPCServer.StringMessage);
       BringToFront;
-      Activate;
+      Application.BringToFront;
     end;
   end;
 end;
@@ -962,16 +960,12 @@ end;
 
 procedure TMainForm.RunActExecute(Sender: TObject);
 begin
-  if Engine.Debug.Count > 0 then
+  if Engine.Debug.IsRuning then
   begin
-    Engine.Debug.AddAction(TdbgpRun.Create);
-    Engine.Debug.AddAction(TdbgpGetWatches.Create);
-    Engine.Debug.AddAction(TdbgpGetCurrent.Create);
-    Engine.Debug.Resume;
+    Engine.Debug.Run;
   end
   else
   begin
-    Engine.Debug.Clear;
     RunScript;
   end;
 end;
@@ -1702,21 +1696,14 @@ end;
 
 procedure TMainForm.DBGStepOverActExecute(Sender: TObject);
 begin
-  if Engine.Debug.Count > 0 then
-  begin
-    Engine.Debug.AddAction(TdbgpStepOver.Create);
-    Engine.Debug.AddAction(TdbgpGetWatches.Create);
-    Engine.Debug.AddAction(TdbgpGetCurrent.Create);
-    Engine.Debug.Resume;
-  end;
+  if Engine.Debug.IsRuning then
+    Engine.Debug.StepOver
 end;
 
 procedure TMainForm.DBGStepIntoActExecute(Sender: TObject);
 begin
-  Engine.Debug.AddAction(TdbgpStepInto.Create);
-  Engine.Debug.AddAction(TdbgpGetWatches.Create);
-  Engine.Debug.AddAction(TdbgpGetCurrent.Create);
-  Engine.Debug.Resume;
+  if Engine.Debug.IsRuning then
+    Engine.Debug.StepInto
 end;
 
 procedure TMainForm.DBGActiveServerActUpdate(Sender: TObject);
@@ -1731,24 +1718,17 @@ end;
 
 procedure TMainForm.DBGResetActExecute(Sender: TObject);
 begin
-  Engine.Debug.AddAction(TdbgpStop.Create);
-  Engine.Debug.AddAction(TdbgpGetCurrent.Create);
-  Engine.Debug.Resume;
+  Engine.Debug.Reset;
 end;
 
 procedure TMainForm.DBGDetachActExecute(Sender: TObject);
 begin
-  Engine.Debug.AddAction(TdbgpDetach.Create);
-  Engine.Debug.AddAction(TdbgpGetCurrent.Create); //usfull to detect the disconnected
-  Engine.Debug.Resume;
+  Engine.Debug.Stop;
 end;
 
 procedure TMainForm.DBGStepOutActExecute(Sender: TObject);
 begin
-  Engine.Debug.AddAction(TdbgpStepOut.Create);
-  Engine.Debug.AddAction(TdbgpGetWatches.Create);
-  Engine.Debug.AddAction(TdbgpGetCurrent.Create);
-  Engine.Debug.Resume;
+  Engine.Debug.StepOut;
 end;
 
 function TMainForm.GetFolder: string;
@@ -1785,7 +1765,7 @@ end;
 
 procedure TMainForm.EngineDebug;
 begin
-  DebugPnl.Caption := Engine.Debug.SessionName;
+  DebugPnl.Caption := Engine.Debug.GetSessionName;
   UpdateFileHeaderPanel;
   UpdateWatches;
   Engine.Files.Refresh; // not safe thread
@@ -1817,34 +1797,31 @@ var
   aItem: TListItem;
 begin
   WatchList.Clear;
-  DBGLock.Lock;
+  Engine.Debug.Lock;
   try
-    for i := 0 to Engine.Debug.Watches.Count - 1 do
+    for i := 0 to Engine.Debug.WatchesCount - 1 do
     begin
       aItem := WatchList.Items.Add;
       aItem.ImageIndex := 41;
-      aItem.Caption := Engine.Debug.Watches[i].VariableName;
-      aItem.SubItems.Add(Engine.Debug.Watches[i].VariableType);
+      aItem.Caption := Engine.Debug.Watches[i].Name;
+      aItem.SubItems.Add(Engine.Debug.Watches[i].VarType);
       aItem.SubItems.Add(Engine.Debug.Watches[i].Value);
     end;
   finally
-    DBGLock.Unlock;
+    Engine.Debug.Unlock;
   end;
 end;
 
 procedure TMainForm.ShowValue1Click(Sender: TObject);
 var
-  s: string;
-  aAction: TdbgpGetWatchInstance;
+  s, v: string;
 begin
   if Engine.Files.Current.SynEdit.SelEnd = 0 then
     s := Trim(Engine.Files.Current.SynEdit.GetWordAtRowCol(Engine.Files.Current.SynEdit.CaretXY))
   else
     s := Engine.Files.Current.SynEdit.SelText;
-  aAction := TdbgpGetWatchInstance.Create;
-  aAction.VariableName := s;
-  Engine.Debug.AddAction(aAction);
-  Engine.Debug.Resume;
+  //if Engine.Debug.GetWatchValue(s, v) then
+
 end;
 
 procedure TMainForm.ShowMessagesList;
@@ -1871,7 +1848,7 @@ begin
   s := Trim(s);
   if s <> '' then
   begin
-    Engine.Debug.Watches.AddWatch(s);
+    Engine.Debug.AddWatch(s);
     UpdateWatches;
   end;
 end;
@@ -1883,7 +1860,7 @@ end;
 
 procedure TMainForm.DeleteWatch(s: string);
 begin
-  Engine.Debug.Watches.RemoveWatch(s);
+  Engine.Debug.RemoveWatch(s);
   UpdateWatches;
 end;
 
@@ -1895,11 +1872,11 @@ begin
     with Engine.Files.Current do
     begin
       aLine := SynEdit.ScreenRowToRow(SynEdit.CaretY);
-      DBGLock.Lock;
+      Engine.Debug.Lock;
       try
-        Engine.Debug.Breakpoints.Toggle(Name, aLine);
+        Engine.Debug.ToggleBreakpoint(Name, aLine);
       finally
-        DBGLock.Unlock;
+        Engine.Debug.Unlock;
       end;
       SynEdit.InvalidateLine(aLine);
     end;
@@ -1992,9 +1969,6 @@ begin
     else
       s := Engine.Files.Current.SynEdit.SelText;
     AddWatch(s);
-    Engine.Debug.AddAction(TdbgpGetWatches.Create);
-    Engine.Debug.AddAction(TdbgpGetCurrent.Create);
-    Engine.Debug.Resume;
   end;
 end;
 

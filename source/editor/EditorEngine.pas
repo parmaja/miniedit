@@ -11,8 +11,8 @@ interface
 uses
   Windows, Messages, SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
   IniFiles, EditorOptions, EditorProfiles, SynEditMarks, SynCompletion, SynEditTypes,
-  SynEditMiscClasses, SyncObjs, Dialogs, SynEditHighlighter, SynEditSearch, SynEdit,
-  mnXMLRttiProfile, mnXMLUtils, dbgpServers, mnUtils, mnServers;
+  SynEditMiscClasses, SyncObjs, Dialogs, SynEditHighlighter, SynEditSearch, SynEdit, EditorDebugger,
+  mnXMLRttiProfile, mnXMLUtils, mnUtils;
 
 type
   TEditorChangeState = set of (ecsChanged, ecsState, ecsRefresh, ecsDebug, ecsEdit, ecsFolder, ecsProjectLoaded);
@@ -88,8 +88,6 @@ type
   TEditorDesktop = class(TPersistent)
   private
     FEngine: TEditorEngine;
-    FBreakpoints: TdbgpBreakpoints;
-    FWatches: TdbgpWatches;
     FFiles: TEditorDesktopFiles;
   public
     constructor Create;
@@ -99,8 +97,6 @@ type
     property Engine: TEditorEngine read FEngine;
   published
     property Files: TEditorDesktopFiles read FFiles;
-    property Breakpoints: TdbgpBreakpoints read FBreakpoints;
-    property Watches: TdbgpWatches read FWatches;
   end;
 
   TRunMode = (prunNone, prunConsole, prunUrl);
@@ -415,27 +411,6 @@ type
     property Engine: TEditorEngine read FEngine;
   end;
 
-  TEditorDebug = class(TdbgpServer)
-  private
-    FEngine: TEditorEngine;
-    FExecuteLine: Integer;
-    FExecuteEdit: TCustomSynEdit;
-    FSessionName: string;
-  protected
-    procedure DoChanged(Listener: TmnListener); override;
-    procedure DebugFile(Socket: TdbgpConnection; const FileName: string; Line: Integer); override;
-    procedure Notification(AComponent: TComponent; Operation: TOperation); override;
-    procedure SetExecuted(SessionName: string; Edit: TCustomSynEdit; const Line: Integer);
-  public
-    destructor Destroy; override;
-    procedure Reset;
-    procedure Detach;
-    property ExecuteLine: Integer read FExecuteLine;
-    property ExecuteEdit: TCustomSynEdit read FExecuteEdit;
-    property Engine: TEditorEngine read FEngine;
-    property SessionName: string read FSessionName;
-  end;
-
   TEditorMessagesList = class;
 
   TEditorMessage = class(TObject)
@@ -482,7 +457,7 @@ type
     FExtenstion: string;
     FOnChangedState: TOnEditorChangeState;
     FProjects: TEditorProjects;
-    FDebug: TEditorDebug;
+    FDebug: TEditorDebugger;
     FMessagesList: TEditorMessagesList;
     FBrowseFolder: string;
     //FMacroRecorder: TSynMacroRecorder;
@@ -525,7 +500,7 @@ type
     property Files: TEditorFiles read FFiles;
     property Projects: TEditorProjects read FProjects;
     property Options: TEditorOptions read FOptions;
-    property Debug: TEditorDebug read FDebug;
+    property Debug: TEditorDebugger read FDebug;
     property MessagesList: TEditorMessagesList read FMessagesList;
     property Window: TWinControl read FWindow write FWindow;
     property BrowseFolder: string read FBrowseFolder write SetBrowseFolder;
@@ -772,8 +747,7 @@ begin
   FFiles.FEngine := Self;
   FProjects := TEditorProjects.Create;
   FProjects.FEngine := Self;
-  FDebug := TEditorDebug.Create(nil);
-  FDebug.FEngine := Self;
+  FDebug := TEditorDebugger.Create;
 end;
 
 function TEditorEngine.CreateEditorFile(Group: string): TEditorFile;
@@ -1787,11 +1761,11 @@ begin
   if fgkExecutable in Group.Kind then
   begin
     aLine := SynEdit.RowToScreenRow(SynEdit.CaretY);//zaher
-    DBGLock.Lock;
+    Engine.Debug.Lock;
     try
-      Engine.Debug.Breakpoints.Toggle(Name, aLine);
+      Engine.Debug.ToggleBreakpoint(Name, aLine);
     finally
-      DBGLock.Unlock;
+      Engine.Debug.Unlock;
     end;
     SynEdit.InvalidateLine(aLine);
   end;
@@ -2219,23 +2193,6 @@ begin
   Result := FCurrent <> nil;
 end;
 
-destructor TEditorDebug.Destroy;
-begin
-  SetExecuted('', nil, -1);
-  Stop;
-  inherited;
-end;
-
-procedure TEditorDebug.Reset;
-begin
-//  Respond(dbgpReset);
-end;
-
-procedure TEditorDebug.Detach;
-begin
-//  Respond(dbgpDetach);
-end;
-
 procedure TFileGroups.EnumExtensions(vExtensions: TStringList);
 var
   i:Integer;
@@ -2280,34 +2237,6 @@ begin
   Result := Find(vName) <> nil;
 end;
 
-procedure TEditorDebug.DebugFile(Socket: TdbgpConnection;
-  const FileName: string; Line: Integer);
-var
-  aFile: TEditorFile;
-begin
-  inherited;
-  aFile := Engine.Files.ShowFile(FileName);
-  SetExecuted(Socket.SessionName, aFile.SynEdit, Line);
-  Engine.UpdateState([ecsDebug]);
-  SetForegroundWindow(Application.MainForm.Handle);
-end;
-
-procedure TEditorDebug.Notification(AComponent: TComponent;
-  Operation: TOperation);
-begin
-  inherited;
-  if (Operation = opRemove) and (AComponent = ExecuteEdit) then
-    FExecuteEdit := nil;
-end;
-
-procedure TEditorDebug.DoChanged(Listener: TmnListener);
-begin
-  inherited;
-  if Listener.Count = 0 then
-    SetExecuted('', nil, -1);
-  Engine.UpdateState([ecsDebug]);
-end;
-
 { TDebugSupportPlugin }
 
 type
@@ -2330,10 +2259,10 @@ begin
     EditorResource.SmallImages.Draw(ACanvas, X, Y, 3);
   end;
 
-  DBGLock.Lock;
+  Engine.Debug.Lock;
   try
     x := 1;
-    for i := 0 to Engine.Debug.Breakpoints.Count - 1 do
+    for i := 0 to Engine.Debug.BreakpointsCount - 1 do
     begin
       if SameText(Engine.Debug.Breakpoints[i].FileName, FEditorFile.Name) then
       begin
@@ -2355,7 +2284,7 @@ begin
       end;
     end;
   finally
-    DBGLock.Unlock;
+    Engine.Debug.Unlock;
   end;
 end;
 
@@ -2365,55 +2294,17 @@ begin
   FEditorFile := AOwner;
 end;
 
-procedure TEditorDebug.SetExecuted(SessionName: string; Edit: TCustomSynEdit;
-  const Line: Integer);
-var
-  OldLine: Integer;
-  OldEdit: TCustomSynEdit;
-begin
-  FSessionName := SessionName;
-  if (FExecuteEdit <> Edit) or (FExecuteLine <> Line) then
-  begin
-    OldLine := FExecuteLine;
-    OldEdit := FExecuteEdit;
-
-    FExecuteLine := Line;
-
-    if ExecuteEdit <> nil then
-      RemoveFreeNotification(ExecuteEdit);
-    FExecuteEdit := Edit;
-    if ExecuteEdit <> nil then
-      FreeNotification(ExecuteEdit);
-
-    if OldEdit <> nil then
-    begin
-      OldEdit.InvalidateLine(OldLine);
-    end;
-
-    if ExecuteEdit <> nil then
-    begin
-      ExecuteEdit.CaretY := FExecuteLine;
-      ExecuteEdit.CaretX := 1;
-      ExecuteEdit.InvalidateLine(FExecuteLine);
-    end;
-  end;
-end;
-
 { TEditorDesktop }
 
 constructor TEditorDesktop.Create;
 begin
   FFiles := TEditorDesktopFiles.Create(TEditorDesktopFile);
-  FBreakpoints := TdbgpBreakpoints.Create;
-  FWatches := TdbgpWatches.Create;
   inherited;
 end;
 
 destructor TEditorDesktop.Destroy;
 begin
   FFiles.Free;
-  FBreakpoints.Free;
-  FWatches.Free;
   inherited;
 end;
 
@@ -2425,9 +2316,9 @@ var
 begin
   Engine.BeginUpdate;
   try
-    DBGLock.Lock;
+    Engine.Debug.Lock;
     try
-      Engine.Debug.Breakpoints.Clear;
+{      Engine.Debug.BreakpointsClear;
       for i := 0 to Breakpoints.Count - 1 do
       begin
         Engine.Debug.Breakpoints.Add(Breakpoints[i].FileName, Breakpoints[i].Line);
@@ -2437,9 +2328,9 @@ begin
       for i := 0 to Watches.Count - 1 do
       begin
         Engine.Debug.Watches.Add(Watches[i].VariableName, Watches[i].Value);
-      end;
+      end;}
     finally
-      DBGLock.Unlock;
+      Engine.Debug.Unlock;
     end;
     Engine.UpdateState([ecsDebug]);
 
@@ -2471,9 +2362,9 @@ var
   aItem: TEditorDesktopFile;
   aFile: TEditorFile;
 begin
-  Breakpoints.Clear;
+{  Breakpoints.Clear;
   Watches.Clear;
-  DBGLock.Lock;
+  Engine.Debug.Lock;
   try
     for i := 0 to Engine.Debug.Breakpoints.Count - 1 do
     begin
@@ -2485,8 +2376,8 @@ begin
       Watches.Add(Engine.Debug.Watches[i].VariableName, Engine.Debug.Watches[i].Value);
     end;
   finally
-    DBGLock.Unlock;
-  end;
+    Engine.Debug.Unlock;
+  end;}
 
   Files.Clear;
   if Engine.Files.Current <> nil then
@@ -2564,7 +2455,5 @@ begin
     end;
 end;
 
-initialization
-  RegisterClasses([TdbgpBreakpoint, TdbgpWatch]);
 end.
 

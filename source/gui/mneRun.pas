@@ -10,7 +10,7 @@ unit mneRun;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, Classes, mnSockets, mnStreams, mnConnections, mnServers, mnXMLUtils,
+  Windows, SysUtils, StrUtils, Classes, mnStreams, mnXMLUtils,
   mnXMLNodes, SyncObjs;
 
 {$i '..\lib\mne.inc'}

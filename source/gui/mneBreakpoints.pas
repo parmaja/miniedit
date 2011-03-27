@@ -34,7 +34,8 @@ procedure ShowBreakpointsForm;
 
 implementation
 
-uses dbgpServers, EditorEngine, mneResources;
+uses
+  EditorEngine, mneResources;
 
 {$R *.lfm}
 
@@ -48,11 +49,11 @@ end;
 
 procedure TBreakpointsForm.FormCreate(Sender: TObject);
 begin
-  DBGLock.Lock;
+  Engine.Debug.Lock;
   try
     Reload;
   finally
-    DBGLock.Unlock;
+    Engine.Debug.Unlock;
   end;
 end;
 
@@ -62,7 +63,7 @@ var
   aItem: TListItem;
 begin
   BreakpointList.Clear;
-  for i := 0 to Engine.Debug.Breakpoints.Count - 1 do
+  for i := 0 to Engine.Debug.BreakpointsCount - 1 do
   begin
     aItem := BreakpointList.Items.Add;
     aItem.ImageIndex := 40;
@@ -76,26 +77,26 @@ procedure TBreakpointsForm.Button2Click(Sender: TObject);
 begin
   if BreakpointList.Selected <> nil then
   begin
-    DBGLock.Lock;
+    Engine.Debug.Lock;
     try
-      Engine.Debug.Breakpoints.Remove(Integer(BreakpointList.Selected.Data));
+      Engine.Debug.RemoveBreakpoint(Integer(BreakpointList.Selected.Data));
       Reload;
       Engine.UpdateState([ecsDebug]);
     finally
-      DBGLock.Unlock;
+      Engine.Debug.Unlock;
     end;
   end;
 end;
 
 procedure TBreakpointsForm.Button1Click(Sender: TObject);
 begin
-  DBGLock.Lock;
+  Engine.Debug.Lock;
   try
-    Engine.Debug.Breakpoints.Clear;
+    Engine.Debug.BreakpointsClear;
     Reload;
     Engine.UpdateState([ecsDebug]);
   finally
-    DBGLock.Unlock;
+    Engine.Debug.Unlock;
   end;
 end;
 

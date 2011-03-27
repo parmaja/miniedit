@@ -40,7 +40,6 @@ uses
   Match in '..\lib\Match.pas',
   HTMLProcessor in '..\lib\HTMLProcessor.pas',
   PHPProcessor in '..\lib\PHPProcessor.pas',
-  dbgpServers in '..\lib\dbgpServers.pas',
   mneRun in 'mneRun.pas',
   mnePHPIniForm in 'mnePHPIniForm.pas' {PHPIniForm},
   mneBreakpoints in 'mneBreakpoints.pas' {BreakpointsForm},

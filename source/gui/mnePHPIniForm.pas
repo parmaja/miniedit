@@ -10,7 +10,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  EditorEngine, Dialogs, StdCtrls, ComCtrls, IniFiles, dbgpServers, mnUtils, PHPUtils;
+  EditorEngine, Dialogs, StdCtrls, ComCtrls, IniFiles, mnUtils, PHPUtils;
 
 type
   TPHPIniForm = class(TForm)

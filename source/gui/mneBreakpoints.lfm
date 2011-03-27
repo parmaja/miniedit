@@ -11,7 +11,7 @@ object BreakpointsForm: TBreakpointsForm
   FormStyle = fsStayOnTop
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '0.9.29'
+  LCLVersion = '0.9.31'
   object BreakpointList: TListView
     Left = 2
     Height = 184
@@ -22,7 +22,7 @@ object BreakpointsForm: TBreakpointsForm
       item
         AutoSize = True
         Caption = 'File'
-        Width = 6
+        Width = 612
       end    
       item
         Caption = 'Line'
@@ -30,7 +30,6 @@ object BreakpointsForm: TBreakpointsForm
       end>
     ColumnClick = False
     HideSelection = False
-    ItemIndex = -1
     ReadOnly = True
     RowSelect = True
     SmallImages = EditorResource.ToolbarImageList

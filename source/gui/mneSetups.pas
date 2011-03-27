@@ -2,7 +2,7 @@ unit mneSetups;
 {$mode delphi}
 {**
  * Mini Edit
- * 
+ *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author    Zaher Dirkey <zaher at parmaja dot com>
  *}
@@ -50,7 +50,7 @@ end;
 
 procedure TEditorSetupForm.OkBtnClick(Sender: TObject);
 var
-  aIniFile:TIniFile;
+  aIniFile: TIniFile;
 begin
   if WorkspaceEdit.Text = '' then
   begin
@@ -61,30 +61,31 @@ begin
   else
   begin
     ForceDirectories(WorkspaceEdit.Text);
-    aIniFile:=TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
+    aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
     try
       aIniFile.WriteString('Options', 'Workspace', IncludeTrailingPathDelimiter(WorkspaceEdit.Text));
     finally
       aIniFile.Free;
     end;
   end;
-  ModalResult := mrOK;
+  ModalResult := mrOk;
 end;
 
 procedure TEditorSetupForm.FormCreate(Sender: TObject);
 var
-  aIniFile:TIniFile;
+  aIniFile: TIniFile;
 begin
   WorkspaceEdit.Items.Add(ExtractFilePath(Application.ExeName));
   WorkspaceEdit.Items.Add('C:\workspace');
-  WorkspaceEdit.Items.Add('D:\workspace');
-  aIniFile:=TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
+  if DirectoryExists('D:\') then
+    WorkspaceEdit.Items.Add('D:\workspace');
+  WorkspaceEdit.Items.Add('\workspace');
+  aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
   try
-     WorkspaceEdit.Text := aIniFile.ReadString('Options', 'Workspace', '');
+    WorkspaceEdit.Text := aIniFile.ReadString('Options', 'Workspace', '');
   finally
     aIniFile.Free;
   end;
 end;
 
 end.
-
