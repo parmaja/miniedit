@@ -9,7 +9,8 @@ unit EditorDebugger;
 interface
 
 uses
-  SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs, SynEdit;
+  SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
+  EditorAddons, SynEdit;
 
 type
   TEditBreakpoint = record
@@ -26,15 +27,15 @@ type
 
   { TEditorDebugger }
 
-  TEditorDebugger = class(TObject)
+  TEditorDebugger = class(TEditorAddon)
   private
     FExecuteLine: integer;
     FExecuteEdit: TCustomSynEdit;
     function GetActive: Boolean;
-    function GetBreakpoints(Index: Integer): TEditBreakpoint;
-    function GetWatches(Index: Integer): TEditWatch;
     procedure SetActive(const AValue: Boolean);
   protected
+    function GetBreakpoints(Index: Integer): TEditBreakpoint; virtual;
+    function GetWatches(Index: Integer): TEditWatch; virtual;
   public
     procedure Start; virtual;
     procedure Stop; virtual;
@@ -64,7 +65,7 @@ type
     procedure AddWatch(vName:string); virtual;
     procedure RemoveWatch(vName:string); virtual;
     function WatchesCount: Integer; virtual;
-    function WatchesClear: Integer; virtual;
+    procedure WatchesClear; virtual;
     property Watches[Index: Integer]: TEditWatch read GetWatches;
     function GetWatchValue(vName:string; var vValue: string): Boolean; virtual;
 
@@ -78,6 +79,7 @@ implementation
 
 function TEditorDebugger.GetBreakpoints(Index: Integer): TEditBreakpoint;
 begin
+  raise Exception.Create('Out of index');
 end;
 
 function TEditorDebugger.GetWatches(Index: Integer): TEditWatch;
@@ -131,17 +133,14 @@ end;
 
 procedure TEditorDebugger.Resume;
 begin
-
 end;
 
 procedure TEditorDebugger.Lock;
 begin
-
 end;
 
 procedure TEditorDebugger.Unlock;
 begin
-
 end;
 
 function TEditorDebugger.IsRuning: Boolean;
@@ -151,12 +150,10 @@ end;
 
 procedure TEditorDebugger.RunToCursor(FileName: string; LineNo: Integer);
 begin
-
 end;
 
 procedure TEditorDebugger.ToggleBreakpoint(FileName: string; LineNo: Integer);
 begin
-
 end;
 
 function TEditorDebugger.IsBreakpoint(FileName: string; LineNo: Integer): Boolean;
@@ -166,12 +163,10 @@ end;
 
 procedure TEditorDebugger.AddBreakpoint(FileName: string; LineNo: Integer);
 begin
-
 end;
 
 procedure TEditorDebugger.RemoveBreakpoint(FileName: string; Line: Integer);
 begin
-
 end;
 
 procedure TEditorDebugger.RemoveBreakpoint(Handle: Integer);
@@ -185,17 +180,14 @@ end;
 
 procedure TEditorDebugger.BreakpointsClear;
 begin
-
 end;
 
 procedure TEditorDebugger.AddWatch(vName: string);
 begin
-
 end;
 
 procedure TEditorDebugger.RemoveWatch(vName: string);
 begin
-
 end;
 
 function TEditorDebugger.WatchesCount: Integer;
@@ -203,9 +195,8 @@ begin
   Result := 0;
 end;
 
-function TEditorDebugger.WatchesClear: Integer;
+procedure TEditorDebugger.WatchesClear;
 begin
-
 end;
 
 function TEditorDebugger.GetWatchValue(vName: string; var vValue: string): Boolean;

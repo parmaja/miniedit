@@ -1643,35 +1643,35 @@ end;
 
 procedure TMainForm.SVNCommitActExecute(Sender: TObject);
 begin
-  ShellExec(Engine.Options.TortoiseProc, '/command:commit /path:"' + Folder + '" /notempfile /closeonend');
+  Engine.SCM.CommitDirectory(Folder);
 end;
 
 procedure TMainForm.SVNDiffFileActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
-    ShellExec(Engine.Options.TortoiseProc, '/command:diff /path:"' + Engine.Files.Current.Name + '" /notempfile /closeonend');
+    Engine.SCM.DiffFile(Engine.Files.Current.Name);
 end;
 
 procedure TMainForm.SVNCommitFileActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
-    ShellExec(Engine.Options.TortoiseProc, '/command:commit /path:"' + Engine.Files.Current.Name + '" /notempfile /closeonend');
+    Engine.SCM.CommitFile(Engine.Files.Current.Name);
 end;
 
 procedure TMainForm.SVNUpdateFileActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
-    ShellExec(Engine.Options.TortoiseProc, '/command:update /path:"' + Engine.Files.Current.Name + '" /notempfile /closeonend');
+    Engine.SCM.UpdateFile(Engine.Files.Current.Name);
 end;
 
 procedure TMainForm.SVNUpdateActExecute(Sender: TObject);
 begin
-  ShellExec(Engine.Options.TortoiseProc, '/command:update /path:"' + Folder + '" /notempfile /closeonend');
+  Engine.SCM.UpdateDirectory(Folder);
 end;
 
 procedure TMainForm.SVNRevertActExecute(Sender: TObject);
 begin
-  ShellExec(Engine.Options.TortoiseProc, '/command:revert /path:"' + Folder + '" /notempfile /closeonend');
+  Engine.SCM.RevertDirectory(Folder);
 end;
 
 procedure TMainForm.DBGStopServerActUpdate(Sender: TObject);
@@ -2233,7 +2233,7 @@ begin
       //      aDialog.InitialDir := Engine.BrowseFolder;
       if aDialog.Execute then
       begin
-        ShellExec(Engine.Options.TortoiseMerge, '/base:"' + aDialog.FileName + '" /mine:' + Engine.Files.Current.Name);
+        Engine.SCM.DiffToFile(aDialog.FileName, Engine.Files.Current.Name);
       end;
       Engine.Files.CheckChanged;
     finally

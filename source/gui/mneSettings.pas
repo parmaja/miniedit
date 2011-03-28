@@ -26,8 +26,6 @@ type
     Label6: TLabel;
     PHPFolderEdit: TEdit;
     Button3: TButton;
-    TortoiseSVNFolderEdit: TEdit;
-    Button2: TButton;
     Label7: TLabel;
     INIEdit: TEdit;
     Button4: TButton;
@@ -51,7 +49,6 @@ type
     Label10: TLabel;
     procedure Button3Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
-    procedure Button2Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -118,7 +115,6 @@ begin
   FEngine.Options.HelpFiles.Clear;
   FEngine.Options.HelpFiles.Values['php'] := PHPManualEdit.Text;
   FEngine.Options.HelpFiles.Values['html'] := HTMLManualEdit.Text;
-  FEngine.Options.TortoiseSVNFolder := TortoiseSVNFolderEdit.Text;
   FEngine.Options.CompilerFolder := PHPFolderEdit.Text;
   FEngine.Options.ConfigFile := INIEdit.Text;
   FEngine.Options.CollectAutoComplete := CollectAutoCompleteChk.Checked;
@@ -144,7 +140,6 @@ begin
   HTMLManualEdit.Text := FEngine.Options.HelpFiles.Values['html'];
   PHPFolderEdit.Text := FEngine.Options.CompilerFolder;
   INIEdit.Text := FEngine.Options.ConfigFile;
-  TortoiseSVNFolderEdit.Text := FEngine.Options.TortoiseSVNFolder;
   CollectAutoCompleteChk.Checked := FEngine.Options.CollectAutoComplete;
   CollectTimeoutSpn.Position := FEngine.Options.CollectTimeout;
   SendOutputToNewFileChk.Checked := FEngine.Options.SendOutputToNewFile;
@@ -163,17 +158,6 @@ begin
       FExtraExtensions[c - 1] := FEngine.Groups[i].Name;
       Inc(c);
     end;
-  end;
-end;
-
-procedure TEditorSettingForm.Button2Click(Sender: TObject);
-var
-  aFolder: string;
-begin
-  aFolder := IncludeTrailingPathDelimiter(TortoiseSVNFolderEdit.Text);
-  if SelectFolder('TSVN path', '', aFolder) then
-  begin
-    TortoiseSVNFolderEdit.Text := aFolder;
   end;
 end;
 

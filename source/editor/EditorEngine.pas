@@ -11,7 +11,7 @@ interface
 uses
   Windows, Messages, SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
   IniFiles, EditorOptions, EditorProfiles, SynEditMarks, SynCompletion, SynEditTypes,
-  SynEditMiscClasses, SyncObjs, Dialogs, SynEditHighlighter, SynEditSearch, SynEdit, EditorDebugger,
+  SynEditMiscClasses, SyncObjs, Dialogs, SynEditHighlighter, SynEditSearch, SynEdit, EditorDebugger, EditorSCM,
   mnXMLRttiProfile, mnXMLUtils, mnUtils;
 
 type
@@ -263,7 +263,6 @@ type
     FCollectAutoComplete: Boolean;
     FCollectTimeout: DWORD;
     FReplaceHistory: TStringList;
-    FTortoiseSVNFolder: string;
     FSendOutputToNewFile: Boolean;
     FShowOutput: Boolean;
     FAutoStartDebugServer: Boolean;
@@ -276,8 +275,6 @@ type
     procedure SetRecentFiles(const Value: TStringList);
     procedure SetRecentProjects(const Value: TStringList);
     procedure SetProjects(const Value: TStringList);
-    function GetTortoiseProc: string;
-    function GetTortoiseMerge: string;
   protected
   public
     constructor Create(AEngine: TEditorEngine);
@@ -288,12 +285,9 @@ type
     procedure Show;
     property Engine: TEditorEngine read FEngine;
     property FileName: string read FFileName write FFileName;
-    property TortoiseProc: string read GetTortoiseProc;
-    property TortoiseMerge: string read GetTortoiseMerge;
     property BoundRect: TRect read FBoundRect write FBoundRect; //not saved yet
   published
     property CompilerFolder: string read FCompilerFolder write FCompilerFolder;
-    property TortoiseSVNFolder: string read FTortoiseSVNFolder write FTortoiseSVNFolder;
     property HelpFiles: TStringList read FHelpFiles write FHelpFiles;
     property ExtraExtensions: TStringList read FExtraExtensions write FExtraExtensions;
     property ConfigFile: string read FConfigFile write FConfigFile;
@@ -444,8 +438,11 @@ type
   TOnFoundEvent = procedure(FileName: string; const Line: string; LineNo, Column, FoundLength: Integer) of object;
   TOnEditorChangeState = procedure(State: TEditorChangeState) of object;
 
+  { TEditorEngine }
+
   TEditorEngine = class(TObject)
   private
+    FSCM: TEditorSCM;
     FUpdateState: TEditorChangeState;
     FUpdateCount: Integer;
     FFiles: TEditorFiles;
@@ -473,6 +470,8 @@ type
     function CreateEditorFile(Group: string): TEditorFile; virtual;
     function CreateEditorProject: TEditorProject;
     function FindExtensionCategoryName(Extension: string): string;
+    function CreateDebugger: TEditorDebugger;
+    function CreateSCM: TEditorSCM;
   public
     constructor Create; virtual;
     destructor Destroy; override;
@@ -501,6 +500,7 @@ type
     property Projects: TEditorProjects read FProjects;
     property Options: TEditorOptions read FOptions;
     property Debug: TEditorDebugger read FDebug;
+    property SCM: TEditorSCM read FSCM;
     property MessagesList: TEditorMessagesList read FMessagesList;
     property Window: TWinControl read FWindow write FWindow;
     property BrowseFolder: string read FBrowseFolder write SetBrowseFolder;
@@ -747,7 +747,8 @@ begin
   FFiles.FEngine := Self;
   FProjects := TEditorProjects.Create;
   FProjects.FEngine := Self;
-  FDebug := TEditorDebugger.Create;
+  FDebug := CreateDebugger;
+  FSCM := CreateSCM;
 end;
 
 function TEditorEngine.CreateEditorFile(Group: string): TEditorFile;
@@ -771,6 +772,7 @@ destructor TEditorEngine.Destroy;
 begin
   FDebug.Stop;
   FreeAndNil(FDebug);
+  FreeAndNil(FSCM);
   FreeAndNil(FFiles);
   FreeAndNil(FProjects);
   FreeAndNil(FCategories);
@@ -868,6 +870,16 @@ begin
     Result := aGroup.Name
   else
     Result := '';
+end;
+
+function TEditorEngine.CreateDebugger: TEditorDebugger;
+begin
+  Result := TEditorDebugger.Create;
+end;
+
+function TEditorEngine.CreateSCM: TEditorSCM;
+begin
+  Result := TEditorSCM.Create;
 end;
 
 function TEditorFiles.FindFile(const vFileName: string): TEditorFile;
@@ -1739,8 +1751,7 @@ procedure TEditorFile.EditorPaintTransient(Sender: TObject;
 begin
 end;*)
 
-procedure TEditorFile.DoSpecialLineColors(Sender: TObject; Line: Integer;
-  var Special: Boolean; var FG, BG: TColor);
+procedure TEditorFile.DoSpecialLineColors(Sender: TObject; Line: Integer; var Special: Boolean; var FG, BG: TColor);
 begin
   if Engine.Debug.ExecuteEdit = Sender then
   begin
@@ -1830,40 +1841,6 @@ procedure TEditorOptions.SetRecentProjects(const Value: TStringList);
 begin
   if FRecentProjects <> Value then
     FRecentProjects.Assign(Value);
-end;
-
-function TEditorOptions.GetTortoiseProc: string;
-var
-  s: string;
-begin
-  s := TortoiseSVNFolder;
-  if (s = '') and DirectoryExists('C:\Program Files\TortoiseSVN') then
-    s := 'C:\Program Files\TortoiseSVN';
-  if s <> '' then
-    s := IncludeTrailingPathDelimiter(s);
-  if s = '' then
-    Result := 'TortoiseProc.exe'
-  else if (s <> '') and SameText(RightStr(s, 4), 'bin\') then
-    Result := '"' + s + 'TortoiseProc.exe"'
-  else
-    Result := '"' + s + 'bin\TortoiseProc.exe"';
-end;
-
-function TEditorOptions.GetTortoiseMerge: string;
-var
-  s: string;
-begin
-  s := TortoiseSVNFolder;
-  if (s = '') and DirectoryExists('C:\Program Files\TortoiseSVN') then
-    s := 'C:\Program Files\TortoiseSVN';
-  if s <> '' then
-    s := IncludeTrailingPathDelimiter(s);
-  if s = '' then
-    Result := 'TortoiseMerge.exe'
-  else if (s <> '') and SameText(RightStr(s, 4), 'bin\') then
-    Result := '"' + s + 'TortoiseMerge.exe"'
-  else
-    Result := '"' + s + 'bin\TortoiseMerge.exe"';
 end;
 
 { TFileCategories }
