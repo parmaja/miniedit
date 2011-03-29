@@ -17,7 +17,7 @@ uses
   Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   SynHighlighterCSS, SynHighlighterSQL, SynHighlighterXML, SynHighlighterApache,
-  SynHighlighterJScript, SynHighlighterHTMLPHP;
+  SynHighlighterJScript, SynHighlighterHTMLPHP, SynHighlighterPas;
 
 type
   TphpFile = class(TEditorFile)
@@ -60,6 +60,14 @@ type
     procedure NewSource; override;
   end;
 //
+
+  { TPASFile }
+
+  TPASFile = class(TEditorFile)
+  protected
+    procedure NewSource; override;
+  public
+  end;
 
   TPHPFileCategory = class(TFileCategory)
   private
@@ -112,6 +120,16 @@ type
     function CreateHighlighter: TSynCustomHighlighter; override;
   public
   end;
+
+  { TPASFileCategory }
+
+  TPASFileCategory = class(TFileCategory)
+  private
+  protected
+    function CreateHighlighter: TSynCustomHighlighter; override;
+  public
+  end;
+
 
   //
   TmneEngine = class(TEditorEngine)
@@ -189,6 +207,20 @@ begin
   end;
 end;
 
+{ TPASFileCategory }
+
+function TPASFileCategory.CreateHighlighter: TSynCustomHighlighter;
+begin
+  Result := TSynPASSyn.Create(nil);
+end;
+
+{ TPASFile }
+
+procedure TPASFile.NewSource;
+begin
+  inherited NewSource;
+end;
+
 constructor TmneEngine.Create;
 begin
   inherited;
@@ -200,6 +232,7 @@ begin
   Categories.Add('INI', TINIFile, TINIFileCategory);
   Categories.Add('TXT', TTXTFile, TTXTFileCategory);
   Categories.Add('XML', TXMLFile, TXMLFileCategory);
+  Categories.Add('XML', TPASFile, TPASFileCategory);
 
   Groups.Add('PHP Files', 'php', 'HTML/PHP', ['php'], [fgkExecutable, fgkPublish, fgkBrowsable, fgkMainIcon]);
   Groups.Add('PHPX Files', 'phpx', 'HTML/PHP', ['phpx'], [fgkExecutable, fgkPublish, fgkBrowsable, fgkMainIcon]);

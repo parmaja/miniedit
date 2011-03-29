@@ -37,6 +37,8 @@ type
     property Style: TFontStyles read FStyle write FStyle default [];
   end;
 
+  { TAttributesProfile }
+
   TAttributesProfile = class(TCollection)
   private
     function GetItem(Index: Integer): TAttributeProfile;
@@ -105,7 +107,9 @@ type
 
   TEditorProfile = class(TComponent) //make it as object
   private
+    FBackgroundColor: TColor;
     FExtOptions: TSynEditorOptions2;
+    FForegroundColor: TColor;
     FMaxUndo: Integer;
     FExtraLineSpacing: Integer;
     FTabWidth: Integer;
@@ -118,7 +122,6 @@ type
     FInsertCaret: TSynEditCaretType;
     FOptions: TSynEditorOptions;
     FGutterOptions: TGutterOptions;
-    FColor: TColor;
     FInsertMode: Boolean;
     FHighlighters: THighlightersProfile;
     procedure SetExtOptions(const AValue: TSynEditorOptions2);
@@ -138,10 +141,11 @@ type
     property Highlighters: THighlightersProfile read FHighlighters;
     property Options: TSynEditorOptions read FOptions write SetOptions default cDefaultOptions;
     property ExtOptions: TSynEditorOptions2 read FExtOptions write SetExtOptions default [];
-    property Color: TColor read FColor write FColor default clWindow;
     property Font: TFont read FFont write SetFont;
     property Gutter: TGutterOptions read FGutterOptions write FGutterOptions;
     property SelectedColor: TSynSelectedColor read FSelectedColor write FSelectedColor;
+    property BackgroundColor: TColor read FBackgroundColor write FBackgroundColor default clWindow;
+    property ForegroundColor: TColor read FForegroundColor write FForegroundColor default clWindowText;
     property ExtraLineSpacing: Integer read FExtraLineSpacing write FExtraLineSpacing default 0;
     property RightEdge: Integer read FRightEdge write FRightEdge default 80;
     property RightEdgeColor: TColor read FRightEdgeColor write FRightEdgeColor default clSilver;
@@ -166,7 +170,6 @@ begin
     Self.Gutter.Assign(THackCustomSynEdit(Source).Gutter);
     Self.SelectedColor.Assign(THackCustomSynEdit(Source).SelectedColor);
 
-    Self.Color := TCustomSynEdit(Source).Color;
     Self.Options := THackCustomSynEdit(Source).Options;
     Self.ExtraLineSpacing := THackCustomSynEdit(Source).ExtraLineSpacing;
     Self.InsertCaret := THackCustomSynEdit(Source).InsertCaret;
@@ -184,11 +187,22 @@ procedure TEditorProfile.AssignTo(Dest: TPersistent);
 begin
   if Assigned(Dest) and (Dest is TCustomSynEdit) then
   begin
-    TCustomSynEdit(Dest).Font.Assign(Self.Font);
+    THackCustomSynEdit(Dest).Font.Assign(Self.Font);
+    if TCustomSynEdit(Dest).Highlighter = nil then
+    begin
+      TCustomSynEdit(Dest).Font.Color := ForegroundColor;
+      TCustomSynEdit(Dest).Color := BackgroundColor;
+    end
+    else
+    begin
+      TCustomSynEdit(Dest).Font.Color := TCustomSynEdit(Dest).Highlighter.WhitespaceAttribute.Foreground;
+      TCustomSynEdit(Dest).Color := TCustomSynEdit(Dest).Highlighter.WhitespaceAttribute.Background;//BUG: bad to be here
+    end;
+
+    THackCustomSynEdit(Dest).Options := THackCustomSynEdit(Dest).Options - [eoDropFiles]; //make main window accept the files
     THackCustomSynEdit(Dest).Gutter.Assign(Self.Gutter);
     THackCustomSynEdit(Dest).SelectedColor.Assign(Self.SelectedColor);
 
-    TCustomSynEdit(Dest).Color := Self.Color;
     THackCustomSynEdit(Dest).Options := Self.Options;
     THackCustomSynEdit(Dest).ExtraLineSpacing := Self.ExtraLineSpacing;
     THackCustomSynEdit(Dest).InsertCaret := Self.InsertCaret;
@@ -212,6 +226,8 @@ begin
   FSelectedColor := TSynSelectedColor.Create;
   FFont := TFont.Create;
   FHighlighters := THighlightersProfile.Create(THighlighterProfile);
+  FBackgroundColor := clWindow;
+  FForegroundColor := clWindowText;
   Reset;
 end;
 
@@ -252,7 +268,6 @@ begin
   FSelectedColor.Background := clHighlight;
   FFont.Name := 'Courier New';
   FFont.Size := 10;
-  Color := clWindow;
   Options := cDefaultOptions;
   ExtraLineSpacing := 0;
   InsertCaret := ctVerticalLine;

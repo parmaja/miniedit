@@ -668,18 +668,19 @@ procedure TEditorOptions.Apply;
 var
   i: Integer;
 begin
-  for i := 0 to Engine.Files.Count - 1 do
-  begin
-    Profile.AssignTo(Engine.Files[i].SynEdit);
-    Engine.Files[i].SynEdit.Options := Engine.Files[i].SynEdit.Options - [eoDropFiles]; //make main window accept the files
-  end;
-
   for i := 0 to Engine.Categories.Count - 1 do
   begin
 //    Engine.Categories[i].Completion.Font := Profile.Font;
     //Engine.Categories[i].Completion.Options := Engine.Categories[i].Completion.Options + [scoTitleIsCentered];
     if Engine.Categories[i].Highlighter <> nil then
+    begin
       Profile.Highlighters.AssignTo(Engine.Categories[i].Highlighter);
+    end;
+  end;
+
+  for i := 0 to Engine.Files.Count - 1 do
+  begin
+    Profile.AssignTo(Engine.Files[i].SynEdit);
   end;
 end;
 
@@ -1454,8 +1455,6 @@ begin
   FSynEdit.Parent := Engine.Window;
   //FSynEdit.OnPaintTransient := EditorPaintTransient;
   TDebugSupportPlugin.Create(Self);
-  Engine.Options.Profile.AssignTo(FSynEdit);
-  FSynEdit.Options := FSynEdit.Options - [eoDropFiles]; //make main window accept the files
 end;
 
 destructor TEditorFile.Destroy;
@@ -1629,6 +1628,7 @@ begin
       FGroup.Category.Completion.AddEditor(FSynEdit);
       //Engine.MacroRecorder.AddEditor(FSynEdit);
     end;
+    Engine.Options.Profile.AssignTo(FSynEdit);
   end;
 end;
 

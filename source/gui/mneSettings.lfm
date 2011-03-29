@@ -1,7 +1,7 @@
 object EditorSettingForm: TEditorSettingForm
-  Left = 308
+  Left = 460
   Height = 276
-  Top = 163
+  Top = 317
   Width = 426
   BorderStyle = bsDialog
   Caption = 'Setting'

@@ -1,4 +1,5 @@
 unit EditorOptions;
+
 {$mode delphi}
 {**
  * Mini Edit
@@ -16,16 +17,15 @@ uses
   EditorProfiles;
 
 type
-  TSynEditorOptionsUserCommand = procedure(AUserCommand: Integer;
-    var ADescription: string) of object;
+  TSynEditorOptionsUserCommand = procedure(AUserCommand: integer; var ADescription: string) of object;
 
-  //NOTE: in order for the user commands to be recorded correctly, you must
-  //      put the command itself in the object property.
-  //      you can do this like so:
-  //
-  //      StringList.AddObject('ecSomeCommand', TObject(ecSomeCommand))
-  //
-  //      where ecSomeCommand is the command that you want to add
+//NOTE: in order for the user commands to be recorded correctly, you must
+//      put the command itself in the object property.
+//      you can do this like so:
+//
+//      StringList.AddObject('ecSomeCommand', TObject(ecSomeCommand))
+//
+//      where ecSomeCommand is the command that you want to add
 
 type
   TSynEditorOptionsAllUserCommands = procedure(ACommands: TStrings) of object;
@@ -33,6 +33,15 @@ type
   { TEditorOptionsForm }
 
   TEditorOptionsForm = class(TForm)
+    Bevel1: TBevel;
+    DefBackgroundCbo: TColorBox;
+    BoldChk: TCheckBox;
+    FontBtn: TButton;
+    FontLbl: TLabel;
+    DefForegroundCbo: TColorBox;
+    ItalicChk: TCheckBox;
+    Label13: TLabel;
+    Label14: TLabel;
     PageControl: TPageControl;
     OkBtn: TButton;
     CancelBtn: TButton;
@@ -89,16 +98,8 @@ type
     ColorTab: TTabSheet;
     SampleEdit: TSynEdit;
     Label11: TLabel;
-    EditorStyleGrp: TGroupBox;
-    BoldChk: TCheckBox;
-    ItalicChk: TCheckBox;
-    UnderlineChk: TCheckBox;
     BackgroundCbo: TColorBox;
     ForegroundCbo: TColorBox;
-    EditorFontGrp: TGroupBox;
-    FontBtn: TButton;
-    Panel3: TPanel;
-    FontLbl: TLabel;
     ElementCbo: TComboBox;
     GutterColorCbo: TColorBox;
     RightEdgeColorCbo: TColorBox;
@@ -110,19 +111,24 @@ type
     ResetBtn: TButton;
     Label12: TLabel;
     GroupCbo: TComboBox;
+    UnderlineChk: TCheckBox;
     WordWrapChk: TCheckBox;
+    procedure BackgroundCboSelect(Sender: TObject);
+    procedure DefaultBackgroundCboSelect(Sender: TObject);
+    procedure DefaultForegroundCboSelect(Sender: TObject);
+    procedure ElementCboSelect(Sender: TObject);
+    procedure ForegroundCboSelect(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FontBtnClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure KeyListEditing(Sender: TObject; Item: TListItem;
-      var AllowEdit: Boolean);
+    procedure GroupCboSelect(Sender: TObject);
+    procedure KeyListEditing(Sender: TObject; Item: TListItem; var AllowEdit: boolean);
     procedure OkBtnClick(Sender: TObject);
     procedure GutterFontBtnClick(Sender: TObject);
     procedure GutterFontChkClick(Sender: TObject);
     procedure PageControlChange(Sender: TObject);
     procedure ResetBtnClick(Sender: TObject);
-    procedure SampleEditMouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
+    procedure SampleEditMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
     procedure ElementCboClick(Sender: TObject);
     procedure GroupCboClick(Sender: TObject);
     procedure BoldChkClick(Sender: TObject);
@@ -131,14 +137,14 @@ type
     procedure BackgroundCboChange(Sender: TObject);
   private
     FProfile: TEditorProfile;
-    InChanging: Boolean;
+    InChanging: boolean;
     procedure ApplyGroup;
     procedure RetrieveElement;
     procedure ApplyElement;
     procedure GetData;
     procedure PutData;
   public
-    function Execute(Profile: TEditorProfile; Highlighters: TList): Boolean;
+    function Execute(Profile: TEditorProfile; Highlighters: TList): boolean;
   end;
 
 implementation
@@ -150,9 +156,9 @@ uses
 
 { TEditorOptionsForm }
 
-function TEditorOptionsForm.Execute(Profile: TEditorProfile; Highlighters: TList): Boolean;
+function TEditorOptionsForm.Execute(Profile: TEditorProfile; Highlighters: TList): boolean;
 var
-  i: Integer;
+  i: integer;
   aHighlighter: TSynCustomHighlighter;
 begin
   if (Profile <> nil) then
@@ -169,7 +175,7 @@ begin
     //Get Data
     GetData;
     //Show the form
-    Result := Showmodal = mrOk;
+    Result := ShowModal = mrOk;
     //PutData
     if Result then
     begin
@@ -183,9 +189,10 @@ begin
     Result := False;
 end;
 
-
 procedure TEditorOptionsForm.GetData;
 begin
+  DefForegroundCbo.Selected := FProfile.ForegroundColor;
+  DefBackgroundCbo.Selected := FProfile.BackgroundColor;
   //Gutter
   GutterVisibleChk.Checked := FProfile.Gutter.Visible;
   GutterAutosizeChk.Checked := FProfile.Gutter.AutoSize;
@@ -231,8 +238,8 @@ begin
   ShowSpecialCharsChk.Checked := eoShowSpecialChars in FProfile.Options;
   //Caret
   InsertModeChk.Checked := FProfile.InsertMode;
-  InsertCaretCbo.ItemIndex := ord(FProfile.InsertCaret);
-  OverwriteCaretCbo.ItemIndex := ord(FProfile.OverwriteCaret);
+  InsertCaretCbo.ItemIndex := Ord(FProfile.InsertCaret);
+  OverwriteCaretCbo.ItemIndex := Ord(FProfile.OverwriteCaret);
 end;
 
 procedure TEditorOptionsForm.PutData;
@@ -240,7 +247,7 @@ var
   vOptions: TSynEditorOptions;
   vExtOptions: TSynEditorOptions2;
 
-  procedure SetFlag(aOption: TSynEditorOption; aValue: Boolean);
+  procedure SetFlag(aOption: TSynEditorOption; aValue: boolean);
   begin
     if aValue then
       Include(vOptions, aOption)
@@ -248,7 +255,7 @@ var
       Exclude(vOptions, aOption);
   end;
 
-  procedure SetExtFlag(aOption: TSynEditorOption2; aValue: Boolean);
+  procedure SetExtFlag(aOption: TSynEditorOption2; aValue: boolean);
   begin
     if aValue then
       Include(vExtOptions, aOption)
@@ -257,6 +264,8 @@ var
   end;
 
 begin
+  FProfile.ForegroundColor := DefForegroundCbo.Selected;
+  FProfile.BackgroundColor := DefBackgroundCbo.Selected;
   //Gutter
   FProfile.Gutter.Visible := GutterVisibleChk.Checked;
   FProfile.Gutter.AutoSize := GutterAutosizeChk.Checked;
@@ -312,13 +321,41 @@ begin
   InChanging := False;
 end;
 
+procedure TEditorOptionsForm.ElementCboSelect(Sender: TObject);
+begin
+  RetrieveElement;
+end;
+
+procedure TEditorOptionsForm.BackgroundCboSelect(Sender: TObject);
+begin
+  if not InChanging then
+    BackgroundChk.Checked := True;
+  ApplyElement;
+end;
+
+procedure TEditorOptionsForm.DefaultBackgroundCboSelect(Sender: TObject);
+begin
+  ApplyElement;
+end;
+
+procedure TEditorOptionsForm.DefaultForegroundCboSelect(Sender: TObject);
+begin
+  ApplyElement;
+end;
+
+procedure TEditorOptionsForm.ForegroundCboSelect(Sender: TObject);
+begin
+  if not InChanging then
+    ForegroundChk.Checked := True;
+  ApplyElement;
+end;
+
 procedure TEditorOptionsForm.FontBtnClick(Sender: TObject);
 begin
-  FontDialog.Font.Assign(FontLbl.Font);
+  FontDialog.Font.Assign(SampleEdit.Font);
   if FontDialog.Execute then
   begin
-    FontLbl.Font.Assign(FontDialog.Font);
-    FontLbl.Caption := FontLbl.Font.Name;
+    SampleEdit.Font.Assign(FontDialog.Font);
     FontLbl.Caption := FontLbl.Font.Name + ' ' + IntToStr(FontLbl.Font.Size) + 'pt';
     ApplyElement;
   end;
@@ -329,8 +366,12 @@ begin
   PageControl.TabIndex := 0;
 end;
 
-procedure TEditorOptionsForm.KeyListEditing(Sender: TObject;
-  Item: TListItem; var AllowEdit: Boolean);
+procedure TEditorOptionsForm.GroupCboSelect(Sender: TObject);
+begin
+  ApplyGroup;
+end;
+
+procedure TEditorOptionsForm.KeyListEditing(Sender: TObject; Item: TListItem; var AllowEdit: boolean);
 begin
   AllowEdit := False;
 end;
@@ -372,34 +413,35 @@ begin
   end;
 end;
 
-procedure TEditorOptionsForm.SampleEditMouseUp(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+procedure TEditorOptionsForm.SampleEditMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 var
   Attributes: TSynHighlighterAttributes;
   p: TPoint;
   s: string;
 begin
   p := SampleEdit.PixelsToRowColumn(Point(X, Y));
-  if SampleEdit.GetHighlighterAttriAtRowCol(Point(p.x, p.y), s, Attributes) then
-  begin
-    if Attributes <> nil then
-      ElementCbo.ItemIndex := ElementCbo.Items.IndexOf(Attributes.Name)
-    else
-      ElementCbo.ItemIndex := -1;
-    RetrieveElement;
-  end;
+  Attributes := nil;
+  if not SampleEdit.GetHighlighterAttriAtRowCol(Point(p.x, p.y), s, Attributes) then
+    Attributes := nil;
+  if Attributes = nil then
+    Attributes := SampleEdit.Highlighter.WhitespaceAttribute;
+  if Attributes <> nil then
+    ElementCbo.ItemIndex := ElementCbo.Items.IndexOf(Attributes.Name)
+  else
+    ElementCbo.ItemIndex := -1;
+  RetrieveElement;
 end;
 
 procedure TEditorOptionsForm.ElementCboClick(Sender: TObject);
 begin
-  RetrieveElement;
+
 end;
 
 procedure TEditorOptionsForm.RetrieveElement;
 var
   aColor: TColor;
 begin
-  if not InChanging and (SampleEdit.Highlighter <> nil) and (ElementCbo.ItemIndex>=0) then
+  if not InChanging and (SampleEdit.Highlighter <> nil) and (ElementCbo.ItemIndex >= 0) then
   begin
     InChanging := True;
     try
@@ -409,7 +451,7 @@ begin
         if aColor = clNone then
         begin
           ForegroundChk.Checked := False;
-          ForegroundCbo.Selected := clBlack
+          ForegroundCbo.Selected := clBlack;
         end
         else
         begin
@@ -422,13 +464,13 @@ begin
         if aColor = clNone then
         begin
           BackgroundChk.Checked := False;
-          BackgroundCbo.Selected := clWindow
+          BackgroundCbo.Selected := clWindow;
         end
         else
         begin
           BackgroundChk.Checked := True;
           BackgroundCbo.Selected := aColor;
-          BackgroundCbo.Refresh;//bug when custom and then custom colos
+          BackgroundCbo.Refresh;//bug when custom and then custom colors
         end;
 
         BoldChk.Checked := (fsBold in Attribute[ElementCbo.ItemIndex].Style);
@@ -445,7 +487,7 @@ procedure TEditorOptionsForm.ApplyElement;
 var
   aFontStyle: TFontStyles;
 begin
-  if not InChanging and (SampleEdit.Highlighter <> nil) and (ElementCbo.ItemIndex>=0) then
+  if not InChanging and (SampleEdit.Highlighter <> nil) and (ElementCbo.ItemIndex >= 0) then
   begin
     InChanging := True;
     try
@@ -455,7 +497,7 @@ begin
           Attribute[ElementCbo.ItemIndex].Foreground := ForegroundCbo.Selected
         else
           Attribute[ElementCbo.ItemIndex].Foreground := clNone;
-          
+
         if BackgroundChk.Checked then
           Attribute[ElementCbo.ItemIndex].Background := BackgroundCbo.Selected
         else
@@ -470,6 +512,8 @@ begin
           aFontStyle := aFontStyle + [fsUnderline];
 
         Attribute[ElementCbo.ItemIndex].Style := aFontStyle;
+        SampleEdit.Color := WhitespaceAttribute.Background;
+        SampleEdit.Font.Color := WhitespaceAttribute.Foreground;
       end;
     finally
       InChanging := False;
@@ -479,14 +523,16 @@ end;
 
 procedure TEditorOptionsForm.GroupCboClick(Sender: TObject);
 begin
-  ApplyGroup;
+
 end;
 
 procedure TEditorOptionsForm.ApplyGroup;
 var
-  i: Integer;
+  i: integer;
 begin
   SampleEdit.Highlighter := TSynCustomHighlighter(GroupCbo.Items.Objects[GroupCbo.ItemIndex]);
+  SampleEdit.Color := SampleEdit.Highlighter.WhitespaceAttribute.Background;
+  SampleEdit.Font.Color := SampleEdit.Highlighter.WhitespaceAttribute.Foreground;
   SampleEdit.Text := SampleEdit.Highlighter.SampleSource;
   ElementCbo.Clear;
   for i := 0 to SampleEdit.Highlighter.AttrCount - 1 do
@@ -510,16 +556,10 @@ end;
 
 procedure TEditorOptionsForm.ForegroundCboChange(Sender: TObject);
 begin
-  if not InChanging then
-    ForegroundChk.Checked := True;
-  ApplyElement;
 end;
 
 procedure TEditorOptionsForm.BackgroundCboChange(Sender: TObject);
 begin
-  if not InChanging then
-    BackgroundChk.Checked := True;
-  ApplyElement;
 end;
 
 end.

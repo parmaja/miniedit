@@ -12,14 +12,14 @@ object EditorOptionsForm: TEditorOptionsForm
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '0.9.29'
+  LCLVersion = '0.9.31'
   object PageControl: TPageControl
     Left = 4
     Height = 379
     Top = 4
     Width = 362
-    ActivePage = OptionsTab
-    TabIndex = 0
+    ActivePage = ColorTab
+    TabIndex = 2
     TabOrder = 0
     OnChange = PageControlChange
     object OptionsTab: TTabSheet
@@ -252,7 +252,7 @@ object EditorOptionsForm: TEditorOptionsForm
           TabOrder = 9
         end
         object WordWrapChk: TCheckBox
-          Left = 10
+          Left = 9
           Height = 17
           Hint = 'if enabled, then the scrollbars will only show when necessary.  If you have ScrollPastEOL, then it the horizontal bar will always be there (it uses MaxLength instead)'
           Top = 231
@@ -319,7 +319,7 @@ object EditorOptionsForm: TEditorOptionsForm
       end
     end
     object GutterTab: TTabSheet
-      Caption = 'Gutter'
+      Caption = 'Display'
       ClientHeight = 353
       ClientWidth = 354
       object RightEdgeGrp: TGroupBox
@@ -357,7 +357,7 @@ object EditorOptionsForm: TEditorOptionsForm
         end
         object RightEdgeColorCbo: TColorBox
           Left = 7
-          Height = 22
+          Height = 24
           Top = 52
           Width = 145
           Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
@@ -465,7 +465,7 @@ object EditorOptionsForm: TEditorOptionsForm
         end
         object GutterColorCbo: TColorBox
           Left = 174
-          Height = 22
+          Height = 24
           Top = 77
           Width = 145
           Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
@@ -522,25 +522,25 @@ object EditorOptionsForm: TEditorOptionsForm
       ClientWidth = 354
       ImageIndex = 3
       object Label11: TLabel
-        Left = 8
+        Left = 5
         Height = 14
-        Top = 55
+        Top = 64
         Width = 42
         Caption = '&Element:'
         ParentColor = False
       end
       object Label12: TLabel
-        Left = 7
+        Left = 5
         Height = 14
-        Top = 8
+        Top = 38
         Width = 28
         Caption = '&Type:'
         ParentColor = False
       end
       inline SampleEdit: TSynEdit
         Left = 3
-        Height = 156
-        Top = 193
+        Height = 151
+        Top = 198
         Width = 344
         Anchors = [akTop, akLeft, akRight, akBottom]
         Font.Height = -13
@@ -549,11 +549,35 @@ object EditorOptionsForm: TEditorOptionsForm
         Font.Quality = fqNonAntialiased
         ParentColor = False
         ParentFont = False
-        TabOrder = 8
+        TabOrder = 6
         OnMouseUp = SampleEditMouseUp
         Gutter.Visible = False
-        Gutter.Width = 0
+        Gutter.Width = 57
         Gutter.MouseActions = <        
+          item
+            Shift = []
+            ShiftMask = []
+            Button = mbLeft
+            ClickCount = ccAny
+            ClickDir = cdDown
+            Command = 13
+            MoveCaret = False
+            Option = 0
+            Priority = 0
+          end        
+          item
+            Shift = []
+            ShiftMask = []
+            Button = mbRight
+            ClickCount = ccSingle
+            ClickDir = cdUp
+            Command = 12
+            MoveCaret = False
+            Option = 0
+            Priority = 0
+          end>
+        RightGutter.Width = 0
+        RightGutter.MouseActions = <        
           item
             Shift = []
             ShiftMask = []
@@ -704,10 +728,10 @@ object EditorOptionsForm: TEditorOptionsForm
         BracketHighlightStyle = sbhsBoth
         inline SynGutterPartList1: TSynGutterPartList
           object SynGutterMarks1: TSynGutterMarks
-            Width = 23
+            Width = 24
           end
           object SynGutterLineNumber1: TSynGutterLineNumber
-            Width = 25
+            Width = 17
             MouseActions = <>
             MarkupInfo.Background = clBtnFace
             MarkupInfo.Foreground = clNone
@@ -810,147 +834,165 @@ object EditorOptionsForm: TEditorOptionsForm
           end
         end
       end
-      object EditorStyleGrp: TGroupBox
-        Left = 3
-        Height = 84
-        Top = 101
-        Width = 143
-        Caption = 'Style'
-        ClientHeight = 66
-        ClientWidth = 139
-        TabOrder = 6
-        object BoldChk: TCheckBox
-          Left = 10
-          Height = 17
-          Top = 4
-          Width = 39
-          Caption = '&Bold'
-          OnClick = BoldChkClick
-          TabOrder = 0
-        end
-        object ItalicChk: TCheckBox
-          Left = 10
-          Height = 17
-          Top = 24
-          Width = 40
-          Caption = '&Italic'
-          OnClick = BoldChkClick
-          TabOrder = 1
-        end
-        object UnderlineChk: TCheckBox
-          Left = 10
-          Height = 17
-          Top = 44
-          Width = 63
-          Caption = '&Underline'
-          OnClick = BoldChkClick
-          TabOrder = 2
-        end
-      end
       object BackgroundCbo: TColorBox
-        Left = 202
-        Height = 22
-        Top = 73
-        Width = 145
+        Left = 89
+        Height = 24
+        Top = 117
+        Width = 100
+        DefaultColorColor = clWhite
+        NoneColorColor = clWhite
+        Selected = clWhite
         Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
         ItemHeight = 16
-        OnChange = BackgroundCboChange
+        OnSelect = BackgroundCboSelect
         TabOrder = 5
       end
       object ForegroundCbo: TColorBox
-        Left = 202
-        Height = 22
-        Top = 26
-        Width = 145
+        Left = 89
+        Height = 24
+        Top = 90
+        Width = 100
         Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
         ItemHeight = 16
-        OnChange = ForegroundCboChange
+        OnSelect = ForegroundCboSelect
         TabOrder = 3
       end
-      object EditorFontGrp: TGroupBox
-        Left = 153
-        Height = 84
-        Top = 101
-        Width = 194
-        Caption = 'Editor Font'
-        ClientHeight = 66
-        ClientWidth = 190
-        TabOrder = 7
-        object FontBtn: TButton
-          Left = 100
-          Height = 25
-          Top = 36
-          Width = 84
-          Caption = 'Font'
-          OnClick = FontBtnClick
-          TabOrder = 0
-        end
-        object Panel3: TPanel
-          Left = 8
-          Height = 30
-          Top = 3
-          Width = 143
-          BevelOuter = bvNone
-          ClientHeight = 30
-          ClientWidth = 143
-          TabOrder = 1
-          object FontLbl: TLabel
-            Left = 2
-            Height = 17
-            Top = 1
-            Width = 129
-            Caption = 'Courier New 10pt'
-            Font.Height = -13
-            Font.Name = 'Courier New'
-            ParentColor = False
-            ParentFont = False
-          end
-        end
-      end
       object ElementCbo: TComboBox
-        Left = 8
+        Left = 71
         Height = 21
-        Top = 74
-        Width = 178
+        Top = 60
+        Width = 274
         ItemHeight = 13
-        OnClick = ElementCboClick
+        OnSelect = ElementCboSelect
         Style = csDropDownList
         TabOrder = 1
       end
       object BackgroundChk: TCheckBox
-        Left = 202
+        Left = 3
         Height = 17
-        Top = 52
+        Top = 121
         Width = 76
         Caption = 'Background'
         OnClick = BoldChkClick
         TabOrder = 4
       end
       object ForegroundChk: TCheckBox
-        Left = 202
+        Left = 3
         Height = 17
-        Top = 4
+        Top = 92
         Width = 72
         Caption = 'Foreground'
         OnClick = BoldChkClick
         TabOrder = 2
       end
       object GroupCbo: TComboBox
-        Left = 7
+        Left = 71
         Height = 21
-        Top = 27
-        Width = 178
+        Top = 34
+        Width = 274
         ItemHeight = 13
-        OnClick = GroupCboClick
+        OnSelect = GroupCboSelect
         Style = csDropDownList
         TabOrder = 0
+      end
+      object FontLbl: TLabel
+        Left = 10
+        Height = 17
+        Top = 171
+        Width = 129
+        Caption = 'Courier New 10pt'
+        Font.Height = -13
+        Font.Name = 'Courier New'
+        ParentColor = False
+        ParentFont = False
+      end
+      object FontBtn: TButton
+        Left = 293
+        Height = 25
+        Top = 168
+        Width = 54
+        Caption = 'Font'
+        OnClick = FontBtnClick
+        TabOrder = 7
+      end
+      object BoldChk: TCheckBox
+        Left = 200
+        Height = 17
+        Top = 115
+        Width = 39
+        Caption = '&Bold'
+        OnClick = BoldChkClick
+        TabOrder = 8
+      end
+      object ItalicChk: TCheckBox
+        Left = 200
+        Height = 17
+        Top = 136
+        Width = 40
+        Caption = '&Italic'
+        OnClick = BoldChkClick
+        TabOrder = 9
+      end
+      object UnderlineChk: TCheckBox
+        Left = 200
+        Height = 17
+        Top = 94
+        Width = 63
+        Caption = '&Underline'
+        OnClick = BoldChkClick
+        TabOrder = 10
+      end
+      object DefBackgroundCbo: TColorBox
+        Left = 245
+        Height = 24
+        Top = 6
+        Width = 100
+        DefaultColorColor = clWhite
+        NoneColorColor = clWhite
+        Selected = clWhite
+        Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
+        ItemHeight = 16
+        OnSelect = BackgroundCboSelect
+        TabOrder = 11
+      end
+      object DefForegroundCbo: TColorBox
+        Left = 71
+        Height = 24
+        Top = 6
+        Width = 100
+        Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
+        ItemHeight = 16
+        OnSelect = ForegroundCboSelect
+        TabOrder = 12
+      end
+      object Label13: TLabel
+        Left = 5
+        Height = 14
+        Top = 11
+        Width = 55
+        Caption = 'Foreground'
+        ParentColor = False
+      end
+      object Label14: TLabel
+        Left = 182
+        Height = 14
+        Top = 10
+        Width = 59
+        Caption = 'Background'
+        ParentColor = False
+      end
+      object Bevel1: TBevel
+        Left = 3
+        Height = 26
+        Top = 167
+        Width = 283
       end
     end
   end
   object OkBtn: TButton
-    Left = 126
+    Left = 124
     Height = 25
-    Top = 387
+    Top = 386
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&OK'
@@ -960,9 +1002,9 @@ object EditorOptionsForm: TEditorOptionsForm
     TabOrder = 1
   end
   object CancelBtn: TButton
-    Left = 206
+    Left = 204
     Height = 25
-    Top = 387
+    Top = 386
     Width = 75
     Anchors = [akRight, akBottom]
     Cancel = True
@@ -971,9 +1013,9 @@ object EditorOptionsForm: TEditorOptionsForm
     TabOrder = 2
   end
   object ResetBtn: TButton
-    Left = 285
+    Left = 283
     Height = 25
-    Top = 387
+    Top = 386
     Width = 78
     Anchors = [akRight, akBottom]
     Caption = 'Reset'

@@ -1,11 +1,11 @@
 object MainForm: TMainForm
-  Left = 334
-  Height = 513
-  Top = 144
+  Left = 328
+  Height = 518
+  Top = 118
   Width = 876
   AllowDropFiles = True
   Caption = 'Mini Edit'
-  ClientHeight = 493
+  ClientHeight = 498
   ClientWidth = 876
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
@@ -22,7 +22,7 @@ object MainForm: TMainForm
     Cursor = crVSplit
     Left = 0
     Height = 7
-    Top = 337
+    Top = 342
     Width = 876
     Align = alBottom
     AutoSnap = False
@@ -31,7 +31,7 @@ object MainForm: TMainForm
   end
   object FoldersSpl: TSplitter
     Left = 200
-    Height = 307
+    Height = 312
     Top = 30
     Width = 6
   end
@@ -118,13 +118,13 @@ object MainForm: TMainForm
   end
   object FoldersPnl: TPanel
     Left = 0
-    Height = 307
+    Height = 312
     Top = 30
     Width = 200
     Align = alLeft
     BevelOuter = bvNone
     BorderWidth = 5
-    ClientHeight = 307
+    ClientHeight = 312
     ClientWidth = 200
     TabOrder = 0
     object FolderPanel: TPanel
@@ -217,7 +217,7 @@ object MainForm: TMainForm
     end
     object FileList: TListView
       Left = 5
-      Height = 278
+      Height = 283
       Top = 24
       Width = 190
       Align = alClient
@@ -242,12 +242,12 @@ object MainForm: TMainForm
   end
   object ClientPnl: TPanel
     Left = 206
-    Height = 307
+    Height = 312
     Top = 30
     Width = 670
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 307
+    ClientHeight = 312
     ClientWidth = 670
     TabOrder = 2
     object OutputSpl: TSplitter
@@ -458,7 +458,7 @@ object MainForm: TMainForm
     end
     inline OutputEdit: TSynEdit
       Left = 0
-      Height = 93
+      Height = 98
       Top = 214
       Width = 670
       Align = alBottom
@@ -497,6 +497,7 @@ object MainForm: TMainForm
           Option = 0
           Priority = 0
         end>
+      RightGutter.Visible = False
       RightGutter.Width = 0
       RightGutter.MouseActions = <      
         item
@@ -760,7 +761,7 @@ object MainForm: TMainForm
   object StatusPanel: TPanel
     Left = 0
     Height = 22
-    Top = 471
+    Top = 476
     Width = 876
     Align = alBottom
     BevelOuter = bvNone
@@ -817,7 +818,7 @@ object MainForm: TMainForm
   object MessagesTabs: TntvPageControl
     Left = 0
     Height = 127
-    Top = 344
+    Top = 349
     Width = 876
     StoreIndex = False
     ShowButtons = False
