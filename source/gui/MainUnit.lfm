@@ -59,17 +59,17 @@ object MainForm: TMainForm
       Transparent = True
       Wrapable = False
       object ToolButton3: TToolButton
-        Left = 1
+        Left = 151
         Top = 0
         Action = ManageAct
       end
       object BackBtn: TToolButton
-        Left = 76
+        Left = 1
         Top = 0
         Action = NewAct
       end
       object ForwardBtn: TToolButton
-        Left = 151
+        Left = 76
         Top = 0
         Action = OpenAct
       end
@@ -879,6 +879,41 @@ object MainForm: TMainForm
       ViewStyle = vsReport
       OnKeyDown = WatchListKeyDown
     end
+    object SearchList: TListView
+      Left = 3
+      Height = 103
+      Top = 21
+      Width = 870
+      Align = alClient
+      Columns = <      
+        item
+          Caption = 'File'
+          Width = 300
+        end      
+        item
+          Caption = 'Line'
+          Width = 80
+        end      
+        item
+          AutoSize = True
+          Caption = 'Result'
+          Width = 486
+        end>
+      ColumnClick = False
+      Font.CharSet = ARABIC_CHARSET
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      HideSelection = False
+      ParentFont = False
+      PopupMenu = MessagesPopup
+      ReadOnly = True
+      RowSelect = True
+      TabStop = False
+      TabOrder = 0
+      ViewStyle = vsReport
+      OnCustomDrawSubItem = SearchListCustomDrawSubItem
+      OnDblClick = SearchListDblClick
+    end
     object MessageList: TListView
       Left = 3
       Height = 103
@@ -916,41 +951,6 @@ object MainForm: TMainForm
       ViewStyle = vsReport
       OnDblClick = MessageListDblClick
       OnKeyDown = WatchListKeyDown
-    end
-    object SearchList: TListView
-      Left = 3
-      Height = 103
-      Top = 21
-      Width = 870
-      Align = alClient
-      Columns = <      
-        item
-          Caption = 'File'
-          Width = 300
-        end      
-        item
-          Caption = 'Line'
-          Width = 80
-        end      
-        item
-          AutoSize = True
-          Caption = 'Result'
-          Width = 486
-        end>
-      ColumnClick = False
-      Font.CharSet = ARABIC_CHARSET
-      Font.Height = -13
-      Font.Name = 'Courier New'
-      HideSelection = False
-      ParentFont = False
-      PopupMenu = MessagesPopup
-      ReadOnly = True
-      RowSelect = True
-      TabStop = False
-      TabOrder = 0
-      ViewStyle = vsReport
-      OnCustomDrawSubItem = SearchListCustomDrawSubItem
-      OnDblClick = SearchListDblClick
     end
   end
   object MainMenu: TMainMenu

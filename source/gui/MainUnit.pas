@@ -1826,12 +1826,12 @@ end;
 
 procedure TMainForm.ShowMessagesList;
 begin
-  MessagesTabs.ItemIndex := 0;
+  MessagesTabs.ActiveControl := MessageList;
 end;
 
 procedure TMainForm.ShowWatchesList;
 begin
-  MessagesTabs.ItemIndex := 1;
+  MessagesTabs.ActiveControl := WatchList;
 end;
 
 procedure TMainForm.Add1Click(Sender: TObject);
@@ -2137,7 +2137,7 @@ begin
     aFolder := Folder;
   MessagesAct.Checked := True;
   UpdateMessagesPnl;
-  MessagesTabs.ItemIndex := 2;
+  MessagesTabs.ActiveControl := SearchList;
   ShowSearchInFilesForm(SearchList, aText, ExpandFileName(aFolder), Engine.Options.SearchFolderHistory, Engine.Options.SearchHistory, Engine.Options.ReplaceHistory);
 end;
 
