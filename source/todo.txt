@@ -1,4 +1,5 @@
 [DONE]
+Edit color if 3 char like #fff
 Drop files;
 Open by assoiate
 Open multiple files
@@ -42,7 +43,6 @@ F6 Swap focus between to folder of edit
 
 [TODO]
 Refresh Tree after save new file
-Edit color if 3 char like #fff
 Ignore .svn etc...
 Show project files in folder and open it
 Sort folder files

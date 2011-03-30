@@ -169,8 +169,10 @@ begin
   begin
     if Length(Value) = 3 then
     begin
-      Result := 0;
-//      RGB()// idont know???
+      R := StrToIntDef('$' + Copy(Value, 1, 1), 0);
+      G := StrToIntDef('$' + Copy(Value, 2, 1), 0);
+      B := StrToIntDef('$' + Copy(Value, 3, 1), 0);
+      Result := RGB(R, G, B);
     end
     else
     begin
