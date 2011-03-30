@@ -1160,6 +1160,7 @@ object MainForm: TMainForm
     end
     object SVN1: TMenuItem
       Caption = 'SVN'
+      Visible = False
       object Commit1: TMenuItem
         Action = SVNCommitAct
         OnClick = SVNCommitActExecute
