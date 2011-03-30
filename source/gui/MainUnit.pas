@@ -2035,8 +2035,12 @@ begin
         Engine.Files.Current.SynEdit.CaretY := aLine;
         if l > 0 then
         begin
-          Engine.Files.Current.SynEdit.CaretX := c;
-          Engine.Files.Current.SynEdit.SelEnd := c + l;
+          with Engine.Files.Current.SynEdit do
+          begin
+            CaretX := c;
+            BlockBegin := Point(c, aLine);
+            BlockEnd := Point(c + l, aLine);
+          end;
         end
         else
           Engine.Files.Current.SynEdit.CaretX := 0;

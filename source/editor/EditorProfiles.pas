@@ -263,6 +263,8 @@ end;
 
 procedure TEditorProfile.Reset;
 begin
+  ForegroundColor := clWindowText;
+  BackgroundColor := clWindow;
   Gutter.Color := clBtnFace;
   FSelectedColor.Foreground := clHighlightText;
   FSelectedColor.Background := clHighlight;
