@@ -19,11 +19,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainUnit"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1582"/>
-        <CursorPos X="9" Y="1602"/>
+        <CursorPos X="47" Y="1585"/>
         <UsageCount Value="139"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -86,10 +85,11 @@
         <Filename Value="..\editor\EditorEngine.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorEngine"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="495"/>
-        <CursorPos X="3" Y="515"/>
+        <TopLine Value="416"/>
+        <CursorPos X="44" Y="425"/>
         <UsageCount Value="139"/>
         <Bookmarks Count="2">
           <Item0 X="1" Y="1458" ID="9"/>
@@ -116,7 +116,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="AboutForms"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="37" Y="11"/>
@@ -216,7 +216,7 @@
         <Filename Value="mneClasses.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="mneClasses"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="158"/>
         <CursorPos X="30" Y="176"/>
@@ -612,7 +612,7 @@
       <Unit63>
         <Filename Value="W:\programs\lazarus\components\synedit\synedithighlighter.pp"/>
         <UnitName Value="SynEditHighlighter"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1465"/>
         <CursorPos X="85" Y="1465"/>
@@ -622,10 +622,12 @@
       <Unit64>
         <Filename Value="W:\programs\lazarus\components\synedit\syneditsearch.pp"/>
         <UnitName Value="SynEditSearch"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
-        <UsageCount Value="1"/>
+        <TopLine Value="47"/>
+        <CursorPos X="3" Y="68"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
       </Unit64>
       <Unit65>
         <Filename Value="V:\programs\FPC\2.4\src\rtl\objpas\classes\classesh.inc"/>
@@ -949,9 +951,9 @@
         <UsageCount Value="27"/>
       </Unit105>
       <Unit106>
-        <Filename Value="..\..\..\..\lib\minilib\Lazarus\lib\SynHighlighterHTMLPHP.pas"/>
+        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\SynHighlighterHTMLPHP.pas"/>
         <UnitName Value="SynHighlighterHTMLPHP"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="408"/>
         <CursorPos X="80" Y="425"/>
@@ -979,7 +981,7 @@
       </Unit108>
       <Unit109>
         <Filename Value="..\todo.txt"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="2"/>
@@ -991,126 +993,126 @@
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="30" HistoryIndex="28">
       <Position1>
-        <Filename Value="..\editor\EditorOptions.pas"/>
-        <Caret Line="407" Column="12" TopLine="405"/>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="1567" Column="39" TopLine="1537"/>
       </Position1>
       <Position2>
-        <Filename Value="..\editor\EditorOptions.pas"/>
-        <Caret Line="167" Column="19" TopLine="153"/>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="1599" Column="23" TopLine="1582"/>
       </Position2>
       <Position3>
-        <Filename Value="AboutForms.pas"/>
-        <Caret Line="4" Column="13" TopLine="1"/>
+        <Filename Value="..\todo.txt"/>
+        <Caret Line="45" Column="1" TopLine="22"/>
       </Position3>
       <Position4>
-        <Filename Value="..\editor\EditorOptions.pas"/>
-        <Caret Line="146" Column="1" TopLine="138"/>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="1607" Column="9" TopLine="1582"/>
       </Position4>
       <Position5>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="10" Column="34" TopLine="1"/>
+        <Filename Value="..\..\..\..\lib\minilib\Lazarus\lib\SynHighlighterHTMLPHP.pas"/>
+        <Caret Line="280" Column="52" TopLine="254"/>
       </Position5>
       <Position6>
         <Filename Value="..\..\..\..\lib\minilib\Lazarus\lib\SynHighlighterHTMLPHP.pas"/>
-        <Caret Line="427" Column="3" TopLine="385"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position6>
       <Position7>
         <Filename Value="..\..\..\..\lib\minilib\Lazarus\lib\SynHighlighterHTMLPHP.pas"/>
-        <Caret Line="110" Column="26" TopLine="102"/>
+        <Caret Line="389" Column="3" TopLine="389"/>
       </Position7>
       <Position8>
-        <Filename Value="W:\programs\lazarus\components\synedit\synedithighlighter.pp"/>
-        <Caret Line="228" Column="3" TopLine="207"/>
+        <Filename Value="..\..\..\..\lib\minilib\Lazarus\lib\SynHighlighterHTMLPHP.pas"/>
+        <Caret Line="24" Column="45" TopLine="3"/>
       </Position8>
       <Position9>
-        <Filename Value="W:\programs\lazarus\components\synedit\synedithighlighter.pp"/>
-        <Caret Line="255" Column="14" TopLine="220"/>
+        <Filename Value="..\..\..\..\lib\minilib\Lazarus\lib\SynHighlighterHTMLPHP.pas"/>
+        <Caret Line="121" Column="11" TopLine="86"/>
       </Position9>
       <Position10>
         <Filename Value="..\..\..\..\lib\minilib\Lazarus\lib\SynHighlighterHTMLPHP.pas"/>
-        <Caret Line="110" Column="26" TopLine="102"/>
+        <Caret Line="168" Column="81" TopLine="133"/>
       </Position10>
       <Position11>
-        <Filename Value="..\..\..\..\lib\minilib\Lazarus\lib\SynHighlighterHTMLPHP.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position11>
-      <Position12>
-        <Filename Value="W:\programs\lazarus\components\synedit\synedithighlighter.pp"/>
-        <Caret Line="255" Column="33" TopLine="220"/>
-      </Position12>
-      <Position13>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="2041" Column="1" TopLine="2019"/>
-      </Position13>
-      <Position14>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position14>
-      <Position15>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="185" Column="14" TopLine="150"/>
-      </Position15>
-      <Position16>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="187" Column="14" TopLine="152"/>
-      </Position16>
-      <Position17>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1555" Column="27" TopLine="1553"/>
-      </Position17>
-      <Position18>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="440" Column="33" TopLine="419"/>
-      </Position18>
-      <Position19>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1555" Column="46" TopLine="1520"/>
-      </Position19>
-      <Position20>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1567" Column="39" TopLine="1537"/>
-      </Position20>
-      <Position21>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1599" Column="23" TopLine="1582"/>
-      </Position21>
-      <Position22>
-        <Filename Value="..\todo.txt"/>
-        <Caret Line="45" Column="1" TopLine="22"/>
-      </Position22>
-      <Position23>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1607" Column="9" TopLine="1582"/>
-      </Position23>
-      <Position24>
-        <Filename Value="..\..\..\..\lib\minilib\Lazarus\lib\SynHighlighterHTMLPHP.pas"/>
-        <Caret Line="280" Column="52" TopLine="254"/>
-      </Position24>
-      <Position25>
-        <Filename Value="..\..\..\..\lib\minilib\Lazarus\lib\SynHighlighterHTMLPHP.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position25>
-      <Position26>
-        <Filename Value="..\..\..\..\lib\minilib\Lazarus\lib\SynHighlighterHTMLPHP.pas"/>
-        <Caret Line="389" Column="3" TopLine="389"/>
-      </Position26>
-      <Position27>
-        <Filename Value="..\..\..\..\lib\minilib\Lazarus\lib\SynHighlighterHTMLPHP.pas"/>
-        <Caret Line="24" Column="45" TopLine="3"/>
-      </Position27>
-      <Position28>
-        <Filename Value="..\..\..\..\lib\minilib\Lazarus\lib\SynHighlighterHTMLPHP.pas"/>
-        <Caret Line="121" Column="11" TopLine="86"/>
-      </Position28>
-      <Position29>
-        <Filename Value="..\..\..\..\lib\minilib\Lazarus\lib\SynHighlighterHTMLPHP.pas"/>
-        <Caret Line="168" Column="81" TopLine="133"/>
-      </Position29>
-      <Position30>
         <Filename Value="..\editor\EditorOptions.pas"/>
         <Caret Line="16" Column="14" TopLine="1"/>
+      </Position11>
+      <Position12>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="515" Column="3" TopLine="495"/>
+      </Position12>
+      <Position13>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="621" Column="5" TopLine="619"/>
+      </Position13>
+      <Position14>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="451" Column="18" TopLine="430"/>
+      </Position14>
+      <Position15>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position15>
+      <Position16>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="451" Column="18" TopLine="416"/>
+      </Position16>
+      <Position17>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="467" Column="61" TopLine="432"/>
+      </Position17>
+      <Position18>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="609" Column="31" TopLine="574"/>
+      </Position18>
+      <Position19>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="621" Column="17" TopLine="586"/>
+      </Position19>
+      <Position20>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="622" Column="15" TopLine="587"/>
+      </Position20>
+      <Position21>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="628" Column="30" TopLine="593"/>
+      </Position21>
+      <Position22>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="636" Column="30" TopLine="601"/>
+      </Position22>
+      <Position23>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="637" Column="35" TopLine="602"/>
+      </Position23>
+      <Position24>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="646" Column="41" TopLine="611"/>
+      </Position24>
+      <Position25>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="746" Column="16" TopLine="711"/>
+      </Position25>
+      <Position26>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="781" Column="27" TopLine="746"/>
+      </Position26>
+      <Position27>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1454" Column="49" TopLine="1419"/>
+      </Position27>
+      <Position28>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position28>
+      <Position29>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="451" Column="20" TopLine="416"/>
+      </Position29>
+      <Position30>
+        <Filename Value="W:\programs\lazarus\components\synedit\syneditsearch.pp"/>
+        <Caret Line="68" Column="3" TopLine="47"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>

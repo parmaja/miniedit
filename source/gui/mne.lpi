@@ -238,7 +238,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="W:\home\pascal\projects\LPE\source\editor\;W:\home\pascal\projects\LPE\source\lib\;$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\editor;..\lib;W:\home\pascal\lib\minilib\MiniXml\source\;W:\programs\lazarus\components\synedit\units\i386-win32\;W:\home\pascal\lib\minilib\Commons\;W:\home\pascal\lib\minilib\Lazarus\lib\;W:\home\pascal\lib\minilib\MiniSocket\source\;$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS);$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
+      <OtherUnitFiles Value="..\editor;..\lib;W:\programs\lazarus\components\synedit\units\i386-win32\;W:\home\pascal\lib\minilib\xml\source\;W:\home\pascal\lib\minilib\lib\;W:\home\pascal\lib\minilib\lazarus\lib\;W:\home\pascal\lib\minilib\socket\source\;$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS);$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <Linking>
