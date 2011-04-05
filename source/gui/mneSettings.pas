@@ -10,7 +10,7 @@ unit mneSettings;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   EditorEngine, Dialogs, StdCtrls, ComCtrls, Grids;
 
 type
@@ -185,4 +185,4 @@ begin
 end;
 
 end.
-
+

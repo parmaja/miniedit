@@ -1,4 +1,5 @@
 unit mneClasses;
+
 {$mode delphi}
 {**
  * Mini Edit
@@ -12,7 +13,8 @@ interface
 {$DEFINE SYN_HEREDOC}
 
 uses
-  Windows, Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
+  Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
+  LCLintf,
   Dialogs, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit,
   Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
@@ -59,7 +61,7 @@ type
   public
     procedure NewSource; override;
   end;
-//
+  //
 
   { TPASFile }
 
@@ -75,7 +77,7 @@ type
   protected
     procedure DoAddCompletion(AKeyword: string; AKind: integer);
     function CreateHighlighter: TSynCustomHighlighter; override;
-    procedure OnExecuteCompletion(Kind: TSynCompletionType; Sender: TObject; var CurrentInput: string; var x, y: Integer; var CanExecute: Boolean); override;
+    procedure OnExecuteCompletion(Kind: TSynCompletionType; Sender: TObject; var CurrentInput: string; var x, y: integer; var CanExecute: boolean); override;
   public
   end;
 
@@ -144,7 +146,7 @@ function RGBHexToColor(Value: string): TColor;
 const
   sSoftwareRegKey = 'Software\LightPHPEdit\';
 
-function GetFileImageIndex(const FileName: string): Integer;
+function GetFileImageIndex(const FileName: string): integer;
 
 implementation
 
@@ -152,26 +154,26 @@ uses
   IniFiles, mnXMLStreams;
 
 function ColorToRGBHex(Color: TColor): string;
-var
-  aRGB: COLORREF;
+{var
+  aRGB: COLORREF;}
 begin
-  aRGB := ColorToRGB(Color);
-  FmtStr(Result, '%s%.2x%.2x%.2x', ['#', GetRValue(aRGB), GetGValue(aRGB), GetBValue(aRGB)]);
+{  aRGB := ColorToRGB(Color);
+  FmtStr(Result, '%s%.2x%.2x%.2x', ['#', GetRValue(aRGB), GetGValue(aRGB), GetBValue(aRGB)]);}
 end;
 
 function RGBHexToColor(Value: string): TColor;
-var
-  R, G, B: Byte;
+{var
+  R, G, B: byte;}
 begin
-  if LeftStr(Value, 1) = '#' then
+{  if LeftStr(Value, 1) = '#' then
     Delete(Value, 1, 1);
   if Value <> '' then
   begin
     if Length(Value) = 3 then
     begin
-      R := StrToIntDef('$' + Copy(Value, 1, 1), 0);
-      G := StrToIntDef('$' + Copy(Value, 2, 1), 0);
-      B := StrToIntDef('$' + Copy(Value, 3, 1), 0);
+      R := StrToIntDef('$' + Copy(Value, 1, 1) + Copy(Value, 1, 1), 0);
+      G := StrToIntDef('$' + Copy(Value, 2, 1) + Copy(Value, 2, 1), 0);
+      B := StrToIntDef('$' + Copy(Value, 3, 1) + Copy(Value, 3, 1), 0);
       Result := RGB(R, G, B);
     end
     else
@@ -183,12 +185,12 @@ begin
     end;
   end
   else
-    Result := clBlack;
+    Result := clBlack;}
 end;
 
 { TmneEngine }
 
-function GetFileImageIndex(const FileName: string): Integer;
+function GetFileImageIndex(const FileName: string): integer;
 var
   AExtensions: TStringList;
   s: string;
@@ -273,6 +275,7 @@ function TPHPFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynHTMLPHPSyn.Create(nil);
 end;
+
 (*
 procedure TphpFile.EditorPaintTransient(Sender: TObject; Canvas: TCanvas; TransientType: TTransientType);
 const
@@ -410,16 +413,16 @@ begin
   *)
 end;
 
-procedure TPHPFileCategory.OnExecuteCompletion(Kind: TSynCompletionType; Sender: TObject; var CurrentInput: string; var x, y: Integer; var CanExecute: Boolean);
+procedure TPHPFileCategory.OnExecuteCompletion(Kind: TSynCompletionType; Sender: TObject; var CurrentInput: string; var x, y: integer; var CanExecute: boolean);
 var
   aVariables: THashedStringList;
   aIdentifiers: THashedStringList;
   s: string;
-  i, r: Integer;
+  i, r: integer;
   aSynEdit: TCustomSynEdit;
-  aProcessor: Byte;
-  aHTMLProcessor, aPHPProcessor: Integer;
-  aTokenType, aStart: Integer;
+  aProcessor: byte;
+  aHTMLProcessor, aPHPProcessor: integer;
+  aTokenType, aStart: integer;
   aRange: pointer;
   P: TPoint;
   Attri: TSynHighlighterAttributes;
@@ -437,7 +440,7 @@ begin
       P := aSynEdit.CaretXY;
       GetHighlighterAttriAtRowColEx2(aSynEdit, P, S, aTokenType, aStart, Attri, aRange);
       aProcessor := RangeToProcessor(aRange);
-      if aTokenType = ord(tkProcessor) then
+      if aTokenType = Ord(tkProcessor) then
         CanExecute := False
       else if aProcessor = aHTMLProcessor then
       begin
@@ -446,30 +449,30 @@ begin
       end
       else if aProcessor = aPHPProcessor then
       begin
-        if aTokenType = ord(tkComment) then
+        if aTokenType = Ord(tkComment) then
           CanExecute := False
-        else if aTokenType = ord(tkString) then
+        else if aTokenType = Ord(tkString) then
         begin
           EnumerateKeywords(Ord(tkSQL), sSQLKeywords, Highlighter.IdentChars, DoAddCompletion);
         end
         else
         begin
           //Completion.Title := 'PHP';
-        //load keyowrds
+          //load keyowrds
           EnumerateKeywords(Ord(tkKeyword), sPHPControls, Highlighter.IdentChars, DoAddCompletion);
           EnumerateKeywords(Ord(tkKeyword), sPHPKeywords, Highlighter.IdentChars, DoAddCompletion);
           EnumerateKeywords(Ord(tkFunction), sPHPFunctions, Highlighter.IdentChars, DoAddCompletion);
           EnumerateKeywords(Ord(tkValue), sPHPConstants, Highlighter.IdentChars, DoAddCompletion);
-        // load a variable
+          // load a variable
           aVariables := THashedStringList.Create;
           aIdentifiers := THashedStringList.Create;
 
-        //Add system variables
+          //Add system variables
           ExtractStrings([','], [], PChar(sPHPVariables), aVariables);
           for i := 0 to aVariables.Count - 1 do
             aVariables[i] := '$' + aVariables[i];
 
-        //extract keywords from external files
+          //extract keywords from external files
           if (Engine.Projects.IsOpened) and (Engine.Projects.Current.RootDir <> '') then
           begin
             if Engine.Options.CollectAutoComplete then
@@ -494,7 +497,7 @@ begin
               Engine.Projects.Current.CachedAge := GetTickCount;
             end;
           end;
-        //add current file variables
+          //add current file variables
           try
             Highlighter.ResetRange;
             for i := 0 to aSynEdit.Lines.Count - 1 do
@@ -546,8 +549,8 @@ procedure TPHPFileCategory.ExtractKeywords(Files, Variables, Identifiers: TStrin
 var
   aFile: TStringList;
   s: string;
-  i, f: Integer;
-  aPHPProcessor: Integer;
+  i, f: integer;
+  aPHPProcessor: integer;
   aHighlighter: TSynHTMLPHPSyn;
 begin
   aHighlighter := TSynHTMLPHPSyn.Create(nil);
@@ -642,4 +645,4 @@ begin
 end;
 
 end.
-
+

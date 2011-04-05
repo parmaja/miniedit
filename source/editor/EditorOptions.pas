@@ -11,8 +11,8 @@ unit EditorOptions;
 interface
 
 uses
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
-  CommCtrl, Registry, ExtCtrls, Buttons, ImgList, Menus, ColorBox, SynEdit,
+  Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
+  Registry, ExtCtrls, Buttons, ImgList, Menus, ColorBox, SynEdit,
   SynEditHighlighter, SynEditMiscClasses, SynEditKeyCmds, Classes, SysUtils,
   EditorProfiles;
 
@@ -563,4 +563,4 @@ begin
 end;
 
 end.
-
+

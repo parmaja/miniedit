@@ -8,7 +8,7 @@ unit SelectFiles;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  LMessages, LCLIntf, LCLProc, LCLType, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Match, EditorEngine, Dialogs, ComCtrls, StdCtrls, ExtCtrls;
 
 type
@@ -144,4 +144,4 @@ begin
 end;
 
 end.
-
+

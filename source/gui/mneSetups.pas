@@ -10,7 +10,7 @@ unit mneSetups;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   mneClasses, Dialogs, StdCtrls, IniFiles;
 
 type
@@ -75,11 +75,15 @@ procedure TEditorSetupForm.FormCreate(Sender: TObject);
 var
   aIniFile: TIniFile;
 begin
-  WorkspaceEdit.Items.Add(ExtractFilePath(Application.ExeName));
+  {$ifdef windows}
   WorkspaceEdit.Items.Add('C:\workspace');
   if DirectoryExists('D:\') then
     WorkspaceEdit.Items.Add('D:\workspace');
   WorkspaceEdit.Items.Add('\workspace');
+  {$else}
+  WorkspaceEdit.Items.Add('/usr/workspace');
+  {$endif}
+  WorkspaceEdit.Items.Add(ExtractFilePath(Application.ExeName));
   aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
   try
     WorkspaceEdit.Text := aIniFile.ReadString('Options', 'Workspace', '');
@@ -88,4 +92,4 @@ begin
   end;
 end;
 
-end.
+end.

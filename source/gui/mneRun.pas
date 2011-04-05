@@ -10,7 +10,7 @@ unit mneRun;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, Classes, mnStreams, mnXMLUtils,
+  SysUtils, StrUtils, Classes, mnStreams, mnXMLUtils,
   mnXMLNodes, SyncObjs;
 
 {$i '..\lib\mne.inc'}
@@ -153,4 +153,4 @@ initialization
 finalization
   FreeAndNil(ProjectLock);
 end.
-
+

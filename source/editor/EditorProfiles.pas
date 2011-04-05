@@ -12,7 +12,7 @@ unit EditorProfiles;
 interface
 
 uses
-  Windows, Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, CommCtrl, Registry, ExtCtrls, Buttons, ImgList,
+  Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, Registry, ExtCtrls, Buttons, ImgList,
   Contnrs, Menus, SynEdit, SynEditHighlighter, SynEditMiscClasses, SynEditPointClasses, SynGutter, SynEditKeyCmds, Classes, SysUtils;
 
 const
@@ -527,4 +527,4 @@ begin
 end;
 
 end.
-
+

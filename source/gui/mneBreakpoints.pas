@@ -8,7 +8,7 @@ unit mneBreakpoints;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ComCtrls, StdCtrls;
 
 type
@@ -124,4 +124,4 @@ begin
 end;
 
 end.
-
+

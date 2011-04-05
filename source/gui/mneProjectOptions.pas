@@ -10,8 +10,8 @@ unit mneProjectOptions;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  ShellApi, EditorEngine, mneClasses, Dialogs, StdCtrls, ExtCtrls, ComCtrls;
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  EditorEngine, mneClasses, Dialogs, StdCtrls, ExtCtrls, ComCtrls;
 
 type
   TProjectForm = class(TForm)
@@ -124,4 +124,4 @@ begin
 end;
 
 end.
-
+

@@ -5,7 +5,7 @@ object MainForm: TMainForm
   Width = 876
   AllowDropFiles = True
   Caption = 'Mini Edit'
-  ClientHeight = 498
+  ClientHeight = 494
   ClientWidth = 876
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
@@ -22,7 +22,7 @@ object MainForm: TMainForm
     Cursor = crVSplit
     Left = 0
     Height = 7
-    Top = 342
+    Top = 338
     Width = 876
     Align = alBottom
     AutoSnap = False
@@ -31,7 +31,7 @@ object MainForm: TMainForm
   end
   object FoldersSpl: TSplitter
     Left = 200
-    Height = 312
+    Height = 308
     Top = 30
     Width = 6
   end
@@ -109,7 +109,7 @@ object MainForm: TMainForm
         Style = tbsCheck
       end
       object ToolButton8: TToolButton
-        Left = 609
+        Left = 610
         Top = 0
         Action = OutputAct
         Style = tbsCheck
@@ -118,13 +118,13 @@ object MainForm: TMainForm
   end
   object FoldersPnl: TPanel
     Left = 0
-    Height = 312
+    Height = 308
     Top = 30
     Width = 200
     Align = alLeft
     BevelOuter = bvNone
     BorderWidth = 5
-    ClientHeight = 312
+    ClientHeight = 308
     ClientWidth = 200
     TabOrder = 0
     object FolderPanel: TPanel
@@ -166,7 +166,7 @@ object MainForm: TMainForm
         Left = 5
         Height = 14
         Top = 2
-        Width = 30
+        Width = 31
         Caption = 'Folder'
         ParentColor = False
       end
@@ -217,7 +217,7 @@ object MainForm: TMainForm
     end
     object FileList: TListView
       Left = 5
-      Height = 283
+      Height = 279
       Top = 24
       Width = 190
       Align = alClient
@@ -225,7 +225,7 @@ object MainForm: TMainForm
         item
           AutoSize = True
           Caption = 'File Name'
-          Width = 186
+          Width = 170
         end>
       HideSelection = False
       PopupMenu = FolderMenu
@@ -242,12 +242,12 @@ object MainForm: TMainForm
   end
   object ClientPnl: TPanel
     Left = 206
-    Height = 312
+    Height = 308
     Top = 30
     Width = 670
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 312
+    ClientHeight = 308
     ClientWidth = 670
     TabOrder = 2
     object OutputSpl: TSplitter
@@ -434,7 +434,7 @@ object MainForm: TMainForm
         end
         object QuickSearchEdit: TEdit
           Left = 60
-          Height = 21
+          Height = 23
           Top = 4
           Width = 173
           OnChange = QuickSearchEditChange
@@ -458,7 +458,7 @@ object MainForm: TMainForm
     end
     inline OutputEdit: TSynEdit
       Left = 0
-      Height = 98
+      Height = 94
       Top = 214
       Width = 670
       Align = alBottom
@@ -761,7 +761,7 @@ object MainForm: TMainForm
   object StatusPanel: TPanel
     Left = 0
     Height = 22
-    Top = 476
+    Top = 472
     Width = 876
     Align = alBottom
     BevelOuter = bvNone
@@ -818,7 +818,7 @@ object MainForm: TMainForm
   object MessagesTabs: TntvPageControl
     Left = 0
     Height = 127
-    Top = 349
+    Top = 345
     Width = 876
     StoreIndex = False
     ShowButtons = False
@@ -848,8 +848,8 @@ object MainForm: TMainForm
     TabOrder = 6
     object WatchList: TListView
       Left = 3
-      Height = 103
-      Top = 21
+      Height = 100
+      Top = 24
       Width = 870
       Align = alClient
       Columns = <      
@@ -864,7 +864,7 @@ object MainForm: TMainForm
         item
           AutoSize = True
           Caption = 'Value'
-          Width = 566
+          Width = 550
         end>
       ColumnClick = False
       Font.CharSet = ARABIC_CHARSET
@@ -881,8 +881,8 @@ object MainForm: TMainForm
     end
     object MessageList: TListView
       Left = 3
-      Height = 103
-      Top = 21
+      Height = 100
+      Top = 24
       Width = 870
       Align = alClient
       Columns = <      
@@ -893,7 +893,7 @@ object MainForm: TMainForm
         item
           AutoSize = True
           Caption = 'Message'
-          Width = 766
+          Width = 63
         end      
         item
           Caption = 'File'
@@ -901,7 +901,7 @@ object MainForm: TMainForm
         end      
         item
           Caption = 'Line'
-          Width = 80
+          Width = 387
         end>
       ColumnClick = False
       Font.CharSet = ARABIC_CHARSET
@@ -919,8 +919,8 @@ object MainForm: TMainForm
     end
     object SearchList: TListView
       Left = 3
-      Height = 103
-      Top = 21
+      Height = 100
+      Top = 24
       Width = 870
       Align = alClient
       Columns = <      
@@ -935,7 +935,7 @@ object MainForm: TMainForm
         item
           AutoSize = True
           Caption = 'Result'
-          Width = 486
+          Width = 470
         end>
       ColumnClick = False
       Font.CharSet = ARABIC_CHARSET
@@ -1163,6 +1163,42 @@ object MainForm: TMainForm
       Visible = False
       object Commit1: TMenuItem
         Action = SVNCommitAct
+        Bitmap.Data = {
+          36040000424D3604000000000000360000002800000010000000100000000100
+          2000000000000004000064000000640000000000000000000000FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00C6C6C6FF7B7B7BFFFF00FF00FF00FF004A4A4AFF292929FF181818FFFF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF006363
+          63FF393939FFDEDEDEFFFF00FF00212121FFCE9C84FFCE9C84FF313131FF4A4A
+          4AFF525252FFDEDEDEFFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF008484
+          84FFCE9C84FFCEAD94FF8C8C8CFF212121FF101010FF313131FF101010FF1818
+          18FF393939FF212121FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00393939FF181818FF313131FF737373FF5A5A5AFF181818FF181818FF1010
+          10FF101010FF9C9C9CFFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF003131
+          31FF212121FF313131FFCEA58CFFCE9C84FFCE9C84FFCE9C84FFCE9C84FFCE9C
+          84FF212121FFCE9C84FF7B7B7BFFEFEFEFFFFF00FF00FF00FF00181818FFBDBD
+          BDFFFF00FF00CE9C84FFCE9C84FFCE9C84FFCE9C84FFCE9C84FFCE9C84FFCE9C
+          84FF181818FFCE9C84FFCE9C84FF4A4A4AFF6B6B6BFF424242FFFF00FF00FF00
+          FF00FF00FF00FF00FF00CEA58CFFCE9C84FFCE9C84FFCE9C84FFCE9C84FFCE9C
+          84FF393939FFE7E7E7FF292929FFCE9C84FF313131FF525252FFFF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00E7CEBDFFCE9C84FFCE9C84FFCE9C84FFE7CE
+          BDFFFF00FF00FF00FF00CECECEFF737373FFFFFFFFFFA5A5A5FFFF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF007B7B7BFF4A4A4AFFB5B5B5FFFF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
+        }
         OnClick = SVNCommitActExecute
       end
       object CommitFIle1: TMenuItem
@@ -1547,7 +1583,6 @@ object MainForm: TMainForm
       end
       object Associate1: TMenuItem
         Action = AssociateAct
-        OnClick = AssociateActExecute
       end
       object N6: TMenuItem
         Caption = '-'
@@ -1757,7 +1792,6 @@ object MainForm: TMainForm
     object AssociateAct: TAction
       Category = 'Tools'
       Caption = 'Associate'
-      OnExecute = AssociateActExecute
     end
     object FolderOpenAllAct: TAction
       Category = 'Folder'
@@ -2230,4 +2264,4 @@ object MainForm: TMainForm
     left = 711
     top = 117
   end
-end
+end

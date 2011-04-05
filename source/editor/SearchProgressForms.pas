@@ -8,7 +8,7 @@ unit SearchProgressForms;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, StdCtrls;
 
 type
@@ -34,4 +34,4 @@ begin
 end;
 
 end.
-
+

@@ -1,4 +1,9 @@
 [DONE]
+Open PHP ini as addon
+Open Folder not worked in Linux
+Make Assoiate as Addon tool
+Make Help as Addon
+
 Edit color if 3 char like #fff
 Drop files;
 Open by assoiate
@@ -51,8 +56,8 @@ Full Screen
 Close Other files
 Select file Ctrl+F12 include opened files and select the current file, may save the last search in combo
 Select file Ctrl+F12 include js files
-add realpath
-Add extension to open as PHP File
+add realpath to highlight
+Add custom extension to open as PHP File
 
 Highlight colors templates
 Change Spaces to Tabs and vise versa

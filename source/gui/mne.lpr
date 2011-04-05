@@ -10,7 +10,6 @@ program mne;
  *}
 
 uses
-  Windows,
   Dialogs,
   Controls,
   Forms,
@@ -18,12 +17,9 @@ uses
   SysUtils,
   simpleipc,
   Themes, lazcontrols, Interfaces,
-  UxTheme,
   MainUnit in 'MainUnit.pas' {MainForm},
   mneProjectOptions in 'mneProjectOptions.pas' {ProjectForm},
   SearchForms in '..\editor\SearchForms.pas' {SearchForm},
-  hh_funcs in '..\lib\hh_funcs.pas',
-  hh in '..\lib\hh.pas',
   EditorOptions in '..\editor\EditorOptions.pas' {EditorOptionsForm},
   EditorProfiles in '..\editor\EditorProfiles.pas',
   mneSetups in 'mneSetups.pas' {EditorSetupForm},
@@ -43,8 +39,6 @@ uses
   mneRun in 'mneRun.pas',
   mnePHPIniForm in 'mnePHPIniForm.pas' {PHPIniForm},
   mneBreakpoints in 'mneBreakpoints.pas' {BreakpointsForm},
-  FileInfo in '..\lib\FileInfo.pas',
-  mneAssociateForm in 'mneAssociateForm.pas' {AssociateForm},
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
   SearchProgressForms in '..\editor\SearchProgressForms.pas' {SearchProgressForm},
   SynHighlighterApache in '..\lib\SynHighlighterApache.pas',
@@ -120,8 +114,10 @@ begin
   begin
     Application.Initialize;
     if CheckSetup then
+    begin
       Run;
-    Application.Run;
+      Application.Run;
+    end;
   end;
 end.
-
+

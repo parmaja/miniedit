@@ -9,7 +9,7 @@ unit mnePHPIniForm;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   EditorEngine, Dialogs, StdCtrls, ComCtrls, IniFiles, mnUtils, PHPUtils;
 
 type
@@ -56,7 +56,7 @@ implementation
 {$R *.lfm}
 
 uses
-  hh_funcs, mnXMLUtils;
+  mnXMLUtils;
 
 procedure ShowPHPIniForm;
 begin
@@ -123,9 +123,9 @@ end;
 procedure TPHPIniForm.FormCreate(Sender: TObject);
 begin
   if Engine.Options.ConfigFile <> '' then
-    PHPIniFileEdit.Text := Engine.Options.ConfigFile
-  else
-    PHPIniFileEdit.Text := IncludeTrailingPathDelimiter(GetWinDir) + 'php.ini';
+    PHPIniFileEdit.Text := Engine.Options.ConfigFile;
+{  else
+    PHPIniFileEdit.Text := IncludeTrailingPathDelimiter(GetWinDir) + 'php.ini';}
   PageControl.TabIndex := 0;
 end;
 
@@ -179,4 +179,4 @@ begin
   end;
 end;
 
-end.
+end.

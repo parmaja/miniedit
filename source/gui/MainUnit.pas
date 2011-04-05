@@ -21,11 +21,12 @@ SynEdit:
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus, ShlObj, ToolWin,
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  LMessages, lCLType, LCLIntf, LCLProc,
+  Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus, ToolWin,
   Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses, StdActns,
   PairSplitter, SynEditHighlighter, SynHighlighterPHP, SynHighlighterApache,
-  ntvTabSets, mneRun, Registry, SynEdit, CommCtrl, SynEditPlugins,
+  ntvTabSets, mneRun, Registry, SynEdit, SynEditPlugins,
   DividerBevel, IniFiles, simpleipc, mnUtils, ntvTabs, ntvPageControls;
 
 {$i '..\lib\mne.inc'}
@@ -307,7 +308,6 @@ type
     procedure SaveAllActExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure NewActExecute(Sender: TObject);
-    procedure AssociateActExecute(Sender: TObject);
     procedure FolderOpenAllActExecute(Sender: TObject);
     procedure FolderOpenActExecute(Sender: TObject);
     procedure FindActExecute(Sender: TObject);
@@ -417,8 +417,7 @@ type
     procedure ApplicationEventsHint(Sender: TObject);
 
     function CanOpenInclude: boolean;
-    function DoHtmlHelp: boolean;
-    procedure WMHelp(var Message: TWMHelp); message WM_HELP;
+    procedure WMHelp(var Message: TLMHelp); message LM_HELP;
     procedure UpdateFileHeaderPanel;
     procedure EditorChangeState(State: TEditorChangeState);
     procedure EngineChanged;
@@ -454,7 +453,6 @@ type
     procedure RunTerminated(Sender: TObject);
     procedure RunScript;
     //
-    procedure CreateWnd; override;
     procedure ReceiveBuffer(const Buffer: string);
     procedure Log(Error: integer; Caption, Msg, FileName: string; LineNo: integer); overload;
     procedure Log(Caption, Msg: string); overload;
@@ -477,18 +475,17 @@ var
 implementation
 
 uses
-  mnXMLUtils, hh, StrUtils, ShellApi, SearchForms, mneProjectOptions, EditorOptions,
-  EditorProfiles, mneResources, mneSetups, hh_funcs, Clipbrd,
+  mnXMLUtils, StrUtils, SearchForms, mneProjectOptions, EditorOptions,
+  EditorProfiles, mneResources, mneSetups, Clipbrd,
   SelectFiles, mneSettings, mneConsts,
   SynEditTypes, AboutForms, mneProjectForms, GotoForms, Types,
-  mnePHPIniForm, mnXMLBase64, mneBreakpoints, mneAssociateForm,
+  mnePHPIniForm, mneBreakpoints,
   SearchInFilesForms, SynHighlighterHTMLPHP;
 
 {$R *.lfm}
 
 constructor TMainForm.Create(AOwner: TComponent);
 var
-  FileInfo: TSHFileInfo;
   aIniFile: TIniFile;
   aEngineFile: string;
   aWorkspace: string;
@@ -526,7 +523,6 @@ begin
     WindowState := wsMaximized;
 {  else
     BoundsRect := Engine.Options.BoundRect;}
-  FillChar(FileInfo, SizeOf(FileInfo), #0);
   if (ParamCount > 0) and not (SameText(ParamStr(1), '/dde')) then
   begin
     Engine.Files.OpenFile(DequoteStr(ParamStr(1)));
@@ -807,18 +803,6 @@ begin
   Engine.Files.New;
 end;
 
-procedure TMainForm.CreateWnd;
-begin
-  inherited;
-  DragAcceptFiles(Handle, True);
-end;
-
-procedure TMainForm.AssociateActExecute(Sender: TObject);
-begin
-  with TAssociateForm.Create(Application) do
-    ShowModal;
-end;
-
 procedure TMainForm.FolderOpenAllActExecute(Sender: TObject);
 var
   i: integer;
@@ -868,84 +852,18 @@ begin
     FolderOpenAct.Execute;
 end;
 
-procedure TMainForm.WMHelp(var Message: TWMHelp);
+procedure TMainForm.WMHelp(var Message: TLMHelp);
 begin
-  if not DoHtmlHelp then
-    inherited;
-end;
-
-function TMainForm.DoHtmlHelp: boolean;
-var
-  aToken, aHelp: string;
-  P: TPoint;
-  Attri: TSynHighlighterAttributes;
-  aTokenType: integer;
-  aRange: Pointer;
-  aStart: integer;
-  HHAKLink: THHAKLink;
-begin
-  //we not use Application.Handle for easy to return to main form
-  Result := False;
-  if (Engine.Files.Current <> nil) and (Engine.Files.Current.SynEdit.Highlighter is TSynHTMLPHPSyn) then
-  begin
-    P := Engine.Files.Current.SynEdit.CaretXY;
-    if GetHighlighterAttriAtRowColEx2(Engine.Files.Current.SynEdit, P, aToken, aTokenType, aStart, Attri, aRange) then
-    begin
-      if (TtkTokenKind(aTokenType) in [tkValue, tkIdentifier, tkHTML, tkKeyword, tkFunction]) then
-      begin
-        aHelp := (Engine.Files.Current.SynEdit.Highlighter as TSynHTMLPHPSyn).Processors[RangeToProcessor(aRange)].Name;
-        if (aToken <> '') then
-        begin
-          if (Engine.Options.HelpFiles.Values[aHelp] <> '') then
-          begin
-            if aHelp = 'html' then
-            begin
-              HHAKLink.cbStruct := SizeOf(HHAKLink);
-              HHAKLink.fReserved := False;
-              HHAKLink.pszKeywords := PChar(aToken);
-              HHAKLink.pszWindow := nil;
-              HHAKLink.fIndexOnFail := True;
-              HHAKLink.pszUrl := nil;
-              HHAKLink.pszMsgText := nil;
-              HHAKLink.pszMsgTitle := nil;
-              HtmlHelp(0, PChar(Engine.Options.HelpFiles.Values[aHelp]), HH_KEYWORD_LOOKUP, cardinal(@HHAKLink));
-              Result := True;
-            end
-            else
-            begin
-              HHAKLink.cbStruct := SizeOf(HHAKLink);
-              HHAKLink.fReserved := False;
-              HHAKLink.pszKeywords := PChar(aToken);
-              HHAKLink.pszWindow := nil;
-              HHAKLink.fIndexOnFail := True;
-              HHAKLink.pszUrl := nil;
-              HHAKLink.pszMsgText := nil;
-              HHAKLink.pszMsgTitle := nil;
-              HtmlHelp(0, PChar(Engine.Options.HelpFiles.Values[aHelp]), HH_KEYWORD_LOOKUP, cardinal(@HHAKLink));
-              Result := True;
-{              if FControlStructures.IndexOf(aToken) >= 0 then
-                aToken := 'control-structures.' + StringReplace(aToken, '_', '-', [rfReplaceAll]) + '.html'
-              else
-                aToken := 'function.' + StringReplace(aToken, '_', '-', [rfReplaceAll]) + '.html';
-              HtmlHelp(0, pchar(Engine.Options.HelpFiles.Values[aHelp] + '::/' + aToken), HH_DISPLAY_TOPIC, 0);
-              Result := True;}
-            end;
-          end;
-        end;
-      end;
-    end;
-  end;
+  inherited; //TODO
 end;
 
 procedure TMainForm.KeywordActExecute(Sender: TObject);
 begin
-  DoHtmlHelp;
+//  DoHtmlHelp;
 end;
 
 procedure TMainForm.HelpIndexActExecute(Sender: TObject);
 begin
-  if (Engine.Options.HelpFiles.Values['php'] <> '') then
-    HtmlHelp(0, PChar(Engine.Options.HelpFiles.Values['php'] + '::/' + 'index.html'), HH_DISPLAY_TOPIC, 0);
 end;
 
 procedure TMainForm.EditorOptionsActExecute(Sender: TObject);
@@ -1078,8 +996,8 @@ end;
 
 procedure TMainForm.OpenFolderActExecute(Sender: TObject);
 begin
-  if Engine.Files.Current <> nil then
-    ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Files.Current.Name + '"'), nil, SW_SHOW);
+{  if Engine.Files.Current <> nil then
+    ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Files.Current.Name + '"'), nil, SW_SHOW);}
 end;
 
 procedure TMainForm.ApplicationEventsHint(Sender: TObject);
@@ -1238,8 +1156,8 @@ end;
 
 procedure TMainForm.ProjectOpenFolderActExecute(Sender: TObject);
 begin
-  if Engine.Projects.IsOpened then
-    ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Projects.Current.FileName + '"'), nil, SW_SHOW);
+{  if Engine.Projects.IsOpened then
+    ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Projects.Current.FileName + '"'), nil, SW_SHOW);}
 end;
 
 procedure TMainForm.ManageActExecute(Sender: TObject);
@@ -1546,7 +1464,7 @@ procedure TMainForm.FileFolder1Click(Sender: TObject);
 begin
   if FileList.Selected <> nil then
   begin
-    ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Folder + FileList.Selected.Caption + '"'), nil, SW_SHOW);
+//    ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Folder + FileList.Selected.Caption + '"'), nil, SW_SHOW);
   end;
 end;
 
@@ -1585,7 +1503,7 @@ var
     begin
       if aWord[i] in ['A'..'Z', 'a'..'z'] then
       begin
-        aIsUpper := IsCharUpper(aWord[i]);
+        aIsUpper := UpperCase(aWord[i]) = aWord[i];//todo IsUpper
         break;
       end;
     end;
@@ -1931,7 +1849,7 @@ begin
           begin
             aFile := Copy(aFile, Length(aRoot) + 1, MaxInt);
             aFile := IncludeSlash(Engine.Projects.Current.RootUrl) + aFile;
-            ShellExecute(0, 'open', PChar(aFile), '', PChar(ExtractFilePath(aFile)), SW_SHOWNOACTIVATE);
+            //ShellExecute(0, 'open', PChar(aFile), '', PChar(ExtractFilePath(aFile)), SW_SHOWNOACTIVATE);//TODO Jihad
           end;
         end;
       end;
@@ -1941,7 +1859,7 @@ begin
           aRoot := IncludeTrailingPathDelimiter(Engine.Options.CompilerFolder) + 'php.exe'
         else
           aRoot := 'php.exe';
-        ShellExecute(0, '', PChar(aRoot), PChar(aFile), PChar(ExtractFilePath(aFile)), SW_SHOWNOACTIVATE);
+//        ShellExecute(0, '', PChar(aRoot), PChar(aFile), PChar(ExtractFilePath(aFile)), SW_SHOWNOACTIVATE);
       end;
     end;
   end;
@@ -2088,7 +2006,8 @@ begin
 
     Sender.Canvas.Lock;
     try
-      ListView_GetSubItemRect(Sender.Handle, Item.Index, SubItem, LVIR_BOUNDS, @aRect);
+      //ListView_GetSubItemRect(Sender.Handle, Item.Index, SubItem, LVIR_BOUNDS, @aRect);
+      aRect := Item.DisplayRectSubItem(SubItem, drSelectBounds);
       c := (Item as TSearchListItem).Column;
       l := (Item as TSearchListItem).Length;
       s := Item.SubItems[1];
@@ -2191,9 +2110,9 @@ var
   aFile: string;
 begin
   if Engine.Options.ConfigFile <> '' then
-    aFile := Engine.Options.ConfigFile
-  else
-    aFile := IncludeTrailingPathDelimiter(GetWinDir) + 'php.ini';
+    aFile := Engine.Options.ConfigFile;
+{  else
+    aFile := IncludeTrailingPathDelimiter(GetWinDir) + 'php.ini';}
   Engine.Files.LoadFile(aFile, False);
 end;
 
@@ -2327,4 +2246,4 @@ begin
 end;
 
 end.
-
+

@@ -8,7 +8,7 @@ unit SearchForms;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, SynEdit, SynEditTypes, SynEditRegexSearch, SynEditMiscClasses, SynEditSearch;
 
 type
@@ -67,7 +67,7 @@ procedure InternalSearchText(SynEdit: TSynEdit; Options: TSynSearchOptions);
 begin
   if SynEdit.SearchReplace(FSearchText, FReplaceText, Options) = 0 then
   begin
-    MessageBeep(MB_ICONASTERISK);
+//    MessageBeep(MB_ICONASTERISK);
     if ssoBackwards in FSearchOptions then
       SynEdit.BlockEnd := SynEdit.BlockBegin
     else
@@ -198,4 +198,4 @@ begin
 end;
 
 end.
-
+

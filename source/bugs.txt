@@ -1,4 +1,5 @@
 [BUGS]
+- Font for Editor not worked
 - When using php_xdebug.dll and php4delphi 7.0 and multithread execute script xdebug crash in execute the script, revert back to use php4delphi 6.2
 - breakpoint not moved when insert new line above.
 

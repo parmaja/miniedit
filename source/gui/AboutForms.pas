@@ -9,8 +9,9 @@ unit AboutForms;
 interface
 
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, ExtCtrls, ComCtrls, Shellapi;
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  lclproc, lclintf,
+  Dialogs, StdCtrls, ExtCtrls, ComCtrls;
 
 type
 
@@ -46,8 +47,6 @@ type
 
 implementation
 
-uses FileInfo;
-
 {$R *.lfm}
 
 procedure TAboutForm.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -56,18 +55,13 @@ begin
 end;
 
 procedure TAboutForm.FormCreate(Sender: TObject);
-var
-  FileVersionInfo:TFileVersionInfo;
 begin
-  FileVersionInfo:=TFileVersionInfo.Create(nil);
-  FileVersionInfo.fileName := Application.ExeName;
-  VersionLbl.Caption := FileVersionInfo.getVersionSetting('FileVersion');
-  FileVersionInfo.Free;
+  VersionLbl.Caption := '1.0.0.1';
 end;
 
 procedure TAboutForm.SiteLblClick(Sender: TObject);
 begin
-  ShellExecute(Handle, 'open', PChar((Sender as TLabel).Caption), nil, nil, SW_SHOWNORMAL);
+  openurl((Sender as TLabel).Caption);
 end;
 
 procedure TAboutForm.TabControl1Changing(Sender: TObject;
@@ -77,4 +71,4 @@ begin
 end;
 
 end.
-
+

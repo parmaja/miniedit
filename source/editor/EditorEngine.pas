@@ -9,10 +9,10 @@ unit EditorEngine;
 interface
 
 uses
-  Windows, Messages, SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
+  Messages, SysUtils, Forms, StrUtils, Dialogs,Variants, Classes, Controls, Graphics, Contnrs,
   IniFiles, EditorOptions, EditorProfiles, SynEditMarks, SynCompletion, SynEditTypes,
-  SynEditMiscClasses, SyncObjs, Dialogs, SynEditHighlighter, SynEditSearch, SynEdit, EditorDebugger, EditorSCM,
-  mnXMLRttiProfile, mnXMLUtils, mnUtils;
+  SynEditMiscClasses, SynEditHighlighter, SynEditSearch, SynEdit, EditorDebugger, EditorSCM,
+  mnXMLRttiProfile, mnXMLUtils, mnUtils, LCLType;
 
 type
   TEditorChangeState = set of (ecsChanged, ecsState, ecsRefresh, ecsDebug, ecsEdit, ecsFolder, ecsProjectLoaded);
@@ -128,7 +128,7 @@ type
     function SaveAs: Boolean;
     property CachedVariables: THashedStringList read FCachedVariables;
     property CachedIdentifiers: THashedStringList read FCachedIdentifiers;
-    property CachedAge: DWORD read FCachedAge write FCachedAge;
+    property CachedAge: cardinal read FCachedAge write FCachedAge;
   published
     property Name: string read FName write FName;
     property Description: string read FDescription write FDescription;
@@ -527,7 +527,7 @@ var
 implementation
 
 uses
-  SynHighlighterHTMLPHP, SynHighlighterHashEntries, Registry, ActiveX, ShlObj, SearchForms,
+  SynHighlighterHTMLPHP, SynHighlighterHashEntries, Registry, SearchForms,
   mneResources;
 
 function SelectFolder(const Caption: string; const Root: WideString; var Directory: string): Boolean;
@@ -2433,4 +2433,4 @@ begin
 end;
 
 end.
-
+

@@ -9,7 +9,7 @@ unit SearchInFilesForms;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, SynEdit, SynEditTypes, SynEditRegexSearch, SynEditMiscClasses,
   SynEditSearch, SearchProgressForms, ComCtrls;
 
@@ -282,4 +282,4 @@ begin
 end;
 
 end.
-
+
