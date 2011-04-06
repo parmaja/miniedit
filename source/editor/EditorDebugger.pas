@@ -9,8 +9,7 @@ unit EditorDebugger;
 interface
 
 uses
-  SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
-  EditorAddons, SynEdit;
+  SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs, IAddons, SynEdit;
 
 type
   TEditBreakpoint = record
@@ -27,7 +26,7 @@ type
 
   { TEditorDebugger }
 
-  TEditorDebugger = class(TEditorAddon)
+  TEditorDebugger = class(TAddon)
   private
     FExecuteLine: integer;
     FExecuteEdit: TCustomSynEdit;

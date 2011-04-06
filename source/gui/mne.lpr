@@ -58,7 +58,7 @@ begin
   begin
     aIniFile := TIniFile.Create(aIni);
     try
-      aPath := aIniFile.ReadString('Options', 'Workspace', '');
+      aPath := aIniFile.ReadString(SysPlatform, 'Workspace', '');
       Result := DirectoryExists(aPath);
     finally
       aIniFile.Free;
@@ -120,4 +120,4 @@ begin
     end;
   end;
 end.
-
+

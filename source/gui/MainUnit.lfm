@@ -5,7 +5,7 @@ object MainForm: TMainForm
   Width = 876
   AllowDropFiles = True
   Caption = 'Mini Edit'
-  ClientHeight = 494
+  ClientHeight = 498
   ClientWidth = 876
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
@@ -22,7 +22,7 @@ object MainForm: TMainForm
     Cursor = crVSplit
     Left = 0
     Height = 7
-    Top = 338
+    Top = 342
     Width = 876
     Align = alBottom
     AutoSnap = False
@@ -31,7 +31,7 @@ object MainForm: TMainForm
   end
   object FoldersSpl: TSplitter
     Left = 200
-    Height = 308
+    Height = 312
     Top = 30
     Width = 6
   end
@@ -109,7 +109,7 @@ object MainForm: TMainForm
         Style = tbsCheck
       end
       object ToolButton8: TToolButton
-        Left = 610
+        Left = 609
         Top = 0
         Action = OutputAct
         Style = tbsCheck
@@ -118,13 +118,13 @@ object MainForm: TMainForm
   end
   object FoldersPnl: TPanel
     Left = 0
-    Height = 308
+    Height = 312
     Top = 30
     Width = 200
     Align = alLeft
     BevelOuter = bvNone
     BorderWidth = 5
-    ClientHeight = 308
+    ClientHeight = 312
     ClientWidth = 200
     TabOrder = 0
     object FolderPanel: TPanel
@@ -152,12 +152,20 @@ object MainForm: TMainForm
         Font.Height = -11
         Font.Name = 'Webdings'
         Glyph.Data = {
-          66000000424D66000000000000003E000000280000000A0000000A0000000100
-          010000000000280000000000000000000000020000000000000000000000FFFF
-          FF00FFC000009E4000008C400000C0C00000E1C00000E1C00000C0C000008C40
-          00009E400000FFC00000
+          76010000424D760100000000000036000000280000000A0000000A0000000100
+          1800000000004001000000000000000000000000000000000000FF00FFFF00FF
+          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0000FF00FF000000
+          000000FF00FFFF00FFFF00FFFF00FF000000000000FF00FF0000FF00FF000000
+          000000000000FF00FFFF00FF000000000000000000FF00FF0000FF00FFFF00FF
+          000000000000000000000000000000000000FF00FFFF00FF0000FF00FFFF00FF
+          FF00FF000000000000000000000000FF00FFFF00FFFF00FF0000FF00FFFF00FF
+          FF00FF000000000000000000000000FF00FFFF00FFFF00FF0000FF00FFFF00FF
+          000000000000000000000000000000000000FF00FFFF00FF0000FF00FF000000
+          000000000000FF00FFFF00FF000000000000000000FF00FF0000FF00FF000000
+          000000FF00FFFF00FFFF00FFFF00FF000000000000FF00FF0000FF00FFFF00FF
+          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0000
         }
-        Layout = blGlyphBottom
+        Layout = blGlyphTop
         NumGlyphs = 0
         OnClick = FolderCloseBtnClick
         ParentFont = False
@@ -166,7 +174,7 @@ object MainForm: TMainForm
         Left = 5
         Height = 14
         Top = 2
-        Width = 31
+        Width = 30
         Caption = 'Folder'
         ParentColor = False
       end
@@ -217,7 +225,7 @@ object MainForm: TMainForm
     end
     object FileList: TListView
       Left = 5
-      Height = 279
+      Height = 283
       Top = 24
       Width = 190
       Align = alClient
@@ -225,7 +233,7 @@ object MainForm: TMainForm
         item
           AutoSize = True
           Caption = 'File Name'
-          Width = 170
+          Width = 186
         end>
       HideSelection = False
       PopupMenu = FolderMenu
@@ -242,12 +250,12 @@ object MainForm: TMainForm
   end
   object ClientPnl: TPanel
     Left = 206
-    Height = 308
+    Height = 312
     Top = 30
     Width = 670
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 308
+    ClientHeight = 312
     ClientWidth = 670
     TabOrder = 2
     object OutputSpl: TSplitter
@@ -273,6 +281,7 @@ object MainForm: TMainForm
       ClientWidth = 670
       FullRepaint = False
       TabOrder = 0
+      OnClick = EditorsPnlClick
       object FileHeaderPanel: TPanel
         Left = 0
         Height = 19
@@ -372,10 +381,18 @@ object MainForm: TMainForm
           Width = 16
           Flat = True
           Glyph.Data = {
-            66000000424D66000000000000003E000000280000000A0000000A0000000100
-            010000000000280000000000000000000000020000000000000000000000FFFF
-            FF00FFC000009E4000008C400000C0C00000E1C00000E1C00000C0C000008C40
-            00009E400000FFC00000
+            76010000424D760100000000000036000000280000000A0000000A0000000100
+            1800000000004001000000000000000000000000000000000000FF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0000FF00FF000000
+            000000FF00FFFF00FFFF00FFFF00FF000000000000FF00FF0000FF00FF000000
+            000000000000FF00FFFF00FF000000000000000000FF00FF0000FF00FFFF00FF
+            000000000000000000000000000000000000FF00FFFF00FF0000FF00FFFF00FF
+            FF00FF000000000000000000000000FF00FFFF00FFFF00FF0000FF00FFFF00FF
+            FF00FF000000000000000000000000FF00FFFF00FFFF00FF0000FF00FFFF00FF
+            000000000000000000000000000000000000FF00FFFF00FF0000FF00FF000000
+            000000000000FF00FFFF00FF000000000000000000FF00FF0000FF00FF000000
+            000000FF00FFFF00FFFF00FFFF00FF000000000000FF00FF0000FF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0000
           }
           Layout = blGlyphBottom
           NumGlyphs = 0
@@ -434,7 +451,7 @@ object MainForm: TMainForm
         end
         object QuickSearchEdit: TEdit
           Left = 60
-          Height = 23
+          Height = 21
           Top = 4
           Width = 173
           OnChange = QuickSearchEditChange
@@ -458,7 +475,7 @@ object MainForm: TMainForm
     end
     inline OutputEdit: TSynEdit
       Left = 0
-      Height = 94
+      Height = 98
       Top = 214
       Width = 670
       Align = alBottom
@@ -761,7 +778,7 @@ object MainForm: TMainForm
   object StatusPanel: TPanel
     Left = 0
     Height = 22
-    Top = 472
+    Top = 476
     Width = 876
     Align = alBottom
     BevelOuter = bvNone
@@ -818,7 +835,7 @@ object MainForm: TMainForm
   object MessagesTabs: TntvPageControl
     Left = 0
     Height = 127
-    Top = 345
+    Top = 349
     Width = 876
     StoreIndex = False
     ShowButtons = False
@@ -848,8 +865,8 @@ object MainForm: TMainForm
     TabOrder = 6
     object WatchList: TListView
       Left = 3
-      Height = 100
-      Top = 24
+      Height = 103
+      Top = 21
       Width = 870
       Align = alClient
       Columns = <      
@@ -864,7 +881,7 @@ object MainForm: TMainForm
         item
           AutoSize = True
           Caption = 'Value'
-          Width = 550
+          Width = 566
         end>
       ColumnClick = False
       Font.CharSet = ARABIC_CHARSET
@@ -881,8 +898,8 @@ object MainForm: TMainForm
     end
     object MessageList: TListView
       Left = 3
-      Height = 100
-      Top = 24
+      Height = 103
+      Top = 21
       Width = 870
       Align = alClient
       Columns = <      
@@ -893,7 +910,7 @@ object MainForm: TMainForm
         item
           AutoSize = True
           Caption = 'Message'
-          Width = 63
+          Width = 766
         end      
         item
           Caption = 'File'
@@ -919,8 +936,8 @@ object MainForm: TMainForm
     end
     object SearchList: TListView
       Left = 3
-      Height = 100
-      Top = 24
+      Height = 103
+      Top = 21
       Width = 870
       Align = alClient
       Columns = <      
@@ -935,7 +952,7 @@ object MainForm: TMainForm
         item
           AutoSize = True
           Caption = 'Result'
-          Width = 470
+          Width = 486
         end>
       ColumnClick = False
       Font.CharSet = ARABIC_CHARSET
@@ -1575,14 +1592,11 @@ object MainForm: TMainForm
         OnClick = DBGBreakpointsActExecute
       end
     end
-    object ools1: TMenuItem
+    object ToolsMnu: TMenuItem
       Caption = 'Tools'
       object OptionsMnu: TMenuItem
         Action = SettingAct
         OnClick = SettingActExecute
-      end
-      object Associate1: TMenuItem
-        Action = AssociateAct
       end
       object N6: TMenuItem
         Caption = '-'
@@ -1622,7 +1636,7 @@ object MainForm: TMainForm
   end
   object ActionList: TActionList
     Images = EditorResource.ToolbarImageList
-    left = 21
+    left = 25
     top = 71
     object PasteAct: TAction
       Category = 'Edit'
@@ -2264,4 +2278,4 @@ object MainForm: TMainForm
     left = 711
     top = 117
   end
-end
+end

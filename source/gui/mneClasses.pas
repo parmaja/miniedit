@@ -145,6 +145,11 @@ function RGBHexToColor(Value: string): TColor;
 
 const
   sSoftwareRegKey = 'Software\LightPHPEdit\';
+{$ifdef WINDOWS}
+  SysPlatform = 'WINDOWS';
+{$else}
+  SysPlatform = 'LINUX';
+{$endif}
 
 function GetFileImageIndex(const FileName: string): integer;
 
@@ -645,4 +650,4 @@ begin
 end;
 
 end.
-
+

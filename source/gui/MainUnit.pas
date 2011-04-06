@@ -22,12 +22,17 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  LMessages, lCLType, LCLIntf, LCLProc,
+  LMessages, lCLType, LCLIntf, LCLProc, IAddons,
   Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus, ToolWin,
   Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses, StdActns,
   PairSplitter, SynEditHighlighter, SynHighlighterPHP, SynHighlighterApache,
   ntvTabSets, mneRun, Registry, SynEdit, SynEditPlugins,
-  DividerBevel, IniFiles, simpleipc, mnUtils, ntvTabs, ntvPageControls;
+  //Addons
+  {$ifdef Windows}
+  mneAssociateForm,
+  {$endif}
+  //end of addons
+  mneAddons, DividerBevel, IniFiles, simpleipc, mnUtils, ntvTabs, ntvPageControls;
 
 {$i '..\lib\mne.inc'}
 
@@ -93,8 +98,7 @@ type
     Run2: TMenuItem;
     Check1: TMenuItem;
     AssociateAct: TAction;
-    ools1: TMenuItem;
-    Associate1: TMenuItem;
+    ToolsMnu: TMenuItem;
     FolderMenu: TPopupMenu;
     FolderOpenAllAct: TAction;
     OpenAll1: TMenuItem;
@@ -289,6 +293,8 @@ type
     QuickFindAct: TAction;
     QuickSearch1: TMenuItem;
     FileModeBtn: TSpeedButton;
+    procedure Associate1Click(Sender: TObject);
+    procedure EditorsPnlClick(Sender: TObject);
     procedure FileSetSelectTab(Sender: TObject; OldTab, NewTab: TntvTabItem; var CanSelect: boolean);
     procedure FileSetTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure FolderCloseBtnClick(Sender: TObject);
@@ -459,6 +465,7 @@ type
     procedure FollowFolder(vFolder: string);
     procedure ShowMessagesList;
     procedure ShowWatchesList;
+    procedure LoadAddons;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -565,6 +572,16 @@ end;
 procedure TMainForm.FileSetSelectTab(Sender: TObject; OldTab, NewTab: TntvTabItem; var CanSelect: boolean);
 begin
   //
+end;
+
+procedure TMainForm.Associate1Click(Sender: TObject);
+begin
+
+end;
+
+procedure TMainForm.EditorsPnlClick(Sender: TObject);
+begin
+
 end;
 
 procedure TMainForm.FileSetTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
@@ -1102,6 +1119,7 @@ begin
   FileSet.ShowBorder := False;
   IPCServer.ServerID := sApplicationID;
   IPCServer.StartServer;
+  LoadAddons;
 end;
 
 procedure TMainForm.CheckActExecute(Sender: TObject);
@@ -1752,6 +1770,33 @@ begin
   MessagesTabs.ActiveControl := WatchList;
 end;
 
+procedure TMainForm.LoadAddons;
+var
+  i: Integer;
+  procedure AddMenu(vParentMenu, vName, vCaption: string; vOnClick: TNotifyEvent);
+  var
+    m: TMenuItem;
+  begin
+    m := TMenuItem.Create(Self);
+    m.Name := vName;
+    m.Caption := vCaption;
+    m.OnClick := vOnClick;
+    ToolsMnu.Add(m);
+    //m.Parent := ToolsMnu;
+  end;
+begin
+  //MainMenu.Items.BeginUpdate;
+  try
+    for i :=0 to Addons.Count -1 do
+    begin
+      if Supports(Addons[i].Addon, IMenuAddon) then
+        AddMenu('', Addons[i].Name, (Addons[i].Addon as IMenuAddon).GetCaption, (Addons[i].Addon as IMenuAddon).Click);
+    end;
+  finally
+    //MainMenu.Items.EndUpdate;
+  end;
+end;
+
 procedure TMainForm.Add1Click(Sender: TObject);
 var
   s: string;
@@ -2246,4 +2291,4 @@ begin
 end;
 
 end.
-
+

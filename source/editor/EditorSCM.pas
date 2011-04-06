@@ -13,14 +13,13 @@ unit EditorSCM;
 interface
 
 uses
-  SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
-  EditorAddons, SynEdit;
+  SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs, IAddons, SynEdit;
 
 type
 
   { TEditorSCM }
 
-  TEditorSCM = class(TEditorAddon)
+  TEditorSCM = class(TAddon)
   private
   protected
   public

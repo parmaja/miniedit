@@ -26,7 +26,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;\usr\ws\dev\home\pascal\lib\minilib\xml\source\;\usr\ws\dev\home\pascal\lib\minilib\lib\;\usr\ws\dev\home\pascal\lib\minilib\lazarus\lib\;\usr\ws\dev\home\pascal\lib\minilib\socket\source\;$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS);$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
+            <OtherUnitFiles Value="..\editor;..\lib;\usr\ws\dev\home\pascal\lib\minilib\xml\source;\usr\ws\dev\home\pascal\lib\minilib\lib;\usr\ws\dev\home\pascal\lib\minilib\lazarus\lib;\usr\ws\dev\home\pascal\lib\minilib\socket\source;$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS);$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Linking>
@@ -270,8 +270,8 @@
       <Filename Value="..\..\bin\mne.exe"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="W:\home\pascal\projects\LPE\source\editor;W:\home\pascal\projects\LPE\source\lib;$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\editor;..\lib;W:\programs\lazarus\components\synedit\units\i386-win32;W:\home\pascal\lib\minilib\xml\source;W:\home\pascal\lib\minilib\lib;W:\home\pascal\lib\minilib\lazarus\lib;W:\home\pascal\lib\minilib\socket\source;$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS);$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
+      <IncludeFiles Value="W:\home\pascal\projects\LPE\source\editor\;W:\home\pascal\projects\LPE\source\lib\;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\addons;W:\programs\lazarus\components\synedit\units\i386-win32\;W:\home\pascal\lib\minilib\xml\source\;W:\home\pascal\lib\minilib\lib\;W:\home\pascal\lib\minilib\lazarus\lib\;W:\home\pascal\lib\minilib\socket\source\;$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS);$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <Linking>
@@ -305,4 +305,4 @@
       </Item3>
     </Exceptions>
   </Debugging>
-</CONFIG>
+</CONFIG>

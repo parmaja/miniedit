@@ -11,7 +11,7 @@ interface
 uses
   Messages, SysUtils, Forms, StrUtils, Dialogs,Variants, Classes, Controls, Graphics, Contnrs,
   IniFiles, EditorOptions, EditorProfiles, SynEditMarks, SynCompletion, SynEditTypes,
-  SynEditMiscClasses, SynEditHighlighter, SynEditSearch, SynEdit, EditorDebugger, EditorSCM,
+  SynEditMiscClasses, SynEditHighlighter, SynEditSearch, SynEdit, EditorDebugger, EditorSCM, IAddons,
   mnXMLRttiProfile, mnXMLUtils, mnUtils, LCLType;
 
 type
@@ -2433,4 +2433,4 @@ begin
 end;
 
 end.
-
+

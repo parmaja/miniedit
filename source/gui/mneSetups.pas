@@ -63,7 +63,7 @@ begin
     ForceDirectories(WorkspaceEdit.Text);
     aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
     try
-      aIniFile.WriteString('Options', 'Workspace', IncludeTrailingPathDelimiter(WorkspaceEdit.Text));
+      aIniFile.WriteString(SysPlatform, 'Workspace', IncludeTrailingPathDelimiter(WorkspaceEdit.Text));
     finally
       aIniFile.Free;
     end;
@@ -86,10 +86,10 @@ begin
   WorkspaceEdit.Items.Add(ExtractFilePath(Application.ExeName));
   aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
   try
-    WorkspaceEdit.Text := aIniFile.ReadString('Options', 'Workspace', '');
+    WorkspaceEdit.Text := aIniFile.ReadString(SysPlatform, 'Workspace', '');
   finally
     aIniFile.Free;
   end;
 end;
 
-end.
+end.
