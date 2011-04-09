@@ -1,6 +1,6 @@
 unit MainUnit;
-
-{$mode delphi}
+{$mode objfpc}
+{$H+}
 {**
  * Mini Edit
  *
@@ -31,6 +31,7 @@ uses
   {$ifdef Windows}
   mneAssociateForm,
   {$endif}
+  mnePHPIniForm,
   //end of addons
   mneAddons, DividerBevel, IniFiles, simpleipc, mnUtils, ntvTabs, ntvPageControls;
 
@@ -223,7 +224,6 @@ type
     DBGStepOutAct1: TMenuItem;
     ToolButton6: TToolButton;
     PHPIniConfigAct: TAction;
-    InstallXDebug1: TMenuItem;
     N5: TMenuItem;
     AddWatch1: TMenuItem;
     WatchesPopupMenu: TPopupMenu;
@@ -272,8 +272,6 @@ type
     NextMessage1: TMenuItem;
     PriorMessage1: TMenuItem;
     N15: TMenuItem;
-    OpenPHPiniAct: TAction;
-    OpenPHPiniAct1: TMenuItem;
     OutputPopup: TPopupMenu;
     MenuItem1: TMenuItem;
     StatePnl: TPanel;
@@ -306,13 +304,14 @@ type
     procedure FileCloseBtnClick(Sender: TObject);
     procedure FileSetClick(Sender: TObject);
     procedure NextActExecute(Sender: TObject);
+    procedure OpenPHPiniAct1Click(Sender: TObject);
     procedure PriorActExecute(Sender: TObject);
     procedure CloseActExecute(Sender: TObject);
     procedure FileListDblClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure SaveActExecute(Sender: TObject);
     procedure SaveAllActExecute(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure NewActExecute(Sender: TObject);
     procedure FolderOpenAllActExecute(Sender: TObject);
     procedure FolderOpenActExecute(Sender: TObject);
@@ -403,7 +402,6 @@ type
     procedure FindInFilesActExecute(Sender: TObject);
     procedure NextMessageActExecute(Sender: TObject);
     procedure PriorMessageActExecute(Sender: TObject);
-    procedure OpenPHPiniActExecute(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure SVNCompareToActExecute(Sender: TObject);
     procedure SwitchFocusActExecute(Sender: TObject);
@@ -423,7 +421,6 @@ type
     procedure ApplicationEventsHint(Sender: TObject);
 
     function CanOpenInclude: boolean;
-    procedure WMHelp(var Message: TLMHelp); message LM_HELP;
     procedure UpdateFileHeaderPanel;
     procedure EditorChangeState(State: TEditorChangeState);
     procedure EngineChanged;
@@ -446,7 +443,7 @@ type
     function GetFolder: string;
     procedure DeleteCurrentWatch;
     procedure MoveListIndex(vForward: boolean);
-    procedure OnSynEditReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var Action: TSynReplaceAction);
+    procedure OnSynEditReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
   protected
     FRunProject: TRunProject;
     LastGotoLine: integer;
@@ -460,8 +457,8 @@ type
     procedure RunScript;
     //
     procedure ReceiveBuffer(const Buffer: string);
-    procedure Log(Error: integer; Caption, Msg, FileName: string; LineNo: integer); overload;
-    procedure Log(Caption, Msg: string); overload;
+    procedure Log(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
+    procedure Log(ACaption, AMsg: string); overload;
     procedure FollowFolder(vFolder: string);
     procedure ShowMessagesList;
     procedure ShowWatchesList;
@@ -486,7 +483,7 @@ uses
   EditorProfiles, mneResources, mneSetups, Clipbrd,
   SelectFiles, mneSettings, mneConsts,
   SynEditTypes, AboutForms, mneProjectForms, GotoForms, Types,
-  mnePHPIniForm, mneBreakpoints,
+  mneBreakpoints,
   SearchInFilesForms, SynHighlighterHTMLPHP;
 
 {$R *.lfm}
@@ -500,7 +497,7 @@ begin
   inherited;
   aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
   try
-    aWorkspace := IncludeTrailingPathDelimiter(aIniFile.ReadString('Options', 'Workspace', ''));
+    aWorkspace := IncludeTrailingPathDelimiter(aIniFile.ReadString(SysPlatform, 'Workspace', ''));
   finally
     aIniFile.Free;
   end;
@@ -508,7 +505,7 @@ begin
   Engine.Workspace := aWorkspace;
   Engine.Window := EditorsPnl;
   //FileSet.Align := alClient;
-  Engine.OnChangedState := EditorChangeState;
+  Engine.OnChangedState := @EditorChangeState;
   //  Engine.OnSynEditReplaceText:= OnSynEditReplaceText;
   if (aWorkspace <> '') then
   begin
@@ -716,6 +713,11 @@ begin
   Engine.Files.Next;
 end;
 
+procedure TMainForm.OpenPHPiniAct1Click(Sender: TObject);
+begin
+
+end;
+
 procedure TMainForm.PriorActExecute(Sender: TObject);
 begin
   Engine.Files.Prior;
@@ -796,7 +798,7 @@ begin
   Engine.Files.SaveAll;
 end;
 
-procedure TMainForm.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   Engine.Options.ShowFolder := FoldersAct.Checked;
   Engine.Options.ShowMessages := MessagesAct.Checked;
@@ -867,11 +869,6 @@ procedure TMainForm.FileListKeyPress(Sender: TObject; var Key: char);
 begin
   if Key = #13 then
     FolderOpenAct.Execute;
-end;
-
-procedure TMainForm.WMHelp(var Message: TLMHelp);
-begin
-  inherited; //TODO
 end;
 
 procedure TMainForm.KeywordActExecute(Sender: TObject);
@@ -958,7 +955,7 @@ begin
     aMenuItem := TMenuItem.Create(Self);
     aMenuItem.Caption := Engine.Options.RecentFiles[i];
     aMenuItem.Hint := aMenuItem.Caption;
-    aMenuItem.OnClick := ReopenClick;
+    aMenuItem.OnClick := @ReopenClick;
     ReopenMnu.Add(aMenuItem);
   end;
 end;
@@ -1001,7 +998,7 @@ begin
     aMenuItem := TMenuItem.Create(Self);
     aMenuItem.Caption := Engine.Options.RecentProjects[i];
     aMenuItem.Hint := aMenuItem.Caption;
-    aMenuItem.OnClick := ReopenProjectClick;
+    aMenuItem.OnClick := @ReopenProjectClick;
     ReopenProjectMnu.Add(aMenuItem);
   end;
 end;
@@ -1062,7 +1059,7 @@ const
 var
   aList: TStringList;
 
-  procedure ExtractKeywords(const Name, Keywords: string);
+  procedure ExtractKeywordsNow(const vName, vKeywords: string);
   var
     aStrings: TStringList;
     i: integer;
@@ -1070,7 +1067,7 @@ var
   begin
     aStrings := TStringList.Create;
     try
-      ExtractStrings([','], [], PChar(Keywords), aStrings);
+      ExtractStrings([','], [], PChar(vKeywords), aStrings);
       aStrings.Sort;
       for i := 0 to aStrings.Count - 1 do
       begin
@@ -1084,7 +1081,7 @@ var
           s := s + '+';
         aStrings[i] := s;
       end;
-      aStrings.Insert(0, '  ' + Name + ' =');
+      aStrings.Insert(0, '  ' + vName + ' =');
       aStrings.Add('');
       aList.AddStrings(aStrings);
     finally
@@ -1094,13 +1091,13 @@ var
 
 begin
   aList := TStringList.Create;
-  ExtractKeywords('sPHPControls', sPHPControls);
-  ExtractKeywords('sPHPKeywords', sPHPKeywords);
-  ExtractKeywords('sPHPFunctions', sPHPFunctions);
-  ExtractKeywords('sPHPConstants', sPHPConstants);
-  ExtractKeywords('sPHPVariables', sPHPVariables);
-  ExtractKeywords('sHTMLKeywords', sHTMLKeywords);
-  ExtractKeywords('sSQLKeywords', sSQLKeywords);
+  ExtractKeywordsNow('sPHPControls', sPHPControls);
+  ExtractKeywordsNow('sPHPKeywords', sPHPKeywords);
+  ExtractKeywordsNow('sPHPFunctions', sPHPFunctions);
+  ExtractKeywordsNow('sPHPConstants', sPHPConstants);
+  ExtractKeywordsNow('sPHPVariables', sPHPVariables);
+  ExtractKeywordsNow('sHTMLKeywords', sHTMLKeywords);
+  ExtractKeywordsNow('sSQLKeywords', sSQLKeywords);
   aList.SaveToFile(aPath + 'PHPKeywords.inc.new');
   aList.Free;
 end;
@@ -1131,12 +1128,12 @@ begin
   end;
 end;
 
-procedure TMainForm.Log(Error: integer; Caption, Msg, FileName: string; LineNo: integer);
+procedure TMainForm.Log(Error: integer; ACaption, Msg, FileName: string; LineNo: integer);
 var
   aItem: TListItem;
 begin
   aItem := MessageList.Items.Add;
-  aItem.Caption := Caption;
+  aItem.Caption := ACaption;
   aItem.ImageIndex := 34;
   aItem.SubItems.Add(Msg);
   aItem.SubItems.Add(FileName);
@@ -1282,6 +1279,7 @@ begin
     if Engine.Files.Current.Group.Category.Name = 'HTML/PHP' then
     begin
       P := Engine.Files.Current.SynEdit.CaretXY;
+      aToken := '';
       Engine.Files.Current.SynEdit.GetHighlighterAttriAtRowColEx(P, aToken, aTokenType, aStart, Attri);
       Result := (aToken <> '') and (TtkTokenKind(aTokenType) = tkString);
     end;
@@ -1720,7 +1718,7 @@ end;
 
 procedure TMainForm.PHPIniConfigActExecute(Sender: TObject);
 begin
-  ShowPHPIniForm;
+
 end;
 
 procedure TMainForm.MessagesTabChange(Sender: TObject; NewTab: integer; var AllowChange: boolean);
@@ -1789,8 +1787,8 @@ begin
   try
     for i :=0 to Addons.Count -1 do
     begin
-      if Supports(Addons[i].Addon, IMenuAddon) then
-        AddMenu('', Addons[i].Name, (Addons[i].Addon as IMenuAddon).GetCaption, (Addons[i].Addon as IMenuAddon).Click);
+      if Supports(Addons[i].Addon, IMenuAddon) and (Supports(Addons[i].Addon, IClickAddon)) then
+        AddMenu('', Addons[i].Name, (Addons[i].Addon as IMenuAddon).GetCaption, @((Addons[i].Addon as IClickAddon).Click));
     end;
   finally
     //MainMenu.Items.EndUpdate;
@@ -2150,17 +2148,6 @@ begin
   MoveListIndex(False);
 end;
 
-procedure TMainForm.OpenPHPiniActExecute(Sender: TObject);
-var
-  aFile: string;
-begin
-  if Engine.Options.ConfigFile <> '' then
-    aFile := Engine.Options.ConfigFile;
-{  else
-    aFile := IncludeTrailingPathDelimiter(GetWinDir) + 'php.ini';}
-  Engine.Files.LoadFile(aFile, False);
-end;
-
 procedure TMainForm.MenuItem1Click(Sender: TObject);
 begin
   OutputEdit.Lines.Clear;
@@ -2265,13 +2252,13 @@ begin
   QuickFindAct.Checked := QuickFindPnl.Visible;
 end;
 
-procedure TMainForm.OnSynEditReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var Action: TSynReplaceAction);
+procedure TMainForm.OnSynEditReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
 begin
   case MessageDlg(Format('Replace this ocurrence of "%s" with "%s"?', [ASearch, AReplace]), mtConfirmation, [mbYes, mbNo, mbAll, mbCancel], 0) of
-    mrYes: Action := raReplace;
-    mrNo: Action := raSkip;
-    mrAll: Action := raReplaceAll;
-    mrCancel: Action := raCancel;
+    mrYes: ReplaceAction := raReplace;
+    mrNo: ReplaceAction := raSkip;
+    mrAll: ReplaceAction := raReplaceAll;
+    mrCancel: ReplaceAction := raCancel;
   end;
 end;
 
@@ -2285,9 +2272,9 @@ begin
   Log('Message', AText);
 end;
 
-procedure TMainForm.Log(Caption, Msg: string);
+procedure TMainForm.Log(ACaption, AMsg: string);
 begin
-  Log(0, Caption, Msg, '', 0);
+  Log(0, ACaption, AMsg, '', 0);
 end;
 
 end.

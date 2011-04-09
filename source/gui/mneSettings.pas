@@ -14,6 +14,9 @@ uses
   EditorEngine, Dialogs, StdCtrls, ComCtrls, Grids;
 
 type
+
+  { TEditorSettingForm }
+
   TEditorSettingForm = class(TForm)
     OkBtn: TButton;
     CancelBtn: TButton;
@@ -22,13 +25,8 @@ type
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     Label1: TLabel;
-    Label5: TLabel;
-    Label6: TLabel;
     PHPFolderEdit: TEdit;
     Button3: TButton;
-    Label7: TLabel;
-    INIEdit: TEdit;
-    Button4: TButton;
     Label3: TLabel;
     Label4: TLabel;
     CollectTimeoutEdit: TEdit;
@@ -49,9 +47,11 @@ type
     Label10: TLabel;
     procedure Button3Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure INIEditChange(Sender: TObject);
   private
     FEngine: TEditorEngine;
     FExtraExtensions: array of string;
@@ -108,6 +108,11 @@ begin
   end;
 end;
 
+procedure TEditorSettingForm.Button4Click(Sender: TObject);
+begin
+
+end;
+
 procedure TEditorSettingForm.Apply;
 var
   i, c: Integer;
@@ -116,7 +121,6 @@ begin
   FEngine.Options.HelpFiles.Values['php'] := PHPManualEdit.Text;
   FEngine.Options.HelpFiles.Values['html'] := HTMLManualEdit.Text;
   FEngine.Options.CompilerFolder := PHPFolderEdit.Text;
-  FEngine.Options.ConfigFile := INIEdit.Text;
   FEngine.Options.CollectAutoComplete := CollectAutoCompleteChk.Checked;
   FEngine.Options.CollectTimeout := CollectTimeoutSpn.Position;
   FEngine.Options.SendOutputToNewFile := SendOutputToNewFileChk.Checked;
@@ -139,7 +143,6 @@ begin
   PHPManualEdit.Text := FEngine.Options.HelpFiles.Values['php'];
   HTMLManualEdit.Text := FEngine.Options.HelpFiles.Values['html'];
   PHPFolderEdit.Text := FEngine.Options.CompilerFolder;
-  INIEdit.Text := FEngine.Options.ConfigFile;
   CollectAutoCompleteChk.Checked := FEngine.Options.CollectAutoComplete;
   CollectTimeoutSpn.Position := FEngine.Options.CollectTimeout;
   SendOutputToNewFileChk.Checked := FEngine.Options.SendOutputToNewFile;
@@ -184,5 +187,10 @@ begin
   CurrentPage := PageControl.ActivePageIndex;
 end;
 
+procedure TEditorSettingForm.INIEditChange(Sender: TObject);
+begin
+
+end;
+
 end.
-
+

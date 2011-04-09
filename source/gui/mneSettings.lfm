@@ -40,48 +40,24 @@ object EditorSettingForm: TEditorSettingForm
     Height = 238
     Top = 3
     Width = 419
-    ActivePage = TabSheet1
-    TabIndex = 0
+    ActivePage = TabSheet4
+    TabIndex = 3
     TabOrder = 2
     object TabSheet1: TTabSheet
       Caption = 'Path'
-      ClientHeight = 204
-      ClientWidth = 413
+      ClientHeight = 212
+      ClientWidth = 411
       object Label1: TLabel
         Left = 14
         Height = 14
         Top = 13
-        Width = 86
+        Width = 89
         Caption = 'Select a PHP path'
-        ParentColor = False
-      end
-      object Label5: TLabel
-        Left = 14
-        Height = 14
-        Top = 103
-        Width = 329
-        Caption = 'Select a TortoiseSVN path, or leave it empty if the path in your PATH'
-        ParentColor = False
-      end
-      object Label6: TLabel
-        Left = 190
-        Height = 14
-        Top = 14
-        Width = 192
-        Caption = 'To run internal need php version 5.2.8.8'
-        ParentColor = False
-      end
-      object Label7: TLabel
-        Left = 14
-        Height = 14
-        Top = 58
-        Width = 51
-        Caption = 'PHP INI file'
         ParentColor = False
       end
       object PHPFolderEdit: TEdit
         Left = 14
-        Height = 23
+        Height = 21
         Top = 32
         Width = 357
         TabOrder = 0
@@ -95,26 +71,11 @@ object EditorSettingForm: TEditorSettingForm
         OnClick = Button3Click
         TabOrder = 1
       end
-      object INIEdit: TEdit
-        Left = 14
-        Height = 23
-        Top = 77
-        Width = 357
-        TabOrder = 2
-      end
-      object Button4: TButton
-        Left = 372
-        Height = 21
-        Top = 77
-        Width = 22
-        Caption = '...'
-        TabOrder = 3
-      end
     end
     object TabSheet3: TTabSheet
       Caption = 'Help'
-      ClientHeight = 204
-      ClientWidth = 413
+      ClientHeight = 212
+      ClientWidth = 411
       ImageIndex = 2
       object Label2: TLabel
         Left = 14
@@ -167,8 +128,8 @@ object EditorSettingForm: TEditorSettingForm
     end
     object TabSheet2: TTabSheet
       Caption = 'Options'
-      ClientHeight = 204
-      ClientWidth = 413
+      ClientHeight = 212
+      ClientWidth = 411
       ImageIndex = 1
       object Label3: TLabel
         Left = 2
@@ -226,15 +187,15 @@ object EditorSettingForm: TEditorSettingForm
         Left = 11
         Height = 17
         Top = 9
-        Width = 201
-        Caption = 'Auto start XDebug server when startup'
+        Width = 189
+        Caption = 'Auto start debug mode when startup'
         TabOrder = 4
       end
     end
     object TabSheet4: TTabSheet
       Caption = 'Extensions'
-      ClientHeight = 204
-      ClientWidth = 413
+      ClientHeight = 212
+      ClientWidth = 411
       ImageIndex = 3
       object Label9: TLabel
         Left = 5
@@ -254,9 +215,9 @@ object EditorSettingForm: TEditorSettingForm
       end
       object ExtensionsGrid: TStringGrid
         Left = 2
-        Height = 165
+        Height = 173
         Top = 41
-        Width = 406
+        Width = 404
         Anchors = [akTop, akLeft, akRight, akBottom]
         ColCount = 2
         DefaultRowHeight = 18
@@ -276,4 +237,4 @@ object EditorSettingForm: TEditorSettingForm
     left = 295
     top = 182
   end
-end
+end

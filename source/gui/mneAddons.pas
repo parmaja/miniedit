@@ -1,5 +1,6 @@
 unit mneAddons;
 {$mode objfpc}
+{$H+}
 {**
  * Mini Edit
  *
@@ -16,6 +17,9 @@ uses
   SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs, SynEdit, IAddons;
 
 implementation
+
+uses
+  EditorEngine;
 
 initialization
 

@@ -270,7 +270,6 @@ type
     FMessagesHeight: Integer;
     FFoldersWidth: Integer;
     FSearchFolderHistory: TStringList;
-    FConfigFile: string;
     FExtraExtensions: TStringList;
     procedure SetRecentFiles(const Value: TStringList);
     procedure SetRecentProjects(const Value: TStringList);
@@ -290,7 +289,6 @@ type
     property CompilerFolder: string read FCompilerFolder write FCompilerFolder;
     property HelpFiles: TStringList read FHelpFiles write FHelpFiles;
     property ExtraExtensions: TStringList read FExtraExtensions write FExtraExtensions;
-    property ConfigFile: string read FConfigFile write FConfigFile;
     property CollectAutoComplete: Boolean read FCollectAutoComplete write FCollectAutoComplete default False;
     property CollectTimeout: DWORD read FCollectTimeout write FCollectTimeout default 60;
     property ShowFolder: Boolean read FShowFolder write FShowFolder default True;

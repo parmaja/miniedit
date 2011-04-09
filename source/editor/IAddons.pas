@@ -1,7 +1,7 @@
 unit IAddons;
-
 {$mode objfpc}
-
+{$INTERFACES DEFAULT}
+{$H+}
 {**
  * Mini Edit
  *
@@ -73,13 +73,22 @@ type
     procedure Click(Sender: TObject);
   end;
 
-  IMenuAddon = interface(IClickAddon)
-    ['{23FA4EA8-C13E-4110-A6AC-B97489E9E10A}']
+  ICaptionAddon = interface(IAddon)
+    ['{3510E934-3C40-46E8-9FFF-494BE33FF97D}']
     function GetCaption: string;
   end;
 
-  IEditorFile = interface(IAddon)
+  IMenuAddon = interface(ICaptionAddon)
+    ['{23FA4EA8-C13E-4110-A6AC-B97489E9E10A}']
+  end;
+
+  IFileAddon = interface(IAddon)
     ['{40A84C67-30B5-4A38-98B5-B56AE3842625}']
+  end;
+
+  ISetupAddon = interface(IAddon) //Add this interface to make setup to your addon
+  ['{F00BFDF0-7037-4BC9-B268-54E6BEECF98C}']
+    procedure ShowSetup;
   end;
 
 function Addons: TAddons;

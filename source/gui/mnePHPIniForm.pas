@@ -1,4 +1,5 @@
 unit mnePHPIniForm;
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *
@@ -10,9 +11,12 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  EditorEngine, Dialogs, StdCtrls, ComCtrls, IniFiles, mnUtils, PHPUtils;
+  EditorEngine, Dialogs, StdCtrls, ComCtrls, IniFiles, mnUtils, PHPUtils, IAddons;
 
 type
+
+  { TPHPIniForm }
+
   TPHPIniForm = class(TForm)
     PageControl: TPageControl;
     PHPIniFileEdit: TEdit;
@@ -40,6 +44,7 @@ type
     OpenDialog: TOpenDialog;
     Edit1: TEdit;
     Label6: TLabel;
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure Button3Click(Sender: TObject);
   private
@@ -62,7 +67,7 @@ procedure ShowPHPIniForm;
 begin
   with TPHPIniForm.Create(Application) do
   begin
-    Retrive;
+    //Retrive;
     if ShowModal = mrOK then
       Apply;
   end;
@@ -122,11 +127,12 @@ end;
 
 procedure TPHPIniForm.FormCreate(Sender: TObject);
 begin
-  if Engine.Options.ConfigFile <> '' then
-    PHPIniFileEdit.Text := Engine.Options.ConfigFile;
-{  else
-    PHPIniFileEdit.Text := IncludeTrailingPathDelimiter(GetWinDir) + 'php.ini';}
   PageControl.TabIndex := 0;
+end;
+
+procedure TPHPIniForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+
 end;
 
 procedure TPHPIniForm.Button3Click(Sender: TObject);
@@ -179,4 +185,25 @@ begin
   end;
 end;
 
+type
+  TOpenPHPConfigAddon = class(TAddon, IClickAddon, IMenuAddon)
+  public
+    procedure Click(Sender: TObject);
+    function GetCaption: string;
+  end;
+
+  { TAssociateAddon }
+
+  procedure TOpenPHPConfigAddon.Click(Sender: TObject);
+  begin
+    ShowPHPIniForm;
+  end;
+
+  function TOpenPHPConfigAddon.GetCaption: string;
+  begin
+    Result := 'PHP Config';
+  end;
+
+initialization
+  Addons.Add('PHP', 'OpenPHPConfigAddon', TOpenPHPConfigAddon);
 end.

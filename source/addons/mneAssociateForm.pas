@@ -1,5 +1,6 @@
 unit mneAssociateForm;
 {$mode objfpc}
+{$H+}
 {**
  * Mini Edit
  *
@@ -37,28 +38,6 @@ implementation
 
 uses
   Registry, ShlObj, EditorEngine;
-
-type
-  TAssociateAddon = class(TAddon, IClickAddon, IMenuAddon)
-  public
-    procedure Click(Sender: TObject);
-    function GetCaption: string;
-  end;
-
-  { TAssociateAddon }
-
-  procedure TAssociateAddon.Click(Sender: TObject);
-  begin
-    with TAssociateForm.Create(Application) do
-    begin
-      ShowModal;// = mrOK;
-    end;
-  end;
-
-  function TAssociateAddon.GetCaption: string;
-  begin
-    Result := 'Associate';
-  end;
 
 procedure TAssociateForm.Apply;
 var
@@ -170,6 +149,28 @@ procedure TAssociateForm.OkBtnClick(Sender: TObject);
 begin
   Apply;
 end;
+
+type
+  TAssociateAddon = class(TAddon, IClickAddon, IMenuAddon)
+  public
+    procedure Click(Sender: TObject);
+    function GetCaption: string;
+  end;
+
+  { TAssociateAddon }
+
+  procedure TAssociateAddon.Click(Sender: TObject);
+  begin
+    with TAssociateForm.Create(Application) do
+    begin
+      ShowModal;// = mrOK;
+    end;
+  end;
+
+  function TAssociateAddon.GetCaption: string;
+  begin
+    Result := 'Associate';
+  end;
 
 initialization
   Addons.Add('File', 'Associate', TAssociateAddon);

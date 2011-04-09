@@ -1606,14 +1606,6 @@ object MainForm: TMainForm
         Visible = False
         OnClick = ExtractkeywordsClick
       end
-      object InstallXDebug1: TMenuItem
-        Action = PHPIniConfigAct
-        OnClick = PHPIniConfigActExecute
-      end
-      object OpenPHPiniAct1: TMenuItem
-        Action = OpenPHPiniAct
-        OnClick = OpenPHPiniActExecute
-      end
     end
     object Help1: TMenuItem
       Caption = '&Help'
@@ -2086,11 +2078,6 @@ object MainForm: TMainForm
       Caption = 'Prior Message'
       OnExecute = PriorMessageActExecute
       ShortCut = 32886
-    end
-    object OpenPHPiniAct: TAction
-      Category = 'Tools'
-      Caption = 'Open PHP ini'
-      OnExecute = OpenPHPiniActExecute
     end
     object SVNCompareToAct: TAction
       Category = 'TSVN'

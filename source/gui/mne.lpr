@@ -43,6 +43,7 @@ uses
   SearchProgressForms in '..\editor\SearchProgressForms.pas' {SearchProgressForm},
   SynHighlighterApache in '..\lib\SynHighlighterApache.pas',
   IniFiles,
+  mneAddons,
   PHPUtils in '..\lib\PHPUtils.pas';
 
 {$R *.res}
@@ -120,4 +121,4 @@ begin
     end;
   end;
 end.
-
+
