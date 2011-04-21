@@ -1306,7 +1306,7 @@ begin
       if NumberEdit.Text <> '' then
       begin
         LastGotoLine := StrToIntDef(NumberEdit.Text, 0);
-        //Engine.Files.Current.SynEdit.GotoLineAndCenter(LastGotoLine);
+        Engine.Files.Current.SynEdit.CaretXY := Point(0, LastGotoLine);
       end;
     end;
     Free;

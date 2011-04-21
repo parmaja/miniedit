@@ -12,11 +12,15 @@ uses
   Dialogs, StdCtrls;
 
 type
-  TGotoLineForm = class(TForm)
+
+  { TGotoLineForm }
+
+TGotoLineForm = class(TForm)
     NumberEdit: TEdit;
     Label1: TLabel;
     OkBtn: TButton;
     CancelBtn: TButton;
+    procedure NumberEditKeyPress(Sender: TObject; var Key: char);
   private
     { Private declarations }
   public
@@ -27,4 +31,12 @@ implementation
 
 {$R *.lfm}
 
-end.
+{ TGotoLineForm }
+
+procedure TGotoLineForm.NumberEditKeyPress(Sender: TObject; var Key: char);
+begin
+  if Key = #13 then
+    Key := #0;
+end;
+
+end.

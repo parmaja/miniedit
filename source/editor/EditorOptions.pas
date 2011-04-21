@@ -211,7 +211,7 @@ begin
   LineSpacingEdit.Text := IntToStr(FProfile.ExtraLineSpacing);
   TabWidthEdit.Text := IntToStr(FProfile.TabWidth);
   //Font
-  FontLbl.Font.Assign(FProfile.Font);
+  SampleEdit.Font.Assign(FProfile.Font);
   FontLbl.Caption := FontLbl.Font.Name + ' ' + IntToStr(FontLbl.Font.Size) + 'pt';
   //Options
   AutoIndentChk.Checked := eoAutoIndent in FProfile.Options;
@@ -282,7 +282,7 @@ begin
   FProfile.ExtraLineSpacing := StrToIntDef(LineSpacingEdit.Text, 0);
   FProfile.TabWidth := StrToIntDef(TabWidthEdit.Text, 8);
   //Font
-  FProfile.Font.Assign(FontLbl.Font);
+  FProfile.Font.Assign(SampleEdit.Font);
   //Options
   vOptions := FProfile.Options; //Keep old values for unsupported options
   vExtOptions := FProfile.ExtOptions;
@@ -563,4 +563,4 @@ begin
 end;
 
 end.
-
+

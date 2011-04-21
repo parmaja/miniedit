@@ -10,7 +10,7 @@ object GotoLineForm: TGotoLineForm
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Position = poMainFormCenter
-  LCLVersion = '0.9.29'
+  LCLVersion = '0.9.31'
   object Label1: TLabel
     Left = 17
     Height = 14
@@ -24,6 +24,7 @@ object GotoLineForm: TGotoLineForm
     Height = 21
     Top = 13
     Width = 123
+    OnKeyPress = NumberEditKeyPress
     TabOrder = 0
   end
   object OkBtn: TButton

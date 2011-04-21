@@ -357,7 +357,7 @@ object EditorOptionsForm: TEditorOptionsForm
         end
         object RightEdgeColorCbo: TColorBox
           Left = 7
-          Height = 24
+          Height = 22
           Top = 52
           Width = 145
           Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
@@ -465,7 +465,7 @@ object EditorOptionsForm: TEditorOptionsForm
         end
         object GutterColorCbo: TColorBox
           Left = 174
-          Height = 24
+          Height = 22
           Top = 77
           Width = 145
           Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
@@ -836,7 +836,7 @@ object EditorOptionsForm: TEditorOptionsForm
       end
       object BackgroundCbo: TColorBox
         Left = 89
-        Height = 24
+        Height = 22
         Top = 117
         Width = 100
         DefaultColorColor = clWhite
@@ -849,7 +849,7 @@ object EditorOptionsForm: TEditorOptionsForm
       end
       object ForegroundCbo: TColorBox
         Left = 89
-        Height = 24
+        Height = 22
         Top = 90
         Width = 100
         Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
@@ -944,7 +944,7 @@ object EditorOptionsForm: TEditorOptionsForm
       end
       object DefBackgroundCbo: TColorBox
         Left = 245
-        Height = 24
+        Height = 22
         Top = 6
         Width = 100
         DefaultColorColor = clWhite
@@ -957,7 +957,7 @@ object EditorOptionsForm: TEditorOptionsForm
       end
       object DefForegroundCbo: TColorBox
         Left = 71
-        Height = 24
+        Height = 22
         Top = 6
         Width = 100
         Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
