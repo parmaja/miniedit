@@ -18,8 +18,8 @@ object EditorOptionsForm: TEditorOptionsForm
     Height = 379
     Top = 4
     Width = 362
-    ActivePage = ColorTab
-    TabIndex = 2
+    ActivePage = OptionsTab
+    TabIndex = 0
     TabOrder = 0
     OnChange = PageControlChange
     object OptionsTab: TTabSheet
@@ -138,7 +138,7 @@ object EditorOptionsForm: TEditorOptionsForm
           Left = 176
           Height = 17
           Hint = 'Spaces at the end of lines will be trimmed and not saved'
-          Top = 156
+          Top = 157
           Width = 108
           Caption = 'Trim trailing spaces'
           TabOrder = 21
@@ -219,7 +219,7 @@ object EditorOptionsForm: TEditorOptionsForm
           Left = 176
           Height = 17
           Hint = 'Shows linebreaks, spaces and tabs using special symbols'
-          Top = 213
+          Top = 212
           Width = 110
           Caption = 'Show special chars'
           TabOrder = 24
@@ -228,7 +228,7 @@ object EditorOptionsForm: TEditorOptionsForm
           Left = 176
           Height = 17
           Hint = 'When clicking with the right mouse for a popup menu, move the cursor to that location'
-          Top = 194
+          Top = 193
           Width = 143
           Caption = 'Right mouse moves cursor'
           TabOrder = 23
@@ -259,6 +259,15 @@ object EditorOptionsForm: TEditorOptionsForm
           Width = 73
           Caption = 'Word Wrap'
           TabOrder = 12
+        end
+        object BracketHighlightChk: TCheckBox
+          Left = 176
+          Height = 17
+          Hint = 'Shows linebreaks, spaces and tabs using special symbols'
+          Top = 231
+          Width = 97
+          Caption = 'Bracket highlight'
+          TabOrder = 25
         end
       end
       object CaretGrp: TGroupBox
@@ -1028,7 +1037,7 @@ object EditorOptionsForm: TEditorOptionsForm
     MinFontSize = 0
     MaxFontSize = 0
     Options = [fdEffects, fdFixedPitchOnly]
-    left = 171
-    top = 292
+    left = 73
+    top = 300
   end
 end

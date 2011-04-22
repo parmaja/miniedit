@@ -34,6 +34,7 @@ type
 
   TEditorOptionsForm = class(TForm)
     Bevel1: TBevel;
+    BracketHighlightChk: TCheckBox;
     DefBackgroundCbo: TColorBox;
     BoldChk: TCheckBox;
     FontBtn: TButton;
@@ -236,6 +237,7 @@ begin
   DisableScrollArrowsChk.Checked := eoDisableScrollArrows in FProfile.Options;
   HideShowScrollbarsChk.Checked := eoHideShowScrollbars in FProfile.Options;
   ShowSpecialCharsChk.Checked := eoShowSpecialChars in FProfile.Options;
+  BracketHighlightChk.Checked := eoBracketHighlight in FProfile.Options;
   //Caret
   InsertModeChk.Checked := FProfile.InsertMode;
   InsertCaretCbo.ItemIndex := Ord(FProfile.InsertCaret);
@@ -308,6 +310,7 @@ begin
   SetFlag(eoDisableScrollArrows, DisableScrollArrowsChk.Checked);
   SetFlag(eoHideShowScrollbars, HideShowScrollbarsChk.Checked);
   SetFlag(eoShowSpecialChars, ShowSpecialCharsChk.Checked);
+  SetFlag(eoBracketHighlight, BracketHighlightChk.Checked);
   FProfile.Options := vOptions;
   FProfile.ExtOptions := vExtOptions;
   //Caret

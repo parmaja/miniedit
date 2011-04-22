@@ -11,7 +11,7 @@ interface
 uses
   Messages, SysUtils, Forms, StrUtils, Dialogs,Variants, Classes, Controls, Graphics, Contnrs,
   IniFiles, EditorOptions, EditorProfiles, SynEditMarks, SynCompletion, SynEditTypes,
-  SynEditMiscClasses, SynEditHighlighter, SynEditSearch, SynEdit, EditorDebugger, EditorSCM, IAddons,
+  SynEditMiscClasses, SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, SynEdit, EditorDebugger, EditorSCM, IAddons,
   mnXMLRttiProfile, mnXMLUtils, mnUtils, LCLType;
 
 type
@@ -171,11 +171,10 @@ type
     procedure Edit;
     procedure DoEdit(Sender: TObject);
     procedure DoStatusChange(Sender: TObject; Changes: TSynStatusChanges);
-    procedure DoGutterClickEvent(Sender: TObject; Button: TMouseButton; X, Y, Line: integer; Mark: TSynEditMark);
+    procedure DoGutterClickEvent(Sender: TObject; X, Y, Line: integer; Mark: TSynEditMark);
     procedure DoSpecialLineColors(Sender: TObject; Line: Integer; var Special: Boolean; var FG, BG: TColor);
     procedure UpdateAge;
     function GetHighlighter: TSynCustomHighlighter; virtual;
-    //procedure EditorPaintTransient(Sender: TObject; Canvas: TCanvas; TransientType: TTransientType); virtual;
     procedure NewSource; virtual;
   public
     constructor Create(Collection: TCollection); override;
@@ -1441,17 +1440,16 @@ begin
   FSynEdit := TSynEdit.Create(Engine.Window);
   FSynEdit.OnChange := DoEdit;
   FSynEdit.OnStatusChange := DoStatusChange;
-  //FSynEdit.OnGutterClick := DoGutterClickEvent;
+  FSynEdit.OnGutterClick := DoGutterClickEvent;
   FSynEdit.OnSpecialLineColors := DoSpecialLineColors;
+  FSynEdit.BookMarkOptions.BookmarkImages := EditorResource.BookmarkImages;
   FSynEdit.BoundsRect := Engine.Window.ClientRect;
   FSynEdit.BorderStyle := bsNone;
   FSynEdit.Visible := False;
   FSynEdit.Align := alClient;
   FSynEdit.Realign;
   FSynEdit.WantTabs := True;
-  //FSynEdit.SearchEngine := Engine.SearchEngine;
   FSynEdit.Parent := Engine.Window;
-  //FSynEdit.OnPaintTransient := EditorPaintTransient;
   TDebugSupportPlugin.Create(Self);
 end;
 
@@ -1743,11 +1741,6 @@ begin
     Engine.UpdateState([ecsState, ecsRefresh]);
   end;
 end;
-(*
-procedure TEditorFile.EditorPaintTransient(Sender: TObject;
-  Canvas: TCanvas; TransientType: TTransientType);
-begin
-end;*)
 
 procedure TEditorFile.DoSpecialLineColors(Sender: TObject; Line: Integer; var Special: Boolean; var FG, BG: TColor);
 begin
@@ -1762,8 +1755,7 @@ begin
   end;
 end;
 
-procedure TEditorFile.DoGutterClickEvent(Sender: TObject;
-  Button: TMouseButton; X, Y, Line: integer; Mark: TSynEditMark);
+procedure TEditorFile.DoGutterClickEvent(Sender: TObject; X, Y, Line: integer; Mark: TSynEditMark);
 var
   aLine: Integer;
 begin

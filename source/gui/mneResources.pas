@@ -13,8 +13,12 @@ uses
   SysUtils, Classes, ImgList, Controls;
 
 type
+
+  { TEditorResource }
+
   TEditorResource = class(TDataModule)
     SmallImages: TImageList;
+    BookmarkImages: TImageList;
     ToolbarImageList: TImageList;
     procedure DataModuleCreate(Sender: TObject);
   private
@@ -22,7 +26,7 @@ type
   end;
 
 var
-  EditorResource: TEditorResource;
+  EditorResource: TEditorResource = nil;
 
 implementation
 
