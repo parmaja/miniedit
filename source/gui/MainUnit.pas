@@ -2167,7 +2167,7 @@ begin
     s := IntToStr(Engine.Files.Current.SynEdit.CaretY) + ':' + IntToStr(Engine.Files.Current.SynEdit.CaretX);
     if Engine.Files.Current.SynEdit.SelAvail then
     begin
-      //  r := Engine.Files.Current.SynEdit.ScreenRowToRow(Engine.Files.Current.SynEdit.SelEnd).Line - Engine.Files.Current.SynEdit.CharIndexToRowCol(Engine.Files.Current.SynEdit.SelStart).Line + 1;
+      r := Engine.Files.Current.SynEdit.BlockEnd.y - Engine.Files.Current.SynEdit.BlockBegin.y + 1;
       s := s + ' [' + IntToStr(r) + ']';
     end;
     CursorPnl.Caption := s;

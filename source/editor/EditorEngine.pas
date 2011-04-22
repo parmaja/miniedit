@@ -1,5 +1,5 @@
 unit EditorEngine;
-{$mode delphi}
+{$mode delphi}{$H+}
 {**
  * Mini Edit
  *
@@ -11,7 +11,8 @@ interface
 uses
   Messages, SysUtils, Forms, StrUtils, Dialogs,Variants, Classes, Controls, Graphics, Contnrs,
   IniFiles, EditorOptions, EditorProfiles, SynEditMarks, SynCompletion, SynEditTypes,
-  SynEditMiscClasses, SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, SynEdit, EditorDebugger, EditorSCM, IAddons,
+  SynEditMiscClasses, SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, SynEdit,
+  SynEditTextTrimmer, SynTextDrawer, EditorDebugger, EditorSCM, IAddons,
   mnXMLRttiProfile, mnXMLUtils, mnUtils, LCLType;
 
 type
@@ -524,7 +525,7 @@ var
 implementation
 
 uses
-  SynHighlighterHTMLPHP, SynHighlighterHashEntries, Registry, SearchForms,
+  SynHighlighterApache, SynHighlighterHTMLPHP, SynHighlighterHashEntries, Registry, SearchForms,
   mneResources;
 
 function SelectFolder(const Caption: string; const Root: WideString; var Directory: string): Boolean;
@@ -1443,6 +1444,7 @@ begin
   FSynEdit.OnGutterClick := DoGutterClickEvent;
   FSynEdit.OnSpecialLineColors := DoSpecialLineColors;
   FSynEdit.BookMarkOptions.BookmarkImages := EditorResource.BookmarkImages;
+  FSynEdit.TrimSpaceType := settLeaveLine;
   FSynEdit.BoundsRect := Engine.Window.ClientRect;
   FSynEdit.BorderStyle := bsNone;
   FSynEdit.Visible := False;
