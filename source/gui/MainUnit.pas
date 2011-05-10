@@ -1699,7 +1699,7 @@ end;
 
 procedure TMainForm.EngineDebug;
 begin
-  DebugPnl.Caption := Engine.Debug.GetSessionName;
+  DebugPnl.Caption := Engine.Debug.GetKey;
   UpdateFileHeaderPanel;
   UpdateWatches;
   Engine.Files.Refresh; // not safe thread
@@ -1707,7 +1707,7 @@ end;
 
 procedure TMainForm.UpdateFileHeaderPanel;
 begin
-  if (Engine.Files.Current <> nil) and (Engine.Files.Current.SynEdit = Engine.Debug.ExecuteEdit) then
+  if (Engine.Files.Current <> nil) and (Engine.Files.Current.SynEdit = Engine.Debug.ExecutedEdit) then
     FileHeaderPanel.Color := $00C6C6EC
   else
     FileHeaderPanel.Color := $00EEE0D7;

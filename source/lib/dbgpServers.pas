@@ -36,7 +36,7 @@ type
   TdbgpAction = class(TObject)
   private
     FConnection: TdbgpConnection;
-    FSessionName: string;
+    FKey: string;
     FFlags: TdbgpActionFlags;
   protected
     FTransactionID: Integer;
@@ -48,7 +48,7 @@ type
     function Stay: Boolean; virtual;
     function Enabled: Boolean; virtual;
     function Accept: Boolean; virtual;
-    property SessionName: string read FSessionName;
+    property Key: string read FKey;
     property Connection: TdbgpConnection read FConnection;
     property Flags: TdbgpActionFlags read FFlags write FFlags;
   public
@@ -192,7 +192,7 @@ type
   TdbgpConnection = class(TmnServerConnection)
   private
     FSpool: TdbgpConnectionSpool;
-    FSessionName: string;
+    FKey: string;
     function GetServer: TdbgpServer;
   public
     FTransactionID: Integer;
@@ -211,7 +211,7 @@ type
     constructor Create(Socket: TmnCustomSocket); override;
     destructor Destroy; override;
     procedure Stop; override;
-    property SessionName: string read FSessionName;
+    property Key: string read FKey;
     property Server: TdbgpServer read GetServer;
   published
   end;
@@ -564,7 +564,7 @@ begin
       while i < Server.Spool.Count do
       begin
         aAction := Server.Spool.Extract(Server.Spool[i]) as TdbgpAction;
-//        if aAction.SessionName = SessionName then
+//        if aAction.Key = Key then
         FSpool.Add(aAction);
 //        else
 //        inc(i);
@@ -742,7 +742,7 @@ begin
   DBGLock.Lock;
   try
     Connection.Server.Watches.Clean;
-    Connection.FSessionName := Respond.Root.Attributes['idekey'];
+    Connection.FKey := Respond.Root.Attributes['idekey'];
   finally
     DBGLock.Unlock;
   end;

@@ -13,6 +13,10 @@ uses
   IniFiles, EditorOptions, EditorProfiles, SynEditMarks, SynCompletion, SynEditTypes,
   SynEditMiscClasses, SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, SynEdit,
   SynEditTextTrimmer, SynTextDrawer, EditorDebugger, EditorSCM, IAddons,
+  {$ifdef Windows}
+  dbgpServers,
+  PHP_xDebug,
+  {$endif}
   mnXMLRttiProfile, mnXMLUtils, mnUtils, LCLType;
 
 type
@@ -199,6 +203,8 @@ type
   published
   end;
 
+  { TEditorFiles }
+
   TEditorFiles = class(TCollection)
   private
     FCheckChanged: Boolean;
@@ -211,6 +217,7 @@ type
   protected
     function SetActiveFile(FileName: string): TEditorFile;
   public
+    destructor Destroy; override;
     function FindFile(const vFileName: string): TEditorFile;
     function IsExist(vName: string): Boolean;
     function LoadFile(vFileName: string; AppendToRecent: Boolean = True): TEditorFile;
@@ -873,7 +880,12 @@ end;
 
 function TEditorEngine.CreateDebugger: TEditorDebugger;
 begin
+  {$ifdef WINDOWS}
+  Result := TPHP_xDebug.Create;
+  Result.Start;
+  {$else}
   Result := TEditorDebugger.Create;
+  {$endif}
 end;
 
 function TEditorEngine.CreateSCM: TEditorSCM;
@@ -1374,6 +1386,11 @@ begin
     Current := Result;
 end;
 
+destructor TEditorFiles.Destroy;
+begin
+  inherited Destroy;
+end;
+
 function TEditorFiles.ShowFile(vFileName: string): TEditorFile;
 begin
   Result := InternalOpenFile(vFileName, False);
@@ -1452,7 +1469,7 @@ begin
   FSynEdit.Realign;
   FSynEdit.WantTabs := True;
   FSynEdit.Parent := Engine.Window;
-  TDebugSupportPlugin.Create(Self);
+  //TDebugSupportPlugin.Create(Self);
 end;
 
 destructor TEditorFile.Destroy;
@@ -1746,9 +1763,9 @@ end;
 
 procedure TEditorFile.DoSpecialLineColors(Sender: TObject; Line: Integer; var Special: Boolean; var FG, BG: TColor);
 begin
-  if Engine.Debug.ExecuteEdit = Sender then
+  if Engine.Debug.ExecutedEdit = Sender then
   begin
-    if Engine.Debug.ExecuteLine = Line then
+    if Engine.Debug.ExecutedLine = Line then
     begin
       Special := True;
       BG := clNavy;
@@ -2221,10 +2238,10 @@ var
 begin
   inherited;
   lh := FEditorFile.SynEdit.LineHeight;
-  if (Engine.Debug.ExecuteEdit = FEditorFile.SynEdit) and (Engine.Debug.ExecuteLine >= 0) then
+  if (Engine.Debug.ExecutedEdit = FEditorFile.SynEdit) and (Engine.Debug.ExecutedLine >= 0) then
   begin
     x := 14;
-    Y := (lh - EditorResource.SmallImages.Height) div 2 + lh * (FEditorFile.SynEdit.RowToScreenRow(Engine.Debug.ExecuteLine) - FEditorFile.SynEdit.TopLine);
+    Y := (lh - EditorResource.SmallImages.Height) div 2 + lh * (FEditorFile.SynEdit.RowToScreenRow(Engine.Debug.ExecutedLine) - FEditorFile.SynEdit.TopLine);
     EditorResource.SmallImages.Draw(ACanvas, X, Y, 3);
   end;
 

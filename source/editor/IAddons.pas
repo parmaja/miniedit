@@ -18,9 +18,14 @@ uses
   SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs;
 
 type
+  TAddonStatus = (adnsNone, adnsActive);
+
+  { IAddon }
+
   IAddon = interface(IInterface)
     ['{D87616D9-5B2E-464A-BBB1-5881D1F0FEA7}']
     function GetObject: TObject;
+    function Status: TAddonStatus;
   end;
 
   { TAddonObject }
@@ -32,10 +37,12 @@ type
   public
     function GetObject: TObject;
     function QueryInterface(const IID: TGUID; out Obj): HResult; virtual; stdcall;
+    destructor Destroy; override;
   end;
 
   TAddon = class(TAddonObject, IAddon)
   public
+     function Status: TAddonStatus;
   end;
 
   TAddonClass = class of TAddon;
@@ -45,11 +52,12 @@ type
   TAddonItem = class(TObject)
   protected
     FAddon: IAddon;
-    FAddonObject: TObject;//kill this object when free
+    FAddonObject: TAddon;//kill this object when free
   public
     ID: int64;
     Category: string;
     Name: string;
+    constructor Create;
     destructor Destroy; override;
     property Addon: IAddon read FAddon;
   end;
@@ -78,6 +86,13 @@ type
     function GetCaption: string;
   end;
 
+  ICheckAddon = interface(IAddon)
+    ['{439B198B-E879-4779-AC70-5F2F378719DA}']
+    function GetChecked: Boolean;
+    procedure SetChecked(AValue: Boolean);
+    property Checked: Boolean read GetChecked write SetChecked;
+  end;
+
   IMenuAddon = interface(ICaptionAddon)
     ['{23FA4EA8-C13E-4110-A6AC-B97489E9E10A}']
   end;
@@ -91,6 +106,11 @@ type
     procedure ShowSetup;
   end;
 
+  IDebugAddon = interface(IAddon)
+  ['{FB4CD381-EE59-4259-8A04-0F80F161710E}']
+  //TODO add debug methods
+  end;
+
 function Addons: TAddons;
 
 implementation
@@ -101,14 +121,26 @@ var
 function Addons: TAddons;
 begin
   if FAddons = nil then
-    FAddons := TAddons.Create;
+    FAddons := TAddons.Create(True);
   Result := FAddons;
+end;
+
+function TAddon.Status: TAddonStatus;
+begin
+  Result := adnsActive;
 end;
 
 { TAddonItem }
 
+constructor TAddonItem.Create;
+begin
+  inherited Create;
+  FAddonObject := nil;
+end;
+
 destructor TAddonItem.Destroy;
 begin
+  FAddon := nil;//i need that :-(
   FreeAndNil(FAddonObject);
   inherited Destroy;
 end;
@@ -135,7 +167,7 @@ var
 begin
   AO := vAddon.Create;
   Result := Add(Category, Name, AO);
-  Result.FAddonObject := AO;//to kill the object when free the list
+  Result.FAddonObject := AO; //to kill the object when free the list
 end;
 
 function TAddonObject._AddRef: integer; stdcall;
@@ -161,5 +193,13 @@ begin
     Result := E_NOINTERFACE;
 end;
 
+destructor TAddonObject.Destroy;
+begin
+  inherited Destroy;
+end;
+
+initialization
+finalization
+  FreeAndNil(FAddons);
 end.
 

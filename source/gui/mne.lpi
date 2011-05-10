@@ -276,7 +276,16 @@
       <OtherUnitFiles Value="..\editor;..\lib;..\addons;W:\programs\lazarus\components\synedit\units\i386-win32\;W:\home\pascal\lib\minilib\xml\source\;W:\home\pascal\lib\minilib\lib\;W:\home\pascal\lib\minilib\lazarus\lib\;W:\home\pascal\lib\minilib\socket\source\;$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS);$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
+    <CodeGeneration>
+      <Optimizations>
+        <OptimizationLevel Value="0"/>
+      </Optimizations>
+    </CodeGeneration>
     <Linking>
+      <Debugging>
+        <GenerateDebugInfo Value="True"/>
+        <UseHeaptrc Value="True"/>
+      </Debugging>
       <Options>
         <Win32>
           <GraphicApplication Value="True"/>

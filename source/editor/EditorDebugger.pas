@@ -26,15 +26,19 @@ type
 
   { TEditorDebugger }
 
-  TEditorDebugger = class(TAddon)
+  TEditorDebugger = class(TAddon, IDebugAddon, ICheckAddon)
   private
-    FExecuteLine: integer;
-    FExecuteEdit: TCustomSynEdit;
+    FExecutedLine: integer;
+    FExecutedEdit: TCustomSynEdit;
+    FKey: string;
     function GetActive: Boolean;
     procedure SetActive(const AValue: Boolean);
   protected
+    //procedure Notification(AComponent: TComponent; Operation: TOperation); override;
     function GetBreakpoints(Index: Integer): TEditBreakpoint; virtual;
     function GetWatches(Index: Integer): TEditWatch; virtual;
+    function GetChecked: Boolean;
+    procedure SetChecked(AValue: Boolean);
   public
     procedure Start; virtual;
     procedure Stop; virtual;
@@ -48,6 +52,8 @@ type
     procedure Unlock; virtual;
     function IsRuning: Boolean; virtual;
 
+    function IsConnected: Boolean; virtual;
+
     procedure RunToCursor(FileName:string; LineNo: Integer); virtual;
     procedure ToggleBreakpoint(FileName:string; LineNo: Integer); virtual;
     function IsBreakpoint(FileName:string; LineNo: Integer): Boolean; virtual;
@@ -55,8 +61,8 @@ type
     procedure RemoveBreakpoint(FileName:string; Line: Integer); virtual; overload;
     procedure RemoveBreakpoint(Handle: Integer); virtual; overload;
 
-    property ExecuteLine: integer read FExecuteLine;
-    property ExecuteEdit: TCustomSynEdit read FExecuteEdit;
+    property ExecutedLine: integer read FExecutedLine;
+    property ExecutedEdit: TCustomSynEdit read FExecutedEdit write FExecutedEdit;
     function BreakpointsCount: Integer; virtual;
     procedure BreakpointsClear; virtual;
     property Breakpoints[Index: Integer]: TEditBreakpoint read GetBreakpoints;
@@ -68,11 +74,17 @@ type
     property Watches[Index: Integer]: TEditWatch read GetWatches;
     function GetWatchValue(vName:string; var vValue: string): Boolean; virtual;
 
-    function GetSessionName: string; virtual;
+    function GetKey: string; virtual;
     property Active: Boolean read GetActive write SetActive;
+
+    procedure SetExecuted(Key: string; Edit: TCustomSynEdit; const Line: integer); overload;
+    procedure SetExecuted(Key: string; FileName: string; const Line: integer); overload;
   end;
 
 implementation
+
+uses
+  EditorEngine;
 
 { TEditorDebugger }
 
@@ -84,6 +96,16 @@ end;
 function TEditorDebugger.GetWatches(Index: Integer): TEditWatch;
 begin
   raise Exception.Create('Out of index');
+end;
+
+function TEditorDebugger.GetChecked: Boolean;
+begin
+  Result := Active;
+end;
+
+procedure TEditorDebugger.SetChecked(AValue: Boolean);
+begin
+  Active := AValue;
 end;
 
 function TEditorDebugger.GetActive: Boolean;
@@ -147,6 +169,11 @@ begin
   Result := False;
 end;
 
+function TEditorDebugger.IsConnected: Boolean;
+begin
+  Result := False;
+end;
+
 procedure TEditorDebugger.RunToCursor(FileName: string; LineNo: Integer);
 begin
 end;
@@ -203,10 +230,59 @@ begin
   Result := False;
 end;
 
-function TEditorDebugger.GetSessionName: string;
+function TEditorDebugger.GetKey: string;
 begin
-  Result := ''
+  Result := FKey;
 end;
+
+procedure TEditorDebugger.SetExecuted(Key: string; Edit: TCustomSynEdit; const Line: integer);
+var
+  OldLine: integer;
+  OldEdit: TCustomSynEdit;
+begin
+  FKey := Key;
+  if (FExecutedEdit <> Edit) or (FExecutedLine <> Line) then
+  begin
+    OldLine := FExecutedLine;
+    OldEdit := FExecutedEdit;
+
+    FExecutedLine := Line;
+
+{    if ExecutedEdit <> nil then
+      RemoveFreeNotification(FExecutedEdit);
+    FExecutedEdit := Edit;
+    if ExecutedEdit <> nil then
+      FreeNotification(FExecutedEdit);}
+
+    if OldEdit <> nil then
+      OldEdit.InvalidateLine(OldLine);
+
+    if ExecutedEdit <> nil then
+    begin
+      ExecutedEdit.CaretY := FExecutedLine;
+      ExecutedEdit.CaretX := 1;
+      ExecutedEdit.InvalidateLine(FExecutedLine);
+    end;
+  end;
+  Engine.UpdateState([ecsDebug]);
+  //SetForegroundWindow(Application.MainForm.Handle);
+end;
+
+procedure TEditorDebugger.SetExecuted(Key: string; FileName: string; const Line: integer);
+var
+  aFile: TEditorFile;
+begin
+  inherited;
+  aFile := Engine.Files.ShowFile(FileName);
+  SetExecuted(Key, aFile.SynEdit, Line);
+end;
+
+{procedure TEditorDebugger.Notification(AComponent: TComponent; Operation: TOperation);
+begin
+  inherited;
+  if (Operation = opRemove) and (AComponent = FDebug.ExecutedEdit) then
+    FDebug.ExecutedEdit := nil;
+end;}
 
 end.
 
