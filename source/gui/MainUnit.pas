@@ -1736,7 +1736,7 @@ begin
   WatchList.Clear;
   Engine.Debug.Lock;
   try
-    for i := 0 to Engine.Debug.WatchesCount - 1 do
+    for i := 0 to Engine.Debug.Watches.Count - 1 do
     begin
       aItem := WatchList.Items.Add;
       aItem.ImageIndex := 41;
@@ -1837,7 +1837,7 @@ begin
   s := Trim(s);
   if s <> '' then
   begin
-    Engine.Debug.AddWatch(s);
+    Engine.Debug.Watches.Add(s);
     UpdateWatches;
   end;
 end;
@@ -1849,7 +1849,7 @@ end;
 
 procedure TMainForm.DeleteWatch(s: string);
 begin
-  Engine.Debug.RemoveWatch(s);
+  Engine.Debug.Watches.Remove(s);
   UpdateWatches;
 end;
 

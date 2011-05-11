@@ -37,7 +37,7 @@ type
   TPHP_xDebugBreakPoints = class(TEditorBreakPoints)
   protected
     FDebug: TPHP_xDebug;
-    function GetCount: Integer; override;
+    function GetCount: integer; override;
     function GetItems(Index: integer): TEditBreakpoint; virtual;
   public
     procedure Clear; override;
@@ -48,15 +48,28 @@ type
     procedure Remove(Handle: integer); override; overload;
   end;
 
+  { TPHP_xDebugWatches }
+
+  TPHP_xDebugWatches = class(TEditorWatches)
+  protected
+    FDebug: TPHP_xDebug;
+    function GetCount: integer; override;
+    function GetItems(Index: integer): TEditWatch; virtual;
+  public
+    procedure Clear; override;
+    procedure Add(vName: string); override;
+    procedure Remove(vName: string); override;
+    function GetWatchValue(vName: string; var vValue: string): boolean; override;
+  end;
+
   { TPHP_xDebug }
 
   TPHP_xDebug = class(TEditorDebugger)
   private
     FServer: TPHP_xDebugServer;
-    FWatches: TdbgpWatches;
   protected
-    property Watches: TdbgpWatches read FWatches;
     function CreateBreakPoints: TEditorBreakPoints; override;
+    function CreateWatches: TEditorWatches; override;
   public
     constructor Create;
     destructor Destroy; override;
@@ -69,20 +82,63 @@ type
     procedure Run; override;
     procedure Lock; override;
     procedure Unlock; override;
-    function IsRuning: Boolean; override;
+    function IsRuning: boolean; override;
     procedure RunToCursor(FileName: string; LineNo: integer); override;
     function GetKey: string; override;
-
-    procedure ToggleBreakpoint(FileName:string; LineNo: Integer);
-
-    function GetWatchValue(vName:string; var vValue: string): Boolean; override;
-end;
+  end;
 
 implementation
 
+{ TPHP_xDebugWatches }
+
+function TPHP_xDebugWatches.GetCount: integer;
+begin
+  with FDebug.FServer do
+    Result := Watches.Count;
+end;
+
+function TPHP_xDebugWatches.GetItems(Index: integer): TEditWatch;
+var
+  aWt: TdbgpWatch;
+begin
+  with FDebug.FServer do
+    aWt := Watches[Index];
+  Result.Name := aWt.VariableName;
+  Result.Value := aWt.Value;
+  Result.VarType := aWt.VariableType;
+end;
+
+procedure TPHP_xDebugWatches.Clear;
+begin
+  inherited Clear;
+end;
+
+procedure TPHP_xDebugWatches.Add(vName: string);
+begin
+  inherited Add(vName);
+end;
+
+procedure TPHP_xDebugWatches.Remove(vName: string);
+begin
+  inherited Remove(vName);
+end;
+
+function TPHP_xDebugWatches.GetWatchValue(vName: string; var vValue: string): boolean;
+var
+  aAction: TdbgpGetWatchInstance;
+begin
+  aAction := TdbgpGetWatchInstance.Create;
+  aAction.VariableName := vName;
+  with FDebug.FServer do
+  begin
+    AddAction(aAction);
+    Resume;
+  end;
+end;
+
 { TPHP_xDebugBreakPoints }
 
-function TPHP_xDebugBreakPoints.GetCount: Integer;
+function TPHP_xDebugBreakPoints.GetCount: integer;
 begin
   with FDebug.FServer do
     Result := Breakpoints.Count;
@@ -148,17 +204,21 @@ begin
   (Result as TPHP_xDebugBreakPoints).FDebug := Self;
 end;
 
+function TPHP_xDebug.CreateWatches: TEditorWatches;
+begin
+  Result := TPHP_xDebugWatches.Create;
+  (Result as TPHP_xDebugWatches).FDebug := Self;
+end;
+
 constructor TPHP_xDebug.Create;
 begin
   inherited Create;
   FServer := TPHP_xDebugServer.Create(nil);
   FServer.FDebug := Self;
-  FWatches := TdbgpWatches.Create;
 end;
 
 destructor TPHP_xDebug.Destroy;
 begin
-  FreeAndNil(FWatches);
   FreeAndNil(FServer);
   inherited;
 end;
@@ -224,14 +284,9 @@ begin
   DBGLock.Unlock;
 end;
 
-function TPHP_xDebug.IsRuning: Boolean;
+function TPHP_xDebug.IsRuning: boolean;
 begin
   Result := FServer.Count > 0;
-end;
-
-procedure TPHP_xDebug.ToggleBreakpoint(FileName: string; LineNo: Integer);
-begin
-
 end;
 
 procedure TPHP_xDebug.RunToCursor(FileName: string; LineNo: integer);
@@ -241,16 +296,6 @@ end;
 function TPHP_xDebug.GetKey: string;
 begin
   Result := FServer.Key;
-end;
-
-function TPHP_xDebug.GetWatchValue(vName: string; var vValue: string): Boolean;
-var
-  aAction: TdbgpGetWatchInstance;
-begin
-  aAction := TdbgpGetWatchInstance.Create;
-  aAction.VariableName := vName;
-  FServer.AddAction(aAction);
-  FServer.Resume;
 end;
 
 procedure TPHP_xDebugServer.Reset;

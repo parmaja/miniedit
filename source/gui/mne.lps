@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="windows"/>
-    <Units Count="157">
+    <Units Count="158">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -12,7 +12,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="190"/>
+        <UsageCount Value="191"/>
         <Loaded Value="True"/>
       </Unit0>
       <Unit1>
@@ -24,10 +24,11 @@
         <UnitName Value="MainUnit"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1688"/>
-        <CursorPos X="59" Y="1700"/>
+        <TopLine Value="1723"/>
+        <CursorPos X="36" Y="1739"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="..\editor\SearchForms.pas"/>
@@ -86,12 +87,11 @@
         <UnitName Value="EditorEngine"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="103" Y="14"/>
+        <TopLine Value="2333"/>
+        <CursorPos X="7" Y="2360"/>
         <UsageCount Value="200"/>
-        <Bookmarks Count="2">
+        <Bookmarks Count="1">
           <Item0 X="1" Y="1473" ID="9"/>
-          <Item1 X="22" Y="152" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit7>
@@ -144,7 +144,7 @@
         <Filename Value="..\lib\dbgpServers.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="dbgpServers"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1003"/>
         <CursorPos X="1" Y="1024"/>
@@ -188,7 +188,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="190"/>
+        <UsageCount Value="191"/>
       </Unit16>
       <Unit17>
         <Filename Value="mneAssociateForm.pas"/>
@@ -198,18 +198,18 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="190"/>
+        <UsageCount Value="191"/>
       </Unit17>
       <Unit18>
         <Filename Value="mneBreakpoints.pas"/>
         <IsPartOfProject Value="True"/>
         <HasResources Value="True"/>
         <UnitName Value="mneBreakpoints"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="79"/>
         <CursorPos X="30" Y="95"/>
-        <UsageCount Value="190"/>
+        <UsageCount Value="191"/>
         <Loaded Value="True"/>
       </Unit18>
       <Unit19>
@@ -219,7 +219,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="152"/>
         <CursorPos X="10" Y="161"/>
-        <UsageCount Value="190"/>
+        <UsageCount Value="191"/>
       </Unit19>
       <Unit20>
         <Filename Value="mneConsts.pas"/>
@@ -228,7 +228,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="50" Y="15"/>
-        <UsageCount Value="190"/>
+        <UsageCount Value="191"/>
       </Unit20>
       <Unit21>
         <Filename Value="mnePHPIniForm.pas"/>
@@ -240,7 +240,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="177"/>
         <CursorPos X="1" Y="205"/>
-        <UsageCount Value="190"/>
+        <UsageCount Value="191"/>
       </Unit21>
       <Unit22>
         <Filename Value="mneProjectForms.pas"/>
@@ -250,7 +250,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="5"/>
         <CursorPos X="3" Y="13"/>
-        <UsageCount Value="190"/>
+        <UsageCount Value="191"/>
       </Unit22>
       <Unit23>
         <Filename Value="mneProjectOptions.pas"/>
@@ -262,7 +262,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="32" Y="11"/>
-        <UsageCount Value="190"/>
+        <UsageCount Value="191"/>
       </Unit23>
       <Unit24>
         <Filename Value="mneResources.pas"/>
@@ -274,7 +274,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="8" Y="6"/>
-        <UsageCount Value="190"/>
+        <UsageCount Value="191"/>
       </Unit24>
       <Unit25>
         <Filename Value="mneSettings.pas"/>
@@ -286,7 +286,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="136"/>
         <CursorPos X="1" Y="146"/>
-        <UsageCount Value="190"/>
+        <UsageCount Value="191"/>
       </Unit25>
       <Unit26>
         <Filename Value="mneSetups.pas"/>
@@ -298,7 +298,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="53"/>
         <CursorPos X="58" Y="89"/>
-        <UsageCount Value="190"/>
+        <UsageCount Value="191"/>
       </Unit26>
       <Unit27>
         <Filename Value="lpeProjectOptions.pas"/>
@@ -470,11 +470,10 @@
       <Unit45>
         <Filename Value="W:\programs\lazarus\components\synedit\synedit.pp"/>
         <UnitName Value="SynEdit"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="43"/>
-        <CursorPos X="1" Y="43"/>
+        <TopLine Value="497"/>
+        <CursorPos X="51" Y="513"/>
         <UsageCount Value="26"/>
         <Bookmarks Count="1">
           <Item0 X="12" Y="3790" ID="2"/>
@@ -540,10 +539,12 @@
       <Unit53>
         <Filename Value="W:\programs\lazarus\components\synedit\syneditmiscclasses.pp"/>
         <UnitName Value="SynEditMiscClasses"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <TopLine Value="228"/>
+        <CursorPos X="1" Y="243"/>
         <UsageCount Value="11"/>
+        <Loaded Value="True"/>
       </Unit53>
       <Unit54>
         <Filename Value="W:\programs\lazarus\components\synedit\syneditmarks.pp"/>
@@ -892,11 +893,15 @@
       <Unit98>
         <Filename Value="..\editor\EditorDebugger.pas"/>
         <UnitName Value="EditorDebugger"/>
-        <EditorIndex Value="6"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="170"/>
-        <CursorPos X="1" Y="186"/>
+        <TopLine Value="122"/>
+        <CursorPos X="15" Y="123"/>
         <UsageCount Value="40"/>
+        <Bookmarks Count="1">
+          <Item0 X="1" Y="1" ID="1"/>
+        </Bookmarks>
         <Loaded Value="True"/>
       </Unit98>
       <Unit99>
@@ -904,8 +909,8 @@
         <UnitName Value="PHP_xDebug"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="94"/>
-        <CursorPos X="1" Y="110"/>
+        <TopLine Value="40"/>
+        <CursorPos X="22" Y="56"/>
         <UsageCount Value="19"/>
         <Loaded Value="True"/>
       </Unit99>
@@ -1070,7 +1075,7 @@
       <Unit120>
         <Filename Value="..\editor\IAddons.pas"/>
         <UnitName Value="IAddons"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
@@ -1362,130 +1367,140 @@
         <CursorPos X="1" Y="1542"/>
         <UsageCount Value="11"/>
       </Unit156>
+      <Unit157>
+        <Filename Value="W:\programs\lazarus\components\synedit\syneditmarkupspecialline.pp"/>
+        <UnitName Value="SynEditMarkupSpecialLine"/>
+        <EditorIndex Value="6"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="17"/>
+        <CursorPos X="35" Y="34"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+      </Unit157>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\editor\PHP_xDebug.pas"/>
+        <Caret Line="84" Column="14" TopLine="68"/>
       </Position1>
       <Position2>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="148" Column="22" TopLine="117"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="82" Column="43" TopLine="66"/>
       </Position2>
       <Position3>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1472" Column="24" TopLine="1437"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position3>
       <Position4>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="2226" Column="22" TopLine="2191"/>
+        <Filename Value="..\editor\PHP_xDebug.pas"/>
+        <Caret Line="84" Column="27" TopLine="68"/>
       </Position4>
       <Position5>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="153" Column="15" TopLine="131"/>
+        <Filename Value="..\editor\PHP_xDebug.pas"/>
+        <Caret Line="60" Column="44" TopLine="32"/>
       </Position5>
       <Position6>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1472" Column="24" TopLine="1437"/>
+        <Filename Value="..\editor\PHP_xDebug.pas"/>
+        <Caret Line="111" Column="17" TopLine="102"/>
       </Position6>
       <Position7>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="2226" Column="22" TopLine="2191"/>
+        <Filename Value="..\editor\PHP_xDebug.pas"/>
+        <Caret Line="311" Column="1" TopLine="303"/>
       </Position7>
       <Position8>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="2231" Column="30" TopLine="2196"/>
+        <Filename Value="..\editor\PHP_xDebug.pas"/>
+        <Caret Line="129" Column="1" TopLine="128"/>
       </Position8>
       <Position9>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="2278" Column="3" TopLine="2240"/>
+        <Filename Value="..\editor\PHP_xDebug.pas"/>
+        <Caret Line="85" Column="5" TopLine="73"/>
       </Position9>
       <Position10>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\editor\PHP_xDebug.pas"/>
+        <Caret Line="134" Column="5" TopLine="126"/>
       </Position10>
       <Position11>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="152" Column="22" TopLine="125"/>
+        <Filename Value="..\editor\PHP_xDebug.pas"/>
+        <Caret Line="217" Column="1" TopLine="202"/>
       </Position11>
       <Position12>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\editor\PHP_xDebug.pas"/>
+        <Caret Line="222" Column="1" TopLine="206"/>
       </Position12>
       <Position13>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="13" Column="51" TopLine="1"/>
+        <Filename Value="..\editor\PHP_xDebug.pas"/>
+        <Caret Line="292" Column="1" TopLine="276"/>
       </Position13>
       <Position14>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="59" Column="1" TopLine="31"/>
       </Position14>
       <Position15>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="13" Column="80" TopLine="1"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="173" Column="1" TopLine="157"/>
       </Position15>
       <Position16>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="14" Column="88" TopLine="1"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="362" Column="1" TopLine="330"/>
       </Position16>
       <Position17>
-        <Filename Value="W:\programs\lazarus\components\synedit\synedit.pp"/>
-        <Caret Line="3519" Column="49" TopLine="3510"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="203" Column="61" TopLine="182"/>
       </Position17>
       <Position18>
-        <Filename Value="W:\programs\lazarus\components\synedit\synedit.pp"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="285" Column="1" TopLine="269"/>
       </Position18>
       <Position19>
-        <Filename Value="W:\programs\lazarus\components\synedit\synedit.pp"/>
-        <Caret Line="54" Column="44" TopLine="19"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="54" Column="15" TopLine="39"/>
       </Position19>
       <Position20>
-        <Filename Value="W:\programs\lazarus\components\synedit\synedit.pp"/>
-        <Caret Line="55" Column="44" TopLine="20"/>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position20>
       <Position21>
-        <Filename Value="W:\programs\lazarus\components\synedit\synedit.pp"/>
-        <Caret Line="149" Column="9" TopLine="114"/>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="1739" Column="39" TopLine="1723"/>
       </Position21>
       <Position22>
-        <Filename Value="mne.lpr"/>
-        <Caret Line="106" Column="18" TopLine="82"/>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="1840" Column="29" TopLine="1824"/>
       </Position22>
       <Position23>
-        <Filename Value="W:\programs\lazarus\components\synedit\synedit.pp"/>
-        <Caret Line="65" Column="27" TopLine="57"/>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="1850" Column="64" TopLine="1836"/>
       </Position23>
       <Position24>
-        <Filename Value="W:\programs\lazarus\components\synedit\synedit.pp"/>
-        <Caret Line="6280" Column="39" TopLine="6245"/>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="1739" Column="36" TopLine="1723"/>
       </Position24>
       <Position25>
-        <Filename Value="W:\programs\lazarus\components\synedit\synedit.pp"/>
-        <Caret Line="6283" Column="38" TopLine="6248"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="81" Column="31" TopLine="75"/>
       </Position25>
       <Position26>
-        <Filename Value="W:\programs\lazarus\components\synedit\synedit.pp"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="208" Column="43" TopLine="181"/>
       </Position26>
       <Position27>
-        <Filename Value="W:\programs\lazarus\components\synedit\synedit.pp"/>
-        <Caret Line="65" Column="27" TopLine="30"/>
+        <Filename Value="..\editor\PHP_xDebug.pas"/>
+        <Caret Line="301" Column="1" TopLine="285"/>
       </Position27>
       <Position28>
-        <Filename Value="W:\programs\lazarus\components\synedit\synedit.pp"/>
-        <Caret Line="6280" Column="39" TopLine="6245"/>
+        <Filename Value="..\editor\PHP_xDebug.pas"/>
+        <Caret Line="56" Column="14" TopLine="40"/>
       </Position28>
       <Position29>
-        <Filename Value="W:\programs\lazarus\components\synedit\synedit.pp"/>
-        <Caret Line="6294" Column="38" TopLine="6252"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="229" Column="22" TopLine="225"/>
       </Position29>
       <Position30>
-        <Filename Value="W:\programs\lazarus\components\synedit\synedit.pp"/>
-        <Caret Line="4834" Column="1" TopLine="4793"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
