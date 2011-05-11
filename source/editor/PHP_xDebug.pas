@@ -12,7 +12,7 @@ interface
 uses
   SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
   mnServers, dbgpServers,
-  SynEdit,
+  SynEdit, IAddons,
   EditorDebugger;
 
 type
@@ -32,16 +32,31 @@ type
     property Key: string read FKey;
   end;
 
+  { TPHP_xDebugBreakPoints }
+
+  TPHP_xDebugBreakPoints = class(TEditorBreakPoints)
+  protected
+    FDebug: TPHP_xDebug;
+    function GetCount: Integer; override;
+    function GetItems(Index: integer): TEditBreakpoint; virtual;
+  public
+    procedure Clear; override;
+    procedure Toggle(FileName: string; LineNo: integer); override;
+    function Found(FileName: string; LineNo: integer): boolean; override;
+    procedure Add(FileName: string; LineNo: integer); override;
+    procedure Remove(FileName: string; Line: integer); override; overload;
+    procedure Remove(Handle: integer); override; overload;
+  end;
+
   { TPHP_xDebug }
 
   TPHP_xDebug = class(TEditorDebugger)
   private
     FServer: TPHP_xDebugServer;
-    FBreakpoints: TdbgpBreakpoints;
     FWatches: TdbgpWatches;
   protected
-    property Breakpoints: TdbgpBreakpoints read FBreakpoints;
     property Watches: TdbgpWatches read FWatches;
+    function CreateBreakPoints: TEditorBreakPoints; override;
   public
     constructor Create;
     destructor Destroy; override;
@@ -58,31 +73,91 @@ type
     procedure RunToCursor(FileName: string; LineNo: integer); override;
     function GetKey: string; override;
 
-    procedure ToggleBreakpoint(FileName:string; LineNo: Integer); override;
-    function IsBreakpoint(FileName:string; LineNo: Integer): Boolean; override;
-    procedure AddBreakpoint(FileName:string; LineNo: Integer); override;
-    procedure RemoveBreakpoint(FileName:string; Line: Integer); override;
-    procedure RemoveBreakpoint(Handle: Integer); override;
+    procedure ToggleBreakpoint(FileName:string; LineNo: Integer);
 
     function GetWatchValue(vName:string; var vValue: string): Boolean; override;
 end;
 
 implementation
 
+{ TPHP_xDebugBreakPoints }
+
+function TPHP_xDebugBreakPoints.GetCount: Integer;
+begin
+  with FDebug.FServer do
+    Result := Breakpoints.Count;
+end;
+
+function TPHP_xDebugBreakPoints.GetItems(Index: integer): TEditBreakpoint;
+var
+  aBP: TdbgpBreakpoint;
+begin
+  with FDebug.FServer do
+    aBP := Breakpoints[Index];
+  Result.FileName := aBP.FileName;
+  Result.Handle := aBP.Handle;
+  Result.Line := aBP.Line;
+end;
+
+procedure TPHP_xDebugBreakPoints.Clear;
+begin
+  with FDebug.FServer do
+    Breakpoints.Clear;
+end;
+
+procedure TPHP_xDebugBreakPoints.Toggle(FileName: string; LineNo: integer);
+begin
+  with FDebug.FServer do
+    Breakpoints.Toggle(FileName, LineNo);
+end;
+
+function TPHP_xDebugBreakPoints.Found(FileName: string; LineNo: integer): boolean;
+begin
+  with FDebug.FServer do
+    Result := Breakpoints.Find(FileName, LineNo) <> nil;
+end;
+
+procedure TPHP_xDebugBreakPoints.Add(FileName: string; LineNo: integer);
+begin
+  with FDebug.FServer do
+    Breakpoints.Add(FileName, LineNo);
+end;
+
+procedure TPHP_xDebugBreakPoints.Remove(FileName: string; Line: integer);
+var
+  aBP: TdbgpBreakpoint;
+begin
+  with FDebug.FServer do
+    aBP := Breakpoints.Find(FileName, Line);
+  if aBP <> nil then
+    with FDebug.FServer do
+      Breakpoints.Remove(aBP);
+end;
+
+procedure TPHP_xDebugBreakPoints.Remove(Handle: integer);
+begin
+  with FDebug.FServer do
+    Breakpoints.Remove(Handle);
+end;
+
 { TPHP_xDebug }
+
+function TPHP_xDebug.CreateBreakPoints: TEditorBreakPoints;
+begin
+  Result := TPHP_xDebugBreakPoints.Create;
+  (Result as TPHP_xDebugBreakPoints).FDebug := Self;
+end;
 
 constructor TPHP_xDebug.Create;
 begin
   inherited Create;
   FServer := TPHP_xDebugServer.Create(nil);
   FServer.FDebug := Self;
-  FBreakpoints := TdbgpBreakpoints.Create;
   FWatches := TdbgpWatches.Create;
 end;
 
 destructor TPHP_xDebug.Destroy;
 begin
-  FreeAndNil(FBreakpoints);
   FreeAndNil(FWatches);
   FreeAndNil(FServer);
   inherited;
@@ -156,29 +231,11 @@ end;
 
 procedure TPHP_xDebug.ToggleBreakpoint(FileName: string; LineNo: Integer);
 begin
-  FServer.Breakpoints.Toggle(FileName, LineNo);
-end;
-
-function TPHP_xDebug.IsBreakpoint(FileName: string; LineNo: Integer): Boolean;
-begin
 
 end;
 
 procedure TPHP_xDebug.RunToCursor(FileName: string; LineNo: integer);
 begin
-end;
-
-procedure TPHP_xDebug.AddBreakpoint(FileName: string; LineNo: integer);
-begin
-end;
-
-procedure TPHP_xDebug.RemoveBreakpoint(FileName: string; Line: integer);
-begin
-end;
-
-procedure TPHP_xDebug.RemoveBreakpoint(Handle: Integer);
-begin
-  inherited RemoveBreakpoint(Handle);
 end;
 
 function TPHP_xDebug.GetKey: string;
@@ -227,6 +284,6 @@ begin
 end;
 
 initialization
-  RegisterClasses([TdbgpBreakpoint, TdbgpWatch]);
+  Addons.Add('Debug', 'XDebug', TPHP_xDebug);
 end.
 

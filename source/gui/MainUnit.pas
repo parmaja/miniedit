@@ -1699,10 +1699,13 @@ end;
 
 procedure TMainForm.EngineDebug;
 begin
-  DebugPnl.Caption := Engine.Debug.GetKey;
-  UpdateFileHeaderPanel;
-  UpdateWatches;
-  Engine.Files.Refresh; // not safe thread
+  if Assigned(Engine) then
+  begin
+    DebugPnl.Caption := Engine.Debug.GetKey;
+    UpdateFileHeaderPanel;
+    UpdateWatches;
+    Engine.Files.Refresh; // not safe thread
+  end;
 end;
 
 procedure TMainForm.UpdateFileHeaderPanel;
@@ -1773,13 +1776,38 @@ var
   i: Integer;
   procedure AddMenu(vParentMenu, vName, vCaption: string; vOnClick: TNotifyEvent);
   var
-    m: TMenuItem;
+    p: TMenuItem;
+    c: TComponent;
+    tb: TToolButton;
+    function CreateMenuItem: TMenuItem;
+    begin
+      Result := TMenuItem.Create(Self);
+      Result.Name := vName;
+      Result.Caption := vCaption;
+      Result.OnClick := vOnClick;
+    end;
+    function CreateToolButton: TToolButton;
+    begin
+      Result := TToolButton.Create(Self);
+      Result.Name := vName;
+      Result.Caption := vCaption;
+      Result.OnClick := vOnClick;
+    end;
   begin
-    m := TMenuItem.Create(Self);
-    m.Name := vName;
-    m.Caption := vCaption;
-    m.OnClick := vOnClick;
-    ToolsMnu.Add(m);
+    c := FindComponent(vParentMenu);
+    if c <> nil then
+    begin
+      if c is TMenu then
+        (c as TMenu).Items.Add(CreateMenuItem)
+      else if c is TMenuItem then
+        (c as TMenuItem).Add(CreateMenuItem)
+      {else if c is TToolBar then
+         CreateToolButton.Parent := c as TToolBar
+      else if c is TToolButton then
+        CreateToolButton.Parent := c as TbittToolBar}
+    end
+    else
+      ToolsMnu.Add(CreateMenuItem);
     //m.Parent := ToolsMnu;
   end;
 begin
@@ -1835,7 +1863,7 @@ begin
       aLine := SynEdit.ScreenRowToRow(SynEdit.CaretY);
       Engine.Debug.Lock;
       try
-        Engine.Debug.ToggleBreakpoint(Name, aLine);
+        Engine.Debug.Breakpoints.Toggle(Name, aLine);
       finally
         Engine.Debug.Unlock;
       end;

@@ -1,4 +1,5 @@
 unit IAddons;
+
 {$mode objfpc}
 {$INTERFACES DEFAULT}
 {$H+}
@@ -42,7 +43,7 @@ type
 
   TAddon = class(TAddonObject, IAddon)
   public
-     function Status: TAddonStatus;
+    function Status: TAddonStatus;
   end;
 
   TAddonClass = class of TAddon;
@@ -88,13 +89,21 @@ type
 
   ICheckAddon = interface(IAddon)
     ['{439B198B-E879-4779-AC70-5F2F378719DA}']
-    function GetChecked: Boolean;
-    procedure SetChecked(AValue: Boolean);
-    property Checked: Boolean read GetChecked write SetChecked;
+    function GetChecked: boolean;
+    procedure SetChecked(AValue: boolean);
+    property Checked: boolean read GetChecked write SetChecked;
   end;
 
   IMenuAddon = interface(ICaptionAddon)
     ['{23FA4EA8-C13E-4110-A6AC-B97489E9E10A}']
+  end;
+
+  IToolbarButtonAddon = interface(ICaptionAddon)
+    ['{5DD80B1E-9B86-427D-8CDC-5E447FDBAC1E}']
+  end;
+
+  IImageIndexAddon = interface(IAddon)
+    ['{73B0A164-68FE-4C19-AF4E-99DA3875612F}']
   end;
 
   IFileAddon = interface(IAddon)
@@ -102,13 +111,13 @@ type
   end;
 
   ISetupAddon = interface(IAddon) //Add this interface to make setup to your addon
-  ['{F00BFDF0-7037-4BC9-B268-54E6BEECF98C}']
+    ['{F00BFDF0-7037-4BC9-B268-54E6BEECF98C}']
     procedure ShowSetup;
   end;
 
   IDebugAddon = interface(IAddon)
-  ['{FB4CD381-EE59-4259-8A04-0F80F161710E}']
-  //TODO add debug methods
+    ['{FB4CD381-EE59-4259-8A04-0F80F161710E}']
+    //TODO add debug methods
   end;
 
 function Addons: TAddons;
@@ -158,7 +167,7 @@ begin
   Result.Category := Category;
   Result.Name := Name;
   Result.FAddon := vAddon;
-  Inherited Add(Result);
+  inherited Add(Result);
 end;
 
 function TAddons.Add(Category, Name: string; vAddon: TAddonClass): TAddonItem;
@@ -199,6 +208,7 @@ begin
 end;
 
 initialization
+
 finalization
   FreeAndNil(FAddons);
 end.

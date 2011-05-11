@@ -777,7 +777,6 @@ end;
 destructor TEditorEngine.Destroy;
 begin
   FDebug.Stop;
-  FreeAndNil(FDebug);
   FreeAndNil(FSCM);
   FreeAndNil(FFiles);
   FreeAndNil(FProjects);
@@ -787,6 +786,7 @@ begin
   FreeAndNil(FOptions);
   //FreeAndNil(FMacroRecorder);
   FreeAndNil(FMessagesList);
+  FreeAndNil(FDebug);
   Engine := nil;
   inherited;
 end;
@@ -1783,7 +1783,7 @@ begin
     aLine := SynEdit.RowToScreenRow(SynEdit.CaretY);//zaher
     Engine.Debug.Lock;
     try
-      Engine.Debug.ToggleBreakpoint(Name, aLine);
+      Engine.Debug.Breakpoints.Toggle(Name, aLine);
     finally
       Engine.Debug.Unlock;
     end;
@@ -2228,13 +2228,11 @@ end;
 type
   THackSynEdit = class(TCustomSynEdit);
 
-procedure TDebugSupportPlugin.AfterPaint(ACanvas: TCanvas;
-  const AClip: TRect; FirstLine, LastLine: integer);
+procedure TDebugSupportPlugin.AfterPaint(ACanvas: TCanvas; const AClip: TRect; FirstLine, LastLine: integer);
 var
   i, x, y, lh: Integer;
   aLine: Integer;
   aRect: TRect;
-
 begin
   inherited;
   lh := FEditorFile.SynEdit.LineHeight;
@@ -2248,7 +2246,7 @@ begin
   Engine.Debug.Lock;
   try
     x := 1;
-    for i := 0 to Engine.Debug.BreakpointsCount - 1 do
+    for i := 0 to Engine.Debug.Breakpoints.Count - 1 do
     begin
       if SameText(Engine.Debug.Breakpoints[i].FileName, FEditorFile.Name) then
       begin

@@ -63,7 +63,7 @@ var
   aItem: TListItem;
 begin
   BreakpointList.Clear;
-  for i := 0 to Engine.Debug.BreakpointsCount - 1 do
+  for i := 0 to Engine.Debug.Breakpoints.Count - 1 do
   begin
     aItem := BreakpointList.Items.Add;
     aItem.ImageIndex := 40;
@@ -79,7 +79,7 @@ begin
   begin
     Engine.Debug.Lock;
     try
-      Engine.Debug.RemoveBreakpoint(Integer(BreakpointList.Selected.Data));
+      Engine.Debug.Breakpoints.Remove(Integer(BreakpointList.Selected.Data));
       Reload;
       Engine.UpdateState([ecsDebug]);
     finally
@@ -92,7 +92,7 @@ procedure TBreakpointsForm.Button1Click(Sender: TObject);
 begin
   Engine.Debug.Lock;
   try
-    Engine.Debug.BreakpointsClear;
+    Engine.Debug.Breakpoints.Clear;
     Reload;
     Engine.UpdateState([ecsDebug]);
   finally
@@ -124,4 +124,4 @@ begin
 end;
 
 end.
-
+

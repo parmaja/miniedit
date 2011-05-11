@@ -1,4 +1,5 @@
 unit EditorDebugger;
+
 {$mode delphi}
 {**
  * Mini Edit
@@ -13,33 +14,60 @@ uses
 
 type
   TEditBreakpoint = record
-    Handle: Integer;
+    Handle: integer;
     FileName: string;
-    Line: Integer;
+    Line: integer;
   end;
 
   TEditWatch = record
     Name: string;
     VarType: string;
-    Value: Variant;
+    Value: variant;
+  end;
+
+  { TEditorBreakPoints }
+
+  TEditorBreakPoints = class(TObject)
+  private
+  protected
+    function GetCount: Integer; virtual;
+    function GetItems(Index: integer): TEditBreakpoint; virtual;
+  public
+    procedure Clear; virtual;
+    procedure Toggle(FileName: string; LineNo: integer); virtual;
+    function Found(FileName: string; LineNo: integer): boolean; virtual;
+    procedure Add(FileName: string; LineNo: integer); virtual;
+    procedure Remove(FileName: string; Line: integer); virtual; overload;
+    procedure Remove(Handle: integer); virtual; overload;
+
+    property Count: Integer read GetCount;
+    property Items[Index: integer]: TEditBreakpoint read GetItems; default;
   end;
 
   { TEditorDebugger }
 
-  TEditorDebugger = class(TAddon, IDebugAddon, ICheckAddon)
+  TEditorDebugger = class(TAddon, IMenuAddon, IClickAddon, IDebugAddon, ICheckAddon)
   private
+    FBreakpoints: TEditorBreakPoints;
     FExecutedLine: integer;
     FExecutedEdit: TCustomSynEdit;
     FKey: string;
-    function GetActive: Boolean;
-    procedure SetActive(const AValue: Boolean);
+    function GetActive: boolean;
+    procedure SetActive(const AValue: boolean);
   protected
     //procedure Notification(AComponent: TComponent; Operation: TOperation); override;
-    function GetBreakpoints(Index: Integer): TEditBreakpoint; virtual;
-    function GetWatches(Index: Integer): TEditWatch; virtual;
-    function GetChecked: Boolean;
-    procedure SetChecked(AValue: Boolean);
+    function GetBreakpoints(Index: integer): TEditBreakpoint; virtual;
+    function GetWatches(Index: integer): TEditWatch; virtual;
+    function GetChecked: boolean;
+    procedure SetChecked(AValue: boolean);
+
+    function GetCaption: string; virtual;
+    procedure Click(Sender: TObject); virtual;
+    function CreateBreakPoints: TEditorBreakPoints; virtual;
   public
+    constructor Create;
+    destructor Destroy; override;
+
     procedure Start; virtual;
     procedure Stop; virtual;
     procedure Reset; virtual;
@@ -50,35 +78,28 @@ type
     procedure Resume; virtual;
     procedure Lock; virtual;
     procedure Unlock; virtual;
-    function IsRuning: Boolean; virtual;
+    function IsRuning: boolean; virtual;
 
-    function IsConnected: Boolean; virtual;
+    function IsConnected: boolean; virtual;
 
-    procedure RunToCursor(FileName:string; LineNo: Integer); virtual;
-    procedure ToggleBreakpoint(FileName:string; LineNo: Integer); virtual;
-    function IsBreakpoint(FileName:string; LineNo: Integer): Boolean; virtual;
-    procedure AddBreakpoint(FileName:string; LineNo: Integer); virtual;
-    procedure RemoveBreakpoint(FileName:string; Line: Integer); virtual; overload;
-    procedure RemoveBreakpoint(Handle: Integer); virtual; overload;
+    procedure RunToCursor(FileName: string; LineNo: integer); virtual;
 
     property ExecutedLine: integer read FExecutedLine;
     property ExecutedEdit: TCustomSynEdit read FExecutedEdit write FExecutedEdit;
-    function BreakpointsCount: Integer; virtual;
-    procedure BreakpointsClear; virtual;
-    property Breakpoints[Index: Integer]: TEditBreakpoint read GetBreakpoints;
 
-    procedure AddWatch(vName:string); virtual;
-    procedure RemoveWatch(vName:string); virtual;
-    function WatchesCount: Integer; virtual;
+    procedure AddWatch(vName: string); virtual;
+    procedure RemoveWatch(vName: string); virtual;
+    function WatchesCount: integer; virtual;
     procedure WatchesClear; virtual;
-    property Watches[Index: Integer]: TEditWatch read GetWatches;
-    function GetWatchValue(vName:string; var vValue: string): Boolean; virtual;
+    property Watches[Index: integer]: TEditWatch read GetWatches;
+    function GetWatchValue(vName: string; var vValue: string): boolean; virtual;
 
     function GetKey: string; virtual;
-    property Active: Boolean read GetActive write SetActive;
+    property Active: boolean read GetActive write SetActive;
 
     procedure SetExecuted(Key: string; Edit: TCustomSynEdit; const Line: integer); overload;
     procedure SetExecuted(Key: string; FileName: string; const Line: integer); overload;
+    property Breakpoints: TEditorBreakPoints read FBreakpoints;
   end;
 
 implementation
@@ -86,34 +107,96 @@ implementation
 uses
   EditorEngine;
 
+{ TEditorBreakPoints }
+
+function TEditorBreakPoints.GetCount: Integer;
+begin
+  Result := 0;
+end;
+
+function TEditorBreakPoints.GetItems(Index: integer): TEditBreakpoint;
+begin
+end;
+
+procedure TEditorBreakPoints.Clear;
+begin
+end;
+
+procedure TEditorBreakPoints.Toggle(FileName: string; LineNo: integer);
+begin
+end;
+
+function TEditorBreakPoints.Found(FileName: string; LineNo: integer): boolean;
+begin
+end;
+
+procedure TEditorBreakPoints.Add(FileName: string; LineNo: integer);
+begin
+end;
+
+procedure TEditorBreakPoints.Remove(FileName: string; Line: integer);
+begin
+end;
+
+procedure TEditorBreakPoints.Remove(Handle: integer);
+begin
+end;
+
 { TEditorDebugger }
 
-function TEditorDebugger.GetBreakpoints(Index: Integer): TEditBreakpoint;
+function TEditorDebugger.GetBreakpoints(Index: integer): TEditBreakpoint;
 begin
   raise Exception.Create('Out of index');
 end;
 
-function TEditorDebugger.GetWatches(Index: Integer): TEditWatch;
+function TEditorDebugger.GetWatches(Index: integer): TEditWatch;
 begin
   raise Exception.Create('Out of index');
 end;
 
-function TEditorDebugger.GetChecked: Boolean;
+function TEditorDebugger.GetChecked: boolean;
 begin
   Result := Active;
 end;
 
-procedure TEditorDebugger.SetChecked(AValue: Boolean);
+procedure TEditorDebugger.SetChecked(AValue: boolean);
 begin
   Active := AValue;
 end;
 
-function TEditorDebugger.GetActive: Boolean;
+function TEditorDebugger.GetCaption: string;
+begin
+  Result := 'Debug';
+end;
+
+procedure TEditorDebugger.Click(Sender: TObject);
+begin
+  Active := not Active;
+end;
+
+function TEditorDebugger.CreateBreakPoints: TEditorBreakPoints;
+begin
+  Result := TEditorBreakPoints.Create;
+end;
+
+constructor TEditorDebugger.Create;
+begin
+  inherited;
+  FBreakpoints := CreateBreakPoints;
+end;
+
+destructor TEditorDebugger.Destroy;
+begin
+  FreeAndNil(FBreakpoints);
+  inherited;
+end;
+
+function TEditorDebugger.GetActive: boolean;
 begin
   Result := False;
 end;
 
-procedure TEditorDebugger.SetActive(const AValue: Boolean);
+procedure TEditorDebugger.SetActive(const AValue: boolean);
 begin
 
 end;
@@ -164,47 +247,17 @@ procedure TEditorDebugger.Unlock;
 begin
 end;
 
-function TEditorDebugger.IsRuning: Boolean;
+function TEditorDebugger.IsRuning: boolean;
 begin
   Result := False;
 end;
 
-function TEditorDebugger.IsConnected: Boolean;
+function TEditorDebugger.IsConnected: boolean;
 begin
   Result := False;
 end;
 
-procedure TEditorDebugger.RunToCursor(FileName: string; LineNo: Integer);
-begin
-end;
-
-procedure TEditorDebugger.ToggleBreakpoint(FileName: string; LineNo: Integer);
-begin
-end;
-
-function TEditorDebugger.IsBreakpoint(FileName: string; LineNo: Integer): Boolean;
-begin
-  Result := False;
-end;
-
-procedure TEditorDebugger.AddBreakpoint(FileName: string; LineNo: Integer);
-begin
-end;
-
-procedure TEditorDebugger.RemoveBreakpoint(FileName: string; Line: Integer);
-begin
-end;
-
-procedure TEditorDebugger.RemoveBreakpoint(Handle: Integer);
-begin
-end;
-
-function TEditorDebugger.BreakpointsCount: Integer;
-begin
-  Result := 0;
-end;
-
-procedure TEditorDebugger.BreakpointsClear;
+procedure TEditorDebugger.RunToCursor(FileName: string; LineNo: integer);
 begin
 end;
 
@@ -216,7 +269,7 @@ procedure TEditorDebugger.RemoveWatch(vName: string);
 begin
 end;
 
-function TEditorDebugger.WatchesCount: Integer;
+function TEditorDebugger.WatchesCount: integer;
 begin
   Result := 0;
 end;
@@ -225,7 +278,7 @@ procedure TEditorDebugger.WatchesClear;
 begin
 end;
 
-function TEditorDebugger.GetWatchValue(vName: string; var vValue: string): Boolean;
+function TEditorDebugger.GetWatchValue(vName: string; var vValue: string): boolean;
 begin
   Result := False;
 end;
