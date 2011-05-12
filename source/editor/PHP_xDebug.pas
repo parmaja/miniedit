@@ -38,7 +38,7 @@ type
   protected
     FDebug: TPHP_xDebug;
     function GetCount: integer; override;
-    function GetItems(Index: integer): TEditBreakpoint; virtual;
+    function GetItems(Index: integer): TEditBreakpoint;
   public
     procedure Clear; override;
     procedure Toggle(FileName: string; LineNo: integer); override;
@@ -54,7 +54,7 @@ type
   protected
     FDebug: TPHP_xDebug;
     function GetCount: integer; override;
-    function GetItems(Index: integer): TEditWatch; virtual;
+    function GetItems(Index: integer): TEditWatch;
   public
     procedure Clear; override;
     procedure Add(vName: string); override;

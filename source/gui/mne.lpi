@@ -204,7 +204,9 @@
       <Unit18>
         <Filename Value="mneBreakpoints.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="BreakpointsForm"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
         <UnitName Value="mneBreakpoints"/>
       </Unit18>
       <Unit19>

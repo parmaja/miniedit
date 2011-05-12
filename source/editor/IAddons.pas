@@ -117,7 +117,12 @@ type
 
   IDebugAddon = interface(IAddon)
     ['{FB4CD381-EE59-4259-8A04-0F80F161710E}']
-    //TODO add debug methods
+    procedure Reset;
+    procedure StepInto;
+    procedure StepOver;
+    procedure StepOut;
+    procedure Run;
+    procedure Resume;
   end;
 
 function Addons: TAddons;

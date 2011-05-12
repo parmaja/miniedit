@@ -586,8 +586,11 @@ begin
   inherited;
   FSpool.Add(TdbgpInit.Create);
   FSpool.Add(TdbgpSetBreakpoints.Create);
-  FSpool.Add(TdbgpRun.Create);
-  FSpool.Add(TdbgpGetCurrent.Create);
+  //if break at first line
+  FSpool.Add(TdbgpStepInto.Create);
+  //else
+  //FSpool.Add(TdbgpRun.Create);
+  FSpool.Add(TdbgpGetCurrent.Create);//try to remove it
 end;
 
 procedure TdbgpConnection.Stop;

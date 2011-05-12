@@ -490,7 +490,7 @@ object MainForm: TMainForm
       TabOrder = 1
       TabStop = False
       Visible = False
-      Gutter.Width = 57
+      Gutter.Width = 19
       Gutter.MouseActions = <      
         item
           Shift = []
@@ -667,9 +667,6 @@ object MainForm: TMainForm
       BracketHighlightStyle = sbhsBoth
       TabWidth = 2
       inline SynGutterPartList1: TSynGutterPartList
-        object SynGutterMarks1: TSynGutterMarks
-          Width = 24
-        end
         object SynGutterLineNumber1: TSynGutterLineNumber
           Width = 17
           MouseActions = <>
@@ -680,97 +677,8 @@ object MainForm: TMainForm
           ZeroStart = False
           LeadingZeros = False
         end
-        object SynGutterChanges1: TSynGutterChanges
-          Width = 4
-          ModifiedColor = 59900
-          SavedColor = clGreen
-        end
         object SynGutterSeparator1: TSynGutterSeparator
           Width = 2
-        end
-        object SynGutterCodeFolding1: TSynGutterCodeFolding
-          MouseActions = <          
-            item
-              Shift = []
-              ShiftMask = []
-              Button = mbRight
-              ClickCount = ccSingle
-              ClickDir = cdUp
-              Command = 16
-              MoveCaret = False
-              Option = 0
-              Priority = 0
-            end          
-            item
-              Shift = []
-              ShiftMask = [ssShift]
-              Button = mbMiddle
-              ClickCount = ccAny
-              ClickDir = cdDown
-              Command = 14
-              MoveCaret = False
-              Option = 0
-              Priority = 0
-            end          
-            item
-              Shift = [ssShift]
-              ShiftMask = [ssShift]
-              Button = mbMiddle
-              ClickCount = ccAny
-              ClickDir = cdDown
-              Command = 14
-              MoveCaret = False
-              Option = 1
-              Priority = 0
-            end          
-            item
-              Shift = []
-              ShiftMask = []
-              Button = mbLeft
-              ClickCount = ccAny
-              ClickDir = cdDown
-              Command = 0
-              MoveCaret = False
-              Option = 0
-              Priority = 0
-            end>
-          MarkupInfo.Background = clNone
-          MarkupInfo.Foreground = clGray
-          MouseActionsExpanded = <          
-            item
-              Shift = []
-              ShiftMask = []
-              Button = mbLeft
-              ClickCount = ccAny
-              ClickDir = cdDown
-              Command = 14
-              MoveCaret = False
-              Option = 0
-              Priority = 0
-            end>
-          MouseActionsCollapsed = <          
-            item
-              Shift = [ssCtrl]
-              ShiftMask = [ssCtrl]
-              Button = mbLeft
-              ClickCount = ccAny
-              ClickDir = cdDown
-              Command = 15
-              MoveCaret = False
-              Option = 0
-              Priority = 0
-            end          
-            item
-              Shift = []
-              ShiftMask = [ssCtrl]
-              Button = mbLeft
-              ClickCount = ccAny
-              ClickDir = cdDown
-              Command = 15
-              MoveCaret = False
-              Option = 1
-              Priority = 0
-            end>
         end
       end
     end
