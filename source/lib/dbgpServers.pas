@@ -34,11 +34,15 @@ type
   TdbgpActionFlag = (dbgpafSend, dbgpafCheckError, dbgpafStopOnError);
   TdbgpActionFlags = set of TdbgpActionFlag;
 
+  { TdbgpAction }
+
   TdbgpAction = class(TObject)
   private
     FConnection: TdbgpConnection;
+    FKeepAlive: Boolean;
     FKey: string;
     FFlags: TdbgpActionFlags;
+    FWait: Boolean;
   protected
     FTransactionID: integer;
     procedure CheckError(Respond: TdbgpRespond);
@@ -53,6 +57,8 @@ type
     property Connection: TdbgpConnection read FConnection;
     property Flags: TdbgpActionFlags read FFlags write FFlags;
   public
+    property KeepAlive: Boolean read FKeepAlive write FKeepAlive; //do no free it
+    property Wait: Boolean read FWait write FWait; //wait until process the action
     constructor Create; virtual;
   end;
 
@@ -146,10 +152,12 @@ type
     procedure Process(Respond: TdbgpRespond); override;
   end;
 
+  { TdbgpGetWatchInstance }
+
   TdbgpGetWatchInstance = class(TdbgpCustomGetWatch)
   protected
-    procedure ShowWatches;
   public
+    destructor Destroy; override;
     procedure Process(Respond: TdbgpRespond); override;
   end;
 
@@ -301,6 +309,8 @@ type
   TdbgpOnServerEvent = procedure(Sender: TObject; Socket: TdbgpConnection) of object;
   TdbgpOnDebugFile = procedure(Socket: TdbgpConnection; const FileName: string; Line: integer) of object;
 
+  { TdbgpServer }
+
   TdbgpServer = class(TmnServer)
   private
     IDELock: TCriticalSection;
@@ -308,6 +318,7 @@ type
     FSpool: TdbgpSpool;
     FWatches: TdbgpWatches;
     FBreakpoints: TdbgpBreakpoints;
+    FWaitCount: Integer;
   protected
     procedure Notification(AComponent: TComponent; operation: TOperation); override;
     function CreateListener: TmnListener; override;
@@ -317,8 +328,10 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Resume;
+    function Resume(vWait: Integer = 0):Boolean; // 0 =s no waiting
     procedure AddAction(Action: TdbgpAction);
+    procedure RemoveAction(Action: TdbgpAction);
+    procedure ExtractAction(Action: TdbgpAction);
     procedure Clear;
     property Watches: TdbgpWatches read FWatches;
     property Breakpoints: TdbgpBreakpoints read FBreakpoints;
@@ -399,10 +412,10 @@ end;
 
 procedure TdbgpConnection.Process;
 var
-  //  aEvent: TdbgpIDEEvent;
   aAction: TdbgpAction;
   aRespond: TdbgpRespond;
   aCommand: string;
+  aWaiting: Boolean;
 begin
   aAction := PopAction;
   if aAction <> nil then
@@ -425,7 +438,7 @@ begin
                 Disconnect
               else if (aRespond.GetAttribute('response', 'status') = 'stoped') then
               begin
-                //              Disconnect;
+                //Disconnect;
               end
               else
               begin
@@ -442,7 +455,15 @@ begin
         end;
       finally
         if not aAction.Stay then
-          FSpool.Remove(aAction);
+        begin
+          aWaiting := aAction.Wait;
+          if aAction.KeepAlive then
+            FSpool.Extract(aAction)
+          else
+            FSpool.Remove(aAction);
+          if aWaiting then
+            DBGEvent.SetEvent;
+        end;
       end;
   end;
 end;
@@ -720,9 +741,20 @@ begin
   inherited;
 end;
 
-procedure TdbgpServer.Resume;
+function TdbgpServer.Resume(vWait: Integer):Boolean;
 begin
-  DBGEvent.SetEvent;
+  if vWait <> 0 then
+    Inc(FWaitCount);
+  try
+    DBGEvent.SetEvent;
+    if vWait <> 0 then
+      Result := DBGEvent.WaitFor(vWait) = wrSignaled //on thread can wait event
+    else
+      Result := True;
+  finally
+    if vWait <> 0 then
+      Dec(FWaitCount);
+  end;
 end;
 
 { TdbgpInit }
@@ -1144,13 +1176,11 @@ end;
 procedure TdbgpGetWatchInstance.Process(Respond: TdbgpRespond);
 begin
   inherited;
-  //Dont do any lock here
-  Connection.Synchronize(ShowWatches);
 end;
 
-procedure TdbgpGetWatchInstance.ShowWatches;
+destructor TdbgpGetWatchInstance.Destroy;
 begin
-  ShowMessage(VariableValue);
+  inherited;
 end;
 
 { TdbgpConnectionSpool }
@@ -1216,8 +1246,6 @@ begin
 {$IFDEF SAVELOG}
   SaveLog('Lock: ' + IntToStr(aThread) {+ ' Owned: ' + IntToStr(OwningThread)});
 {$ENDIF}
-  {if FSection.OwningThread = aThread then
-    raise EdbgpException.Create('Already locked by this thread');}
   Enter;
 end;
 
@@ -1244,6 +1272,26 @@ begin
   DBGLock.Lock;
   try
     Spool.Add(Action);
+  finally
+    DBGLock.Unlock;
+  end;
+end;
+
+procedure TdbgpServer.RemoveAction(Action: TdbgpAction);
+begin
+  DBGLock.Lock;
+  try
+    Spool.Remove(Action);
+  finally
+    DBGLock.Unlock;
+  end;
+end;
+
+procedure TdbgpServer.ExtractAction(Action: TdbgpAction);
+begin
+  DBGLock.Lock;
+  try
+    Spool.Extract(Action);
   finally
     DBGLock.Unlock;
   end;

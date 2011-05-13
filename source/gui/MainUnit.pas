@@ -1,4 +1,5 @@
 unit MainUnit;
+
 {$mode objfpc}
 {$H+}
 {**
@@ -46,6 +47,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    ApplicationProperties: TApplicationProperties;
     MainMenu: TMainMenu;
     file1: TMenuItem;
     FileSet: TntvTabSet;
@@ -291,13 +293,14 @@ type
     QuickFindAct: TAction;
     QuickSearch1: TMenuItem;
     FileModeBtn: TSpeedButton;
+    procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
     procedure Associate1Click(Sender: TObject);
     procedure EditorsPnlClick(Sender: TObject);
     procedure FileSetSelectTab(Sender: TObject; OldTab, NewTab: TntvTabItem; var CanSelect: boolean);
     procedure FileSetTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure FolderCloseBtnClick(Sender: TObject);
     procedure FoldersActExecute(Sender: TObject);
-    procedure FormDropFiles(Sender: TObject; const FileNames: array of String);
+    procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
     procedure IPCServerMessage(Sender: TObject);
     procedure OpenActExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -434,6 +437,8 @@ type
     procedure SetFolder(const Value: string);
     procedure ReopenClick(Sender: TObject);
     procedure ReopenProjectClick(Sender: TObject);
+    function GetWatchByCursor(var v, s, t: string): boolean;
+    function GetWatchByMouse(p: TPoint; var v, s, t: string): boolean;
     procedure AddWatch(s: string);
     procedure DeleteWatch(s: string);
     procedure EnumRecentFile;
@@ -576,6 +581,22 @@ begin
 
 end;
 
+procedure TMainForm.ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
+var
+  v, s, t: string;
+begin
+  if (Engine.Files.Current <> nil) and (HintInfo.HintControl = Engine.Files.Current.SynEdit) then
+  begin
+    CanShow := GetWatchByMouse(HintInfo.CursorPos, v, s, t);
+    if CanShow then
+    begin
+      HintStr := v + ':' + t + '=' + #13#10 + s;
+      HintInfo.HideTimeout := 10000;
+      HintInfo.ReshowTimeout := 1;
+    end;
+  end;
+end;
+
 procedure TMainForm.EditorsPnlClick(Sender: TObject);
 begin
 
@@ -591,7 +612,7 @@ begin
   UpdateFoldersPnl;
 end;
 
-procedure TMainForm.FormDropFiles(Sender: TObject; const FileNames: array of String);
+procedure TMainForm.FormDropFiles(Sender: TObject; const FileNames: array of string);
 var
   i: integer;
   aFolder: string;
@@ -600,7 +621,7 @@ begin
   Engine.BeginUpdate;
   try
     aFolder := '';
-    for i := 0 to Length(FileNames) -1 do
+    for i := 0 to Length(FileNames) - 1 do
     begin
       A := FileNames[i];
       if DirectoryExists(A) and (i = 0) then
@@ -617,7 +638,7 @@ end;
 
 procedure TMainForm.IPCServerMessage(Sender: TObject);
 var
-  c: Integer;
+  c: integer;
 begin
   c := IPCServer.MsgType;
   case c of
@@ -873,7 +894,7 @@ end;
 
 procedure TMainForm.KeywordActExecute(Sender: TObject);
 begin
-//  DoHtmlHelp;
+  //  DoHtmlHelp;
 end;
 
 procedure TMainForm.HelpIndexActExecute(Sender: TObject);
@@ -982,6 +1003,30 @@ begin
     aFile := (Sender as TMenuItem).Caption;
     Engine.Projects.Load(aFile);
   end;
+end;
+
+function TMainForm.GetWatchByCursor(var v, s, t: string): boolean;
+var
+  l: variant;
+begin
+  if not Engine.Files.Current.SynEdit.SelAvail then
+    v := Trim(Engine.Files.Current.SynEdit.GetWordAtRowCol(Engine.Files.Current.SynEdit.CaretXY))
+  else
+    v := Engine.Files.Current.SynEdit.SelText;
+  Result := Engine.Debug.Watches.GetValue(v, l, t) and (v <> '');
+  s := l;
+end;
+
+function TMainForm.GetWatchByMouse(p: TPoint; var v, s, t: string): boolean;
+var
+  l: variant;
+begin
+  if not Engine.Files.Current.SynEdit.SelAvail then
+    v := Trim(Engine.Files.Current.SynEdit.GetWordAtRowCol(Engine.Files.Current.SynEdit.PixelsToRowColumn(p)))
+  else
+    v := Engine.Files.Current.SynEdit.SelText;
+  Result := Engine.Debug.Watches.GetValue(v, l, t) and (v <> '');
+  s := l;
 end;
 
 procedure TMainForm.EnumRecentProjects;
@@ -1124,7 +1169,7 @@ begin
   if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
   begin
     SaveAllAct.Execute;
-//    RunInternal(True);
+    //    RunInternal(True);
   end;
 end;
 
@@ -1480,7 +1525,7 @@ procedure TMainForm.FileFolder1Click(Sender: TObject);
 begin
   if FileList.Selected <> nil then
   begin
-//    ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Folder + FileList.Selected.Caption + '"'), nil, SW_SHOW);
+    //    ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Folder + FileList.Selected.Caption + '"'), nil, SW_SHOW);
   end;
 end;
 
@@ -1631,13 +1676,13 @@ end;
 procedure TMainForm.DBGStepOverActExecute(Sender: TObject);
 begin
   if Engine.Debug.IsRuning then
-    Engine.Debug.StepOver
+    Engine.Debug.StepOver;
 end;
 
 procedure TMainForm.DBGStepIntoActExecute(Sender: TObject);
 begin
   if Engine.Debug.IsRuning then
-    Engine.Debug.StepInto
+    Engine.Debug.StepInto;
 end;
 
 procedure TMainForm.DBGActiveServerActUpdate(Sender: TObject);
@@ -1751,14 +1796,10 @@ end;
 
 procedure TMainForm.ShowValue1Click(Sender: TObject);
 var
-  s, v: string;
+  s, v, t: string;
 begin
-  if Engine.Files.Current.SynEdit.SelEnd = 0 then
-    s := Trim(Engine.Files.Current.SynEdit.GetWordAtRowCol(Engine.Files.Current.SynEdit.CaretXY))
-  else
-    s := Engine.Files.Current.SynEdit.SelText;
-  //if Engine.Debug.GetWatchValue(s, v) then
-
+  if GetWatchByCursor(v, s, t) then
+    ShowMessage(v + ':' + t + '=' + #13 + s);
 end;
 
 procedure TMainForm.ShowMessagesList;
@@ -1773,12 +1814,14 @@ end;
 
 procedure TMainForm.LoadAddons;
 var
-  i: Integer;
+  i: integer;
+
   procedure AddMenu(vParentMenu, vName, vCaption: string; vOnClick: TNotifyEvent);
   var
     p: TMenuItem;
     c: TComponent;
     tb: TToolButton;
+
     function CreateMenuItem: TMenuItem;
     begin
       Result := TMenuItem.Create(Self);
@@ -1786,6 +1829,7 @@ var
       Result.Caption := vCaption;
       Result.OnClick := vOnClick;
     end;
+
     function CreateToolButton: TToolButton;
     begin
       Result := TToolButton.Create(Self);
@@ -1793,6 +1837,7 @@ var
       Result.Caption := vCaption;
       Result.OnClick := vOnClick;
     end;
+
   begin
     c := FindComponent(vParentMenu);
     if c <> nil then
@@ -1800,7 +1845,7 @@ var
       if c is TMenu then
         (c as TMenu).Items.Add(CreateMenuItem)
       else if c is TMenuItem then
-        (c as TMenuItem).Add(CreateMenuItem)
+        (c as TMenuItem).Add(CreateMenuItem);
       {else if c is TToolBar then
          CreateToolButton.Parent := c as TToolBar
       else if c is TToolButton then
@@ -1810,10 +1855,11 @@ var
       ToolsMnu.Add(CreateMenuItem);
     //m.Parent := ToolsMnu;
   end;
+
 begin
   //MainMenu.Items.BeginUpdate;
   try
-    for i :=0 to Addons.Count -1 do
+    for i := 0 to Addons.Count - 1 do
     begin
       if Supports(Addons[i].Addon, IMenuAddon) and (Supports(Addons[i].Addon, IClickAddon)) then
         AddMenu('', Addons[i].Name, (Addons[i].Addon as IMenuAddon).GetCaption, @((Addons[i].Addon as IClickAddon).Click));
@@ -1930,7 +1976,7 @@ begin
           aRoot := IncludeTrailingPathDelimiter(Engine.Options.CompilerFolder) + 'php.exe'
         else
           aRoot := 'php.exe';
-//        ShellExecute(0, '', PChar(aRoot), PChar(aFile), PChar(ExtractFilePath(aFile)), SW_SHOWNOACTIVATE);
+        //        ShellExecute(0, '', PChar(aRoot), PChar(aFile), PChar(ExtractFilePath(aFile)), SW_SHOWNOACTIVATE);
       end;
     end;
   end;
@@ -1953,7 +1999,7 @@ var
 begin
   if Engine.Files.Current <> nil then
   begin
-    if Engine.Files.Current.SynEdit.SelEnd = 0 then
+    if not Engine.Files.Current.SynEdit.SelAvail then
       s := Trim(Engine.Files.Current.SynEdit.GetWordAtRowCol(Engine.Files.Current.SynEdit.CaretXY))
     else
       s := Engine.Files.Current.SynEdit.SelText;
@@ -2077,7 +2123,6 @@ begin
 
     Sender.Canvas.Lock;
     try
-      //ListView_GetSubItemRect(Sender.Handle, Item.Index, SubItem, LVIR_BOUNDS, @aRect);
       aRect := Item.DisplayRectSubItem(SubItem, drSelectBounds);
       c := (Item as TSearchListItem).Column;
       l := (Item as TSearchListItem).Length;

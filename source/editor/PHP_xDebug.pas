@@ -59,7 +59,7 @@ type
     procedure Clear; override;
     procedure Add(vName: string); override;
     procedure Remove(vName: string); override;
-    function GetWatchValue(vName: string; var vValue: string): boolean; override;
+    function GetValue(vName: string; var vValue: variant; var vType: string): boolean; override;
   end;
 
   { TPHP_xDebug }
@@ -83,7 +83,7 @@ type
     procedure Lock; override;
     procedure Unlock; override;
     function IsRuning: boolean; override;
-    procedure RunToCursor(FileName: string; LineNo: integer); override;
+    procedure RunTo(FileName: string; LineNo: integer); override;
     function GetKey: string; override;
   end;
 
@@ -123,16 +123,29 @@ begin
   inherited Remove(vName);
 end;
 
-function TPHP_xDebugWatches.GetWatchValue(vName: string; var vValue: string): boolean;
+function TPHP_xDebugWatches.GetValue(vName: string; var vValue: variant; var vType: string): boolean;
 var
   aAction: TdbgpGetWatchInstance;
 begin
-  aAction := TdbgpGetWatchInstance.Create;
-  aAction.VariableName := vName;
-  with FDebug.FServer do
+  Result := False;
+  if FDebug.FServer.Count > 0 then   //there is a connection from XDebug
   begin
-    AddAction(aAction);
-    Resume;
+    aAction := TdbgpGetWatchInstance.Create;
+    aAction.KeepAlive := True;
+    aAction.Wait := True;
+    aAction.VariableName := vName;
+    with FDebug.FServer do
+    begin
+      AddAction(aAction);
+      if Resume(10000) then//wait for 10 sec
+      begin
+        vValue := aAction.VariableValue;
+        vType := aAction.VariableType;
+        Result := True;
+      end;
+      ExtractAction(aAction);
+      aAction.Free;
+    end;
   end;
 end;
 
@@ -289,7 +302,7 @@ begin
   Result := FServer.Count > 0;
 end;
 
-procedure TPHP_xDebug.RunToCursor(FileName: string; LineNo: integer);
+procedure TPHP_xDebug.RunTo(FileName: string; LineNo: integer);
 begin
 end;
 

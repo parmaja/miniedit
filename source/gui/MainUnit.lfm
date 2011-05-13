@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 328
+  Left = 507
   Height = 518
-  Top = 118
+  Top = 125
   Width = 876
   AllowDropFiles = True
   Caption = 'Mini Edit'
@@ -2172,5 +2172,10 @@ object MainForm: TMainForm
     OnMessage = IPCServerMessage
     left = 711
     top = 117
+  end
+  object ApplicationProperties: TApplicationProperties
+    OnShowHint = ApplicationPropertiesShowHint
+    left = 83
+    top = 215
   end
 end

@@ -179,7 +179,6 @@ type
     procedure DoEdit(Sender: TObject);
     procedure DoStatusChange(Sender: TObject; Changes: TSynStatusChanges);
     procedure DoGutterClickEvent(Sender: TObject; X, Y, Line: integer; Mark: TSynEditMark);
-    procedure DoSpecialLineColors(Sender: TObject; Line: Integer; var Special: Boolean; var FG, BG: TColor);
     procedure DoSpecialLineMarkup(Sender: TObject; Line: Integer; var Special: Boolean; Markup: TSynSelectedColor);
     procedure UpdateAge;
     function GetHighlighter: TSynCustomHighlighter; virtual;
@@ -1462,13 +1461,12 @@ begin
   FSynEdit.OnChange := DoEdit;
   FSynEdit.OnStatusChange := DoStatusChange;
   FSynEdit.OnGutterClick := DoGutterClickEvent;
-  //FSynEdit.OnSpecialLineColors := DoSpecialLineColors;
   FSynEdit.OnSpecialLineMarkup := DoSpecialLineMarkup;
   FSynEdit.BookMarkOptions.BookmarkImages := EditorResource.BookmarkImages;
-  //FSynEdit.Gutter.Parts.Add()
   FSynEdit.TrimSpaceType := settLeaveLine;
   FSynEdit.BoundsRect := Engine.Window.ClientRect;
   FSynEdit.BorderStyle := bsNone;
+  FSynEdit.ShowHint := True;
   FSynEdit.Visible := False;
   FSynEdit.Align := alClient;
   FSynEdit.Realign;
@@ -1766,19 +1764,6 @@ begin
   end;
 end;
 
-procedure TEditorFile.DoSpecialLineColors(Sender: TObject; Line: Integer; var Special: Boolean; var FG, BG: TColor);
-begin
-  if Engine.Debug.ExecutedEdit = Sender then
-  begin
-    if Engine.Debug.ExecutedLine = Line then
-    begin
-      Special := True;
-      BG := clNavy;
-      FG := clWhite;
-    end;
-  end;
-end;
-
 procedure TEditorFile.DoSpecialLineMarkup(Sender: TObject; Line: Integer; var Special: Boolean; Markup: TSynSelectedColor);
 begin
   if Engine.Debug.ExecutedEdit = Sender then
@@ -1786,11 +1771,8 @@ begin
     if Engine.Debug.ExecutedLine = Line then
     begin
       Special := True;
-      with Markup do
-      begin
-        Background := clNavy;
-        Foreground := clWhite;
-      end;
+      Markup.Background := clNavy;
+      Markup.Foreground := clWhite;
     end;
   end;
 end;

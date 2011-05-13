@@ -59,7 +59,7 @@ type
   public
     procedure Add(vName: string); virtual;
     procedure Remove(vName: string); virtual;
-    function GetWatchValue(vName: string; var vValue: string): boolean; virtual;
+    function GetValue(vName: string; var vValue: Variant; var vType: string): boolean; virtual;
     property Items[Index: integer]: TEditWatch read GetItems; default;
   end;
 
@@ -117,7 +117,7 @@ type
 
     function IsConnected: boolean; virtual;
 
-    procedure RunToCursor(FileName: string; LineNo: integer); virtual;//todo runto
+    procedure RunTo(FileName: string; LineNo: integer); virtual;//todo runto
 
     property ExecutedLine: Integer read GetExecutedLine;
     property ExecutedEdit: TCustomSynEdit read GetExecutedEdit write SetExecutedEdit;
@@ -163,7 +163,7 @@ begin
 
 end;
 
-function TEditorWatches.GetWatchValue(vName: string; var vValue: string): boolean;
+function TEditorWatches.GetValue(vName: string; var vValue: Variant; var vType: string): boolean;
 begin
 end;
 
@@ -322,7 +322,7 @@ begin
   Result := False;
 end;
 
-procedure TEditorDebugger.RunToCursor(FileName: string; LineNo: integer);
+procedure TEditorDebugger.RunTo(FileName: string; LineNo: integer);
 begin
 end;
 
