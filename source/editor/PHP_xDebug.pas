@@ -132,13 +132,12 @@ begin
   if FDebug.FServer.Count > 0 then   //there is a connection from XDebug
   begin
     aAction := TdbgpGetWatchInstance.Create;
-    aAction.KeepAlive := True;
-    aAction.Wait := True;
+    aAction.CreateEvent;
     aAction.VariableName := vName;
     with FDebug.FServer do
     begin
       AddAction(aAction);
-      if Resume(10000) then//wait for 10 sec
+      if Resume(aAction) then//wait for 10 sec
       begin
         vValue := aAction.VariableValue;
         vType := aAction.VariableType;
@@ -255,7 +254,7 @@ end;
 procedure TPHP_xDebug.Stop;
 begin
   FServer.AddAction(TdbgpDetach);
-  FServer.Resume(INFINITE);
+  //FServer.Resume(INFINITE);
   FServer.Stop;
 end;
 
@@ -306,12 +305,12 @@ end;
 
 procedure TPHP_xDebug.Lock;
 begin
-  DBGLock.Lock;
+  DBGP.Lock.Enter;
 end;
 
 procedure TPHP_xDebug.Unlock;
 begin
-  DBGLock.Unlock;
+  DBGP.Lock.Leave;
 end;
 
 function TPHP_xDebug.IsRuning: boolean;
