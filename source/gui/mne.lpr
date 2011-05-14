@@ -40,7 +40,7 @@ uses
   mnePHPIniForm in 'mnePHPIniForm.pas' {PHPIniForm},
   mneBreakpoints in 'mneBreakpoints.pas' {BreakpointsForm},
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
-  SearchProgressForms in '..\editor\SearchProgressForms.pas' {SearchProgressForm},
+  SearchProgressForms in '..\editor\SearchProgressForms.pas', EditorDebugger {SearchProgressForm},
   SynHighlighterApache in '..\lib\SynHighlighterApache.pas',
   IniFiles,
   mneAddons,

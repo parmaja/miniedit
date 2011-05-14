@@ -20,7 +20,7 @@ uses
   mnXMLRttiProfile, mnXMLUtils, mnUtils, LCLType;
 
 type
-  TEditorChangeState = set of (ecsChanged, ecsState, ecsRefresh, ecsDebug, ecsEdit, ecsFolder, ecsProjectLoaded);
+  TEditorChangeState = set of (ecsChanged, ecsState, ecsRefresh, ecsDebug, ecsShow, ecsEdit, ecsFolder, ecsProjectLoaded); //ecsShow bring to front
   TSynCompletionType = (ctCode, ctHint, ctParams);
 
   TEditorEngine = class;
@@ -248,6 +248,11 @@ type
     property Current: TEditorFile read GetCurrent write SetCurrent;
     property Items[Index: Integer]: TEditorFile read GetItems; default;
   published
+  end;
+
+  TSynBreakPointItem = class(TSynObjectListItem)
+  public
+    IsBreakPoint: Boolean;
   end;
 
   TEditorFileClass = class of TEditorFile;
@@ -779,6 +784,7 @@ end;
 destructor TEditorEngine.Destroy;
 begin
   FDebug.Stop;
+  FreeAndNil(FDebug);
   FreeAndNil(FSCM);
   FreeAndNil(FFiles);
   FreeAndNil(FProjects);
@@ -788,7 +794,6 @@ begin
   FreeAndNil(FOptions);
   //FreeAndNil(FMacroRecorder);
   FreeAndNil(FMessagesList);
-  FreeAndNil(FDebug);
   Engine := nil;
   inherited;
 end;
@@ -884,7 +889,7 @@ function TEditorEngine.CreateDebugger: TEditorDebugger;
 begin
   {$ifdef WINDOWS}
   Result := TPHP_xDebug.Create;
-  Result.Start;
+  //Result.Start;
   {$else}
   Result := TEditorDebugger.Create;
   {$endif}
@@ -1463,6 +1468,8 @@ begin
   FSynEdit.OnGutterClick := DoGutterClickEvent;
   FSynEdit.OnSpecialLineMarkup := DoSpecialLineMarkup;
   FSynEdit.BookMarkOptions.BookmarkImages := EditorResource.BookmarkImages;
+  //FSynEdit.Gutter.MarksPart.DebugMarksImageIndex := 0;
+  //FSynEdit.Gutter.Parts.Add(TSynBreakPointItem.Create(FSynEdit.Gutter.Parts));
   FSynEdit.TrimSpaceType := settLeaveLine;
   FSynEdit.BoundsRect := Engine.Window.ClientRect;
   FSynEdit.BorderStyle := bsNone;

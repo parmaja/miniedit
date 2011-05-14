@@ -77,6 +77,9 @@ type
 {
   Most common addons
 }
+
+  { IClickAddon }
+
   IClickAddon = interface(IAddon)
     ['{780D2A49-8F64-45A3-8F2C-96DE2318DB90}']
     procedure Click(Sender: TObject);
@@ -90,8 +93,8 @@ type
   ICheckAddon = interface(IAddon)
     ['{439B198B-E879-4779-AC70-5F2F378719DA}']
     function GetChecked: boolean;
-    procedure SetChecked(AValue: boolean);
-    property Checked: boolean read GetChecked write SetChecked;
+    procedure SetChecked(const AValue: boolean);
+    property Checked: Boolean read GetChecked write SetChecked;
   end;
 
   IMenuAddon = interface(ICaptionAddon)
@@ -123,6 +126,9 @@ type
     procedure StepOut;
     procedure Run;
     procedure Resume;
+    function GetActive: boolean;
+    procedure SetActive(const AValue: Boolean);
+    property Active: Boolean read GetActive write SetActive;
   end;
 
 function Addons: TAddons;
@@ -209,7 +215,7 @@ end;
 
 destructor TAddonObject.Destroy;
 begin
-  inherited Destroy;
+  inherited;
 end;
 
 initialization

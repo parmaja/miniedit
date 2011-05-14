@@ -206,4 +206,4 @@ type
 
 initialization
   Addons.Add('PHP', 'OpenPHPConfigAddon', TOpenPHPConfigAddon);
-end.
+end.

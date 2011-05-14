@@ -4,7 +4,7 @@ unit EditorDebugger;
 {**
  * Mini Edit
  *
- * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+ * @license   GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author    Zaher Dirkey <zaher at parmaja dot com>
  *}
 interface
@@ -39,7 +39,7 @@ type
 
   TEditorBreakPoints = class(TEditorElements)
   protected
-    function GetItems(Index: integer): TEditBreakpoint;
+    function GetItems(Index: integer): TEditBreakpoint; virtual;
   public
     procedure Toggle(FileName: string; LineNo: integer); virtual;
     function Found(FileName: string; LineNo: integer): boolean; virtual;
@@ -55,7 +55,7 @@ type
   TEditorWatches = class(TEditorElements)
   private
   protected
-    function GetItems(Index: integer): TEditWatch;
+    function GetItems(Index: integer): TEditWatch; virtual;
   public
     procedure Add(vName: string); virtual;
     procedure Remove(vName: string); virtual;
@@ -80,23 +80,20 @@ type
 
   { TEditorDebugger }
 
-  TEditorDebugger = class(TAddon, IMenuAddon, IClickAddon, IDebugAddon, ICheckAddon)
+  TEditorDebugger = class(TAddon, IMenuAddon, IClickAddon, IDebugAddon)
   private
     FBreakpoints: TEditorBreakPoints;
     FWatches: TEditorWatches;
     FKey: string;
     FLink: TEditorDebugLink;
-    function GetActive: boolean;
     function GetExecutedEdit: TCustomSynEdit;
     function GetExecutedLine: Integer;
-    procedure SetActive(const AValue: boolean);
-    function GetChecked: boolean;
-    procedure SetChecked(AValue: boolean);
-
     function GetCaption: string; virtual;
     procedure Click(Sender: TObject); virtual;
     procedure SetExecutedEdit(const AValue: TCustomSynEdit);
   protected
+    function GetActive: Boolean; virtual;
+    procedure SetActive(const AValue: Boolean); virtual;
     function CreateBreakPoints: TEditorBreakPoints; virtual;
     function CreateWatches: TEditorWatches; virtual;
   public
@@ -105,18 +102,16 @@ type
 
     procedure Start; virtual;
     procedure Stop; virtual;
-    procedure Reset; virtual;
+
+    procedure Reset; virtual; //stop debug and stop the run
+    procedure Resume; virtual; //run and do not stop at breakpoints, or run without debug
     procedure StepInto; virtual;
     procedure StepOver; virtual;
     procedure StepOut; virtual;
     procedure Run; virtual;
-    procedure Resume; virtual;
     procedure Lock; virtual;
     procedure Unlock; virtual;
     function IsRuning: boolean; virtual;
-
-    function IsConnected: boolean; virtual;
-
     procedure RunTo(FileName: string; LineNo: integer); virtual;//todo runto
 
     property ExecutedLine: Integer read GetExecutedLine;
@@ -195,16 +190,6 @@ end;
 
 { TEditorDebugger }
 
-function TEditorDebugger.GetChecked: boolean;
-begin
-  Result := Active;
-end;
-
-procedure TEditorDebugger.SetChecked(AValue: boolean);
-begin
-  Active := AValue;
-end;
-
 function TEditorDebugger.GetCaption: string;
 begin
   Result := 'Debug';
@@ -240,6 +225,7 @@ end;
 
 destructor TEditorDebugger.Destroy;
 begin
+  FLink.ExecutedEdit := nil;//just for safe free
   FreeAndNil(FBreakpoints);
   FreeAndNil(FWatches);
   FreeAndNil(FLink);
@@ -263,7 +249,6 @@ end;
 
 procedure TEditorDebugger.SetActive(const AValue: boolean);
 begin
-
 end;
 
 procedure TEditorDebugger.Start;
@@ -317,11 +302,6 @@ begin
   Result := False;
 end;
 
-function TEditorDebugger.IsConnected: boolean;
-begin
-  Result := False;
-end;
-
 procedure TEditorDebugger.RunTo(FileName: string; LineNo: integer);
 begin
 end;
@@ -355,8 +335,7 @@ begin
       ExecutedEdit.InvalidateLine(FLink.ExecutedLine);
     end;
   end;
-  Engine.UpdateState([ecsDebug]);
-  Application.MainForm.BringToFront;
+  Engine.UpdateState([ecsDebug, ecsShow]);
 end;
 
 procedure TEditorDebugger.SetExecuted(Key: string; FileName: string; const Line: integer);

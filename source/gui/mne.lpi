@@ -86,7 +86,7 @@
         <PackageName Value="LCL"/>
       </Item6>
     </RequiredPackages>
-    <Units Count="27">
+    <Units Count="28">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -265,6 +265,11 @@
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="mneSetups"/>
       </Unit26>
+      <Unit27>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="EditorDebugger"/>
+      </Unit27>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

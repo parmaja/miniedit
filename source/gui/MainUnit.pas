@@ -23,7 +23,7 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  LMessages, lCLType, LCLIntf, LCLProc, IAddons,
+  LMessages, lCLType, LCLIntf, LCLProc, IAddons, EditorDebugger,
   Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus, ToolWin,
   Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses, StdActns,
   PairSplitter, SynEditHighlighter, SynHighlighterPHP, SynHighlighterApache,
@@ -220,8 +220,8 @@ type
     StepOver1: TMenuItem;
     Reset2: TMenuItem;
     DBGActiveServerAct: TAction;
-    DBGDetachAct: TAction;
-    Detach1: TMenuItem;
+    DBGResumeAct: TAction;
+    ResumeMnu: TMenuItem;
     DBGStepOutAct: TAction;
     DBGStepOutAct1: TMenuItem;
     ToolButton6: TToolButton;
@@ -312,6 +312,7 @@ type
     procedure CloseActExecute(Sender: TObject);
     procedure FileListDblClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
+    procedure RunToCursor1Click(Sender: TObject);
     procedure SaveActExecute(Sender: TObject);
     procedure SaveAllActExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -382,11 +383,9 @@ type
     procedure DBGActiveServerActUpdate(Sender: TObject);
     procedure DBGActiveServerActExecute(Sender: TObject);
     procedure DBGResetActExecute(Sender: TObject);
-    procedure DBGDetachActExecute(Sender: TObject);
+    procedure DBGResumeActExecute(Sender: TObject);
     procedure DBGStepOutActExecute(Sender: TObject);
     procedure SaveAsActExecute(Sender: TObject);
-    procedure PHPIniConfigActExecute(Sender: TObject);
-    procedure MessagesTabChange(Sender: TObject; NewTab: integer; var AllowChange: boolean);
     procedure ShowValue1Click(Sender: TObject);
     procedure Add1Click(Sender: TObject);
     procedure Delete1Click(Sender: TObject);
@@ -794,6 +793,11 @@ begin
     end;
 end;
 
+procedure TMainForm.RunToCursor1Click(Sender: TObject);
+begin
+
+end;
+
 procedure TMainForm.SaveActExecute(Sender: TObject);
 begin
   Engine.Files.Save;
@@ -835,6 +839,7 @@ begin
   Engine.Options.Save;
   if FRunProject <> nil then
     FRunProject.Terminate;
+  Engine.OnChangedState := nil;
   //HtmlHelp(Application.Handle, nil, HH_CLOSE_ALL, 0);
 end;
 
@@ -1445,6 +1450,8 @@ begin
     EngineRefresh;
   if ecsDebug in State then
     EngineDebug;
+  if ecsShow in State then
+    BringToFront;
   if ecsEdit in State then
     EngineEdited;
   if ecsProjectLoaded in State then
@@ -1700,9 +1707,9 @@ begin
   Engine.Debug.Reset;
 end;
 
-procedure TMainForm.DBGDetachActExecute(Sender: TObject);
+procedure TMainForm.DBGResumeActExecute(Sender: TObject);
 begin
-  Engine.Debug.Stop;
+  Engine.Debug.Resume;
 end;
 
 procedure TMainForm.DBGStepOutActExecute(Sender: TObject);
@@ -1744,7 +1751,7 @@ end;
 
 procedure TMainForm.EngineDebug;
 begin
-  if Assigned(Engine) then
+  if Assigned(Engine) and (Engine.Debug <> nil) then
   begin
     DebugPnl.Caption := Engine.Debug.GetKey;
     UpdateFileHeaderPanel;
@@ -1762,15 +1769,6 @@ begin
   FileHeaderPanel.Visible := Engine.Files.Count > 0;
   if FileHeaderPanel.Visible then
     FileHeaderPanel.Refresh;
-end;
-
-procedure TMainForm.PHPIniConfigActExecute(Sender: TObject);
-begin
-
-end;
-
-procedure TMainForm.MessagesTabChange(Sender: TObject; NewTab: integer; var AllowChange: boolean);
-begin
 end;
 
 procedure TMainForm.UpdateWatches;

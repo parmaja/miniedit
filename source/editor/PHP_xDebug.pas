@@ -10,7 +10,7 @@ unit PHP_xDebug;
 interface
 
 uses
-  SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
+  SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs, syncobjs,
   mnServers, dbgpServers,
   SynEdit, IAddons,
   EditorDebugger;
@@ -27,8 +27,6 @@ type
     procedure DebugFile(Socket: TdbgpConnection; const FileName: string; Line: integer); override;
   public
     destructor Destroy; override;
-    procedure Reset;
-    procedure Detach;
     property Key: string read FKey;
   end;
 
@@ -38,7 +36,7 @@ type
   protected
     FDebug: TPHP_xDebug;
     function GetCount: integer; override;
-    function GetItems(Index: integer): TEditBreakpoint;
+    function GetItems(Index: integer): TEditBreakpoint; override;
   public
     procedure Clear; override;
     procedure Toggle(FileName: string; LineNo: integer); override;
@@ -54,7 +52,7 @@ type
   protected
     FDebug: TPHP_xDebug;
     function GetCount: integer; override;
-    function GetItems(Index: integer): TEditWatch;
+    function GetItems(Index: integer): TEditWatch; override;
   public
     procedure Clear; override;
     procedure Add(vName: string); override;
@@ -68,6 +66,8 @@ type
   private
     FServer: TPHP_xDebugServer;
   protected
+    function GetActive: boolean; override;
+    procedure SetActive(const AValue: boolean); override;
     function CreateBreakPoints: TEditorBreakPoints; override;
     function CreateWatches: TEditorWatches; override;
   public
@@ -76,14 +76,15 @@ type
     procedure Start; override;
     procedure Stop; override;
     procedure Reset; override;
+    procedure Resume; override;
     procedure StepInto; override;
     procedure StepOver; override;
     procedure StepOut; override;
     procedure Run; override;
+    procedure RunTo(FileName: string; LineNo: integer); override;
     procedure Lock; override;
     procedure Unlock; override;
     function IsRuning: boolean; override;
-    procedure RunTo(FileName: string; LineNo: integer); override;
     function GetKey: string; override;
   end;
 
@@ -211,6 +212,16 @@ end;
 
 { TPHP_xDebug }
 
+function TPHP_xDebug.GetActive: boolean;
+begin
+  Result := FServer.Active;
+end;
+
+procedure TPHP_xDebug.SetActive(const AValue: boolean);
+begin
+  FServer.Active := AValue;
+end;
+
 function TPHP_xDebug.CreateBreakPoints: TEditorBreakPoints;
 begin
   Result := TPHP_xDebugBreakPoints.Create;
@@ -243,9 +254,9 @@ end;
 
 procedure TPHP_xDebug.Stop;
 begin
-  FServer.AddAction(TdbgpDetach.Create);
-  FServer.AddAction(TdbgpGetCurrent.Create); //usefull to detect the disconnected
-  FServer.Resume;
+  FServer.AddAction(TdbgpDetach);
+  FServer.Resume(INFINITE);
+  FServer.Stop;
 end;
 
 procedure TPHP_xDebug.Reset;
@@ -253,6 +264,12 @@ begin
   FServer.AddAction(TdbgpStop.Create);
   FServer.AddAction(TdbgpGetCurrent.Create);
   FServer.Resume;
+  FServer.Clear;
+end;
+
+procedure TPHP_xDebug.Resume;
+begin
+  FServer.AddAction(TdbgpDetach.Create);
 end;
 
 procedure TPHP_xDebug.StepInto;
@@ -311,16 +328,6 @@ begin
   Result := FServer.Key;
 end;
 
-procedure TPHP_xDebugServer.Reset;
-begin
-  //  Respond(dbgpReset);
-end;
-
-procedure TPHP_xDebugServer.Detach;
-begin
-  //  Respond(dbgpDetach);
-end;
-
 procedure TPHP_xDebugServer.DebugFile(Socket: TdbgpConnection; const FileName: string; Line: integer);
 begin
   FDebug.SetExecuted(Socket.Key, FileName, Line);
@@ -336,12 +343,10 @@ end;
 
 destructor TPHP_xDebugServer.Destroy;
 begin
-  FDebug.SetExecuted('', nil, -1);
-  Stop;
   inherited;
 end;
 
 initialization
-  Addons.Add('Debug', 'XDebug', TPHP_xDebug);
+//  Addons.Add('Debug', 'XDebug', TPHP_xDebug);//most not created /??!!!
 end.
 

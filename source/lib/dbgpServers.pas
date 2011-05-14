@@ -57,10 +57,13 @@ type
     property Connection: TdbgpConnection read FConnection;
     property Flags: TdbgpActionFlags read FFlags write FFlags;
   public
+    constructor Create; virtual;
+    destructor Destroy; override;
     property KeepAlive: Boolean read FKeepAlive write FKeepAlive; //do no free it
     property Wait: Boolean read FWait write FWait; //wait until process the action
-    constructor Create; virtual;
   end;
+
+  TdbgpActionClass = class of TdbgpAction;
 
   TdbgpSpool = class(TObjectList)
   private
@@ -121,10 +124,13 @@ type
     procedure Process(Respond: TdbgpRespond); override;
   end;
 
+  { TdbgpDetach }
+
   TdbgpDetach = class(TdbgpAction)
   public
     function GetCommand: string; override;
     procedure Process(Respond: TdbgpRespond); override;
+    destructor Destroy; override;
   end;
 
   TdbgpStop = class(TdbgpAction)
@@ -324,12 +330,15 @@ type
     function CreateListener: TmnListener; override;
     procedure DoChanged(Listener: TmnListener); override;
     procedure DebugFile(Socket: TdbgpConnection; const FileName: string; Line: integer); virtual;
+    procedure DoStart; override;
+    procedure DoStop; override;
     property Spool: TdbgpSpool read FSpool;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    function Resume(vWait: Integer = 0):Boolean; // 0 =s no waiting
-    procedure AddAction(Action: TdbgpAction);
+    function Resume(vWait: cardinal = 0):Boolean; // 0 =s no waiting
+    procedure AddAction(Action: TdbgpAction); overload;
+    procedure AddAction(ActionClass: TdbgpActionClass); overload;
     procedure RemoveAction(Action: TdbgpAction);
     procedure ExtractAction(Action: TdbgpAction);
     procedure Clear;
@@ -373,6 +382,7 @@ destructor TdbgpServer.Destroy;
 begin
   FreeAndNil(IDELock);
   FreeAndNil(FWatches);
+  FreeAndNil(FBreakpoints);
   FreeAndNil(FSpool);
   inherited;
 end;
@@ -580,6 +590,7 @@ begin
   begin
     Server.IDELock.Enter;
     try
+      DBGEvent.SetEvent; //if some proc waiting release it, it is good for my Hint variable value
       DBGEvent.WaitFor(INFINITE); //on thread can wait event
       i := 0;
       while i < Server.Spool.Count do
@@ -644,6 +655,19 @@ begin
     FOnDebugFile(Socket, FileName, Line);
 end;
 
+procedure TdbgpServer.DoStart;
+begin
+  Spool.Clear;
+  inherited;
+end;
+
+procedure TdbgpServer.DoStop;
+begin
+  inherited;
+  if FSpool <> nil then //DoStop class when Server free
+    FSpool.Clear;
+end;
+
 procedure TdbgpServer.DoChanged(Listener: TmnListener);
 begin
   inherited;
@@ -694,6 +718,11 @@ begin
   Created;
 end;
 
+destructor TdbgpAction.Destroy;
+begin
+  inherited Destroy;
+end;
+
 procedure TdbgpAction.Created;
 begin
   Flags := [dbgpafSend];
@@ -741,7 +770,7 @@ begin
   inherited;
 end;
 
-function TdbgpServer.Resume(vWait: Integer):Boolean;
+function TdbgpServer.Resume(vWait: cardinal):Boolean;
 begin
   if vWait <> 0 then
     Inc(FWaitCount);
@@ -836,6 +865,11 @@ procedure TdbgpDetach.Process(Respond: TdbgpRespond);
 begin
   inherited;
   Connection.Disconnect;
+end;
+
+destructor TdbgpDetach.Destroy;
+begin
+  inherited Destroy;
 end;
 
 { TdbgpStop }
@@ -1275,6 +1309,11 @@ begin
   finally
     DBGLock.Unlock;
   end;
+end;
+
+procedure TdbgpServer.AddAction(ActionClass: TdbgpActionClass);
+begin
+  AddAction(ActionClass.Create);
 end;
 
 procedure TdbgpServer.RemoveAction(Action: TdbgpAction);
