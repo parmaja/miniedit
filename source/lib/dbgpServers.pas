@@ -468,9 +468,8 @@ begin
           aAction.FTransactionID := SendCommand(aCommand);
         if aAction.Accept and Connected then
         begin
-          TdbgpRespond.Create;
+          aRespond := ReadRespond;
           try
-            aRespond := ReadRespond;
             if (aRespond <> nil) and (aRespond.Root <> nil) then
             begin
               if (aRespond.GetAttribute('response', 'status') = 'stopping') then
@@ -485,11 +484,11 @@ begin
                   if (aRespond <> nil) and Connected and (aRespond.Root <> nil) then
                     aAction.Process(aRespond);
                 finally
-                  aRespond.Free;
                 end;
               end;
             end;
           finally
+            FreeAndNil(aRespond);
           end;
         end;
       finally
@@ -952,7 +951,6 @@ end;
 
 procedure TdbgpWatches.AddWatch(Name: string);
 var
-  aWatchAction: TdbgpGetWatch;
   aIndex: integer;
 begin
   DBGP.Lock.Enter;
@@ -963,10 +961,13 @@ begin
   end;
   if Server.IsRuning then
   begin
-    aWatchAction := TdbgpGetWatch.Create;
-    aWatchAction.Index := aIndex;
-    aWatchAction.VariableName := Name;
-    Server.Spool.Add(aWatchAction);
+    DBGP.Lock.Enter;
+    try
+      Server.Spool.Add(TdbgpGetWatches.Create);
+      Server.Spool.Add(TdbgpGetCurrent.Create);
+    finally
+      DBGP.Lock.Leave;
+    end;
     Server.Resume;
   end;
 end;
@@ -1015,14 +1016,28 @@ end;
 procedure TdbgpWatches.RemoveWatch(Name: string);
 var
   i: integer;
+  Founded: Boolean;
 begin
+  Founded:=False;
   for i := 0 to Count - 1 do
   begin
     if Items[i].VariableName = Name then
     begin
       Delete(i);
+      Founded:=True;
       break;
     end;
+  end;
+  if Server.IsRuning then
+  begin
+    DBGP.Lock.Enter;
+    try
+      Server.Spool.Add(TdbgpGetWatches.Create);
+      Server.Spool.Add(TdbgpGetCurrent.Create);
+    finally
+      DBGP.Lock.Leave;
+    end;
+    Server.Resume;
   end;
 end;
 

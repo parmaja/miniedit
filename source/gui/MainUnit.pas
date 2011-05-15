@@ -1775,20 +1775,29 @@ procedure TMainForm.UpdateWatches;
 var
   i: integer;
   aItem: TListItem;
+  aIndex: Integer;
 begin
-  WatchList.Clear;
-  Engine.Debug.Lock;
+  aIndex := WatchList.ItemIndex;
+  WatchList.BeginUpdate;
   try
-    for i := 0 to Engine.Debug.Watches.Count - 1 do
-    begin
-      aItem := WatchList.Items.Add;
-      aItem.ImageIndex := 41;
-      aItem.Caption := Engine.Debug.Watches[i].Name;
-      aItem.SubItems.Add(Engine.Debug.Watches[i].VarType);
-      aItem.SubItems.Add(Engine.Debug.Watches[i].Value);
+    WatchList.Clear;
+    Engine.Debug.Lock;
+    try
+      for i := 0 to Engine.Debug.Watches.Count - 1 do
+      begin
+        aItem := WatchList.Items.Add;
+        aItem.ImageIndex := 41;
+        aItem.Caption := Engine.Debug.Watches[i].Name;
+        aItem.SubItems.Add(Engine.Debug.Watches[i].VarType);
+        aItem.SubItems.Add(Engine.Debug.Watches[i].Value);
+      end;
+    finally
+      Engine.Debug.Unlock;
     end;
   finally
-    Engine.Debug.Unlock;
+    if aIndex >=0 then
+      WatchList.ItemIndex := aIndex;
+    WatchList.EndUpdate;
   end;
 end;
 
@@ -1882,7 +1891,6 @@ begin
   if s <> '' then
   begin
     Engine.Debug.Watches.Add(s);
-    UpdateWatches;
   end;
 end;
 
@@ -1894,7 +1902,6 @@ end;
 procedure TMainForm.DeleteWatch(s: string);
 begin
   Engine.Debug.Watches.Remove(s);
-  UpdateWatches;
 end;
 
 procedure TMainForm.DBGToggleBreakpointExecute(Sender: TObject);
@@ -2002,6 +2009,7 @@ begin
     else
       s := Engine.Files.Current.SynEdit.SelText;
     AddWatch(s);
+    MessagesTabs.ActiveControl := WatchList;
   end;
 end;
 

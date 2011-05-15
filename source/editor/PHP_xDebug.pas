@@ -273,10 +273,10 @@ end;
 
 procedure TPHP_xDebug.Reset;
 begin
+  FServer.Clear; //no need to any exists actions
   FServer.AddAction(TdbgpStop.Create);
   FServer.AddAction(TdbgpGetCurrent.Create);
   FServer.Resume;
-  FServer.Clear;
 end;
 
 procedure TPHP_xDebug.Resume;
@@ -350,7 +350,6 @@ begin
   inherited;
   if Listener.Count = 0 then
     FDebug.SetExecuted('', nil, -1);
-  //Engine.UpdateState([ecsDebug]);
 end;
 
 destructor TPHP_xDebugServer.Destroy;

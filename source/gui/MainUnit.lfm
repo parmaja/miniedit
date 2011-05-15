@@ -1631,7 +1631,7 @@ object MainForm: TMainForm
       Caption = 'Resume'
       Hint = 'Run php without debug'
       OnExecute = DBGResumeActExecute
-      ShortCut = 122
+      ShortCut = 8305
     end
     object DBGStepOutAct: TAction
       Category = 'Debug'

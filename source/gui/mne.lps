@@ -4,16 +4,14 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="windows"/>
-    <Units Count="186">
+    <Units Count="194">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="23"/>
         <WindowIndex Value="0"/>
         <TopLine Value="93"/>
         <CursorPos X="1" Y="113"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit0>
       <Unit1>
         <Filename Value="MainUnit.pas"/>
@@ -22,11 +20,15 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainUnit"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1865"/>
-        <CursorPos X="1" Y="1884"/>
+        <TopLine Value="1705"/>
+        <CursorPos X="16" Y="1707"/>
         <UsageCount Value="200"/>
+        <Bookmarks Count="1">
+          <Item0 X="3" Y="2010" ID="0"/>
+        </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit1>
@@ -85,10 +87,10 @@
         <Filename Value="..\editor\EditorEngine.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorEngine"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="910"/>
-        <CursorPos X="1" Y="927"/>
+        <TopLine Value="1"/>
+        <CursorPos X="8" Y="20"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="1">
           <Item0 X="66" Y="182" ID="3"/>
@@ -144,13 +146,13 @@
         <Filename Value="..\lib\dbgpServers.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="dbgpServers"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="262"/>
-        <CursorPos X="21" Y="278"/>
+        <TopLine Value="1350"/>
+        <CursorPos X="3" Y="1352"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="1">
-          <Item0 X="1" Y="819" ID="0"/>
+          <Item0 X="23" Y="492" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit12>
@@ -219,12 +221,10 @@
         <Filename Value="mneClasses.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="mneClasses"/>
-        <EditorIndex Value="14"/>
         <WindowIndex Value="0"/>
         <TopLine Value="419"/>
         <CursorPos X="33" Y="443"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit19>
       <Unit20>
         <Filename Value="mneConsts.pas"/>
@@ -242,12 +242,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="mnePHPIniForm"/>
-        <EditorIndex Value="22"/>
         <WindowIndex Value="0"/>
         <TopLine Value="178"/>
         <CursorPos X="10" Y="208"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit21>
       <Unit22>
         <Filename Value="mneProjectForms.pas"/>
@@ -311,11 +309,11 @@
         <Filename Value="..\editor\EditorDebugger.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorDebugger"/>
-        <EditorIndex Value="13"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="146"/>
-        <CursorPos X="11" Y="146"/>
-        <UsageCount Value="75"/>
+        <TopLine Value="90"/>
+        <CursorPos X="20" Y="106"/>
+        <UsageCount Value="77"/>
         <Loaded Value="True"/>
       </Unit27>
       <Unit28>
@@ -488,12 +486,10 @@
       <Unit46>
         <Filename Value="W:\programs\lazarus\components\synedit\synedit.pp"/>
         <UnitName Value="SynEdit"/>
-        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="4211"/>
         <CursorPos X="1" Y="4228"/>
         <UsageCount Value="37"/>
-        <Loaded Value="True"/>
       </Unit46>
       <Unit47>
         <Filename Value="W:\programs\lazarus\components\synedit\syngutter.pp"/>
@@ -742,12 +738,10 @@
       </Unit77>
       <Unit78>
         <Filename Value="W:\programs\lazarus\lcl\include\containedaction.inc"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="79"/>
         <CursorPos X="1" Y="104"/>
         <UsageCount Value="13"/>
-        <Loaded Value="True"/>
       </Unit78>
       <Unit79>
         <Filename Value="W:\programs\lazarus\lcl\include\customaction.inc"/>
@@ -788,12 +782,10 @@
       <Unit84>
         <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvTabSets.pas"/>
         <UnitName Value="ntvTabSets"/>
-        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="557"/>
         <CursorPos X="46" Y="578"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit84>
       <Unit85>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\objpas\classes\classesh.inc"/>
@@ -805,12 +797,10 @@
       <Unit86>
         <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvTabs.pas"/>
         <UnitName Value="ntvTabs"/>
-        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="581"/>
         <CursorPos X="123" Y="582"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit86>
       <Unit87>
         <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvPageControls.pas"/>
@@ -910,16 +900,14 @@
       <Unit99>
         <Filename Value="..\editor\PHP_xDebug.pas"/>
         <UnitName Value="PHP_xDebug"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="12"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="38"/>
-        <CursorPos X="14" Y="54"/>
-        <UsageCount Value="41"/>
-        <Bookmarks Count="3">
+        <TopLine Value="274"/>
+        <CursorPos X="22" Y="284"/>
+        <UsageCount Value="43"/>
+        <Bookmarks Count="2">
           <Item0 X="3" Y="267" ID="9"/>
           <Item1 X="22" Y="260" ID="2"/>
-          <Item2 X="1" Y="120" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit99>
@@ -1081,12 +1069,10 @@
       <Unit120>
         <Filename Value="..\editor\IAddons.pas"/>
         <UnitName Value="IAddons"/>
-        <EditorIndex Value="18"/>
         <WindowIndex Value="0"/>
         <TopLine Value="21"/>
         <CursorPos X="33" Y="34"/>
         <UsageCount Value="41"/>
-        <Loaded Value="True"/>
       </Unit120>
       <Unit121>
         <Filename Value="..\..\..\..\lib\minilib\pos\source\posStuffs.pas"/>
@@ -1337,12 +1323,10 @@
       </Unit151>
       <Unit152>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\inc\objpash.inc"/>
-        <EditorIndex Value="19"/>
         <WindowIndex Value="0"/>
         <TopLine Value="254"/>
         <CursorPos X="28" Y="280"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit152>
       <Unit153>
         <Filename Value="..\..\..\..\lib\minilib\socket\source\mnConnections.pas"/>
@@ -1355,12 +1339,10 @@
       <Unit154>
         <Filename Value="P:\programs\fpc\2.4\src\packages\fcl-base\src\syncobjs.pp"/>
         <UnitName Value="syncobjs"/>
-        <EditorIndex Value="15"/>
         <WindowIndex Value="0"/>
         <TopLine Value="54"/>
         <CursorPos X="16" Y="70"/>
         <UsageCount Value="20"/>
-        <Loaded Value="True"/>
       </Unit154>
       <Unit155>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\win\sysosh.inc"/>
@@ -1538,218 +1520,280 @@
       </Unit176>
       <Unit177>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\inc\threadh.inc"/>
-        <EditorIndex Value="16"/>
         <WindowIndex Value="0"/>
         <TopLine Value="136"/>
         <CursorPos X="1" Y="157"/>
         <UsageCount Value="13"/>
-        <Loaded Value="True"/>
       </Unit177>
       <Unit178>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\inc\thread.inc"/>
-        <EditorIndex Value="17"/>
         <WindowIndex Value="0"/>
         <TopLine Value="269"/>
         <CursorPos X="20" Y="272"/>
         <UsageCount Value="13"/>
-        <Loaded Value="True"/>
       </Unit178>
       <Unit179>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\win\sysutils.pp"/>
         <UnitName Value="sysutils"/>
-        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit179>
       <Unit180>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\win32\classes.pp"/>
         <UnitName Value="Classes"/>
-        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="144"/>
         <CursorPos X="11" Y="169"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit180>
       <Unit181>
         <Filename Value="P:\programs\fpc\2.4\src\packages\fcl-base\src\contnrs.pp"/>
         <UnitName Value="contnrs"/>
-        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1553"/>
         <CursorPos X="3" Y="1579"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit181>
       <Unit182>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\inc\objpas.inc"/>
-        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="782"/>
         <CursorPos X="10" Y="787"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit182>
       <Unit183>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\i386\i386.inc"/>
-        <EditorIndex Value="20"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1241"/>
         <CursorPos X="55" Y="1260"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit183>
       <Unit184>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\inc\systemh.inc"/>
-        <EditorIndex Value="21"/>
         <WindowIndex Value="0"/>
         <TopLine Value="909"/>
         <CursorPos X="42" Y="925"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit184>
       <Unit185>
         <Filename Value="W:\programs\lazarus\components\synedit\syneditpointclasses.pas"/>
         <UnitName Value="SynEditPointClasses"/>
-        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1495"/>
         <CursorPos X="1" Y="1521"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit185>
+      <Unit186>
+        <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLUtils.pas"/>
+        <UnitName Value="mnXMLUtils"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="36"/>
+        <CursorPos X="7" Y="63"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit186>
+      <Unit187>
+        <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLNodes.pas"/>
+        <UnitName Value="mnXMLNodes"/>
+        <EditorIndex Value="12"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="138"/>
+        <CursorPos X="3" Y="139"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit187>
+      <Unit188>
+        <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLRttiProfile.pas"/>
+        <UnitName Value="mnXMLRttiProfile"/>
+        <EditorIndex Value="6"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="17" Y="23"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit188>
+      <Unit189>
+        <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLRttiReader.pas"/>
+        <UnitName Value="mnXMLRttiReader"/>
+        <EditorIndex Value="7"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="10" Y="20"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit189>
+      <Unit190>
+        <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXML.pas"/>
+        <UnitName Value="mnXML"/>
+        <EditorIndex Value="11"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="653"/>
+        <CursorPos X="15" Y="672"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit190>
+      <Unit191>
+        <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLRtti.pas"/>
+        <UnitName Value="mnXMLRtti"/>
+        <EditorIndex Value="8"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="10" Y="20"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit191>
+      <Unit192>
+        <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLReader.pas"/>
+        <UnitName Value="mnXMLReader"/>
+        <EditorIndex Value="9"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="22" Y="19"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit192>
+      <Unit193>
+        <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLScanner.pas"/>
+        <UnitName Value="mnXMLScanner"/>
+        <EditorIndex Value="10"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="230"/>
+        <CursorPos X="23" Y="252"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
+      </Unit193>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <JumpHistory Count="30" HistoryIndex="28">
       <Position1>
-        <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvTabSets.pas"/>
-        <Caret Line="266" Column="44" TopLine="257"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="182" Column="66" TopLine="166"/>
       </Position1>
       <Position2>
-        <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvTabSets.pas"/>
-        <Caret Line="578" Column="46" TopLine="557"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position2>
       <Position3>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1998" Column="1" TopLine="1988"/>
+        <Filename Value="..\editor\PHP_xDebug.pas"/>
+        <Caret Line="127" Column="13" TopLine="124"/>
       </Position3>
       <Position4>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="2000" Column="1" TopLine="1988"/>
+        <Filename Value="..\lib\dbgpServers.pas"/>
+        <Caret Line="969" Column="1" TopLine="953"/>
       </Position4>
       <Position5>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="2001" Column="1" TopLine="1988"/>
+        <Filename Value="..\lib\dbgpServers.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position5>
       <Position6>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="2006" Column="17" TopLine="1988"/>
+        <Filename Value="..\lib\dbgpServers.pas"/>
+        <Caret Line="20" Column="68" TopLine="1"/>
       </Position6>
       <Position7>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="2000" Column="1" TopLine="1988"/>
+        <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXML.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position7>
       <Position8>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="2001" Column="11" TopLine="1988"/>
+        <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLNodes.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position8>
       <Position9>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="2000" Column="1" TopLine="1988"/>
+        <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLNodes.pas"/>
+        <Caret Line="165" Column="9" TopLine="149"/>
       </Position9>
       <Position10>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="2004" Column="12" TopLine="1988"/>
+        <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLNodes.pas"/>
+        <Caret Line="230" Column="12" TopLine="227"/>
       </Position10>
       <Position11>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1881" Column="3" TopLine="1879"/>
+        <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLNodes.pas"/>
+        <Caret Line="61" Column="59" TopLine="45"/>
       </Position11>
       <Position12>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1883" Column="10" TopLine="1875"/>
+        <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLScanner.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position12>
       <Position13>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1882" Column="1" TopLine="1875"/>
+        <Filename Value="..\lib\dbgpServers.pas"/>
+        <Caret Line="21" Column="3" TopLine="1"/>
       </Position13>
       <Position14>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1884" Column="1" TopLine="1875"/>
+        <Filename Value="..\lib\dbgpServers.pas"/>
+        <Caret Line="537" Column="27" TopLine="531"/>
       </Position14>
       <Position15>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1885" Column="1" TopLine="1875"/>
+        <Filename Value="..\lib\dbgpServers.pas"/>
+        <Caret Line="543" Column="11" TopLine="531"/>
       </Position15>
       <Position16>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1887" Column="1" TopLine="1875"/>
+        <Filename Value="..\lib\dbgpServers.pas"/>
+        <Caret Line="222" Column="25" TopLine="206"/>
       </Position16>
       <Position17>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="2006" Column="1" TopLine="1990"/>
+        <Filename Value="..\lib\dbgpServers.pas"/>
+        <Caret Line="467" Column="23" TopLine="459"/>
       </Position17>
       <Position18>
-        <Filename Value="W:\programs\lazarus\lcl\include\containedaction.inc"/>
-        <Caret Line="104" Column="1" TopLine="79"/>
+        <Filename Value="..\lib\dbgpServers.pas"/>
+        <Caret Line="471" Column="34" TopLine="459"/>
       </Position18>
       <Position19>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1881" Column="1" TopLine="1865"/>
+        <Filename Value="..\lib\dbgpServers.pas"/>
+        <Caret Line="534" Column="37" TopLine="508"/>
       </Position19>
       <Position20>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1882" Column="1" TopLine="1865"/>
+        <Filename Value="..\lib\dbgpServers.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position20>
       <Position21>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1884" Column="1" TopLine="1865"/>
+        <Filename Value="..\lib\dbgpServers.pas"/>
+        <Caret Line="222" Column="25" TopLine="196"/>
       </Position21>
       <Position22>
-        <Filename Value="..\editor\PHP_xDebug.pas"/>
-        <Caret Line="118" Column="1" TopLine="102"/>
+        <Filename Value="..\lib\dbgpServers.pas"/>
+        <Caret Line="490" Column="11" TopLine="463"/>
       </Position22>
       <Position23>
-        <Filename Value="..\editor\PHP_xDebug.pas"/>
-        <Caret Line="120" Column="1" TopLine="102"/>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="69" Column="5" TopLine="60"/>
       </Position23>
       <Position24>
         <Filename Value="MainUnit.pas"/>
-        <Caret Line="1885" Column="1" TopLine="1865"/>
+        <Caret Line="217" Column="13" TopLine="191"/>
       </Position24>
       <Position25>
         <Filename Value="MainUnit.pas"/>
-        <Caret Line="1881" Column="1" TopLine="1865"/>
+        <Caret Line="221" Column="10" TopLine="195"/>
       </Position25>
       <Position26>
         <Filename Value="MainUnit.pas"/>
-        <Caret Line="1882" Column="1" TopLine="1865"/>
+        <Caret Line="1707" Column="16" TopLine="1705"/>
       </Position26>
       <Position27>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1884" Column="1" TopLine="1865"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="106" Column="15" TopLine="90"/>
       </Position27>
       <Position28>
         <Filename Value="..\editor\PHP_xDebug.pas"/>
-        <Caret Line="118" Column="1" TopLine="102"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position28>
       <Position29>
         <Filename Value="..\editor\PHP_xDebug.pas"/>
-        <Caret Line="126" Column="13" TopLine="103"/>
+        <Caret Line="279" Column="11" TopLine="274"/>
       </Position29>
       <Position30>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="278" Column="21" TopLine="262"/>
+        <Caret Line="1352" Column="3" TopLine="1350"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="3">
+    <BreakPoints Count="2">
       <Item1>
         <Kind Value="bpkSource"/>
         <Source Value="..\editor\EditorProfiles.pas"/>
@@ -1760,11 +1804,6 @@
         <Source Value="..\editor\EditorEngine.pas"/>
         <Line Value="2248"/>
       </Item2>
-      <Item3>
-        <Kind Value="bpkSource"/>
-        <Source Value="MainUnit.pas"/>
-        <Line Value="1881"/>
-      </Item3>
     </BreakPoints>
     <Watches Count="2">
       <Item1>
