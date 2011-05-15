@@ -2348,5 +2348,6 @@ begin
   Log(0, ACaption, AMsg, '', 0);
 end;
 
+initialization
 end.
 

@@ -16,7 +16,7 @@ unit dbgpServers;
 interface
 
 uses
-  Windows, SysUtils, StrUtils, Classes, Contnrs, Dialogs, Variants,
+  SysUtils, StrUtils, Classes, Contnrs, Dialogs, Variants,
   mnSockets, mnStreams, mnConnections, mnServers, mnXMLUtils, mnXMLBase64,
   mnXMLRttiProfile, mnXMLNodes, SyncObjs, IniFiles;
 
@@ -208,7 +208,7 @@ type
 
   TdbgpConnection = class(TmnServerConnection)
   private
-    FSpool: TdbgpConnectionSpool;
+    FLocalSpool: TdbgpConnectionSpool;
     FKey: string;
     function GetServer: TdbgpServer;
   public
@@ -321,12 +321,12 @@ type
 
   TdbgpServer = class(TmnServer)
   private
-    IDELock: TCriticalSection;
     FOnDebugFile: TdbgpOnDebugFile;
     FSpool: TdbgpSpool;
     FWatches: TdbgpWatches;
     FBreakpoints: TdbgpBreakpoints;
-    FWaitCount: Integer;
+    FRunCount: Integer;
+    function GetIsRuning: Boolean;
   protected
     procedure Notification(AComponent: TComponent; operation: TOperation); override;
     function CreateListener: TmnListener; override;
@@ -338,12 +338,14 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    function Resume(Action: TdbgpAction = nil):Boolean; // 0 =s no waiting
+    procedure Resume;
     procedure AddAction(Action: TdbgpAction); overload;
     procedure AddAction(ActionClass: TdbgpActionClass); overload;
     procedure RemoveAction(Action: TdbgpAction);
     procedure ExtractAction(Action: TdbgpAction);
     procedure Clear;
+    property RunCount: Integer read FRunCount;
+    property IsRuning: Boolean read GetIsRuning;
     property Watches: TdbgpWatches read FWatches;
     property Breakpoints: TdbgpBreakpoints read FBreakpoints;
     property OnDebugFile: TdbgpOnDebugFile read FOnDebugFile write FOnDebugFile;
@@ -393,7 +395,6 @@ end;
 constructor TdbgpServer.Create(AOwner: TComponent);
 begin
   inherited;
-  IDELock := TCriticalSection.Create;
   FSpool := TdbgpSpool.Create(True);
   Port := '9000';
   FWatches := TdbgpWatches.Create;
@@ -404,11 +405,15 @@ end;
 
 destructor TdbgpServer.Destroy;
 begin
-  FreeAndNil(IDELock);
   FreeAndNil(FWatches);
   FreeAndNil(FBreakpoints);
   FreeAndNil(FSpool);
   inherited;
+end;
+
+function TdbgpServer.GetIsRuning: Boolean;
+begin
+  Result := RunCount > 0;
 end;
 
 procedure TdbgpServer.Notification(AComponent: TComponent; Operation: TOperation);
@@ -419,15 +424,15 @@ end;
 constructor TdbgpConnection.Create(Socket: TmnCustomSocket);
 begin
   inherited;
-  FSpool := TdbgpConnectionSpool.Create;
-  FSpool.FConnection := Self;
+  FLocalSpool := TdbgpConnectionSpool.Create;
+  FLocalSpool.FConnection := Self;
   KeepAlive := True;
   Stream.Timeout := 5000;
 end;
 
 destructor TdbgpConnection.Destroy;
 begin
-  FreeAndNil(FSpool);
+  FreeAndNil(FLocalSpool);
   inherited;
 end;
 
@@ -455,7 +460,7 @@ begin
   if aAction <> nil then
   begin
     if not aAction.Enabled then
-      FSpool.Remove(aAction)
+      FLocalSpool.Remove(aAction)
     else
       try
         aCommand := aAction.GetCommand;
@@ -492,11 +497,11 @@ begin
         begin
           aKeep := (aAction.Event <> nil) or aAction.KeepAlive;
           if aAction.Event <> nil then
-            aAction.FreeEvent;
+            aAction.Event.SetEvent;
           if aKeep then
-            FSpool.Extract(aAction)
+            FLocalSpool.Extract(aAction)
           else
-            FSpool.Remove(aAction);
+            FLocalSpool.Remove(aAction);
         end;
       end;
   end;
@@ -610,28 +615,31 @@ var
   aAction: TdbgpAction;
   i: integer;
 begin
-  if FSpool.Count = 0 then
+  if FLocalSpool.Count = 0 then
   begin
-    Server.IDELock.Enter;
+    InterLockedIncrement(Server.FRunCount);
+    DBGP.Event.WaitFor(INFINITE); //wait the ide to make resume
+    InterLockedDecrement(Server.FRunCount);
+
+    DBGP.Lock.Enter;
     try
-      DBGP.Event.WaitFor(INFINITE); //on thread can wait event
       i := 0;
       while i < Server.Spool.Count do
       begin
         aAction := Server.Spool.Extract(Server.Spool[i]) as TdbgpAction;
         //        if aAction.Key = Key then
-        FSpool.Add(aAction);
+        FLocalSpool.Add(aAction);
         //        else
         //        inc(i);
       end;
     finally
-      Server.IDELock.Leave;
+      DBGP.Lock.Leave;
     end;
   end;
   Result := nil;
-  while not Terminated and ((FSpool.Count > 0) and (Result = nil)) do
+  while not Terminated and ((FLocalSpool.Count > 0) and (Result = nil)) do
   begin
-    Result := FSpool[0];
+    Result := FLocalSpool[0];
     Result.Prepare;
   end;
 end;
@@ -639,13 +647,13 @@ end;
 procedure TdbgpConnection.Prepare;
 begin
   inherited;
-  FSpool.Add(TdbgpInit.Create);
-  FSpool.Add(TdbgpSetBreakpoints.Create);
+  FLocalSpool.Add(TdbgpInit.Create);
+  FLocalSpool.Add(TdbgpSetBreakpoints.Create);
   //if break at first line
-  FSpool.Add(TdbgpStepInto.Create);
+  FLocalSpool.Add(TdbgpStepInto.Create);
   //else
   //FSpool.Add(TdbgpRun.Create);
-  FSpool.Add(TdbgpGetCurrent.Create);//try to remove it
+  FLocalSpool.Add(TdbgpGetCurrent.Create);//try to remove it
 end;
 
 procedure TdbgpConnection.Stop;
@@ -723,12 +731,11 @@ procedure TdbgpAction.CreateEvent;
 begin
   if FEvent <> nil then
     raise EdbgpException.Create('Event already exists');
-  FEvent := TSimpleEvent.Create;
+  FEvent := TEvent.Create(nil, True, False, '');
 end;
 
 procedure TdbgpAction.FreeEvent;
 begin
-  FEvent.SetEvent;
   FreeAndNil(FEvent);
 end;
 
@@ -756,7 +763,8 @@ end;
 
 destructor TdbgpAction.Destroy;
 begin
-  inherited Destroy;
+  FreeEvent;
+  inherited;
 end;
 
 procedure TdbgpAction.Created;
@@ -806,23 +814,9 @@ begin
   inherited;
 end;
 
-function TdbgpServer.Resume(Action: TdbgpAction):Boolean;
-var
-  aWait: Boolean;
+procedure TdbgpServer.Resume;
 begin
-  aWait := Action.Event <> nil;
-  if aWait then
-    Inc(FWaitCount);
-  try
-    DBGP.Event.SetEvent;
-    if Action.Event <> nil then
-      Result := Action.Event.WaitFor(-1) = wrSignaled //on thread can wait event
-    else
-      Result := True;
-  finally
-    if aWait then
-      Dec(FWaitCount);
-  end;
+  DBGP.Event.SetEvent;
 end;
 
 { TdbgpInit }
@@ -967,7 +961,7 @@ begin
   finally
     DBGP.Lock.Leave;
   end;
-  if Server.Count > 0 then
+  if Server.IsRuning then
   begin
     aWatchAction := TdbgpGetWatch.Create;
     aWatchAction.Index := aIndex;
@@ -1129,7 +1123,7 @@ begin
   if aBreakpoint <> nil then
   begin
     Remove(aBreakpoint);
-    if Server.Count > 0 then
+    if Server.IsRuning then
     begin
       if aBreakpoint.ID <> 0 then
       begin
@@ -1142,7 +1136,7 @@ begin
   else
   begin
     Add(FileName, Line);
-    if Server.Count > 0 then
+    if Server.IsRuning then
     begin
       aSetBreakpoint := TdbgpSetBreakpoint.Create;
       aSetBreakpoint.FileName := FileName;

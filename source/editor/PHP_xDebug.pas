@@ -111,17 +111,20 @@ end;
 
 procedure TPHP_xDebugWatches.Clear;
 begin
-  inherited Clear;
+  with FDebug.FServer do
+    Watches.Clear;
 end;
 
 procedure TPHP_xDebugWatches.Add(vName: string);
 begin
-  inherited Add(vName);
+  with FDebug.FServer do
+    Watches.AddWatch(vName);
 end;
 
 procedure TPHP_xDebugWatches.Remove(vName: string);
 begin
-  inherited Remove(vName);
+  with FDebug.FServer do
+    Watches.RemoveWatch(vName);
 end;
 
 function TPHP_xDebugWatches.GetValue(vName: string; var vValue: variant; var vType: string): boolean;
@@ -129,7 +132,7 @@ var
   aAction: TdbgpGetWatchInstance;
 begin
   Result := False;
-  if FDebug.FServer.Count > 0 then   //there is a connection from XDebug
+  if FDebug.IsRuning then   //there is a connection from XDebug
   begin
     aAction := TdbgpGetWatchInstance.Create;
     aAction.CreateEvent;
@@ -137,7 +140,8 @@ begin
     with FDebug.FServer do
     begin
       AddAction(aAction);
-      if Resume(aAction) then//wait for 10 sec
+      Resume;
+      aAction.Event.WaitFor(INFINITE);
       begin
         vValue := aAction.VariableValue;
         vType := aAction.VariableType;
@@ -252,10 +256,19 @@ begin
 end;
 
 procedure TPHP_xDebug.Stop;
+var
+  aAction: TdbgpDetach;
 begin
-  FServer.AddAction(TdbgpDetach);
-  //FServer.Resume(INFINITE);
-  FServer.Stop;
+  if IsRuning then
+  begin
+    aAction := TdbgpDetach.Create;
+    aAction.CreateEvent;
+    FServer.AddAction(aAction);
+    FServer.Resume;
+    aAction.Event.WaitFor(INFINITE);
+    aAction.Free;
+    FServer.Stop;
+  end;
 end;
 
 procedure TPHP_xDebug.Reset;
@@ -315,7 +328,7 @@ end;
 
 function TPHP_xDebug.IsRuning: boolean;
 begin
-  Result := FServer.Count > 0;
+  Result := FServer.IsRuning;
 end;
 
 procedure TPHP_xDebug.RunTo(FileName: string; LineNo: integer);

@@ -29,9 +29,9 @@ type
 
   TEditorElements = class(TObject)
   protected
-    function GetCount: integer; virtual;
+    function GetCount: integer; virtual; abstract;
   public
-    procedure Clear; virtual;
+    procedure Clear; virtual; abstract;
     property Count: integer read GetCount;
   end;
 
@@ -39,13 +39,13 @@ type
 
   TEditorBreakPoints = class(TEditorElements)
   protected
-    function GetItems(Index: integer): TEditBreakpoint; virtual;
+    function GetItems(Index: integer): TEditBreakpoint; virtual; abstract;
   public
-    procedure Toggle(FileName: string; LineNo: integer); virtual;
-    function Found(FileName: string; LineNo: integer): boolean; virtual;
-    procedure Add(FileName: string; LineNo: integer); virtual;
-    procedure Remove(FileName: string; Line: integer); virtual; overload;
-    procedure Remove(Handle: integer); virtual; overload;
+    procedure Toggle(FileName: string; LineNo: integer); virtual; abstract;
+    function Found(FileName: string; LineNo: integer): boolean; virtual; abstract;
+    procedure Add(FileName: string; LineNo: integer); virtual; abstract;
+    procedure Remove(FileName: string; Line: integer); virtual; overload; abstract;
+    procedure Remove(Handle: integer); virtual; overload; abstract;
 
     property Items[Index: integer]: TEditBreakpoint read GetItems; default;
   end;
@@ -55,11 +55,11 @@ type
   TEditorWatches = class(TEditorElements)
   private
   protected
-    function GetItems(Index: integer): TEditWatch; virtual;
+    function GetItems(Index: integer): TEditWatch; virtual; abstract;
   public
-    procedure Add(vName: string); virtual;
-    procedure Remove(vName: string); virtual;
-    function GetValue(vName: string; var vValue: Variant; var vType: string): boolean; virtual;
+    procedure Add(vName: string); virtual; abstract;
+    procedure Remove(vName: string); virtual; abstract;
+    function GetValue(vName: string; var vValue: Variant; var vType: string): boolean; virtual; abstract;
     property Items[Index: integer]: TEditWatch read GetItems; default;
   end;
 
@@ -94,8 +94,8 @@ type
   protected
     function GetActive: Boolean; virtual;
     procedure SetActive(const AValue: Boolean); virtual;
-    function CreateBreakPoints: TEditorBreakPoints; virtual;
-    function CreateWatches: TEditorWatches; virtual;
+    function CreateBreakPoints: TEditorBreakPoints; virtual; abstract;
+    function CreateWatches: TEditorWatches; virtual; abstract;
   public
     constructor Create;
     destructor Destroy; override;
@@ -131,63 +131,6 @@ implementation
 uses
   EditorEngine;
 
-{ TEditorElements }
-
-function TEditorElements.GetCount: integer;
-begin
-  Result := 0;
-end;
-
-procedure TEditorElements.Clear;
-begin
-end;
-
-{ TEditorWatches }
-
-function TEditorWatches.GetItems(Index: integer): TEditWatch;
-begin
-
-end;
-
-procedure TEditorWatches.Add(vName: string);
-begin
-end;
-
-procedure TEditorWatches.Remove(vName: string);
-begin
-
-end;
-
-function TEditorWatches.GetValue(vName: string; var vValue: Variant; var vType: string): boolean;
-begin
-end;
-
-{ TEditorBreakPoints }
-
-function TEditorBreakPoints.GetItems(Index: integer): TEditBreakpoint;
-begin
-end;
-
-procedure TEditorBreakPoints.Toggle(FileName: string; LineNo: integer);
-begin
-end;
-
-function TEditorBreakPoints.Found(FileName: string; LineNo: integer): boolean;
-begin
-end;
-
-procedure TEditorBreakPoints.Add(FileName: string; LineNo: integer);
-begin
-end;
-
-procedure TEditorBreakPoints.Remove(FileName: string; Line: integer);
-begin
-end;
-
-procedure TEditorBreakPoints.Remove(Handle: integer);
-begin
-end;
-
 { TEditorDebugger }
 
 function TEditorDebugger.GetCaption: string;
@@ -198,16 +141,6 @@ end;
 procedure TEditorDebugger.Click(Sender: TObject);
 begin
   Active := not Active;
-end;
-
-function TEditorDebugger.CreateBreakPoints: TEditorBreakPoints;
-begin
-  Result := TEditorBreakPoints.Create;
-end;
-
-function TEditorDebugger.CreateWatches: TEditorWatches;
-begin
-  Result := TEditorWatches.Create;
 end;
 
 procedure TEditorDebugger.SetExecutedEdit(const AValue: TCustomSynEdit);
