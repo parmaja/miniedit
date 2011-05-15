@@ -12,7 +12,7 @@ uses
   Messages, SysUtils, Forms, StrUtils, Dialogs,Variants, Classes, Controls, Graphics, Contnrs,
   IniFiles, EditorOptions, EditorProfiles, SynEditMarks, SynCompletion, SynEditTypes,
   SynEditMiscClasses, SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, SynEdit,
-  SynEditTextTrimmer, SynTextDrawer, EditorDebugger, EditorSCM, IAddons,
+  SynEditTextTrimmer, SynTextDrawer, EditorDebugger, EditorSCM, IAddons, SynGutterBase,
   {$ifdef Windows}
   dbgpServers,
   PHP_xDebug,
@@ -145,13 +145,16 @@ type
     property SaveDesktop: Boolean read FSaveDesktop write FSaveDesktop default True;
   end;
 
-  TDebugSupportPlugin = class(TObject)
-  private
-    FEditorFile: TEditorFile;
+  { TDebugMarksPart }
+
+  TSynDebugMarksPart = class(TSynGutterPartBase)
   protected
-    procedure AfterPaint(ACanvas: TCanvas; const AClip: TRect; FirstLine, LastLine: integer);
+    FEditorFile: TEditorFile;
+    procedure Init; override;
   public
-    constructor Create(AOwner: TEditorFile);
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
+    procedure Paint(Canvas: TCanvas; AClip: TRect; FirstLine, LastLine: integer); override;
   end;
 
   TEditorFileMode = (efmUnix, efmWindows, efmMac);
@@ -607,6 +610,26 @@ begin
       S := S + #$D;
     Stream.WriteBuffer(Pointer(S)^, Length(S));
   end;
+end;
+
+{ TSynDebugMarksPart }
+
+procedure TSynDebugMarksPart.Init;
+begin
+  inherited;
+end;
+
+constructor TSynDebugMarksPart.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+//  FMouseActions := TSynEditMouseActionsLineNum.Create(self);
+//  FMouseActions.ResetDefaults;
+end;
+
+destructor TSynDebugMarksPart.Destroy;
+begin
+  FreeAndNil(FMouseActions);
+  inherited;
 end;
 
 function TEditorEngine.SearchReplace(const FileName: string; const ALines: TStringList; const ASearch, AReplace: string; OnFoundEvent: TOnFoundEvent; AOptions: TSynSearchOptions): integer;
@@ -1471,6 +1494,8 @@ begin
 //  FSynEdit.Gutter.MarksPart(0).DebugMarksImageIndex := 0;
   //FSynEdit.Gutter.MarksPart.DebugMarksImageIndex := 0;
   //FSynEdit.Gutter.Parts.Add(TSynBreakPointItem.Create(FSynEdit.Gutter.Parts));
+  with TSynDebugMarksPart.Create(FSynEdit.Gutter.Parts) do
+    FEditorFile := Self;
   FSynEdit.TrimSpaceType := settLeaveLine;
   FSynEdit.BoundsRect := Engine.Window.ClientRect;
   FSynEdit.BorderStyle := bsNone;
@@ -2239,19 +2264,19 @@ end;
 type
   THackSynEdit = class(TCustomSynEdit);
 
-procedure TDebugSupportPlugin.AfterPaint(ACanvas: TCanvas; const AClip: TRect; FirstLine, LastLine: integer);
+procedure TSynDebugMarksPart.Paint(Canvas: TCanvas; AClip: TRect; FirstLine, LastLine: Integer);
 var
   i, x, y, lh: Integer;
   aLine: Integer;
   aRect: TRect;
 begin
-  inherited;
-  lh := FEditorFile.SynEdit.LineHeight;
-  if (Engine.Debug.ExecutedEdit = FEditorFile.SynEdit) and (Engine.Debug.ExecutedLine >= 0) then
+  //inherited;
+  lh := TSynEdit(SynEdit).LineHeight;
+  if (Engine.Debug.ExecutedEdit = SynEdit) and (Engine.Debug.ExecutedLine >= 0) then
   begin
     x := 14;
-    Y := (lh - EditorResource.SmallImages.Height) div 2 + lh * (FEditorFile.SynEdit.RowToScreenRow(Engine.Debug.ExecutedLine) - FEditorFile.SynEdit.TopLine);
-    EditorResource.SmallImages.Draw(ACanvas, X, Y, 3);
+    Y := (lh - EditorResource.SmallImages.Height) div 2 + lh * (TSynEdit(SynEdit).RowToScreenRow(Engine.Debug.ExecutedLine) - TSynEdit(SynEdit).TopLine);
+    EditorResource.SmallImages.Draw(Canvas, X, Y, 3);
   end;
 
   Engine.Debug.Lock;
@@ -2262,18 +2287,18 @@ begin
       if SameText(Engine.Debug.Breakpoints[i].FileName, FEditorFile.Name) then
       begin
         aLine := Engine.Debug.Breakpoints[i].Line;
-        with FEditorFile.SynEdit do
+        with TSynEdit(SynEdit) do
         begin
           if (aLine >= TopLine) and (aLine < TopLine + LinesInWindow) then
           begin
             Y := (lh - EditorResource.SmallImages.Height) div 2 + lh * (RowToScreenRow(aLine) - RowToScreenRow(TopLine));
-            EditorResource.SmallImages.Draw(ACanvas, X, Y, 4);
+            EditorResource.SmallImages.Draw(Canvas, X, Y, 4);
 
             aRect := Rect(0, LineHeight * (RowToScreenRow(aLine) - RowToScreenRow(TopLine)), ClientWidth, 0);
             aRect.Bottom := aRect.Top + LineHeight;
-            ACanvas.Brush.Color := $00CCCCFF;
-            ACanvas.Pen.Mode := pmMask;
-            ACanvas.Rectangle(aRect);
+            Canvas.Brush.Color := $00CCCCFF;
+            Canvas.Pen.Mode := pmMask;
+            Canvas.Rectangle(aRect);
           end;
         end;
       end;
@@ -2281,12 +2306,6 @@ begin
   finally
     Engine.Debug.Unlock;
   end;
-end;
-
-constructor TDebugSupportPlugin.Create(AOwner: TEditorFile);
-begin
-  inherited Create;
-  FEditorFile := AOwner;
 end;
 
 { TEditorDesktop }
