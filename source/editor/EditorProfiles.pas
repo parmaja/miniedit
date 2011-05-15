@@ -80,25 +80,32 @@ type
   TGutterOptions = class(TPersistent)
   private
     FAutoSize: boolean;
-    FColor: TColor;
-    FCursor: TCursor;
+    FBackcolor: TColor;
+    FForecolor: TColor;
     FLeftOffset: integer;
     FRightOffset: integer;
+    FShowLineNumbers: Boolean;
     FVisible: boolean;
+    FLeadingZeros: boolean;
+    FZeroStart: boolean;
     FWidth: integer;
   public
     constructor Create;
     procedure Assign(Source: TPersistent); override;
     procedure AssignTo(Dest: TPersistent); override;
     constructor AssignFrom(SynGutter: TSynGutter);
+    procedure Reset; virtual;
   published
     property AutoSize: boolean read FAutoSize write FAutoSize default True;
-    property Color: TColor read FColor write FColor default clDefault;
-    property Cursor: TCursor read FCursor write FCursor default crDefault;
+    property Backcolor: TColor read FBackcolor write FBackcolor default clBtnFace;
+    property Forecolor: TColor read FForecolor write FForecolor default clBtnText;
     property LeftOffset: integer read FLeftOffset write FLeftOffset default 0;
     property RightOffset: integer read FRightOffset write FRightOffset default 0;
     property Visible: boolean read FVisible write FVisible default True;
     property Width: integer read FWidth write FWidth default 30;
+    property ShowLineNumbers: Boolean read FShowLineNumbers write FShowLineNumbers default True;
+    property LeadingZeros: Boolean read FLeadingZeros write FLeadingZeros default False;
+    property ZeroStart: Boolean read FZeroStart write FZeroStart default False;
   end;
 
   //This class is assignable to a SynEdit without modifying key properties that affect function
@@ -158,7 +165,11 @@ type
 
 implementation
 
+uses
+  SynGutterBase, SynGutterLineNumber;
+
 { TEditorProfile }
+
 type
   THackCustomSynEdit = class(TCustomSynEdit);
 
@@ -222,7 +233,6 @@ begin
   FComponentStyle := FComponentStyle + [csSubComponent];
   FBookmarks := TSynBookMarkOpt.Create(Self);
   FGutterOptions := TGutterOptions.Create;//ToDO check the Create params
-  //FSynGutter.ShowLineNumbers := True;
   FSelectedColor := TSynSelectedColor.Create;
   FFont := TFont.Create;
   FHighlighters := THighlightersProfile.Create(THighlighterProfile);
@@ -265,7 +275,7 @@ procedure TEditorProfile.Reset;
 begin
   ForegroundColor := clWindowText;
   BackgroundColor := clWindow;
-  Gutter.Color := clBtnFace;
+  Gutter.Reset;
   FSelectedColor.Foreground := clHighlightText;
   FSelectedColor.Background := clHighlight;
   FFont.Name := 'Courier New';
@@ -478,13 +488,8 @@ end;
 
 constructor TGutterOptions.Create;
 begin
-  FAutoSize := True;
-  FColor := clDefault;
-  FCursor := crDefault;
-  FLeftOffset := 0;
-  FRightOffset := 0;
-  FVisible := True;
-  FWidth := 30;
+  inherited;
+  Reset;
 end;
 
 procedure TGutterOptions.Assign(Source: TPersistent);
@@ -498,14 +503,27 @@ end;
 procedure TGutterOptions.AssignTo(Dest: TPersistent);
 var
   SynGutter: TSynGutter;
+  i: Integer;
+  gp: TSynGutterLineNumber;
 begin
   if Dest is TSynGutter then
   begin
     SynGutter := Dest as TSynGutter;
 
     SynGutter.AutoSize := FAutoSize;
-    SynGutter.Color := FColor;
-    SynGutter.Cursor := FCursor;
+    SynGutter.Color := FBackcolor;
+    for i := 0 to SynGutter.Parts.Count -1 do
+    begin
+      SynGutter.Parts[i].MarkupInfo.Foreground := FForecolor;
+      SynGutter.Parts[i].MarkupInfo.Background := FBackcolor;
+    end;
+    gp := SynGutter.Parts.ByClass[TSynGutterLineNumber, 0] as TSynGutterLineNumber;
+    if gp <> nil then
+    begin
+      gp.Visible := FShowLineNumbers;
+      gp.LeadingZeros := FLeadingZeros;
+      gp.ZeroStart := FZeroStart;
+    end;
     SynGutter.LeftOffset := FLeftOffset;
     SynGutter.RightOffset := FRightOffset;
     SynGutter.Visible := FVisible;
@@ -516,14 +534,36 @@ begin
 end;
 
 constructor TGutterOptions.AssignFrom(SynGutter: TSynGutter);
+var
+  gp: TSynGutterLineNumber;
 begin
   FAutoSize := SynGutter.AutoSize;
-  FColor := SynGutter.Color;
-  FCursor := SynGutter.Cursor;
+  FBackcolor := SynGutter.Color;
   FLeftOffset := SynGutter.LeftOffset;
   FRightOffset := SynGutter.RightOffset;
   FVisible := SynGutter.Visible;
   FWidth := SynGutter.Width;
+  gp := SynGutter.Parts.ByClass[TSynGutterLineNumber, 0] as TSynGutterLineNumber;
+  if gp <> nil then
+  begin
+    FShowLineNumbers := gp.Visible;
+    FLeadingZeros := gp.LeadingZeros;
+    FZeroStart := gp.ZeroStart;
+  end;
+end;
+
+procedure TGutterOptions.Reset;
+begin
+  FAutoSize := True;
+  FBackcolor := clBtnFace;
+  FForecolor := clBtnText;
+  FLeftOffset := 0;
+  FRightOffset := 0;
+  FVisible := True;
+  FWidth := 30;
+  FShowLineNumbers := True;
+  FLeadingZeros := False;
+  FZeroStart := False;
 end;
 
 end.

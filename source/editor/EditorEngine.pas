@@ -1468,6 +1468,7 @@ begin
   FSynEdit.OnGutterClick := DoGutterClickEvent;
   FSynEdit.OnSpecialLineMarkup := DoSpecialLineMarkup;
   FSynEdit.BookMarkOptions.BookmarkImages := EditorResource.BookmarkImages;
+//  FSynEdit.Gutter.MarksPart(0).DebugMarksImageIndex := 0;
   //FSynEdit.Gutter.MarksPart.DebugMarksImageIndex := 0;
   //FSynEdit.Gutter.Parts.Add(TSynBreakPointItem.Create(FSynEdit.Gutter.Parts));
   FSynEdit.TrimSpaceType := settLeaveLine;

@@ -40,9 +40,11 @@ type
     FontBtn: TButton;
     FontLbl: TLabel;
     DefForegroundCbo: TColorBox;
+    GutterForecolorCbo: TColorBox;
     ItalicChk: TCheckBox;
     Label13: TLabel;
     Label14: TLabel;
+    Label5: TLabel;
     PageControl: TPageControl;
     OkBtn: TButton;
     CancelBtn: TButton;
@@ -85,13 +87,9 @@ type
     Label8: TLabel;
     Label9: TLabel;
     Label10: TLabel;
-    GutterFontChk: TCheckBox;
-    GutterFontBtn: TButton;
     ScrollHintFollowsChk: TCheckBox;
     GroupUndoChk: TCheckBox;
     SmartTabDeleteChk: TCheckBox;
-    GutterFontDisplayPnl: TPanel;
-    GutterFontLbl: TLabel;
     EnhanceHomeKeyChk: TCheckBox;
     HideShowScrollbarsChk: TCheckBox;
     DisableScrollArrowsChk: TCheckBox;
@@ -102,7 +100,7 @@ type
     BackgroundCbo: TColorBox;
     ForegroundCbo: TColorBox;
     ElementCbo: TComboBox;
-    GutterColorCbo: TColorBox;
+    GutterBackcolorCbo: TColorBox;
     RightEdgeColorCbo: TColorBox;
     BackgroundChk: TCheckBox;
     ForegroundChk: TCheckBox;
@@ -123,6 +121,7 @@ type
     procedure FontBtnClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure GroupCboSelect(Sender: TObject);
+    procedure GutterFontChkChange(Sender: TObject);
     procedure KeyListEditing(Sender: TObject; Item: TListItem; var AllowEdit: boolean);
     procedure OkBtnClick(Sender: TObject);
     procedure GutterFontBtnClick(Sender: TObject);
@@ -197,14 +196,12 @@ begin
   //Gutter
   GutterVisibleChk.Checked := FProfile.Gutter.Visible;
   GutterAutosizeChk.Checked := FProfile.Gutter.AutoSize;
-  GutterColorCbo.Selected := FProfile.Gutter.Color;
-  {GutterShowLineNumbersChk.Checked := FProfile.Gutter.ShowLineNumbers;
+  GutterForecolorCbo.Selected := FProfile.Gutter.Forecolor;
+  GutterBackcolorCbo.Selected := FProfile.Gutter.Backcolor;
+  GutterShowLineNumbersChk.Checked := FProfile.Gutter.ShowLineNumbers;
   GutterShowLeaderZerosChk.Checked := FProfile.Gutter.LeadingZeros;
   GutterStartAtZeroChk.Checked := FProfile.Gutter.ZeroStart;
-  GutterFontChk.Checked := FProfile.Gutter.UseFontStyle;
-  GutterFontLbl.Font.Assign(FProfile.Gutter.Font);
-  GutterFontLbl.Caption := GutterFontLbl.Font.Name + ' ' + IntToStr(GutterFontLbl.Font.Size) + 'pt';
-  }
+
   //Right Edge
   RightEdgeEdit.Text := IntToStr(FProfile.RightEdge);
   RightEdgeColorCbo.Selected := FProfile.RightEdgeColor;
@@ -271,12 +268,11 @@ begin
   //Gutter
   FProfile.Gutter.Visible := GutterVisibleChk.Checked;
   FProfile.Gutter.AutoSize := GutterAutosizeChk.Checked;
-  FProfile.Gutter.Color := GutterColorCbo.Selected;
-  {FProfile.Gutter.ShowLineNumbers := GutterShowLineNumbersChk.Checked;
+  FProfile.Gutter.Forecolor := GutterForecolorCbo.Selected;
+  FProfile.Gutter.Backcolor := GutterBackcolorCbo.Selected;
+  FProfile.Gutter.ShowLineNumbers := GutterShowLineNumbersChk.Checked;
   FProfile.Gutter.LeadingZeros := GutterShowLeaderZerosChk.Checked;
-  FProfile.Gutter.UseFontStyle := GutterFontChk.Checked;
-  FProfile.Gutter.Font.Assign(GutterFontLbl.Font);
-  FProfile.Gutter.ZeroStart := GutterStartAtZeroChk.Checked;}
+  FProfile.Gutter.ZeroStart := GutterStartAtZeroChk.Checked;
   //Right Edge
   FProfile.RightEdge := StrToIntDef(RightEdgeEdit.Text, 80);
   FProfile.RightEdgeColor := RightEdgeColorCbo.Selected;
@@ -374,6 +370,11 @@ begin
   ApplyGroup;
 end;
 
+procedure TEditorOptionsForm.GutterFontChkChange(Sender: TObject);
+begin
+
+end;
+
 procedure TEditorOptionsForm.KeyListEditing(Sender: TObject; Item: TListItem; var AllowEdit: boolean);
 begin
   AllowEdit := False;
@@ -386,18 +387,11 @@ end;
 
 procedure TEditorOptionsForm.GutterFontBtnClick(Sender: TObject);
 begin
-  FontDialog.Font.Assign(GutterFontLbl.Font);
-  if FontDialog.Execute then
-  begin
-    GutterFontLbl.Font.Assign(FontDialog.Font);
-    GutterFontLbl.Caption := GutterFontLbl.Font.Name + ' ' + IntToStr(GutterFontLbl.Font.Size) + 'pt';
-  end;
+
 end;
 
 procedure TEditorOptionsForm.GutterFontChkClick(Sender: TObject);
 begin
-  GutterFontLbl.Enabled := GutterFontChk.Checked;
-  GutterFontLbl.Enabled := GutterFontChk.Checked;
 end;
 
 procedure TEditorOptionsForm.PageControlChange(Sender: TObject);

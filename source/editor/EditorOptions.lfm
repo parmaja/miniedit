@@ -18,8 +18,8 @@ object EditorOptionsForm: TEditorOptionsForm
     Height = 379
     Top = 4
     Width = 362
-    ActivePage = OptionsTab
-    TabIndex = 0
+    ActivePage = GutterTab
+    TabIndex = 1
     TabOrder = 0
     OnChange = PageControlChange
     object OptionsTab: TTabSheet
@@ -386,9 +386,9 @@ object EditorOptionsForm: TEditorOptionsForm
         object Label1: TLabel
           Left = 176
           Height = 14
-          Top = 59
-          Width = 59
-          Caption = 'Gutter color:'
+          Top = 51
+          Width = 83
+          Caption = 'Gutter backcolor:'
           ParentColor = False
         end
         object GutterAutosizeChk: TCheckBox
@@ -433,53 +433,31 @@ object EditorOptionsForm: TEditorOptionsForm
           State = cbChecked
           TabOrder = 0
         end
-        object GutterFontChk: TCheckBox
-          Left = 176
-          Height = 17
-          Top = 3
-          Width = 93
-          Caption = 'Use Gutter Font'
-          OnClick = GutterFontChkClick
-          TabOrder = 5
-        end
-        object GutterFontBtn: TButton
-          Left = 282
-          Height = 25
-          Top = -2
-          Width = 40
-          Caption = 'Font'
-          OnClick = GutterFontBtnClick
-          TabOrder = 6
-        end
-        object GutterFontDisplayPnl: TPanel
-          Left = 176
-          Height = 33
-          Top = 25
-          Width = 145
-          BevelOuter = bvNone
-          ClientHeight = 33
-          ClientWidth = 145
-          TabOrder = 8
-          object GutterFontLbl: TLabel
-            Left = 19
-            Height = 15
-            Top = 9
-            Width = 106
-            Caption = 'Courier New 8pt'
-            Font.Height = -11
-            Font.Name = 'Courier New'
-            ParentColor = False
-            ParentFont = False
-          end
-        end
-        object GutterColorCbo: TColorBox
+        object GutterBackcolorCbo: TColorBox
           Left = 174
           Height = 22
-          Top = 77
+          Top = 71
           Width = 145
           Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
           ItemHeight = 16
-          TabOrder = 7
+          TabOrder = 5
+        end
+        object Label5: TLabel
+          Left = 176
+          Height = 14
+          Top = 2
+          Width = 80
+          Caption = 'Gutter frontcolor:'
+          ParentColor = False
+        end
+        object GutterForecolorCbo: TColorBox
+          Left = 174
+          Height = 22
+          Top = 23
+          Width = 145
+          Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
+          ItemHeight = 16
+          TabOrder = 6
         end
       end
       object LineSpacingGrp: TGroupBox
