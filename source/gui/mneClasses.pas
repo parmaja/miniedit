@@ -308,7 +308,7 @@ begin
   inherited;
   Screen.Cursor := crHourGlass;
   try
-    //Completion.ClearList;
+    Completion.ItemList.Clear;
     aSynEdit := (Sender as TSynCompletion).TheForm.CurrentEditor as TCustomSynEdit;
     if (aSynEdit <> nil) and (Highlighter is TSynHTMLPHPSyn) then
     begin
@@ -322,7 +322,7 @@ begin
       //CanExecute := False
       else if aProcessor = aHTMLProcessor then
       begin
-        //Completion.Title := 'HTML';
+        Completion.TheForm.Caption := 'HTML';
         EnumerateKeywords(Ord(tkKeyword), sHTMLKeywords, Highlighter.IdentChars, DoAddCompletion);
       end
       else if aProcessor = aPHPProcessor then
@@ -336,7 +336,7 @@ begin
         end
         else
         begin
-          //Completion.Title := 'PHP';
+          Completion.TheForm.Caption := 'PHP';
           //load keyowrds
           EnumerateKeywords(Ord(tkKeyword), sPHPControls, Highlighter.IdentChars, DoAddCompletion);
           EnumerateKeywords(Ord(tkKeyword), sPHPKeywords, Highlighter.IdentChars, DoAddCompletion);
