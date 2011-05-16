@@ -1911,7 +1911,7 @@ begin
   if (Engine.Files.Current <> nil) and (GetFocus = Engine.Files.Current.SynEdit.Handle) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
     with Engine.Files.Current do
     begin
-      aLine := SynEdit.ScreenRowToRow(SynEdit.CaretY);
+      aLine := SynEdit.CaretY;
       Engine.Debug.Lock;
       try
         Engine.Debug.Breakpoints.Toggle(Name, aLine);

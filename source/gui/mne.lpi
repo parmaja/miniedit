@@ -291,7 +291,7 @@
     <Linking>
       <Debugging>
         <GenerateDebugInfo Value="True"/>
-        <UseHeaptrc Value="True"/>
+        <UseValgrind Value="True"/>
       </Debugging>
       <Options>
         <Win32>

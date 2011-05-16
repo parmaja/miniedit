@@ -9,7 +9,7 @@ unit EditorEngine;
 interface
 
 uses
-  Messages, SysUtils, Forms, StrUtils, Dialogs,Variants, Classes, Controls, Graphics, Contnrs,
+  Messages, SysUtils, Forms, StrUtils, Dialogs,Variants, Classes, Controls, Graphics, Contnrs, Types,
   IniFiles, EditorOptions, EditorProfiles, SynEditMarks, SynCompletion, SynEditTypes,
   SynEditMiscClasses, SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, SynEdit,
   SynEditTextTrimmer, SynTextDrawer, EditorDebugger, EditorSCM, IAddons, SynGutterBase,
@@ -155,6 +155,8 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure Paint(Canvas: TCanvas; AClip: TRect; FirstLine, LastLine: integer); override;
+  published
+    property MarkupInfo;
   end;
 
   TEditorFileMode = (efmUnix, efmWindows, efmMac);
@@ -1485,6 +1487,7 @@ end;
 constructor TEditorFile.Create(Collection: TCollection);
 begin
   inherited;
+  { There is more assigns in SetGroup }
   FSynEdit := TSynEdit.Create(Engine.Window);
   FSynEdit.OnChange := DoEdit;
   FSynEdit.OnStatusChange := DoStatusChange;
@@ -1494,8 +1497,6 @@ begin
 //  FSynEdit.Gutter.MarksPart(0).DebugMarksImageIndex := 0;
   //FSynEdit.Gutter.MarksPart.DebugMarksImageIndex := 0;
   //FSynEdit.Gutter.Parts.Add(TSynBreakPointItem.Create(FSynEdit.Gutter.Parts));
-  with TSynDebugMarksPart.Create(FSynEdit.Gutter.Parts) do
-    FEditorFile := Self;
   FSynEdit.TrimSpaceType := settLeaveLine;
   FSynEdit.BoundsRect := Engine.Window.ClientRect;
   FSynEdit.BorderStyle := bsNone;
@@ -1677,6 +1678,13 @@ begin
     begin
       FSynEdit.Highlighter := FGroup.Category.Highlighter;
       FGroup.Category.Completion.AddEditor(FSynEdit);
+      if fgkExecutable in FGroup.Kind then
+        with TSynDebugMarksPart.Create(FSynEdit.Gutter.Parts) do
+        begin
+          FEditorFile := Self;
+          AutoSize := False;
+          Width := EditorResource.DebugImages.Width + DEBUG_IMAGE_MARGINES;
+        end;
       //Engine.MacroRecorder.AddEditor(FSynEdit);
     end;
     Engine.Options.Profile.AssignTo(FSynEdit);
@@ -1816,7 +1824,7 @@ var
 begin
   if fgkExecutable in Group.Kind then
   begin
-    aLine := SynEdit.RowToScreenRow(SynEdit.CaretY);//zaher
+    aLine := SynEdit.PixelsToRowColumn(Point(X,Y)).y;
     Engine.Debug.Lock;
     try
       Engine.Debug.Breakpoints.Toggle(Name, aLine);
@@ -2264,48 +2272,51 @@ end;
 type
   THackSynEdit = class(TCustomSynEdit);
 
+procedure CenterRect(var R1: TRect; R2: TRect);//from posDraws
+begin
+  OffsetRect(R1, ((R2.Right - R2.Left) div 2) - ((R1.Right - R1.Left) div 2) + (R2.Left - R1.Left), ((R2.Bottom - R2.Top) div 2) - ((R1.Bottom - R1.Top) div 2) + (R2.Top - R1.Top));
+end;
+
 procedure TSynDebugMarksPart.Paint(Canvas: TCanvas; AClip: TRect; FirstLine, LastLine: Integer);
 var
-  i, x, y, lh: Integer;
+  i, x, y, lh, iw, el: Integer;
   aLine: Integer;
   aRect: TRect;
+  procedure DrawIndicator(Line:Integer; ImageIndex: Integer);
+  var
+    r: TRect;
+  begin
+    Line := TSynEdit(SynEdit).RowToScreenRow(Line);
+    if (Line >= FirstLine) and (Line <= LastLine) then
+    begin
+      aRect := AClip;
+      aRect.Top := Line * lh;
+      aRect.Bottom := aRect.Top + lh;
+      r := aRect;
+      r.Right := r.Left + iw;
+      CenterRect(r, aRect);
+      //todo center the rect by image size
+      EditorResource.DebugImages.Draw(Canvas, r.Left, r.Top, ImageIndex);
+    end;
+  end;
 begin
   //inherited;
   lh := TSynEdit(SynEdit).LineHeight;
-  if (Engine.Debug.ExecutedEdit = SynEdit) and (Engine.Debug.ExecutedLine >= 0) then
-  begin
-    x := 14;
-    Y := (lh - EditorResource.SmallImages.Height) div 2 + lh * (TSynEdit(SynEdit).RowToScreenRow(Engine.Debug.ExecutedLine) - TSynEdit(SynEdit).TopLine);
-    EditorResource.SmallImages.Draw(Canvas, X, Y, 3);
-  end;
+  iw := EditorResource.DebugImages.Width;
 
   Engine.Debug.Lock;
   try
-    x := 1;
     for i := 0 to Engine.Debug.Breakpoints.Count - 1 do
     begin
-      if SameText(Engine.Debug.Breakpoints[i].FileName, FEditorFile.Name) then
-      begin
-        aLine := Engine.Debug.Breakpoints[i].Line;
-        with TSynEdit(SynEdit) do
-        begin
-          if (aLine >= TopLine) and (aLine < TopLine + LinesInWindow) then
-          begin
-            Y := (lh - EditorResource.SmallImages.Height) div 2 + lh * (RowToScreenRow(aLine) - RowToScreenRow(TopLine));
-            EditorResource.SmallImages.Draw(Canvas, X, Y, 4);
-
-            aRect := Rect(0, LineHeight * (RowToScreenRow(aLine) - RowToScreenRow(TopLine)), ClientWidth, 0);
-            aRect.Bottom := aRect.Top + LineHeight;
-            Canvas.Brush.Color := $00CCCCFF;
-            Canvas.Pen.Mode := pmMask;
-            Canvas.Rectangle(aRect);
-          end;
-        end;
-      end;
+      if SameText(Engine.Debug.Breakpoints[i].FileName, FEditorFile.Name) then//need improve
+        DrawIndicator(Engine.Debug.Breakpoints[i].Line, DEBUG_IMAGE_BREAKPOINT);
     end;
   finally
     Engine.Debug.Unlock;
   end;
+
+  if (Engine.Debug.ExecutedEdit = SynEdit) and (Engine.Debug.ExecutedLine >= 0) then
+    DrawIndicator(Engine.Debug.ExecutedLine, DEBUG_IMAGE_EXECUTE);
 end;
 
 { TEditorDesktop }

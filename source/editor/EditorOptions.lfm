@@ -384,11 +384,11 @@ object EditorOptionsForm: TEditorOptionsForm
         ClientWidth = 337
         TabOrder = 0
         object Label1: TLabel
-          Left = 176
+          Left = 129
           Height = 14
-          Top = 51
-          Width = 83
-          Caption = 'Gutter backcolor:'
+          Top = 29
+          Width = 52
+          Caption = 'Backcolor:'
           ParentColor = False
         end
         object GutterAutosizeChk: TCheckBox
@@ -434,30 +434,47 @@ object EditorOptionsForm: TEditorOptionsForm
           TabOrder = 0
         end
         object GutterBackcolorCbo: TColorBox
-          Left = 174
+          Left = 184
           Height = 22
-          Top = 71
+          Top = 25
           Width = 145
           Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
           ItemHeight = 16
           TabOrder = 5
         end
         object Label5: TLabel
-          Left = 176
+          Left = 129
           Height = 14
           Top = 2
-          Width = 80
-          Caption = 'Gutter frontcolor:'
+          Width = 51
+          Caption = 'Frontcolor:'
           ParentColor = False
         end
         object GutterForecolorCbo: TColorBox
-          Left = 174
+          Left = 185
           Height = 22
-          Top = 23
+          Top = -2
           Width = 145
           Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
           ItemHeight = 16
           TabOrder = 6
+        end
+        object SeparatorColorCbo: TColorBox
+          Left = 184
+          Height = 22
+          Top = 52
+          Width = 145
+          Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
+          ItemHeight = 16
+          TabOrder = 7
+        end
+        object Label6: TLabel
+          Left = 129
+          Height = 14
+          Top = 56
+          Width = 50
+          Caption = 'Separator:'
+          ParentColor = False
         end
       end
       object LineSpacingGrp: TGroupBox

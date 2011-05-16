@@ -19,11 +19,17 @@ type
   TEditorResource = class(TDataModule)
     SmallImages: TImageList;
     BookmarkImages: TImageList;
+    DebugImages: TImageList;
     ToolbarImageList: TImageList;
     procedure DataModuleCreate(Sender: TObject);
   private
   public
   end;
+
+const
+  DEBUG_IMAGE_EXECUTE = 0;
+  DEBUG_IMAGE_BREAKPOINT = 1;
+  DEBUG_IMAGE_MARGINES = 0;
 
 var
   EditorResource: TEditorResource = nil;

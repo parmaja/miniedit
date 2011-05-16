@@ -82,13 +82,15 @@ type
     FAutoSize: boolean;
     FBackcolor: TColor;
     FForecolor: TColor;
+    FSeparatorColor: TColor;
     FLeftOffset: integer;
     FRightOffset: integer;
     FShowLineNumbers: Boolean;
-    FVisible: boolean;
-    FLeadingZeros: boolean;
-    FZeroStart: boolean;
-    FWidth: integer;
+    FVisible: Boolean;
+    FLeadingZeros: Boolean;
+    FZeroStart: Boolean;
+    FShowSeparator: Boolean;
+    FWidth: Integer;
   public
     constructor Create;
     procedure Assign(Source: TPersistent); override;
@@ -99,6 +101,8 @@ type
     property AutoSize: boolean read FAutoSize write FAutoSize default True;
     property Backcolor: TColor read FBackcolor write FBackcolor default clBtnFace;
     property Forecolor: TColor read FForecolor write FForecolor default clBtnText;
+    property SeparatorColor: TColor read FSeparatorColor write FSeparatorColor default clBtnText;
+    property ShowSeparator: Boolean read FShowSeparator write FShowSeparator default True;
     property LeftOffset: integer read FLeftOffset write FLeftOffset default 0;
     property RightOffset: integer read FRightOffset write FRightOffset default 0;
     property Visible: boolean read FVisible write FVisible default True;
@@ -505,6 +509,7 @@ var
   SynGutter: TSynGutter;
   i: Integer;
   gp: TSynGutterLineNumber;
+  sp: TSynGutterSeparator;
 begin
   if Dest is TSynGutter then
   begin
@@ -524,6 +529,13 @@ begin
       gp.LeadingZeros := FLeadingZeros;
       gp.ZeroStart := FZeroStart;
     end;
+    sp := SynGutter.Parts.ByClass[TSynGutterSeparator, 0] as TSynGutterSeparator;
+    if sp <> nil then
+    begin
+      sp.Visible := FShowSeparator;
+      sp.MarkupInfo.Foreground := FSeparatorColor;
+      sp.MarkupInfo.Background := FSeparatorColor;
+    end;
     SynGutter.LeftOffset := FLeftOffset;
     SynGutter.RightOffset := FRightOffset;
     SynGutter.Visible := FVisible;
@@ -536,6 +548,7 @@ end;
 constructor TGutterOptions.AssignFrom(SynGutter: TSynGutter);
 var
   gp: TSynGutterLineNumber;
+  sp: TSynGutterSeparator;
 begin
   FAutoSize := SynGutter.AutoSize;
   FBackcolor := SynGutter.Color;
@@ -550,6 +563,12 @@ begin
     FLeadingZeros := gp.LeadingZeros;
     FZeroStart := gp.ZeroStart;
   end;
+  sp := SynGutter.Parts.ByClass[TSynGutterSeparator, 0] as TSynGutterSeparator;
+  if sp <> nil then
+  begin
+    FShowSeparator := sp.Visible;
+    FSeparatorColor := sp.MarkupInfo.Foreground;
+  end;
 end;
 
 procedure TGutterOptions.Reset;
@@ -557,6 +576,8 @@ begin
   FAutoSize := True;
   FBackcolor := clBtnFace;
   FForecolor := clBtnText;
+  FSeparatorColor := clBtnFace;
+  FShowSeparator := True;
   FLeftOffset := 0;
   FRightOffset := 0;
   FVisible := True;

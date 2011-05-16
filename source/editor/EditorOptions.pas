@@ -40,11 +40,13 @@ type
     FontBtn: TButton;
     FontLbl: TLabel;
     DefForegroundCbo: TColorBox;
+    SeparatorColorCbo: TColorBox;
     GutterForecolorCbo: TColorBox;
     ItalicChk: TCheckBox;
     Label13: TLabel;
     Label14: TLabel;
     Label5: TLabel;
+    Label6: TLabel;
     PageControl: TPageControl;
     OkBtn: TButton;
     CancelBtn: TButton;
@@ -198,6 +200,7 @@ begin
   GutterAutosizeChk.Checked := FProfile.Gutter.AutoSize;
   GutterForecolorCbo.Selected := FProfile.Gutter.Forecolor;
   GutterBackcolorCbo.Selected := FProfile.Gutter.Backcolor;
+  SeparatorColorCbo.Selected := FProfile.Gutter.SeparatorColor;
   GutterShowLineNumbersChk.Checked := FProfile.Gutter.ShowLineNumbers;
   GutterShowLeaderZerosChk.Checked := FProfile.Gutter.LeadingZeros;
   GutterStartAtZeroChk.Checked := FProfile.Gutter.ZeroStart;
@@ -270,6 +273,7 @@ begin
   FProfile.Gutter.AutoSize := GutterAutosizeChk.Checked;
   FProfile.Gutter.Forecolor := GutterForecolorCbo.Selected;
   FProfile.Gutter.Backcolor := GutterBackcolorCbo.Selected;
+  FProfile.Gutter.SeparatorColor := SeparatorColorCbo.Selected;
   FProfile.Gutter.ShowLineNumbers := GutterShowLineNumbersChk.Checked;
   FProfile.Gutter.LeadingZeros := GutterShowLeaderZerosChk.Checked;
   FProfile.Gutter.ZeroStart := GutterStartAtZeroChk.Checked;
