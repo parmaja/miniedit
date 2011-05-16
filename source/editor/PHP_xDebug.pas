@@ -282,6 +282,8 @@ end;
 procedure TPHP_xDebug.Resume;
 begin
   FServer.AddAction(TdbgpDetach.Create);
+  FServer.AddAction(TdbgpGetCurrent.Create);
+  FServer.Resume;
 end;
 
 procedure TPHP_xDebug.StepInto;

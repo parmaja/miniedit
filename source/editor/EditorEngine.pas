@@ -339,7 +339,7 @@ type
     FCompletion: TSynCompletion;
     FKind: TFileCategoryKinds;
   protected
-    procedure OnExecuteCompletion(Kind: TSynCompletionType; Sender: TObject; var CurrentInput: string; var x, y: Integer; var CanExecute: Boolean); virtual;
+    procedure OnExecuteCompletion(Sender: TObject); virtual;
     function CreateHighlighter: TSynCustomHighlighter; virtual;
   public
     constructor Create; virtual;
@@ -1503,7 +1503,7 @@ begin
   cf := FSynEdit.Gutter.Parts.ByClass[TSynGutterCodeFolding, 0] as TSynGutterCodeFolding;
   if cf <> nil then
   begin
-    cf.Visible := False;//I hate code folding
+    cf.Visible := False; //I hate code folding
   end;
   FSynEdit.TrimSpaceType := settLeaveLine;
   FSynEdit.BoundsRect := Engine.Window.ClientRect;
@@ -1514,7 +1514,6 @@ begin
   FSynEdit.Realign;
   FSynEdit.WantTabs := True;
   FSynEdit.Parent := Engine.Window;
-  //TDebugSupportPlugin.Create(Self);
 end;
 
 destructor TEditorFile.Destroy;
@@ -2031,12 +2030,12 @@ begin
   inherited;
   FHighlighter := CreateHighlighter;
   FCompletion := TSynCompletion.Create(nil);
-  //FCompletion.Options := [scoLimitToMatchedText, {scoCaseSensitive, }scoUseInsertList, scoUsePrettyText, scoEndCharCompletion, scoCompleteWithTab, scoCompleteWithEnter];
   FCompletion.Width := 340;
   FCompletion.EndOfTokenChr := '{}()[].<>/\:!$&*+-=%';
-  //FCompletion.DefaultType := ctCode;
-  //FCompletion.OnExecute := OnExecuteCompletion;
+  FCompletion.OnExecute := OnExecuteCompletion;
   FCompletion.ShortCut := scCtrl + VK_SPACE;
+  //FCompletion.Options := [scoLimitToMatchedText, {scoCaseSensitive, }scoUseInsertList, scoUsePrettyText, scoEndCharCompletion, scoCompleteWithTab, scoCompleteWithEnter];
+  //FCompletion.DefaultType := ctCode;
 end;
 
 function TFileCategory.CreateEditorFile(Files: TEditorFiles): TEditorFile;
@@ -2056,9 +2055,7 @@ begin
   inherited;
 end;
 
-procedure TFileCategory.OnExecuteCompletion(Kind: TSynCompletionType;
-  Sender: TObject; var CurrentInput: string; var x, y: Integer;
-  var CanExecute: Boolean);
+procedure TFileCategory.OnExecuteCompletion(Sender: TObject);
 begin
 end;
 

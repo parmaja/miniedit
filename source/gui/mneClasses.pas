@@ -71,14 +71,17 @@ type
   public
   end;
 
+  { TPHPFileCategory }
+
   TPHPFileCategory = class(TFileCategory)
   private
     procedure ExtractKeywords(Files, Variables, Identifiers: TStringList);
   protected
     procedure DoAddCompletion(AKeyword: string; AKind: integer);
     function CreateHighlighter: TSynCustomHighlighter; override;
-    procedure OnExecuteCompletion(Kind: TSynCompletionType; Sender: TObject; var CurrentInput: string; var x, y: integer; var CanExecute: boolean); override;
+    procedure OnExecuteCompletion(Sender: TObject); override;
   public
+    constructor Create; override;
   end;
 
   TCSSFileCategory = class(TFileCategory)
@@ -149,6 +152,7 @@ const
   SysPlatform = 'WINDOWS';
 {$else}
   SysPlatform = 'LINUX';
+
 {$endif}
 
 function GetFileImageIndex(const FileName: string): integer;
@@ -283,20 +287,10 @@ end;
 
 procedure TPHPFileCategory.DoAddCompletion(AKeyword: string; AKind: integer);
 begin
-(*  Completion.InsertList.Add(AKeyword);
-  case AKind of
-    Ord(tkHTML): Completion.ItemList.Add('HTML \column{}\style{+B}\color{' + ColorToString((Highlighter as TSynHTMLPHPSyn).HtmlAttri.Foreground) + '}' + AKeyword + '\style{-B}');
-    Ord(tkVariable): Completion.ItemList.Add('variable \column{}\style{+B}\color{' + ColorToString((Highlighter as TSynHTMLPHPSyn).VariableAttri.Foreground) + '}' + AKeyword + '\style{-B}');
-    Ord(tkValue): Completion.ItemList.Add('value \column{}\style{+B}\color{' + ColorToString((Highlighter as TSynHTMLPHPSyn).ValueAttri.Foreground) + '}' + AKeyword + '\style{-B}');
-    Ord(tkFunction): Completion.ItemList.Add('function \column{}\style{+B}\color{' + ColorToString((Highlighter as TSynHTMLPHPSyn).FunctionAttri.Foreground) + '}' + AKeyword + '\style{-B}');
-    Ord(tkKeyword): Completion.ItemList.Add('keyword \column{}\style{+B}\color{' + ColorToString((Highlighter as TSynHTMLPHPSyn).KeywordAttribute.Foreground) + '}' + AKeyword + '\style{-B}');
-    Ord(tkIdentifier): Completion.ItemList.Add('identifier \column{}\style{+B}\color{' + ColorToString((Highlighter as TSynHTMLPHPSyn).IdentifierAttribute.Foreground) + '}' + AKeyword + '\style{-B}');
-    Ord(tkSQL): Completion.ItemList.Add('SQL \column{}\style{+B}\color{' + ColorToString((Highlighter as TSynHTMLPHPSyn).StringAttribute.Foreground) + '}' + AKeyword + '\style{-B}');
-  end;
-  *)
+  Completion.ItemList.Add(AKeyword);
 end;
 
-procedure TPHPFileCategory.OnExecuteCompletion(Kind: TSynCompletionType; Sender: TObject; var CurrentInput: string; var x, y: integer; var CanExecute: boolean);
+procedure TPHPFileCategory.OnExecuteCompletion(Sender: TObject);
 var
   aVariables: THashedStringList;
   aIdentifiers: THashedStringList;
@@ -315,7 +309,7 @@ begin
   Screen.Cursor := crHourGlass;
   try
     //Completion.ClearList;
-    //aSynEdit := (Sender as TSynCompletion).Form.CurrentEditor;
+    aSynEdit := (Sender as TSynCompletion).TheForm.CurrentEditor as TCustomSynEdit;
     if (aSynEdit <> nil) and (Highlighter is TSynHTMLPHPSyn) then
     begin
       aPHPProcessor := (Highlighter as TSynHTMLPHPSyn).Processors.IndexOf('php');
@@ -324,7 +318,8 @@ begin
       GetHighlighterAttriAtRowColEx2(aSynEdit, P, S, aTokenType, aStart, Attri, aRange);
       aProcessor := RangeToProcessor(aRange);
       if aTokenType = Ord(tkProcessor) then
-        CanExecute := False
+        Abort
+      //CanExecute := False
       else if aProcessor = aHTMLProcessor then
       begin
         //Completion.Title := 'HTML';
@@ -333,7 +328,8 @@ begin
       else if aProcessor = aPHPProcessor then
       begin
         if aTokenType = Ord(tkComment) then
-          CanExecute := False
+          Abort
+        //CanExecute := False
         else if aTokenType = Ord(tkString) then
         begin
           EnumerateKeywords(Ord(tkSQL), sSQLKeywords, Highlighter.IdentChars, DoAddCompletion);
@@ -426,6 +422,12 @@ begin
   finally
     Screen.Cursor := crDefault;
   end;
+end;
+
+constructor TPHPFileCategory.Create;
+begin
+  inherited Create;
+  Completion.CaseSensitive := False;
 end;
 
 procedure TPHPFileCategory.ExtractKeywords(Files, Variables, Identifiers: TStringList);
