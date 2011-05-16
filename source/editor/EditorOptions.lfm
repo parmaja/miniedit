@@ -462,7 +462,7 @@ object EditorOptionsForm: TEditorOptionsForm
         object SeparatorColorCbo: TColorBox
           Left = 184
           Height = 22
-          Top = 52
+          Top = 74
           Width = 145
           Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
           ItemHeight = 16
@@ -471,10 +471,18 @@ object EditorOptionsForm: TEditorOptionsForm
         object Label6: TLabel
           Left = 129
           Height = 14
-          Top = 56
+          Top = 78
           Width = 50
           Caption = 'Separator:'
           ParentColor = False
+        end
+        object ShowSeparatorChk: TCheckBox
+          Left = 129
+          Height = 17
+          Top = 53
+          Width = 94
+          Caption = 'Show Separator'
+          TabOrder = 8
         end
       end
       object LineSpacingGrp: TGroupBox

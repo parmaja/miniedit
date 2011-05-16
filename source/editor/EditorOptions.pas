@@ -40,6 +40,7 @@ type
     FontBtn: TButton;
     FontLbl: TLabel;
     DefForegroundCbo: TColorBox;
+    ShowSeparatorChk: TCheckBox;
     SeparatorColorCbo: TColorBox;
     GutterForecolorCbo: TColorBox;
     ItalicChk: TCheckBox;
@@ -201,6 +202,7 @@ begin
   GutterForecolorCbo.Selected := FProfile.Gutter.Forecolor;
   GutterBackcolorCbo.Selected := FProfile.Gutter.Backcolor;
   SeparatorColorCbo.Selected := FProfile.Gutter.SeparatorColor;
+  ShowSeparatorChk.Checked := FProfile.Gutter.ShowSeparator;
   GutterShowLineNumbersChk.Checked := FProfile.Gutter.ShowLineNumbers;
   GutterShowLeaderZerosChk.Checked := FProfile.Gutter.LeadingZeros;
   GutterStartAtZeroChk.Checked := FProfile.Gutter.ZeroStart;
@@ -274,6 +276,7 @@ begin
   FProfile.Gutter.Forecolor := GutterForecolorCbo.Selected;
   FProfile.Gutter.Backcolor := GutterBackcolorCbo.Selected;
   FProfile.Gutter.SeparatorColor := SeparatorColorCbo.Selected;
+  FProfile.Gutter.ShowSeparator := ShowSeparatorChk.Checked;
   FProfile.Gutter.ShowLineNumbers := GutterShowLineNumbersChk.Checked;
   FProfile.Gutter.LeadingZeros := GutterShowLeaderZerosChk.Checked;
   FProfile.Gutter.ZeroStart := GutterStartAtZeroChk.Checked;

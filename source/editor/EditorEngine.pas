@@ -544,7 +544,8 @@ var
 implementation
 
 uses
-  SynHighlighterApache, SynHighlighterHTMLPHP, SynHighlighterHashEntries, Registry, SearchForms,
+  SynHighlighterApache, SynHighlighterHTMLPHP, SynHighlighterHashEntries, SynGutterCodeFolding,
+  Registry, SearchForms,
   mneResources;
 
 function SelectFolder(const Caption: string; const Root: WideString; var Directory: string): Boolean;
@@ -1485,6 +1486,8 @@ begin
 end;
 
 constructor TEditorFile.Create(Collection: TCollection);
+var
+  cf: TSynGutterCodeFolding;
 begin
   inherited;
   { There is more assigns in SetGroup }
@@ -1497,6 +1500,11 @@ begin
 //  FSynEdit.Gutter.MarksPart(0).DebugMarksImageIndex := 0;
   //FSynEdit.Gutter.MarksPart.DebugMarksImageIndex := 0;
   //FSynEdit.Gutter.Parts.Add(TSynBreakPointItem.Create(FSynEdit.Gutter.Parts));
+  cf := FSynEdit.Gutter.Parts.ByClass[TSynGutterCodeFolding, 0] as TSynGutterCodeFolding;
+  if cf <> nil then
+  begin
+    cf.Visible := False;//I hate code folding
+  end;
   FSynEdit.TrimSpaceType := settLeaveLine;
   FSynEdit.BoundsRect := Engine.Window.ClientRect;
   FSynEdit.BorderStyle := bsNone;
