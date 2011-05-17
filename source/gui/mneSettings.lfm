@@ -168,15 +168,15 @@ object EditorSettingForm: TEditorSettingForm
         Wrap = False
       end
       object CollectAutoCompleteChk: TCheckBox
-        Left = 11
+        Left = 7
         Height = 17
         Top = 53
-        Width = 301
-        Caption = 'Auto complete variables and identifiers in whall project folder'
+        Width = 305
+        Caption = 'Auto complete variables and identifiers in whole project folder'
         TabOrder = 2
       end
       object SendOutputToNewFileChk: TCheckBox
-        Left = 11
+        Left = 7
         Height = 17
         Top = 30
         Width = 127
@@ -184,7 +184,7 @@ object EditorSettingForm: TEditorSettingForm
         TabOrder = 3
       end
       object AutoStartDebugServerChk: TCheckBox
-        Left = 11
+        Left = 7
         Height = 17
         Top = 9
         Width = 189

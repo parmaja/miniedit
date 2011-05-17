@@ -904,6 +904,8 @@ end;
 
 procedure TMainForm.HelpIndexActExecute(Sender: TObject);
 begin
+  Engine.Files.Current.SynEdit.Modified := True;
+  Engine.Files.Current.SynEdit.Modified := False;
 end;
 
 procedure TMainForm.EditorOptionsActExecute(Sender: TObject);

@@ -40,6 +40,10 @@ type
     FontBtn: TButton;
     FontLbl: TLabel;
     DefForegroundCbo: TColorBox;
+    Label15: TLabel;
+    Label7: TLabel;
+    SavedColorCbo: TColorBox;
+    UnsavedColorCbo: TColorBox;
     ShowSeparatorChk: TCheckBox;
     SeparatorColorCbo: TColorBox;
     GutterForecolorCbo: TColorBox;
@@ -75,6 +79,7 @@ type
     ScrollPastEOFChk: TCheckBox;
     ScrollPastEOLChk: TCheckBox;
     ShowScrollHintChk: TCheckBox;
+    ShowModifiedLinesChk: TCheckBox;
     SmartTabsChk: TCheckBox;
     TabsToSpacesChk: TCheckBox;
     TrimTrailingSpacesChk: TCheckBox;
@@ -203,6 +208,11 @@ begin
   GutterBackcolorCbo.Selected := FProfile.Gutter.Backcolor;
   SeparatorColorCbo.Selected := FProfile.Gutter.SeparatorColor;
   ShowSeparatorChk.Checked := FProfile.Gutter.ShowSeparator;
+
+  SavedColorCbo.Selected := FProfile.Gutter.Savedcolor;
+  UnsavedColorCbo.Selected := FProfile.Gutter.Unsavedcolor;
+  ShowModifiedLinesChk.Checked := FProfile.Gutter.ShowModifiedLines;
+
   GutterShowLineNumbersChk.Checked := FProfile.Gutter.ShowLineNumbers;
   GutterShowLeaderZerosChk.Checked := FProfile.Gutter.LeadingZeros;
   GutterStartAtZeroChk.Checked := FProfile.Gutter.ZeroStart;
@@ -278,6 +288,11 @@ begin
   FProfile.Gutter.SeparatorColor := SeparatorColorCbo.Selected;
   FProfile.Gutter.ShowSeparator := ShowSeparatorChk.Checked;
   FProfile.Gutter.ShowLineNumbers := GutterShowLineNumbersChk.Checked;
+
+  FProfile.Gutter.Savedcolor := SavedColorCbo.Selected;
+  FProfile.Gutter.Unsavedcolor := UnsavedColorCbo.Selected;
+  FProfile.Gutter.ShowModifiedLines := ShowModifiedLinesChk.Checked;
+
   FProfile.Gutter.LeadingZeros := GutterShowLeaderZerosChk.Checked;
   FProfile.Gutter.ZeroStart := GutterStartAtZeroChk.Checked;
   //Right Edge

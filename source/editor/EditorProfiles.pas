@@ -82,10 +82,13 @@ type
     FAutoSize: boolean;
     FBackcolor: TColor;
     FForecolor: TColor;
+    FSavedColor: TColor;
     FSeparatorColor: TColor;
     FLeftOffset: integer;
     FRightOffset: integer;
     FShowLineNumbers: Boolean;
+    FShowModifiedLines: Boolean;
+    FUnsavedColor: TColor;
     FVisible: Boolean;
     FLeadingZeros: Boolean;
     FZeroStart: Boolean;
@@ -103,6 +106,11 @@ type
     property Forecolor: TColor read FForecolor write FForecolor default clBtnText;
     property SeparatorColor: TColor read FSeparatorColor write FSeparatorColor default clBtnText;
     property ShowSeparator: Boolean read FShowSeparator write FShowSeparator default True;
+
+    property SavedColor: TColor read FSavedColor write FSavedColor default clGreen;
+    property UnsavedColor: TColor read FUnsavedColor write FUnsavedColor default clYellow;
+    property ShowModifiedLines: Boolean read FShowModifiedLines write FShowModifiedLines default True;
+
     property LeftOffset: integer read FLeftOffset write FLeftOffset default 0;
     property RightOffset: integer read FRightOffset write FRightOffset default 0;
     property Visible: boolean read FVisible write FVisible default True;
@@ -170,7 +178,7 @@ type
 implementation
 
 uses
-  SynGutterBase, SynGutterLineNumber;
+  SynGutterBase, SynGutterLineNumber, SynGutterChanges;
 
 { TEditorProfile }
 
@@ -510,6 +518,7 @@ var
   i: Integer;
   gp: TSynGutterLineNumber;
   sp: TSynGutterSeparator;
+  ch: TSynGutterChanges;
 begin
   if Dest is TSynGutter then
   begin
@@ -536,6 +545,13 @@ begin
       sp.MarkupInfo.Foreground := FSeparatorColor;
       sp.MarkupInfo.Background := FSeparatorColor;
     end;
+    ch := SynGutter.Parts.ByClass[TSynGutterChanges, 0] as TSynGutterChanges;
+    if ch <> nil then
+    begin
+      ch.Visible := FShowModifiedLines;
+      ch.SavedColor := FSavedColor;
+      ch.ModifiedColor := FUnsavedColor;
+    end;
     SynGutter.LeftOffset := FLeftOffset;
     SynGutter.RightOffset := FRightOffset;
     SynGutter.Visible := FVisible;
@@ -549,6 +565,7 @@ constructor TGutterOptions.AssignFrom(SynGutter: TSynGutter);
 var
   gp: TSynGutterLineNumber;
   sp: TSynGutterSeparator;
+  ch: TSynGutterChanges;
 begin
   FAutoSize := SynGutter.AutoSize;
   FBackcolor := SynGutter.Color;
@@ -569,6 +586,13 @@ begin
     FShowSeparator := sp.Visible;
     FSeparatorColor := sp.MarkupInfo.Foreground;
   end;
+  ch := SynGutter.Parts.ByClass[TSynGutterChanges, 0] as TSynGutterChanges;
+  if ch <> nil then
+  begin
+    FShowModifiedLines := ch.Visible;
+    FSavedColor := ch.SavedColor;
+    FUnsavedColor := ch.ModifiedColor;
+  end;
 end;
 
 procedure TGutterOptions.Reset;
@@ -585,6 +609,9 @@ begin
   FShowLineNumbers := True;
   FLeadingZeros := False;
   FZeroStart := False;
+  FShowModifiedLines := True;
+  FSavedColor := clGreen;
+  FUnsavedColor := clYellow;
 end;
 
 end.

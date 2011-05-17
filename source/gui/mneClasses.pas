@@ -14,7 +14,7 @@ interface
 
 uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
-  LCLintf,
+  LCLintf, LCLType,
   Dialogs, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit,
   Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
@@ -163,18 +163,18 @@ uses
   IniFiles, mnXMLStreams;
 
 function ColorToRGBHex(Color: TColor): string;
-{var
-  aRGB: COLORREF;}
+var
+  aRGB: TColorRef;
 begin
-{  aRGB := ColorToRGB(Color);
-  FmtStr(Result, '%s%.2x%.2x%.2x', ['#', GetRValue(aRGB), GetGValue(aRGB), GetBValue(aRGB)]);}
+  aRGB := ColorToRGB(Color);
+  FmtStr(Result, '%s%.2x%.2x%.2x', ['#', GetRValue(aRGB), GetGValue(aRGB), GetBValue(aRGB)]);
 end;
 
 function RGBHexToColor(Value: string): TColor;
-{var
-  R, G, B: byte;}
+var
+  R, G, B: byte;
 begin
-{  if LeftStr(Value, 1) = '#' then
+  if LeftStr(Value, 1) = '#' then
     Delete(Value, 1, 1);
   if Value <> '' then
   begin
@@ -194,7 +194,7 @@ begin
     end;
   end
   else
-    Result := clBlack;}
+    Result := clBlack;
 end;
 
 { TmneEngine }
