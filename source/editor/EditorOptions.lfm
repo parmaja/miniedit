@@ -334,7 +334,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object RightEdgeGrp: TGroupBox
         Left = 7
         Height = 100
-        Top = 136
+        Top = 216
         Width = 165
         Caption = 'Right Edge'
         ClientHeight = 82
@@ -376,11 +376,11 @@ object EditorOptionsForm: TEditorOptionsForm
       end
       object GutterGrp: TGroupBox
         Left = 7
-        Height = 121
+        Height = 195
         Top = 8
         Width = 341
         Caption = 'Gutter'
-        ClientHeight = 103
+        ClientHeight = 177
         ClientWidth = 337
         TabOrder = 0
         object Label1: TLabel
@@ -477,18 +477,60 @@ object EditorOptionsForm: TEditorOptionsForm
           ParentColor = False
         end
         object ShowSeparatorChk: TCheckBox
-          Left = 129
+          Left = 132
           Height = 17
-          Top = 53
+          Top = 55
           Width = 94
           Caption = 'Show Separator'
           TabOrder = 8
+        end
+        object SavedColorCbo: TColorBox
+          Left = 185
+          Height = 22
+          Top = 124
+          Width = 145
+          Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
+          ItemHeight = 16
+          TabOrder = 9
+        end
+        object Label7: TLabel
+          Left = 129
+          Height = 14
+          Top = 129
+          Width = 32
+          Caption = 'Saved'
+          ParentColor = False
+        end
+        object ShowModifiedLinesChk: TCheckBox
+          Left = 132
+          Height = 17
+          Top = 101
+          Width = 88
+          Caption = 'Show Modified'
+          TabOrder = 10
+        end
+        object UnsavedColorCbo: TColorBox
+          Left = 185
+          Height = 22
+          Top = 150
+          Width = 145
+          Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
+          ItemHeight = 16
+          TabOrder = 11
+        end
+        object Label15: TLabel
+          Left = 129
+          Height = 14
+          Top = 153
+          Width = 44
+          Caption = 'Unsaved'
+          ParentColor = False
         end
       end
       object LineSpacingGrp: TGroupBox
         Left = 183
         Height = 100
-        Top = 136
+        Top = 216
         Width = 165
         Caption = 'Line spacing / Tab spacing'
         ClientHeight = 82

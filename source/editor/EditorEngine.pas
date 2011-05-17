@@ -545,7 +545,7 @@ implementation
 
 uses
   SynHighlighterApache, SynHighlighterHTMLPHP, SynHighlighterHashEntries, SynGutterCodeFolding,
-  Registry, SearchForms,
+  Registry, SearchForms, SynEditTextBuffer,
   mneResources;
 
 function SelectFolder(const Caption: string; const Root: WideString; var Directory: string): Boolean;
@@ -1669,6 +1669,11 @@ end;
 procedure TEditorFile.UpdateAge;
 begin
   FFileAge := FileAge(Name);
+  if SynEdit <> nil then
+  begin
+    SynEdit.Modified := False;
+    SynEdit.MarkTextAsSaved;
+  end;
 end;
 
 procedure TEditorFile.Reload;
@@ -1692,6 +1697,7 @@ begin
           AutoSize := False;
           Width := EditorResource.DebugImages.Width + DEBUG_IMAGE_MARGINES;
         end;
+      FSynEdit.Gutter.SeparatorPart(0).Index := FSynEdit.Gutter.Parts.Count - 1;
       //Engine.MacroRecorder.AddEditor(FSynEdit);
     end;
     Engine.Options.Profile.AssignTo(FSynEdit);
