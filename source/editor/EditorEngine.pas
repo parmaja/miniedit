@@ -13,10 +13,7 @@ uses
   IniFiles, EditorOptions, EditorProfiles, SynEditMarks, SynCompletion, SynEditTypes,
   SynEditMiscClasses, SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, SynEdit,
   SynEditTextTrimmer, SynTextDrawer, EditorDebugger, EditorSCM, IAddons, SynGutterBase,
-  {$ifdef Windows}
-  dbgpServers,
-  PHP_xDebug,
-  {$endif}
+  dbgpServers, PHP_xDebug,
   mnXMLRttiProfile, mnXMLUtils, mnUtils, LCLType;
 
 type
@@ -913,12 +910,7 @@ end;
 
 function TEditorEngine.CreateDebugger: TEditorDebugger;
 begin
-  {$ifdef WINDOWS}
   Result := TPHP_xDebug.Create;
-  //Result.Start;
-  {$else}
-  Result := TEditorDebugger.Create;
-  {$endif}
 end;
 
 function TEditorEngine.CreateSCM: TEditorSCM;
@@ -2492,4 +2484,4 @@ begin
 end;
 
 end.
-
+

@@ -10,6 +10,9 @@ program mne;
  *}
 
 uses
+  {$ifndef WINDOWS}
+  cthreads,
+  {$endif}
   Dialogs,
   Controls,
   Forms,
@@ -121,4 +124,4 @@ begin
     end;
   end;
 end.
-
+

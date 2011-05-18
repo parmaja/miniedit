@@ -1,11 +1,11 @@
 object MainForm: TMainForm
-  Left = 276
+  Left = 528
   Height = 518
-  Top = 134
+  Top = 251
   Width = 876
   AllowDropFiles = True
   Caption = 'Mini Edit'
-  ClientHeight = 498
+  ClientHeight = 494
   ClientWidth = 876
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
@@ -22,7 +22,7 @@ object MainForm: TMainForm
     Cursor = crVSplit
     Left = 0
     Height = 7
-    Top = 342
+    Top = 338
     Width = 876
     Align = alBottom
     AutoSnap = False
@@ -31,13 +31,13 @@ object MainForm: TMainForm
   end
   object FoldersSpl: TSplitter
     Left = 200
-    Height = 312
-    Top = 30
+    Height = 309
+    Top = 29
     Width = 6
   end
   object TopCoolBar: TToolBar
     Left = 0
-    Height = 30
+    Height = 29
     Top = 0
     Width = 876
     AutoSize = True
@@ -46,10 +46,11 @@ object MainForm: TMainForm
     TabOrder = 5
     object MainBar: TToolBar
       Left = 1
-      Height = 22
+      Height = 23
       Top = 2
       Width = 875
       AutoSize = True
+      ButtonHeight = 23
       ButtonWidth = 75
       EdgeBorders = []
       Images = EditorResource.ToolbarImageList
@@ -109,7 +110,7 @@ object MainForm: TMainForm
         Style = tbsCheck
       end
       object ToolButton8: TToolButton
-        Left = 609
+        Left = 610
         Top = 0
         Action = OutputAct
         Style = tbsCheck
@@ -118,13 +119,13 @@ object MainForm: TMainForm
   end
   object FoldersPnl: TPanel
     Left = 0
-    Height = 312
-    Top = 30
+    Height = 309
+    Top = 29
     Width = 200
     Align = alLeft
     BevelOuter = bvNone
     BorderWidth = 5
-    ClientHeight = 312
+    ClientHeight = 309
     ClientWidth = 200
     TabOrder = 0
     object FolderPanel: TPanel
@@ -174,7 +175,7 @@ object MainForm: TMainForm
         Left = 5
         Height = 14
         Top = 2
-        Width = 30
+        Width = 31
         Caption = 'Folder'
         ParentColor = False
       end
@@ -225,7 +226,7 @@ object MainForm: TMainForm
     end
     object FileList: TListView
       Left = 5
-      Height = 283
+      Height = 280
       Top = 24
       Width = 190
       Align = alClient
@@ -233,7 +234,7 @@ object MainForm: TMainForm
         item
           AutoSize = True
           Caption = 'File Name'
-          Width = 186
+          Width = 170
         end>
       HideSelection = False
       PopupMenu = FolderMenu
@@ -250,19 +251,19 @@ object MainForm: TMainForm
   end
   object ClientPnl: TPanel
     Left = 206
-    Height = 312
-    Top = 30
+    Height = 309
+    Top = 29
     Width = 670
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 312
+    ClientHeight = 309
     ClientWidth = 670
     TabOrder = 2
     object OutputSpl: TSplitter
       Cursor = crVSplit
       Left = 0
       Height = 3
-      Top = 211
+      Top = 191
       Width = 670
       Align = alBottom
       AutoSnap = False
@@ -272,12 +273,12 @@ object MainForm: TMainForm
     end
     object EditorsPnl: TPanel
       Left = 0
-      Height = 211
+      Height = 191
       Top = 0
       Width = 670
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 211
+      ClientHeight = 191
       ClientWidth = 670
       FullRepaint = False
       TabOrder = 0
@@ -357,7 +358,7 @@ object MainForm: TMainForm
       object QuickFindPnl: TPanel
         Left = 0
         Height = 29
-        Top = 182
+        Top = 162
         Width = 670
         Align = alBottom
         BevelInner = bvSpace
@@ -400,7 +401,7 @@ object MainForm: TMainForm
         end
         object QuickSearchNextBtn: TBitBtn
           Left = 310
-          Height = 22
+          Height = 23
           Top = 3
           Width = 72
           Caption = 'Next'
@@ -426,7 +427,7 @@ object MainForm: TMainForm
         end
         object QuickSearchPrevBtn: TBitBtn
           Left = 236
-          Height = 22
+          Height = 23
           Top = 3
           Width = 72
           Caption = 'Previous'
@@ -451,7 +452,7 @@ object MainForm: TMainForm
         end
         object QuickSearchEdit: TEdit
           Left = 60
-          Height = 21
+          Height = 23
           Top = 4
           Width = 173
           OnChange = QuickSearchEditChange
@@ -475,8 +476,8 @@ object MainForm: TMainForm
     end
     inline OutputEdit: TSynEdit
       Left = 0
-      Height = 98
-      Top = 214
+      Height = 115
+      Top = 194
       Width = 670
       Align = alBottom
       Anchors = [akTop, akLeft, akRight]
@@ -686,7 +687,7 @@ object MainForm: TMainForm
   object StatusPanel: TPanel
     Left = 0
     Height = 22
-    Top = 476
+    Top = 472
     Width = 876
     Align = alBottom
     BevelOuter = bvNone
@@ -743,7 +744,7 @@ object MainForm: TMainForm
   object MessagesTabs: TntvPageControl
     Left = 0
     Height = 127
-    Top = 349
+    Top = 345
     Width = 876
     StoreIndex = False
     ShowButtons = False
@@ -773,8 +774,8 @@ object MainForm: TMainForm
     TabOrder = 6
     object WatchList: TListView
       Left = 3
-      Height = 103
-      Top = 21
+      Height = 100
+      Top = 24
       Width = 870
       Align = alClient
       Columns = <      
@@ -789,7 +790,7 @@ object MainForm: TMainForm
         item
           AutoSize = True
           Caption = 'Value'
-          Width = 566
+          Width = 550
         end>
       ColumnClick = False
       Font.CharSet = ARABIC_CHARSET
@@ -806,8 +807,8 @@ object MainForm: TMainForm
     end
     object MessageList: TListView
       Left = 3
-      Height = 103
-      Top = 21
+      Height = 100
+      Top = 24
       Width = 870
       Align = alClient
       Columns = <      
@@ -818,7 +819,7 @@ object MainForm: TMainForm
         item
           AutoSize = True
           Caption = 'Message'
-          Width = 766
+          Width = 63
         end      
         item
           Caption = 'File'
@@ -844,8 +845,8 @@ object MainForm: TMainForm
     end
     object SearchList: TListView
       Left = 3
-      Height = 103
-      Top = 21
+      Height = 100
+      Top = 24
       Width = 870
       Align = alClient
       Columns = <      
@@ -860,7 +861,7 @@ object MainForm: TMainForm
         item
           AutoSize = True
           Caption = 'Result'
-          Width = 486
+          Width = 470
         end>
       ColumnClick = False
       Font.CharSet = ARABIC_CHARSET
@@ -1744,8 +1745,8 @@ object MainForm: TMainForm
     end
   end
   object FileModeMenu: TPopupMenu
-    left = 238
-    top = 118
+    left = 240
+    top = 117
     object UnixMnu: TMenuItem
       Caption = 'Unix'
       OnClick = UnixMnuClick
@@ -1843,7 +1844,7 @@ object MainForm: TMainForm
     end
   end
   object FilePopupMenu: TPopupMenu
-    left = 333
+    left = 344
     top = 117
     object Copyfilename1: TMenuItem
       Action = CopyFileNameAct
@@ -1882,7 +1883,7 @@ object MainForm: TMainForm
     ServerID = 'Parmaja.MiniEdit'
     Global = True
     OnMessage = IPCServerMessage
-    left = 711
+    left = 712
     top = 117
   end
   object ApplicationProperties: TApplicationProperties
@@ -1890,4 +1891,4 @@ object MainForm: TMainForm
     left = 83
     top = 215
   end
-end
+end
