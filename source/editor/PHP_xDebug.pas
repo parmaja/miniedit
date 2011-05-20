@@ -267,8 +267,8 @@ begin
     FServer.Resume;
     aAction.Event.WaitFor(INFINITE);
     aAction.Free;
-    FServer.Stop;
   end;
+  FServer.Stop;
 end;
 
 procedure TPHP_xDebug.Reset;
@@ -362,4 +362,4 @@ end;
 initialization
 //  Addons.Add('Debug', 'XDebug', TPHP_xDebug);//most not created /??!!!
 end.
-
+

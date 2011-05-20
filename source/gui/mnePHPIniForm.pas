@@ -179,7 +179,7 @@ begin
     EnablelXDebugChk.Checked := GetOnOff(IniFile.ReadString('PHP', 'xdebug.remote_enable', 'Off'));
     AutoStartChk.Checked := GetOnOff(IniFile.ReadString('PHP', 'xdebug.remote_autostart', 'Off'));
     DefaultEnableChk.Checked := GetOnOff(IniFile.ReadString('PHP', 'xdebug.default_enable', 'Off'));
-    IniFile.UpdateFile;
+//    IniFile.UpdateFile;
   finally
     IniFile.Free;
   end;
@@ -206,4 +206,4 @@ type
 
 initialization
   Addons.Add('PHP', 'OpenPHPConfigAddon', TOpenPHPConfigAddon);
-end.
+end.

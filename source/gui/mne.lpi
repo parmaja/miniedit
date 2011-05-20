@@ -15,39 +15,8 @@
       <CharSet Value=""/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
-    <BuildModes Count="2">
+    <BuildModes Count="1">
       <Item1 Name="windows" Default="True"/>
-      <Item2 Name="linux">
-        <CompilerOptions>
-          <Version Value="10"/>
-          <PathDelim Value="\"/>
-          <Target>
-            <Filename Value="..\..\bin\mne.exe"/>
-          </Target>
-          <SearchPaths>
-            <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;\usr\ws\dev\home\pascal\lib\minilib\xml\source;\usr\ws\dev\home\pascal\lib\minilib\lib;\usr\ws\dev\home\pascal\lib\minilib\lazarus\lib;\usr\ws\dev\home\pascal\lib\minilib\socket\source;$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS);$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
-            <UnitOutputDirectory Value="..\..\units"/>
-          </SearchPaths>
-          <Linking>
-            <Options>
-              <Win32>
-                <GraphicApplication Value="True"/>
-              </Win32>
-            </Options>
-          </Linking>
-          <Other>
-            <Verbosity>
-              <ShowNotes Value="False"/>
-              <ShowHints Value="False"/>
-            </Verbosity>
-            <CompilerMessages>
-              <UseMsgFile Value="True"/>
-            </CompilerMessages>
-            <CompilerPath Value="$(CompPath)"/>
-          </Other>
-        </CompilerOptions>
-      </Item2>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
@@ -279,8 +248,8 @@
       <Filename Value="..\..\bin\mne.exe"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="W:\home\pascal\projects\LPE\source\editor\;W:\home\pascal\projects\LPE\source\lib\;$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\addons;W:\programs\lazarus\components\synedit\units\i386-win32\;W:\home\pascal\lib\minilib\xml\source\;W:\home\pascal\lib\minilib\lib\;W:\home\pascal\lib\minilib\lazarus\lib\;W:\home\pascal\lib\minilib\socket\source\;$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS);$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
+      <IncludeFiles Value="W:\home\pascal\projects\LPE\source\editor;W:\home\pascal\projects\LPE\source\lib;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\addons;W:\programs\lazarus\components\synedit\units\i386-win32;W:\home\pascal\lib\minilib\xml\source;W:\home\pascal\lib\minilib\lib;W:\home\pascal\lib\minilib\lazarus\lib;W:\home\pascal\lib\minilib\socket\source;$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS);$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <CodeGeneration>
@@ -323,4 +292,4 @@
       </Item3>
     </Exceptions>
   </Debugging>
-</CONFIG>
+</CONFIG>

@@ -11,7 +11,9 @@ unit dbgpServers;
 
 }
 
-{$DEFINE SAVELOG}
+{$ifdef WINDOWS}
+{.$DEFINE SAVELOG}
+{$endif}
 
 interface
 
@@ -1387,4 +1389,4 @@ initialization
 finalization
   FreeAndNil(FDBGP);
 end.
-
+
