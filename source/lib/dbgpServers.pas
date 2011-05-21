@@ -97,7 +97,7 @@ type
   private
     FFileName: string;
     FLine: integer;
-    procedure OpenFile;
+    procedure ShowFile;
   public
     procedure Created; override;
     function GetCommand: string; override;
@@ -317,13 +317,13 @@ type
   end;
 
   TdbgpOnServerEvent = procedure(Sender: TObject; Socket: TdbgpConnection) of object;
-  TdbgpOnDebugFile = procedure(Socket: TdbgpConnection; const FileName: string; Line: integer) of object;
+  TdbgpOnShowFile = procedure(Socket: TdbgpConnection; const FileName: string; Line: integer) of object;
 
   { TdbgpServer }
 
   TdbgpServer = class(TmnServer)
   private
-    FOnDebugFile: TdbgpOnDebugFile;
+    FOnShowFile: TdbgpOnShowFile;
     FSpool: TdbgpSpool;
     FWatches: TdbgpWatches;
     FBreakpoints: TdbgpBreakpoints;
@@ -333,7 +333,7 @@ type
     procedure Notification(AComponent: TComponent; operation: TOperation); override;
     function CreateListener: TmnListener; override;
     procedure DoChanged(Listener: TmnListener); override;
-    procedure DebugFile(Socket: TdbgpConnection; const FileName: string; Line: integer); virtual;
+    procedure ShowFile(Socket: TdbgpConnection; const FileName: string; Line: integer); virtual;
     procedure DoStart; override;
     procedure DoStop; override;
     property Spool: TdbgpSpool read FSpool;
@@ -350,7 +350,7 @@ type
     property IsRuning: Boolean read GetIsRuning;
     property Watches: TdbgpWatches read FWatches;
     property Breakpoints: TdbgpBreakpoints read FBreakpoints;
-    property OnDebugFile: TdbgpOnDebugFile read FOnDebugFile write FOnDebugFile;
+    property OnShowFile: TdbgpOnShowFile read FOnShowFile write FOnShowFile;
   published
   end;
 
@@ -446,9 +446,9 @@ begin
   Result := FTransactionID;
 end;
 
-procedure TdbgpGetCurrent.OpenFile; //this function must synced
+procedure TdbgpGetCurrent.ShowFile; //this function must synced
 begin
-  Connection.Server.DebugFile(Connection, FFileName, FLine);
+  Connection.Server.ShowFile(Connection, FFileName, FLine);
 end;
 
 procedure TdbgpConnection.Process;
@@ -681,10 +681,10 @@ begin
   inherited;
 end;
 
-procedure TdbgpServer.DebugFile(Socket: TdbgpConnection; const FileName: string; Line: integer);
+procedure TdbgpServer.ShowFile(Socket: TdbgpConnection; const FileName: string; Line: integer);
 begin
-  if Assigned(FOnDebugFile) then
-    FOnDebugFile(Socket, FileName, Line);
+  if Assigned(FOnShowFile) then
+    FOnShowFile(Socket, FileName, Line);
 end;
 
 procedure TdbgpServer.DoStart;
@@ -863,7 +863,7 @@ begin
       FLine := StrToIntDef(Respond.GetAttribute('stack', 'lineno'), 0);
       try
         //Dont do any lock here
-        Connection.Synchronize(OpenFile);
+        Connection.Synchronize(ShowFile);
       finally
       end;
     end;

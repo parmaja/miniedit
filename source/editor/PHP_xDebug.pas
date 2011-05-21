@@ -24,7 +24,7 @@ type
   protected
     FDebug: TPHP_xDebug;
     procedure DoChanged(Listener: TmnListener); override;
-    procedure DebugFile(Socket: TdbgpConnection; const FileName: string; Line: integer); override;
+    procedure ShowFile(Socket: TdbgpConnection; const FileName: string; Line: integer); override;
   public
     destructor Destroy; override;
     property Key: string read FKey;
@@ -342,7 +342,7 @@ begin
   Result := FServer.Key;
 end;
 
-procedure TPHP_xDebugServer.DebugFile(Socket: TdbgpConnection; const FileName: string; Line: integer);
+procedure TPHP_xDebugServer.ShowFile(Socket: TdbgpConnection; const FileName: string; Line: integer);
 begin
   FDebug.SetExecuted(Socket.Key, FileName, Line);
 end;

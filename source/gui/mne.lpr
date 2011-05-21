@@ -1,6 +1,6 @@
 program mne;
 
-{$MODE Delphi}
+{$mode objfpc}
 
 {**
  * Mini Edit
@@ -10,9 +10,9 @@ program mne;
  *}
 
 uses
-  {$ifndef WINDOWS}
+  {$IFDEF UNIX}
   cthreads,
-  {$endif}
+  {$ENDIF}
   Dialogs,
   Controls,
   Forms,
