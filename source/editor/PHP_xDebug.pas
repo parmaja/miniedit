@@ -1,6 +1,5 @@
 unit PHP_xDebug;
-
-{$mode delphi}
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *
@@ -23,7 +22,7 @@ type
     FKey: string;
   protected
     FDebug: TPHP_xDebug;
-    procedure DoChanged(Listener: TmnListener); override;
+    procedure DoChanged(vListener: TmnListener); override;
     procedure ShowFile(Socket: TdbgpConnection; const FileName: string; Line: integer); override;
   public
     destructor Destroy; override;
@@ -347,10 +346,10 @@ begin
   FDebug.SetExecuted(Socket.Key, FileName, Line);
 end;
 
-procedure TPHP_xDebugServer.DoChanged(Listener: TmnListener);
+procedure TPHP_xDebugServer.DoChanged(vListener: TmnListener);
 begin
   inherited;
-  if Listener.Count = 0 then
+  if vListener.Count = 0 then
     FDebug.SetExecuted('', nil, -1);
 end;
 
@@ -362,4 +361,4 @@ end;
 initialization
 //  Addons.Add('Debug', 'XDebug', TPHP_xDebug);//most not created /??!!!
 end.
-
+

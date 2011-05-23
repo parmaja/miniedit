@@ -1,5 +1,5 @@
 unit SearchInFilesForms;
-{$mode delphi}
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *
@@ -267,7 +267,7 @@ begin
     finally
       Stream.Free;
     end;
-    Engine.SearchReplace(FileName, aStrings, FSearchText, FReplaceText, FoundEvent, FSearchOptions);
+    Engine.SearchReplace(FileName, aStrings, FSearchText, FReplaceText, @FoundEvent, FSearchOptions);
     if ssoReplace in FSearchOptions then
       SaveAsMode(FileName, Mode, aStrings);
   finally
@@ -282,4 +282,4 @@ begin
 end;
 
 end.
-
+

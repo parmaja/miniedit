@@ -1,5 +1,5 @@
 unit mneConsts;
-
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *

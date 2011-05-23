@@ -1,4 +1,5 @@
 unit GotoForms;
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *

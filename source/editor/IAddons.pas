@@ -1,8 +1,6 @@
 unit IAddons;
-
-{$mode objfpc}
+{$mode objfpc}{$H+}
 {$INTERFACES DEFAULT}
-{$H+}
 {**
  * Mini Edit
  *

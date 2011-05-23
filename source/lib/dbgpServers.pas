@@ -1,6 +1,5 @@
 unit dbgpServers;
-
-{$mode delphi}
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *
@@ -240,7 +239,7 @@ type
     FAddress: string;
     FPort: integer;
   protected
-    function CreateConnection(Socket: TmnCustomSocket): TmnServerConnection; override;
+    function CreateConnection(vSocket: TmnCustomSocket): TmnServerConnection; override;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -332,7 +331,7 @@ type
   protected
     procedure Notification(AComponent: TComponent; operation: TOperation); override;
     function CreateListener: TmnListener; override;
-    procedure DoChanged(Listener: TmnListener); override;
+    procedure DoChanged(vListener: TmnListener); override;
     procedure ShowFile(Socket: TdbgpConnection; const FileName: string; Line: integer); virtual;
     procedure DoStart; override;
     procedure DoStop; override;
@@ -665,9 +664,9 @@ end;
 
 { TmnDBGListener }
 
-function TmnDBGListener.CreateConnection(Socket: TmnCustomSocket): TmnServerConnection;
+function TmnDBGListener.CreateConnection(vSocket: TmnCustomSocket): TmnServerConnection;
 begin
-  Result := TdbgpConnection.Create(Socket);
+  Result := TdbgpConnection.Create(vSocket);
 end;
 
 constructor TmnDBGListener.Create;
@@ -700,10 +699,9 @@ begin
     FSpool.Clear;
 end;
 
-procedure TdbgpServer.DoChanged(Listener: TmnListener);
+procedure TdbgpServer.DoChanged(vListener: TmnListener);
 begin
   inherited;
-
 end;
 
 { TdbgpAction }
@@ -863,7 +861,7 @@ begin
       FLine := StrToIntDef(Respond.GetAttribute('stack', 'lineno'), 0);
       try
         //Dont do any lock here
-        Connection.Synchronize(ShowFile);
+        Connection.Synchronize(@ShowFile);
       finally
       end;
     end;
@@ -1389,4 +1387,4 @@ initialization
 finalization
   FreeAndNil(FDBGP);
 end.
-
+

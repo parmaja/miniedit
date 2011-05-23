@@ -1,5 +1,5 @@
 unit mneResources;
-{$mode delphi}
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *

@@ -1,4 +1,5 @@
 unit mneBreakpoints;
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *

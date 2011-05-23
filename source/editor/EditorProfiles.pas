@@ -1,5 +1,5 @@
 unit EditorProfiles;
-{$mode delphi}
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *
@@ -27,7 +27,7 @@ type
     FStyle: TFontStyles;
     FName: string;
   public
-    constructor Create(Collection: TCollection); override;
+    constructor Create(ACollection: TCollection); override;
     procedure AssignTo(Dest: TPersistent); override;
     procedure Assign(Source: TPersistent); override;
   published
@@ -54,7 +54,7 @@ type
     FName: string;
     FAttributes: TAttributesProfile;
   public
-    constructor Create(Collection: TCollection); override;
+    constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
     procedure AssignTo(Dest: TPersistent); override;
     procedure Assign(Source: TPersistent); override;
@@ -421,7 +421,7 @@ begin
     inherited;
 end;
 
-constructor THighlighterProfile.Create(Collection: TCollection);
+constructor THighlighterProfile.Create(ACollection: TCollection);
 begin
   inherited;
   FAttributes := TAttributesProfile.Create(TAttributeProfile);
@@ -489,7 +489,7 @@ begin
     inherited;
 end;
 
-constructor TAttributeProfile.Create(Collection: TCollection);
+constructor TAttributeProfile.Create(ACollection: TCollection);
 begin
   inherited;
   FBackground := clNone;

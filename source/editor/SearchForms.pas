@@ -1,4 +1,5 @@
 unit SearchForms;
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *
@@ -198,4 +199,4 @@ begin
 end;
 
 end.
-
+

@@ -1,5 +1,5 @@
 unit mneProjectForms;
-{$mode delphi}
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *
@@ -24,7 +24,7 @@ type
     CloseBtn: TButton;
     RProjectsList: TListBox;
     RFilesList: TListBox;
-    PopupMenu: TPopupMenu;
+    PopupMnu: TPopupMenu;
     AddtoProjects1: TMenuItem;
     Button1: TButton;
     Button3: TButton;
@@ -281,4 +281,4 @@ begin
 end;
 
 end.
-
+

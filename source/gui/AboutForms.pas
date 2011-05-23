@@ -1,5 +1,5 @@
 unit AboutForms;
-{$mode delphi}
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *
@@ -35,7 +35,7 @@ type
     Label10: TLabel;
     Label11: TLabel;
     Label12: TLabel;
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure SiteLblClick(Sender: TObject);
     procedure TabControl1Changing(Sender: TObject; var AllowChange: Boolean);
@@ -49,9 +49,9 @@ implementation
 
 {$R *.lfm}
 
-procedure TAboutForm.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TAboutForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-  Action := caHide;
+  CloseAction := caHide;
 end;
 
 procedure TAboutForm.FormCreate(Sender: TObject);
@@ -71,4 +71,4 @@ begin
 end;
 
 end.
-
+

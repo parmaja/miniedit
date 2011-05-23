@@ -1,6 +1,5 @@
 unit mneClasses;
-
-{$mode delphi}
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *
@@ -323,7 +322,7 @@ begin
       else if aProcessor = aHTMLProcessor then
       begin
         Completion.TheForm.Caption := 'HTML';
-        EnumerateKeywords(Ord(tkKeyword), sHTMLKeywords, Highlighter.IdentChars, DoAddCompletion);
+        EnumerateKeywords(Ord(tkKeyword), sHTMLKeywords, Highlighter.IdentChars, @DoAddCompletion);
       end
       else if aProcessor = aPHPProcessor then
       begin
@@ -332,16 +331,16 @@ begin
         //CanExecute := False
         else if aTokenType = Ord(tkString) then
         begin
-          EnumerateKeywords(Ord(tkSQL), sSQLKeywords, Highlighter.IdentChars, DoAddCompletion);
+          EnumerateKeywords(Ord(tkSQL), sSQLKeywords, Highlighter.IdentChars, @DoAddCompletion);
         end
         else
         begin
           Completion.TheForm.Caption := 'PHP';
           //load keyowrds
-          EnumerateKeywords(Ord(tkKeyword), sPHPControls, Highlighter.IdentChars, DoAddCompletion);
-          EnumerateKeywords(Ord(tkKeyword), sPHPKeywords, Highlighter.IdentChars, DoAddCompletion);
-          EnumerateKeywords(Ord(tkFunction), sPHPFunctions, Highlighter.IdentChars, DoAddCompletion);
-          EnumerateKeywords(Ord(tkValue), sPHPConstants, Highlighter.IdentChars, DoAddCompletion);
+          EnumerateKeywords(Ord(tkKeyword), sPHPControls, Highlighter.IdentChars, @DoAddCompletion);
+          EnumerateKeywords(Ord(tkKeyword), sPHPKeywords, Highlighter.IdentChars, @DoAddCompletion);
+          EnumerateKeywords(Ord(tkFunction), sPHPFunctions, Highlighter.IdentChars, @DoAddCompletion);
+          EnumerateKeywords(Ord(tkValue), sPHPConstants, Highlighter.IdentChars, @DoAddCompletion);
           // load a variable
           aVariables := THashedStringList.Create;
           aIdentifiers := THashedStringList.Create;

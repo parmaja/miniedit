@@ -1,5 +1,5 @@
 unit mneSetups;
-{$mode delphi}
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *

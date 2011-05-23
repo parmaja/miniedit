@@ -1,5 +1,5 @@
 unit EditorEngine;
-{$mode delphi}{$H+}
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *
@@ -186,7 +186,7 @@ type
     function GetHighlighter: TSynCustomHighlighter; virtual;
     procedure NewSource; virtual;
   public
-    constructor Create(Collection: TCollection); override;
+    constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
     procedure Load(FileName: string); virtual;
     procedure Save(FileName: string); virtual;
@@ -1477,17 +1477,17 @@ begin
   aParent.UpdateState([ecsChanged, ecsState, ecsRefresh]);
 end;
 
-constructor TEditorFile.Create(Collection: TCollection);
+constructor TEditorFile.Create(ACollection: TCollection);
 var
   cf: TSynGutterCodeFolding;
 begin
   inherited;
   { There is more assigns in SetGroup }
   FSynEdit := TSynEdit.Create(Engine.Window);
-  FSynEdit.OnChange := DoEdit;
-  FSynEdit.OnStatusChange := DoStatusChange;
-  FSynEdit.OnGutterClick := DoGutterClickEvent;
-  FSynEdit.OnSpecialLineMarkup := DoSpecialLineMarkup;
+  FSynEdit.OnChange := @DoEdit;
+  FSynEdit.OnStatusChange := @DoStatusChange;
+  FSynEdit.OnGutterClick := @DoGutterClickEvent;
+  FSynEdit.OnSpecialLineMarkup := @DoSpecialLineMarkup;
   FSynEdit.BookMarkOptions.BookmarkImages := EditorResource.BookmarkImages;
 //  FSynEdit.Gutter.MarksPart(0).DebugMarksImageIndex := 0;
   //FSynEdit.Gutter.MarksPart.DebugMarksImageIndex := 0;
@@ -2030,7 +2030,7 @@ begin
   FCompletion := TSynCompletion.Create(nil);
   FCompletion.Width := 340;
   FCompletion.EndOfTokenChr := '{}()[].<>/\:!$&*+-=%';
-  FCompletion.OnExecute := OnExecuteCompletion;
+  FCompletion.OnExecute := @OnExecuteCompletion;
   FCompletion.ShortCut := scCtrl + VK_SPACE;
   //FCompletion.Options := [scoLimitToMatchedText, {scoCaseSensitive, }scoUseInsertList, scoUsePrettyText, scoEndCharCompletion, scoCompleteWithTab, scoCompleteWithEnter];
   //FCompletion.DefaultType := ctCode;
@@ -2484,4 +2484,4 @@ begin
 end;
 
 end.
-
+

@@ -1,4 +1,6 @@
 unit SelectFiles;
+{$mode objfpc}{$H+}
+
 {**
  * Mini Edit
  *
@@ -144,4 +146,4 @@ begin
 end;
 
 end.
-
+

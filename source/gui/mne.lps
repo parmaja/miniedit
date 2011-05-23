@@ -3,7 +3,7 @@
   <ProjectSession>
     <PathDelim Value="\"/>
     <Version Value="9"/>
-    <BuildModes Count="1" Active="linux">
+    <BuildModes Count="1" Active="windows">
       <Item1 Name="linux">
         <CompilerOptions>
           <Version Value="10"/>
@@ -13,7 +13,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;\usr\ws\dev\home\pascal\lib\minilib\xml\source\;\usr\ws\dev\home\pascal\lib\minilib\lib\;\usr\ws\dev\home\pascal\lib\minilib\lazarus\lib\;\usr\ws\dev\home\pascal\lib\minilib\socket\source\;$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS);$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
+            <OtherUnitFiles Value="..\editor;..\lib;\usr\ws\dev\home\pascal\lib\minilib\xml\source;\usr\ws\dev\home\pascal\lib\minilib\lib;\usr\ws\dev\home\pascal\lib\minilib\lazarus\lib;\usr\ws\dev\home\pascal\lib\minilib\socket\source;$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS);$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Linking>
@@ -40,10 +40,10 @@
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="41" Y="19"/>
+        <TopLine Value="61"/>
+        <CursorPos X="8" Y="61"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -54,11 +54,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainUnit"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1159"/>
-        <CursorPos X="49" Y="1171"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -70,10 +69,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SearchForms"/>
+        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="62"/>
-        <CursorPos X="3" Y="70"/>
+        <TopLine Value="1"/>
+        <CursorPos X="20" Y="2"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\lib\hh_funcs.pas"/>
@@ -100,32 +101,38 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="EditorOptions"/>
+        <EditorIndex Value="24"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="268"/>
-        <CursorPos X="25" Y="288"/>
+        <TopLine Value="1"/>
+        <CursorPos X="20" Y="2"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit5>
       <Unit6>
         <Filename Value="..\editor\EditorProfiles.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorProfiles"/>
+        <EditorIndex Value="25"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="152"/>
-        <CursorPos X="39" Y="181"/>
+        <TopLine Value="36"/>
+        <CursorPos X="17" Y="59"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit6>
       <Unit7>
         <Filename Value="..\editor\EditorEngine.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorEngine"/>
+        <EditorIndex Value="22"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="668"/>
-        <CursorPos X="33" Y="682"/>
+        <TopLine Value="1"/>
+        <CursorPos X="20" Y="2"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="2">
           <Item0 X="66" Y="184" ID="3"/>
           <Item1 X="1" Y="2309" ID="0"/>
         </Bookmarks>
+        <Loaded Value="True"/>
       </Unit7>
       <Unit8>
         <Filename Value="..\editor\SelectFiles.pas"/>
@@ -134,10 +141,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SelectFiles"/>
+        <EditorIndex Value="15"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="51" Y="11"/>
+        <CursorPos X="1" Y="2"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit8>
       <Unit9>
         <Filename Value="AboutForms.pas"/>
@@ -146,10 +155,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="AboutForms"/>
+        <EditorIndex Value="16"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="28"/>
-        <CursorPos X="38" Y="48"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="2"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\editor\GotoForms.pas"/>
@@ -158,29 +169,36 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="GotoForms"/>
+        <EditorIndex Value="26"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="10" Y="39"/>
+        <CursorPos X="20" Y="2"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit10>
       <Unit11>
         <Filename Value="..\lib\Match.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="Match"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="38" Y="10"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit11>
       <Unit12>
         <Filename Value="..\lib\dbgpServers.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="dbgpServers"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="18"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="838"/>
-        <CursorPos X="24" Y="864"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="2"/>
         <UsageCount Value="200"/>
+        <Bookmarks Count="1">
+          <Item0 X="24" Y="864" ID="1"/>
+        </Bookmarks>
         <Loaded Value="True"/>
       </Unit12>
       <Unit13>
@@ -196,10 +214,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SearchInFilesForms"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="4"/>
-        <CursorPos X="3" Y="12"/>
+        <TopLine Value="254"/>
+        <CursorPos X="74" Y="271"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit14>
       <Unit15>
         <Filename Value="..\editor\SearchProgressForms.pas"/>
@@ -208,10 +229,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SearchProgressForms"/>
+        <EditorIndex Value="14"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="22" Y="7"/>
+        <CursorPos X="20" Y="2"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit15>
       <Unit16>
         <Filename Value="mneRunPHP.pas"/>
@@ -239,28 +262,34 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="mneBreakpoints"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <CursorPos X="20" Y="2"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit18>
       <Unit19>
         <Filename Value="mneClasses.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="mneClasses"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="134"/>
-        <CursorPos X="5" Y="163"/>
+        <TopLine Value="304"/>
+        <CursorPos X="83" Y="344"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit19>
       <Unit20>
         <Filename Value="mneConsts.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="mneConsts"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="50" Y="15"/>
+        <CursorPos X="20" Y="2"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit20>
       <Unit21>
         <Filename Value="mnePHPIniForm.pas"/>
@@ -269,22 +298,27 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="mnePHPIniForm"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="151"/>
-        <CursorPos X="26" Y="167"/>
+        <TopLine Value="1"/>
+        <CursorPos X="20" Y="2"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit21>
       <Unit22>
         <Filename Value="mneProjectForms.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="ManageProjectsForm"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
         <UnitName Value="mneProjectForms"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="5"/>
-        <CursorPos X="3" Y="13"/>
+        <TopLine Value="17"/>
+        <CursorPos X="5" Y="36"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit22>
       <Unit23>
         <Filename Value="mneProjectOptions.pas"/>
@@ -293,10 +327,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="mneProjectOptions"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="32" Y="11"/>
+        <TopLine Value="70"/>
+        <CursorPos X="8" Y="72"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit23>
       <Unit24>
         <Filename Value="mneResources.pas"/>
@@ -305,10 +341,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="mneResources"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="14"/>
-        <CursorPos X="46" Y="25"/>
+        <TopLine Value="1"/>
+        <CursorPos X="20" Y="2"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit24>
       <Unit25>
         <Filename Value="mneSettings.pas"/>
@@ -317,10 +355,12 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="mneSettings"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="136"/>
-        <CursorPos X="64" Y="151"/>
+        <TopLine Value="153"/>
+        <CursorPos X="66" Y="185"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit25>
       <Unit26>
         <Filename Value="mneSetups.pas"/>
@@ -329,20 +369,22 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="mneSetups"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="53"/>
-        <CursorPos X="58" Y="89"/>
+        <TopLine Value="1"/>
+        <CursorPos X="20" Y="2"/>
         <UsageCount Value="200"/>
+        <Loaded Value="True"/>
       </Unit26>
       <Unit27>
         <Filename Value="..\editor\EditorDebugger.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorDebugger"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="21"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="90" Y="6"/>
-        <UsageCount Value="129"/>
+        <CursorPos X="20" Y="2"/>
+        <UsageCount Value="132"/>
         <Loaded Value="True"/>
       </Unit27>
       <Unit28>
@@ -707,9 +749,9 @@
         <Filename Value="W:\programs\lazarus\lcl\dialogs.pp"/>
         <UnitName Value="Dialogs"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="500"/>
-        <CursorPos X="11" Y="514"/>
-        <UsageCount Value="7"/>
+        <TopLine Value="124"/>
+        <CursorPos X="14" Y="141"/>
+        <UsageCount Value="11"/>
       </Unit70>
       <Unit71>
         <Filename Value="W:\programs\lazarus\lcl\include\control.inc"/>
@@ -818,10 +860,12 @@
       </Unit84>
       <Unit85>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\objpas\classes\classesh.inc"/>
+        <EditorIndex Value="23"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="284"/>
-        <CursorPos X="37" Y="298"/>
-        <UsageCount Value="7"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="11"/>
+        <Loaded Value="True"/>
       </Unit85>
       <Unit86>
         <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvTabs.pas"/>
@@ -913,12 +957,10 @@
       <Unit97>
         <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\PHPUtils.pas"/>
         <UnitName Value="PHPUtils"/>
-        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="387"/>
         <CursorPos X="38" Y="399"/>
-        <UsageCount Value="11"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="13"/>
       </Unit97>
       <Unit98>
         <Filename Value="mneRun.pas"/>
@@ -931,14 +973,13 @@
       <Unit99>
         <Filename Value="..\editor\PHP_xDebug.pas"/>
         <UnitName Value="PHP_xDebug"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="19"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="10"/>
-        <CursorPos X="29" Y="21"/>
-        <UsageCount Value="53"/>
-        <Bookmarks Count="2">
-          <Item0 X="3" Y="267" ID="9"/>
-          <Item1 X="3" Y="347" ID="1"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="55"/>
+        <Bookmarks Count="1">
+          <Item0 X="3" Y="266" ID="9"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit99>
@@ -1017,17 +1058,19 @@
       <Unit109>
         <Filename Value="W:\programs\lazarus\lcl\forms.pp"/>
         <UnitName Value="Forms"/>
+        <EditorIndex Value="17"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1290"/>
-        <CursorPos X="15" Y="1306"/>
-        <UsageCount Value="8"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
       </Unit109>
       <Unit110>
         <Filename Value="W:\programs\lazarus\lcl\include\application.inc"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="804"/>
-        <CursorPos X="1" Y="819"/>
-        <UsageCount Value="7"/>
+        <TopLine Value="2154"/>
+        <CursorPos X="52" Y="2169"/>
+        <UsageCount Value="11"/>
       </Unit110>
       <Unit111>
         <Filename Value="W:\programs\lazarus\lcl\lcltype.pp"/>
@@ -1100,10 +1143,12 @@
       <Unit120>
         <Filename Value="..\editor\IAddons.pas"/>
         <UnitName Value="IAddons"/>
+        <EditorIndex Value="27"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="21"/>
-        <CursorPos X="33" Y="34"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="3"/>
         <UsageCount Value="36"/>
+        <Loaded Value="True"/>
       </Unit120>
       <Unit121>
         <Filename Value="..\..\..\..\lib\minilib\pos\source\posStuffs.pas"/>
@@ -1115,6 +1160,7 @@
         <Bookmarks Count="1">
           <Item0 X="17" Y="64" ID="1"/>
         </Bookmarks>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit121>
       <Unit122>
         <Filename Value="..\..\..\..\lib\minilib\pos\source\posTypes.pas"/>
@@ -1123,6 +1169,7 @@
         <TopLine Value="26"/>
         <CursorPos X="16" Y="47"/>
         <UsageCount Value="4"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit122>
       <Unit123>
         <Filename Value="mneAddons.pas"/>
@@ -1345,11 +1392,11 @@
       <Unit151>
         <Filename Value="..\..\..\..\lib\minilib\socket\source\mnServers.pas"/>
         <UnitName Value="mnServers"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="20"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
-        <UsageCount Value="15"/>
+        <CursorPos X="16" Y="3"/>
+        <UsageCount Value="17"/>
         <Loaded Value="True"/>
       </Unit151>
       <Unit152>
@@ -1362,12 +1409,10 @@
       <Unit153>
         <Filename Value="..\..\..\..\lib\minilib\socket\source\mnConnections.pas"/>
         <UnitName Value="mnConnections"/>
-        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="168"/>
         <CursorPos X="31" Y="176"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="12"/>
       </Unit153>
       <Unit154>
         <Filename Value="P:\programs\fpc\2.4\src\packages\fcl-base\src\syncobjs.pp"/>
@@ -1459,9 +1504,9 @@
       <Unit165>
         <Filename Value="W:\programs\lazarus\lcl\interfaces\win32\win32object.inc"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="339"/>
-        <CursorPos X="1" Y="353"/>
-        <UsageCount Value="7"/>
+        <TopLine Value="342"/>
+        <CursorPos X="19" Y="345"/>
+        <UsageCount Value="11"/>
       </Unit165>
       <Unit166>
         <Filename Value="W:\programs\lazarus\lcl\include\messagedialogs.inc"/>
@@ -1694,6 +1739,7 @@
         <TopLine Value="252"/>
         <CursorPos X="5" Y="278"/>
         <UsageCount Value="6"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit195>
       <Unit196>
         <Filename Value="..\..\..\..\lib\minilib\pos\source\posUtils.pas"/>
@@ -1705,6 +1751,7 @@
         <Bookmarks Count="1">
           <Item0 X="11" Y="60" ID="1"/>
         </Bookmarks>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit196>
       <Unit197>
         <Filename Value="..\..\..\..\lib\minilib\lib\mnUtils.pas"/>
@@ -1780,12 +1827,10 @@
       <Unit206>
         <Filename Value="..\..\..\..\lib\minilib\socket\source\mnWin32Sockets.pas"/>
         <UnitName Value="mnWin32Sockets"/>
-        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="29"/>
         <CursorPos X="24" Y="33"/>
-        <UsageCount Value="15"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="17"/>
       </Unit206>
       <Unit207>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\win\sockets.pp"/>
@@ -1897,12 +1942,14 @@
         <DefaultSyntaxHighlighter Value="XML"/>
       </Unit220>
       <Unit221>
-        <Filename Value="..\..\..\..\..\..\programs\lazarus\lcl\dialogs.pp"/>
-        <UnitName Value="Dialogs"/>
+        <Filename Value="W:\programs\lazarus\debugger\gdbmidebugger.pp"/>
+        <UnitName Value="GDBMIDebugger"/>
+        <EditorIndex Value="28"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="124"/>
-        <CursorPos X="14" Y="141"/>
-        <UsageCount Value="11"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
       </Unit221>
     </Units>
     <General>
@@ -1910,124 +1957,124 @@
     </General>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="864" Column="16" TopLine="848"/>
+        <Filename Value="..\editor\GotoForms.pas"/>
+        <Caret Line="39" Column="10" TopLine="1"/>
       </Position1>
       <Position2>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\editor\IAddons.pas"/>
+        <Caret Line="2" Column="20" TopLine="1"/>
       </Position2>
       <Position3>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="100" Column="23" TopLine="72"/>
+        <Filename Value="W:\programs\lazarus\debugger\gdbmidebugger.pp"/>
+        <Caret Line="81" Column="1" TopLine="43"/>
       </Position3>
       <Position4>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="320" Column="18" TopLine="292"/>
+        <Filename Value="mneBreakpoints.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position4>
       <Position5>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="326" Column="33" TopLine="298"/>
+        <Filename Value="mneClasses.pas"/>
+        <Caret Line="163" Column="5" TopLine="134"/>
       </Position5>
       <Position6>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="336" Column="23" TopLine="308"/>
+        <Filename Value="mneConsts.pas"/>
+        <Caret Line="15" Column="50" TopLine="1"/>
       </Position6>
       <Position7>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="863" Column="37" TopLine="848"/>
+        <Filename Value="mnePHPIniForm.pas"/>
+        <Caret Line="167" Column="26" TopLine="151"/>
       </Position7>
       <Position8>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="mneProjectForms.pas"/>
+        <Caret Line="13" Column="3" TopLine="5"/>
       </Position8>
       <Position9>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="100" Column="15" TopLine="72"/>
+        <Filename Value="mneProjectOptions.pas"/>
+        <Caret Line="11" Column="32" TopLine="1"/>
       </Position9>
       <Position10>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="863" Column="26" TopLine="848"/>
+        <Filename Value="mneResources.pas"/>
+        <Caret Line="25" Column="46" TopLine="3"/>
       </Position10>
       <Position11>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="867" Column="32" TopLine="848"/>
+        <Filename Value="mneSettings.pas"/>
+        <Caret Line="151" Column="64" TopLine="136"/>
       </Position11>
       <Position12>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="866" Column="32" TopLine="848"/>
+        <Filename Value="mneSetups.pas"/>
+        <Caret Line="89" Column="58" TopLine="53"/>
       </Position12>
       <Position13>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="451" Column="21" TopLine="449"/>
+        <Filename Value="..\editor\SearchForms.pas"/>
+        <Caret Line="70" Column="3" TopLine="62"/>
       </Position13>
       <Position14>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="686" Column="3" TopLine="684"/>
+        <Filename Value="..\editor\SearchInFilesForms.pas"/>
+        <Caret Line="12" Column="3" TopLine="4"/>
       </Position14>
       <Position15>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="866" Column="32" TopLine="849"/>
+        <Filename Value="..\editor\SearchProgressForms.pas"/>
+        <Caret Line="7" Column="22" TopLine="1"/>
       </Position15>
       <Position16>
-        <Filename Value="mne.lpr"/>
-        <Caret Line="100" Column="8" TopLine="87"/>
+        <Filename Value="..\editor\SelectFiles.pas"/>
+        <Caret Line="2" Column="20" TopLine="1"/>
       </Position16>
       <Position17>
-        <Filename Value="mne.lpr"/>
-        <Caret Line="15" Column="8" TopLine="1"/>
+        <Filename Value="AboutForms.pas"/>
+        <Caret Line="41" Column="51" TopLine="32"/>
       </Position17>
       <Position18>
-        <Filename Value="mne.lpr"/>
-        <Caret Line="14" Column="1" TopLine="1"/>
+        <Filename Value="W:\programs\lazarus\lcl\forms.pp"/>
+        <Caret Line="382" Column="13" TopLine="347"/>
       </Position18>
       <Position19>
-        <Filename Value="mne.lpr"/>
-        <Caret Line="3" Column="7" TopLine="1"/>
+        <Filename Value="..\editor\EditorProfiles.pas"/>
+        <Caret Line="2" Column="20" TopLine="1"/>
       </Position19>
       <Position20>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="526" Column="33" TopLine="506"/>
+        <Filename Value="..\editor\EditorProfiles.pas"/>
+        <Caret Line="30" Column="25" TopLine="8"/>
       </Position20>
       <Position21>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\editor\EditorProfiles.pas"/>
+        <Caret Line="493" Column="39" TopLine="492"/>
       </Position21>
       <Position22>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="100" Column="23" TopLine="72"/>
+        <Filename Value="..\editor\EditorProfiles.pas"/>
+        <Caret Line="57" Column="25" TopLine="36"/>
       </Position22>
       <Position23>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="mneClasses.pas"/>
+        <Caret Line="2" Column="20" TopLine="1"/>
       </Position23>
       <Position24>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="23" Column="37" TopLine="1"/>
+        <Filename Value="mneProjectOptions.pas"/>
+        <Caret Line="2" Column="20" TopLine="1"/>
       </Position24>
       <Position25>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="449" Column="62" TopLine="421"/>
+        <Filename Value="mneProjectOptions.pas"/>
+        <Caret Line="35" Column="51" TopLine="14"/>
       </Position25>
       <Position26>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1682" Column="1" TopLine="1676"/>
+        <Filename Value="mneSettings.pas"/>
+        <Caret Line="2" Column="20" TopLine="1"/>
       </Position26>
       <Position27>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="2044" Column="3" TopLine="2042"/>
+        <Filename Value="mneSettings.pas"/>
+        <Caret Line="53" Column="51" TopLine="32"/>
       </Position27>
       <Position28>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="2051" Column="3" TopLine="2049"/>
+        <Filename Value="mneProjectForms.pas"/>
+        <Caret Line="2" Column="20" TopLine="1"/>
       </Position28>
       <Position29>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1092" Column="1" TopLine="1092"/>
+        <Filename Value="mneProjectForms.pas"/>
+        <Caret Line="27" Column="5" TopLine="6"/>
       </Position29>
       <Position30>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1091" Column="1" TopLine="1091"/>
+        <Filename Value="..\editor\SearchInFilesForms.pas"/>
+        <Caret Line="2" Column="20" TopLine="1"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
@@ -2041,7 +2088,7 @@
       <Item2>
         <Kind Value="bpkSource"/>
         <Source Value="..\lib\dbgpServers.pas"/>
-        <Line Value="686"/>
+        <Line Value="685"/>
       </Item2>
     </BreakPoints>
     <Watches Count="2">
@@ -2053,4 +2100,4 @@
       </Item2>
     </Watches>
   </Debugging>
-</CONFIG>
+</CONFIG>

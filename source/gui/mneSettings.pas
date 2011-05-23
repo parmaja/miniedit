@@ -1,5 +1,5 @@
 unit mneSettings;
-{$mode delphi}
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *
@@ -50,7 +50,7 @@ type
     procedure Button4Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure INIEditChange(Sender: TObject);
   private
     FEngine: TEditorEngine;
@@ -181,8 +181,7 @@ begin
   PageControl.ActivePageIndex := CurrentPage;
 end;
 
-procedure TEditorSettingForm.FormClose(Sender: TObject;
-  var Action: TCloseAction);
+procedure TEditorSettingForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   CurrentPage := PageControl.ActivePageIndex;
 end;

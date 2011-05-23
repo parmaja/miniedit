@@ -11,7 +11,7 @@ object ManageProjectsForm: TManageProjectsForm
   Font.Name = 'MS Sans Serif'
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '0.9.29'
+  LCLVersion = '0.9.31'
   object PageControl: TPageControl
     Left = 5
     Height = 298
@@ -90,7 +90,7 @@ object ManageProjectsForm: TManageProjectsForm
         Anchors = [akTop, akLeft, akRight, akBottom]
         ItemHeight = 18
         OnDblClick = ProjectsListDblClick
-        PopupMenu = PopupMenu
+        PopupMenu = PopupMnu
         Style = lbOwnerDrawFixed
         TabOrder = 0
       end
@@ -146,7 +146,7 @@ object ManageProjectsForm: TManageProjectsForm
     OnClick = Button2Click
     TabOrder = 3
   end
-  object PopupMenu: TPopupMenu
+  object PopupMnu: TPopupMenu
     left = 172
     top = 174
     object AddtoProjects1: TMenuItem

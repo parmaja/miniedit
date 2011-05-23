@@ -1,5 +1,5 @@
 unit mneProjectOptions;
-{$mode delphi}
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *
@@ -32,7 +32,7 @@ type
     RunModeCbo: TComboBox;
     Bevel1: TBevel;
     procedure OkBtnClick(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -67,9 +67,9 @@ begin
   Apply;
 end;
 
-procedure TProjectForm.FormClose(Sender: TObject; var Action: TCloseAction);
+procedure TProjectForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
-  Action := caFree;
+  CloseAction := caFree;
 end;
 
 procedure TProjectForm.Apply;
@@ -124,4 +124,4 @@ begin
 end;
 
 end.
-
+

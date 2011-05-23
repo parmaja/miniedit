@@ -1,6 +1,5 @@
 unit EditorDebugger;
-
-{$mode delphi}
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *
