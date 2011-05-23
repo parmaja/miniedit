@@ -94,8 +94,9 @@ type
 
   TdbgpGetCurrent = class(TdbgpAction)
   private
-    FFileName: string;
-    FLine: integer;
+    FCurKey: string;
+    FCurFile: string;
+    FCurLine: integer;
     procedure ShowFile;
   public
     procedure Created; override;
@@ -316,13 +317,12 @@ type
   end;
 
   TdbgpOnServerEvent = procedure(Sender: TObject; Socket: TdbgpConnection) of object;
-  TdbgpOnShowFile = procedure(Socket: TdbgpConnection; const FileName: string; Line: integer) of object;
+  TdbgpOnShowFile = procedure(const Key, FileName: string; Line: integer) of object;
 
   { TdbgpServer }
 
   TdbgpServer = class(TmnServer)
   private
-    FOnShowFile: TdbgpOnShowFile;
     FSpool: TdbgpSpool;
     FWatches: TdbgpWatches;
     FBreakpoints: TdbgpBreakpoints;
@@ -332,7 +332,6 @@ type
     procedure Notification(AComponent: TComponent; operation: TOperation); override;
     function CreateListener: TmnListener; override;
     procedure DoChanged(vListener: TmnListener); override;
-    procedure ShowFile(Socket: TdbgpConnection; const FileName: string; Line: integer); virtual;
     procedure DoStart; override;
     procedure DoStop; override;
     property Spool: TdbgpSpool read FSpool;
@@ -349,18 +348,21 @@ type
     property IsRuning: Boolean read GetIsRuning;
     property Watches: TdbgpWatches read FWatches;
     property Breakpoints: TdbgpBreakpoints read FBreakpoints;
-    property OnShowFile: TdbgpOnShowFile read FOnShowFile write FOnShowFile;
   published
   end;
 
   { TdbgpManager }
 
   TdbgpManager = class(TObject)
+  private
+    FOnShowFile: TdbgpOnShowFile;
    public
     Lock: TCriticalSection;
     Event: TEvent;
     constructor Create;
     destructor Destroy; override;
+    procedure ShowFile(const Key, FileName: string; Line: integer);
+    property OnShowFile: TdbgpOnShowFile read FOnShowFile write FOnShowFile;
   end;
 
 function DBGP: TdbgpManager;
@@ -391,6 +393,12 @@ begin
   FreeAndNil(Event);
   FreeAndNil(Lock);
   inherited;
+end;
+
+procedure TdbgpManager.ShowFile(const Key, FileName: string; Line: integer);
+begin
+  if Assigned(FOnShowFile) then
+    FOnShowFile(Key, FileName, Line);
 end;
 
 constructor TdbgpServer.Create(AOwner: TComponent);
@@ -445,9 +453,9 @@ begin
   Result := FTransactionID;
 end;
 
-procedure TdbgpGetCurrent.ShowFile; //this function must synced
+procedure TdbgpGetCurrent.ShowFile; //this function must Synchronize
 begin
-  Connection.Server.ShowFile(Connection, FFileName, FLine);
+  DBGP.ShowFile(FCurKey, FCurFile, FCurLine);
 end;
 
 procedure TdbgpConnection.Process;
@@ -680,12 +688,6 @@ begin
   inherited;
 end;
 
-procedure TdbgpServer.ShowFile(Socket: TdbgpConnection; const FileName: string; Line: integer);
-begin
-  if Assigned(FOnShowFile) then
-    FOnShowFile(Socket, FileName, Line);
-end;
-
 procedure TdbgpServer.DoStart;
 begin
   Spool.Clear;
@@ -855,10 +857,11 @@ begin
   inherited;
   if Respond.Root.Items.Count > 0 then
   begin
-    FFileName := URIToFileName(Respond.GetAttribute('stack', 'filename'));
-    if FFileName <> '' then
+    FCurFile := URIToFileName(Respond.GetAttribute('stack', 'filename'));
+    if FCurFile <> '' then
     begin
-      FLine := StrToIntDef(Respond.GetAttribute('stack', 'lineno'), 0);
+      FCurKey := Connection.Key;
+      FCurLine := StrToIntDef(Respond.GetAttribute('stack', 'lineno'), 0);
       try
         //Dont do any lock here
         Connection.Synchronize(@ShowFile);
@@ -1387,4 +1390,4 @@ initialization
 finalization
   FreeAndNil(FDBGP);
 end.
-
+

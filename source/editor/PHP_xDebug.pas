@@ -23,7 +23,6 @@ type
   protected
     FDebug: TPHP_xDebug;
     procedure DoChanged(vListener: TmnListener); override;
-    procedure ShowFile(Socket: TdbgpConnection; const FileName: string; Line: integer); override;
   public
     destructor Destroy; override;
     property Key: string read FKey;
@@ -69,6 +68,7 @@ type
     procedure SetActive(const AValue: boolean); override;
     function CreateBreakPoints: TEditorBreakPoints; override;
     function CreateWatches: TEditorWatches; override;
+    procedure DoShowFile(const Key, FileName: string; Line: integer);
   public
     constructor Create;
     destructor Destroy; override;
@@ -88,6 +88,9 @@ type
   end;
 
 implementation
+
+uses
+  Dialogs;
 
 { TPHP_xDebugWatches }
 
@@ -236,16 +239,23 @@ begin
   (Result as TPHP_xDebugWatches).FDebug := Self;
 end;
 
+procedure TPHP_xDebug.DoShowFile(const Key, FileName: string; Line: integer);
+begin
+  SetExecuted(Key, FileName, Line);
+end;
+
 constructor TPHP_xDebug.Create;
 begin
   inherited Create;
   FServer := TPHP_xDebugServer.Create(nil);
   FServer.FDebug := Self;
+  DBGP.OnShowFile := @DoShowFile;
 end;
 
 destructor TPHP_xDebug.Destroy;
 begin
   FreeAndNil(FServer);
+  DBGP.OnShowFile := nil;
   inherited;
 end;
 
@@ -341,16 +351,16 @@ begin
   Result := FServer.Key;
 end;
 
-procedure TPHP_xDebugServer.ShowFile(Socket: TdbgpConnection; const FileName: string; Line: integer);
+{procedure TPHP_xDebugServer.ShowFile(const Key, FileName: string; Line: integer);
 begin
-  FDebug.SetExecuted(Socket.Key, FileName, Line);
-end;
+  //FDebug.SetExecuted(Key, FileName, Line);
+end;}
 
 procedure TPHP_xDebugServer.DoChanged(vListener: TmnListener);
 begin
   inherited;
-  if vListener.Count = 0 then
-    FDebug.SetExecuted('', nil, -1);
+{  if vListener.Count = 0 then
+    FDebug.SetExecuted('', nil, -1);}
 end;
 
 destructor TPHP_xDebugServer.Destroy;
@@ -361,4 +371,4 @@ end;
 initialization
 //  Addons.Add('Debug', 'XDebug', TPHP_xDebug);//most not created /??!!!
 end.
-
+

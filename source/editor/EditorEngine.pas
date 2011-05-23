@@ -969,7 +969,11 @@ end;
 
 function TEditorFiles.InternalOpenFile(FileName: string; AppendToRecent: Boolean): TEditorFile;
 begin
+  {$ifdef windows}
   FileName := ExpandFileName(FileName);
+  {$else}
+  FileName := '/' + FileName;  //todo huh
+  {$endif}
   Result := FindFile(FileName);
   if Result = nil then
   begin
@@ -2484,4 +2488,4 @@ begin
 end;
 
 end.
-
+

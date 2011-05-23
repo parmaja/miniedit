@@ -15,8 +15,43 @@
       <CharSet Value=""/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
-    <BuildModes Count="1">
+    <BuildModes Count="2">
       <Item1 Name="windows" Default="True"/>
+      <Item2 Name="linux">
+        <CompilerOptions>
+          <Version Value="10"/>
+          <PathDelim Value="\"/>
+          <Target>
+            <Filename Value="..\..\bin\mne"/>
+          </Target>
+          <SearchPaths>
+            <IncludeFiles Value="$(ProjOutDir)"/>
+            <OtherUnitFiles Value="..\editor;..\lib;\usr\ws\dev\home\pascal\lib\minilib\xml\source\;\usr\ws\dev\home\pascal\lib\minilib\lib\;\usr\ws\dev\home\pascal\lib\minilib\lazarus\lib\;\usr\ws\dev\home\pascal\lib\minilib\socket\source\;$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS);$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
+            <UnitOutputDirectory Value="..\..\units"/>
+          </SearchPaths>
+          <Linking>
+            <Debugging>
+              <GenerateDebugInfo Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
+            </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
+          </Linking>
+          <Other>
+            <Verbosity>
+              <ShowNotes Value="False"/>
+              <ShowHints Value="False"/>
+            </Verbosity>
+            <CompilerMessages>
+              <UseMsgFile Value="True"/>
+            </CompilerMessages>
+            <CompilerPath Value="$(CompPath)"/>
+          </Other>
+        </CompilerOptions>
+      </Item2>
     </BuildModes>
     <PublishOptions>
       <Version Value="2"/>
@@ -28,6 +63,7 @@
       <local>
         <FormatVersion Value="1"/>
         <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
+        <Display Value=":1"/>
       </local>
     </RunParams>
     <RequiredPackages Count="6">
@@ -199,7 +235,9 @@
       <Unit22>
         <Filename Value="mneProjectForms.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="ManageProjectsForm"/>
         <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
         <UnitName Value="mneProjectForms"/>
       </Unit22>
       <Unit23>
@@ -248,8 +286,8 @@
       <Filename Value="..\..\bin\mne.exe"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="W:\home\pascal\projects\LPE\source\editor\;W:\home\pascal\projects\LPE\source\lib\;$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\addons;W:\programs\lazarus\components\synedit\units\i386-win32\;W:\home\pascal\lib\minilib\xml\source\;W:\home\pascal\lib\minilib\lib\;W:\home\pascal\lib\minilib\lazarus\lib\;W:\home\pascal\lib\minilib\socket\source\;$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS);$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
+      <IncludeFiles Value="W:\home\pascal\projects\LPE\source\editor;W:\home\pascal\projects\LPE\source\lib;$(ProjOutDir)"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\addons;W:\programs\lazarus\components\synedit\units\i386-win32;W:\home\pascal\lib\minilib\xml\source;W:\home\pascal\lib\minilib\lib;W:\home\pascal\lib\minilib\lazarus\lib;W:\home\pascal\lib\minilib\socket\source;$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS);$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <CodeGeneration>
@@ -293,4 +331,4 @@
       </Item3>
     </Exceptions>
   </Debugging>
-</CONFIG>
+</CONFIG>
