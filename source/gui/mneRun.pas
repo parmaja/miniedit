@@ -98,7 +98,6 @@ begin
       Synchronize(SendBuffer);
     end;
     Console := nil; //zaher
-    Suspend;
   end;
 end;
 
@@ -145,7 +144,7 @@ end;
 
 procedure TRunProject.Run;
 begin
-  Resume;
+  Start;
 end;
 
 initialization
@@ -153,4 +152,4 @@ initialization
 finalization
   FreeAndNil(ProjectLock);
 end.
-
+

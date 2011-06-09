@@ -46,13 +46,13 @@ var
 begin
   if PHPChk.Checked then
   begin
-    AssociateNow('Open', '.php', 'phpfile', Application.ExeName, 'PHP script file', 'text/plain', True);
-    AssociateNow('Edit', '.phpx', 'phpxfile', Application.ExeName, 'PHPX script file', 'text/plain', True);
+    AssociateNow('Open', '.php', 'phpfile', Application.ExeName, 'PHP script file', 'text/plain', False);
+    AssociateNow('Edit', '.phpx', 'phpxfile', Application.ExeName, 'PHPX script file', 'text/plain', False);
     if Engine.Options.CompilerFolder <> '' then
       AssociateNow('Open', '.phpx', 'phpxfile', IncludeTrailingPathDelimiter(Engine.Options.CompilerFolder) + 'php.exe', 'PHP executable script file', 'text/plain', False);
   end;
 
-  AssociateNow('Open', '.mne-project', 'lightphpedit-project', Application.ExeName, 'Mini Edit project file', 'application/lightphpedit', True);
+  AssociateNow('Open', '.mne-project', 'mne-project', Application.ExeName, 'Mini Edit project file', 'application/miniedit', True);
 
   if CSSChk.Checked then
     AssociateNow('Open', '.css', 'cssfile', Application.ExeName, 'CSS file', 'text/plain', True);
@@ -105,7 +105,7 @@ begin
       aReg.WriteString('', '[Open "%1"' + '' + ']');
       aReg.CloseKey;
       aReg.OpenKey(FileType + '\Shell\' + Cmd + '\ddeexec\Application', True);
-      aReg.WriteString('', 'LightPHPEdit');
+      aReg.WriteString('', 'MiniEdit');
       aReg.CloseKey;
       aReg.OpenKey(FileType + '\Shell\' + Cmd + '\ddeexec\Topic', True);
       aReg.WriteString('', 'DDESystem');
@@ -127,7 +127,7 @@ begin
     Result := aReg.ReadString('') = FileType;
     aReg.CloseKey;
     aReg.OpenKey(FileType + '\Shell\' + Cmd + '\Command', True);
-    Result := Result and (aReg.ReadString('') = '"' + Application.ExeName + '" /DDE "%1"');
+    Result := Result and (aReg.ReadString('') = '"' + Application.ExeName + '" "%1"');
     aReg.CloseKey;
   finally
     aReg.Free;

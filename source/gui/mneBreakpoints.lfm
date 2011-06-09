@@ -41,7 +41,7 @@ object BreakpointsForm: TBreakpointsForm
   object CloseBtn: TButton
     Left = 540
     Height = 25
-    Top = 192
+    Top = 193
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&Close'

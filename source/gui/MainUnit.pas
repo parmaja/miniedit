@@ -34,7 +34,7 @@ uses
   {$endif}
   mnePHPIniForm,
   //end of addons
-  mneAddons, DividerBevel, IniFiles, simpleipc, mnUtils, ntvTabs, ntvPageControls;
+  mneAddons, IniFiles, simpleipc, mnUtils, ntvTabs, ntvPageControls;
 
 {$i '..\lib\mne.inc'}
 
@@ -451,7 +451,6 @@ type
   protected
     FRunProject: TRunProject;
     LastGotoLine: integer;
-    FControlStructures: TStringList;
     //
 
     procedure PHPScriptError(Sender: TObject; AText: string; AType: TRunErrorType; AFileName: string; ALineNo: integer);
@@ -536,23 +535,6 @@ begin
     Engine.Files.OpenFile(DequoteStr(ParamStr(1)));
     Folder := ExtractFilePath(DequoteStr(ParamStr(1)));
   end;
-  FControlStructures := TStringList.Create;
-  FControlStructures.Add('if');
-  FControlStructures.Add('else');
-  FControlStructures.Add('elseif');
-  FControlStructures.Add('while');
-  FControlStructures.Add('do');
-  FControlStructures.Add('for');
-  FControlStructures.Add('foreach');
-  FControlStructures.Add('break');
-  FControlStructures.Add('continue');
-  FControlStructures.Add('switch');
-  FControlStructures.Add('declare');
-  FControlStructures.Add('return');
-  FControlStructures.Add('require');
-  FControlStructures.Add('include');
-  FControlStructures.Add('require_once');
-  FControlStructures.Add('include_once');
   if Engine.Options.AutoStartDebugServer then
     DBGStartServerAct.Execute;
 end;
@@ -1475,7 +1457,6 @@ end;
 
 destructor TMainForm.Destroy;
 begin
-  FControlStructures.Free;
   inherited;
 end;
 
@@ -2359,4 +2340,4 @@ begin
 end;
 
 end.
-
+
