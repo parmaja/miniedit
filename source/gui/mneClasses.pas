@@ -382,28 +382,28 @@ begin
             aVariables[i] := '$' + aVariables[i];
 
           //extract keywords from external files
-          if (Engine.Session.IsOpened) and (Engine.Session.Current.RootDir <> '') then
+          if (Engine.Session.IsOpened) and (Engine.Session.Project.RootDir <> '') then
           begin
             if Engine.Options.CollectAutoComplete then
             begin
-              if ((GetTickCount - Engine.Session.Current.CachedAge) > (Engine.Options.CollectTimeout * 1000)) then
+              if ((GetTickCount - Engine.Session.Project.CachedAge) > (Engine.Options.CollectTimeout * 1000)) then
               begin
-                Engine.Session.Current.CachedVariables.Clear;
-                Engine.Session.Current.CachedIdentifiers.Clear;
+                Engine.Session.Project.CachedVariables.Clear;
+                Engine.Session.Project.CachedIdentifiers.Clear;
                 aFiles := TStringList.Create;
                 try
-                  EnumFileList('', Engine.Session.Current.RootDir, '*.php', aFiles, 1000, Engine.Session.IsOpened);
+                  EnumFileList('', Engine.Session.Project.RootDir, '*.php', aFiles, 1000, Engine.Session.IsOpened);
                   r := aFiles.IndexOf(Engine.Files.Current.Name);
                   if r >= 0 then
                     aFiles.Delete(r);
-                  ExtractKeywords(aFiles, Engine.Session.Current.CachedVariables, Engine.Session.Current.CachedIdentifiers);
+                  ExtractKeywords(aFiles, Engine.Session.Project.CachedVariables, Engine.Session.Project.CachedIdentifiers);
                 finally
                   aFiles.Free;
                 end;
               end;
-              aVariables.AddStrings(Engine.Session.Current.CachedVariables);
-              aIdentifiers.AddStrings(Engine.Session.Current.CachedIdentifiers);
-              Engine.Session.Current.CachedAge := GetTickCount;
+              aVariables.AddStrings(Engine.Session.Project.CachedVariables);
+              aIdentifiers.AddStrings(Engine.Session.Project.CachedIdentifiers);
+              Engine.Session.Project.CachedAge := GetTickCount;
             end;
           end;
           //add current file variables

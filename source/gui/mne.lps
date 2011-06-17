@@ -22,10 +22,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainUnit"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="2135"/>
-        <CursorPos X="1" Y="2147"/>
+        <CursorPos X="27" Y="2145"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit1>
@@ -84,16 +85,16 @@
         <Filename Value="..\editor\EditorEngine.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorEngine"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="384"/>
-        <CursorPos X="5" Y="404"/>
+        <TopLine Value="1488"/>
+        <CursorPos X="27" Y="1505"/>
         <UsageCount Value="200"/>
-        <Bookmarks Count="3">
-          <Item0 X="66" Y="166" ID="3"/>
-          <Item1 X="1" Y="2295" ID="0"/>
-          <Item2 X="1" Y="79" ID="1"/>
+        <Bookmarks Count="4">
+          <Item0 X="66" Y="169" ID="3"/>
+          <Item1 X="1" Y="2337" ID="0"/>
+          <Item2 X="53" Y="2047" ID="2"/>
+          <Item3 X="13" Y="200" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit7>
@@ -211,7 +212,7 @@
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="380"/>
-        <CursorPos X="29" Y="406"/>
+        <CursorPos X="37" Y="406"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit18>
@@ -305,7 +306,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="256"/>
         <CursorPos X="55" Y="272"/>
-        <UsageCount Value="144"/>
+        <UsageCount Value="145"/>
       </Unit26>
       <Unit27>
         <Filename Value="..\addons\mneAssociateForm.pas"/>
@@ -317,7 +318,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="23"/>
         <CursorPos X="7" Y="54"/>
-        <UsageCount Value="30"/>
+        <UsageCount Value="31"/>
       </Unit27>
       <Unit28>
         <Filename Value="mneAssociateForm.pas"/>
@@ -1942,124 +1943,124 @@
     </General>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="mneClasses.pas"/>
-        <Caret Line="243" Column="18" TopLine="241"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="51" Column="13" TopLine="25"/>
       </Position1>
       <Position2>
-        <Filename Value="mneClasses.pas"/>
-        <Caret Line="285" Column="6" TopLine="271"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="60" Column="66" TopLine="34"/>
       </Position2>
       <Position3>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="499" Column="22" TopLine="483"/>
+        <Caret Line="200" Column="13" TopLine="175"/>
       </Position3>
       <Position4>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="423" Column="1" TopLine="392"/>
+        <Caret Line="422" Column="13" TopLine="396"/>
       </Position4>
       <Position5>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="387" Column="4" TopLine="384"/>
+        <Caret Line="433" Column="51" TopLine="407"/>
       </Position5>
       <Position6>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="417" Column="15" TopLine="414"/>
+        <Caret Line="1004" Column="21" TopLine="978"/>
       </Position6>
       <Position7>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="414" Column="17" TopLine="403"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position7>
       <Position8>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="480" Column="29" TopLine="454"/>
+        <Caret Line="51" Column="13" TopLine="25"/>
       </Position8>
       <Position9>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="524" Column="51" TopLine="498"/>
+        <Caret Line="60" Column="66" TopLine="34"/>
       </Position9>
       <Position10>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="801" Column="3" TopLine="785"/>
+        <Caret Line="200" Column="13" TopLine="174"/>
       </Position10>
       <Position11>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1870" Column="11" TopLine="1844"/>
+        <Caret Line="422" Column="13" TopLine="396"/>
       </Position11>
       <Position12>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="981" Column="6" TopLine="965"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position12>
       <Position13>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1321" Column="45" TopLine="1295"/>
+        <Caret Line="51" Column="13" TopLine="25"/>
       </Position13>
       <Position14>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1185" Column="23" TopLine="1169"/>
+        <Caret Line="60" Column="66" TopLine="34"/>
       </Position14>
       <Position15>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="307" Column="14" TopLine="291"/>
+        <Caret Line="202" Column="13" TopLine="174"/>
       </Position15>
       <Position16>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1189" Column="21" TopLine="1171"/>
+        <Caret Line="422" Column="6" TopLine="396"/>
       </Position16>
       <Position17>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1293" Column="21" TopLine="1275"/>
+        <Caret Line="423" Column="25" TopLine="417"/>
       </Position17>
       <Position18>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1852" Column="12" TopLine="1835"/>
+        <Caret Line="1296" Column="6" TopLine="1294"/>
       </Position18>
       <Position19>
-        <Filename Value="mneClasses.pas"/>
-        <Caret Line="285" Column="6" TopLine="271"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="2254" Column="21" TopLine="2228"/>
       </Position19>
       <Position20>
-        <Filename Value="mneClasses.pas"/>
-        <Caret Line="385" Column="30" TopLine="369"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="829" Column="4" TopLine="813"/>
       </Position20>
       <Position21>
-        <Filename Value="mneClasses.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1024" Column="21" TopLine="1008"/>
       </Position21>
       <Position22>
-        <Filename Value="..\editor\SelectFiles.pas"/>
-        <Caret Line="2" Column="1" TopLine="1"/>
-      </Position22>
-      <Position23>
-        <Filename Value="..\editor\SelectFiles.pas"/>
-        <Caret Line="50" Column="62" TopLine="35"/>
-      </Position23>
-      <Position24>
-        <Filename Value="mneProjectForms.pas"/>
-        <Caret Line="36" Column="5" TopLine="17"/>
-      </Position24>
-      <Position25>
-        <Filename Value="mneProjectForms.pas"/>
-        <Caret Line="102" Column="22" TopLine="87"/>
-      </Position25>
-      <Position26>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="928" Column="19" TopLine="902"/>
-      </Position26>
-      <Position27>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="660" Column="14" TopLine="645"/>
-      </Position27>
-      <Position28>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1871" Column="12" TopLine="1854"/>
-      </Position28>
-      <Position29>
         <Filename Value="..\editor\EditorEngine.pas"/>
         <Caret Line="1" Column="1" TopLine="1"/>
+      </Position22>
+      <Position23>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1364" Column="53" TopLine="1338"/>
+      </Position23>
+      <Position24>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1070" Column="12" TopLine="1053"/>
+      </Position24>
+      <Position25>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1504" Column="20" TopLine="1488"/>
+      </Position25>
+      <Position26>
+        <Filename Value="mneClasses.pas"/>
+        <Caret Line="406" Column="29" TopLine="380"/>
+      </Position26>
+      <Position27>
+        <Filename Value="mneClasses.pas"/>
+        <Caret Line="385" Column="67" TopLine="369"/>
+      </Position27>
+      <Position28>
+        <Filename Value="mneClasses.pas"/>
+        <Caret Line="389" Column="42" TopLine="373"/>
+      </Position28>
+      <Position29>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="2147" Column="1" TopLine="2135"/>
       </Position29>
       <Position30>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="235" Column="1" TopLine="204"/>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="660" Column="52" TopLine="645"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>

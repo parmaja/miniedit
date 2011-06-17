@@ -658,8 +658,8 @@ begin
   FileSet.Visible := FileSet.Items.Count > 0;
   if Engine.Files.Current = nil then
     QuickFindPnl.Visible := False;
-  if (Engine.Session.IsOpened) and (Engine.Session.Current.Name <> '') then
-    Caption := Engine.Session.Current.Name + ' - ' + sApplicationTitle
+  if (Engine.Session.IsOpened) and (Engine.Session.Project.Name <> '') then
+    Caption := Engine.Session.Project.Name + ' - ' + sApplicationTitle
   else
     Caption := sApplicationTitle;
   Application.Title := Caption;
@@ -765,13 +765,13 @@ begin
   end;
 
   if (Engine.Session.IsOpened) then
-    if (Engine.Session.Current.FileName = '') then
+    if (Engine.Session.Project.FileName = '') then
     begin
-      mr := Application.MessageBox(PChar('Save project ' + Engine.Session.Current.Name + ' before close?'), 'Save', MB_YESNOCANCEL);
+      mr := Application.MessageBox(PChar('Save project ' + Engine.Session.Project.Name + ' before close?'), 'Save', MB_YESNOCANCEL);
       if mr = mrCancel then
         CanClose := False
       else if mr = mrYes then
-        Engine.Session.Current.Save;
+        Engine.Session.Project.Save;
     end;
 end;
 
@@ -916,7 +916,7 @@ procedure TMainForm.ProjectOptionsActExecute(Sender: TObject);
 begin
   if Engine.Session.IsOpened then
   begin
-    ShowProjectForm(Engine.Session.Current);
+    ShowProjectForm(Engine.Session.Project);
     Engine.UpdateState([ecsChanged]);
   end;
 end;
@@ -928,7 +928,7 @@ begin
   Engine.Session.Close;
   aProject := Engine.Session.New;
   if ShowProjectForm(aProject) then
-    Engine.Session.Current := aProject
+    Engine.Session.Project := aProject
   else
     aProject.Free;
 end;
@@ -940,13 +940,13 @@ end;
 
 procedure TMainForm.SaveProjectActExecute(Sender: TObject);
 begin
-  Engine.Session.Current.Save;
+  Engine.Session.Project.Save;
 end;
 
 procedure TMainForm.SelectFileActExecute(Sender: TObject);
 begin
   if Engine.Session.IsOpened then
-    ShowSelectFile(Engine.Session.Current.RootDir)
+    ShowSelectFile(Engine.Session.Project.RootDir)
   else
     ShowSelectFile(Folder);
 end;
@@ -978,7 +978,7 @@ begin
   begin
     aFile := (Sender as TMenuItem).Caption;
     if Engine.Session.IsOpened then
-      aFile := ExpandToPath(aFile, Engine.Session.Current.RootDir);
+      aFile := ExpandToPath(aFile, Engine.Session.Project.RootDir);
     Engine.Files.OpenFile(aFile);
   end;
 end;
@@ -1200,13 +1200,13 @@ end;
 procedure TMainForm.SaveAsProjectActExecute(Sender: TObject);
 begin
   if Engine.Session.IsOpened then
-    Engine.Session.Current.SaveAs;
+    Engine.Session.Project.SaveAs;
 end;
 
 procedure TMainForm.ProjectOpenFolderActExecute(Sender: TObject);
 begin
 {  if Engine.Session.IsOpened then
-    ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Session.Current.FileName + '"'), nil, SW_SHOW);}
+    ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Session.Project.FileName + '"'), nil, SW_SHOW);}
 end;
 
 procedure TMainForm.ManageActExecute(Sender: TObject);
@@ -1446,8 +1446,8 @@ end;
 
 procedure TMainForm.EngineProjectLoaded;
 begin
-  if (Engine.Session.IsOpened) and (Engine.Session.Current.RootDir <> '') then
-    Folder := Engine.Session.Current.RootDir;
+  if (Engine.Session.IsOpened) and (Engine.Session.Project.RootDir <> '') then
+    Folder := Engine.Session.Project.RootDir;
 end;
 
 procedure TMainForm.ReplaceActExecute(Sender: TObject);
@@ -1936,8 +1936,8 @@ begin
     aFile := Engine.Files.Current.Name;
     if (Engine.Session.IsOpened) then
     begin
-      aFile := ExpandToPath(aFile, Engine.Session.Current.RootDir);
-      aUrlMode := Engine.Session.Current.RunMode;
+      aFile := ExpandToPath(aFile, Engine.Session.Project.RootDir);
+      aUrlMode := Engine.Session.Project.RunMode;
     end
     else
     begin
@@ -1949,11 +1949,11 @@ begin
       begin
         if Engine.Session.IsOpened then
         begin
-          aRoot := IncludeTrailingPathDelimiter(Engine.Session.Current.RootDir);
+          aRoot := IncludeTrailingPathDelimiter(Engine.Session.Project.RootDir);
           if SameText((Copy(aFile, 1, Length(aRoot))), aRoot) then
           begin
             aFile := Copy(aFile, Length(aRoot) + 1, MaxInt);
-            aFile := IncludeSlash(Engine.Session.Current.RootUrl) + aFile;
+            aFile := IncludeSlash(Engine.Session.Project.RootUrl) + aFile;
             //ShellExecute(0, 'open', PChar(aFile), '', PChar(ExtractFilePath(aFile)), SW_SHOWNOACTIVATE);//TODO Jihad
           end;
         end;
@@ -2016,8 +2016,8 @@ end;
 
 procedure TMainForm.FolderHomeActExecute(Sender: TObject);
 begin
-  if Engine.Session.Current <> nil then
-    Folder := Engine.Session.Current.RootDir;
+  if Engine.Session.Project <> nil then
+    Folder := Engine.Session.Project.RootDir;
 end;
 
 procedure TMainForm.StatusTimerTimer(Sender: TObject);
@@ -2157,8 +2157,8 @@ begin
       aText := Engine.Files.Current.SynEdit.GetWordAtRowCol(Engine.Files.Current.SynEdit.CaretXY);
   end;
 
-  if Engine.Session.Current <> nil then
-    aFolder := Engine.Session.Current.RootDir
+  if Engine.Session.Project <> nil then
+    aFolder := Engine.Session.Project.RootDir
   else
     aFolder := '';
   if aFolder = '' then
