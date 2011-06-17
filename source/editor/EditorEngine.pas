@@ -32,33 +32,6 @@ type
     property ErrorLine: Integer read FErrorLine write FErrorLine;
   end;
 
-  TProjectMember = class(TCollectionItem)
-  private
-    FName: string;
-    FDescription: string;
-    FRunUrl: string;
-  public
-  published
-    property Name: string read FName write FName;
-    property RunUrl: string read FRunUrl write FRunUrl;
-    property Description: string read FDescription write FDescription;
-  end;
-
-  TProjectMembers = class(TCollection)
-  private
-    FEngine: TEditorEngine;
-    function GetItems(Index: Integer): TProjectMember;
-    function GetMember(Index: string): TProjectMember;
-  protected
-  public
-    function Find(vName: string): TProjectMember;
-    function IsExist(vName: string): Boolean;
-    property Engine: TEditorEngine read FEngine;
-    property Items[Index: Integer]: TProjectMember read GetItems;
-    property Members[Index: string]: TProjectMember read GetMember; default;
-  published
-  end;
-
   TEditorDesktopFile = class(TCollectionItem)
   private
     FFileName: string;
@@ -111,7 +84,6 @@ type
     FRootDir: string;
     FFileName: string;
     FEngine: TEditorEngine;
-    FMembers: TProjectMembers;
     FName: string;
     FSaveDesktop: Boolean;
     FDesktop: TEditorDesktop;
@@ -136,7 +108,6 @@ type
     property Description: string read FDescription write FDescription;
     property RootDir: string read FRootDir write FRootDir;
     property RootUrl: string read FRootUrl write FRootUrl;
-    property Members: TProjectMembers read FMembers;
     property RunMode: TRunMode read FRunMode write FRunMode default prunUrl;
     property Desktop: TEditorDesktop read FDesktop;
     property SaveDesktop: Boolean read FSaveDesktop write FSaveDesktop default True;
@@ -1363,39 +1334,6 @@ begin
   Result := IncludeTrailingPathDelimiter(FWorkSpace);
 end;
 
-{ TProjectMembers }
-
-function TProjectMembers.Find(vName: string): TProjectMember;
-var
-  i: Integer;
-begin
-  Result := nil;
-  if vName <> '' then
-    for i := 0 to Count - 1 do
-    begin
-      if SameText(Items[i].Name, vName) then
-      begin
-        Result := Items[i] as TProjectMember;
-        break;
-      end;
-    end;
-end;
-
-function TProjectMembers.GetItems(Index: Integer): TProjectMember;
-begin
-  Result := inherited Items[Index] as TProjectMember;
-end;
-
-function TProjectMembers.GetMember(Index: string): TProjectMember;
-begin
-  Result := Find(Index);
-end;
-
-function TProjectMembers.IsExist(vName: string): Boolean;
-begin
-  Result := Find(vName) <> nil;
-end;
-
 { TEditorFiles }
 
 function TEditorFiles.GetItems(Index: Integer): TEditorFile;
@@ -2069,8 +2007,6 @@ begin
   FEngine := AEngine;
   FDesktop := TEditorDesktop.Create;
   FDesktop.FEngine := Engine;
-  FMembers := TProjectMembers.Create(TProjectMember);
-  FMembers.FEngine := Engine;
   FCachedVariables := THashedStringList.Create;
   FCachedIdentifiers := THashedStringList.Create;
   FSaveDesktop := True;
@@ -2080,7 +2016,6 @@ destructor TEditorProject.Destroy;
 begin
   if FileName <> '' then
     Save;
-  FMembers.Free;
   FDesktop.Free;
   FCachedVariables.Free;
   FCachedIdentifiers.Free;
@@ -2488,4 +2423,4 @@ begin
 end;
 
 end.
-
+

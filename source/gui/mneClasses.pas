@@ -134,6 +134,24 @@ type
   public
   end;
 
+  TCustomProject = class(TObject)
+  public
+    procedure ShowConfig; virtual; abstract;
+  end;
+
+  { TPHPProject }
+
+  TPHPProject = class(TCustomProject)
+  public
+    procedure ShowConfig; override;
+  end;
+
+  { TPascalProject }
+
+  TPascalProject = class(TCustomProject)
+  public
+    procedure ShowConfig; override;
+  end;
 
   //
   TmneEngine = class(TEditorEngine)
@@ -217,6 +235,18 @@ begin
   finally
     AExtensions.Free;
   end;
+end;
+
+{ TPascalProject }
+
+procedure TPascalProject.ShowConfig;
+begin
+end;
+
+{ TPHPProject }
+
+procedure TPHPProject.ShowConfig;
+begin
 end;
 
 { TPASFileCategory }
