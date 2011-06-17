@@ -66,30 +66,46 @@
         <Display Value=":1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="6">
+    <RequiredPackages Count="10">
       <Item1>
-        <PackageName Value="FCL"/>
-        <MinVersion Major="1" Release="1" Valid="True"/>
+        <PackageName Value="MiniXML"/>
+        <MinVersion Valid="True"/>
       </Item1>
       <Item2>
-        <PackageName Value="LCLBase"/>
-        <MinVersion Major="1" Release="1" Valid="True"/>
+        <PackageName Value="minisockets"/>
+        <MinVersion Valid="True"/>
       </Item2>
       <Item3>
-        <PackageName Value="LazControls"/>
+        <PackageName Value="minilib"/>
         <MinVersion Valid="True"/>
       </Item3>
       <Item4>
-        <PackageName Value="NativeLib"/>
+        <PackageName Value="MiniBaseLib"/>
         <MinVersion Valid="True"/>
       </Item4>
       <Item5>
-        <PackageName Value="SynEdit"/>
-        <MinVersion Major="1" Valid="True"/>
+        <PackageName Value="FCL"/>
+        <MinVersion Major="1" Release="1" Valid="True"/>
       </Item5>
       <Item6>
-        <PackageName Value="LCL"/>
+        <PackageName Value="LCLBase"/>
+        <MinVersion Major="1" Release="1" Valid="True"/>
       </Item6>
+      <Item7>
+        <PackageName Value="LazControls"/>
+        <MinVersion Valid="True"/>
+      </Item7>
+      <Item8>
+        <PackageName Value="NativeLib"/>
+        <MinVersion Valid="True"/>
+      </Item8>
+      <Item9>
+        <PackageName Value="SynEdit"/>
+        <MinVersion Major="1" Valid="True"/>
+      </Item9>
+      <Item10>
+        <PackageName Value="LCL"/>
+      </Item10>
     </RequiredPackages>
     <Units Count="28">
       <Unit0>
@@ -289,7 +305,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="W:\home\pascal\projects\LPE\source\editor\;W:\home\pascal\projects\LPE\source\lib\;$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\addons;W:\programs\lazarus\components\synedit\units\i386-win32\;W:\home\pascal\lib\minilib\xml\source\;W:\home\pascal\lib\minilib\lazarus\components\native\;W:\home\pascal\lib\minilib\lib\;W:\home\pascal\lib\minilib\lazarus\lib\;W:\home\pascal\lib\minilib\socket\source\;$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS);$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\addons;$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS);$(LazarusDir)\lcl\units\$(TargetCPU)-$(TargetOS)\$(LCLWidgetType)"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <CodeGeneration>

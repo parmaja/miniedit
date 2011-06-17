@@ -4,14 +4,14 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="windows"/>
-    <Units Count="225">
+    <Units Count="228">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="24"/>
-        <CursorPos X="7" Y="33"/>
+        <TopLine Value="97"/>
+        <CursorPos X="48" Y="104"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -22,14 +22,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainUnit"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="20"/>
-        <CursorPos X="40" Y="26"/>
+        <CursorPos X="123" Y="29"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="..\editor\SearchForms.pas"/>
@@ -38,13 +34,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SearchForms"/>
-        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="20" Y="2"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\lib\hh_funcs.pas"/>
@@ -89,7 +82,6 @@
         <Filename Value="..\editor\EditorEngine.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorEngine"/>
-        <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
         <TopLine Value="954"/>
         <CursorPos X="8" Y="962"/>
@@ -98,7 +90,6 @@
           <Item0 X="66" Y="184" ID="3"/>
           <Item1 X="1" Y="2313" ID="0"/>
         </Bookmarks>
-        <Loaded Value="True"/>
       </Unit7>
       <Unit8>
         <Filename Value="..\editor\SelectFiles.pas"/>
@@ -107,13 +98,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SelectFiles"/>
-        <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="2"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit8>
       <Unit9>
         <Filename Value="AboutForms.pas"/>
@@ -152,12 +140,10 @@
         <Filename Value="..\lib\dbgpServers.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="dbgpServers"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="216"/>
         <CursorPos X="15" Y="232"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit12>
       <Unit13>
         <Filename Value="..\lib\FileInfo.pas"/>
@@ -172,13 +158,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SearchInFilesForms"/>
-        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <TopLine Value="254"/>
         <CursorPos X="60" Y="259"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit14>
       <Unit15>
         <Filename Value="..\editor\SearchProgressForms.pas"/>
@@ -187,13 +170,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SearchProgressForms"/>
-        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="20" Y="2"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit15>
       <Unit16>
         <Filename Value="mneRunPHP.pas"/>
@@ -211,13 +191,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="mneBreakpoints"/>
-        <EditorIndex Value="14"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="15" Y="8"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit17>
       <Unit18>
         <Filename Value="mneClasses.pas"/>
@@ -292,13 +269,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="mneSettings"/>
-        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="153"/>
         <CursorPos X="66" Y="184"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit24>
       <Unit25>
         <Filename Value="mneSetups.pas"/>
@@ -307,24 +281,19 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="mneSetups"/>
-        <EditorIndex Value="15"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="20" Y="2"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit25>
       <Unit26>
         <Filename Value="..\editor\EditorDebugger.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorDebugger"/>
-        <EditorIndex Value="18"/>
         <WindowIndex Value="0"/>
         <TopLine Value="256"/>
         <CursorPos X="55" Y="272"/>
-        <UsageCount Value="134"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="137"/>
       </Unit26>
       <Unit27>
         <Filename Value="..\addons\mneAssociateForm.pas"/>
@@ -333,13 +302,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="mneAssociateForm"/>
-        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="23"/>
         <CursorPos X="7" Y="54"/>
-        <UsageCount Value="20"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
+        <UsageCount Value="23"/>
       </Unit27>
       <Unit28>
         <Filename Value="mneAssociateForm.pas"/>
@@ -816,21 +782,17 @@
       <Unit85>
         <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvTabSets.pas"/>
         <UnitName Value="ntvTabSets"/>
-        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="37"/>
         <CursorPos X="38" Y="60"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit85>
       <Unit86>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\objpas\classes\classesh.inc"/>
-        <EditorIndex Value="16"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1496"/>
         <CursorPos X="15" Y="1512"/>
         <UsageCount Value="11"/>
-        <Loaded Value="True"/>
       </Unit86>
       <Unit87>
         <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvTabs.pas"/>
@@ -930,17 +892,14 @@
       <Unit99>
         <Filename Value="mneRun.pas"/>
         <UnitName Value="mneRun"/>
-        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="24"/>
         <CursorPos X="54" Y="36"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit99>
       <Unit100>
         <Filename Value="..\editor\PHP_xDebug.pas"/>
         <UnitName Value="PHP_xDebug"/>
-        <EditorIndex Value="17"/>
         <WindowIndex Value="0"/>
         <TopLine Value="236"/>
         <CursorPos X="1" Y="244"/>
@@ -950,7 +909,6 @@
           <Item1 X="38" Y="244" ID="2"/>
           <Item2 X="14" Y="243" ID="1"/>
         </Bookmarks>
-        <Loaded Value="True"/>
       </Unit100>
       <Unit101>
         <Filename Value="..\editor\EditorSCM.pas"/>
@@ -1099,6 +1057,7 @@
         <TopLine Value="1"/>
         <CursorPos X="58" Y="7"/>
         <UsageCount Value="9"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit119>
       <Unit120>
         <Filename Value="W:\programs\lazarus\lcl\interfaces\gtk2\gtk2proc.inc"/>
@@ -1350,6 +1309,7 @@
         <TopLine Value="1"/>
         <CursorPos X="16" Y="3"/>
         <UsageCount Value="17"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit151>
       <Unit152>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\inc\objpash.inc"/>
@@ -1361,12 +1321,11 @@
       <Unit153>
         <Filename Value="..\..\..\..\lib\minilib\socket\source\mnConnections.pas"/>
         <UnitName Value="mnConnections"/>
-        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
         <TopLine Value="56"/>
         <CursorPos X="29" Y="72"/>
         <UsageCount Value="12"/>
-        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit153>
       <Unit154>
         <Filename Value="P:\programs\fpc\2.4\src\packages\fcl-base\src\syncobjs.pp"/>
@@ -1519,9 +1478,10 @@
         <Filename Value="..\..\..\..\lib\minilib\socket\source\mnSocketStreams.pas"/>
         <UnitName Value="mnSocketStreams"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="407"/>
-        <CursorPos X="1" Y="417"/>
+        <TopLine Value="6"/>
+        <CursorPos X="49" Y="16"/>
         <UsageCount Value="16"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit173>
       <Unit174>
         <Filename Value="W:\programs\lazarus\examples\fontenum\mainunit.pas"/>
@@ -1621,6 +1581,7 @@
         <TopLine Value="36"/>
         <CursorPos X="7" Y="63"/>
         <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit186>
       <Unit187>
         <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLNodes.pas"/>
@@ -1629,6 +1590,7 @@
         <TopLine Value="138"/>
         <CursorPos X="3" Y="139"/>
         <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit187>
       <Unit188>
         <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLRttiProfile.pas"/>
@@ -1637,6 +1599,7 @@
         <TopLine Value="1"/>
         <CursorPos X="17" Y="23"/>
         <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit188>
       <Unit189>
         <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLRttiReader.pas"/>
@@ -1645,6 +1608,7 @@
         <TopLine Value="1"/>
         <CursorPos X="10" Y="20"/>
         <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit189>
       <Unit190>
         <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXML.pas"/>
@@ -1653,6 +1617,7 @@
         <TopLine Value="653"/>
         <CursorPos X="15" Y="672"/>
         <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit190>
       <Unit191>
         <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLRtti.pas"/>
@@ -1661,6 +1626,7 @@
         <TopLine Value="1"/>
         <CursorPos X="10" Y="20"/>
         <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit191>
       <Unit192>
         <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLReader.pas"/>
@@ -1669,6 +1635,7 @@
         <TopLine Value="1"/>
         <CursorPos X="22" Y="19"/>
         <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit192>
       <Unit193>
         <Filename Value="..\..\..\..\lib\minilib\xml\source\mnXMLScanner.pas"/>
@@ -1677,6 +1644,7 @@
         <TopLine Value="230"/>
         <CursorPos X="23" Y="252"/>
         <UsageCount Value="12"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit193>
       <Unit194>
         <Filename Value="W:\programs\lazarus\ide\sourcesyneditor.pas"/>
@@ -1777,6 +1745,7 @@
         <TopLine Value="31"/>
         <CursorPos X="33" Y="51"/>
         <UsageCount Value="19"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit205>
       <Unit206>
         <Filename Value="..\..\..\..\lib\minilib\socket\source\mnWin32Sockets.pas"/>
@@ -1785,6 +1754,7 @@
         <TopLine Value="29"/>
         <CursorPos X="24" Y="33"/>
         <UsageCount Value="17"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit206>
       <Unit207>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\win\sockets.pp"/>
@@ -1801,6 +1771,7 @@
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="8"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit208>
       <Unit209>
         <Filename Value="..\..\..\..\lib\minilib\socket\source\mnLinuxSockets.pas"/>
@@ -1809,6 +1780,7 @@
         <TopLine Value="96"/>
         <CursorPos X="1" Y="129"/>
         <UsageCount Value="18"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit209>
       <Unit210>
         <Filename Value="W:\prog\programs\fpc\2.4\src\rtl\unix\sockets.pp"/>
@@ -1920,138 +1892,56 @@
       <Unit224>
         <Filename Value="..\..\..\..\lib\minilib\lib\mnStreams.pas"/>
         <UnitName Value="mnStreams"/>
-        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
       </Unit224>
+      <Unit225>
+        <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvThemes.pas"/>
+        <UnitName Value="ntvThemes"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="66"/>
+        <CursorPos X="72" Y="78"/>
+        <UsageCount Value="10"/>
+      </Unit225>
+      <Unit226>
+        <Filename Value="..\..\..\..\lib\minilib\lib\minibaselib.pas"/>
+        <UnitName Value="MiniBaseLib"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="23" Y="8"/>
+        <UsageCount Value="10"/>
+      </Unit226>
+      <Unit227>
+        <Filename Value="..\..\..\..\lib\minilib\xml\source\minixml.pas"/>
+        <UnitName Value="MiniXML"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="121" Y="14"/>
+        <UsageCount Value="10"/>
+        <Loaded Value="True"/>
+        <DefaultSyntaxHighlighter Value="Delphi"/>
+      </Unit227>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="30" HistoryIndex="29">
+    <JumpHistory Count="3" HistoryIndex="2">
       <Position1>
         <Filename Value="mne.lpr"/>
-        <Caret Line="31" Column="23" TopLine="5"/>
+        <Caret Line="38" Column="24" TopLine="24"/>
       </Position1>
       <Position2>
-        <Filename Value="mne.lpr"/>
-        <Caret Line="33" Column="22" TopLine="7"/>
+        <Filename Value="..\..\..\..\lib\minilib\xml\source\minixml.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position2>
       <Position3>
-        <Filename Value="mne.lpr"/>
-        <Caret Line="35" Column="21" TopLine="9"/>
+        <Filename Value="..\..\..\..\lib\minilib\xml\source\minixml.pas"/>
+        <Caret Line="18" Column="45" TopLine="1"/>
       </Position3>
-      <Position4>
-        <Filename Value="mne.lpr"/>
-        <Caret Line="36" Column="20" TopLine="10"/>
-      </Position4>
-      <Position5>
-        <Filename Value="mne.lpr"/>
-        <Caret Line="38" Column="26" TopLine="12"/>
-      </Position5>
-      <Position6>
-        <Filename Value="mne.lpr"/>
-        <Caret Line="43" Column="17" TopLine="17"/>
-      </Position6>
-      <Position7>
-        <Filename Value="mne.lpr"/>
-        <Caret Line="44" Column="24" TopLine="18"/>
-      </Position7>
-      <Position8>
-        <Filename Value="mne.lpr"/>
-        <Caret Line="45" Column="25" TopLine="19"/>
-      </Position8>
-      <Position9>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1460" Column="1" TopLine="1434"/>
-      </Position9>
-      <Position10>
-        <Filename Value="..\addons\mneAssociateForm.pas"/>
-        <Caret Line="176" Column="1" TopLine="147"/>
-      </Position10>
-      <Position11>
-        <Filename Value="..\addons\mneAssociateForm.pas"/>
-        <Caret Line="50" Column="1" TopLine="33"/>
-      </Position11>
-      <Position12>
-        <Filename Value="..\addons\mneAssociateForm.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position12>
-      <Position13>
-        <Filename Value="..\addons\mneAssociateForm.pas"/>
-        <Caret Line="28" Column="99" TopLine="2"/>
-      </Position13>
-      <Position14>
-        <Filename Value="..\addons\mneAssociateForm.pas"/>
-        <Caret Line="76" Column="110" TopLine="50"/>
-      </Position14>
-      <Position15>
-        <Filename Value="..\addons\mneAssociateForm.pas"/>
-        <Caret Line="97" Column="15" TopLine="71"/>
-      </Position15>
-      <Position16>
-        <Filename Value="..\addons\mneAssociateForm.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position16>
-      <Position17>
-        <Filename Value="..\addons\mneAssociateForm.pas"/>
-        <Caret Line="84" Column="3" TopLine="76"/>
-      </Position17>
-      <Position18>
-        <Filename Value="..\addons\mneAssociateForm.pas"/>
-        <Caret Line="100" Column="15" TopLine="76"/>
-      </Position18>
-      <Position19>
-        <Filename Value="..\addons\mneAssociateForm.pas"/>
-        <Caret Line="102" Column="15" TopLine="76"/>
-      </Position19>
-      <Position20>
-        <Filename Value="..\addons\mneAssociateForm.pas"/>
-        <Caret Line="104" Column="54" TopLine="78"/>
-      </Position20>
-      <Position21>
-        <Filename Value="..\addons\mneAssociateForm.pas"/>
-        <Caret Line="108" Column="41" TopLine="81"/>
-      </Position21>
-      <Position22>
-        <Filename Value="..\addons\mneAssociateForm.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position22>
-      <Position23>
-        <Filename Value="..\addons\mneAssociateForm.pas"/>
-        <Caret Line="76" Column="38" TopLine="70"/>
-      </Position23>
-      <Position24>
-        <Filename Value="..\addons\mneAssociateForm.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
-      </Position24>
-      <Position25>
-        <Filename Value="..\addons\mneAssociateForm.pas"/>
-        <Caret Line="28" Column="27" TopLine="2"/>
-      </Position25>
-      <Position26>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="19" Column="68" TopLine="10"/>
-      </Position26>
-      <Position27>
-        <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvTabSets.pas"/>
-        <Caret Line="578" Column="46" TopLine="557"/>
-      </Position27>
-      <Position28>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="26" Column="79" TopLine="14"/>
-      </Position28>
-      <Position29>
-        <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvTabSets.pas"/>
-        <Caret Line="8" Column="2" TopLine="1"/>
-      </Position29>
-      <Position30>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="40" Column="45" TopLine="20"/>
-      </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
