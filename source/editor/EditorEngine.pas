@@ -76,6 +76,16 @@ type
 
   TRunMode = (prunNone, prunConsole, prunUrl);
 
+  {
+    TProjectClasp
+    Collect file groups and have special properties
+  }
+
+  TEditorClasp = class(TPersistent)
+  public
+    function ShowConfig: Boolean; virtual;
+  end;
+
   TEditorProject = class(TmnXMLProfile)
   private
     FRunMode: TRunMode;
@@ -87,6 +97,7 @@ type
     FName: string;
     FSaveDesktop: Boolean;
     FDesktop: TEditorDesktop;
+    FClasp: TEditorClasp;
     FCachedIdentifiers: THashedStringList;
     FCachedVariables: THashedStringList;
     FCachedAge: DWORD;
@@ -373,7 +384,35 @@ type
     property Engine: TEditorEngine read FEngine;
   end;
 
-  TEditorProjects = class(TObject)
+  {
+  TClaspItem = class(TObject)
+  private
+    FName: string;
+  protected
+  public
+  end;
+
+  TClaspClass = class of TClasp;
+
+  TClasps = class(TObjectList)
+  private
+    FEngine: TEditorEngine;
+    function GetItem(Index: Integer): TClaspItem;
+    procedure SetItem(Index: Integer; AObject: TClaspItem);
+  public
+    constructor Create(AEngine: TEditorEngine);
+    function Find(vName: string): TClaspItem;
+    procedure Add(const Name: string; vEditorClasp: TEditorClaspClass);
+    property Items[Index: Integer]: TClaspItem read GetItem write SetItem; default;
+    property Engine: TEditorEngine read FEngine;
+  end;
+  }
+
+  {
+    Session object to manage the current opened project, only one project can open.
+  }
+
+  TEditorSession = class(TObject)
   private
     FEngine: TEditorEngine;
     FCurrent: TEditorProject;
@@ -386,6 +425,7 @@ type
     procedure Close;
     procedure Open;
     property IsOpened: Boolean read GetIsOpened;
+    //Current is the opened project if it is nil it is mean not opened any project.
     property Current: TEditorProject read FCurrent write SetCurrent;
     property Engine: TEditorEngine read FEngine;
   end;
@@ -438,7 +478,7 @@ type
     FGroups: TFileGroups;
     FExtenstion: string;
     FOnChangedState: TOnEditorChangeState;
-    FProjects: TEditorProjects;
+    FSession: TEditorSession;
     FDebug: TEditorDebugger;
     FMessagesList: TEditorMessagesList;
     FBrowseFolder: string;
@@ -482,7 +522,7 @@ type
     property Categories: TFileCategories read FCategories;
     property Groups: TFileGroups read FGroups;
     property Files: TEditorFiles read FFiles;
-    property Projects: TEditorProjects read FProjects;
+    property Session: TEditorSession read FSession;
     property Options: TEditorOptions read FOptions;
     property Debug: TEditorDebugger read FDebug;
     property SCM: TEditorSCM read FSCM;
@@ -581,6 +621,13 @@ begin
       S := S + #$D;
     Stream.WriteBuffer(Pointer(S)^, Length(S));
   end;
+end;
+
+{ TProjectClasp }
+
+function TEditorClasp.ShowConfig: Boolean;
+begin
+  Result := False;
 end;
 
 { TSynDebugMarksPart }
@@ -735,7 +782,7 @@ begin
   end;
 end;
 
-procedure TEditorProjects.Close;
+procedure TEditorSession.Close;
 begin
   Current := nil;
 end;
@@ -752,8 +799,8 @@ begin
   FSearchEngine := TSynEditSearch.Create;
   FFiles := TEditorFiles.Create(TEditorFile);
   FFiles.FEngine := Self;
-  FProjects := TEditorProjects.Create;
-  FProjects.FEngine := Self;
+  FSession := TEditorSession.Create;
+  FSession.FEngine := Self;
   FDebug := CreateDebugger;
   FSCM := CreateSCM;
 end;
@@ -781,7 +828,7 @@ begin
   FreeAndNil(FDebug);
   FreeAndNil(FSCM);
   FreeAndNil(FFiles);
-  FreeAndNil(FProjects);
+  FreeAndNil(FSession);
   FreeAndNil(FCategories);
   FreeAndNil(FGroups);
   FreeAndNil(FSearchEngine);
@@ -932,10 +979,10 @@ var
   s: string;
 begin
   s := ExtractFilePath(Application.ExeName);
-  if Projects.Current.RootDir = '' then
+  if Session.Current.RootDir = '' then
     Result := s
   else
-    Result := ExpandToPath(Projects.Current.RootDir, s);
+    Result := ExpandToPath(Session.Current.RootDir, s);
 end;
 
 function TEditorFiles.InternalOpenFile(FileName: string; AppendToRecent: Boolean): TEditorFile;
@@ -962,7 +1009,7 @@ begin
   Apply;
 end;
 
-procedure TEditorProjects.Load(FileName: string);
+procedure TEditorSession.Load(FileName: string);
 var
   aProject: TEditorProject;
 begin
@@ -1007,7 +1054,7 @@ begin
   Engine.UpdateState([ecsChanged, ecsState, ecsRefresh]);
 end;
 
-function TEditorProjects.New: TEditorProject;
+function TEditorSession.New: TEditorProject;
 begin
   Result := Engine.CreateEditorProject;
 end;
@@ -1064,7 +1111,7 @@ function TEditorFiles.OpenFile(vFileName: string): TEditorFile;
 begin
   if SameText(ExtractFileExt(vFileName), '.' + Engine.Extenstion) then
   begin
-    Engine.Projects.Load(vFileName);
+    Engine.Session.Load(vFileName);
     Result := nil; //it is a project not a file.
   end
   else
@@ -1073,7 +1120,7 @@ begin
   end;
 end;
 
-procedure TEditorProjects.Open;
+procedure TEditorSession.Open;
 var
   aDialog: TOpenDialog;
 begin
@@ -1202,7 +1249,7 @@ begin
     Engine.UpdateState([ecsState, ecsRefresh]);
 end;
 
-procedure TEditorProjects.SetCurrent(const Value: TEditorProject);
+procedure TEditorSession.SetCurrent(const Value: TEditorProject);
 begin
   if FCurrent <> Value then
   begin
@@ -1271,8 +1318,8 @@ end;
 
 function TEditorEngine.ExpandFileName(FileName: string): string;
 begin
-  if Projects.Current <> nil then
-    Result := ExpandToPath(FileName, Projects.Current.RootDir)
+  if Session.Current <> nil then
+    Result := ExpandToPath(FileName, Session.Current.RootDir)
   else if Files.Current <> nil then
     Result := ExpandToPath(FileName, ExtractFilePath(Files.Current.Name))
   else
@@ -2154,13 +2201,13 @@ begin
   FEngine := AEngine;
 end;
 
-destructor TEditorProjects.Destroy;
+destructor TEditorSession.Destroy;
 begin
   FCurrent := nil;
   inherited;
 end;
 
-function TEditorProjects.GetIsOpened: Boolean;
+function TEditorSession.GetIsOpened: Boolean;
 begin
   Result := FCurrent <> nil;
 end;

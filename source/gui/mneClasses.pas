@@ -134,23 +134,22 @@ type
   public
   end;
 
-  TCustomProject = class(TObject)
-  public
-    procedure ShowConfig; virtual; abstract;
-  end;
-
   { TPHPProject }
 
-  TPHPProject = class(TCustomProject)
+  { TPHPClasp }
+
+  TPHPClasp = class(TEditorClasp)
   public
-    procedure ShowConfig; override;
+    function ShowConfig: Boolean; override;
   end;
 
   { TPascalProject }
 
-  TPascalProject = class(TCustomProject)
+  { TPascalClasp }
+
+  TPascalClasp = class(TEditorClasp)
   public
-    procedure ShowConfig; override;
+    function ShowConfig: Boolean; override;
   end;
 
   //
@@ -237,16 +236,18 @@ begin
   end;
 end;
 
-{ TPascalProject }
+{ TPascalClasp }
 
-procedure TPascalProject.ShowConfig;
+function TPascalClasp.ShowConfig: Boolean;
 begin
+  Result := False;
 end;
 
-{ TPHPProject }
+{ TPHPClasp }
 
-procedure TPHPProject.ShowConfig;
+function TPHPClasp.ShowConfig: Boolean;
 begin
+  Result := False;
 end;
 
 { TPASFileCategory }
@@ -381,28 +382,28 @@ begin
             aVariables[i] := '$' + aVariables[i];
 
           //extract keywords from external files
-          if (Engine.Projects.IsOpened) and (Engine.Projects.Current.RootDir <> '') then
+          if (Engine.Session.IsOpened) and (Engine.Session.Current.RootDir <> '') then
           begin
             if Engine.Options.CollectAutoComplete then
             begin
-              if ((GetTickCount - Engine.Projects.Current.CachedAge) > (Engine.Options.CollectTimeout * 1000)) then
+              if ((GetTickCount - Engine.Session.Current.CachedAge) > (Engine.Options.CollectTimeout * 1000)) then
               begin
-                Engine.Projects.Current.CachedVariables.Clear;
-                Engine.Projects.Current.CachedIdentifiers.Clear;
+                Engine.Session.Current.CachedVariables.Clear;
+                Engine.Session.Current.CachedIdentifiers.Clear;
                 aFiles := TStringList.Create;
                 try
-                  EnumFileList('', Engine.Projects.Current.RootDir, '*.php', aFiles, 1000, Engine.Projects.IsOpened);
+                  EnumFileList('', Engine.Session.Current.RootDir, '*.php', aFiles, 1000, Engine.Session.IsOpened);
                   r := aFiles.IndexOf(Engine.Files.Current.Name);
                   if r >= 0 then
                     aFiles.Delete(r);
-                  ExtractKeywords(aFiles, Engine.Projects.Current.CachedVariables, Engine.Projects.Current.CachedIdentifiers);
+                  ExtractKeywords(aFiles, Engine.Session.Current.CachedVariables, Engine.Session.Current.CachedIdentifiers);
                 finally
                   aFiles.Free;
                 end;
               end;
-              aVariables.AddStrings(Engine.Projects.Current.CachedVariables);
-              aIdentifiers.AddStrings(Engine.Projects.Current.CachedIdentifiers);
-              Engine.Projects.Current.CachedAge := GetTickCount;
+              aVariables.AddStrings(Engine.Session.Current.CachedVariables);
+              aIdentifiers.AddStrings(Engine.Session.Current.CachedIdentifiers);
+              Engine.Session.Current.CachedAge := GetTickCount;
             end;
           end;
           //add current file variables

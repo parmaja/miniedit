@@ -48,7 +48,7 @@ begin
   with TSelectFileForm.Create(Application) do
   begin
     try
-      EnumFileList(vRoot, '.', '*.php', FFiles, 1000, Engine.Projects.IsOpened);//TODO '*.php' must come from the Engine
+      EnumFileList(vRoot, '.', '*.php', FFiles, 1000, Engine.Session.IsOpened);//TODO '*.php' must come from the Engine
       ShowFiles;
       Result := ShowModal = mrOK;
       if Result then

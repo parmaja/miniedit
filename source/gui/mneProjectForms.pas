@@ -100,7 +100,7 @@ procedure TManageProjectsForm.NewProject;
 var
   aProject: TEditorProject;
 begin
-  aProject := Engine.Projects.New;
+  aProject := Engine.Session.New;
   try
     if ShowProjectForm(aProject) then
     begin
@@ -198,13 +198,13 @@ begin
     0:
       if ProjectsList.ItemIndex >= 0 then
       begin
-        Engine.Projects.Load(ProjectsList.Items[ProjectsList.ItemIndex]);
+        Engine.Session.Load(ProjectsList.Items[ProjectsList.ItemIndex]);
         Close;
       end;
     1:
       if RProjectsList.ItemIndex >= 0 then
       begin
-        Engine.Projects.Load(RProjectsList.Items[RProjectsList.ItemIndex]);
+        Engine.Session.Load(RProjectsList.Items[RProjectsList.ItemIndex]);
         Close;
       end;
     2:
