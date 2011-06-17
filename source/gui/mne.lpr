@@ -20,7 +20,7 @@ uses
   Registry,
   SysUtils,
   simpleipc,
-  Themes, minibaselib, minixml, minisockets, minilib, Interfaces,
+  Themes, Interfaces,
   MainUnit in 'MainUnit.pas' {MainForm},
   mneProjectOptions in 'mneProjectOptions.pas' {ProjectForm},
   SearchForms in '..\editor\SearchForms.pas' {SearchForm},
@@ -125,4 +125,4 @@ begin
     end;
   end;
 end.
-
+

@@ -10,8 +10,8 @@
         <IsPartOfProject Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="97"/>
-        <CursorPos X="48" Y="104"/>
+        <TopLine Value="16"/>
+        <CursorPos X="11" Y="22"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -1321,10 +1321,13 @@
       <Unit153>
         <Filename Value="..\..\..\..\lib\minilib\socket\source\mnConnections.pas"/>
         <UnitName Value="mnConnections"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="56"/>
-        <CursorPos X="29" Y="72"/>
+        <TopLine Value="1"/>
+        <CursorPos X="49" Y="20"/>
         <UsageCount Value="12"/>
+        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit153>
       <Unit154>
@@ -1916,32 +1919,41 @@
       <Unit227>
         <Filename Value="..\..\..\..\lib\minilib\xml\source\minixml.pas"/>
         <UnitName Value="MiniXML"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="121" Y="14"/>
+        <CursorPos X="1" Y="1"/>
         <UsageCount Value="10"/>
-        <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit227>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="3" HistoryIndex="2">
+    <JumpHistory Count="6" HistoryIndex="5">
       <Position1>
         <Filename Value="mne.lpr"/>
         <Caret Line="38" Column="24" TopLine="24"/>
       </Position1>
       <Position2>
-        <Filename Value="..\..\..\..\lib\minilib\xml\source\minixml.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="mne.lpr"/>
+        <Caret Line="104" Column="48" TopLine="97"/>
       </Position2>
       <Position3>
-        <Filename Value="..\..\..\..\lib\minilib\xml\source\minixml.pas"/>
-        <Caret Line="18" Column="45" TopLine="1"/>
+        <Filename Value="mne.lpr"/>
+        <Caret Line="16" Column="3" TopLine="16"/>
       </Position3>
+      <Position4>
+        <Filename Value="..\..\..\..\lib\minilib\socket\source\mnConnections.pas"/>
+        <Caret Line="72" Column="29" TopLine="56"/>
+      </Position4>
+      <Position5>
+        <Filename Value="..\..\..\..\lib\minilib\socket\source\mnConnections.pas"/>
+        <Caret Line="23" Column="44" TopLine="10"/>
+      </Position5>
+      <Position6>
+        <Filename Value="..\..\..\..\lib\minilib\socket\source\mnConnections.pas"/>
+        <Caret Line="18" Column="1" TopLine="10"/>
+      </Position6>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
