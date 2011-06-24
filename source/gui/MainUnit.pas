@@ -1088,8 +1088,6 @@ begin
 end;
 
 procedure TMainForm.ExtractkeywordsClick(Sender: TObject);
-const
-  aPath = 'D:\work\delphi\projects\LightPHPEdit\source\lib\';
 var
   aList: TStringList;
 
@@ -1132,7 +1130,7 @@ begin
   ExtractKeywordsNow('sPHPVariables', sPHPVariables);
   ExtractKeywordsNow('sHTMLKeywords', sHTMLKeywords);
   ExtractKeywordsNow('sSQLKeywords', sSQLKeywords);
-  aList.SaveToFile(aPath + 'PHPKeywords.inc.new');
+  aList.SaveToFile(Application.Location + 'PHPKeywords.inc.new');
   aList.Free;
 end;
 
@@ -1758,7 +1756,7 @@ procedure TMainForm.UpdateWatches;
 var
   i: integer;
   aItem: TListItem;
-  aIndex: Integer;
+  aIndex: integer;
 begin
   aIndex := WatchList.ItemIndex;
   WatchList.BeginUpdate;
@@ -1778,7 +1776,7 @@ begin
       Engine.Debug.Unlock;
     end;
   finally
-    if aIndex >=0 then
+    if aIndex >= 0 then
       WatchList.ItemIndex := aIndex;
     WatchList.EndUpdate;
   end;

@@ -1,4 +1,5 @@
 unit mneProjectForms;
+
 {$mode objfpc}{$H+}
 {**
  * Mini Edit
@@ -47,7 +48,7 @@ type
     procedure NewProject;
     procedure RemoveNow;
     procedure OpenNow;
-    procedure ChangeToIndex(ListBox:TlistBox; Index: Integer);
+    procedure ChangeToIndex(ListBox: TlistBox; Index: integer);
   public
     { Public declarations }
   end;
@@ -62,7 +63,7 @@ uses EditorEngine, mneProjectOptions;
 
 procedure TManageProjectsForm.EnumRecentFile;
 var
-  i: Integer;
+  i: integer;
 begin
   RFilesList.Clear;
   for i := 0 to Engine.Options.RecentFiles.Count - 1 do
@@ -73,7 +74,7 @@ end;
 
 procedure TManageProjectsForm.EnumRecentProjects;
 var
-  i: Integer;
+  i: integer;
 begin
   RProjectsList.Clear;
   for i := 0 to Engine.Options.RecentProjects.Count - 1 do
@@ -124,7 +125,7 @@ end;
 
 procedure TManageProjectsForm.EnumProjects;
 var
-  i: Integer;
+  i: integer;
 begin
   ProjectsList.Clear;
   for i := 0 to Engine.Options.Projects.Count - 1 do
@@ -162,7 +163,7 @@ end;
 
 procedure TManageProjectsForm.RemoveNow;
 var
-  Old: Integer;
+  Old: integer;
 begin
   case PageControl.TabIndex of
     0:
@@ -229,7 +230,7 @@ end;
 procedure TManageProjectsForm.AddtoProjects1Click(Sender: TObject);
 var
   aProject: string;
-  POld, ROld: Integer;
+  POld, ROld: integer;
 begin
   if RProjectsList.ItemIndex >= 0 then
   begin
@@ -247,7 +248,7 @@ end;
 
 procedure TManageProjectsForm.MoveUpBtnClick(Sender: TObject);
 var
-  i: Integer;
+  i: integer;
 begin
   if ProjectsList.ItemIndex > 0 then
   begin
@@ -260,7 +261,7 @@ end;
 
 procedure TManageProjectsForm.MoveDownBtnClick(Sender: TObject);
 var
-  i: Integer;
+  i: integer;
 begin
   if (ProjectsList.ItemIndex >= 0) and (ProjectsList.ItemIndex < (ProjectsList.Count - 1)) then
   begin
@@ -271,7 +272,7 @@ begin
   end;
 end;
 
-procedure TManageProjectsForm.ChangeToIndex(ListBox:TlistBox; Index: Integer);
+procedure TManageProjectsForm.ChangeToIndex(ListBox: TlistBox; Index: integer);
 begin
   if ListBox.Items.Count = 0 then
     Index := -1
