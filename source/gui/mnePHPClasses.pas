@@ -19,7 +19,7 @@ uses
   Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   SynHighlighterCSS, SynHighlighterSQL, SynHighlighterXML, SynHighlighterApache,
-  SynHighlighterJScript, SynHighlighterHTMLPHP, SynHighlighterPas,
+  SynHighlighterJScript, SynHighlighterXHTML, SynHighlighterPas,
   mneClasses;
 
 type
@@ -227,7 +227,7 @@ end;
 
 function TPHPFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
-  Result := TSynHTMLPHPSyn.Create(nil);
+  Result := TSynXHTMLSyn.Create(nil);
 end;
 
 procedure TPHPFileCategory.DoAddCompletion(AKeyword: string; AKind: integer);
@@ -255,13 +255,13 @@ begin
   try
     Completion.ItemList.Clear;
     aSynEdit := (Sender as TSynCompletion).TheForm.CurrentEditor as TCustomSynEdit;
-    if (aSynEdit <> nil) and (Highlighter is TSynHTMLPHPSyn) then
+    if (aSynEdit <> nil) and (Highlighter is TSynXHTMLSyn) then
     begin
-      aPHPProcessor := (Highlighter as TSynHTMLPHPSyn).Processors.IndexOf('php');
-      aHTMLProcessor := (Highlighter as TSynHTMLPHPSyn).Processors.IndexOf('html');
+      aPHPProcessor := (Highlighter as TSynXHTMLSyn).Processors.IndexOf('php');
+      aHTMLProcessor := (Highlighter as TSynXHTMLSyn).Processors.IndexOf('html');
       P := aSynEdit.CaretXY;
       GetHighlighterAttriAtRowColEx2(aSynEdit, P, S, aTokenType, aStart, Attri, aRange);
-      aProcessor := RangeToProcessor(aRange);
+      aProcessor := RangeToProcessor(PtrUInt(aRange));
       if aTokenType = Ord(tkProcessor) then
         Abort
       //CanExecute := False
@@ -329,7 +329,7 @@ begin
               Highlighter.SetLine(aSynEdit.Lines[i], 1);
               while not Highlighter.GetEol do
               begin
-                if (Highlighter.GetTokenPos <> (aStart - 1)) and (RangeToProcessor(Highlighter.GetRange) = aPHPProcessor) then
+                if (Highlighter.GetTokenPos <> (aStart - 1)) and (RangeToProcessor(PtrUInt(Highlighter.GetRange)) = aPHPProcessor) then
                 begin
                   if (Highlighter.GetTokenKind = Ord(tkVariable)) then
                   begin
@@ -380,9 +380,9 @@ var
   s: string;
   i, f: integer;
   aPHPProcessor: integer;
-  aHighlighter: TSynHTMLPHPSyn;
+  aHighlighter: TSynXHTMLSyn;
 begin
-  aHighlighter := TSynHTMLPHPSyn.Create(nil);
+  aHighlighter := TSynXHTMLSyn.Create(nil);
   aFile := TStringList.Create;
   try
     aPHPProcessor := aHighlighter.Processors.Find('php').Index;
@@ -395,7 +395,7 @@ begin
         aHighlighter.SetLine(aFile[i], 1);
         while not aHighlighter.GetEol do
         begin
-          if (RangeToProcessor(aHighlighter.GetRange) = aPHPProcessor) then
+          if (RangeToProcessor(PtrUInt(aHighlighter.GetRange)) = aPHPProcessor) then
           begin
             if (aHighlighter.GetTokenKind = Ord(tkVariable)) then
             begin
