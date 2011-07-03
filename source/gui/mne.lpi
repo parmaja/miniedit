@@ -306,7 +306,6 @@
       <Debugging>
         <GenerateDebugInfo Value="True"/>
         <GenerateDwarf Value="True"/>
-        <UseExternalDbgSyms Value="True"/>
       </Debugging>
       <Options>
         <Win32>

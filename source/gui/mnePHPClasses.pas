@@ -87,7 +87,6 @@ type
 
   TPHPPerspective = class(TEditorPerspective)
   public
-    class procedure GetAttributes(var PerspectiveAttributes: TPerspectiveAttributes); override;
     constructor Create; override;
   end;
 
@@ -98,17 +97,13 @@ uses
 
 { TPHPPerspective }
 
-class procedure TPHPPerspective.GetAttributes(var PerspectiveAttributes: TPerspectiveAttributes);
-begin
-  PerspectiveAttributes.Title := 'PHP project';
-  PerspectiveAttributes.Description := 'PHP Files, *.php, *.inc';
-  PerspectiveAttributes.Name := 'PHP';
-  PerspectiveAttributes.ImageIndex := -1;
-end;
-
 constructor TPHPPerspective.Create;
 begin
   inherited;
+  FTitle := 'PHP project';
+  FDescription := 'PHP Files, *.php, *.inc';
+  FName := 'PHP';
+  FImageIndex := -1;
 end;
 
 { TphpFile }
@@ -464,5 +459,5 @@ initialization
     Perspectives.Add(TPHPPerspective);
     DefaultGroup := 'PHP';
   end;
-end.end.
+end.
 
