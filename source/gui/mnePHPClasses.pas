@@ -35,13 +35,19 @@ type
     function Run: Boolean; override;
   end;
 
+  { TCssFile }
+
   TCssFile = class(TEditorFile)
   public
   end;
 
+  { TJSFile }
+
   TJSFile = class(TEditorFile)
   public
   end;
+
+  { THTMLFile }
 
   THTMLFile = class(TEditorFile)
   public
@@ -61,11 +67,15 @@ type
     constructor Create; override;
   end;
 
+  { TCSSFileCategory }
+
   TCSSFileCategory = class(TFileCategory)
   protected
     function CreateHighlighter: TSynCustomHighlighter; override;
   public
   end;
+
+  { TJSFileCategory }
 
   TJSFileCategory = class(TFileCategory)
   protected

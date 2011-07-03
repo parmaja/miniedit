@@ -77,8 +77,12 @@ type
 
   TRunMode = (prunNone, prunConsole, prunUrl);
 
+  TEditorProjectOptions = class(TPersistent)
+  public
+  end;
+
   {
-    TProjectPerspective
+    TEditorPerspective
     Collect file groups and have special properties
     it must choosed by user when create a new project
   }
@@ -105,6 +109,7 @@ type
 
   TEditorProject = class(TmnXMLProfile)
   private
+    FOptions: TEditorProjectOptions;
     FRunMode: TRunMode;
     FDescription: string;
     FRootUrl: string;
@@ -114,10 +119,11 @@ type
     FName: string;
     FSaveDesktop: boolean;
     FDesktop: TEditorDesktop;
-    FPerspective: TEditorPerspective;
     FCachedIdentifiers: THashedStringList;
     FCachedVariables: THashedStringList;
     FCachedAge: DWORD;
+    FPerspective: TEditorPerspective;
+    function GetPerspective: TEditorPerspective;
   protected
     procedure Loaded(Failed: boolean); override;
     procedure Saving; override;
@@ -131,6 +137,7 @@ type
     property CachedVariables: THashedStringList read FCachedVariables;
     property CachedIdentifiers: THashedStringList read FCachedIdentifiers;
     property CachedAge: cardinal read FCachedAge write FCachedAge;
+    property Perspective: TEditorPerspective read GetPerspective default nil;
   published
     property Name: string read FName write FName;
     property Description: string read FDescription write FDescription;
@@ -139,7 +146,8 @@ type
     property RunMode: TRunMode read FRunMode write FRunMode default prunUrl;
     property SaveDesktop: boolean read FSaveDesktop write FSaveDesktop default True;
     property Desktop: TEditorDesktop read FDesktop;
-    property Perspective: TEditorPerspective read FPerspective write FPerspective default nil;
+    //This is custom options depend on choosed perspective maybe have nil value
+    property Options: TEditorProjectOptions read FOptions write FOptions default nil;
   end;
 
   { TDebugMarksPart }
@@ -444,6 +452,32 @@ type
     property Engine: TEditorEngine read FEngine;
   end;
 
+  { TEditorFormItem }
+
+  TEditorFormItem = class(TObject)
+  private
+    FObjectClass: TClass;
+    FItemClass: TCustomFormClass;
+  protected
+  public
+    property ObjectClass: TClass read FObjectClass;
+    property ItemClass: TCustomFormClass read FItemClass;
+  end;
+
+  { TEditorFormList }
+
+  TEditorFormList = class(TObjectList)
+  private
+    FEngine: TEditorEngine;
+    function GetItem(Index: integer): TEditorFormItem;
+  public
+    constructor Create(AEngine: TEditorEngine);
+    function Find(ObjectClass:TClass): TEditorFormItem;
+    procedure Add(vObjectClass:TClass; vFormClass:TCustomFormClass);
+    property Items[Index: integer]: TEditorFormItem read GetItem; default;
+    property Engine: TEditorEngine read FEngine;
+  end;
+
   {
     Session object to manage the current opened project, only one project can open.
   }
@@ -505,6 +539,7 @@ type
   TEditorEngine = class(TObject)
   private
     FDefaultGroup: string;
+    FForms: TEditorFormList;
     FOnChoosePerspective: TOnChoosePerspective;
     FPerspectives: TPerspectiveList;
     FSCM: TEditorSCM;
@@ -566,6 +601,7 @@ type
     property Categories: TFileCategories read FCategories;
     property Groups: TFileGroups read FGroups;
     property Perspectives: TPerspectiveList read FPerspectives;
+    property Forms: TEditorFormList read FForms;
     //
     property Files: TEditorFiles read FFiles;
     property Session: TEditorSession read FSession;
@@ -677,6 +713,44 @@ begin
       S := S + #$D;
     Stream.WriteBuffer(Pointer(S)^, Length(S));
   end;
+end;
+
+{ TEditorFormList }
+
+function TEditorFormList.GetItem(Index: integer): TEditorFormItem;
+begin
+  Result := inherited Items[Index] as TEditorFormItem;
+end;
+
+constructor TEditorFormList.Create(AEngine: TEditorEngine);
+begin
+  inherited Create;
+  FEngine := AEngine;
+end;
+
+function TEditorFormList.Find(ObjectClass:TClass): TEditorFormItem;
+var
+  i: integer;
+begin
+  Result := nil;
+  for i := 0 to Count - 1 do
+  begin
+    if ObjectClass.InheritsFrom(Items[i].ObjectClass) then
+    begin
+      Result := Items[i] as TEditorFormItem;
+      break;
+    end;
+  end;
+end;
+
+procedure TEditorFormList.Add(vObjectClass:TClass; vFormClass:TCustomFormClass);
+var
+  aItem: TEditorFormItem;
+begin
+  aItem := TEditorFormItem.Create;
+  aItem.FObjectClass := vObjectClass;
+  aItem.FItemClass := vFormClass;
+  inherited Add(aItem);
 end;
 
 { TEditorPerspective }
@@ -927,7 +1001,6 @@ end;
 function TEditorEngine.CreateEditorProject: TEditorProject;
 begin
   Result := TEditorProject.Create(Self);
-  Result.Perspective := ChoosePerspective;
 end;
 
 destructor TEditorEngine.Destroy;
@@ -2217,6 +2290,12 @@ begin
   FCachedVariables.Free;
   FCachedIdentifiers.Free;
   inherited;
+end;
+
+function TEditorProject.GetPerspective: TEditorPerspective;
+begin
+  Result := FPerspective;
+  //TODO
 end;
 
 procedure TEditorProject.Loaded(Failed: boolean);
