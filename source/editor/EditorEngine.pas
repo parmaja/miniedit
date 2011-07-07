@@ -55,7 +55,7 @@ type
   public
     function Add(FileName: string): TEditorDesktopFile;
     function Find(vName: string): TEditorDesktopFile;
-    function IsExist(vName: string): boolean;
+    function IsExist(vName: string): Boolean;
     property Items[Index: integer]: TEditorDesktopFile read GetItems; default;
   published
     property CurrentFile: string read FCurrentFile write FCurrentFile;
@@ -121,26 +121,26 @@ type
     FFileName: string;
     FEngine: TEditorEngine;
     FName: string;
-    FSaveDesktop: boolean;
+    FSaveDesktop: Boolean;
     FDesktop: TEditorDesktop;
-    FCachedIdentifiers: THashedStringList;
-    FCachedVariables: THashedStringList;
+    FCachedIdentifiers: THashedstringList;
+    FCachedVariables: THashedstringList;
     FCachedAge: DWORD;
     FPerspective: TEditorPerspective;
     function GetPerspective: TEditorPerspective;
   protected
-    procedure Loaded(Failed: boolean); override;
+    procedure Loaded(Failed: Boolean); override;
     procedure Saving; override;
   public
     constructor Create(AEngine: TEditorEngine);
     destructor Destroy; override;
     property Engine: TEditorEngine read FEngine;
     property FileName: string read FFileName write FFileName;
-    function Save: boolean;
-    function SaveAs: boolean;
-    property CachedVariables: THashedStringList read FCachedVariables;
-    property CachedIdentifiers: THashedStringList read FCachedIdentifiers;
-    property CachedAge: cardinal read FCachedAge write FCachedAge;
+    function Save: Boolean;
+    function SaveAs: Boolean;
+    property CachedVariables: THashedstringList read FCachedVariables;
+    property CachedIdentifiers: THashedstringList read FCachedIdentifiers;
+    property CachedAge: Cardinal read FCachedAge write FCachedAge;
     property Perspective: TEditorPerspective read GetPerspective default nil;
   published
     property Name: string read FName write FName;
@@ -148,7 +148,7 @@ type
     property RootDir: string read FRootDir write FRootDir;
     property RootUrl: string read FRootUrl write FRootUrl;
     property RunMode: TRunMode read FRunMode write FRunMode default prunUrl;
-    property SaveDesktop: boolean read FSaveDesktop write FSaveDesktop default True;
+    property SaveDesktop: Boolean read FSaveDesktop write FSaveDesktop default True;
     property Desktop: TEditorDesktop read FDesktop;
     //This is custom options depend on choosed perspective maybe have nil value
     property Options: TEditorProjectOptions read FOptions write FOptions default nil;
@@ -176,16 +176,16 @@ type
   private
     FName: string;
     FSynEdit: TSynEdit;
-    FEdited: boolean;
+    FEdited: Boolean;
     FFileAge: integer;
     FGroup: TFileGroup;
     FRelated: string;
     FMode: TEditorFileMode;
     function GetEngine: TEditorEngine;
-    procedure SetEdited(const Value: boolean);
+    procedure SetEdited(const Value: Boolean);
     procedure SetGroup(const Value: TFileGroup);
-    function GetReadonly: boolean;
-    procedure SetReadonly(const Value: boolean);
+    function GetReadonly: Boolean;
+    procedure SetReadonly(const Value: Boolean);
     function GetModeAsText: string;
     procedure SetMode(const Value: TEditorFileMode);
   protected
@@ -193,7 +193,7 @@ type
     procedure DoEdit(Sender: TObject);
     procedure DoStatusChange(Sender: TObject; Changes: TSynStatusChanges);
     procedure DoGutterClickEvent(Sender: TObject; X, Y, Line: integer; Mark: TSynEditMark);
-    procedure DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: boolean; Markup: TSynSelectedColor);
+    procedure DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
     procedure UpdateAge;
     function GetHighlighter: TSynCustomHighlighter; virtual;
     procedure NewSource; virtual;
@@ -202,23 +202,23 @@ type
     destructor Destroy; override;
     procedure Load(FileName: string); virtual;
     procedure Save(FileName: string); virtual;
-    procedure SaveFile(AsNewFile: boolean = False); virtual;
+    procedure SaveFile(AsNewFile: Boolean = False); virtual;
     procedure Reload;
     procedure Show;
     procedure Close;
     procedure OpenInclude; virtual;
-    function CanOpenInclude: boolean; virtual;
-    function CheckChanged: boolean;
+    function CanOpenInclude: Boolean; virtual;
+    function CheckChanged: Boolean;
     //run the file or run the project depend on the project type (perspective)
-    function Run: boolean; virtual;
+    function Run: Boolean; virtual;
     property Mode: TEditorFileMode read FMode write SetMode default efmUnix;
     property ModeAsText: string read GetModeAsText;
     property Name: string read FName write FName;
     property Related: string read FRelated write FRelated;
     property SynEdit: TSynEdit read FSynEdit;
     property Engine: TEditorEngine read GetEngine;
-    property Edited: boolean read FEdited write SetEdited;
-    property ReadOnly: boolean read GetReadonly write SetReadonly;
+    property Edited: Boolean read FEdited write SetEdited;
+    property ReadOnly: Boolean read GetReadonly write SetReadonly;
     property Group: TFileGroup read FGroup write SetGroup;
   published
   end;
@@ -227,26 +227,26 @@ type
 
   TEditorFiles = class(TCollection)
   private
-    FCheckChanged: boolean;
+    FCheckChanged: Boolean;
     FCurrent: TEditorFile;
     FEngine: TEditorEngine;
     function GetItems(Index: integer): TEditorFile;
     function GetCurrent: TEditorFile;
     procedure SetCurrent(const Value: TEditorFile);
-    function InternalOpenFile(FileName: string; AppendToRecent: boolean): TEditorFile;
+    function InternalOpenFile(FileName: string; AppendToRecent: Boolean): TEditorFile;
   protected
     function SetActiveFile(FileName: string): TEditorFile;
   public
     destructor Destroy; override;
     function FindFile(const vFileName: string): TEditorFile;
-    function IsExist(vName: string): boolean;
-    function LoadFile(vFileName: string; AppendToRecent: boolean = True): TEditorFile;
+    function IsExist(vName: string): Boolean;
+    function LoadFile(vFileName: string; AppendToRecent: Boolean = True): TEditorFile;
     function ShowFile(vFileName: string): TEditorFile; overload; //open it without add to recent, for debuging
     function ShowFile(const FileName: string; Line: integer): TEditorFile; overload;
     function OpenFile(vFileName: string): TEditorFile;
-    procedure SetCurrentIndex(Index: integer; vRefresh: boolean);
+    procedure SetCurrentIndex(Index: integer; vRefresh: Boolean);
     function New: TEditorFile; overload;
-    function New(Category, Name, Related: string; ReadOnly, Executable: boolean): TEditorFile; overload;
+    function New(Category, Name, Related: string; ReadOnly, Executable: Boolean): TEditorFile; overload;
     procedure Open;
     procedure Save;
     procedure SaveAll;
@@ -270,7 +270,7 @@ type
 
   TSynBreakPointItem = class(TSynObjectListItem)
   public
-    IsBreakPoint: boolean;
+    IsBreakPoint: Boolean;
   end;
 
   TEditorFileClass = class of TEditorFile;
@@ -284,31 +284,31 @@ type
     FFileName: string;
     FEngine: TEditorEngine;
     FPerspective: TEditorPerspective;
-    FShowFolder: boolean;
-    FWindowMaxmized: boolean;
+    FShowFolder: Boolean;
+    FWindowMaxmized: Boolean;
     FBoundRect: TRect;
-    FSearchHistory: TStringList;
+    FSearchHistory: TstringList;
     FProfile: TEditorProfile;
     FCompilerFolder: string;
-    FRecentFiles: TStringList;
-    FRecentProjects: TStringList;
-    FHelpFiles: TStringList;
-    FProjects: TStringList;
-    FShowMessages: boolean;
-    FCollectAutoComplete: boolean;
+    FRecentFiles: TstringList;
+    FRecentProjects: TstringList;
+    FHelpFiles: TstringList;
+    FProjects: TstringList;
+    FShowMessages: Boolean;
+    FCollectAutoComplete: Boolean;
     FCollectTimeout: DWORD;
-    FReplaceHistory: TStringList;
-    FSendOutputToNewFile: boolean;
-    FShowOutput: boolean;
-    FAutoStartDebugServer: boolean;
+    FReplaceHistory: TstringList;
+    FSendOutputToNewFile: Boolean;
+    FShowOutput: Boolean;
+    FAutoStartDebugServer: Boolean;
     FOutputHeight: integer;
     FMessagesHeight: integer;
     FFoldersWidth: integer;
-    FSearchFolderHistory: TStringList;
-    FExtraExtensions: TStringList;
-    procedure SetRecentFiles(const Value: TStringList);
-    procedure SetRecentProjects(const Value: TStringList);
-    procedure SetProjects(const Value: TStringList);
+    FSearchFolderHistory: TstringList;
+    FExtraExtensions: TstringList;
+    procedure SetRecentFiles(const Value: TstringList);
+    procedure SetRecentProjects(const Value: TstringList);
+    procedure SetProjects(const Value: TstringList);
   protected
   public
     constructor Create(AEngine: TEditorEngine);
@@ -323,26 +323,26 @@ type
     procedure SetDefaultPerspective(vPerspective: TEditorPerspective);
   published
     property CompilerFolder: string read FCompilerFolder write FCompilerFolder;
-    property HelpFiles: TStringList read FHelpFiles write FHelpFiles;
-    property ExtraExtensions: TStringList read FExtraExtensions write FExtraExtensions;
-    property CollectAutoComplete: boolean read FCollectAutoComplete write FCollectAutoComplete default False;
+    property HelpFiles: TstringList read FHelpFiles write FHelpFiles;
+    property ExtraExtensions: TstringList read FExtraExtensions write FExtraExtensions;
+    property CollectAutoComplete: Boolean read FCollectAutoComplete write FCollectAutoComplete default False;
     property CollectTimeout: DWORD read FCollectTimeout write FCollectTimeout default 60;
-    property ShowFolder: boolean read FShowFolder write FShowFolder default True;
-    property ShowMessages: boolean read FShowMessages write FShowMessages default False;
-    property ShowOutput: boolean read FShowOutput write FShowOutput default False;
+    property ShowFolder: Boolean read FShowFolder write FShowFolder default True;
+    property ShowMessages: Boolean read FShowMessages write FShowMessages default False;
+    property ShowOutput: Boolean read FShowOutput write FShowOutput default False;
     property OutputHeight: integer read FOutputHeight write FOutputHeight default 100;
     property MessagesHeight: integer read FMessagesHeight write FMessagesHeight default 100;
     property FoldersWidth: integer read FFoldersWidth write FFoldersWidth default 180;
-    property SendOutputToNewFile: boolean read FSendOutputToNewFile write FSendOutputToNewFile default False;
-    property AutoStartDebugServer: boolean read FAutoStartDebugServer write FAutoStartDebugServer default False;
-    property WindowMaxmized: boolean read FWindowMaxmized write FWindowMaxmized default False;
-    property SearchHistory: TStringList read FSearchHistory;
-    property ReplaceHistory: TStringList read FReplaceHistory;
-    property SearchFolderHistory: TStringList read FSearchFolderHistory;
+    property SendOutputToNewFile: Boolean read FSendOutputToNewFile write FSendOutputToNewFile default False;
+    property AutoStartDebugServer: Boolean read FAutoStartDebugServer write FAutoStartDebugServer default False;
+    property WindowMaxmized: Boolean read FWindowMaxmized write FWindowMaxmized default False;
+    property SearchHistory: TstringList read FSearchHistory;
+    property ReplaceHistory: TstringList read FReplaceHistory;
+    property SearchFolderHistory: TstringList read FSearchFolderHistory;
     property Profile: TEditorProfile read FProfile;
-    property RecentFiles: TStringList read FRecentFiles write SetRecentFiles;
-    property RecentProjects: TStringList read FRecentProjects write SetRecentProjects;
-    property Projects: TStringList read FProjects write SetProjects;
+    property RecentFiles: TstringList read FRecentFiles write SetRecentFiles;
+    property RecentProjects: TstringList read FRecentProjects write SetRecentProjects;
+    property Projects: TstringList read FProjects write SetProjects;
     property Perspective: TEditorPerspective read FPerspective write FPerspective default nil;
   end;
 
@@ -395,16 +395,16 @@ type
   private
     FName: string;
     FDisplayName: string;
-    FExtensions: TStringList;
+    FExtensions: TstringList;
     FKind: TFileGroupKinds;
     FCategory: TFileCategory;
   protected
   public
     constructor Create; virtual;
     destructor Destroy; override;
-    procedure EnumExtensions(vExtensions: TStringList);
+    procedure EnumExtensions(vExtensions: TstringList);
     property Category: TFileCategory read FCategory;
-    property Extensions: TStringList read FExtensions;
+    property Extensions: TstringList read FExtensions;
     property Name: string read FName write FName;
     property Kind: TFileGroupKinds read FKind write FKind;
     property DisplayName: string read FDisplayName write FDisplayName;
@@ -418,7 +418,7 @@ type
   public
     constructor Create(AEngine: TEditorEngine);
     function Find(vName: string): TFileGroup;
-    procedure EnumExtensions(vExtensions: TStringList);
+    procedure EnumExtensions(vExtensions: TstringList);
     function FindExtension(vExtension: string): TFileGroup;
     function CreateFilter(vGroup: TFileGroup = nil): string;
     procedure Add(const DisplayName, Name, Category: string; Extensions: array of string; Kind: TFileGroupKinds = []);
@@ -475,14 +475,14 @@ type
     FEngine: TEditorEngine;
     FProject: TEditorProject;
     procedure SetProject(const Value: TEditorProject);
-    function GetIsOpened: boolean;
+    function GetIsOpened: Boolean;
   public
     destructor Destroy; override;
     procedure Load(FileName: string);
     function New: TEditorProject;
     procedure Close;
     procedure Open;
-    property IsOpened: boolean read GetIsOpened;
+    property IsOpened: Boolean read GetIsOpened;
     //Current is the opened project if it is nil it is mean not opened any project.
     property Project: TEditorProject read FProject write SetProject;
     property Engine: TEditorEngine read FEngine;
@@ -550,7 +550,7 @@ type
     FOnReplaceText: TReplaceTextEvent;
     function GetPerspective: TEditorPerspective;
     function GetRoot: string;
-    function GetUpdating: boolean;
+    function GetUpdating: Boolean;
     procedure SetBrowseFolder(const Value: string);
     function GetWorkSpace: string;
   protected
@@ -568,7 +568,7 @@ type
     constructor Create; virtual;
     destructor Destroy; override;
     //I used it for search in files
-    function SearchReplace(const FileName: string; const ALines: TStringList; const ASearch, AReplace: string; OnFoundEvent: TOnFoundEvent; AOptions: TSynSearchOptions): integer;
+    function SearchReplace(const FileName: string; const ALines: TstringList; const ASearch, AReplace: string; OnFoundEvent: TOnFoundEvent; AOptions: TSynSearchOptions): integer;
     //Recent
     procedure ProcessRecentFile(const FileName: string);
     procedure RemoveRecentFile(const FileName: string);
@@ -582,7 +582,7 @@ type
 
     procedure BeginUpdate;
     procedure UpdateState(State: TEditorChangeState);
-    property Updating: boolean read GetUpdating;
+    property Updating: Boolean read GetUpdating;
     procedure EndUpdate;
 
     function ExpandFileName(FileName: string): string;
@@ -612,14 +612,14 @@ type
   published
   end;
 
-function SelectFolder(const Caption: string; const Root: WideString; var Directory: string): boolean;
+function SelectFolder(const Caption: string; const Root: Widestring; var Directory: string): Boolean;
 procedure SpliteStr(S, Separator: string; var Name, Value: string);
-procedure EnumFiles(Folder, Filter: string; FileList: TStringList);
-procedure EnumFileList(const Root, Path, Files: string; Strings: TStringList; vMaxCount: integer; Recursive: boolean);
-procedure SaveAsUnix(Strings: TStrings; Stream: TStream);
-procedure SaveAsWindows(Strings: TStrings; Stream: TStream);
-procedure SaveAsMAC(Strings: TStrings; Stream: TStream);
-procedure SaveAsMode(const FileName: string; Mode: TEditorFileMode; Strings: TStrings);
+procedure EnumFiles(Folder, Filter: string; FileList: TstringList);
+procedure EnumFileList(const Root, Path, Files: string; strings: TstringList; vMaxCount: integer; Recursive: Boolean);
+procedure SaveAsUnix(strings: Tstrings; Stream: TStream);
+procedure SaveAsWindows(strings: Tstrings; Stream: TStream);
+procedure SaveAsMAC(strings: Tstrings; Stream: TStream);
+procedure SaveAsMode(const FileName: string; Mode: TEditorFileMode; strings: Tstrings);
 function DetectFileMode(const Contents: string): TEditorFileMode;
 function ChangeTabsToSpace(const Contents: string; TabWidth: integer): string;
 
@@ -649,7 +649,7 @@ begin
   Result := FEngine;
 end;
 
-function SelectFolder(const Caption: string; const Root: WideString; var Directory: string): boolean;
+function SelectFolder(const Caption: string; const Root: Widestring; var Directory: string): Boolean;
 begin
   Result := SelectDirectory(Caption, Root, Directory);
 end;
@@ -671,45 +671,45 @@ begin
   end;
 end;
 
-procedure SaveAsUnix(Strings: TStrings; Stream: TStream);
+procedure SaveAsUnix(strings: Tstrings; Stream: TStream);
 var
   i, l: integer;
   S: string;
 begin
-  l := Strings.Count - 1;
+  l := strings.Count - 1;
   for i := 0 to l do
   begin
-    S := Strings[i];
+    S := strings[i];
     if i <> l then
       S := S + #$A;
     Stream.WriteBuffer(Pointer(S)^, Length(S));
   end;
 end;
 
-procedure SaveAsWindows(Strings: TStrings; Stream: TStream);
+procedure SaveAsWindows(strings: Tstrings; Stream: TStream);
 var
   i, l: integer;
   S: string;
 begin
-  l := Strings.Count - 1;
+  l := strings.Count - 1;
   for i := 0 to l do
   begin
-    S := Strings[i];
+    S := strings[i];
     if i <> l then
       S := S + #$D#$A;
     Stream.WriteBuffer(Pointer(S)^, Length(S));
   end;
 end;
 
-procedure SaveAsMAC(Strings: TStrings; Stream: TStream);
+procedure SaveAsMAC(strings: Tstrings; Stream: TStream);
 var
   i, l: integer;
   S: string;
 begin
-  l := Strings.Count - 1;
+  l := strings.Count - 1;
   for i := 0 to l do
   begin
-    S := Strings[i];
+    S := strings[i];
     if i <> l then
       S := S + #$D;
     Stream.WriteBuffer(Pointer(S)^, Length(S));
@@ -821,14 +821,14 @@ begin
   inherited;
 end;
 
-function TEditorEngine.SearchReplace(const FileName: string; const ALines: TStringList; const ASearch, AReplace: string; OnFoundEvent: TOnFoundEvent; AOptions: TSynSearchOptions): integer;
+function TEditorEngine.SearchReplace(const FileName: string; const ALines: TstringList; const ASearch, AReplace: string; OnFoundEvent: TOnFoundEvent; AOptions: TSynSearchOptions): integer;
 var
   i: integer;
   nSearchLen, nReplaceLen, n, nChar: integer;
   nInLine: integer;
   iResultOffset: integer;
   aLine, aReplaceText: string;
-  Replaced: boolean;
+  Replaced: Boolean;
 begin
   if not Assigned(SearchEngine) then
   begin
@@ -921,7 +921,7 @@ end;
 procedure TEditorFiles.CheckChanged;
 var
   i: integer;
-  b: boolean;
+  b: Boolean;
 begin
   if not FCheckChanged then
   begin
@@ -965,7 +965,7 @@ begin
   FMessagesList := TEditorMessagesList.Create;
   //FMacroRecorder := TSynMacroRecorder.Create(nil);
   //FMacroRecorder.OnStateChange := DoMacroStateChange;
-  FForms:=TEditorFormList.Create(Self);
+  FForms := TEditorFormList.Create(Self);
   FOptions := TEditorOptions.Create(Self);
   FCategories := TFileCategories.Create(Self);
   FGroups := TFileGroups.Create(Self);
@@ -1017,7 +1017,7 @@ begin
   inherited;
 end;
 
-procedure EnumFiles(Folder, Filter: string; FileList: TStringList);
+procedure EnumFiles(Folder, Filter: string; FileList: TstringList);
 var
   Rslt: integer;
   SearchRec: TSearchRec;
@@ -1035,7 +1035,7 @@ begin
   FindClose(SearchRec);
 end;
 
-procedure EnumFileList(const Root, Path, Files: string; Strings: TStringList; vMaxCount: integer; Recursive: boolean);
+procedure EnumFileList(const Root, Path, Files: string; strings: TstringList; vMaxCount: integer; Recursive: Boolean);
 var
   sr: TSearchRec;
 
@@ -1051,8 +1051,8 @@ begin
   if FindFirst(FullPath + Files, faAnyFile, sr) = 0 then
   begin
     repeat
-      Strings.Add(IncludeTrailingPathDelimiter(Path) + sr.Name);
-      if Strings.Count > vMaxCount then
+      strings.Add(IncludeTrailingPathDelimiter(Path) + sr.Name);
+      if strings.Count > vMaxCount then
         raise Exception.Create('Too many files');
     until (FindNext(sr) <> 0);
   end;
@@ -1064,7 +1064,7 @@ begin
         if (sr.Name = '') or (sr.Name[1] = '.') or (sr.Name = '..') or (copy(sr.Name, 1, 5) = '_vti_') or SameText(sr.Name, '.svn') or SameText(sr.Name, '_svn') then
           continue;
         if (sr.Attr and faDirectory) <> 0 then
-          EnumFileList(Root, IncludeTrailingPathDelimiter(Path) + sr.Name, Files, Strings, vMaxCount, Recursive)
+          EnumFileList(Root, IncludeTrailingPathDelimiter(Path) + sr.Name, Files, strings, vMaxCount, Recursive)
       until (FindNext(sr) <> 0);
     end;
 end;
@@ -1185,7 +1185,7 @@ begin
   Result := TEditorPerspective.Create;
 end;
 
-function TEditorFiles.InternalOpenFile(FileName: string; AppendToRecent: boolean): TEditorFile;
+function TEditorFiles.InternalOpenFile(FileName: string; AppendToRecent: Boolean): TEditorFile;
 begin
   {$ifdef windows}
   FileName := ExpandFileName(FileName);
@@ -1249,7 +1249,7 @@ begin
   Engine.UpdateState([ecsChanged, ecsState, ecsRefresh]);
 end;
 
-function TEditorFiles.New(Category, Name, Related: string; ReadOnly, Executable: boolean): TEditorFile;
+function TEditorFiles.New(Category, Name, Related: string; ReadOnly, Executable: Boolean): TEditorFile;
 begin
   Result := Engine.CreateEditorFile(Category);
   Result.ReadOnly := ReadOnly;
@@ -1436,7 +1436,7 @@ begin
   end;
 end;
 
-procedure TEditorFiles.SetCurrentIndex(Index: integer; vRefresh: boolean);
+procedure TEditorFiles.SetCurrentIndex(Index: integer; vRefresh: Boolean);
 var
   aCurrent: TEditorFile;
 begin
@@ -1502,13 +1502,13 @@ end;
 procedure TEditorEngine.LoadOptions;
 var
   aFile: string;
-  i: Integer;
+  i: integer;
 begin
   Options.Load(Workspace + 'mne-options.xml');
   for i := 0 to Perspectives.Count - 1 do
   begin
     if Perspectives[i].OSDepended then
-      Perspectives[i].SafeLoadFromFile(LowerCase(Workspace + 'mne-' + SysPlatform + '-'+ Perspectives[i].Name + '.xml'))
+      Perspectives[i].SafeLoadFromFile(LowerCase(Workspace + 'mne-' + SysPlatform + '-' + Perspectives[i].Name + '.xml'))
     else
       Perspectives[i].SafeLoadFromFile(LowerCase(Workspace + 'mne-' + Perspectives[i].Name + '.xml'));
   end;
@@ -1517,13 +1517,13 @@ end;
 procedure TEditorEngine.SaveOptions;
 var
   aFile: string;
-  i: Integer;
+  i: integer;
 begin
   Options.Save;
   for i := 0 to Perspectives.Count - 1 do
   begin
     if Perspectives[i].OSDepended then
-      Perspectives[i].SaveToFile(LowerCase(Workspace + 'mne-' + SysPlatform + '-'+ Perspectives[i].Name + '.xml'))
+      Perspectives[i].SaveToFile(LowerCase(Workspace + 'mne-' + SysPlatform + '-' + Perspectives[i].Name + '.xml'))
     else
       Perspectives[i].SaveToFile(LowerCase(Workspace + 'mne-' + Perspectives[i].Name + '.xml'));
   end;
@@ -1546,7 +1546,7 @@ begin
   Options.RecentFiles.Delete(i);
 end;
 
-function TEditorEngine.GetUpdating: boolean;
+function TEditorEngine.GetUpdating: Boolean;
 begin
   Result := FUpdateCount > 0;
 end;
@@ -1575,7 +1575,7 @@ begin
     DoChangedState(State);
 end;
 
-function TEditorFiles.LoadFile(vFileName: string; AppendToRecent: boolean): TEditorFile;
+function TEditorFiles.LoadFile(vFileName: string; AppendToRecent: Boolean): TEditorFile;
 begin
   Result := InternalOpenFile(vFileName, AppendToRecent);
   Engine.UpdateState([ecsChanged]);
@@ -1623,7 +1623,7 @@ begin
   Result := inherited Items[Index] as TEditorFile;
 end;
 
-function TEditorFiles.IsExist(vName: string): boolean;
+function TEditorFiles.IsExist(vName: string): Boolean;
 begin
   Result := FindFile(vName) <> nil;
 end;
@@ -1705,7 +1705,7 @@ begin
 
 end;
 
-function TEditorFile.CanOpenInclude: boolean;
+function TEditorFile.CanOpenInclude: Boolean;
 begin
   Result := False;
 end;
@@ -1770,7 +1770,7 @@ begin
   SynEdit.BeginUpdate;
   try
     Size := Stream.Size - Stream.Position;
-    SetString(Contents, nil, Size);
+    Setstring(Contents, nil, Size);
     Stream.Read(Pointer(Contents)^, Size);
     Mode := DetectFileMode(Contents);
     if eoTabsToSpaces in SynEdit.Options then
@@ -1787,17 +1787,17 @@ begin
   end;
 end;
 
-procedure SaveAsMode(const FileName: string; Mode: TEditorFileMode; Strings: TStrings);
+procedure SaveAsMode(const FileName: string; Mode: TEditorFileMode; strings: Tstrings);
 var
   aStream: TFileStream;
 begin
   aStream := TFileStream.Create(FileName, fmCreate);
   try
     case Mode of
-      efmWindows: SaveAsWindows(Strings, aStream);
-      efmMac: SaveAsMac(Strings, aStream);
+      efmWindows: SaveAsWindows(strings, aStream);
+      efmMac: SaveAsMac(strings, aStream);
       else
-        SaveAsUnix(Strings, aStream);
+        SaveAsUnix(strings, aStream);
     end;
   finally
     aStream.Free;
@@ -1813,7 +1813,7 @@ begin
   UpdateAge;
 end;
 
-procedure TEditorFile.SetEdited(const Value: boolean);
+procedure TEditorFile.SetEdited(const Value: Boolean);
 begin
   FEdited := Value;
 end;
@@ -1826,10 +1826,10 @@ begin
   (Engine.FilesControl.Owner as TCustomForm).ActiveControl := SynEdit;
 end;
 
-procedure TEditorFile.SaveFile(AsNewFile: boolean);
+procedure TEditorFile.SaveFile(AsNewFile: Boolean);
 var
   aDialog: TSaveDialog;
-  DoSave, DoRecent: boolean;
+  DoSave, DoRecent: Boolean;
   aName: string;
 begin
   DoRecent := False;
@@ -1875,7 +1875,7 @@ begin
   end;
 end;
 
-function TEditorFile.CheckChanged: boolean;
+function TEditorFile.CheckChanged: Boolean;
 var
   mr: integer;
 begin
@@ -1892,7 +1892,7 @@ begin
   end;
 end;
 
-function TEditorFile.Run: boolean;
+function TEditorFile.Run: Boolean;
 begin
   Result := False;
 end;
@@ -1943,12 +1943,12 @@ begin
     Result := nil;
 end;
 
-function TEditorFile.GetReadonly: boolean;
+function TEditorFile.GetReadonly: Boolean;
 begin
   Result := SynEdit.ReadOnly;
 end;
 
-procedure TEditorFile.SetReadonly(const Value: boolean);
+procedure TEditorFile.SetReadonly(const Value: Boolean);
 begin
   SynEdit.ReadOnly := Value;
 end;
@@ -2018,7 +2018,7 @@ var
         break;
       Inc(i);
     end;
-    Result := Result + RepeatString(' ', c);
+    Result := Result + Repeatstring(' ', c);
     p := i;
   end;
 
@@ -2051,7 +2051,7 @@ begin
   end;
 end;
 
-procedure TEditorFile.DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: boolean; Markup: TSynSelectedColor);
+procedure TEditorFile.DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
 begin
   if Engine.Debug.ExecutedEdit = Sender then
   begin
@@ -2093,15 +2093,15 @@ constructor TEditorOptions.Create(AEngine: TEditorEngine);
 begin
   inherited Create;
   FEngine := AEngine;
-  FSearchHistory := TStringList.Create;
-  FReplaceHistory := TStringList.Create;
-  FSearchFolderHistory := TStringList.Create;
+  FSearchHistory := TstringList.Create;
+  FReplaceHistory := TstringList.Create;
+  FSearchFolderHistory := TstringList.Create;
   FProfile := TEditorProfile.Create(nil);
-  FHelpFiles := TStringList.Create;
-  FExtraExtensions := TStringList.Create;
-  FRecentFiles := TStringList.Create;
-  FRecentProjects := TStringList.Create;
-  FProjects := TStringList.Create;
+  FHelpFiles := TstringList.Create;
+  FExtraExtensions := TstringList.Create;
+  FRecentFiles := TstringList.Create;
+  FRecentProjects := TstringList.Create;
+  FProjects := TstringList.Create;
   FShowFolder := True;
   FShowMessages := False;
   FCollectTimeout := 60;
@@ -2130,19 +2130,19 @@ begin
   FPerspective := vPerspective;
 end;
 
-procedure TEditorOptions.SetProjects(const Value: TStringList);
+procedure TEditorOptions.SetProjects(const Value: TstringList);
 begin
   if FRecentProjects <> Value then
     FRecentProjects.Assign(Value);
 end;
 
-procedure TEditorOptions.SetRecentFiles(const Value: TStringList);
+procedure TEditorOptions.SetRecentFiles(const Value: TstringList);
 begin
   if FRecentFiles <> Value then
     FRecentFiles.Assign(Value);
 end;
 
-procedure TEditorOptions.SetRecentProjects(const Value: TStringList);
+procedure TEditorOptions.SetRecentProjects(const Value: TstringList);
 begin
   if FRecentProjects <> Value then
     FRecentProjects.Assign(Value);
@@ -2166,10 +2166,10 @@ var
   i, j: integer;
   s: string;
   aSupported: string;
-  AExtensions: TStringList;
+  AExtensions: TstringList;
 begin
   aSupported := '';
-  AExtensions := TStringList.Create;
+  AExtensions := TstringList.Create;
   try
     for i := 0 to Count - 1 do
     begin
@@ -2230,14 +2230,14 @@ end;
 function TFileGroups.FindExtension(vExtension: string): TFileGroup;
 var
   i, j: integer;
-  AExtensions: TStringList;
+  AExtensions: TstringList;
 begin
   Result := nil;
   if LeftStr(vExtension, 1) = '.' then
     vExtension := Copy(vExtension, 2, MaxInt);
   if vExtension <> '' then
   begin
-    AExtensions := TStringList.Create;
+    AExtensions := TstringList.Create;
     try
       for i := 0 to Count - 1 do
       begin
@@ -2309,8 +2309,8 @@ begin
   FEngine := AEngine;
   FDesktop := TEditorDesktop.Create;
   FDesktop.FEngine := Engine;
-  FCachedVariables := THashedStringList.Create;
-  FCachedIdentifiers := THashedStringList.Create;
+  FCachedVariables := THashedstringList.Create;
+  FCachedIdentifiers := THashedstringList.Create;
   FSaveDesktop := True;
 end;
 
@@ -2330,14 +2330,14 @@ begin
   //TODO
 end;
 
-procedure TEditorProject.Loaded(Failed: boolean);
+procedure TEditorProject.Loaded(Failed: Boolean);
 begin
   inherited;
   if not Failed and FSaveDesktop then
     Desktop.Load;
 end;
 
-function TEditorProject.Save: boolean;
+function TEditorProject.Save: Boolean;
 begin
   if FileName = '' then
     Result := SaveAs
@@ -2350,7 +2350,7 @@ begin
   end;
 end;
 
-function TEditorProject.SaveAs: boolean;
+function TEditorProject.SaveAs: Boolean;
 var
   aDialog: TSaveDialog;
 begin
@@ -2385,19 +2385,19 @@ end;
 constructor TFileGroup.Create;
 begin
   inherited;
-  FExtensions := TStringList.Create;
+  FExtensions := TstringList.Create;
   FKind := [fgkBrowsable];
 end;
 
-procedure TFileGroup.EnumExtensions(vExtensions: TStringList);
+procedure TFileGroup.EnumExtensions(vExtensions: TstringList);
 var
   s: string;
 begin
   vExtensions.BeginUpdate;
   try
-    vExtensions.AddStrings(Extensions);
+    vExtensions.Addstrings(Extensions);
     s := Engine.Options.ExtraExtensions.Values[Name];
-    ExtractStrings([';'], [' '], PChar(s), vExtensions);
+    Extractstrings([';'], [' '], PChar(s), vExtensions);
   finally
     vExtensions.EndUpdate;
   end;
@@ -2468,12 +2468,12 @@ begin
   inherited;
 end;
 
-function TEditorSession.GetIsOpened: boolean;
+function TEditorSession.GetIsOpened: Boolean;
 begin
   Result := FProject <> nil;
 end;
 
-procedure TFileGroups.EnumExtensions(vExtensions: TStringList);
+procedure TFileGroups.EnumExtensions(vExtensions: TstringList);
 var
   i: integer;
 begin
@@ -2512,7 +2512,7 @@ begin
   Result := inherited Items[Index] as TEditorDesktopFile;
 end;
 
-function TEditorDesktopFiles.IsExist(vName: string): boolean;
+function TEditorDesktopFiles.IsExist(vName: string): Boolean;
 begin
   Result := Find(vName) <> nil;
 end;
