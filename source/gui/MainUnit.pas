@@ -713,7 +713,6 @@ end;
 procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   IPCServer.StopServer;
-  Engine.Free;
 end;
 
 procedure TMainForm.FileCloseBtnClick(Sender: TObject);
@@ -1089,7 +1088,7 @@ end;
 
 procedure TMainForm.ShowKnownActExecute(Sender: TObject);
 begin
-  ShowFolderFiles := sffUnknown;
+  ShowFolderFiles := sffKnown;
 end;
 
 procedure TMainForm.UnixMnuClick(Sender: TObject);
@@ -1253,7 +1252,7 @@ begin
     UpdateFolder;
   case FShowFolderFiles of
     sffRelated: ShowRelatedAct.Checked := True;
-    sffUnknown: ShowKnownAct.Checked := True;
+    sffKnown: ShowKnownAct.Checked := True;
     sffAll: ShowAllAct.Checked := True;
   end;
 end;
@@ -1292,7 +1291,7 @@ var
   aItem: TListItem;
   AExtensions: TStringList;
 
-  function FindExtension(vExtension: string): boolean;
+  function MatchExtension(vExtension: string): boolean;
   begin
     if LeftStr(vExtension, 1) = '.' then //that correct if some one added dot to the first char of extension
       vExtension := Copy(vExtension, 2, MaxInt);
@@ -1305,13 +1304,11 @@ begin
     AExtensions := TStringList.Create;
     try
       case ShowFolderFiles of
+        //Engine.Session.Project.Perspective.
         sffRelated: Engine.Groups.EnumExtensions(AExtensions);
-        sffUnknown: Engine.Groups.EnumExtensions(AExtensions);
+        sffKnown: Engine.Groups.EnumExtensions(AExtensions);
         sffAll: AExtensions.Add('*');
       end;
-      //TODO use FShowFolderFiles
-
-      //Engine.Session.Project.Perspective.
 
       FileList.Clear;
       if (Folder <> '') and DirectoryExists(Folder) then
@@ -1338,7 +1335,7 @@ begin
         begin
           if (SearchRec.Name <> '.') and (SearchRec.Name <> '..') and (not SameText(SearchRec.Name, '.svn')) then
           begin
-            if FindExtension(ExtractFileExt(SearchRec.Name)) then
+            if MatchExtension(ExtractFileExt(SearchRec.Name)) then
             begin
               aItem := FileList.Items.Add;
               aItem.Caption := SearchRec.Name;

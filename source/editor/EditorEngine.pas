@@ -63,14 +63,12 @@ type
 
   TEditorDesktop = class(TPersistent)
   private
-    FEngine: TEditorEngine;
     FFiles: TEditorDesktopFiles;
   public
     constructor Create;
     destructor Destroy; override;
     procedure Load;
     procedure Save;
-    property Engine: TEditorEngine read FEngine;
   published
     property Files: TEditorDesktopFiles read FFiles;
   end;
@@ -123,7 +121,6 @@ type
     FRootUrl: string;
     FRootDir: string;
     FFileName: string;
-    FEngine: TEditorEngine;
     FName: string;
     FSaveDesktop: Boolean;
     FDesktop: TEditorDesktop;
@@ -136,9 +133,8 @@ type
     procedure Loaded(Failed: Boolean); override;
     procedure Saving; override;
   public
-    constructor Create(AEngine: TEditorEngine);
+    constructor Create; virtual;
     destructor Destroy; override;
-    property Engine: TEditorEngine read FEngine;
     property FileName: string read FFileName write FFileName;
     function Save: Boolean;
     function SaveAs: Boolean;
@@ -185,7 +181,6 @@ type
     FGroup: TFileGroup;
     FRelated: string;
     FMode: TEditorFileMode;
-    function GetEngine: TEditorEngine;
     procedure SetEdited(const Value: Boolean);
     procedure SetGroup(const Value: TFileGroup);
     function GetReadonly: Boolean;
@@ -220,7 +215,6 @@ type
     property Name: string read FName write FName;
     property Related: string read FRelated write FRelated;
     property SynEdit: TSynEdit read FSynEdit;
-    property Engine: TEditorEngine read GetEngine;
     property Edited: Boolean read FEdited write SetEdited;
     property ReadOnly: Boolean read GetReadonly write SetReadonly;
     property Group: TFileGroup read FGroup write SetGroup;
@@ -233,7 +227,6 @@ type
   private
     FCheckChanged: Boolean;
     FCurrent: TEditorFile;
-    FEngine: TEditorEngine;
     function GetItems(Index: integer): TEditorFile;
     function GetCurrent: TEditorFile;
     procedure SetCurrent(const Value: TEditorFile);
@@ -266,7 +259,6 @@ type
     procedure CheckChanged;
     procedure CloseAll;
     function GetEditedCount: integer;
-    property Engine: TEditorEngine read FEngine;
     property Current: TEditorFile read GetCurrent write SetCurrent;
     property Items[Index: integer]: TEditorFile read GetItems; default;
   published
@@ -277,7 +269,7 @@ type
     IsBreakPoint: Boolean;
   end;
 
-  TShowFolderFiles = (sffRelated, sffUnknown, sffAll);
+  TShowFolderFiles = (sffRelated, sffKnown, sffAll);
   TEditorFileClass = class of TEditorFile;
 
   TOnEngineChanged = procedure of object;
@@ -287,7 +279,6 @@ type
   TEditorOptions = class(TmnXMLProfile)
   private
     FFileName: string;
-    FEngine: TEditorEngine;
     FPerspective: TEditorPerspective;
     FShowFolder: Boolean;
     FShowFolderFiles: TShowFolderFiles;
@@ -316,13 +307,12 @@ type
     procedure SetProjects(const Value: TStringList);
   protected
   public
-    constructor Create(AEngine: TEditorEngine);
+    constructor Create;
     destructor Destroy; override;
     procedure Apply;
     procedure Load(vFileName: string);
     procedure Save;
     procedure Show;
-    property Engine: TEditorEngine read FEngine;
     property FileName: string read FFileName write FFileName;
     property BoundRect: TRect read FBoundRect write FBoundRect; //not saved yet
     procedure SetDefaultPerspective(vPerspective: TEditorPerspective);
@@ -420,28 +410,24 @@ type
   TFileGroups = class(TObjectList)
   private
     function GetItem(Index: integer): TFileGroup;
-    procedure SetItem(Index: integer; AObject: TFileGroup);
   public
     function Find(vName: string): TFileGroup;
     procedure EnumExtensions(vExtensions: TStringList);
     function FindExtension(vExtension: string): TFileGroup;
     function CreateFilter(vGroup: TFileGroup = nil): string;
     procedure Add(const Name, DisplayName: string; Category: string; Extensions: array of string; Kind: TFileGroupKinds = []);
-    property Items[Index: integer]: TFileGroup read GetItem write SetItem; default;
+    property Items[Index: integer]: TFileGroup read GetItem; default;
   end;
 
   { TPerspectives }
 
   TPerspectives = class(TObjectList)
   private
-    FEngine: TEditorEngine;
     function GetItem(Index: integer): TEditorPerspective;
   public
-    constructor Create(AEngine: TEditorEngine);
     function Find(vName: string): TEditorPerspective;
     procedure Add(vEditorPerspective: TEditorPerspectiveClass);
     property Items[Index: integer]: TEditorPerspective read GetItem; default;
-    property Engine: TEditorEngine read FEngine;
   end;
 
   { TEditorFormItem }
@@ -460,14 +446,11 @@ type
 
   TEditorFormList = class(TObjectList)
   private
-    FEngine: TEditorEngine;
     function GetItem(Index: integer): TEditorFormItem;
   public
-    constructor Create(AEngine: TEditorEngine);
     function Find(ObjectClass: TClass): TEditorFormItem;
     procedure Add(vObjectClass: TClass; vFormClass: TCustomFormClass);
     property Items[Index: integer]: TEditorFormItem read GetItem; default;
-    property Engine: TEditorEngine read FEngine;
   end;
 
   {
@@ -476,7 +459,6 @@ type
 
   TEditorSession = class(TObject)
   private
-    FEngine: TEditorEngine;
     FProject: TEditorProject;
     procedure SetProject(const Value: TEditorProject);
     function GetIsOpened: Boolean;
@@ -489,7 +471,6 @@ type
     property IsOpened: Boolean read GetIsOpened;
     //Current is the opened project if it is nil it is mean not opened any project.
     property Project: TEditorProject read FProject write SetProject;
-    property Engine: TEditorEngine read FEngine;
   end;
 
   TEditorMessagesList = class;
@@ -644,10 +625,13 @@ uses
   mneResources;
 
 var
+  FEngineShutdown: Boolean  = False;
   FEngine: TEditorEngine = nil;
 
 function Engine: TEditorEngine;
 begin
+  if FEngineShutdown then
+    raise Exception.Create('Engine in shutdown?');
   if FEngine = nil then
     FEngine := TEditorEngine.Create;
   Result := FEngine;
@@ -727,12 +711,6 @@ begin
   Result := inherited Items[Index] as TEditorFormItem;
 end;
 
-constructor TEditorFormList.Create(AEngine: TEditorEngine);
-begin
-  inherited Create;
-  FEngine := AEngine;
-end;
-
 function TEditorFormList.Find(ObjectClass: TClass): TEditorFormItem;
 var
   i: integer;
@@ -785,12 +763,6 @@ end;
 function TPerspectives.GetItem(Index: integer): TEditorPerspective;
 begin
   Result := inherited Items[Index] as TEditorPerspective;
-end;
-
-constructor TPerspectives.Create(AEngine: TEditorEngine);
-begin
-  inherited Create;
-  FEngine := AEngine;
 end;
 
 function TPerspectives.Find(vName: string): TEditorPerspective;
@@ -981,16 +953,14 @@ begin
   FMessagesList := TEditorMessagesList.Create;
   //FMacroRecorder := TSynMacroRecorder.Create(nil);
   //FMacroRecorder.OnStateChange := DoMacroStateChange;
-  FForms := TEditorFormList.Create(Self);
-  FOptions := TEditorOptions.Create(Self);
+  FForms := TEditorFormList.Create(True);
+  FOptions := TEditorOptions.Create;
   FCategories := TFileCategories.Create(True);
   FGroups := TFileGroups.Create(True);
-  FPerspectives := TPerspectives.Create(Self);
+  FPerspectives := TPerspectives.Create(True);
   FSearchEngine := TSynEditSearch.Create;
   FFiles := TEditorFiles.Create(TEditorFile);
-  FFiles.FEngine := Self;
   FSession := TEditorSession.Create;
-  FSession.FEngine := Self;
   FDebug := CreateDebugger;
   FSCM := CreateSCM;
   Extenstion := 'mne-project';
@@ -1010,7 +980,7 @@ end;
 
 function TEditorEngine.CreateEditorProject: TEditorProject;
 begin
-  Result := TEditorProject.Create(Self);
+  Result := TEditorProject.Create
 end;
 
 destructor TEditorEngine.Destroy;
@@ -1027,8 +997,8 @@ begin
   FreeAndNil(FOptions);
   //FreeAndNil(FMacroRecorder);
   FreeAndNil(FMessagesList);
-  Engine.OnChangedState := nil;
-  Engine.OnChoosePerspective := nil;
+  FOnChangedState := nil;
+  FOnChoosePerspective := nil;
   FreeAndNil(FForms);
   inherited;
 end;
@@ -1774,11 +1744,6 @@ begin
   Engine.Files.Edited;
 end;
 
-function TEditorFile.GetEngine: TEditorEngine;
-begin
-  Result := (Collection as TEditorFiles).FEngine;
-end;
-
 procedure TEditorFile.Load(FileName: string);
 var
   Contents: string;
@@ -2109,10 +2074,9 @@ end;
 
 { TEditorOptions }
 
-constructor TEditorOptions.Create(AEngine: TEditorEngine);
+constructor TEditorOptions.Create;
 begin
   inherited Create;
-  FEngine := AEngine;
   FSearchHistory := TStringList.Create;
   FReplaceHistory := TStringList.Create;
   FSearchFolderHistory := TStringList.Create;
@@ -2284,7 +2248,7 @@ end;
 
 constructor TFileCategory.Create;
 begin
-  inherited;
+  inherited Create(False);//childs is groups and already added to Groups and freed by it
   FHighlighter := CreateHighlighter;
 end;
 
@@ -2330,12 +2294,10 @@ end;
 
 { TEditorProject }
 
-constructor TEditorProject.Create(AEngine: TEditorEngine);
+constructor TEditorProject.Create;
 begin
   inherited Create;
-  FEngine := AEngine;
   FDesktop := TEditorDesktop.Create;
-  FDesktop.FEngine := Engine;
   FCachedVariables := THashedStringList.Create;
   FCachedIdentifiers := THashedStringList.Create;
   FSaveDesktop := True;
@@ -2513,11 +2475,6 @@ end;
 function TFileGroups.GetItem(Index: integer): TFileGroup;
 begin
   Result := inherited Items[Index] as TFileGroup;
-end;
-
-procedure TFileGroups.SetItem(Index: integer; AObject: TFileGroup);
-begin
-  inherited Items[Index] := AObject;
 end;
 
 destructor TEditorSession.Destroy;
@@ -2788,4 +2745,7 @@ begin
     end;
 end;
 
+finalization
+  FEngineShutdown := True;
+  FreeAndNil(FEngine);
 end.
