@@ -48,6 +48,9 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    TypePnl: TPanel;
+    ProjectTypeMnu: TMenuItem;
+    ProjectTypeAct: TAction;
     MenuItem10: TMenuItem;
     MenuItem11: TMenuItem;
     MenuItem12: TMenuItem;
@@ -325,8 +328,8 @@ type
     procedure CloseActExecute(Sender: TObject);
     procedure FileListDblClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
+    procedure ProjectTypeActExecute(Sender: TObject);
     procedure RefreshFilesActExecute(Sender: TObject);
-    procedure RunToCursor1Click(Sender: TObject);
     procedure SaveActExecute(Sender: TObject);
     procedure SaveAllActExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -442,7 +445,7 @@ type
     procedure SetShowFolderFiles(AValue: TShowFolderFiles);
     procedure UpdateFileHeaderPanel;
     procedure EditorChangeState(State: TEditorChangeState);
-    procedure ChoosePerspective(var vPerspective: TEditorPerspective);
+    procedure ChoosePerspective(var Resumed: Boolean; var vPerspective: TEditorPerspective);
 
     procedure EngineChanged;
     procedure UpdateWatches;
@@ -794,14 +797,27 @@ begin
     end;
 end;
 
+procedure TMainForm.ProjectTypeActExecute(Sender: TObject);
+var
+  lPerspective: TEditorPerspective;
+begin
+  if Engine.Session.IsOpened then
+  begin
+    lPerspective := Engine.Session.Project.Perspective;
+    if Engine.ChoosePerspective(lPerspective) then
+      Engine.Session.Project.PerspectiveName := lPerspective.Name;
+  end
+  else
+  begin
+    lPerspective := Engine.DefaultPerspective;
+    if Engine.ChoosePerspective(lPerspective) then
+      Engine.DefaultPerspective := lPerspective;
+  end;
+end;
+
 procedure TMainForm.RefreshFilesActExecute(Sender: TObject);
 begin
   UpdateFolder;
-end;
-
-procedure TMainForm.RunToCursor1Click(Sender: TObject);
-begin
-
 end;
 
 procedure TMainForm.SaveActExecute(Sender: TObject);
@@ -926,14 +942,11 @@ end;
 
 procedure TMainForm.RunActExecute(Sender: TObject);
 begin
-  if Engine.Perspective.Debug.IsRuning then
-  begin
-    Engine.Perspective.Debug.Run;
-  end
-  else
-  begin
-    RunScript;
-  end;
+  if Engine.Perspective.Debug <> nil then
+    if Engine.Perspective.Debug.IsRuning then
+      Engine.Perspective.Debug.Run
+    else
+      RunScript;
 end;
 
 procedure TMainForm.ProjectOptionsActExecute(Sender: TObject);
@@ -1187,6 +1200,7 @@ begin
   ProjectOpenFolderAct.Enabled := b;
   //SCMMnu.Visible := Engine.SCM <> nil;
   DebugMnu.Visible := Engine.Perspective.Debug <> nil;
+  TypePnl.Caption := Engine.Perspective.Name;
 end;
 
 procedure TMainForm.SaveAsProjectActExecute(Sender: TObject);
@@ -1413,13 +1427,13 @@ begin
     BringToFront;
   if ecsEdit in State then
     EngineEdited;
-  if ecsProjectLoaded in State then
+  if ecsProject in State then
     ProjectLoaded;
   if ecsState in State then
     EngineState;
 end;
 
-procedure TMainForm.ChoosePerspective(var vPerspective: TEditorPerspective);
+procedure TMainForm.ChoosePerspective(var Resumed: Boolean; var vPerspective: TEditorPerspective);
 var
   aName: string;
 begin
@@ -1429,7 +1443,8 @@ begin
   end
   else
     aName := '';
-  ShowSelectPerspective(aName);
+  Resumed := ShowSelectPerspective(aName);
+  vPerspective := Engine.Perspectives.Find(aName);
 end;
 
 procedure TMainForm.ProjectLoaded;
@@ -1638,54 +1653,64 @@ end;
 
 procedure TMainForm.DBGStartServerActUpdate(Sender: TObject);
 begin
-  DBGStartServerAct.Enabled := not Engine.Perspective.Debug.Active;
+  if Engine.Perspective.Debug <> nil then
+    DBGStartServerAct.Enabled := not Engine.Perspective.Debug.Active;
 end;
 
 procedure TMainForm.DBGStartServerActExecute(Sender: TObject);
 begin
-  Engine.Perspective.Debug.Start;
+  if Engine.Perspective.Debug <> nil then
+    Engine.Perspective.Debug.Start;
 end;
 
 procedure TMainForm.DBGStopServerActExecute(Sender: TObject);
 begin
-  Engine.Perspective.Debug.Stop;
+  if Engine.Perspective.Debug <> nil then
+    Engine.Perspective.Debug.Stop;
 end;
 
 procedure TMainForm.DBGStepOverActExecute(Sender: TObject);
 begin
-  if Engine.Perspective.Debug.IsRuning then
-    Engine.Perspective.Debug.StepOver;
+  if Engine.Perspective.Debug <> nil then
+    if Engine.Perspective.Debug.IsRuning then
+      Engine.Perspective.Debug.StepOver;
 end;
 
 procedure TMainForm.DBGStepIntoActExecute(Sender: TObject);
 begin
-  if Engine.Perspective.Debug.IsRuning then
-    Engine.Perspective.Debug.StepInto;
+  if Engine.Perspective.Debug <> nil then
+    if Engine.Perspective.Debug.IsRuning then
+      Engine.Perspective.Debug.StepInto;
 end;
 
 procedure TMainForm.DBGActiveServerActUpdate(Sender: TObject);
 begin
-  DBGActiveServerAct.Checked := Engine.Perspective.Debug.Active;
+  if Engine.Perspective.Debug <> nil then
+    DBGActiveServerAct.Checked := Engine.Perspective.Debug.Active;
 end;
 
 procedure TMainForm.DBGActiveServerActExecute(Sender: TObject);
 begin
-  Engine.Perspective.Debug.Active := not DBGActiveServerAct.Checked;
+  if Engine.Perspective.Debug <> nil then
+    Engine.Perspective.Debug.Active := not DBGActiveServerAct.Checked;
 end;
 
 procedure TMainForm.DBGResetActExecute(Sender: TObject);
 begin
-  Engine.Perspective.Debug.Reset;
+  if Engine.Perspective.Debug <> nil then
+    Engine.Perspective.Debug.Reset;
 end;
 
 procedure TMainForm.DBGResumeActExecute(Sender: TObject);
 begin
-  Engine.Perspective.Debug.Resume;
+  if Engine.Perspective.Debug <> nil then
+    Engine.Perspective.Debug.Resume;
 end;
 
 procedure TMainForm.DBGStepOutActExecute(Sender: TObject);
 begin
-  Engine.Perspective.Debug.StepOut;
+  if Engine.Perspective.Debug <> nil then
+    Engine.Perspective.Debug.StepOut;
 end;
 
 function TMainForm.GetFolder: string;
@@ -1748,27 +1773,30 @@ var
   aItem: TListItem;
   aIndex: integer;
 begin
-  aIndex := WatchList.ItemIndex;
-  WatchList.BeginUpdate;
-  try
-    WatchList.Clear;
-    Engine.Perspective.Debug.Lock;
+  if Engine.Perspective.Debug <> nil then
+  begin
+    aIndex := WatchList.ItemIndex;
+    WatchList.BeginUpdate;
     try
-      for i := 0 to Engine.Perspective.Debug.Watches.Count - 1 do
-      begin
-        aItem := WatchList.Items.Add;
-        aItem.ImageIndex := 41;
-        aItem.Caption := Engine.Perspective.Debug.Watches[i].Name;
-        aItem.SubItems.Add(Engine.Perspective.Debug.Watches[i].VarType);
-        aItem.SubItems.Add(Engine.Perspective.Debug.Watches[i].Value);
+      WatchList.Clear;
+      Engine.Perspective.Debug.Lock;
+      try
+        for i := 0 to Engine.Perspective.Debug.Watches.Count - 1 do
+        begin
+          aItem := WatchList.Items.Add;
+          aItem.ImageIndex := 41;
+          aItem.Caption := Engine.Perspective.Debug.Watches[i].Name;
+          aItem.SubItems.Add(Engine.Perspective.Debug.Watches[i].VarType);
+          aItem.SubItems.Add(Engine.Perspective.Debug.Watches[i].Value);
+        end;
+      finally
+        Engine.Perspective.Debug.Unlock;
       end;
     finally
-      Engine.Perspective.Debug.Unlock;
+      if aIndex >= 0 then
+        WatchList.ItemIndex := aIndex;
+      WatchList.EndUpdate;
     end;
-  finally
-    if aIndex >= 0 then
-      WatchList.ItemIndex := aIndex;
-    WatchList.EndUpdate;
   end;
 end;
 
@@ -1858,10 +1886,13 @@ end;
 
 procedure TMainForm.AddWatch(s: string);
 begin
-  s := Trim(s);
-  if s <> '' then
+  if Engine.Perspective.Debug <> nil then
   begin
-    Engine.Perspective.Debug.Watches.Add(s);
+    s := Trim(s);
+    if s <> '' then
+    begin
+      Engine.Perspective.Debug.Watches.Add(s);
+    end;
   end;
 end;
 
@@ -1872,25 +1903,29 @@ end;
 
 procedure TMainForm.DeleteWatch(s: string);
 begin
-  Engine.Perspective.Debug.Watches.Remove(s);
+  if Engine.Perspective.Debug <> nil then
+    Engine.Perspective.Debug.Watches.Remove(s);
 end;
 
 procedure TMainForm.DBGToggleBreakpointExecute(Sender: TObject);
 var
   aLine: integer;
 begin
-  if (Engine.Files.Current <> nil) and (GetFocus = Engine.Files.Current.SynEdit.Handle) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
-    with Engine.Files.Current do
-    begin
-      aLine := SynEdit.CaretY;
-      Engine.Perspective.Debug.Lock;
-      try
-        Engine.Perspective.Debug.Breakpoints.Toggle(Name, aLine);
-      finally
-        Engine.Perspective.Debug.Unlock;
+  if Engine.Perspective.Debug <> nil then
+  begin
+    if (Engine.Files.Current <> nil) and (GetFocus = Engine.Files.Current.SynEdit.Handle) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
+      with Engine.Files.Current do
+      begin
+        aLine := SynEdit.CaretY;
+        Engine.Perspective.Debug.Lock;
+        try
+          Engine.Perspective.Debug.Breakpoints.Toggle(Name, aLine);
+        finally
+          Engine.Perspective.Debug.Unlock;
+        end;
+        SynEdit.InvalidateLine(aLine);
       end;
-      SynEdit.InvalidateLine(aLine);
-    end;
+  end;
 end;
 
 procedure TMainForm.OutputActExecute(Sender: TObject);

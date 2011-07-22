@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 330
+  Left = 480
   Height = 518
-  Top = 197
+  Top = 104
   Width = 876
   AllowDropFiles = True
   Caption = 'Mini Edit'
@@ -22,7 +22,7 @@ object MainForm: TMainForm
     Cursor = crVSplit
     Left = 0
     Height = 7
-    Top = 342
+    Top = 343
     Width = 876
     Align = alBottom
     AutoSnap = False
@@ -31,7 +31,7 @@ object MainForm: TMainForm
   end
   object FoldersSpl: TSplitter
     Left = 200
-    Height = 313
+    Height = 314
     Top = 29
     Width = 6
   end
@@ -119,13 +119,13 @@ object MainForm: TMainForm
   end
   object FoldersPnl: TPanel
     Left = 0
-    Height = 313
+    Height = 314
     Top = 29
     Width = 200
     Align = alLeft
     BevelOuter = bvNone
     BorderWidth = 5
-    ClientHeight = 313
+    ClientHeight = 314
     ClientWidth = 200
     TabOrder = 0
     object FolderPanel: TPanel
@@ -226,7 +226,7 @@ object MainForm: TMainForm
     end
     object FileList: TListView
       Left = 5
-      Height = 284
+      Height = 285
       Top = 24
       Width = 190
       Align = alClient
@@ -251,19 +251,19 @@ object MainForm: TMainForm
   end
   object ClientPnl: TPanel
     Left = 206
-    Height = 313
+    Height = 314
     Top = 29
     Width = 670
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 313
+    ClientHeight = 314
     ClientWidth = 670
     TabOrder = 2
     object OutputSpl: TSplitter
       Cursor = crVSplit
       Left = 0
       Height = 3
-      Top = 158
+      Top = 159
       Width = 670
       Align = alBottom
       AutoSnap = False
@@ -273,12 +273,12 @@ object MainForm: TMainForm
     end
     object EditorsPnl: TPanel
       Left = 0
-      Height = 158
+      Height = 159
       Top = 0
       Width = 670
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 158
+      ClientHeight = 159
       ClientWidth = 670
       FullRepaint = False
       TabOrder = 0
@@ -358,7 +358,7 @@ object MainForm: TMainForm
       object QuickFindPnl: TPanel
         Left = 0
         Height = 29
-        Top = 129
+        Top = 130
         Width = 670
         Align = alBottom
         BevelInner = bvSpace
@@ -477,7 +477,7 @@ object MainForm: TMainForm
     inline OutputEdit: TSynEdit
       Left = 0
       Height = 152
-      Top = 161
+      Top = 162
       Width = 670
       Align = alBottom
       Font.Height = -13
@@ -685,20 +685,20 @@ object MainForm: TMainForm
   end
   object StatusPanel: TPanel
     Left = 0
-    Height = 22
-    Top = 476
+    Height = 21
+    Top = 477
     Width = 876
     Align = alBottom
     BevelOuter = bvNone
-    ClientHeight = 22
+    ClientHeight = 21
     ClientWidth = 876
     TabOrder = 3
     object MessagePnl: TPanel
-      Left = 1
+      Left = 80
       Height = 19
       Hint = 'Message'
-      Top = 3
-      Width = 667
+      Top = 1
+      Width = 588
       Alignment = taLeftJustify
       Anchors = [akLeft, akRight, akBottom]
       BevelOuter = bvLowered
@@ -709,7 +709,7 @@ object MainForm: TMainForm
       Left = 774
       Height = 19
       Hint = 'Debug Session'
-      Top = 2
+      Top = 1
       Width = 100
       Alignment = taLeftJustify
       Anchors = [akRight, akBottom]
@@ -721,7 +721,7 @@ object MainForm: TMainForm
       Left = 692
       Height = 19
       Hint = 'Caret Position'
-      Top = 2
+      Top = 1
       Width = 80
       Anchors = [akRight, akBottom]
       BevelOuter = bvLowered
@@ -732,18 +732,29 @@ object MainForm: TMainForm
       Left = 670
       Height = 19
       Hint = 'State'
-      Top = 2
+      Top = 1
       Width = 20
       Anchors = [akRight, akBottom]
       BevelOuter = bvLowered
       BorderWidth = 2
       TabOrder = 3
     end
+    object TypePnl: TPanel
+      Left = 2
+      Height = 19
+      Hint = 'Project Type'
+      Top = 1
+      Width = 76
+      Anchors = [akLeft, akBottom]
+      BevelOuter = bvLowered
+      BorderWidth = 2
+      TabOrder = 4
+    end
   end
   object MessagesTabs: TntvPageControl
     Left = 0
     Height = 127
-    Top = 349
+    Top = 350
     Width = 876
     StoreIndex = False
     ShowButtons = False
@@ -973,6 +984,9 @@ object MainForm: TMainForm
         Action = ProjectOptionsAct
         OnClick = ProjectOptionsActExecute
       end
+      object ProjectTypeMnu: TMenuItem
+        Action = ProjectTypeAct
+      end
     end
     object veiw1: TMenuItem
       Caption = '&View'
@@ -1201,7 +1215,6 @@ object MainForm: TMainForm
       end
       object RunToCursor1: TMenuItem
         Action = DBGRunToCursor
-        OnClick = RunToCursor1Click
       end
       object Reset2: TMenuItem
         Action = DBGResetAct
@@ -1747,6 +1760,11 @@ object MainForm: TMainForm
       Category = 'Files'
       Caption = 'Refresh'
       OnExecute = RefreshFilesActExecute
+    end
+    object ProjectTypeAct: TAction
+      Category = 'Project'
+      Caption = 'Project Type'
+      OnExecute = ProjectTypeActExecute
     end
   end
   object FolderMenu: TPopupMenu

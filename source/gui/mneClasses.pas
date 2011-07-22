@@ -292,5 +292,3 @@ initialization
     Groups.Add('TXT', 'TXT files', 'TXT', ['txt'], []);
   end;
 end.
-
-

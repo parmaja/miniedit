@@ -18,7 +18,7 @@ uses
   mnXMLRttiProfile, mnXMLUtils, mnUtils, LCLType;
 
 type
-  TEditorChangeState = set of (ecsChanged, ecsState, ecsRefresh, ecsDebug, ecsShow, ecsEdit, ecsFolder, ecsProjectLoaded); //ecsShow bring to front
+  TEditorChangeState = set of (ecsChanged, ecsState, ecsRefresh, ecsDebug, ecsShow, ecsEdit, ecsFolder, ecsProject); //ecsShow bring to front
   TSynCompletionType = (ctCode, ctHint, ctParams);
 
   TEditorEngine = class;
@@ -326,6 +326,8 @@ type
 
   TEditorOptions = class(TmnXMLProfile)
   private
+    FDefaultPerspective: string;
+    FDefaultSCM: string;
     FFileName: string;
     FShowFolder: Boolean;
     FShowFolderFiles: TShowFolderFiles;
@@ -383,6 +385,8 @@ type
     property RecentFiles: TStringList read FRecentFiles write SetRecentFiles;
     property RecentProjects: TStringList read FRecentProjects write SetRecentProjects;
     property Projects: TStringList read FProjects write SetProjects;
+    property DefaultPerspective: string read FDefaultPerspective write FDefaultPerspective;
+    property DefaultSCM: string read FDefaultSCM write FDefaultSCM;
   end;
 
   TFileCategoryKind = (fckPublish);
@@ -474,7 +478,9 @@ type
     function GetItem(Index: integer): TEditorPerspective;
   public
     function Find(vName: string): TEditorPerspective;
+    function IndexOf(vName: string): Integer;
     procedure Add(vEditorPerspective: TEditorPerspectiveClass);
+    procedure Add(vEditorPerspective: TEditorPerspective);
     property Items[Index: integer]: TEditorPerspective read GetItem; default;
   end;
 
@@ -564,7 +570,7 @@ type
 
   TOnFoundEvent = procedure(FileName: string; const Line: string; LineNo, Column, FoundLength: integer) of object;
   TOnEditorChangeState = procedure(State: TEditorChangeState) of object;
-  TOnChoosePerspective = procedure(var vPerspective: TEditorPerspective) of object;
+  TOnChoosePerspective = procedure(var Resumed: Boolean; var vPerspective: TEditorPerspective) of object;
 
   { TEditorEngine }
 
@@ -600,12 +606,12 @@ type
     function GetUpdating: Boolean;
     procedure SetBrowseFolder(const Value: string);
     function GetWorkSpace: string;
+    procedure SetDefaultPerspective(AValue: TEditorPerspective);
   protected
     property SearchEngine: TSynEditSearch read FSearchEngine;
     procedure DoChangedState(State: TEditorChangeState); virtual;
     procedure DoMacroStateChange(Sender: TObject);
     function FindExtensionCategoryName(Extension: string): string;
-    function ChoosePerspective: TEditorPerspective;
     procedure DoReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
   public
     constructor Create; virtual;
@@ -623,6 +629,8 @@ type
     procedure LoadOptions;
     procedure SaveOptions;
     procedure Shutdown;
+
+    function ChoosePerspective(var vPerspective: TEditorPerspective): Boolean;
 
     procedure BeginUpdate;
     procedure UpdateState(State: TEditorChangeState);
@@ -648,7 +656,7 @@ type
     property FilesControl: TWinControl read FFilesControl write FFilesControl;
     property BrowseFolder: string read FBrowseFolder write SetBrowseFolder;
     procedure SetDefaultPerspective(vName: string);
-    property DefaultPerspective: TEditorPerspective read FDefaultPerspective write FDefaultPerspective;
+    property DefaultPerspective: TEditorPerspective read FDefaultPerspective write SetDefaultPerspective;
     property Perspective: TEditorPerspective read GetPerspective;
     property SCM: TEditorSCM read GetSCM;
     //property MacroRecorder: TSynMacroRecorder read FMacroRecorder;
@@ -865,8 +873,9 @@ constructor TEditorPerspective.Create;
 begin
   inherited;
   FGroups := TFileGroups.Create(False);//it already owned by Engine.Groups
-  FTitle := 'Default project type';
+  FTitle := 'Default';
   FName := 'Default';
+  FDescription := 'Default project type';
   FImageIndex := -1;
   FDefaultFileGroup := 'TXT';
 end;
@@ -923,12 +932,33 @@ begin
     end;
 end;
 
+function TPerspectives.IndexOf(vName: string): Integer;
+var
+  i: integer;
+begin
+  Result := -1;
+  if vName <> '' then
+    for i := 0 to Count - 1 do
+    begin
+      if SameText(Items[i].Name, vName) then
+      begin
+        Result := i;
+        break;
+      end;
+    end;
+end;
+
 procedure TPerspectives.Add(vEditorPerspective: TEditorPerspectiveClass);
 var
   aItem: TEditorPerspective;
 begin
   aItem := vEditorPerspective.Create;
-  inherited Add(aItem);
+  Add(aItem);
+end;
+
+procedure TPerspectives.Add(vEditorPerspective: TEditorPerspective);
+begin
+  inherited Add(vEditorPerspective);
 end;
 
 { TSynDebugMarksPart }
@@ -1087,6 +1117,7 @@ end;
 procedure TEditorSession.Close;
 begin
   FProject := nil;
+  Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
 end;
 
 constructor TEditorEngine.Create;
@@ -1106,6 +1137,7 @@ begin
   FFiles := TEditorFiles.Create(TEditorFile);
   FSession := TEditorSession.Create;
   Extenstion := 'mne-project';
+  Perspectives.Add(FInternalPerspective);
 end;
 
 destructor TEditorEngine.Destroy;
@@ -1123,7 +1155,8 @@ begin
   FreeAndNil(FMessagesList);
   FOnChangedState := nil;
   FOnChoosePerspective := nil;
-  FreeAndNil(FInternalPerspective);
+  FInternalPerspective := nil;
+//  FreeAndNil(FInternalPerspective);
   FreeAndNil(FForms);
   inherited;
 end;
@@ -1217,13 +1250,11 @@ begin
     Result := '';
 end;
 
-function TEditorEngine.ChoosePerspective: TEditorPerspective;
+function TEditorEngine.ChoosePerspective(var vPerspective: TEditorPerspective): Boolean;
 begin
-  Result := nil;
+  Result := False;
   if Assigned(FOnChoosePerspective) then
-    FOnChoosePerspective(Result);
-  if Result = nil then
-    Result := TEditorPerspective.Create;
+    FOnChoosePerspective(Result, vPerspective);
 end;
 
 procedure TEditorEngine.DoReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
@@ -1341,7 +1372,7 @@ begin
     end;
     Project := aProject;
     Engine.ProcessRecentProject(FileName);
-    Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProjectLoaded]);
+    Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
   finally
     Engine.EndUpdate;
   end;
@@ -1620,6 +1651,7 @@ var
   i: Integer;
 begin
   Options.Load(Workspace + 'mne-options.xml');
+  SetDefaultPerspective(Options.DefaultPerspective);
   for i := 0 to Perspectives.Count - 1 do
   begin
     if Perspectives[i].OSDepended then
@@ -1687,7 +1719,7 @@ end;
 procedure TEditorEngine.SetDefaultPerspective(vName: string);
 begin
   FDefaultPerspective := Perspectives.Find(vName);
-  if FDefaultPerspective <> nil then
+  if FDefaultPerspective = nil then
     FDefaultPerspective := FInternalPerspective;
 end;
 
@@ -1744,6 +1776,15 @@ end;
 function TEditorEngine.GetWorkSpace: string;
 begin
   Result := IncludeTrailingPathDelimiter(FWorkSpace);
+end;
+
+procedure TEditorEngine.SetDefaultPerspective(AValue: TEditorPerspective);
+begin
+  if FDefaultPerspective =AValue then exit;
+  FDefaultPerspective :=AValue;
+  if FDefaultPerspective <> nil then
+    Options.DefaultPerspective := FDefaultPerspective.Name;
+  Engine.UpdateState([ecsChanged, ecsProject]);
 end;
 
 { TEditorFiles }
@@ -2460,8 +2501,9 @@ begin
     FPerspective := nil;
     if FPerspectiveName <> '' then
       FPerspective := Engine.Perspectives.Find(PerspectiveName);
-    if FPerspective <> nil then
+    if FPerspective = nil then
       FPerspective := Engine.DefaultPerspective;
+    Engine.UpdateState([ecsChanged, ecsProject]);
   end;
 end;
 
