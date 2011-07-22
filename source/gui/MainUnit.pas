@@ -47,6 +47,10 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    MenuItem10: TMenuItem;
+    MenuItem11: TMenuItem;
+    MenuItem12: TMenuItem;
+    RefreshFilesAct: TAction;
     MenuItem6: TMenuItem;
     MenuItem7: TMenuItem;
     MenuItem8: TMenuItem;
@@ -320,6 +324,7 @@ type
     procedure CloseActExecute(Sender: TObject);
     procedure FileListDblClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
+    procedure RefreshFilesActExecute(Sender: TObject);
     procedure RunToCursor1Click(Sender: TObject);
     procedure SaveActExecute(Sender: TObject);
     procedure SaveAllActExecute(Sender: TObject);
@@ -437,14 +442,17 @@ type
     procedure UpdateFileHeaderPanel;
     procedure EditorChangeState(State: TEditorChangeState);
     procedure ChoosePerspective(var vPerspective: TEditorPerspective);
+
     procedure EngineChanged;
     procedure UpdateWatches;
     procedure EngineDebug;
     procedure EngineRefresh;
     procedure EngineEdited;
     procedure EngineState;
-    procedure EngineProjectLoaded;
+    procedure ProjectLoaded;
     procedure UpdateFolder;
+    procedure UpdateProject;
+
     procedure SetFolder(const Value: string);
     procedure ReopenClick(Sender: TObject);
     procedure ReopenProjectClick(Sender: TObject);
@@ -454,7 +462,6 @@ type
     procedure DeleteWatch(s: string);
     procedure EnumRecentFile;
     procedure EnumRecentProjects;
-    procedure UpdateProject;
     function GetCurrentColorText: string;
     function GetFolder: string;
     procedure DeleteCurrentWatch;
@@ -527,6 +534,7 @@ begin
   begin
     Engine.LoadOptions;
   end;
+  ShowFolderFiles := Engine.Options.ShowFolderFiles;
   FoldersAct.Checked := Engine.Options.ShowFolder;
   MessagesAct.Checked := Engine.Options.ShowMessages;
   OutputAct.Checked := Engine.Options.ShowOutput;
@@ -785,6 +793,11 @@ begin
     end;
 end;
 
+procedure TMainForm.RefreshFilesActExecute(Sender: TObject);
+begin
+  UpdateFolder;
+end;
+
 procedure TMainForm.RunToCursor1Click(Sender: TObject);
 begin
 
@@ -833,6 +846,7 @@ begin
   if FRunProject <> nil then
     FRunProject.Terminate;
   Engine.OnChangedState := nil;
+  Engine.Shutdown;
   //HtmlHelp(Application.Handle, nil, HH_CLOSE_ALL, 0);
 end;
 
@@ -1019,12 +1033,17 @@ function TMainForm.GetWatchByMouse(p: TPoint; var v, s, t: string): boolean;
 var
   l: variant;
 begin
-  if not Engine.Files.Current.SynEdit.SelAvail then
-    v := Trim(Engine.Files.Current.SynEdit.GetWordAtRowCol(Engine.Files.Current.SynEdit.PixelsToRowColumn(p)))
+  if Engine.Perspective.Debug <> nil then
+  begin
+    if not Engine.Files.Current.SynEdit.SelAvail then
+      v := Trim(Engine.Files.Current.SynEdit.GetWordAtRowCol(Engine.Files.Current.SynEdit.PixelsToRowColumn(p)))
+    else
+      v := Engine.Files.Current.SynEdit.SelText;
+    Result := Engine.Perspective.Debug.Watches.GetValue(v, l, t) and (v <> '');
+    s := l;
+  end
   else
-    v := Engine.Files.Current.SynEdit.SelText;
-  Result := Engine.Perspective.Debug.Watches.GetValue(v, l, t) and (v <> '');
-  s := l;
+    Result := False;
 end;
 
 procedure TMainForm.EnumRecentProjects;
@@ -1165,6 +1184,8 @@ begin
   AddFileToProjectAct.Enabled := b;
   CloseProjectAct.Enabled := b;
   ProjectOpenFolderAct.Enabled := b;
+  //SCMMnu.Visible := Engine.SCM <> nil;
+  DebugMnu.Visible := Engine.Perspective.Debug <> nil;
 end;
 
 procedure TMainForm.SaveAsProjectActExecute(Sender: TObject);
@@ -1287,30 +1308,39 @@ end;
 procedure TMainForm.UpdateFolder;
 var
   r: integer;
+  All: Boolean;
   SearchRec: TSearchRec;
   aItem: TListItem;
   AExtensions: TStringList;
 
   function MatchExtension(vExtension: string): boolean;
   begin
-    if LeftStr(vExtension, 1) = '.' then //that correct if some one added dot to the first char of extension
-      vExtension := Copy(vExtension, 2, MaxInt);
-    Result := AExtensions.IndexOf(vExtension) >= 0;
+    if not All then
+    begin
+      if LeftStr(vExtension, 1) = '.' then //that correct if some one added dot to the first char of extension
+        vExtension := Copy(vExtension, 2, MaxInt);
+      Result := AExtensions.IndexOf(vExtension) >= 0;
+    end
+    else
+      Result := True;
   end;
-
+var
+  i:Integer;
 begin
   FileList.Items.BeginUpdate;
   try
+    FileList.Clear;
+
+    All := False;
     AExtensions := TStringList.Create;
     try
       case ShowFolderFiles of
-        //Engine.Session.Project.Perspective.
-        sffRelated: Engine.Groups.EnumExtensions(AExtensions);
+        sffRelated: Engine.Perspective.EnumExtensions(AExtensions);
         sffKnown: Engine.Groups.EnumExtensions(AExtensions);
-        sffAll: AExtensions.Add('*');
+        sffAll: All := True;
       end;
 
-      FileList.Clear;
+      //Folders
       if (Folder <> '') and DirectoryExists(Folder) then
       begin
         r := FindFirst(Folder + '*.*', faAnyFile or faDirectory, SearchRec);
@@ -1330,10 +1360,12 @@ begin
         end;
         FindClose(SearchRec);
 
+        //Files
         r := FindFirst(Folder + '*.*', faAnyFile, SearchRec);
         while r = 0 do
         begin
-          if (SearchRec.Name <> '.') and (SearchRec.Name <> '..') and (not SameText(SearchRec.Name, '.svn')) then
+          //if (SearchRec.Name <> '.') and (SearchRec.Name <> '..') then
+          if (SearchRec.Attr and faDirectory) = 0 then
           begin
             if MatchExtension(ExtractFileExt(SearchRec.Name)) then
             begin
@@ -1381,7 +1413,7 @@ begin
   if ecsEdit in State then
     EngineEdited;
   if ecsProjectLoaded in State then
-    EngineProjectLoaded;
+    ProjectLoaded;
   if ecsState in State then
     EngineState;
 end;
@@ -1399,7 +1431,7 @@ begin
   ShowSelectPerspective(aName);
 end;
 
-procedure TMainForm.EngineProjectLoaded;
+procedure TMainForm.ProjectLoaded;
 begin
   if (Engine.Session.IsOpened) and (Engine.Session.Project.RootDir <> '') then
     Folder := Engine.Session.Project.RootDir;
@@ -1567,35 +1599,35 @@ end;
 
 procedure TMainForm.SCMCommitActExecute(Sender: TObject);
 begin
-  Engine.Perspective.SCM.CommitDirectory(Folder);
+  Engine.SCM.CommitDirectory(Folder);
 end;
 
 procedure TMainForm.SCMDiffFileActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
-    Engine.Perspective.SCM.DiffFile(Engine.Files.Current.Name);
+    Engine.SCM.DiffFile(Engine.Files.Current.Name);
 end;
 
 procedure TMainForm.SCMCommitFileActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
-    Engine.Perspective.SCM.CommitFile(Engine.Files.Current.Name);
+    Engine.SCM.CommitFile(Engine.Files.Current.Name);
 end;
 
 procedure TMainForm.SCMUpdateFileActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
-    Engine.Perspective.SCM.UpdateFile(Engine.Files.Current.Name);
+    Engine.SCM.UpdateFile(Engine.Files.Current.Name);
 end;
 
 procedure TMainForm.SCMUpdateActExecute(Sender: TObject);
 begin
-  Engine.Perspective.SCM.UpdateDirectory(Folder);
+  Engine.SCM.UpdateDirectory(Folder);
 end;
 
 procedure TMainForm.SCMRevertActExecute(Sender: TObject);
 begin
-  Engine.Perspective.SCM.RevertDirectory(Folder);
+  Engine.SCM.RevertDirectory(Folder);
 end;
 
 procedure TMainForm.DBGStopServerActUpdate(Sender: TObject);
@@ -1700,7 +1732,7 @@ end;
 
 procedure TMainForm.UpdateFileHeaderPanel;
 begin
-  if (Engine.Files.Current <> nil) and (Engine.Files.Current.SynEdit = Engine.Perspective.Debug.ExecutedEdit) then
+  if (Engine.Files.Current <> nil) and (Engine.Perspective.Debug <> nil) and (Engine.Perspective.Debug.ExecutedEdit = Engine.Files.Current.SynEdit) then
     FileHeaderPanel.Color := $00C6C6EC
   else
     FileHeaderPanel.Color := $00EEE0D7;
@@ -2168,7 +2200,7 @@ begin
       //      aDialog.InitialDir := Engine.BrowseFolder;
       if aDialog.Execute then
       begin
-        Engine.Perspective.SCM.DiffToFile(aDialog.FileName, Engine.Files.Current.Name);
+        Engine.SCM.DiffToFile(aDialog.FileName, Engine.Files.Current.Name);
       end;
       Engine.Files.CheckChanged;
     finally

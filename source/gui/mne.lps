@@ -11,7 +11,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="101"/>
         <CursorPos X="79" Y="122"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit0>
       <Unit1>
         <Filename Value="MainUnit.pas"/>
@@ -23,11 +23,14 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="181"/>
-        <CursorPos X="14" Y="208"/>
-        <UsageCount Value="69"/>
+        <TopLine Value="1592"/>
+        <CursorPos X="15" Y="1608"/>
+        <UsageCount Value="73"/>
+        <Bookmarks Count="2">
+          <Item0 X="1" Y="1438" ID="0"/>
+          <Item1 X="46" Y="1338" ID="1"/>
+        </Bookmarks>
         <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="..\editor\SearchForms.pas"/>
@@ -39,7 +42,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\editor\EditorOptions.pas"/>
@@ -51,7 +54,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit3>
       <Unit4>
         <Filename Value="..\editor\EditorProfiles.pas"/>
@@ -60,7 +63,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="75" Y="6"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\editor\EditorEngine.pas"/>
@@ -68,12 +71,11 @@
         <UnitName Value="EditorEngine"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="2625"/>
-        <CursorPos X="29" Y="2640"/>
-        <UsageCount Value="69"/>
-        <Bookmarks Count="2">
+        <TopLine Value="1200"/>
+        <CursorPos X="17" Y="1202"/>
+        <UsageCount Value="73"/>
+        <Bookmarks Count="1">
           <Item0 X="1" Y="1" ID="3"/>
-          <Item1 X="3" Y="537" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit5>
@@ -87,7 +89,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="18"/>
         <CursorPos X="15" Y="34"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit6>
       <Unit7>
         <Filename Value="AboutForms.pas"/>
@@ -99,7 +101,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="25"/>
         <CursorPos X="1" Y="41"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit7>
       <Unit8>
         <Filename Value="..\editor\GotoForms.pas"/>
@@ -108,7 +110,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="GotoForms"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit8>
       <Unit9>
         <Filename Value="..\lib\Match.pas"/>
@@ -117,7 +119,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="4"/>
         <CursorPos X="45" Y="24"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit9>
       <Unit10>
         <Filename Value="..\lib\dbgpServers.pas"/>
@@ -126,7 +128,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="7"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit10>
       <Unit11>
         <Filename Value="..\editor\SearchInFilesForms.pas"/>
@@ -138,7 +140,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="33"/>
         <CursorPos X="74" Y="45"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit11>
       <Unit12>
         <Filename Value="..\editor\SearchProgressForms.pas"/>
@@ -147,7 +149,7 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SearchProgressForms"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit12>
       <Unit13>
         <Filename Value="mneBreakpoints.pas"/>
@@ -160,7 +162,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="74"/>
         <CursorPos X="29" Y="100"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
         <Loaded Value="True"/>
       </Unit13>
       <Unit14>
@@ -171,7 +173,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="13"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
         <Bookmarks Count="1">
           <Item0 X="15" Y="167" ID="2"/>
         </Bookmarks>
@@ -181,7 +183,7 @@
         <Filename Value="mneConsts.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="mneConsts"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit15>
       <Unit16>
         <Filename Value="mnePHPIniForm.pas"/>
@@ -193,7 +195,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="155"/>
         <CursorPos X="8" Y="160"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit16>
       <Unit17>
         <Filename Value="mneProjectForms.pas"/>
@@ -205,7 +207,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit17>
       <Unit18>
         <Filename Value="mneProjectOptions.pas"/>
@@ -217,7 +219,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="96"/>
         <CursorPos X="32" Y="111"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit18>
       <Unit19>
         <Filename Value="mneSettings.pas"/>
@@ -229,7 +231,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="28" Y="7"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit19>
       <Unit20>
         <Filename Value="mneSetups.pas"/>
@@ -241,13 +243,18 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="23" Y="18"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit20>
       <Unit21>
         <Filename Value="..\editor\EditorDebugger.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorDebugger"/>
-        <UsageCount Value="69"/>
+        <EditorIndex Value="7"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="158"/>
+        <CursorPos X="1" Y="174"/>
+        <UsageCount Value="73"/>
+        <Loaded Value="True"/>
       </Unit21>
       <Unit22>
         <Filename Value="..\addons\mneAssociateForm.pas"/>
@@ -259,7 +266,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="35"/>
         <CursorPos X="2" Y="51"/>
-        <UsageCount Value="69"/>
+        <UsageCount Value="73"/>
       </Unit22>
       <Unit23>
         <Filename Value="..\editor\SelectPerspective.pas"/>
@@ -271,7 +278,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="67"/>
         <CursorPos X="44" Y="83"/>
-        <UsageCount Value="64"/>
+        <UsageCount Value="68"/>
       </Unit23>
       <Unit24>
         <Filename Value="mnePHPConfigForms.pas"/>
@@ -283,9 +290,8 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="44" Y="1"/>
-        <UsageCount Value="53"/>
+        <UsageCount Value="57"/>
         <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit24>
       <Unit25>
         <Filename Value="..\lib\hh_funcs.pas"/>
@@ -336,11 +342,11 @@
       <Unit32>
         <Filename Value="P:\programs\fpc\2.4\src\packages\fcl-base\src\contnrs.pp"/>
         <UnitName Value="contnrs"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="66"/>
         <CursorPos X="14" Y="82"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="16"/>
         <Loaded Value="True"/>
       </Unit32>
       <Unit33>
@@ -385,7 +391,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="443"/>
         <CursorPos X="25" Y="463"/>
-        <UsageCount Value="28"/>
+        <UsageCount Value="31"/>
         <Loaded Value="True"/>
       </Unit37>
       <Unit38>
@@ -395,7 +401,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="54"/>
         <CursorPos X="30" Y="61"/>
-        <UsageCount Value="26"/>
+        <UsageCount Value="29"/>
         <Loaded Value="True"/>
       </Unit38>
       <Unit39>
@@ -491,7 +497,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="29"/>
         <CursorPos X="17" Y="45"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit50>
       <Unit51>
@@ -582,123 +588,123 @@
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="535" Column="3" TopLine="519"/>
+        <Caret Line="734" Column="1" TopLine="717"/>
       </Position1>
       <Position2>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1021" Column="1" TopLine="1005"/>
+        <Caret Line="655" Column="1" TopLine="639"/>
       </Position2>
       <Position3>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="789" Column="3" TopLine="781"/>
+        <Caret Line="657" Column="1" TopLine="639"/>
       </Position3>
       <Position4>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1031" Column="15" TopLine="1015"/>
+        <Caret Line="659" Column="1" TopLine="639"/>
       </Position4>
       <Position5>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="798" Column="22" TopLine="794"/>
+        <Caret Line="660" Column="1" TopLine="639"/>
       </Position5>
       <Position6>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1138" Column="1" TopLine="1122"/>
+        <Caret Line="2557" Column="1" TopLine="2541"/>
       </Position6>
       <Position7>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="2084" Column="25" TopLine="2068"/>
+        <Caret Line="2559" Column="1" TopLine="2541"/>
       </Position7>
       <Position8>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="2086" Column="26" TopLine="2070"/>
+        <Caret Line="2539" Column="1" TopLine="2523"/>
       </Position8>
       <Position9>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="2102" Column="23" TopLine="2086"/>
+        <Caret Line="2540" Column="1" TopLine="2523"/>
       </Position9>
       <Position10>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="2104" Column="25" TopLine="2088"/>
+        <Caret Line="2471" Column="1" TopLine="2455"/>
       </Position10>
       <Position11>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="2106" Column="26" TopLine="2090"/>
+        <Caret Line="2472" Column="1" TopLine="2461"/>
       </Position11>
       <Position12>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="2623" Column="22" TopLine="2607"/>
+        <Caret Line="2473" Column="1" TopLine="2461"/>
       </Position12>
       <Position13>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="2625" Column="26" TopLine="2609"/>
+        <Caret Line="2474" Column="1" TopLine="2455"/>
       </Position13>
       <Position14>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="614" Column="27" TopLine="598"/>
+        <Caret Line="2464" Column="1" TopLine="2455"/>
       </Position14>
       <Position15>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="105" Column="3" TopLine="92"/>
+        <Caret Line="2465" Column="1" TopLine="2455"/>
       </Position15>
       <Position16>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="784" Column="1" TopLine="781"/>
+        <Caret Line="2466" Column="1" TopLine="2455"/>
       </Position16>
       <Position17>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="2637" Column="26" TopLine="2621"/>
+        <Caret Line="2456" Column="1" TopLine="2450"/>
       </Position17>
       <Position18>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="2638" Column="42" TopLine="2622"/>
+        <Caret Line="2457" Column="1" TopLine="2450"/>
       </Position18>
       <Position19>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="2641" Column="17" TopLine="2625"/>
+        <Caret Line="2459" Column="7" TopLine="2450"/>
       </Position19>
       <Position20>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="2730" Column="29" TopLine="2704"/>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="1340" Column="1" TopLine="1309"/>
       </Position20>
       <Position21>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="2640" Column="12" TopLine="2625"/>
+        <Caret Line="2727" Column="3" TopLine="2717"/>
       </Position21>
       <Position22>
-        <Filename Value="mneBreakpoints.pas"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
         <Caret Line="1" Column="1" TopLine="1"/>
       </Position22>
       <Position23>
-        <Filename Value="mneBreakpoints.pas"/>
-        <Caret Line="52" Column="10" TopLine="37"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="16" Column="63" TopLine="1"/>
       </Position23>
       <Position24>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="841" Column="18" TopLine="839"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="96" Column="1" TopLine="70"/>
       </Position24>
       <Position25>
         <Filename Value="MainUnit.pas"/>
-        <Caret Line="913" Column="13" TopLine="898"/>
+        <Caret Line="1340" Column="1" TopLine="1309"/>
       </Position25>
       <Position26>
         <Filename Value="MainUnit.pas"/>
-        <Caret Line="1857" Column="33" TopLine="1831"/>
+        <Caret Line="1602" Column="10" TopLine="1586"/>
       </Position26>
       <Position27>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1570" Column="26" TopLine="1554"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="613" Column="35" TopLine="596"/>
       </Position27>
       <Position28>
         <Filename Value="MainUnit.pas"/>
-        <Caret Line="2161" Column="41" TopLine="2145"/>
+        <Caret Line="1602" Column="10" TopLine="1586"/>
       </Position28>
       <Position29>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1694" Column="39" TopLine="1676"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="613" Column="35" TopLine="597"/>
       </Position29>
       <Position30>
         <Filename Value="MainUnit.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="1602" Column="10" TopLine="1586"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>

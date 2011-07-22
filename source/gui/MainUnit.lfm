@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 368
+  Left = 330
   Height = 518
-  Top = 148
+  Top = 197
   Width = 876
   AllowDropFiles = True
   Caption = 'Mini Edit'
@@ -1025,6 +1025,9 @@ object MainForm: TMainForm
       object MenuItem7: TMenuItem
         Action = ShowAllAct
       end
+      object MenuItem10: TMenuItem
+        Action = RefreshFilesAct
+      end
       object N16: TMenuItem
         Caption = '-'
       end
@@ -1740,6 +1743,11 @@ object MainForm: TMainForm
       GroupIndex = 5
       OnExecute = ShowAllActExecute
     end
+    object RefreshFilesAct: TAction
+      Category = 'Files'
+      Caption = 'Refresh'
+      OnExecute = RefreshFilesActExecute
+    end
   end
   object FolderMenu: TPopupMenu
     left = 84
@@ -1775,6 +1783,12 @@ object MainForm: TMainForm
     end
     object MenuItem4: TMenuItem
       Action = ShowAllAct
+    end
+    object MenuItem11: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem12: TMenuItem
+      Action = RefreshFilesAct
     end
   end
   object FileModeMenu: TPopupMenu
