@@ -23,10 +23,11 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  LMessages, lCLType, LCLIntf, LCLProc, IAddons, EditorDebugger,
+  LMessages, lCLType, LCLIntf, LCLProc, EditorDebugger,
   Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus, ToolWin,
   Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses, StdActns,
-  PairSplitter, SynEditHighlighter, SynEdit,
+  PairSplitter, SynEditHighlighter, SynEdit, IAddons,
+  TSVN_SCM,
   ntvTabSets, mneRun, Registry, SynEditPlugins,
   //Addons
   {$ifdef Windows}

@@ -13,7 +13,7 @@ uses
   Messages, SysUtils, Forms, StrUtils, Dialogs, Variants, Classes, Controls, Graphics, Contnrs, Types,
   IniFiles, EditorOptions, EditorProfiles, SynEditMarks, SynCompletion, SynEditTypes,
   SynEditMiscClasses, SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, SynEdit,
-  SynEditTextTrimmer, SynTextDrawer, EditorDebugger, EditorSCM, IAddons, SynGutterBase,
+  SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase,
   dbgpServers, PHP_xDebug,
   mnXMLRttiProfile, mnXMLUtils, mnUtils, LCLType;
 
@@ -81,6 +81,21 @@ type
   public
   end;
 
+  { TEditorElement }
+
+  TEditorElement = class(TmnXMLProfile)
+  private
+  protected
+    FName: string;
+    FTitle: string;
+    FDescription: string;
+  public
+    constructor Create; virtual;
+    property Title: string read FTitle;
+    property Name: string read FName;
+    property Description: string read FDescription;
+  end;
+
   {
     TEditorPerspective
     Collect file groups and have special properties
@@ -89,27 +104,22 @@ type
 
   { TEditorPerspective }
 
-  TEditorPerspective = class(TmnXMLProfile)
+  TEditorPerspective = class(TEditorElement)
   private
     FGroups: TFileGroups;
     FDebug: TEditorDebugger;
   protected
     FOSDepended: Boolean;
     FImageIndex: integer;
-    FName: string;
-    FTitle: string;
-    FDescription: string;
     FDefaultFileGroup: string;
     procedure AddGroup(vName: string);
+    function CreateDebugger: TEditorDebugger; virtual;
   public
-    constructor Create; virtual;
+    constructor Create; override;
     destructor Destroy; override;
     procedure EnumExtensions(vExtensions: TStringList); virtual;
     function CreateEditorFile(Group: string): TEditorFile; virtual;
     function CreateEditorProject: TEditorProject; virtual;
-    property Title: string read FTitle;
-    property Description: string read FDescription;
-    property Name: string read FName;
     property ImageIndex: integer read FImageIndex;
     //OSDepended: When save to file, the filename changed depend on the os system name
     property OSDepended: Boolean read FOSDepended;
@@ -125,10 +135,27 @@ type
   {
     used only if no perspective defined
   }
+
   TDefaultPerspective = class(TEditorPerspective)
   public
     procedure EnumExtensions(vExtensions: TStringList); override;
   end;
+
+  TEditorSCM = class(TEditorElement)
+  private
+  protected
+  public
+    procedure CommitDirectory(Directory: string); virtual; abstract;
+    procedure CommitFile(FileName: string); virtual; abstract;
+    procedure UpdateDirectory(Directory: string); virtual; abstract;
+    procedure UpdateFile(FileName: string); virtual; abstract;
+    procedure RevertDirectory(Directory: string); virtual; abstract;
+    procedure RevertFile(FileName: string); virtual; abstract;
+    procedure DiffFile(FileName: string); virtual; abstract;
+    procedure DiffToFile(FileName, ToFileName: string); virtual; abstract;
+  end;
+
+  TEditorSCMClass = class of TEditorSCM;
 
   { TEditorProject }
 
@@ -451,6 +478,17 @@ type
     property Items[Index: integer]: TEditorPerspective read GetItem; default;
   end;
 
+  { TSourceManagements }
+
+  TSourceManagements = class(TObjectList)
+  private
+    function GetItem(Index: integer): TEditorSCM;
+  public
+    function Find(vName: string): TEditorSCM;
+    procedure Add(vEditorSCM: TEditorSCMClass);
+    property Items[Index: Integer]: TEditorSCM read GetItem; default;
+  end;
+
   { TEditorFormItem }
 
   TEditorFormItem = class(TObject)
@@ -539,6 +577,7 @@ type
     FForms: TEditorFormList;
     FOnChoosePerspective: TOnChoosePerspective;
     FPerspectives: TPerspectives;
+    FSourceManagements: TSourceManagements;
     FUpdateState: TEditorChangeState;
     FUpdateCount: integer;
     FFiles: TEditorFiles;
@@ -598,6 +637,7 @@ type
     property Categories: TFileCategories read FCategories;
     property Groups: TFileGroups read FGroups;
     property Perspectives: TPerspectives read FPerspectives;
+    property SourceManagements: TSourceManagements read FSourceManagements;
     property Forms: TEditorFormList read FForms;
     //
     property Files: TEditorFiles read FFiles;
@@ -726,6 +766,44 @@ begin
   end;
 end;
 
+{ TSourceManagements }
+
+function TSourceManagements.GetItem(Index: integer): TEditorSCM;
+begin
+  Result := inherited Items[Index] as TEditorSCM;
+end;
+
+function TSourceManagements.Find(vName: string): TEditorSCM;
+var
+  i: integer;
+begin
+  Result := nil;
+  if vName <> '' then
+    for i := 0 to Count - 1 do
+    begin
+      if SameText(Items[i].Name, vName) then
+      begin
+        Result := Items[i] as TEditorSCM;
+        break;
+      end;
+    end;
+end;
+
+procedure TSourceManagements.Add(vEditorSCM: TEditorSCMClass);
+var
+  aItem: TEditorSCM;
+begin
+  aItem := vEditorSCM.Create;
+  inherited Add(aItem);
+end;
+
+{ TEditorElement }
+
+constructor TEditorElement.Create;
+begin
+  inherited Create;
+end;
+
 { TDefaultPerspective }
 
 procedure TDefaultPerspective.EnumExtensions(vExtensions: TStringList);
@@ -776,6 +854,11 @@ begin
   if G = nil then
     raise Exception.Create(vName + ' file group not found');
   Groups.Add(G);
+end;
+
+function TEditorPerspective.CreateDebugger: TEditorDebugger;
+begin
+  Result := nil;
 end;
 
 constructor TEditorPerspective.Create;
@@ -1018,6 +1101,7 @@ begin
   FCategories := TFileCategories.Create(True);
   FGroups := TFileGroups.Create(True);
   FPerspectives := TPerspectives.Create(True);
+  FSourceManagements := TSourceManagements.Create(True);
   FSearchEngine := TSynEditSearch.Create;
   FFiles := TEditorFiles.Create(TEditorFile);
   FSession := TEditorSession.Create;

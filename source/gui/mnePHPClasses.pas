@@ -18,6 +18,7 @@ uses
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   SynHighlighterCSS, SynHighlighterSQL, SynHighlighterXML, SynHighlighterApache,
   SynHighlighterJScript, SynHighlighterXHTML, SynHighlighterPas,
+  EditorDebugger, PHP_xDebug,
   mneClasses;
 
 type
@@ -88,6 +89,8 @@ type
     FHTMLHelpFile: string;
     FPHPHelpFile: string;
     FPHPPath: string;
+  protected
+    function CreateDebugger: TEditorDebugger; override;
   public
     constructor Create; override;
     property PHPPath: string read FPHPPath write FPHPPath;
@@ -101,6 +104,11 @@ uses
   IniFiles, mnXMLStreams, mnUtils;
 
 { TPHPPerspective }
+
+function TPHPPerspective.CreateDebugger: TEditorDebugger;
+begin
+  Result := TPHP_xDebug.Create;
+end;
 
 constructor TPHPPerspective.Create;
 begin
