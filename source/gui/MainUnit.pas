@@ -47,10 +47,21 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    MenuItem6: TMenuItem;
+    MenuItem7: TMenuItem;
+    MenuItem8: TMenuItem;
+    MenuItem9: TMenuItem;
+    ShowAllAct: TAction;
+    ShowKnownAct: TAction;
+    ShowRelatedAct: TAction;
     ApplicationProperties: TApplicationProperties;
     MainMenu: TMainMenu;
     file1: TMenuItem;
     FileSet: TntvTabSet;
+    MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
+    MenuItem4: TMenuItem;
+    MenuItem5: TMenuItem;
     MessageList: TListView;
     MessagesTabs: TntvPageControl;
     SearchList: TListView;
@@ -332,6 +343,9 @@ type
     procedure CloseProjectActExecute(Sender: TObject);
     procedure OpenFolderActExecute(Sender: TObject);
     procedure MessagesActExecute(Sender: TObject);
+    procedure ShowAllActExecute(Sender: TObject);
+    procedure ShowRelatedActExecute(Sender: TObject);
+    procedure ShowKnownActExecute(Sender: TObject);
     procedure UnixMnuClick(Sender: TObject);
     procedure WindowsMnuClick(Sender: TObject);
     procedure MacMnuClick(Sender: TObject);
@@ -412,12 +426,14 @@ type
   private
     //ApplicationEvents: TApplicationEvents;
     FMessages: TEditorMessages;
+    FShowFolderFiles: TShowFolderFiles;
     //    OnActivate = ApplicationEventsActivate
     //    OnHint = ApplicationEventsHint
     procedure ApplicationEventsActivate(Sender: TObject);
     procedure ApplicationEventsHint(Sender: TObject);
 
     function CanOpenInclude: boolean;
+    procedure SetShowFolderFiles(AValue: TShowFolderFiles);
     procedure UpdateFileHeaderPanel;
     procedure EditorChangeState(State: TEditorChangeState);
     procedure ChoosePerspective(var vPerspective: TEditorPerspective);
@@ -462,6 +478,7 @@ type
     procedure ShowMessagesList;
     procedure ShowWatchesList;
     procedure LoadAddons;
+    property ShowFolderFiles: TShowFolderFiles read FShowFolderFiles write SetShowFolderFiles;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -490,7 +507,7 @@ uses
 constructor TMainForm.Create(AOwner: TComponent);
 var
   aIniFile: TIniFile;
-  aEngineFile: string;
+  aEngineFile, lFilePath: string;
   aWorkspace: string;
 begin
   inherited;
@@ -525,10 +542,14 @@ begin
     WindowState := wsMaximized;
 {  else
     BoundsRect := Engine.Options.BoundRect;}
+
+  // Open any files passed in the command line
   if (ParamCount > 0) and not (SameText(ParamStr(1), '/dde')) then
   begin
-    Engine.Files.OpenFile(DequoteStr(ParamStr(1)));
-    Folder := ExtractFilePath(DequoteStr(ParamStr(1)));
+    lFilePath := DequoteStr(ParamStr(1));
+    Folder := ExtractFilePath(lFilePath);
+    // The filename is expanded, if necessary, in EditorEngine.TEditorFiles.InternalOpenFile
+    Engine.Files.OpenFile(lFilePath);
   end;
   if Engine.Options.AutoStartDebugServer then
     DBGStartServerAct.Execute;
@@ -798,6 +819,7 @@ end;
 procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   Engine.Options.ShowFolder := FoldersAct.Checked;
+  Engine.Options.ShowFolderFiles := ShowFolderFiles;
   Engine.Options.ShowMessages := MessagesAct.Checked;
   Engine.Options.ShowOutput := OutputAct.Checked;
 
@@ -1055,6 +1077,21 @@ begin
   UpdateMessagesPnl;
 end;
 
+procedure TMainForm.ShowAllActExecute(Sender: TObject);
+begin
+  ShowFolderFiles := sffAll;
+end;
+
+procedure TMainForm.ShowRelatedActExecute(Sender: TObject);
+begin
+  ShowFolderFiles := sffRelated;
+end;
+
+procedure TMainForm.ShowKnownActExecute(Sender: TObject);
+begin
+  ShowFolderFiles := sffUnknown;
+end;
+
 procedure TMainForm.UnixMnuClick(Sender: TObject);
 begin
   Engine.Files.Current.Mode := efmUnix;
@@ -1208,6 +1245,19 @@ begin
   Result := (Engine.Files.Current <> nil) and Engine.Files.Current.CanOpenInclude;
 end;
 
+procedure TMainForm.SetShowFolderFiles(AValue: TShowFolderFiles);
+begin
+  if FShowFolderFiles =AValue then exit;
+  FShowFolderFiles :=AValue;
+  if FoldersAct.Checked then
+    UpdateFolder;
+  case FShowFolderFiles of
+    sffRelated: ShowRelatedAct.Checked := True;
+    sffUnknown: ShowKnownAct.Checked := True;
+    sffAll: ShowAllAct.Checked := True;
+  end;
+end;
+
 procedure TMainForm.OpenIncludeActUpdate(Sender: TObject);
 begin
   OpenIncludeAct.Enabled := CanOpenInclude;
@@ -1244,7 +1294,7 @@ var
 
   function FindExtension(vExtension: string): boolean;
   begin
-    if LeftStr(vExtension, 1) = '.' then
+    if LeftStr(vExtension, 1) = '.' then //that correct if some one added dot to the first char of extension
       vExtension := Copy(vExtension, 2, MaxInt);
     Result := AExtensions.IndexOf(vExtension) >= 0;
   end;
@@ -1254,7 +1304,14 @@ begin
   try
     AExtensions := TStringList.Create;
     try
-      Engine.Groups.EnumExtensions(AExtensions);
+      case ShowFolderFiles of
+        sffRelated: Engine.Groups.EnumExtensions(AExtensions);
+        sffUnknown: Engine.Groups.EnumExtensions(AExtensions);
+        sffAll: AExtensions.Add('*');
+      end;
+      //TODO use FShowFolderFiles
+
+      //Engine.Session.Project.Perspective.
 
       FileList.Clear;
       if (Folder <> '') and DirectoryExists(Folder) then

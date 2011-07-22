@@ -11,7 +11,6 @@
       <XPManifest>
         <DpiAware Value="True"/>
       </XPManifest>
-      <Icon Value="0"/>
     </General>
     <VersionInfo>
       <Language Value=""/>
@@ -65,9 +64,7 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
-        <CommandLineParams Value="&quot;W:\work\delphi\jobs\projects\ssregister\php\web\reg.php&quot;"/>
         <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
-        <WorkingDirectory Value="W:\work\delphi\jobs\projects\ssregister\php\web"/>
         <Display Value=":1"/>
       </local>
     </RunParams>
@@ -75,22 +72,18 @@
       <Item1>
         <PackageName Value="MiniXML"/>
         <MinVersion Valid="True"/>
-        <DefaultFilename Value="..\..\..\..\..\xml\source\MiniXML.lpk" Prefer="True"/>
       </Item1>
       <Item2>
         <PackageName Value="minisockets"/>
         <MinVersion Valid="True"/>
-        <DefaultFilename Value="..\..\..\..\..\socket\source\MiniSockets.lpk" Prefer="True"/>
       </Item2>
       <Item3>
         <PackageName Value="minilib"/>
         <MinVersion Valid="True"/>
-        <DefaultFilename Value="..\..\..\..\lib\MiniLib.lpk" Prefer="True"/>
       </Item3>
       <Item4>
         <PackageName Value="MiniBaseLib"/>
         <MinVersion Valid="True"/>
-        <DefaultFilename Value="..\..\..\..\..\lib\MiniBaseLib.lpk" Prefer="True"/>
       </Item4>
       <Item5>
         <PackageName Value="FCL"/>
