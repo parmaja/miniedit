@@ -10,8 +10,6 @@ unit mneClasses;
 
 interface
 
-{$DEFINE SYN_HEREDOC}
-
 uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
   LCLintf, LCLType,

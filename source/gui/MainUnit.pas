@@ -204,22 +204,22 @@ type
     Open2: TMenuItem;
     OpenColor1: TMenuItem;
     N11: TMenuItem;
-    SVN1: TMenuItem;
-    Commit1: TMenuItem;
-    Diff1: TMenuItem;
-    CommitFIle1: TMenuItem;
-    SVNCommitAct: TAction;
-    SVNDiffFileAct: TAction;
-    SVNCommitFileAct: TAction;
-    SVNUpdateFileAct: TAction;
-    SVNRevertAct: TAction;
-    SVNUpdateAct: TAction;
-    Update1: TMenuItem;
-    UpdateFile1: TMenuItem;
-    Revert2: TMenuItem;
+    SCMMnu: TMenuItem;
+    CommitMnu: TMenuItem;
+    DiffMnu: TMenuItem;
+    CommitFileMnu: TMenuItem;
+    SCMCommitAct: TAction;
+    SCMDiffFileAct: TAction;
+    SCMCommitFileAct: TAction;
+    SCMUpdateFileAct: TAction;
+    SCMRevertAct: TAction;
+    SCMUpdateAct: TAction;
+    UpdateMnu: TMenuItem;
+    UpdateFileMnu: TMenuItem;
+    RevertMnu: TMenuItem;
     DBGStartServerAct: TAction;
     DBGStopServerAct: TAction;
-    About3: TMenuItem;
+    DebugMnu: TMenuItem;
     StartServer1: TMenuItem;
     DBGStopServerAct1: TMenuItem;
     DBGStepIntoAct: TAction;
@@ -286,8 +286,8 @@ type
     OutputPopup: TPopupMenu;
     MenuItem1: TMenuItem;
     StatePnl: TPanel;
-    SVNCompareToAct: TAction;
-    CompareTo1: TMenuItem;
+    SCMCompareToAct: TAction;
+    CompareToMnu: TMenuItem;
     SwitchFocusAct: TAction;
     SwitchFocus1: TMenuItem;
     N16: TMenuItem;
@@ -377,12 +377,12 @@ type
     procedure OpenColorActExecute(Sender: TObject);
     procedure FileModeBtnClick(Sender: TObject);
     procedure FolderBtnClick(Sender: TObject);
-    procedure SVNCommitActExecute(Sender: TObject);
-    procedure SVNDiffFileActExecute(Sender: TObject);
-    procedure SVNCommitFileActExecute(Sender: TObject);
-    procedure SVNUpdateFileActExecute(Sender: TObject);
-    procedure SVNUpdateActExecute(Sender: TObject);
-    procedure SVNRevertActExecute(Sender: TObject);
+    procedure SCMCommitActExecute(Sender: TObject);
+    procedure SCMDiffFileActExecute(Sender: TObject);
+    procedure SCMCommitFileActExecute(Sender: TObject);
+    procedure SCMUpdateFileActExecute(Sender: TObject);
+    procedure SCMUpdateActExecute(Sender: TObject);
+    procedure SCMRevertActExecute(Sender: TObject);
     procedure DBGStopServerActUpdate(Sender: TObject);
     procedure DBGStartServerActUpdate(Sender: TObject);
     procedure DBGStartServerActExecute(Sender: TObject);
@@ -414,7 +414,7 @@ type
     procedure NextMessageActExecute(Sender: TObject);
     procedure PriorMessageActExecute(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
-    procedure SVNCompareToActExecute(Sender: TObject);
+    procedure SCMCompareToActExecute(Sender: TObject);
     procedure SwitchFocusActExecute(Sender: TObject);
     procedure QuickSearchNextBtnClick(Sender: TObject);
     procedure QuickSearchPrevBtnClick(Sender: TObject);
@@ -911,9 +911,9 @@ end;
 
 procedure TMainForm.RunActExecute(Sender: TObject);
 begin
-  if Engine.Debug.IsRuning then
+  if Engine.Perspective.Debug.IsRuning then
   begin
-    Engine.Debug.Run;
+    Engine.Perspective.Debug.Run;
   end
   else
   begin
@@ -1011,7 +1011,7 @@ begin
     v := Trim(Engine.Files.Current.SynEdit.GetWordAtRowCol(Engine.Files.Current.SynEdit.CaretXY))
   else
     v := Engine.Files.Current.SynEdit.SelText;
-  Result := Engine.Debug.Watches.GetValue(v, l, t) and (v <> '');
+  Result := Engine.Perspective.Debug.Watches.GetValue(v, l, t) and (v <> '');
   s := l;
 end;
 
@@ -1023,7 +1023,7 @@ begin
     v := Trim(Engine.Files.Current.SynEdit.GetWordAtRowCol(Engine.Files.Current.SynEdit.PixelsToRowColumn(p)))
   else
     v := Engine.Files.Current.SynEdit.SelText;
-  Result := Engine.Debug.Watches.GetValue(v, l, t) and (v <> '');
+  Result := Engine.Perspective.Debug.Watches.GetValue(v, l, t) and (v <> '');
   s := l;
 end;
 
@@ -1565,94 +1565,94 @@ begin
   FolderBtn.PopupMenu.Popup(Pt.X, Pt.Y);
 end;
 
-procedure TMainForm.SVNCommitActExecute(Sender: TObject);
+procedure TMainForm.SCMCommitActExecute(Sender: TObject);
 begin
-  Engine.SCM.CommitDirectory(Folder);
+  Engine.Perspective.SCM.CommitDirectory(Folder);
 end;
 
-procedure TMainForm.SVNDiffFileActExecute(Sender: TObject);
+procedure TMainForm.SCMDiffFileActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
-    Engine.SCM.DiffFile(Engine.Files.Current.Name);
+    Engine.Perspective.SCM.DiffFile(Engine.Files.Current.Name);
 end;
 
-procedure TMainForm.SVNCommitFileActExecute(Sender: TObject);
+procedure TMainForm.SCMCommitFileActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
-    Engine.SCM.CommitFile(Engine.Files.Current.Name);
+    Engine.Perspective.SCM.CommitFile(Engine.Files.Current.Name);
 end;
 
-procedure TMainForm.SVNUpdateFileActExecute(Sender: TObject);
+procedure TMainForm.SCMUpdateFileActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
-    Engine.SCM.UpdateFile(Engine.Files.Current.Name);
+    Engine.Perspective.SCM.UpdateFile(Engine.Files.Current.Name);
 end;
 
-procedure TMainForm.SVNUpdateActExecute(Sender: TObject);
+procedure TMainForm.SCMUpdateActExecute(Sender: TObject);
 begin
-  Engine.SCM.UpdateDirectory(Folder);
+  Engine.Perspective.SCM.UpdateDirectory(Folder);
 end;
 
-procedure TMainForm.SVNRevertActExecute(Sender: TObject);
+procedure TMainForm.SCMRevertActExecute(Sender: TObject);
 begin
-  Engine.SCM.RevertDirectory(Folder);
+  Engine.Perspective.SCM.RevertDirectory(Folder);
 end;
 
 procedure TMainForm.DBGStopServerActUpdate(Sender: TObject);
 begin
-  DBGStopServerAct.Enabled := Engine.Debug.Active;
+  DBGStopServerAct.Enabled := Engine.Perspective.Debug.Active;
 end;
 
 procedure TMainForm.DBGStartServerActUpdate(Sender: TObject);
 begin
-  DBGStartServerAct.Enabled := not Engine.Debug.Active;
+  DBGStartServerAct.Enabled := not Engine.Perspective.Debug.Active;
 end;
 
 procedure TMainForm.DBGStartServerActExecute(Sender: TObject);
 begin
-  Engine.Debug.Start;
+  Engine.Perspective.Debug.Start;
 end;
 
 procedure TMainForm.DBGStopServerActExecute(Sender: TObject);
 begin
-  Engine.Debug.Stop;
+  Engine.Perspective.Debug.Stop;
 end;
 
 procedure TMainForm.DBGStepOverActExecute(Sender: TObject);
 begin
-  if Engine.Debug.IsRuning then
-    Engine.Debug.StepOver;
+  if Engine.Perspective.Debug.IsRuning then
+    Engine.Perspective.Debug.StepOver;
 end;
 
 procedure TMainForm.DBGStepIntoActExecute(Sender: TObject);
 begin
-  if Engine.Debug.IsRuning then
-    Engine.Debug.StepInto;
+  if Engine.Perspective.Debug.IsRuning then
+    Engine.Perspective.Debug.StepInto;
 end;
 
 procedure TMainForm.DBGActiveServerActUpdate(Sender: TObject);
 begin
-  DBGActiveServerAct.Checked := Engine.Debug.Active;
+  DBGActiveServerAct.Checked := Engine.Perspective.Debug.Active;
 end;
 
 procedure TMainForm.DBGActiveServerActExecute(Sender: TObject);
 begin
-  Engine.Debug.Active := not DBGActiveServerAct.Checked;
+  Engine.Perspective.Debug.Active := not DBGActiveServerAct.Checked;
 end;
 
 procedure TMainForm.DBGResetActExecute(Sender: TObject);
 begin
-  Engine.Debug.Reset;
+  Engine.Perspective.Debug.Reset;
 end;
 
 procedure TMainForm.DBGResumeActExecute(Sender: TObject);
 begin
-  Engine.Debug.Resume;
+  Engine.Perspective.Debug.Resume;
 end;
 
 procedure TMainForm.DBGStepOutActExecute(Sender: TObject);
 begin
-  Engine.Debug.StepOut;
+  Engine.Perspective.Debug.StepOut;
 end;
 
 function TMainForm.GetFolder: string;
@@ -1689,9 +1689,9 @@ end;
 
 procedure TMainForm.EngineDebug;
 begin
-  if Assigned(Engine) and (Engine.Debug <> nil) then
+  if Assigned(Engine) and (Engine.Perspective.Debug <> nil) then
   begin
-    DebugPnl.Caption := Engine.Debug.GetKey;
+    DebugPnl.Caption := Engine.Perspective.Debug.GetKey;
     UpdateFileHeaderPanel;
     UpdateWatches;
     Engine.Files.Refresh; // not safe thread
@@ -1700,7 +1700,7 @@ end;
 
 procedure TMainForm.UpdateFileHeaderPanel;
 begin
-  if (Engine.Files.Current <> nil) and (Engine.Files.Current.SynEdit = Engine.Debug.ExecutedEdit) then
+  if (Engine.Files.Current <> nil) and (Engine.Files.Current.SynEdit = Engine.Perspective.Debug.ExecutedEdit) then
     FileHeaderPanel.Color := $00C6C6EC
   else
     FileHeaderPanel.Color := $00EEE0D7;
@@ -1719,18 +1719,18 @@ begin
   WatchList.BeginUpdate;
   try
     WatchList.Clear;
-    Engine.Debug.Lock;
+    Engine.Perspective.Debug.Lock;
     try
-      for i := 0 to Engine.Debug.Watches.Count - 1 do
+      for i := 0 to Engine.Perspective.Debug.Watches.Count - 1 do
       begin
         aItem := WatchList.Items.Add;
         aItem.ImageIndex := 41;
-        aItem.Caption := Engine.Debug.Watches[i].Name;
-        aItem.SubItems.Add(Engine.Debug.Watches[i].VarType);
-        aItem.SubItems.Add(Engine.Debug.Watches[i].Value);
+        aItem.Caption := Engine.Perspective.Debug.Watches[i].Name;
+        aItem.SubItems.Add(Engine.Perspective.Debug.Watches[i].VarType);
+        aItem.SubItems.Add(Engine.Perspective.Debug.Watches[i].Value);
       end;
     finally
-      Engine.Debug.Unlock;
+      Engine.Perspective.Debug.Unlock;
     end;
   finally
     if aIndex >= 0 then
@@ -1828,7 +1828,7 @@ begin
   s := Trim(s);
   if s <> '' then
   begin
-    Engine.Debug.Watches.Add(s);
+    Engine.Perspective.Debug.Watches.Add(s);
   end;
 end;
 
@@ -1839,7 +1839,7 @@ end;
 
 procedure TMainForm.DeleteWatch(s: string);
 begin
-  Engine.Debug.Watches.Remove(s);
+  Engine.Perspective.Debug.Watches.Remove(s);
 end;
 
 procedure TMainForm.DBGToggleBreakpointExecute(Sender: TObject);
@@ -1850,11 +1850,11 @@ begin
     with Engine.Files.Current do
     begin
       aLine := SynEdit.CaretY;
-      Engine.Debug.Lock;
+      Engine.Perspective.Debug.Lock;
       try
-        Engine.Debug.Breakpoints.Toggle(Name, aLine);
+        Engine.Perspective.Debug.Breakpoints.Toggle(Name, aLine);
       finally
-        Engine.Debug.Unlock;
+        Engine.Perspective.Debug.Unlock;
       end;
       SynEdit.InvalidateLine(aLine);
     end;
@@ -2154,7 +2154,7 @@ begin
   end;
 end;
 
-procedure TMainForm.SVNCompareToActExecute(Sender: TObject);
+procedure TMainForm.SCMCompareToActExecute(Sender: TObject);
 var
   aDialog: TOpenDialog;
 begin
@@ -2168,7 +2168,7 @@ begin
       //      aDialog.InitialDir := Engine.BrowseFolder;
       if aDialog.Execute then
       begin
-        Engine.SCM.DiffToFile(aDialog.FileName, Engine.Files.Current.Name);
+        Engine.Perspective.SCM.DiffToFile(aDialog.FileName, Engine.Files.Current.Name);
       end;
       Engine.Files.CheckChanged;
     finally

@@ -10,8 +10,6 @@ unit mnePHPClasses;
 
 interface
 
-{$DEFINE SYN_HEREDOC}
-
 uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
   LCLintf, LCLType,
@@ -110,11 +108,12 @@ begin
   FTitle := 'PHP project';
   FDescription := 'PHP Files, *.php, *.inc';
   FName := 'PHP';
+  FDefaultFileGroup := 'PHP';
   FImageIndex := -1;
-  Groups.Add('PHP');
-  Groups.Add('HTML');
-  Groups.Add('CSS');
-  Groups.Add('JS');
+  AddGroup('PHP');
+  AddGroup('HTML');
+  AddGroup('CSS');
+  AddGroup('JS');
 end;
 
 { TphpFile }
@@ -470,7 +469,6 @@ initialization
     Groups.Add('CSS', 'CSS Files', 'CSS', ['css'], [fgkPublish, fgkBrowsable]);
     Groups.Add('JS', 'Java Script Files', 'JS', ['js'], [fgkPublish, fgkBrowsable]);
     Perspectives.Add(TPHPPerspective);
-    DefaultGroup := 'PHP';
   end;
 end.
 

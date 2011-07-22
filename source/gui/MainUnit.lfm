@@ -1095,11 +1095,11 @@ object MainForm: TMainForm
         OnClick = EditorOptionsActExecute
       end
     end
-    object SVN1: TMenuItem
-      Caption = 'SVN'
+    object SCMMnu: TMenuItem
+      Caption = 'SCM'
       Visible = False
-      object Commit1: TMenuItem
-        Action = SVNCommitAct
+      object CommitMnu: TMenuItem
+        Action = SCMCommitAct
         Bitmap.Data = {
           36040000424D3604000000000000360000002800000010000000100000000100
           2000000000000004000064000000640000000000000000000000FF00FF00FF00
@@ -1136,34 +1136,34 @@ object MainForm: TMainForm
           FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
           FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
         }
-        OnClick = SVNCommitActExecute
+        OnClick = SCMCommitActExecute
       end
-      object CommitFIle1: TMenuItem
-        Action = SVNCommitFileAct
-        OnClick = SVNCommitFileActExecute
+      object CommitFileMnu: TMenuItem
+        Action = SCMCommitFileAct
+        OnClick = SCMCommitFileActExecute
       end
-      object Update1: TMenuItem
-        Action = SVNUpdateAct
-        OnClick = SVNUpdateActExecute
+      object UpdateMnu: TMenuItem
+        Action = SCMUpdateAct
+        OnClick = SCMUpdateActExecute
       end
-      object UpdateFile1: TMenuItem
-        Action = SVNUpdateFileAct
-        OnClick = SVNUpdateFileActExecute
+      object UpdateFileMnu: TMenuItem
+        Action = SCMUpdateFileAct
+        OnClick = SCMUpdateFileActExecute
       end
-      object Diff1: TMenuItem
-        Action = SVNDiffFileAct
-        OnClick = SVNDiffFileActExecute
+      object DiffMnu: TMenuItem
+        Action = SCMDiffFileAct
+        OnClick = SCMDiffFileActExecute
       end
-      object Revert2: TMenuItem
-        Action = SVNRevertAct
-        OnClick = SVNRevertActExecute
+      object RevertMnu: TMenuItem
+        Action = SCMRevertAct
+        OnClick = SCMRevertActExecute
       end
-      object CompareTo1: TMenuItem
-        Action = SVNCompareToAct
-        OnClick = SVNCompareToActExecute
+      object CompareToMnu: TMenuItem
+        Action = SCMCompareToAct
+        OnClick = SCMCompareToActExecute
       end
     end
-    object About3: TMenuItem
+    object DebugMnu: TMenuItem
       Caption = 'Debug'
       object StartServer1: TMenuItem
         Action = DBGStartServerAct
@@ -1554,37 +1554,37 @@ object MainForm: TMainForm
       OnUpdate = OpenColorActUpdate
       ShortCut = 32781
     end
-    object SVNCommitAct: TAction
-      Category = 'TSVN'
+    object SCMCommitAct: TAction
+      Category = 'SCM'
       Caption = 'Commit'
       ImageIndex = 35
-      OnExecute = SVNCommitActExecute
+      OnExecute = SCMCommitActExecute
     end
-    object SVNDiffFileAct: TAction
-      Category = 'TSVN'
+    object SCMDiffFileAct: TAction
+      Category = 'SCM'
       Caption = 'Diff File'
-      OnExecute = SVNDiffFileActExecute
+      OnExecute = SCMDiffFileActExecute
       ShortCut = 24644
     end
-    object SVNCommitFileAct: TAction
-      Category = 'TSVN'
+    object SCMCommitFileAct: TAction
+      Category = 'SCM'
       Caption = 'Commit File'
-      OnExecute = SVNCommitFileActExecute
+      OnExecute = SCMCommitFileActExecute
     end
-    object SVNUpdateFileAct: TAction
-      Category = 'TSVN'
+    object SCMUpdateFileAct: TAction
+      Category = 'SCM'
       Caption = 'Update File'
-      OnExecute = SVNUpdateFileActExecute
+      OnExecute = SCMUpdateFileActExecute
     end
-    object SVNRevertAct: TAction
-      Category = 'TSVN'
+    object SCMRevertAct: TAction
+      Category = 'SCM'
       Caption = 'Revert'
-      OnExecute = SVNRevertActExecute
+      OnExecute = SCMRevertActExecute
     end
-    object SVNUpdateAct: TAction
-      Category = 'TSVN'
+    object SCMUpdateAct: TAction
+      Category = 'SCM'
       Caption = 'Update'
-      OnExecute = SVNUpdateActExecute
+      OnExecute = SCMUpdateActExecute
     end
     object DBGStartServerAct: TAction
       Category = 'Debug'
@@ -1702,10 +1702,10 @@ object MainForm: TMainForm
       OnExecute = PriorMessageActExecute
       ShortCut = 32886
     end
-    object SVNCompareToAct: TAction
-      Category = 'TSVN'
+    object SCMCompareToAct: TAction
+      Category = 'SCM'
       Caption = 'Compare To'
-      OnExecute = SVNCompareToActExecute
+      OnExecute = SCMCompareToActExecute
     end
     object SwitchFocusAct: TAction
       Category = 'View'
