@@ -16,8 +16,7 @@ uses
   Dialogs, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit,
   Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  SynHighlighterCSS, SynHighlighterSQL, SynHighlighterXML, SynHighlighterApache,
-  SynHighlighterJScript, SynHighlighterXHTML, SynHighlighterPas;
+  SynHighlighterPas, SynHighlighterLFM;
 
 type
   { TPASFile }
@@ -28,9 +27,24 @@ type
   public
   end;
 
+  TLFMFile = class(TEditorFile)
+  protected
+    //procedure NewSource; override;
+  public
+  end;
+
   { TPASFileCategory }
 
   TPASFileCategory = class(TFileCategory)
+  private
+  protected
+    function CreateHighlighter: TSynCustomHighlighter; override;
+  public
+  end;
+
+  { TLFMFileCategory }
+
+  TLFMFileCategory = class(TFileCategory)
   private
   protected
     function CreateHighlighter: TSynCustomHighlighter; override;
@@ -48,6 +62,13 @@ implementation
 
 uses
   IniFiles, mnXMLStreams, mnUtils;
+
+{ TLFMFileCategory }
+
+function TLFMFileCategory.CreateHighlighter: TSynCustomHighlighter;
+begin
+  Result := TSynLFMSyn.Create(nil);
+end;
 
 { TPascalPerspective }
 
@@ -92,9 +113,14 @@ end;
 initialization
   with Engine do
   begin
-    Categories.Add('PASCAL', TPASFile, TPASFileCategory);
-    Groups.Add('PPR', 'Pascal Project Files', 'PASCAL', ['ppr', 'lpr', 'dpr'], [fgkExecutable, fgkPublish, fgkBrowsable]);//PPR meant Pascal project
-    Groups.Add('PAS', 'Pascal Files', 'PASCAL', ['pas', 'pp', 'p'], [fgkExecutable, fgkPublish, fgkBrowsable]);
+    Categories.Add('pascal', TPASFile, TPASFileCategory);
+    Categories.Add('lfm', TLFMFile, TLFMFileCategory);
+    Groups.Add('ppr', 'Pascal Project Files', 'pascal', ['ppr'], [fgkExecutable, fgkPublish, fgkBrowsable]);//PPR meant Pascal project
+    Groups.Add('lpr', 'Lazarus Project Files', 'pascal', ['lpr'], [fgkExecutable, fgkPublish, fgkBrowsable]);//PPR meant Pascal project
+    Groups.Add('dpr', 'Delphi Project Files', 'pascal', ['dpr'], [fgkExecutable, fgkPublish, fgkBrowsable]);//PPR meant Pascal project
+    Groups.Add('pas', 'Pascal Files', 'pascal', ['pas', 'pp', 'p'], [fgkExecutable, fgkPublish, fgkBrowsable]);
+    Groups.Add('lfm', 'Lazarus Form Files', 'lfm', ['lfm'], [fgkPublish, fgkBrowsable]);
+
     Perspectives.Add(TPascalPerspective);
   end;
 end.
