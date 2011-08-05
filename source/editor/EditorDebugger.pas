@@ -269,7 +269,8 @@ begin
       ExecutedEdit.InvalidateLine(FLink.ExecutedLine);
     end;
   end;
-  Engine.UpdateState([ecsDebug, ecsShow]);
+  if Edit <> nil then
+    Engine.UpdateState([ecsDebug, ecsShow]);
 end;
 
 procedure TEditorDebugger.SetExecuted(Key: string; FileName: string; const Line: integer);
