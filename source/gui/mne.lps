@@ -121,14 +121,14 @@
         <Filename Value="..\lib\dbgpServers.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="dbgpServers"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="664"/>
-        <CursorPos X="69" Y="673"/>
+        <TopLine Value="389"/>
+        <CursorPos X="1" Y="406"/>
         <UsageCount Value="140"/>
-        <Bookmarks Count="1">
-          <Item0 X="3" Y="527" ID="0"/>
+        <Bookmarks Count="2">
+          <Item0 X="3" Y="526" ID="0"/>
+          <Item1 X="5" Y="732" ID="1"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit10>
@@ -244,10 +244,11 @@
         <Filename Value="..\editor\EditorDebugger.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorDebugger"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
+        <TopLine Value="245"/>
+        <CursorPos X="7" Y="271"/>
         <UsageCount Value="140"/>
         <Loaded Value="True"/>
       </Unit21>
@@ -280,8 +281,8 @@
         <UnitName Value="PHP_xDebug"/>
         <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="320"/>
-        <CursorPos X="18" Y="344"/>
+        <TopLine Value="242"/>
+        <CursorPos X="1" Y="258"/>
         <UsageCount Value="70"/>
         <Loaded Value="True"/>
       </Unit24>
@@ -438,7 +439,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="269"/>
         <CursorPos X="15" Y="285"/>
-        <UsageCount Value="24"/>
+        <UsageCount Value="25"/>
         <Loaded Value="True"/>
       </Unit43>
       <Unit44>
@@ -888,7 +889,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="633"/>
         <CursorPos X="3" Y="636"/>
-        <UsageCount Value="15"/>
+        <UsageCount Value="16"/>
         <Loaded Value="True"/>
       </Unit97>
       <Unit98>
@@ -898,7 +899,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="21"/>
         <CursorPos X="51" Y="33"/>
-        <UsageCount Value="15"/>
+        <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit98>
@@ -909,10 +910,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="92"/>
         <CursorPos X="1" Y="107"/>
-        <UsageCount Value="15"/>
-        <Bookmarks Count="1">
-          <Item0 X="1" Y="108" ID="1"/>
-        </Bookmarks>
+        <UsageCount Value="16"/>
         <Loaded Value="True"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit99>
@@ -923,7 +921,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="11"/>
         <Loaded Value="True"/>
       </Unit100>
       <Unit101>
@@ -943,24 +941,24 @@
     </General>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="..\..\..\..\..\socket\source\mnCommandServers.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="254" Column="37" TopLine="246"/>
       </Position1>
       <Position2>
-        <Filename Value="..\..\..\..\..\socket\source\mnCommandServers.pas"/>
-        <Caret Line="56" Column="17" TopLine="40"/>
+        <Filename Value="..\editor\PHP_xDebug.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position2>
       <Position3>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="690" Column="18" TopLine="687"/>
+        <Filename Value="..\editor\PHP_xDebug.pas"/>
+        <Caret Line="345" Column="18" TopLine="320"/>
       </Position3>
       <Position4>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="350" Column="15" TopLine="334"/>
       </Position4>
       <Position5>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="690" Column="18" TopLine="664"/>
+        <Caret Line="671" Column="27" TopLine="664"/>
       </Position5>
       <Position6>
         <Filename Value="..\lib\dbgpServers.pas"/>
@@ -968,19 +966,19 @@
       </Position6>
       <Position7>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="690" Column="17" TopLine="664"/>
+        <Caret Line="220" Column="20" TopLine="204"/>
       </Position7>
       <Position8>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="739" Column="5" TopLine="735"/>
       </Position8>
       <Position9>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="650" Column="20" TopLine="624"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position9>
       <Position10>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="690" Column="17" TopLine="664"/>
+        <Caret Line="739" Column="5" TopLine="723"/>
       </Position10>
       <Position11>
         <Filename Value="..\lib\dbgpServers.pas"/>
@@ -988,84 +986,84 @@
       </Position11>
       <Position12>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="669" Column="20" TopLine="639"/>
+        <Caret Line="220" Column="20" TopLine="204"/>
       </Position12>
       <Position13>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="690" Column="17" TopLine="664"/>
+        <Caret Line="339" Column="15" TopLine="323"/>
       </Position13>
       <Position14>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="876" Column="18" TopLine="855"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position14>
       <Position15>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="990" Column="18" TopLine="964"/>
+        <Caret Line="219" Column="29" TopLine="194"/>
       </Position15>
       <Position16>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="998" Column="20" TopLine="972"/>
+        <Caret Line="632" Column="1" TopLine="616"/>
       </Position16>
       <Position17>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="1067" Column="20" TopLine="1041"/>
+        <Caret Line="733" Column="21" TopLine="716"/>
       </Position17>
       <Position18>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="1093" Column="18" TopLine="1067"/>
+        <Caret Line="731" Column="1" TopLine="716"/>
       </Position18>
       <Position19>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="1202" Column="18" TopLine="1176"/>
+        <Caret Line="732" Column="1" TopLine="716"/>
       </Position19>
       <Position20>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="1214" Column="18" TopLine="1188"/>
+        <Caret Line="382" Column="1" TopLine="366"/>
       </Position20>
       <Position21>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="1225" Column="18" TopLine="1199"/>
+        <Caret Line="384" Column="1" TopLine="366"/>
       </Position21>
       <Position22>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="1239" Column="18" TopLine="1213"/>
+        <Caret Line="385" Column="1" TopLine="366"/>
       </Position22>
       <Position23>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="1254" Column="18" TopLine="1228"/>
+        <Caret Line="405" Column="1" TopLine="389"/>
       </Position23>
       <Position24>
         <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="1351" Column="18" TopLine="1325"/>
+        <Caret Line="406" Column="1" TopLine="389"/>
       </Position24>
       <Position25>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="1366" Column="18" TopLine="1340"/>
+        <Filename Value="..\editor\PHP_xDebug.pas"/>
+        <Caret Line="258" Column="1" TopLine="242"/>
       </Position25>
       <Position26>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="1376" Column="18" TopLine="1350"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="279" Column="1" TopLine="263"/>
       </Position26>
       <Position27>
         <Filename Value="..\editor\EditorDebugger.pas"/>
-        <Caret Line="254" Column="37" TopLine="246"/>
+        <Caret Line="281" Column="1" TopLine="263"/>
       </Position27>
       <Position28>
-        <Filename Value="..\editor\PHP_xDebug.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="287" Column="1" TopLine="263"/>
       </Position28>
       <Position29>
-        <Filename Value="..\editor\PHP_xDebug.pas"/>
-        <Caret Line="345" Column="18" TopLine="320"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="252" Column="1" TopLine="236"/>
       </Position29>
       <Position30>
-        <Filename Value="..\lib\dbgpServers.pas"/>
-        <Caret Line="350" Column="15" TopLine="334"/>
+        <Filename Value="..\editor\EditorDebugger.pas"/>
+        <Caret Line="253" Column="1" TopLine="236"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="2">
+    <BreakPoints Count="3">
       <Item1>
         <Kind Value="bpkSource"/>
         <Source Value="..\editor\EditorEngine.pas"/>
@@ -1076,6 +1074,11 @@
         <Source Value="..\..\..\..\..\socket\source\mnConnections.pas"/>
         <Line Value="175"/>
       </Item2>
+      <Item3>
+        <Kind Value="bpkSource"/>
+        <Source Value="..\lib\dbgpServers.pas"/>
+        <Line Value="731"/>
+      </Item3>
     </BreakPoints>
   </Debugging>
 </CONFIG>

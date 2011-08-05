@@ -217,7 +217,6 @@ type
     function GetServer: TdbgpServer;
   public
     FTransactionID: integer;
-    procedure Reset;
   protected
     function NewTransactionID: integer;
 {$IFDEF SAVELOG}
@@ -525,7 +524,6 @@ end;
 procedure TdbgpConnection.Unprepare;
 begin
   inherited Unprepare;
-  Synchronize(@Reset);//TODO: nop, this make problem when other connection still running
 end;
 
 { TdbgpSocketServer }
@@ -631,11 +629,6 @@ begin
   Result := (Listener.Server as TdbgpServer);
 end;
 
-procedure TdbgpConnection.Reset;
-begin
-  DBGP.ShowFile(FKey, '');
-end;
-
 function TdbgpConnection.PopAction: TdbgpAction;
 var
   aAction: TdbgpAction;
@@ -735,6 +728,8 @@ end;
 procedure TdbgpServer.DoChanged(vListener: TmnListener);
 begin
   inherited;
+  if vListener.Count = 0 then //TODO: i am not sure in Linux
+    DBGP.ShowFile('', '');
 end;
 
 { TdbgpAction }
