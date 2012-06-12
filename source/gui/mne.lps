@@ -4,7 +4,7 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="windows"/>
-    <Units Count="150">
+    <Units Count="151">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -195,7 +195,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="22"/>
         <CursorPos X="13" Y="42"/>
-        <UsageCount Value="199"/>
+        <UsageCount Value="203"/>
       </Unit16>
       <Unit17>
         <Filename Value="..\editor\PHP_xDebug.pas"/>
@@ -204,7 +204,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="139"/>
         <CursorPos X="26" Y="152"/>
-        <UsageCount Value="145"/>
+        <UsageCount Value="150"/>
       </Unit17>
       <Unit18>
         <Filename Value="..\editor\SelectList.pas"/>
@@ -216,7 +216,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="70"/>
         <CursorPos X="65" Y="75"/>
-        <UsageCount Value="145"/>
+        <UsageCount Value="150"/>
       </Unit18>
       <Unit19>
         <Filename Value="mneResources.pas"/>
@@ -228,16 +228,21 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="92"/>
+        <UsageCount Value="97"/>
       </Unit19>
       <Unit20>
         <Filename Value="..\editor\EditorEngine.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorEngine"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="33" Y="8"/>
-        <UsageCount Value="29"/>
+        <TopLine Value="1232"/>
+        <CursorPos X="3" Y="1237"/>
+        <UsageCount Value="34"/>
+        <Bookmarks Count="1">
+          <Item0 X="3" Y="1237" ID="1"/>
+        </Bookmarks>
+        <Loaded Value="True"/>
       </Unit20>
       <Unit21>
         <Filename Value="MainUnit.pas"/>
@@ -249,9 +254,13 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="526"/>
-        <CursorPos X="27" Y="531"/>
-        <UsageCount Value="23"/>
+        <TopLine Value="1137"/>
+        <CursorPos X="11" Y="1143"/>
+        <UsageCount Value="28"/>
+        <Bookmarks Count="2">
+          <Item0 X="1" Y="452" ID="2"/>
+          <Item1 X="3" Y="621" ID="3"/>
+        </Bookmarks>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
       </Unit21>
@@ -403,11 +412,11 @@
       <Unit41>
         <Filename Value="w:\programs\lazarus\lcl\lclclasses.pp"/>
         <UnitName Value="LCLClasses"/>
-        <EditorIndex Value="9"/>
+        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <TopLine Value="20"/>
         <CursorPos X="25" Y="38"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="12"/>
         <Loaded Value="True"/>
       </Unit41>
       <Unit42>
@@ -1200,11 +1209,11 @@
       </Unit137>
       <Unit138>
         <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\classesh.inc"/>
-        <EditorIndex Value="10"/>
+        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1649"/>
         <CursorPos X="15" Y="1667"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="12"/>
         <Loaded Value="True"/>
       </Unit138>
       <Unit139>
@@ -1217,46 +1226,40 @@
       <Unit140>
         <Filename Value="w:\programs\lazarus\lcl\extctrls.pp"/>
         <UnitName Value="ExtCtrls"/>
-        <EditorIndex Value="1"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
         <TopLine Value="338"/>
         <CursorPos X="3" Y="346"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="14"/>
         <Loaded Value="True"/>
       </Unit140>
       <Unit141>
         <Filename Value="w:\programs\lazarus\lcl\include\customsplitter.inc"/>
-        <EditorIndex Value="2"/>
+        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="913"/>
         <CursorPos X="22" Y="921"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="14"/>
         <Loaded Value="True"/>
       </Unit141>
       <Unit142>
         <Filename Value="w:\programs\lazarus\lcl\controls.pp"/>
         <UnitName Value="Controls"/>
-        <EditorIndex Value="7"/>
+        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1547"/>
         <CursorPos X="14" Y="1565"/>
-        <UsageCount Value="11"/>
-        <Bookmarks Count="1">
-          <Item0 X="15" Y="1348" ID="1"/>
-        </Bookmarks>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit142>
       <Unit143>
         <Filename Value="..\..\..\..\components\native\ntvSpliters.pas"/>
         <UnitName Value="ntvSpliters"/>
-        <EditorIndex Value="6"/>
+        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="41" Y="18"/>
-        <UsageCount Value="12"/>
-        <Bookmarks Count="1">
-          <Item0 X="3" Y="361" ID="2"/>
-        </Bookmarks>
+        <UsageCount Value="14"/>
         <Loaded Value="True"/>
       </Unit143>
       <Unit144>
@@ -1269,31 +1272,31 @@
       <Unit145>
         <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\math.pp"/>
         <UnitName Value="math"/>
-        <EditorIndex Value="5"/>
+        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
         <TopLine Value="123"/>
         <CursorPos X="10" Y="139"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit145>
       <Unit146>
         <Filename Value="w:\programs\lazarus\lcl\themes.pas"/>
         <UnitName Value="Themes"/>
-        <EditorIndex Value="4"/>
+        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="490"/>
         <CursorPos X="10" Y="506"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit146>
       <Unit147>
         <Filename Value="w:\programs\lazarus\lcl\lclstrconsts.pas"/>
         <UnitName Value="LCLStrConsts"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="477"/>
         <CursorPos X="3" Y="507"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="13"/>
         <Loaded Value="True"/>
       </Unit147>
       <Unit148>
@@ -1306,142 +1309,152 @@
       </Unit148>
       <Unit149>
         <Filename Value="w:\programs\lazarus\lcl\include\control.inc"/>
-        <EditorIndex Value="8"/>
+        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="3223"/>
         <CursorPos X="1" Y="3235"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="12"/>
         <Loaded Value="True"/>
       </Unit149>
+      <Unit150>
+        <Filename Value="..\..\..\..\..\comm\source\mnWinCommStreams.pas"/>
+        <UnitName Value="mnWinCommStreams"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="194"/>
+        <CursorPos X="37" Y="202"/>
+        <UsageCount Value="12"/>
+        <Loaded Value="True"/>
+      </Unit150>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\classesh.inc"/>
-        <Caret Line="665" Column="21" TopLine="635"/>
-      </Position1>
-      <Position2>
-        <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\classesh.inc"/>
-        <Caret Line="666" Column="23" TopLine="636"/>
-      </Position2>
-      <Position3>
-        <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\classesh.inc"/>
-        <Caret Line="705" Column="29" TopLine="675"/>
-      </Position3>
-      <Position4>
-        <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\classesh.inc"/>
-        <Caret Line="706" Column="31" TopLine="676"/>
-      </Position4>
-      <Position5>
-        <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\classesh.inc"/>
-        <Caret Line="720" Column="21" TopLine="690"/>
-      </Position5>
-      <Position6>
-        <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\classesh.inc"/>
-        <Caret Line="721" Column="23" TopLine="691"/>
-      </Position6>
-      <Position7>
-        <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\classesh.inc"/>
-        <Caret Line="759" Column="29" TopLine="729"/>
-      </Position7>
-      <Position8>
-        <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\classesh.inc"/>
-        <Caret Line="760" Column="31" TopLine="730"/>
-      </Position8>
-      <Position9>
-        <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\classesh.inc"/>
-        <Caret Line="783" Column="23" TopLine="753"/>
-      </Position9>
-      <Position10>
-        <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\classesh.inc"/>
-        <Caret Line="784" Column="24" TopLine="754"/>
-      </Position10>
-      <Position11>
-        <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\classesh.inc"/>
-        <Caret Line="1486" Column="24" TopLine="1456"/>
-      </Position11>
-      <Position12>
-        <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\classesh.inc"/>
-        <Caret Line="1537" Column="32" TopLine="1507"/>
-      </Position12>
-      <Position13>
-        <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\classesh.inc"/>
-        <Caret Line="1546" Column="62" TopLine="1516"/>
-      </Position13>
-      <Position14>
-        <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\classesh.inc"/>
-        <Caret Line="1569" Column="16" TopLine="1539"/>
-      </Position14>
-      <Position15>
-        <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\classesh.inc"/>
-        <Caret Line="1572" Column="19" TopLine="1542"/>
-      </Position15>
-      <Position16>
-        <Filename Value="..\..\..\..\components\native\ntvSpliters.pas"/>
-        <Caret Line="48" Column="21" TopLine="30"/>
-      </Position16>
-      <Position17>
-        <Filename Value="..\..\..\..\components\native\ntvSpliters.pas"/>
-        <Caret Line="281" Column="18" TopLine="265"/>
-      </Position17>
-      <Position18>
-        <Filename Value="..\..\..\..\components\native\ntvSpliters.pas"/>
-        <Caret Line="65" Column="15" TopLine="47"/>
-      </Position18>
-      <Position19>
         <Filename Value="..\..\..\..\components\native\ntvSpliters.pas"/>
         <Caret Line="285" Column="3" TopLine="277"/>
-      </Position19>
-      <Position20>
+      </Position1>
+      <Position2>
         <Filename Value="..\..\..\..\components\native\ntvSpliters.pas"/>
         <Caret Line="292" Column="5" TopLine="288"/>
-      </Position20>
-      <Position21>
+      </Position2>
+      <Position3>
         <Filename Value="..\..\..\..\components\native\ntvSpliters.pas"/>
         <Caret Line="105" Column="7" TopLine="79"/>
-      </Position21>
-      <Position22>
+      </Position3>
+      <Position4>
         <Filename Value="..\..\..\..\components\native\ntvSpliters.pas"/>
         <Caret Line="284" Column="43" TopLine="267"/>
-      </Position22>
-      <Position23>
+      </Position4>
+      <Position5>
         <Filename Value="..\..\..\..\components\native\ntvSpliters.pas"/>
         <Caret Line="285" Column="3" TopLine="267"/>
-      </Position23>
-      <Position24>
+      </Position5>
+      <Position6>
         <Filename Value="..\..\..\..\components\native\ntvSpliters.pas"/>
         <Caret Line="414" Column="21" TopLine="411"/>
-      </Position24>
-      <Position25>
+      </Position6>
+      <Position7>
         <Filename Value="..\..\..\..\components\native\ntvSpliters.pas"/>
         <Caret Line="80" Column="14" TopLine="64"/>
-      </Position25>
-      <Position26>
+      </Position7>
+      <Position8>
         <Filename Value="..\..\..\..\components\native\ntvSpliters.pas"/>
         <Caret Line="300" Column="1" TopLine="294"/>
-      </Position26>
-      <Position27>
+      </Position8>
+      <Position9>
         <Filename Value="..\..\..\..\components\native\ntvSpliters.pas"/>
         <Caret Line="565" Column="16" TopLine="538"/>
+      </Position9>
+      <Position10>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="540" Column="52" TopLine="526"/>
+      </Position10>
+      <Position11>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="539" Column="52" TopLine="525"/>
+      </Position11>
+      <Position12>
+        <Filename Value="..\..\..\..\components\native\ntvSpliters.pas"/>
+        <Caret Line="296" Column="24" TopLine="284"/>
+      </Position12>
+      <Position13>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="433" Column="5" TopLine="430"/>
+      </Position13>
+      <Position14>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
+      </Position14>
+      <Position15>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="247" Column="13" TopLine="220"/>
+      </Position15>
+      <Position16>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="411" Column="23" TopLine="384"/>
+      </Position16>
+      <Position17>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="412" Column="23" TopLine="385"/>
+      </Position17>
+      <Position18>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="449" Column="46" TopLine="422"/>
+      </Position18>
+      <Position19>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="951" Column="18" TopLine="948"/>
+      </Position19>
+      <Position20>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="957" Column="18" TopLine="954"/>
+      </Position20>
+      <Position21>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="622" Column="3" TopLine="620"/>
+      </Position21>
+      <Position22>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="956" Column="1" TopLine="954"/>
+      </Position22>
+      <Position23>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1237" Column="3" TopLine="1232"/>
+      </Position23>
+      <Position24>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="452" Column="37" TopLine="444"/>
+      </Position24>
+      <Position25>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="321" Column="15" TopLine="312"/>
+      </Position25>
+      <Position26>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="412" Column="23" TopLine="398"/>
+      </Position26>
+      <Position27>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="413" Column="23" TopLine="399"/>
       </Position27>
       <Position28>
         <Filename Value="MainUnit.pas"/>
-        <Caret Line="540" Column="52" TopLine="526"/>
+        <Caret Line="450" Column="46" TopLine="436"/>
       </Position28>
       <Position29>
         <Filename Value="MainUnit.pas"/>
-        <Caret Line="539" Column="52" TopLine="525"/>
+        <Caret Line="454" Column="1" TopLine="438"/>
       </Position29>
       <Position30>
-        <Filename Value="..\..\..\..\components\native\ntvSpliters.pas"/>
-        <Caret Line="296" Column="24" TopLine="284"/>
+        <Filename Value="MainUnit.pas"/>
+        <Caret Line="951" Column="1" TopLine="944"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
-    <BreakPoints Count="2">
+    <BreakPoints Count="5">
       <Item1>
         <Kind Value="bpkSource"/>
         <WatchScope Value="wpsGlobal"/>
@@ -1456,6 +1469,27 @@
         <Source Value="..\editor\TSVN_SCM.pas"/>
         <Line Value="9"/>
       </Item2>
+      <Item3>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="..\editor\EditorEngine.pas"/>
+        <Line Value="1237"/>
+      </Item3>
+      <Item4>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="MainUnit.pas"/>
+        <Line Value="951"/>
+      </Item4>
+      <Item5>
+        <Kind Value="bpkSource"/>
+        <WatchScope Value="wpsLocal"/>
+        <WatchKind Value="wpkWrite"/>
+        <Source Value="MainUnit.pas"/>
+        <Line Value="951"/>
+      </Item5>
     </BreakPoints>
   </Debugging>
 </CONFIG>

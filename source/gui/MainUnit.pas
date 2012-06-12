@@ -316,6 +316,7 @@ type
     QuickFindAct: TAction;
     QuickSearch1: TMenuItem;
     FileModeBtn: TSpeedButton;
+    procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
     procedure Associate1Click(Sender: TObject);
     procedure EditorsPnlClick(Sender: TObject);
@@ -448,9 +449,6 @@ type
     FShowFolderFiles: TShowFolderFiles;
     //    OnActivate = ApplicationEventsActivate
     //    OnHint = ApplicationEventsHint
-    procedure ApplicationEventsActivate(Sender: TObject);
-    procedure ApplicationEventsHint(Sender: TObject);
-
     function CanOpenInclude: boolean;
     procedure SetShowFolderFiles(AValue: TShowFolderFiles);
     procedure UpdateFileHeaderPanel;
@@ -614,6 +612,12 @@ begin
       HintInfo.ReshowTimeout := 1;
     end;
   end;
+end;
+
+procedure TMainForm.ApplicationPropertiesActivate(Sender: TObject);
+begin
+  if not (csLoading in ComponentState) then
+    Engine.Files.CheckChanged;
 end;
 
 procedure TMainForm.EditorsPnlClick(Sender: TObject);
@@ -945,12 +949,6 @@ begin
   Engine.Files.FindNext;
 end;
 
-procedure TMainForm.ApplicationEventsActivate(Sender: TObject);
-begin
-  if not (csLoading in ComponentState) then
-    Engine.Files.CheckChanged;
-end;
-
 procedure TMainForm.FileListKeyPress(Sender: TObject; var Key: char);
 begin
   if Key = #13 then
@@ -1142,14 +1140,6 @@ procedure TMainForm.OpenFolderActExecute(Sender: TObject);
 begin
 {  if Engine.Files.Current <> nil then
     ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Files.Current.Name + '"'), nil, SW_SHOW);}
-end;
-
-procedure TMainForm.ApplicationEventsHint(Sender: TObject);
-begin
-  StatusTimer.Enabled := False;
-  if Application.Hint <> '' then
-    MessagePnl.Caption := Application.Hint;
-  StatusTimer.Enabled := True;
 end;
 
 procedure TMainForm.UpdateMessagesPnl;
