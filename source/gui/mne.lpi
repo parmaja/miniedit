@@ -103,7 +103,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item9>
     </RequiredPackages>
-    <Units Count="20">
+    <Units Count="22">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -244,6 +244,19 @@
         <ResourceBaseClass Value="DataModule"/>
         <UnitName Value="mneResources"/>
       </Unit19>
+      <Unit20>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="EditorEngine"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="MainUnit.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="MainForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+        <UnitName Value="MainUnit"/>
+      </Unit21>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
