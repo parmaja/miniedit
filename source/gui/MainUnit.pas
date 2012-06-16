@@ -452,7 +452,7 @@ type
     function CanOpenInclude: boolean;
     procedure SetShowFolderFiles(AValue: TShowFolderFiles);
     procedure UpdateFileHeaderPanel;
-    procedure EditorChangeState(State: TEditorChangeState);
+    procedure EditorChangeState(State: TEditorChangeStates);
     function ChoosePerspective(var vPerspective: TEditorPerspective): Boolean;
     function ChooseSCM(var vSCM: TEditorSCM): Boolean;
 
@@ -544,7 +544,7 @@ begin
   Engine.OnReplaceText:= @OnReplaceText;
   if (aWorkspace <> '') then
   begin
-    Engine.LoadOptions;
+    Engine.Startup;
   end;
   ShowFolderFiles := Engine.Options.ShowFolderFiles;
   FoldersAct.Checked := Engine.Options.ShowFolder;
@@ -700,6 +700,7 @@ begin
     //AExtensions.Free;
   end;
 end;
+
 
 procedure TMainForm.OpenActExecute(Sender: TObject);
 begin
@@ -899,7 +900,6 @@ begin
   Engine.Options.WindowMaxmized := WindowState = wsMaximized;
   Engine.Options.BoundRect := BoundsRect;
   Engine.Session.Close;
-  Engine.SaveOptions;
   if FRunProject <> nil then
     FRunProject.Terminate;
   Engine.OnChangedState := nil;
@@ -1459,7 +1459,7 @@ begin
   end;
 end;
 
-procedure TMainForm.EditorChangeState(State: TEditorChangeState);
+procedure TMainForm.EditorChangeState(State: TEditorChangeStates);
 begin
   if ecsFolder in State then
     UpdateFolder;
@@ -2296,7 +2296,7 @@ begin
     try
       aDialog.Title := 'Open file';
       aDialog.Options := aDialog.Options - [ofAllowMultiSelect];
-      aDialog.Filter := Engine.Groups.CreateFilter(Engine.Files.Current.Group);
+      aDialog.Filter := Engine.Groups.CreateFilter('', Engine.Files.Current.Group);
       //      aDialog.InitialDir := Engine.BrowseFolder;
       if aDialog.Execute then
       begin
