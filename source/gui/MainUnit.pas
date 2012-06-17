@@ -50,6 +50,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    Bevel1: TBevel;
     FoldersSpl: TntvSplitter;
     NewAsMnu: TMenuItem;
     NewAsAct: TAction;
