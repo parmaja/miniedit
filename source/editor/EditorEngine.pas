@@ -251,6 +251,7 @@ type
     FSynEdit: TSynEdit;
     FEdited: Boolean;
     FFileAge: integer;
+    FFileSize: int64;
     FGroup: TFileGroup;
     FRelated: string;
     FMode: TEditorFileMode;
@@ -436,7 +437,7 @@ type
     function GetItem(Index: Integer): TFileGroup;
   protected
     FCompletion: TmneSynCompletion;
-    procedure OnExecuteCompletion(Sender: TObject); virtual;
+    procedure DoExecuteCompletion(Sender: TObject); virtual;
     function CreateHighlighter: TSynCustomHighlighter; virtual;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); virtual;
     procedure InitEdit(vSynEdit: TCustomSynEdit); virtual;
@@ -779,12 +780,13 @@ uses
   mneResources, MsgBox, GUIMsgBox;
 
 var
-  FEngineShutdown: Boolean  = False;
+  FIsEngineStart: Boolean = False;
+  FIsEngineShutdown: Boolean  = False;
   FEngine: TEditorEngine = nil;
 
 function Engine: TEditorEngine;
 begin
-  if FEngineShutdown then
+  if FIsEngineShutdown then
     raise Exception.Create('Engine in shutdown?');
   if FEngine = nil then
     FEngine := TEditorEngine.Create;
@@ -1300,7 +1302,7 @@ end;
 
 destructor TEditorEngine.Destroy;
 begin
-  if not FEngineShutdown then
+  if not FIsEngineShutdown then
     Shutdown;
   FreeAndNil(FFiles);
   FreeAndNil(FSession);
@@ -1802,6 +1804,7 @@ end;
 
 procedure TEditorEngine.Startup;
 begin
+  FIsEngineStart := True;
   LoadOptions;
   Groups.Sort(@SortGroupsByTitle)
 end;
@@ -1851,11 +1854,14 @@ end;
 
 procedure TEditorEngine.Shutdown;
 begin
-  SaveOptions;
+  if FIsEngineStart then
+  begin
+    SaveOptions;
+  end;
   if Perspective.Debug <> nil then
     Perspective.Debug.Stop;
   Files.Clear;
-  FEngineShutdown := True;
+  FIsEngineShutdown := True;
 end;
 
 procedure TEditorEngine.RemoveRecentProject(const FileName: string);
@@ -2141,7 +2147,7 @@ var
   Stream: TFileStream;
 begin
   FileName := ExpandFileName(FileName);
-  Stream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+  Stream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
   SynEdit.BeginUpdate;
   try
     Size := Stream.Size - Stream.Position;
@@ -2259,7 +2265,7 @@ var
   mr: TmsgChoice;
 begin
   Result := True;
-  if (FileExists(Name)) and (FFileAge <> FileAge(Name)) then
+  if (FileExists(Name)) and ((FFileAge <> FileAge(Name)) or (FFileSize <> FileSize(Name)))  then
   begin
     mr := MsgBox.Msg.YesNoCancel(Name + #13' was changed, update it?');
     if mr = msgcYes then
@@ -2279,6 +2285,7 @@ end;
 procedure TEditorFile.UpdateAge;
 begin
   FFileAge := FileAge(Name);
+  FFileSize := FileSize(Name);
   if SynEdit <> nil then
   begin
     SynEdit.Modified := False;
@@ -2734,7 +2741,7 @@ begin
   Result := FHighlighter;
 end;
 
-procedure TFileCategory.OnExecuteCompletion(Sender: TObject);
+procedure TFileCategory.DoExecuteCompletion(Sender: TObject);
 begin
 end;
 
@@ -3286,4 +3293,4 @@ end;
 
 finalization
   FreeAndNil(FEngine);
-end.
+end.
