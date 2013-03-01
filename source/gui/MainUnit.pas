@@ -1478,7 +1478,7 @@ begin
             aItem := FileList.Items.Add;
             aItem.Caption := aFiles[r];
             aItem.Data := Pointer(1);
-            aItem.ImageIndex := GetFileImageIndex(SearchRec.Name);
+            aItem.ImageIndex := GetFileImageIndex(aFiles[r]);
           end;
         end;
       finally
