@@ -2113,7 +2113,7 @@ end;
 constructor TEditorFile.Create(ACollection: TCollection);
 begin
   inherited;
-  { There is more assigns in SetGroup }
+  { There is more assigns in TEditorFile.SetGroup and TEditorProfile.Assign}
   FSynEdit := TSynEdit.Create(Engine.FilesControl);
   FSynEdit.OnChange := @DoEdit;
   FSynEdit.OnStatusChange := @DoStatusChange;
