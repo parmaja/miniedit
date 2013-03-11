@@ -48,7 +48,7 @@ begin
   with TSelectFileForm.Create(Application) do
   begin
     try
-      EnumFileList(vRoot, '.', Engine.Perspective.Groups.CreateFilter(False), Engine.Options.IgnoreNames, FFiles, 1000, Engine.Session.IsOpened);
+      EnumFileList(vRoot, '.', Engine.Perspective.Groups.CreateFilter(False), Engine.Options.IgnoreNames, FFiles, 1000, True);
       ShowFiles;
       Result := ShowModal = mrOK;
       if Result then

@@ -39,7 +39,7 @@ object SelectFileForm: TSelectFileForm
     OnDblClick = FilesListDblClick
   end
   object OkBtn: TButton
-    Left = 210
+    Left = 6
     Height = 26
     Top = 319
     Width = 75
@@ -50,7 +50,7 @@ object SelectFileForm: TSelectFileForm
     TabOrder = 2
   end
   object CancelBtn: TButton
-    Left = 134
+    Left = 83
     Height = 26
     Top = 319
     Width = 75

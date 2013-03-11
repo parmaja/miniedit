@@ -772,14 +772,19 @@ type
 
 function SelectFolder(const Caption: string; const Root: WideString; var Directory: string): Boolean;
 procedure SpliteStr(S, Separator: string; var Name, Value: string);
-procedure EnumFiles(Folder, Filter: string; FileList: TStringList);
-procedure EnumFileList(const Root, Path, Files, Ignore: string; Strings: TStringList; vMaxCount: integer; Recursive: Boolean);
 procedure SaveAsUnix(Strings: TStrings; Stream: TStream);
 procedure SaveAsWindows(Strings: TStrings; Stream: TStream);
 procedure SaveAsMAC(Strings: TStrings; Stream: TStream);
 procedure SaveAsMode(const FileName: string; Mode: TEditorFileMode; Strings: Tstrings);
 function DetectFileMode(const Contents: string): TEditorFileMode;
 function ChangeTabsToSpace(const Contents: string; TabWidth: integer): string;
+
+type
+  TEnumFilesCallback = procedure(AObject: TObject; const FileName: string; Resume: Boolean); //If set Resume to false it will stop
+
+procedure EnumFiles(Folder, Filter: string; FileList: TStringList);
+procedure EnumFileList(const Root, Path, Files, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount: integer; Recursive: Boolean);
+procedure EnumFileList(const Root, Path, Files, Ignore: string; Strings: TStringList; vMaxCount: integer; Recursive: Boolean);
 
 function Engine: TEditorEngine;
 
@@ -1355,11 +1360,12 @@ begin
   FindClose(SearchRec);
 end;
 
-procedure EnumFileList(const Root, Path, Files, Ignore: string; Strings: TStringList; vMaxCount: integer; Recursive: Boolean);
+procedure EnumFileList(const Root, Path, Files, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount: Integer; Recursive: Boolean);
 var
-  sr: TSearchRec;
+  Resume: Boolean;
   IgnoreList: TStringList;
   MaskList: TMaskList;
+  aCount: Integer;
 
   procedure DoFind(const Root, Path: string);
     function FullPath: string;
@@ -1369,22 +1375,28 @@ var
       if Path <> '' then
         Result := IncludeTrailingPathDelimiter(Result + Path);
     end;
+  var
+    sr: TSearchRec;
   begin
     if FindFirst(FullPath + '*'{Files}, faAnyFile, sr) = 0 then
     begin
       repeat
         if (sr.Name = '') or
           ((IgnoreList <> nil) and (IgnoreList.IndexOf(sr.Name)>=0)) or
-          ((MaskList = nil) or (not MaskList.Matches(sr.Name))) then
+          not ((MaskList = nil) or (MaskList.Matches(sr.Name))) then
             continue;
-        Strings.Add(IncludeTrailingPathDelimiter(Path) + sr.Name);
-        if Strings.Count > vMaxCount then
-          raise Exception.Create('Too many files');
+        Callback(AObject, IncludeTrailingPathDelimiter(Path) + sr.Name, Resume);
+        if aCount > vMaxCount then
+          Resume := False;
+          //raise Exception.Create('Too many files');
+        if not Resume then
+          break;
+        aCount := aCount + 1;
       until (FindNext(sr) <> 0);
     end;
 
-    if Recursive then
-      if FindFirst(FullPath + '*.*', faDirectory, sr) = 0 then
+    if Resume and Recursive then
+      if FindFirst(FullPath + '*', faDirectory, sr) = 0 then
       begin
         repeat
           if (sr.Name = '') or (sr.Name[1] = '.') or (sr.Name = '..') or
@@ -1411,12 +1423,24 @@ begin
   end
   else
     MaskList := nil;
+  aCount := 0;
+  Resume := true;
   try
     DoFind(Root, IncludeTrailingPathDelimiter(Path));
   finally
     FreeAndNil(IgnoreList);
     FreeAndNil(MaskList);
   end;
+end;
+
+procedure EnumFileListStringsCallback(AObject: TObject; const FileName: string; Resume: Boolean);
+begin
+  TStringList(AObject).Add(FileName);
+end;
+
+procedure EnumFileList(const Root, Path, Files, Ignore: string; Strings: TStringList; vMaxCount: integer; Recursive: Boolean);
+begin
+  EnumFileList(Root, Path, Files, Ignore, @EnumFileListStringsCallback, Strings, vMaxCount, Recursive);
 end;
 
 { TListFileSearcher }
