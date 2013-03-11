@@ -13,7 +13,7 @@ uses
   IniFiles, EditorOptions, EditorProfiles, SynEditMarks, SynCompletion, SynEditTypes,
   SynEditMiscClasses, SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, SynEdit,
   SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase,
-  dbgpServers, PHP_xDebug, FileUtil,
+  dbgpServers, PHP_xDebug, FileUtil, Masks,
   mnXMLRttiProfile, mnXMLUtils, mnUtils, LCLType;
 
 type
@@ -357,6 +357,7 @@ type
   TEditorOptions = class(TmnXMLProfile)
   private
     FFileName: string;
+    FIgnoreNames: string;
     FShowFolder: Boolean;
     FShowFolderFiles: TShowFolderFiles;
     FSortFolderFiles: TSortFolderFiles;
@@ -395,6 +396,7 @@ type
     property BoundRect: TRect read FBoundRect write FBoundRect; //not saved yet
   published
     property ExtraExtensions: TStringList read FExtraExtensions write FExtraExtensions;
+    property IgnoreNames: string read FIgnoreNames write FIgnoreNames;
     property CollectAutoComplete: Boolean read FCollectAutoComplete write FCollectAutoComplete default False;
     property CollectTimeout: DWORD read FCollectTimeout write FCollectTimeout default 60;
     property ShowFolder: Boolean read FShowFolder write FShowFolder default True;
@@ -537,7 +539,7 @@ type
     procedure EnumExtensions(vExtensions: TStringList);
     procedure EnumExtensions(vExtensions: TEditorElements);
     function FindExtension(vExtension: string): TFileGroup;
-    function CreateFilter(FirstExtension: string = ''; vGroup: TFileGroup = nil; OnlyThisGroup: Boolean = true): string;
+    function CreateFilter(FullFilter:Boolean = True; FirstExtension: string = ''; vGroup: TFileGroup = nil; OnlyThisGroup: Boolean = true): string;
     procedure Add(vGroup: TFileGroup);
     procedure Add(GroupClass: TFileGroupClass; FileClass: TEditorFileClass; const Name, Title: string; Category: string; Extensions: array of string; Kind: TFileGroupKinds = []; Style: TFileGroupStyles = []);
     procedure Add(FileClass: TEditorFileClass; const Name, Title: string; Category: string; Extensions: array of string; Kind: TFileGroupKinds = []; Style: TFileGroupStyles = []);
@@ -758,10 +760,20 @@ type
   public
   end;
 
+  { TListFileSearcher }
+
+  TListFileSearcher = class(TFileSearcher)
+  protected
+    procedure DoDirectoryFound; override;
+    procedure DoFileFound; override;
+  public
+    List: TStringList;
+  end;
+
 function SelectFolder(const Caption: string; const Root: WideString; var Directory: string): Boolean;
 procedure SpliteStr(S, Separator: string; var Name, Value: string);
 procedure EnumFiles(Folder, Filter: string; FileList: TStringList);
-procedure EnumFileList(const Root, Path, Files: string; Strings: TStringList; vMaxCount: integer; Recursive: Boolean);
+procedure EnumFileList(const Root, Path, Files, Ignore: string; Strings: TStringList; vMaxCount: integer; Recursive: Boolean);
 procedure SaveAsUnix(Strings: TStrings; Stream: TStream);
 procedure SaveAsWindows(Strings: TStrings; Stream: TStream);
 procedure SaveAsMAC(Strings: TStrings; Stream: TStream);
@@ -1343,39 +1355,81 @@ begin
   FindClose(SearchRec);
 end;
 
-procedure EnumFileList(const Root, Path, Files: string; Strings: TStringList; vMaxCount: integer; Recursive: Boolean);
+procedure EnumFileList(const Root, Path, Files, Ignore: string; Strings: TStringList; vMaxCount: integer; Recursive: Boolean);
 var
   sr: TSearchRec;
+  IgnoreList: TStringList;
+  MaskList: TMaskList;
 
-  function FullPath: string;
+  procedure DoFind(const Root, Path: string);
+    function FullPath: string;
+    begin
+      if Root <> '' then
+        Result := IncludeTrailingPathDelimiter(Root);
+      if Path <> '' then
+        Result := IncludeTrailingPathDelimiter(Result + Path);
+    end;
   begin
-    if Root <> '' then
-      Result := IncludeTrailingPathDelimiter(Root);
-    if Path <> '' then
-      Result := IncludeTrailingPathDelimiter(Result + Path);
-  end;
-
-begin
-  if FindFirst(FullPath + Files, faAnyFile, sr) = 0 then
-  begin
-    repeat
-      Strings.Add(IncludeTrailingPathDelimiter(Path) + sr.Name);
-      if Strings.Count > vMaxCount then
-        raise Exception.Create('Too many files');
-    until (FindNext(sr) <> 0);
-  end;
-
-  if Recursive then
-    if FindFirst(FullPath + '*.*', faDirectory, sr) = 0 then
+    if FindFirst(FullPath + '*'{Files}, faAnyFile, sr) = 0 then
     begin
       repeat
-        if (sr.Name = '') or (sr.Name[1] = '.') or (sr.Name = '..') or (copy(sr.Name, 1, 5) = '_vti_') or SameText(sr.Name, '.svn') or
-          SameText(sr.Name, '_svn') or SameText(sr.Name, '.git') then//TODO add it to external list
+        if (sr.Name = '') or
+          ((IgnoreList <> nil) and (IgnoreList.IndexOf(sr.Name)>=0)) or
+          ((MaskList = nil) or (not MaskList.Matches(sr.Name))) then
             continue;
-        if (sr.Attr and faDirectory) <> 0 then
-          EnumFileList(Root, IncludeTrailingPathDelimiter(Path) + sr.Name, Files, Strings, vMaxCount, Recursive)
+        Strings.Add(IncludeTrailingPathDelimiter(Path) + sr.Name);
+        if Strings.Count > vMaxCount then
+          raise Exception.Create('Too many files');
       until (FindNext(sr) <> 0);
     end;
+
+    if Recursive then
+      if FindFirst(FullPath + '*.*', faDirectory, sr) = 0 then
+      begin
+        repeat
+          if (sr.Name = '') or (sr.Name[1] = '.') or (sr.Name = '..') or
+            ((IgnoreList <> nil) and (IgnoreList.IndexOf(sr.Name)>=0)) then
+              continue;
+          if (sr.Attr and faDirectory) <> 0 then
+            DoFind(Root, IncludeTrailingPathDelimiter(Path) + sr.Name);
+        until (FindNext(sr) <> 0);
+      end;
+  end;
+begin
+  if Ignore <> '' then
+  begin
+    IgnoreList := TStringList.Create;
+    IgnoreList.Sort;
+    IgnoreList.Sorted := true;
+    StrToStrings(Ignore, IgnoreList, [';'], [' ']);
+  end
+  else
+    IgnoreList := nil;
+  if Files <> '' then
+  begin
+    MaskList := TMaskList.Create(Files);
+  end
+  else
+    MaskList := nil;
+  try
+    DoFind(Root, IncludeTrailingPathDelimiter(Path));
+  finally
+    FreeAndNil(IgnoreList);
+    FreeAndNil(MaskList);
+  end;
+end;
+
+{ TListFileSearcher }
+
+procedure TListFileSearcher.DoDirectoryFound;
+begin
+  inherited;
+
+end;
+
+procedure TListFileSearcher.DoFileFound;
+begin
+  inherited;
 end;
 
 procedure TEditorFiles.Edited;
@@ -2237,7 +2291,7 @@ begin
   begin
     aDialog := TSaveDialog.Create(nil);
     aDialog.Title := 'Save file';
-    aDialog.Filter := Engine.Groups.CreateFilter(Extension, Group, False);//put the group of file as the first one
+    aDialog.Filter := Engine.Groups.CreateFilter(True, Extension, Group, False);//put the group of file as the first one
     aDialog.InitialDir := Engine.BrowseFolder;
     if Extension <> '' then
       aDialog.DefaultExt := Extension
@@ -2586,7 +2640,7 @@ begin
   Add(aFC);
 end;
 
-function TFileGroups.CreateFilter(FirstExtension: string; vGroup: TFileGroup; OnlyThisGroup: Boolean): string;
+function TFileGroups.CreateFilter(FullFilter:Boolean; FirstExtension: string; vGroup: TFileGroup; OnlyThisGroup: Boolean): string;
 var
   aSupported: string;
   procedure AddIt(AGroup: TFileGroup);
@@ -2597,8 +2651,9 @@ var
   begin
     if fgkBrowsable in AGroup.Kind then
     begin
-      if Result <> '' then
-        Result := Result + '|';
+      if FullFilter then
+        if Result <> '' then
+          Result := Result + '|';
       s := '';
       AExtensions := TStringList.Create;
       try
@@ -2618,7 +2673,8 @@ var
             aSupported := aSupported + ';';
           aSupported := aSupported + '*.' + AExtensions[i];
         end;
-        Result := Result + AGroup.Title + ' (' + s + ')|' + s;
+        if FullFilter then
+          Result := Result + AGroup.Title + ' (' + s + ')|' + s;
       finally
         AExtensions.Free;
       end;
@@ -2648,12 +2704,17 @@ begin
     end;
   end;
 
-  if Result <> '' then
-    Result := 'All files (' + aSupported + ')|' + aSupported + '|' + Result;
+  if FullFilter then
+  begin
+    if Result <> '' then
+      Result := 'All files (' + aSupported + ')|' + aSupported + '|' + Result;
 
-  if Result <> '' then
-    Result := Result + '|';
-  Result := Result + 'Any file (*.*)|*.*';
+    if Result <> '' then
+      Result := Result + '|';
+    Result := Result + 'Any file (*.*)|*.*';
+  end
+  else
+    Result := aSupported;
 end;
 
 procedure TFileGroups.Add(vGroup: TFileGroup);
