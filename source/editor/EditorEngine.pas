@@ -539,6 +539,7 @@ type
     procedure EnumExtensions(vExtensions: TStringList);
     procedure EnumExtensions(vExtensions: TEditorElements);
     function FindExtension(vExtension: string): TFileGroup;
+    //FullFilter return title of that filter for open/save dialog boxes
     function CreateFilter(FullFilter:Boolean = True; FirstExtension: string = ''; vGroup: TFileGroup = nil; OnlyThisGroup: Boolean = true): string;
     procedure Add(vGroup: TFileGroup);
     procedure Add(GroupClass: TFileGroupClass; FileClass: TEditorFileClass; const Name, Title: string; Category: string; Extensions: array of string; Kind: TFileGroupKinds = []; Style: TFileGroupStyles = []);
@@ -780,11 +781,12 @@ function DetectFileMode(const Contents: string): TEditorFileMode;
 function ChangeTabsToSpace(const Contents: string; TabWidth: integer): string;
 
 type
-  TEnumFilesCallback = procedure(AObject: TObject; const FileName: string; Resume: Boolean); //If set Resume to false it will stop
+  //If set Resume to false it will stop loop
+  TEnumFilesCallback = procedure(AObject: TObject; const FileName: string; Resume: Boolean);
 
 procedure EnumFiles(Folder, Filter: string; FileList: TStringList);
-procedure EnumFileList(const Root, Path, Files, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount, vMaxLevel: Integer; Recursive: Boolean);
-procedure EnumFileList(const Root, Path, Files, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: integer; Recursive: Boolean);
+procedure EnumFileList(const Root, Path, Masks, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount, vMaxLevel: Integer; Recursive: Boolean);
+procedure EnumFileList(const Root, Path, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: integer; Recursive: Boolean);
 
 function Engine: TEditorEngine;
 
@@ -1360,7 +1362,7 @@ begin
   FindClose(SearchRec);
 end;
 
-procedure EnumFileList(const Root, Path, Files, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount,vMaxLevel: Integer; Recursive: Boolean);
+procedure EnumFileList(const Root, Path, Masks, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount,vMaxLevel: Integer; Recursive: Boolean);
 var
   Resume: Boolean;
   IgnoreList: TStringList;
@@ -1413,16 +1415,15 @@ begin
   if Ignore <> '' then
   begin
     IgnoreList := TStringList.Create;
+    StrToStrings(Ignore, IgnoreList, [';'], [' ']);
     IgnoreList.Sort;
     IgnoreList.Sorted := true;
-    StrToStrings(Ignore, IgnoreList, [';'], [' ']);
   end
   else
     IgnoreList := nil;
-  if Files <> '' then
-  begin
-    MaskList := TMaskList.Create(Files);
-  end
+
+  if Masks <> '' then
+    MaskList := TMaskList.Create(Masks)
   else
     MaskList := nil;
   aCount := 0;
@@ -1440,9 +1441,9 @@ begin
   TStringList(AObject).Add(FileName);
 end;
 
-procedure EnumFileList(const Root, Path, Files, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: integer; Recursive: Boolean);
+procedure EnumFileList(const Root, Path, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: integer; Recursive: Boolean);
 begin
-  EnumFileList(Root, Path, Files, Ignore, @EnumFileListStringsCallback, Strings, vMaxCount, vMaxLevel, Recursive);
+  EnumFileList(Root, Path, Masks, Ignore, @EnumFileListStringsCallback, Strings, vMaxCount, vMaxLevel, Recursive);
 end;
 
 { TListFileSearcher }
