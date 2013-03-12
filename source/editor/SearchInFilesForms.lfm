@@ -1,11 +1,11 @@
 object SearchInFilesForm: TSearchInFilesForm
   Left = 308
-  Height = 221
+  Height = 186
   Top = 169
   Width = 324
   BorderStyle = bsDialog
   Caption = 'Search text in files'
-  ClientHeight = 221
+  ClientHeight = 186
   ClientWidth = 324
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
@@ -22,7 +22,7 @@ object SearchInFilesForm: TSearchInFilesForm
   object Label2: TLabel
     Left = 8
     Height = 13
-    Top = 169
+    Top = 134
     Width = 41
     Caption = 'In Fol&der'
     ParentColor = False
@@ -64,7 +64,7 @@ object SearchInFilesForm: TSearchInFilesForm
   object OKBtn: TButton
     Left = 244
     Height = 27
-    Top = 190
+    Top = 155
     Width = 75
     Anchors = [akLeft, akBottom]
     Caption = 'OK'
@@ -75,7 +75,7 @@ object SearchInFilesForm: TSearchInFilesForm
   object CancelBtn: TButton
     Left = 167
     Height = 27
-    Top = 190
+    Top = 155
     Width = 75
     Anchors = [akLeft, akBottom]
     Cancel = True
@@ -104,14 +104,14 @@ object SearchInFilesForm: TSearchInFilesForm
   object SearchFolderEdit: TComboBox
     Left = 55
     Height = 21
-    Top = 166
+    Top = 131
     Width = 265
     ItemHeight = 13
     TabOrder = 5
   end
   object SearchFilesGrp: TRadioGroup
     Left = 165
-    Height = 93
+    Height = 65
     Top = 61
     Width = 154
     AutoFill = True
@@ -124,11 +124,11 @@ object SearchInFilesForm: TSearchInFilesForm
     ChildSizing.ShrinkVertical = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
-    ClientHeight = 75
+    ClientHeight = 47
     ClientWidth = 150
     ItemIndex = 0
     Items.Strings = (
-      '&PHP files'
+      '&Project type files'
       '&All kown files'
     )
     TabOrder = 4

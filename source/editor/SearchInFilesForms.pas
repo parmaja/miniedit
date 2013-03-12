@@ -44,7 +44,6 @@ type
     procedure SearchInFiles;
     procedure SearchInFile(FileName: string);
   protected
-    FCanceled: Boolean;
     FSearchCount: Integer;
     FProgressForm: TSearchProgressForm;
     FSearchText: string;
@@ -62,13 +61,18 @@ uses EditorEngine, SearchForms;
 
 {$R *.lfm}
 
-procedure DoSearchInFileCallback(AObject: TObject; const FileName: string; Resume: Boolean);
+procedure DoSearchInFileCallback(AObject: TObject; const FileName: string; Count, Level:Integer; var Resume: Boolean);
 begin
   with (AObject as TSearchInFilesForm) do
   begin
     SearchInFile(ExpandFileName(FileName));
-    if FCanceled then
-      Resume := False;
+    if (Count mod 25) = 0 then
+    begin
+      Application.ProcessMessages;
+      if FProgressForm.Canceled then
+        Resume := False;
+      Application.ProcessMessages;
+    end;
   end;
 end;
 
@@ -81,7 +85,7 @@ begin
   else
     aMasks := Engine.Groups.CreateFilter(False);
 
-  EnumFileList(IncludeTrailingPathDelimiter(SearchFolderEdit.Text), '.', aMasks, Engine.Options.IgnoreNames, @DoSearchInFileCallback, Self, 1000, 3, True);
+  EnumFileList(IncludeTrailingPathDelimiter(SearchFolderEdit.Text), aMasks, Engine.Options.IgnoreNames, @DoSearchInFileCallback, Self, 1000, 3, True, True);
 end;
 
 procedure TSearchInFilesForm.SearchReplaceText;
@@ -229,7 +233,6 @@ begin
   if FProgressForm <> nil then
   begin
     FProgressForm.FileNameLbl.Caption := FileName;
-    FCanceled := FProgressForm.Canceled;
     Application.ProcessMessages;
   end;
   aStrings := TStringList.Create;
@@ -253,7 +256,6 @@ begin
   if FProgressForm <> nil then
   begin
     FProgressForm.FoundLbl.Caption := IntToStr(FSearchCount);
-    FCanceled := FProgressForm.Canceled;
     Application.ProcessMessages;
   end;
 end;
