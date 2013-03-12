@@ -46,8 +46,8 @@
         <UnitName Value="SelectFiles"/>
         <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="33"/>
-        <CursorPos X="124" Y="50"/>
+        <TopLine Value="71"/>
+        <CursorPos X="29" Y="101"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -105,11 +105,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SearchInFilesForms"/>
-        <IsVisibleTab Value="True"/>
         <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="64"/>
-        <CursorPos X="47" Y="71"/>
+        <CursorPos X="38" Y="93"/>
         <UsageCount Value="200"/>
         <Bookmarks Count="1">
           <Item0 X="1" Y="106" ID="2"/>
@@ -130,6 +129,7 @@
         <CursorPos X="3" Y="34"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
+        <LoadedDesigner Value="True"/>
       </Unit9>
       <Unit10>
         <Filename Value="mneBreakpoints.pas"/>
@@ -248,11 +248,15 @@
         <Filename Value="..\editor\EditorEngine.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorEngine"/>
+        <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1413"/>
-        <CursorPos X="54" Y="1425"/>
+        <TopLine Value="657"/>
+        <CursorPos X="49" Y="686"/>
         <UsageCount Value="156"/>
+        <Bookmarks Count="1">
+          <Item0 X="15" Y="701" ID="1"/>
+        </Bookmarks>
         <Loaded Value="True"/>
       </Unit20>
       <Unit21>
@@ -1295,8 +1299,8 @@
         <UnitName Value="mneClasses"/>
         <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="210"/>
-        <CursorPos X="33" Y="217"/>
+        <TopLine Value="211"/>
+        <CursorPos X="5" Y="222"/>
         <UsageCount Value="12"/>
         <Loaded Value="True"/>
       </Unit146>
@@ -1950,7 +1954,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="7"/>
         <CursorPos X="10" Y="31"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="11"/>
         <Loaded Value="True"/>
       </Unit227>
       <Unit228>
@@ -1959,7 +1963,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="340"/>
         <CursorPos X="20" Y="349"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="11"/>
         <Loaded Value="True"/>
       </Unit228>
     </Units>
@@ -1968,124 +1972,124 @@
     </General>
     <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="73" Column="17" TopLine="47"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1390" Column="1" TopLine="1380"/>
       </Position1>
       <Position2>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1393" Column="1" TopLine="1383"/>
       </Position2>
       <Position3>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="47" Column="14" TopLine="17"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="786" Column="102" TopLine="770"/>
       </Position3>
       <Position4>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="73" Column="17" TopLine="43"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1446" Column="38" TopLine="1428"/>
       </Position4>
       <Position5>
         <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="235" Column="14" TopLine="205"/>
+        <Caret Line="77" Column="1" TopLine="64"/>
       </Position5>
       <Position6>
         <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="88" Column="106" TopLine="70"/>
       </Position6>
       <Position7>
         <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="47" Column="14" TopLine="17"/>
+        <Caret Line="66" Column="102" TopLine="46"/>
       </Position7>
       <Position8>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="73" Column="17" TopLine="43"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1366" Column="1" TopLine="1362"/>
       </Position8>
       <Position9>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="235" Column="14" TopLine="205"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="788" Column="61" TopLine="787"/>
       </Position9>
       <Position10>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="249" Column="14" TopLine="229"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1425" Column="54" TopLine="1413"/>
       </Position10>
       <Position11>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="259" Column="32" TopLine="230"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position11>
       <Position12>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="258" Column="32" TopLine="230"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="91" Column="13" TopLine="61"/>
       </Position12>
       <Position13>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="49" Column="18" TopLine="31"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="99" Column="65" TopLine="69"/>
       </Position13>
       <Position14>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="73" Column="22" TopLine="39"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="980" Column="11" TopLine="950"/>
       </Position14>
       <Position15>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="2207" Column="53" TopLine="2177"/>
       </Position15>
       <Position16>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="47" Column="1" TopLine="17"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="2208" Column="48" TopLine="2178"/>
       </Position16>
       <Position17>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="234" Column="1" TopLine="216"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="3217" Column="49" TopLine="3187"/>
       </Position17>
       <Position18>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="71" Column="35" TopLine="64"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="3231" Column="69" TopLine="3201"/>
       </Position18>
       <Position19>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="72" Column="21" TopLine="64"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="91" Column="13" TopLine="72"/>
       </Position19>
       <Position20>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="74" Column="1" TopLine="64"/>
+        <Filename Value="..\editor\SelectFiles.pas"/>
+        <Caret Line="50" Column="124" TopLine="33"/>
       </Position20>
       <Position21>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="77" Column="1" TopLine="64"/>
+        <Filename Value="..\editor\SelectFiles.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position21>
       <Position22>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1390" Column="1" TopLine="1380"/>
+        <Filename Value="..\editor\SelectFiles.pas"/>
+        <Caret Line="101" Column="29" TopLine="71"/>
       </Position22>
       <Position23>
-        <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1393" Column="1" TopLine="1383"/>
+        <Filename Value="mneClasses.pas"/>
+        <Caret Line="222" Column="5" TopLine="211"/>
       </Position23>
       <Position24>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="786" Column="102" TopLine="770"/>
+        <Caret Line="792" Column="18" TopLine="774"/>
       </Position24>
       <Position25>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1446" Column="38" TopLine="1428"/>
+        <Caret Line="1899" Column="3" TopLine="1895"/>
       </Position25>
       <Position26>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="77" Column="1" TopLine="64"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="713" Column="5" TopLine="697"/>
       </Position26>
       <Position27>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="88" Column="106" TopLine="70"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1901" Column="3" TopLine="1883"/>
       </Position27>
       <Position28>
-        <Filename Value="..\editor\SearchInFilesForms.pas"/>
-        <Caret Line="66" Column="102" TopLine="46"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="699" Column="31" TopLine="682"/>
       </Position28>
       <Position29>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1366" Column="1" TopLine="1362"/>
+        <Caret Line="1496" Column="3" TopLine="1493"/>
       </Position29>
       <Position30>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="788" Column="61" TopLine="787"/>
+        <Caret Line="1906" Column="19" TopLine="1888"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
@@ -2110,7 +2114,7 @@
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="..\editor\EditorEngine.pas"/>
-        <Line Value="2951"/>
+        <Line Value="2959"/>
       </Item3>
     </BreakPoints>
   </Debugging>

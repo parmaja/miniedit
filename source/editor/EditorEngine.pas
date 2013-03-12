@@ -681,6 +681,8 @@ type
     //FMacroRecorder: TSynMacroRecorder;
     FWorkSpace: string;
     FOnReplaceText: TReplaceTextEvent;
+    //Extenstion Cache
+    //FExtenstionCache: TExtenstionCache; //TODO
     function GetPerspective: TEditorPerspective;
     function GetSCM: TEditorSCM;
     function GetRoot: string;
@@ -696,7 +698,7 @@ type
     procedure DoChangedState(State: TEditorChangeStates); virtual;
     procedure DoMacroStateChange(Sender: TObject);
     procedure DoReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
-
+    procedure UpdateExtensionsCache;
   public
     constructor Create; virtual;
     destructor Destroy; override;
@@ -1491,6 +1493,11 @@ begin
     FOnReplaceText(Sender, ASearch, AReplace, Line, Column, ReplaceAction);
 end;
 
+procedure TEditorEngine.UpdateExtensionsCache;
+begin
+
+end;
+
 function TEditorFiles.FindFile(const vFileName: string): TEditorFile;
 var
   i: integer;
@@ -1897,7 +1904,8 @@ procedure TEditorEngine.Startup;
 begin
   FIsEngineStart := True;
   LoadOptions;
-  Groups.Sort(@SortGroupsByTitle)
+  Groups.Sort(@SortGroupsByTitle);
+  UpdateExtensionsCache;
 end;
 
 procedure TEditorEngine.LoadOptions;
