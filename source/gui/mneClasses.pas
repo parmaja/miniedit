@@ -20,23 +20,23 @@ uses
   SynHighlighterPython;
 
 type
-  TSQLFile = class(TEditorFile)
+  TSQLFile = class(TSynEditEditorFile)
   public
   end;
 
-  TApacheFile = class(TEditorFile)
+  TApacheFile = class(TSynEditEditorFile)
   public
   end;
 
-  TINIFile = class(TEditorFile)
+  TINIFile = class(TSynEditEditorFile)
   public
   end;
 
-  TTXTFile = class(TEditorFile)
+  TTXTFile = class(TSynEditEditorFile)
   public
   end;
 
-  TXMLFile = class(TEditorFile)
+  TXMLFile = class(TSynEditEditorFile)
   public
     procedure NewSource; override;
   end;

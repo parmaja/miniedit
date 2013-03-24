@@ -280,7 +280,8 @@ begin
   if FileName <> '' then
   begin
     aFile := Engine.Files.ShowFile(FileName);
-    SetExecuted(Key, aFile.SynEdit, Line);
+    if (aFile is TSynEditEditorFile) then //{$warning 'bad beavor, i this class must be outside the engine'}
+      SetExecuted(Key, (aFile as TSynEditEditorFile).SynEdit, Line);
   end
   else
     SetExecuted(Key, nil, -1);

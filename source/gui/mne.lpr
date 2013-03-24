@@ -49,6 +49,7 @@ uses
   IniFiles,
   mneAddons, mneAssociateForm,
   mnePHPClasses,
+
   mnePASClasses,
   MsgBox,
   GUIMsgBox,
@@ -131,4 +132,4 @@ begin
     end;
   end;
 end.
-
+

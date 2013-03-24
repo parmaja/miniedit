@@ -248,54 +248,119 @@ type
   TEditorFile = class(TCollectionItem)
   private
     FName: string;
-    FSynEdit: TSynEdit;
     FIsNew: Boolean;
     FIsEdited: Boolean;
-    FFileAge: integer;
+    FFileAge: Integer;
     FFileSize: int64;
     FGroup: TFileGroup;
     FRelated: string;
     FMode: TEditorFileMode;
     procedure SetGroup(const Value: TFileGroup);
-    function GetIsReadonly: Boolean;
     procedure SetIsEdited(const Value: Boolean);
     procedure SetIsNew(AValue: Boolean);
-    procedure SetIsReadonly(const Value: Boolean);
     function GetModeAsText: string;
     procedure SetMode(const Value: TEditorFileMode);
+  protected
+    procedure AssignGroup(const Value: TFileGroup); virtual;
+    function GetIsReadonly: Boolean; virtual;
+    procedure SetIsReadonly(const Value: Boolean); virtual;
+    function GetControl: TControl; virtual;
   protected
     procedure Edit;
     procedure DoEdit(Sender: TObject);
     procedure DoStatusChange(Sender: TObject; Changes: TSynStatusChanges);
-    procedure DoGutterClickEvent(Sender: TObject; X, Y, Line: integer; Mark: TSynEditMark);
-    procedure DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
-    procedure UpdateAge;
+    procedure UpdateAge; virtual;
     function GetHighlighter: TSynCustomHighlighter; virtual;
     procedure NewSource; virtual;
+    procedure DoLoad(FileName: string); virtual;
+    procedure DoSave(FileName: string); virtual;
   public
     constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
-    procedure Load(FileName: string); virtual;
-    procedure Save(FileName: string); virtual;
+    procedure Assign(Source: TPersistent); override;
+    procedure Load(FileName: string);
+    procedure Save(FileName: string);
+
     procedure SaveFile(Extension:string = ''; AsNewFile: Boolean = False); virtual;
-    procedure Reload;
-    procedure Show;
+    procedure Show; virtual;
     procedure Close;
+    procedure Reload;
     procedure OpenInclude; virtual;
     function CanOpenInclude: Boolean; virtual;
     function CheckChanged: Boolean;
+    //
+    procedure Find; virtual;
+    procedure FindNext; virtual;
+    procedure Replace; virtual;
+    procedure Refresh; virtual;
+    function GetHint(HintControl: TControl; CursorPos: TPoint; out vHint: string): Boolean; virtual;
+    //
+    function GetLanguageName: string; virtual; //TODO need to get more good name to this function
+    procedure SetLine(Line: Integer); virtual;
+    //Clipboard
+    function CanCopy: Boolean; virtual;
+    function CanPaste: Boolean; virtual;
+
+    procedure Paste; virtual;
+    procedure Copy; virtual;
+    procedure Cut; virtual;
+    procedure SelectAll; virtual;
+
     //run the file or run the project depend on the project type (perspective)
     function Run: Boolean; virtual;
     property Mode: TEditorFileMode read FMode write SetMode default efmUnix;
     property ModeAsText: string read GetModeAsText;
     property Name: string read FName write FName;
     property Related: string read FRelated write FRelated;
-    property SynEdit: TSynEdit read FSynEdit;
     property IsEdited: Boolean read FIsEdited write SetIsEdited;
     property IsNew: Boolean read FIsNew write SetIsNew default False;
     property IsReadOnly: Boolean read GetIsReadonly write SetIsReadonly;
     property Group: TFileGroup read FGroup write SetGroup;
+    property Control: TControl read GetControl;
   published
+  end;
+
+  { TSynEditEditorFile }
+
+  TSynEditEditorFile = class(TEditorFile)
+  private
+    FSynEdit: TSynEdit;
+  protected
+    function GetIsReadonly: Boolean; override;
+    procedure SetIsReadonly(const Value: Boolean); override;
+    function GetControl: TControl; override;
+    procedure DoLoad(FileName: string); override;
+    procedure DoSave(FileName: string); override;
+    procedure AssignGroup(const Value: TFileGroup); override;
+
+    procedure DoGutterClickEvent(Sender: TObject; X, Y, Line: integer; Mark: TSynEditMark);
+    procedure DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
+  public
+    constructor Create(ACollection: TCollection); override;
+    destructor Destroy; override;
+    procedure Assign(Source: TPersistent); override;
+    procedure AssignTo(Dest: TPersistent); override;
+    procedure Find; override;
+    procedure FindNext; override;
+    procedure Replace; override;
+    procedure Refresh; override;
+    procedure Show; override;
+    function GetHint(HintControl: TControl; CursorPos: TPoint; out vHint: string): Boolean; override;
+    function GetWatchByMouse(p: TPoint; var v, s, t: string): boolean;
+    function GetWatchByCursor(var v, s, t: string): boolean;
+    procedure UpdateAge; override;
+    function GetLanguageName: string; override;
+
+    //TODO: This function must enumrated
+    function CanCopy: Boolean; override;
+    function CanPaste: Boolean; override;
+    procedure Copy; override;
+    procedure Paste; override;
+    procedure Cut; override;
+    procedure SelectAll; override;
+
+    procedure SetLine(Line: Integer); override;
+    property SynEdit: TSynEdit read FSynEdit;
   end;
 
   { TEditorFiles }
@@ -388,7 +453,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Apply;
+    procedure Apply; virtual;
     procedure Load(vFileName: string);
     procedure Save;
     procedure Show;
@@ -888,6 +953,296 @@ begin
   end;
 end;
 
+{ TSynEditEditorFile }
+
+function TSynEditEditorFile.GetIsReadonly: Boolean;
+begin
+  Result := SynEdit.ReadOnly;
+end;
+
+procedure TSynEditEditorFile.SetIsReadonly(const Value: Boolean);
+begin
+  SynEdit.ReadOnly := Value;
+end;
+
+function TSynEditEditorFile.GetControl: TControl;
+begin
+  Result := SynEdit;
+end;
+
+procedure TSynEditEditorFile.DoLoad(FileName: string);
+var
+  Contents: string;
+  Size: integer;
+  Stream: TFileStream;
+begin
+  FileName := ExpandFileName(FileName);
+  DoLoad(FileName);
+  try
+    Stream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+    SynEdit.BeginUpdate;
+    try
+      Size := Stream.Size - Stream.Position;
+      SetString(Contents, nil, Size);
+      Stream.Read(Pointer(Contents)^, Size);
+      Mode := DetectFileMode(Contents);
+      if eoTabsToSpaces in SynEdit.Options then
+      begin
+        Contents := ChangeTabsToSpace(Contents, SynEdit.TabWidth);
+      end;
+      SynEdit.Lines.Text := Contents;
+      Name := FileName;
+      IsEdited := False;
+      IsNew := False;
+      UpdateAge;
+    finally
+      SynEdit.EndUpdate;
+      Stream.Free;
+    end;
+  finally
+    {on E: EStreamError do
+    else
+      raise;}
+  end;
+end;
+
+procedure TSynEditEditorFile.DoSave(FileName: string);
+begin
+  SaveAsMode(FileName, Mode, SynEdit.Lines);
+end;
+
+procedure TSynEditEditorFile.AssignGroup(const Value: TFileGroup);
+begin
+  inherited AssignGroup(Value);
+  if Value <> nil then
+  begin
+    FSynEdit.Highlighter := FGroup.Category.Highlighter;
+    Value.Category.InitCompletion(FSynEdit);
+
+    if (fgkExecutable in FGroup.Kind) then
+      with TSynDebugMarksPart.Create(FSynEdit.Gutter.Parts) do
+      begin
+        FEditorFile := Self;
+        AutoSize := False;
+        Width := EditorResource.DebugImages.Width + DEBUG_IMAGE_MARGINES;
+      end;
+
+    FSynEdit.Gutter.SeparatorPart(0).Index := FSynEdit.Gutter.Parts.Count - 1;
+
+    Value.Category.InitEdit(FSynEdit);
+    //Engine.MacroRecorder.AddEditor(FSynEdit);
+  end;
+  Engine.Options.Profile.AssignTo(FSynEdit);//TODO dublicated assign?
+end;
+
+procedure TSynEditEditorFile.DoGutterClickEvent(Sender: TObject; X, Y, Line: integer; Mark: TSynEditMark);
+var
+  aLine: integer;
+begin
+  if (Engine.Perspective.Debug <> nil) and (fgkExecutable in Group.Kind) then
+  begin
+    aLine := SynEdit.PixelsToRowColumn(Point(X, Y)).y;
+    Engine.Perspective.Debug.Lock;
+    try
+      Engine.Perspective.Debug.Breakpoints.Toggle(Name, aLine);
+    finally
+      Engine.Perspective.Debug.Unlock;
+    end;
+    SynEdit.InvalidateLine(aLine);
+  end;
+end;
+
+procedure TSynEditEditorFile.DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
+begin
+  if (Engine.Perspective.Debug <> nil) and (Engine.Perspective.Debug.ExecutedEdit = Sender) then
+  begin
+    if Engine.Perspective.Debug.ExecutedLine = Line then
+    begin
+      Special := True;
+      Markup.Background := clNavy;
+      Markup.Foreground := clWhite;
+    end;
+  end;
+end;
+
+constructor TSynEditEditorFile.Create(ACollection: TCollection);
+begin
+  inherited;
+  { There is more assigns in TEditorFile.SetGroup and TEditorProfile.Assign}
+  FSynEdit := TSynEdit.Create(Engine.FilesControl);
+  FSynEdit.OnChange := @DoEdit;
+  FSynEdit.OnStatusChange := @DoStatusChange;
+  FSynEdit.OnGutterClick := @DoGutterClickEvent;
+  FSynEdit.OnSpecialLineMarkup := @DoSpecialLineMarkup;
+  FSynEdit.BookMarkOptions.BookmarkImages := EditorResource.BookmarkImages;
+  FSynEdit.OnReplaceText := @Engine.DoReplaceText;
+  //  FSynEdit.Gutter.MarksPart(0).DebugMarksImageIndex := 0;
+  //FSynEdit.Gutter.MarksPart.DebugMarksImageIndex := 0;
+  //FSynEdit.Gutter.Parts.Add(TSynBreakPointItem.Create(FSynEdit.Gutter.Parts));
+
+  FSynEdit.TrimSpaceType := settLeaveLine;
+  FSynEdit.BoundsRect := Engine.FilesControl.ClientRect;
+  FSynEdit.BorderStyle := bsNone;
+  FSynEdit.ShowHint := True;
+  FSynEdit.Visible := False;
+  FSynEdit.Align := alClient;
+  FSynEdit.Realign;
+  FSynEdit.WantTabs := True;
+  FSynEdit.Parent := Engine.FilesControl;
+end;
+
+destructor TSynEditEditorFile.Destroy;
+begin
+  FSynEdit.Free;
+  inherited;
+end;
+
+procedure TSynEditEditorFile.Assign(Source: TPersistent);
+begin
+  if Source is TEditorProfile then
+    (Source as TEditorProfile).AssignTo(SynEdit)
+  else if (Source is TEditorDesktopFile) then
+  begin
+    with (Source as TEditorDesktopFile) do
+    begin
+      SynEdit.CaretX := CaretX;
+      SynEdit.CaretY := CaretY;
+      SynEdit.TopLine := TopLine;
+    end;
+  end
+  else
+    inherited Assign(Source);
+end;
+
+procedure TSynEditEditorFile.AssignTo(Dest: TPersistent);
+begin
+  if Dest is TEditorProfile then
+    //(Source as TEditorProfile).AssignTo(SynEdit)//TODO
+  else if (Dest is TEditorDesktopFile) then
+  begin
+    with (Dest as TEditorDesktopFile) do
+    begin
+      CaretX := SynEdit.CaretX;
+      CaretY := SynEdit.CaretY;
+      TopLine := SynEdit.TopLine;
+    end;
+  end
+  else
+    inherited AssignTo(Dest);
+end;
+
+procedure TSynEditEditorFile.Find;
+begin
+  inherited;
+  ShowSearchForm(SynEdit, Engine.Options.SearchHistory, Engine.Options.ReplaceHistory, False);
+end;
+
+procedure TSynEditEditorFile.FindNext;
+begin
+  inherited;
+  NextSearchText(SynEdit);
+end;
+
+procedure TSynEditEditorFile.Replace;
+begin
+  inherited;
+  ShowSearchForm(SynEdit, Engine.Options.SearchHistory, Engine.Options.ReplaceHistory, True);
+end;
+
+procedure TSynEditEditorFile.Refresh;
+begin
+  inherited;
+  SynEdit.Refresh;
+end;
+
+procedure TSynEditEditorFile.Show;
+begin
+  inherited;
+  SynEdit.Visible := True;
+  SynEdit.Show;
+  SynEdit.BringToFront;
+  (Engine.FilesControl.Owner as TCustomForm).ActiveControl := SynEdit;
+end;
+
+function TSynEditEditorFile.GetHint(HintControl: TControl; CursorPos: TPoint; out vHint: string): Boolean;
+var
+  v, s, t: string;
+begin
+  Result := GetWatchByMouse(CursorPos, v, s, t);
+  vHint := v + ':' + t + '=' + #13#10 + s;
+end;
+
+function TSynEditEditorFile.GetWatchByMouse(p: TPoint; var v, s, t: string): boolean;
+begin
+
+end;
+
+function TSynEditEditorFile.GetWatchByCursor(var v, s, t: string): boolean;
+var
+  l: variant;
+begin
+  if not SynEdit.SelAvail then
+    v := Trim(SynEdit.GetWordAtRowCol(SynEdit.CaretXY))
+  else
+    v := SynEdit.SelText;
+  Result := (v <> '') and Engine.Perspective.Debug.Watches.GetValue(v, l, t, False);
+  s := l;
+end;
+
+procedure TSynEditEditorFile.UpdateAge;
+begin
+  inherited;
+  if SynEdit <> nil then
+  begin
+    SynEdit.Modified := False;
+    SynEdit.MarkTextAsSaved;
+  end;
+end;
+
+function TSynEditEditorFile.GetLanguageName: string;
+begin
+  if (SynEdit <> nil) and (SynEdit.Highlighter <> nil) then
+    Result := SynEdit.Highlighter.GetLanguageName
+  else
+    Result := inherited;
+end;
+
+function TSynEditEditorFile.CanCopy: Boolean;
+begin
+  Result := SynEdit.SelAvail;
+end;
+
+function TSynEditEditorFile.CanPaste: Boolean;
+begin
+  Result := SynEdit.CanPaste;
+end;
+
+procedure TSynEditEditorFile.Copy;
+begin
+  SynEdit.CopyToClipboard
+end;
+
+procedure TSynEditEditorFile.Paste;
+begin
+  SynEdit.PasteFromClipboard;
+end;
+
+procedure TSynEditEditorFile.Cut;
+begin
+  SynEdit.CutToClipboard;
+end;
+
+procedure TSynEditEditorFile.SelectAll;
+begin
+  SynEdit.SelectAll;
+end;
+
+procedure TSynEditEditorFile.SetLine(Line: Integer);
+begin
+  SynEdit.CaretY := Line;
+  SynEdit.CaretX := 1;
+end;
+
 { TmneSynCompletion }
 
 function TmneSynCompletion.OwnedByEditor: Boolean;
@@ -1246,14 +1601,12 @@ begin
     //Engine.Categories[i].Completion.Font := Profile.Font;
     //Engine.Categories[i].Completion.Options := Engine.Categories[i].Completion.Options + [scoTitleIsCentered];
     if Engine.Categories[i].Highlighter <> nil then
-    begin
       Profile.Highlighters.AssignTo(Engine.Categories[i].Highlighter);
-    end;
   end;
 
   for i := 0 to Engine.Files.Count - 1 do
   begin
-    Profile.AssignTo(Engine.Files[i].SynEdit);
+    Engine.Files[i].Assign(Profile);
   end;
 end;
 
@@ -1484,7 +1837,7 @@ end;
 procedure TEditorFiles.Find;
 begin
   if Current <> nil then
-    ShowSearchForm(Current.SynEdit, Engine.Options.SearchHistory, Engine.Options.ReplaceHistory, False);
+    Current.Find;
 end;
 
 procedure TEditorEngine.DoReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
@@ -1516,7 +1869,7 @@ end;
 procedure TEditorFiles.FindNext;
 begin
   if Current <> nil then
-    NextSearchText(Current.SynEdit);
+    Current.FindNext;
 end;
 
 function TEditorFiles.GetCurrent: TEditorFile;
@@ -1871,14 +2224,12 @@ begin
         if Engine.Categories[i].Highlighter <> nil then
           aList.Add(Engine.Categories[i].Highlighter.ClassType);
       end;
-      if (Engine.Files.Current <> nil) and (Engine.Files.Current.SynEdit <> nil) and (Engine.Files.Current.SynEdit.Highlighter <> nil) then
-        aSelect := Engine.Files.Current.SynEdit.Highlighter.GetLanguageName
+      if (Engine.Files.Current <> nil) then
+        aSelect := Engine.Files.Current.GetLanguageName //just to select a language in the combobox
       else
         aSelect := '';
       if Execute(Profile, aList, aSelect) then
-      begin
         Apply;
-      end;
     finally
       aList.Free;
     end;
@@ -2048,7 +2399,7 @@ end;
 procedure TEditorFiles.Replace;
 begin
   if Current <> nil then
-    ShowSearchForm(Current.SynEdit, Engine.Options.SearchHistory, Engine.Options.ReplaceHistory, True);
+    Current.Replace;
 end;
 
 procedure TEditorFiles.Revert;
@@ -2143,16 +2494,13 @@ end;
 procedure TEditorFiles.Refresh;
 begin
   if Current <> nil then
-  begin
-    Current.SynEdit.Refresh;
-  end;
+    Current.Refresh;
 end;
 
-function TEditorFiles.ShowFile(const FileName: string; Line: integer): TEditorFile;
+function TEditorFiles.ShowFile(const FileName: string; Line: Integer): TEditorFile;
 begin
   Result := InternalOpenFile(FileName, False);
-  Result.SynEdit.CaretY := Line;
-  Result.SynEdit.CaretX := 1;
+  Result.SetLine(Line);
   Engine.UpdateState([ecsChanged]);
   if Result <> nil then
     Current := Result;
@@ -2163,7 +2511,7 @@ end;
 
 procedure TEditorFile.Edit;
 begin
-  if not SynEdit.ReadOnly then
+  if not IsReadOnly then
     IsEdited := True;
 end;
 
@@ -2193,7 +2541,6 @@ end;
 
 procedure TEditorFile.OpenInclude;
 begin
-
 end;
 
 function TEditorFile.CanOpenInclude: Boolean;
@@ -2204,35 +2551,18 @@ end;
 constructor TEditorFile.Create(ACollection: TCollection);
 begin
   inherited;
-  { There is more assigns in TEditorFile.SetGroup and TEditorProfile.Assign}
-  FSynEdit := TSynEdit.Create(Engine.FilesControl);
-  FSynEdit.OnChange := @DoEdit;
-  FSynEdit.OnStatusChange := @DoStatusChange;
-  FSynEdit.OnGutterClick := @DoGutterClickEvent;
-  FSynEdit.OnSpecialLineMarkup := @DoSpecialLineMarkup;
-  FSynEdit.BookMarkOptions.BookmarkImages := EditorResource.BookmarkImages;
-  FSynEdit.OnReplaceText := @Engine.DoReplaceText;
-  //  FSynEdit.Gutter.MarksPart(0).DebugMarksImageIndex := 0;
-  //FSynEdit.Gutter.MarksPart.DebugMarksImageIndex := 0;
-  //FSynEdit.Gutter.Parts.Add(TSynBreakPointItem.Create(FSynEdit.Gutter.Parts));
-
-  FSynEdit.TrimSpaceType := settLeaveLine;
-  FSynEdit.BoundsRect := Engine.FilesControl.ClientRect;
-  FSynEdit.BorderStyle := bsNone;
-  FSynEdit.ShowHint := True;
-  FSynEdit.Visible := False;
-  FSynEdit.Align := alClient;
-  FSynEdit.Realign;
-  FSynEdit.WantTabs := True;
-  FSynEdit.Parent := Engine.FilesControl;
   FIsNew := True;
   FIsEdited := False;
 end;
 
 destructor TEditorFile.Destroy;
 begin
-  FSynEdit.Free;
   inherited;
+end;
+
+procedure TEditorFile.Assign(Source: TPersistent);
+begin
+  inherited Assign(Source);
 end;
 
 procedure TEditorFile.DoEdit(Sender: TObject);
@@ -2242,38 +2572,9 @@ begin
 end;
 
 procedure TEditorFile.Load(FileName: string);
-var
-  Contents: string;
-  Size: integer;
-  Stream: TFileStream;
 begin
   FileName := ExpandFileName(FileName);
-  try
-    Stream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
-    SynEdit.BeginUpdate;
-    try
-      Size := Stream.Size - Stream.Position;
-      SetString(Contents, nil, Size);
-      Stream.Read(Pointer(Contents)^, Size);
-      Mode := DetectFileMode(Contents);
-      if eoTabsToSpaces in SynEdit.Options then
-      begin
-        Contents := ChangeTabsToSpace(Contents, SynEdit.TabWidth);
-      end;
-      SynEdit.Lines.Text := Contents;
-      Name := FileName;
-      IsEdited := False;
-      IsNew := False;
-      UpdateAge;
-    finally
-      SynEdit.EndUpdate;
-      Stream.Free;
-    end;
-  finally
-    {on E: EStreamError do
-    else
-      raise;}
-  end;
+  DoLoad(FileName);
 end;
 
 procedure SaveAsMode(const FileName: string; Mode: TEditorFileMode; Strings: TStrings);
@@ -2295,7 +2596,7 @@ end;
 
 procedure TEditorFile.Save(FileName: string);
 begin
-  SaveAsMode(FileName, Mode, SynEdit.Lines);
+  DoSave(FileName);
   Name := FileName;
   IsEdited := False;
   IsNew := False;
@@ -2310,16 +2611,12 @@ end;
 
 procedure TEditorFile.Show;
 begin
-  SynEdit.Visible := True;
-  SynEdit.Show;
-  SynEdit.BringToFront;
-  (Engine.FilesControl.Owner as TCustomForm).ActiveControl := SynEdit;
 end;
 
 procedure TEditorFile.SaveFile(Extension:string; AsNewFile: Boolean);
 var
   aDialog: TSaveDialog;
-  DoSave, DoRecent: Boolean;
+  aSave, DoRecent: Boolean;
   aName: string;
 begin
   DoRecent := False;
@@ -2341,8 +2638,8 @@ begin
     end;
     aDialog.FileName := '*' + aDialog.DefaultExt;
 
-    DoSave := aDialog.Execute;
-    if DoSave then
+    aSave := aDialog.Execute;
+    if aSave then
     begin
       aName := aDialog.FileName;
       DoRecent := True;
@@ -2352,10 +2649,10 @@ begin
   else
   begin
     aName := FName;
-    DoSave := True;
+    aSave := True;
   end;
 
-  if DoSave then
+  if aSave then
   begin
     Save(aName);
     FName := aName;
@@ -2406,6 +2703,63 @@ begin
   end;
 end;
 
+procedure TEditorFile.Find;
+begin
+end;
+
+procedure TEditorFile.FindNext;
+begin
+end;
+
+procedure TEditorFile.Replace;
+begin
+end;
+
+procedure TEditorFile.Refresh;
+begin
+end;
+
+function TEditorFile.GetHint(HintControl: TControl; CursorPos: TPoint; out vHint: string): Boolean;
+begin
+  Result := False;
+end;
+
+function TEditorFile.GetLanguageName: string;
+begin
+  Result := '';
+end;
+
+procedure TEditorFile.SetLine(Line: Integer);
+begin
+
+end;
+
+function TEditorFile.CanCopy: Boolean;
+begin
+  Result := False;
+end;
+
+function TEditorFile.CanPaste: Boolean;
+begin
+  Result := False;
+end;
+
+procedure TEditorFile.Paste;
+begin
+end;
+
+procedure TEditorFile.Copy;
+begin
+end;
+
+procedure TEditorFile.Cut;
+begin
+end;
+
+procedure TEditorFile.SelectAll;
+begin
+end;
+
 function TEditorFile.Run: Boolean;
 begin
   Result := False;
@@ -2415,11 +2769,6 @@ procedure TEditorFile.UpdateAge;
 begin
   FFileAge := FileAge(Name);
   FFileSize := FileSize(Name);
-  if SynEdit <> nil then
-  begin
-    SynEdit.Modified := False;
-    SynEdit.MarkTextAsSaved;
-  end;
 end;
 
 procedure TEditorFile.Reload;
@@ -2433,25 +2782,13 @@ begin
   begin
     FGroup := Value;
     if FGroup <> nil then
-    begin
-      FSynEdit.Highlighter := FGroup.Category.Highlighter;
-      FGroup.Category.InitCompletion(FSynEdit);
-
-      if (fgkExecutable in FGroup.Kind) then
-        with TSynDebugMarksPart.Create(FSynEdit.Gutter.Parts) do
-        begin
-          FEditorFile := Self;
-          AutoSize := False;
-          Width := EditorResource.DebugImages.Width + DEBUG_IMAGE_MARGINES;
-        end;
-
-      FSynEdit.Gutter.SeparatorPart(0).Index := FSynEdit.Gutter.Parts.Count - 1;
-
-      FGroup.Category.InitEdit(FSynEdit);
-      //Engine.MacroRecorder.AddEditor(FSynEdit);
-    end;
-    Engine.Options.Profile.AssignTo(FSynEdit);
+      AssignGroup(FGroup);
   end;
+end;
+
+function TEditorFile.GetControl: TControl;
+begin
+  Result := nil;
 end;
 
 function TEditorFile.GetHighlighter: TSynCustomHighlighter;
@@ -2464,7 +2801,7 @@ end;
 
 function TEditorFile.GetIsReadonly: Boolean;
 begin
-  Result := SynEdit.ReadOnly;
+  Result := False;//TODO true
 end;
 
 procedure TEditorFile.SetIsNew(AValue: Boolean);
@@ -2476,10 +2813,17 @@ end;
 
 procedure TEditorFile.SetIsReadonly(const Value: Boolean);
 begin
-  SynEdit.ReadOnly := Value;
 end;
 
 procedure TEditorFile.NewSource;
+begin
+end;
+
+procedure TEditorFile.DoLoad(FileName: string);
+begin
+end;
+
+procedure TEditorFile.DoSave(FileName: string);
 begin
 end;
 
@@ -2576,34 +2920,8 @@ begin
   end;
 end;
 
-procedure TEditorFile.DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
+procedure TEditorFile.AssignGroup(const Value: TFileGroup);
 begin
-  if (Engine.Perspective.Debug <> nil) and (Engine.Perspective.Debug.ExecutedEdit = Sender) then
-  begin
-    if Engine.Perspective.Debug.ExecutedLine = Line then
-    begin
-      Special := True;
-      Markup.Background := clNavy;
-      Markup.Foreground := clWhite;
-    end;
-  end;
-end;
-
-procedure TEditorFile.DoGutterClickEvent(Sender: TObject; X, Y, Line: integer; Mark: TSynEditMark);
-var
-  aLine: integer;
-begin
-  if (Engine.Perspective.Debug <> nil) and (fgkExecutable in Group.Kind) then
-  begin
-    aLine := SynEdit.PixelsToRowColumn(Point(X, Y)).y;
-    Engine.Perspective.Debug.Lock;
-    try
-      Engine.Perspective.Debug.Breakpoints.Toggle(Name, aLine);
-    finally
-      Engine.Perspective.Debug.Unlock;
-    end;
-    SynEdit.InvalidateLine(aLine);
-  end;
 end;
 
 procedure TEditorFile.DoStatusChange(Sender: TObject; Changes: TSynStatusChanges);
@@ -3315,9 +3633,7 @@ begin
         aFile := Engine.Files.LoadFile(aItem.FileName, False);
         if aFile <> nil then
         begin
-          aFile.SynEdit.CaretX := aItem.CaretX;
-          aFile.SynEdit.CaretY := aItem.CaretY;
-          aFile.SynEdit.TopLine := aItem.TopLine;
+          aFile.Assign(aItem);
         end;
       end;
     end;
@@ -3360,9 +3676,7 @@ begin
   begin
     aFile := Engine.Files[i];
     aItem := Files.Add(aFile.Name);
-    aItem.CaretX := aFile.SynEdit.CaretX;
-    aItem.CaretY := aFile.SynEdit.CaretY;
-    aItem.TopLine := aFile.SynEdit.TopLine;
+    aFile.AssignTo(aItem);
   end;
 end;
 

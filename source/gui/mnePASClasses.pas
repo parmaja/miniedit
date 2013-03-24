@@ -29,13 +29,13 @@ type
 
   { TPASFile }
 
-  TPASFile = class(TEditorFile)
+  TPASFile = class(TSynEditEditorFile)
   protected
     procedure NewSource; override;
   public
   end;
 
-  TLFMFile = class(TEditorFile)
+  TLFMFile = class(TSynEditEditorFile)
   protected
     //procedure NewSource; override;
   public

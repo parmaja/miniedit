@@ -475,7 +475,6 @@ type
     procedure ReopenClick(Sender: TObject);
     procedure ReopenProjectClick(Sender: TObject);
     function GetWatchByCursor(var v, s, t: string): boolean;
-    function GetWatchByMouse(p: TPoint; var v, s, t: string): boolean;
     procedure AddWatch(s: string);
     procedure DeleteWatch(s: string);
     procedure EnumRecentFile;
@@ -496,7 +495,6 @@ type
     procedure RunTerminated(Sender: TObject);
     procedure RunScript;
     //
-    procedure ReceiveBuffer(const Buffer: string);
     procedure Log(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
     procedure Log(ACaption, AMsg: string); overload;
     procedure FollowFolder(vFolder: string; FocusIt: Boolean);
@@ -604,16 +602,16 @@ begin
   FoldersAct.Execute;
 end;
 
-procedure TMainForm.ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
+procedure TMainForm.ApplicationPropertiesShowHint(var HintStr: string; var CanShow: Boolean; var HintInfo: THintInfo);
 var
-  v, s, t: string;
+  s: string;
 begin
-  if (Engine.Files.Current <> nil) and (HintInfo.HintControl = Engine.Files.Current.SynEdit) then
+  if (Engine.Files.Current <> nil) then
   begin
-    CanShow := GetWatchByMouse(HintInfo.CursorPos, v, s, t);
+    CanShow := Engine.Files.Current.GetHint(HintInfo.HintControl, HintInfo.CursorPos, s);
+
     if CanShow then
     begin
-      HintStr := v + ':' + t + '=' + #13#10 + s;
       HintInfo.HideTimeout := 10000;
       HintInfo.ReshowTimeout := 1;
     end;
@@ -736,7 +734,8 @@ procedure TMainForm.EngineRefresh;
 begin
   if Engine.Files.Current <> nil then
   begin
-    Engine.Files.Current.SynEdit.PopupMenu := EditorPopupMenu;
+    if Engine.Files.Current.Control <> nil then
+      Engine.Files.Current.Control.PopupMenu := EditorPopupMenu;
     FileNameLbl.Caption := Engine.Files.Current.Name;
     FileModeBtn.Caption := Engine.Files.Current.ModeAsText;
     FileTabs.ItemIndex := Engine.Files.Current.Index;
@@ -1079,35 +1078,6 @@ begin
   end;
 end;
 
-function TMainForm.GetWatchByCursor(var v, s, t: string): boolean;
-var
-  l: variant;
-begin
-  if not Engine.Files.Current.SynEdit.SelAvail then
-    v := Trim(Engine.Files.Current.SynEdit.GetWordAtRowCol(Engine.Files.Current.SynEdit.CaretXY))
-  else
-    v := Engine.Files.Current.SynEdit.SelText;
-  Result := (v <> '') and Engine.Perspective.Debug.Watches.GetValue(v, l, t, False);
-  s := l;
-end;
-
-function TMainForm.GetWatchByMouse(p: TPoint; var v, s, t: string): boolean;
-var
-  l: variant;
-begin
-  if Engine.Perspective.Debug <> nil then
-  begin
-    if not Engine.Files.Current.SynEdit.SelAvail then
-      v := Trim(Engine.Files.Current.SynEdit.GetWordAtRowCol(Engine.Files.Current.SynEdit.PixelsToRowColumn(p)))
-    else
-      v := Engine.Files.Current.SynEdit.SelText;
-    Result := (v <> '') and Engine.Perspective.Debug.Watches.GetValue(v, l, t, False);
-    s := l;
-  end
-  else
-    Result := False;
-end;
-
 procedure TMainForm.EnumRecentProjects;
 var
   i, c: integer;
@@ -1292,17 +1262,17 @@ end;
 
 procedure TMainForm.CopyActUpdate(Sender: TObject);
 begin
-  CopyAct.Enabled := (Engine.Files.Current <> nil) and Engine.Files.Current.SynEdit.SelAvail;
+  CopyAct.Enabled := (Engine.Files.Current <> nil) and Engine.Files.Current.CanCopy;
 end;
 
 procedure TMainForm.PasteActUpdate(Sender: TObject);
 begin
-  PasteAct.Enabled := (Engine.Files.Current <> nil) and Engine.Files.Current.SynEdit.CanPaste;
+  PasteAct.Enabled := (Engine.Files.Current <> nil) and Engine.Files.Current.CanPaste;
 end;
 
 procedure TMainForm.CutActUpdate(Sender: TObject);
 begin
-  CutAct.Enabled := (Engine.Files.Current <> nil) and Engine.Files.Current.SynEdit.SelAvail;
+  CutAct.Enabled := (Engine.Files.Current <> nil) and Engine.Files.Current.CanCopy;
 end;
 
 procedure TMainForm.SelectAllActUpdate(Sender: TObject);
@@ -1312,23 +1282,23 @@ end;
 
 procedure TMainForm.PasteActExecute(Sender: TObject);
 begin
-  Engine.Files.Current.SynEdit.PasteFromClipboard;
+  Engine.Files.Current.Paste;
 end;
 
 procedure TMainForm.CopyActExecute(Sender: TObject);
 begin
-  Engine.Files.Current.SynEdit.CopyToClipboard;
+  Engine.Files.Current.CanCopy;
 end;
 
 procedure TMainForm.CutActExecute(Sender: TObject);
 begin
-  Engine.Files.Current.SynEdit.CutToClipboard;
+  Engine.Files.Current.Cut;
 end;
 
 procedure TMainForm.SelectAllActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
-    Engine.Files.Current.SynEdit.SelectAll;
+    Engine.Files.Current.SelectAll;
 end;
 
 function TMainForm.CanOpenInclude: boolean;
@@ -1828,23 +1798,6 @@ end;
 procedure TMainForm.RunTerminated(Sender: TObject);
 begin
   FRunProject := nil;
-end;
-
-procedure TMainForm.ReceiveBuffer(const Buffer: string);
-begin
-  if Engine.Options.SendOutputToNewFile then
-  begin
-    if FRunProject.Console = nil then
-      FRunProject.Console := Engine.Files.New('html', 'Result', Engine.Files.Current.Name, True, False).SynEdit;
-  end
-  else
-  begin
-    FRunProject.Console := OutputEdit;
-    OutputAct.Checked := True;
-    UpdateOutputPnl;
-  end;
-  (FRunProject.Console as TCustomSynEdit).Text := Buffer;
-  (FRunProject.Console as TCustomSynEdit).CaretY := (FRunProject.Console as TCustomSynEdit).Lines.Count - 1;
 end;
 
 procedure TMainForm.SaveAsActExecute(Sender: TObject);
