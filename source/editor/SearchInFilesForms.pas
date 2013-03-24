@@ -27,7 +27,7 @@ type
     Label1: TLabel;
     SearchTextEdit: TComboBox;
     SearchOptionsGrp: TGroupBox;
-    OKBtn: TButton;
+    FindBtn: TButton;
     CancelBtn: TButton;
     SearchCaseSensitiveChk: TCheckBox;
     SearchWholeWordsChk: TCheckBox;

@@ -8,6 +8,10 @@ Mini Edit is an open source desktop application for edit files like PHP, HTML an
 * Search in files
 * Search for file
 * Portable one exe file
+* Projects
+* PHP XDebug
+* Until now it very Fast
+* Tortoise SVN/GIT integrated
 
 ## Download 
 Download it from sourceforge.net minilib project

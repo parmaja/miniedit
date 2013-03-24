@@ -1,12 +1,12 @@
 object SearchInFilesForm: TSearchInFilesForm
-  Left = 308
+  Left = 304
   Height = 186
-  Top = 169
-  Width = 324
+  Top = 252
+  Width = 322
   BorderStyle = bsDialog
-  Caption = 'Search text in files'
+  Caption = 'Find text in files'
   ClientHeight = 186
-  ClientWidth = 324
+  ClientWidth = 322
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Position = poMainFormCenter
@@ -31,7 +31,8 @@ object SearchInFilesForm: TSearchInFilesForm
     Left = 106
     Height = 21
     Top = 6
-    Width = 214
+    Width = 210
+    Anchors = [akTop, akLeft, akRight]
     ItemHeight = 13
     TabOrder = 0
   end
@@ -61,19 +62,19 @@ object SearchInFilesForm: TSearchInFilesForm
       TabOrder = 1
     end
   end
-  object OKBtn: TButton
-    Left = 244
+  object FindBtn: TButton
+    Left = 241
     Height = 27
     Top = 155
     Width = 75
     Anchors = [akLeft, akBottom]
-    Caption = 'OK'
+    Caption = 'Find'
     Default = True
     ModalResult = 1
     TabOrder = 6
   end
   object CancelBtn: TButton
-    Left = 167
+    Left = 164
     Height = 27
     Top = 155
     Width = 75
@@ -87,7 +88,8 @@ object SearchInFilesForm: TSearchInFilesForm
     Left = 105
     Height = 21
     Top = 34
-    Width = 214
+    Width = 211
+    Anchors = [akTop, akLeft, akRight]
     Color = clBtnFace
     ItemHeight = 13
     TabOrder = 2
@@ -105,7 +107,8 @@ object SearchInFilesForm: TSearchInFilesForm
     Left = 55
     Height = 21
     Top = 131
-    Width = 265
+    Width = 262
+    Anchors = [akTop, akLeft, akRight]
     ItemHeight = 13
     TabOrder = 5
   end
@@ -113,7 +116,8 @@ object SearchInFilesForm: TSearchInFilesForm
     Left = 165
     Height = 65
     Top = 61
-    Width = 154
+    Width = 151
+    Anchors = [akTop, akLeft, akRight]
     AutoFill = True
     Caption = 'Files'
     ChildSizing.LeftRightSpacing = 6
@@ -125,7 +129,7 @@ object SearchInFilesForm: TSearchInFilesForm
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
     ClientHeight = 47
-    ClientWidth = 150
+    ClientWidth = 147
     ItemIndex = 0
     Items.Strings = (
       '&Project type files'
