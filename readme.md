@@ -19,7 +19,7 @@ Download it from sourceforge.net minilib project
 http://sourceforge.net/projects/minilib/files/miniEdit/
 
 ### Compile 
- - Use source code from github.com in branch "release", master brnch is my upstream work.
+ - Use source code from github.com in branch "release", "master" branch is my upstream work.
  - FPC 2.6.2 or later
  - Lazarus last update from svn repo
  - MiniLib from http://sourceforge.net/projects/minilib
