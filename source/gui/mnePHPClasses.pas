@@ -25,7 +25,7 @@ type
 
   { TPHPFile }
 
-  TPHPFile = class(TEditorFile)
+  TPHPFile = class(TSynEditEditorFile)
   protected
   public
     procedure NewSource; override;
@@ -164,8 +164,8 @@ begin
   begin
     if Engine.Files.Current.Group.Category is TXHTMLFileCategory then
     begin
-      P := Engine.Files.Current.SynEdit.CaretXY;
-      Engine.Files.Current.SynEdit.GetHighlighterAttriAtRowColEx(P, aToken, aTokenType, aStart, Attri);
+      P := SynEdit.CaretXY;
+      SynEdit.GetHighlighterAttriAtRowColEx(P, aToken, aTokenType, aStart, Attri);
       aToken := DequoteStr(aToken);
       if (aToken <> '') and (TtkTokenKind(aTokenType) = tkString) then
       begin
@@ -226,9 +226,9 @@ begin
       if Engine.Session.IsOpened then
       begin
         aRoot := IncludeTrailingPathDelimiter(Engine.Session.Project.RootDir);
-        if SameText((Copy(aFile, 1, Length(aRoot))), aRoot) then
+        if SameText((MidStr(aFile, 1, Length(aRoot))), aRoot) then
         begin
-          aFile := Copy(aFile, Length(aRoot) + 1, MaxInt);
+          aFile := MidStr(aFile, Length(aRoot) + 1, MaxInt);
           aFile := IncludeSlash(Engine.Session.Project.RootUrl) + aFile;
           //ShellExecute(0, 'open', PChar(aFile), '', PChar(ExtractFilePath(aFile)), SW_SHOWNOACTIVATE);//TODO Jihad
           Result := True;

@@ -71,13 +71,13 @@ type
     procedure SetExecutedExit(const AValue: TCustomSynEdit);
   public
     FExecutedLine: integer;
-    FExecutedEdit: TCustomSynEdit;
+    FExecutedControl: TCustomSynEdit;
   protected
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
     constructor Create(AOwner: TComponent); override;
     property ExecutedLine: Integer read FExecutedLine write FExecutedLine;
-    property ExecutedEdit: TCustomSynEdit read FExecutedEdit write SetExecutedExit;
+    property ExecutedControl: TCustomSynEdit read FExecutedControl write SetExecutedExit;
   end;
 
   { TEditorDebugger }
@@ -88,11 +88,11 @@ type
     FWatches: TEditorWatches;
     FKey: string;
     FLink: TEditorDebugLink;
-    function GetExecutedEdit: TCustomSynEdit;
+    function GetExecutedControl: TCustomSynEdit;
     function GetExecutedLine: Integer;
     function GetCaption: string; virtual;
     procedure Click(Sender: TObject); virtual;
-    procedure SetExecutedEdit(const AValue: TCustomSynEdit);
+    procedure SetExecutedControl(const AValue: TCustomSynEdit);
   protected
     function GetActive: Boolean; virtual;
     procedure SetActive(const AValue: Boolean); virtual;
@@ -117,7 +117,7 @@ type
     procedure RunTo(FileName: string; LineNo: integer); virtual;//todo runto
 
     property ExecutedLine: Integer read GetExecutedLine;
-    property ExecutedEdit: TCustomSynEdit read GetExecutedEdit write SetExecutedEdit;
+    property ExecutedControl: TCustomSynEdit read GetExecutedControl write SetExecutedControl;
 
     function GetKey: string; virtual;
     property Active: boolean read GetActive write SetActive;
@@ -145,9 +145,9 @@ begin
   Active := not Active;
 end;
 
-procedure TEditorDebugger.SetExecutedEdit(const AValue: TCustomSynEdit);
+procedure TEditorDebugger.SetExecutedControl(const AValue: TCustomSynEdit);
 begin
-  FLink.ExecutedEdit := AValue;
+  FLink.ExecutedControl := AValue;
 end;
 
 constructor TEditorDebugger.Create;
@@ -160,7 +160,7 @@ end;
 
 destructor TEditorDebugger.Destroy;
 begin
-  FLink.ExecutedEdit := nil;//just for safe free
+  FLink.ExecutedControl := nil;//just for safe free
   FreeAndNil(FBreakpoints);
   FreeAndNil(FWatches);
   FreeAndNil(FLink);
@@ -172,9 +172,9 @@ begin
   Result := False;
 end;
 
-function TEditorDebugger.GetExecutedEdit: TCustomSynEdit;
+function TEditorDebugger.GetExecutedControl: TCustomSynEdit;
 begin
-  Result := FLink.ExecutedEdit;
+  Result := FLink.ExecutedControl;
 end;
 
 function TEditorDebugger.GetExecutedLine: Integer;
@@ -252,22 +252,22 @@ var
   OldEdit: TCustomSynEdit;
 begin
   FKey := Key;
-  if (FLink.ExecutedEdit <> Edit) or (FLink.ExecutedLine <> Line) then
+  if (FLink.ExecutedControl <> Edit) or (FLink.ExecutedLine <> Line) then
   begin
     OldLine := FLink.ExecutedLine;
-    OldEdit := FLink.ExecutedEdit;
+    OldEdit := FLink.ExecutedControl;
 
     FLink.ExecutedLine := Line;
-    FLink.ExecutedEdit := Edit;
+    FLink.ExecutedControl := Edit;
 
     if OldEdit <> nil then
       OldEdit.InvalidateLine(OldLine);
 
-    if ExecutedEdit <> nil then
+    if ExecutedControl <> nil then
     begin
-      ExecutedEdit.CaretY := FLink.ExecutedLine;
-      ExecutedEdit.CaretX := 1;
-      ExecutedEdit.InvalidateLine(FLink.ExecutedLine);
+      ExecutedControl.CaretY := FLink.ExecutedLine;
+      ExecutedControl.CaretX := 1;
+      ExecutedControl.InvalidateLine(FLink.ExecutedLine);
     end;
     Engine.UpdateState([ecsDebug, ecsShow]);
   end;
@@ -289,22 +289,22 @@ end;
 
 procedure TEditorDebugLink.SetExecutedExit(const AValue: TCustomSynEdit);
 begin
-  if FExecutedEdit <> AValue then
+  if FExecutedControl <> AValue then
   begin
-    if FExecutedEdit <> nil then
-      RemoveFreeNotification(FExecutedEdit);
-    FExecutedEdit :=AValue;
-    if FExecutedEdit <> nil then
-      FreeNotification(FExecutedEdit)
+    if FExecutedControl <> nil then
+      RemoveFreeNotification(FExecutedControl);
+    FExecutedControl :=AValue;
+    if FExecutedControl <> nil then
+      FreeNotification(FExecutedControl)
   end;
 end;
 
 procedure TEditorDebugLink.Notification(AComponent: TComponent; Operation: TOperation);
 begin
   inherited;
-  if (Operation = opRemove) and (AComponent = FExecutedEdit) then
+  if (Operation = opRemove) and (AComponent = FExecutedControl) then
   begin
-    FExecutedEdit := nil;
+    FExecutedControl := nil;
     FExecutedLine := 0;
   end;
 end;

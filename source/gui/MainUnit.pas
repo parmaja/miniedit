@@ -474,7 +474,6 @@ type
     procedure SetFolder(const Value: string);
     procedure ReopenClick(Sender: TObject);
     procedure ReopenProjectClick(Sender: TObject);
-    function GetWatchByCursor(var v, s, t: string): boolean;
     procedure AddWatch(s: string);
     procedure DeleteWatch(s: string);
     procedure EnumRecentFile;
@@ -486,7 +485,6 @@ type
     procedure OnReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
   protected
     FRunProject: TRunProject;
-    LastGotoLine: integer;
     //
 
     procedure ScriptError(Sender: TObject; AText: string; AType: TRunErrorType; AFileName: string; ALineNo: integer);
@@ -522,7 +520,7 @@ uses
   mnXMLUtils, StrUtils, SearchForms, mneProjectOptions, EditorOptions,
   EditorProfiles, mneResources, mneSetups, Clipbrd,
   SelectFiles, mneSettings, mneConsts,
-  SynEditTypes, AboutForms, mneProjectForms, GotoForms, Types,
+  SynEditTypes, AboutForms, mneProjectForms, Types,
   mneBreakpoints,
   SearchInFilesForms, SelectList, MsgBox;
 
@@ -1343,19 +1341,8 @@ end;
 
 procedure TMainForm.GotoLineActExecute(Sender: TObject);
 begin
-  with TGotoLineForm.Create(Application) do
-  begin
-    NumberEdit.Text := IntToStr(LastGotoLine);
-    if ShowModal = mrOk then
-    begin
-      if NumberEdit.Text <> '' then
-      begin
-        LastGotoLine := StrToIntDef(NumberEdit.Text, 0);
-        Engine.Files.Current.SynEdit.CaretXY := Point(0, LastGotoLine);
-      end;
-    end;
-    Free;
-  end;
+  if Engine.Files.Current <> nil then
+    Engine.Files.Current.GotoLine;
 end;
 
 procedure TMainForm.UpdateFolder;
@@ -1606,9 +1593,9 @@ end;
 function TMainForm.GetCurrentColorText: string;
 begin
   Result := '';
-  if (Engine.Files.Current <> nil) then
+  if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomSynEdit) then
   begin
-    Result := Trim(GetWordAtRowColEx(Engine.Files.Current.SynEdit, Engine.Files.Current.SynEdit.CaretXY, TSynValidStringChars + ['#'], False));
+    Result := Trim(GetWordAtRowColEx((Engine.Files.Current.Control as TCustomSynEdit), (Engine.Files.Current.Control as TCustomSynEdit).CaretXY, TSynValidStringChars + ['#'], False));
     if Result <> '' then
     begin
       if Result[1] <> '#' then
@@ -1640,27 +1627,30 @@ var
   end;
 
 begin
-  aWord := GetCurrentColorText;
-  if (aWord <> '') and (Length(aWord) > 1) then
+  if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomSynEdit) then
   begin
-    CheckIsUpper;
-    aColor := RGBHexToColor(aWord);
-    aDialog := TColorDialog.Create(Self);
-    //aDialog.Options := aDialog.Options + [cdFullOpen];
-    try
-      aDialog.Color := aColor;
-      if aDialog.Execute then
-      begin
-        aWord := ColorToRGBHex(aDialog.Color);
-        GetWordAtRowColEx(Engine.Files.Current.SynEdit, Engine.Files.Current.SynEdit.CaretXY, TSynValidStringChars + ['#'], True);
-        if aIsUpper then
-          aWord := UpperCase(aWord)
-        else
-          aWord := LowerCase(aWord);
-        Engine.Files.Current.SynEdit.SelText := aWord;
+    aWord := GetCurrentColorText;
+    if (aWord <> '') and (Length(aWord) > 1) then
+    begin
+      CheckIsUpper;
+      aColor := RGBHexToColor(aWord);
+      aDialog := TColorDialog.Create(Self);
+      //aDialog.Options := aDialog.Options + [cdFullOpen];
+      try
+        aDialog.Color := aColor;
+        if aDialog.Execute then
+        begin
+          aWord := ColorToRGBHex(aDialog.Color);
+          GetWordAtRowColEx((Engine.Files.Current.Control as TCustomSynEdit), (Engine.Files.Current.Control as TCustomSynEdit).CaretXY, TSynValidStringChars + ['#'], True);
+          if aIsUpper then
+            aWord := UpperCase(aWord)
+          else
+            aWord := LowerCase(aWord);
+          (Engine.Files.Current.Control as TCustomSynEdit).SelText := aWord;
+        end;
+      finally
+        aDialog.Free;
       end;
-    finally
-      aDialog.Free;
     end;
   end;
 end;
@@ -1818,7 +1808,7 @@ end;
 
 procedure TMainForm.UpdateFileHeaderPanel;
 begin
-  if (Engine.Files.Current <> nil) and (Engine.Perspective.Debug <> nil) and (Engine.Perspective.Debug.ExecutedEdit = Engine.Files.Current.SynEdit) then
+  if (Engine.Files.Current <> nil) and (Engine.Perspective.Debug <> nil) and (Engine.Files.Current.Control = Engine.Perspective.Debug.ExecutedControl) then
     FileHeaderPanel.Color := $00C6C6EC
   else
     FileHeaderPanel.Color := $00EEE0D7;
@@ -1864,11 +1854,11 @@ procedure TMainForm.ShowValue1Click(Sender: TObject);
 var
   s, v, t: string;
 begin
-  if (Engine.Files.Current <> nil) then
+  {if (Engine.Files.Current <> nil) and then
   begin
-    if GetWatchByCursor(v, s, t) then
-      ShowMessage(v + ':' + t + '=' + #13 + s);
-  end;
+    if Engine.Files.Current.GetWatchByCursor(v, s, t) then
+      ShowMessage(v + ':' + t + '=' + #13 + s); add it to message list
+  end;}
 end;
 
 procedure TMainForm.ShowMessagesList;
@@ -1976,17 +1966,17 @@ var
 begin
   if Engine.Perspective.Debug <> nil then
   begin
-    if (Engine.Files.Current <> nil) and (GetFocus = Engine.Files.Current.SynEdit.Handle) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
+    if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomSynEdit) and (ActiveControl = Engine.Files.Current.Control) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
       with Engine.Files.Current do
       begin
-        aLine := SynEdit.CaretY;
+        aLine := (Control as TCustomSynEdit).CaretY;
         Engine.Perspective.Debug.Lock;
         try
           Engine.Perspective.Debug.Breakpoints.Toggle(Name, aLine);
         finally
           Engine.Perspective.Debug.Unlock;
         end;
-        SynEdit.InvalidateLine(aLine);
+        (Control as TCustomSynEdit).InvalidateLine(aLine);
       end;
   end;
 end;
@@ -2034,15 +2024,16 @@ procedure TMainForm.DBGAddWatchActExecute(Sender: TObject);
 var
   s: string;
 begin
-  if Engine.Files.Current <> nil then
-  begin
-    if not Engine.Files.Current.SynEdit.SelAvail then
-      s := Trim(Engine.Files.Current.SynEdit.GetWordAtRowCol(Engine.Files.Current.SynEdit.CaretXY))
-    else
-      s := Engine.Files.Current.SynEdit.SelText;
-    AddWatch(s);
-    MessagesTabs.ActiveControl := WatchList;
-  end;
+  with Engine.Files do
+    if (Current <> nil) and (Current.Control is TCustomSynEdit) then
+    begin
+      if not (Current.Control as TCustomSynEdit).SelAvail then
+        s := Trim((Current.Control as TCustomSynEdit).GetWordAtRowCol((Current.Control as TCustomSynEdit).CaretXY))
+      else
+        s := (Current.Control as TCustomSynEdit).SelText;
+      AddWatch(s);
+      MessagesTabs.ActiveControl := WatchList;
+    end;
 end;
 
 procedure TMainForm.DeleteCurrentWatch;
@@ -2105,19 +2096,23 @@ begin
           c := 0;
           l := 0;
         end;
-        Engine.Files.Current.SynEdit.CaretY := aLine;
-        if l > 0 then
+        with Engine.Files.Current do
+        if Control is TCustomSynEdit then
         begin
-          with Engine.Files.Current.SynEdit do
+          (Control as TCustomSynEdit).CaretY := aLine;
+          if l > 0 then
           begin
-            CaretX := c;
-            BlockBegin := Point(c, aLine);
-            BlockEnd := Point(c + l, aLine);
-          end;
-        end
-        else
-          Engine.Files.Current.SynEdit.CaretX := 0;
-        Engine.Files.Current.SynEdit.SetFocus;
+            with (Control as TCustomSynEdit) do
+            begin
+              CaretX := c;
+              BlockBegin := Point(c, aLine);
+              BlockEnd := Point(c + l, aLine);
+            end;
+          end
+          else
+            (Control as TCustomSynEdit).CaretX := 0;
+          (Control as TCustomSynEdit).SetFocus;
+        end;
       end;
     end;
   end;
@@ -2138,10 +2133,14 @@ begin
       begin
         aLine := StrToIntDef(s, 0);
         if aLine > 0 then
+        with Engine.Files do
         begin
-          Engine.Files.Current.SynEdit.CaretY := aLine;
-          Engine.Files.Current.SynEdit.CaretX := 0;
-          Engine.Files.Current.SynEdit.SetFocus;
+          if (Current <> nil) and (Current.Control is TCustomSynEdit) then
+          begin
+            (Current.Control as TCustomSynEdit).CaretY := aLine;
+            (Current.Control as TCustomSynEdit).CaretX := 0;
+            (Current.Control as TCustomSynEdit).SetFocus;
+          end;
         end;
       end;
     end;
@@ -2205,12 +2204,13 @@ procedure TMainForm.FindInFilesActExecute(Sender: TObject);
 var
   aText, aFolder: string;
 begin
-  if Engine.Files.Current <> nil then
+  with Engine.Files do
+  if (Current <> nil) and (Current.Control is TCustomSynEdit) then
   begin
-    if Engine.Files.Current.SynEdit.SelAvail and (Engine.Files.Current.SynEdit.BlockBegin.y = Engine.Files.Current.SynEdit.BlockEnd.y) then
-      aText := Engine.Files.Current.SynEdit.SelText
+    if (Current.Control as TCustomSynEdit).SelAvail and ((Current.Control as TCustomSynEdit).BlockBegin.y = (Current.Control as TCustomSynEdit).BlockEnd.y) then
+      aText := (Current.Control as TCustomSynEdit).SelText
     else
-      aText := Engine.Files.Current.SynEdit.GetWordAtRowCol(Engine.Files.Current.SynEdit.CaretXY);
+      aText := (Current.Control as TCustomSynEdit).GetWordAtRowCol((Current.Control as TCustomSynEdit).CaretXY);
   end;
 
   if Engine.Session.Project <> nil then
@@ -2281,13 +2281,7 @@ begin
   else}
   if Engine.Files.Current <> nil then
   begin
-    s := IntToStr(Engine.Files.Current.SynEdit.CaretY) + ':' + IntToStr(Engine.Files.Current.SynEdit.CaretX);
-    if Engine.Files.Current.SynEdit.SelAvail then
-    begin
-      r := Engine.Files.Current.SynEdit.BlockEnd.y - Engine.Files.Current.SynEdit.BlockBegin.y + 1;
-      s := s + ' [' + IntToStr(r) + ']';
-    end;
-    CursorPnl.Caption := s;
+    CursorPnl.Caption := Engine.Files.Current.GetGlance;
     if Engine.Files.Current.IsNew then
       StatePnl.Caption := 'N'
     else if Engine.Files.Current.IsReadOnly then
@@ -2324,35 +2318,42 @@ end;
 
 procedure TMainForm.SwitchFocusActExecute(Sender: TObject);
 begin
-  if FoldersAct.Checked and (Engine.Files.Current <> nil) and (Engine.Files.Current.SynEdit.Focused) then
+  if FoldersAct.Checked and (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomControl) and (Engine.Files.Current.Control as TCustomControl).Focused then
     FileList.SetFocus
   else if (Engine.Files.Current <> nil) then
-    Engine.Files.Current.SynEdit.SetFocus;
+    if (Engine.Files.Current.Control is TCustomControl) then
+      (Engine.Files.Current.Control as TCustomControl).SetFocus;
 end;
 
 procedure TMainForm.QuickSearchNextBtnClick(Sender: TObject);
 begin
-  if QuickSearchEdit.Text <> '' then
-    Engine.Files.Current.SynEdit.SearchReplace(QuickSearchEdit.Text, '', []);
+  if (Engine.Files.Current.Control is TCustomSynEdit) then
+    if (QuickSearchEdit.Text <> '') then
+      (Engine.Files.Current.Control as TCustomSynEdit).SearchReplace(QuickSearchEdit.Text, '', []);
 end;
 
 procedure TMainForm.QuickSearchPrevBtnClick(Sender: TObject);
 begin
-  if QuickSearchEdit.Text <> '' then
-    Engine.Files.Current.SynEdit.SearchReplace(QuickSearchEdit.Text, '', [ssoBackwards]);
+  if (Engine.Files.Current.Control is TCustomSynEdit) then
+    if QuickSearchEdit.Text <> '' then
+      (Engine.Files.Current.Control as TCustomSynEdit).SearchReplace(QuickSearchEdit.Text, '', [ssoBackwards]);
 end;
 
 procedure TMainForm.QuickSearchEditChange(Sender: TObject);
 begin
-  if QuickSearchEdit.Text <> '' then
-    Engine.Files.Current.SynEdit.SearchReplace(QuickSearchEdit.Text, '', [ssoEntireScope]);
-  SearchForms.SetTextSearch(QuickSearchEdit.Text);
+  if (Engine.Files.Current.Control is TCustomSynEdit) then
+  begin
+    if QuickSearchEdit.Text <> '' then
+      (Engine.Files.Current.Control as TCustomSynEdit).SearchReplace(QuickSearchEdit.Text, '', [ssoEntireScope]);
+    SearchForms.SetTextSearch(QuickSearchEdit.Text);
+  end;
 end;
 
 procedure TMainForm.QuickSearchEditKeyPress(Sender: TObject; var Key: char);
 begin
-  if (Key = #13) and (QuickSearchEdit.Text <> '') then
-    Engine.Files.Current.SynEdit.SearchReplace(QuickSearchEdit.Text, '', []);
+  if (Engine.Files.Current.Control is TCustomSynEdit) then
+    if (Key = #13) and (QuickSearchEdit.Text <> '') then
+      (Engine.Files.Current.Control as TCustomSynEdit).SearchReplace(QuickSearchEdit.Text, '', []);
 end;
 
 procedure TMainForm.CloseQuickSearchBtnClick(Sender: TObject);
@@ -2362,19 +2363,25 @@ end;
 
 procedure TMainForm.QuickFindActExecute(Sender: TObject);
 begin
-  QuickFindPnl.Visible := QuickFindAct.Checked;
-  if QuickFindPnl.Visible then
+  if (Engine.Files.Current.Control is TCustomSynEdit) then
   begin
-    QuickSearchEdit.Text := SearchForms.GetTextSearch;
-    QuickSearchEdit.SetFocus;
-    QuickSearchEdit.SelectAll;
+    QuickFindPnl.Visible := QuickFindAct.Checked;
+    if QuickFindPnl.Visible then
+    begin
+      QuickSearchEdit.Text := SearchForms.GetTextSearch;
+      QuickSearchEdit.SetFocus;
+      QuickSearchEdit.SelectAll;
+    end;
   end;
 end;
 
 procedure TMainForm.QuickFindActUpdate(Sender: TObject);
 begin
-  QuickFindAct.Enabled := Engine.Files.Count > 0;
-  QuickFindAct.Checked := QuickFindPnl.Visible;
+  if (Engine.Files.Current.Control is TCustomSynEdit) then
+  begin
+    QuickFindAct.Enabled := Engine.Files.Count > 0;
+    QuickFindAct.Checked := QuickFindPnl.Visible;
+  end;
 end;
 
 procedure TMainForm.OnReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);

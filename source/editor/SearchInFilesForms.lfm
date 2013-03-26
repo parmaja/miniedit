@@ -1,7 +1,7 @@
 object SearchInFilesForm: TSearchInFilesForm
   Left = 304
   Height = 186
-  Top = 252
+  Top = 230
   Width = 322
   BorderStyle = bsDialog
   Caption = 'Find text in files'

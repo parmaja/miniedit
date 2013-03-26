@@ -289,11 +289,13 @@ type
     function CanOpenInclude: Boolean; virtual;
     function CheckChanged: Boolean;
     //
+    procedure GotoLine; virtual;
     procedure Find; virtual;
     procedure FindNext; virtual;
     procedure Replace; virtual;
     procedure Refresh; virtual;
     function GetHint(HintControl: TControl; CursorPos: TPoint; out vHint: string): Boolean; virtual;
+    function GetGlance: string; virtual; //Simple string to show in the corner of mainform
     //
     function GetLanguageName: string; virtual; //TODO need to get more good name to this function
     procedure SetLine(Line: Integer); virtual;
@@ -326,6 +328,7 @@ type
   private
     FSynEdit: TSynEdit;
   protected
+    LastGotoLine: Integer;
     function GetIsReadonly: Boolean; override;
     procedure SetIsReadonly(const Value: Boolean); override;
     function GetControl: TControl; override;
@@ -346,6 +349,7 @@ type
     procedure Refresh; override;
     procedure Show; override;
     function GetHint(HintControl: TControl; CursorPos: TPoint; out vHint: string): Boolean; override;
+    function GetGlance: string; override;
     function GetWatchByMouse(p: TPoint; var v, s, t: string): boolean;
     function GetWatchByCursor(var v, s, t: string): boolean;
     procedure UpdateAge; override;
@@ -360,6 +364,7 @@ type
     procedure SelectAll; override;
 
     procedure SetLine(Line: Integer); override;
+    procedure GotoLine; override;
     property SynEdit: TSynEdit read FSynEdit;
   end;
 
@@ -869,7 +874,7 @@ implementation
 
 uses
   SynHighlighterApache, SynHighlighterXHTML, SynHighlighterHashEntries, SynGutterCodeFolding,
-  Registry, SearchForms, SynEditTextBuffer,
+  Registry, SearchForms, SynEditTextBuffer, GotoForms,
   mneResources, MsgBox, GUIMsgBox;
 
 var
@@ -1054,7 +1059,7 @@ end;
 
 procedure TSynEditEditorFile.DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
 begin
-  if (Engine.Perspective.Debug <> nil) and (Engine.Perspective.Debug.ExecutedEdit = Sender) then
+  if (Engine.Perspective.Debug <> nil) and (Engine.Perspective.Debug.ExecutedControl = Sender) then
   begin
     if Engine.Perspective.Debug.ExecutedLine = Line then
     begin
@@ -1172,6 +1177,18 @@ begin
   vHint := v + ':' + t + '=' + #13#10 + s;
 end;
 
+function TSynEditEditorFile.GetGlance: string;
+var
+  r: Integer;
+begin
+  Result := IntToStr(SynEdit.CaretY) + ':' + IntToStr(SynEdit.CaretX);
+  if SynEdit.SelAvail then
+  begin
+    r := SynEdit.BlockEnd.y - SynEdit.BlockBegin.y + 1;
+    Result := Result + ' [' + IntToStr(r) + ']';
+  end;
+end;
+
 function TSynEditEditorFile.GetWatchByMouse(p: TPoint; var v, s, t: string): boolean;
 begin
 
@@ -1241,6 +1258,23 @@ procedure TSynEditEditorFile.SetLine(Line: Integer);
 begin
   SynEdit.CaretY := Line;
   SynEdit.CaretX := 1;
+end;
+
+procedure TSynEditEditorFile.GotoLine;
+begin
+  with TGotoLineForm.Create(Application) do
+  begin
+    NumberEdit.Text := IntToStr(LastGotoLine);
+    if ShowModal = mrOk then
+    begin
+      if NumberEdit.Text <> '' then
+      begin
+        LastGotoLine := StrToIntDef(NumberEdit.Text, 0);
+        SynEdit.CaretXY := Point(0, LastGotoLine);
+      end;
+    end;
+    Free;
+  end;
 end;
 
 { TmneSynCompletion }
@@ -2703,6 +2737,10 @@ begin
   end;
 end;
 
+procedure TEditorFile.GotoLine;
+begin
+end;
+
 procedure TEditorFile.Find;
 begin
 end;
@@ -2722,6 +2760,11 @@ end;
 function TEditorFile.GetHint(HintControl: TControl; CursorPos: TPoint; out vHint: string): Boolean;
 begin
   Result := False;
+end;
+
+function TEditorFile.GetGlance: string;
+begin
+  Result := '';
 end;
 
 function TEditorFile.GetLanguageName: string;
@@ -3576,7 +3619,7 @@ begin
       Engine.Perspective.Debug.Unlock;
     end;
 
-    if (Engine.Perspective.Debug.ExecutedEdit = SynEdit) and (Engine.Perspective.Debug.ExecutedLine >= 0) then
+    if (Engine.Perspective.Debug.ExecutedControl = SynEdit) and (Engine.Perspective.Debug.ExecutedLine >= 0) then
       DrawIndicator(Engine.Perspective.Debug.ExecutedLine, DEBUG_IMAGE_EXECUTE);
   end;
 end;
