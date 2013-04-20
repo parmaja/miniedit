@@ -36,7 +36,6 @@ uses
   AboutForms in 'AboutForms.pas' {AboutForm},
   mneProjectForms in 'mneProjectForms.pas' {ManageProjectsForm},
   GotoForms in '..\editor\GotoForms.pas' {GotoLineForm},
-  Match in '..\lib\Match.pas',
   HTMLProcessor in '..\lib\HTMLProcessor.pas',
   PHPProcessor in '..\lib\PHPProcessor.pas',
   mneRun in 'mneRun.pas',
@@ -49,7 +48,6 @@ uses
   IniFiles,
   mneAddons, mneAssociateForm,
   mnePHPClasses,
-
   mnePASClasses,
   MsgBox,
   GUIMsgBox,

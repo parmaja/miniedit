@@ -982,7 +982,6 @@ var
   Stream: TFileStream;
 begin
   FileName := ExpandFileName(FileName);
-  DoLoad(FileName);
   try
     Stream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
     SynEdit.BeginUpdate;

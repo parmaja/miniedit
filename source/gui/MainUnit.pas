@@ -321,7 +321,7 @@ type
     QuickSearchNextBtn: TBitBtn;
     QuickSearchEdit: TEdit;
     QuickFindAct: TAction;
-    QuickSearch1: TMenuItem;
+    QuickSearch: TMenuItem;
     FileModeBtn: TSpeedButton;
     procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
@@ -2377,7 +2377,7 @@ end;
 
 procedure TMainForm.QuickFindActUpdate(Sender: TObject);
 begin
-  if (Engine.Files.Current.Control is TCustomSynEdit) then
+  if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomSynEdit) then
   begin
     QuickFindAct.Enabled := Engine.Files.Count > 0;
     QuickFindAct.Checked := QuickFindPnl.Visible;

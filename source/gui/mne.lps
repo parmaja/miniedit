@@ -4,14 +4,14 @@
     <PathDelim Value="\"/>
     <Version Value="9"/>
     <BuildModes Active="windows"/>
-    <Units Count="223">
+    <Units Count="238">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
-        <EditorIndex Value="20"/>
+        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="26"/>
-        <CursorPos X="3" Y="53"/>
+        <TopLine Value="42"/>
+        <CursorPos X="23" Y="55"/>
         <UsageCount Value="200"/>
         <Loaded Value="True"/>
       </Unit0>
@@ -22,13 +22,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SearchForms"/>
-        <EditorIndex Value="12"/>
         <WindowIndex Value="0"/>
         <TopLine Value="25"/>
         <CursorPos X="11" Y="42"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit1>
       <Unit2>
         <Filename Value="..\editor\EditorProfiles.pas"/>
@@ -80,11 +77,10 @@
       </Unit5>
       <Unit6>
         <Filename Value="..\lib\Match.pas"/>
-        <IsPartOfProject Value="True"/>
         <UnitName Value="Match"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
-        <CursorPos X="36" Y="11"/>
+        <CursorPos X="18" Y="6"/>
         <UsageCount Value="200"/>
       </Unit6>
       <Unit7>
@@ -107,13 +103,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="SearchInFilesForms"/>
-        <EditorIndex Value="18"/>
         <WindowIndex Value="0"/>
         <TopLine Value="64"/>
         <CursorPos X="87" Y="69"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
-        <LoadedDesigner Value="True"/>
       </Unit8>
       <Unit9>
         <Filename Value="..\editor\SearchProgressForms.pas"/>
@@ -179,12 +172,10 @@
         <Filename Value="..\editor\EditorDebugger.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorDebugger"/>
-        <EditorIndex Value="10"/>
         <WindowIndex Value="0"/>
         <TopLine Value="281"/>
         <CursorPos X="21" Y="306"/>
         <UsageCount Value="200"/>
-        <Loaded Value="True"/>
       </Unit14>
       <Unit15>
         <Filename Value="..\addons\mneAssociateForm.pas"/>
@@ -246,15 +237,16 @@
         <Filename Value="..\editor\EditorEngine.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="EditorEngine"/>
-        <EditorIndex Value="0"/>
+        <IsVisibleTab Value="True"/>
+        <EditorIndex Value="3"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="348"/>
-        <CursorPos X="15" Y="361"/>
-        <UsageCount Value="191"/>
+        <TopLine Value="1598"/>
+        <CursorPos X="38" Y="1604"/>
+        <UsageCount Value="204"/>
         <Bookmarks Count="3">
-          <Item0 X="32" Y="1108" ID="3"/>
-          <Item1 X="25" Y="1260" ID="2"/>
-          <Item2 X="1" Y="2609" ID="9"/>
+          <Item0 X="32" Y="1107" ID="3"/>
+          <Item1 X="25" Y="1259" ID="2"/>
+          <Item2 X="1" Y="2608" ID="9"/>
         </Bookmarks>
         <Loaded Value="True"/>
       </Unit20>
@@ -265,11 +257,11 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
         <UnitName Value="MainUnit"/>
-        <EditorIndex Value="3"/>
+        <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="71" Y="15"/>
-        <UsageCount Value="185"/>
+        <TopLine Value="703"/>
+        <CursorPos X="27" Y="710"/>
+        <UsageCount Value="201"/>
         <Bookmarks Count="1">
           <Item0 X="1" Y="611" ID="0"/>
         </Bookmarks>
@@ -286,7 +278,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="261"/>
         <CursorPos X="16" Y="277"/>
-        <UsageCount Value="169"/>
+        <UsageCount Value="189"/>
       </Unit22>
       <Unit23>
         <Filename Value="mneSetups.pas"/>
@@ -298,7 +290,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="64"/>
         <CursorPos X="72" Y="77"/>
-        <UsageCount Value="119"/>
+        <UsageCount Value="139"/>
       </Unit23>
       <Unit24>
         <Filename Value="mneSettings.pas"/>
@@ -310,7 +302,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="83"/>
         <CursorPos X="42" Y="102"/>
-        <UsageCount Value="73"/>
+        <UsageCount Value="93"/>
       </Unit24>
       <Unit25>
         <Filename Value="..\editor\SelectPerspective.pas"/>
@@ -321,27 +313,27 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="62"/>
+        <UsageCount Value="60"/>
       </Unit25>
       <Unit26>
         <Filename Value="..\lib\hh_funcs.pas"/>
         <UnitName Value="hh_funcs"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit26>
       <Unit27>
         <Filename Value="..\lib\hh.pas"/>
         <UnitName Value="hh"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit27>
       <Unit28>
         <Filename Value="..\lib\FileInfo.pas"/>
         <UnitName Value="FileInfo"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit28>
       <Unit29>
         <Filename Value="mneRunPHP.pas"/>
         <UnitName Value="mneRunPHP"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit29>
       <Unit30>
         <Filename Value="..\..\..\..\..\socket\source\mnLinuxSockets.pas"/>
@@ -349,7 +341,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="318"/>
         <CursorPos X="1" Y="332"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit30>
       <Unit31>
@@ -358,14 +350,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="188"/>
         <CursorPos X="25" Y="202"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit31>
       <Unit32>
         <Filename Value="..\editor\SelectPerspective.lfm"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit32>
       <Unit33>
@@ -374,7 +366,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="124"/>
         <CursorPos X="55" Y="144"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit33>
       <Unit34>
         <Filename Value="W:\programs\lazarus\components\synedit\synhighlighterxml.pas"/>
@@ -382,7 +374,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="9"/>
       </Unit34>
       <Unit35>
         <Filename Value="..\..\..\..\lib\SynHighlighterHTMLPHP.pas"/>
@@ -390,7 +382,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="22" Y="2"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="9"/>
         <Bookmarks Count="1">
           <Item0 X="14" Y="150" ID="1"/>
         </Bookmarks>
@@ -400,7 +392,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="273"/>
         <CursorPos X="21" Y="287"/>
-        <UsageCount Value="20"/>
+        <UsageCount Value="18"/>
       </Unit36>
       <Unit37>
         <Filename Value="..\..\..\..\lib\PHPUtils.pas"/>
@@ -408,7 +400,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="26"/>
         <CursorPos X="76" Y="44"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit37>
       <Unit38>
         <Filename Value="P:\programs\fpc\2.4\src\packages\fcl-base\src\inifiles.pp"/>
@@ -416,7 +408,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="45"/>
         <CursorPos X="3" Y="61"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="10"/>
       </Unit38>
       <Unit39>
         <Filename Value="..\..\..\..\..\comm\source\mnCommStreams.pas"/>
@@ -424,7 +416,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="11" Y="20"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="10"/>
       </Unit39>
       <Unit40>
         <Filename Value="..\..\..\..\..\connection\ref\SLDataSet.pas"/>
@@ -432,21 +424,21 @@
         <WindowIndex Value="0"/>
         <TopLine Value="378"/>
         <CursorPos X="9" Y="394"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="10"/>
       </Unit40>
       <Unit41>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\objpas\sysutils\sysstrh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="65"/>
         <CursorPos X="10" Y="78"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="10"/>
       </Unit41>
       <Unit42>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\objpas\sysutils\sysstr.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="110"/>
         <CursorPos X="3" Y="117"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="10"/>
       </Unit42>
       <Unit43>
         <Filename Value="w:\programs\lazarus\lcl\lclclasses.pp"/>
@@ -454,7 +446,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="20"/>
         <CursorPos X="25" Y="38"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="10"/>
       </Unit43>
       <Unit44>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\win32\classes.pp"/>
@@ -462,7 +454,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="2"/>
       </Unit44>
       <Unit45>
         <Filename Value="W:\programs\lazarus\components\synedit\syneditsearch.pp"/>
@@ -470,7 +462,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="109"/>
         <CursorPos X="1" Y="132"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="2"/>
         <Bookmarks Count="2">
           <Item0 X="1" Y="132" ID="2"/>
           <Item1 X="14" Y="123" ID="9"/>
@@ -481,21 +473,21 @@
         <WindowIndex Value="0"/>
         <TopLine Value="592"/>
         <CursorPos X="3" Y="597"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="2"/>
       </Unit46>
       <Unit47>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\inc\objpash.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="181"/>
         <CursorPos X="38" Y="197"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit47>
       <Unit48>
         <Filename Value="..\editor\SelectList.lfm"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit48>
       <Unit49>
@@ -503,7 +495,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="65" Y="4"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit49>
       <Unit50>
@@ -511,7 +503,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="XML"/>
       </Unit50>
       <Unit51>
@@ -519,7 +511,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="356"/>
         <CursorPos X="70" Y="370"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="XML"/>
       </Unit51>
       <Unit52>
@@ -527,7 +519,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="XML"/>
       </Unit52>
       <Unit53>
@@ -535,7 +527,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="XML"/>
       </Unit53>
       <Unit54>
@@ -543,7 +535,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="XML"/>
       </Unit54>
       <Unit55>
@@ -551,7 +543,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="59"/>
         <CursorPos X="3" Y="62"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit55>
       <Unit56>
         <Filename Value="..\..\..\..\..\xml\source\mnXMLRttiReader.pas"/>
@@ -559,7 +551,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="16"/>
         <CursorPos X="52" Y="24"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="3"/>
         <Bookmarks Count="1">
           <Item0 X="42" Y="231" ID="9"/>
         </Bookmarks>
@@ -571,7 +563,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="103"/>
         <CursorPos X="12" Y="107"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit57>
       <Unit58>
@@ -580,7 +572,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit58>
       <Unit59>
@@ -589,7 +581,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="23"/>
         <CursorPos X="19" Y="37"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit59>
       <Unit60>
@@ -597,7 +589,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="100"/>
         <CursorPos X="1" Y="131"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="1"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit60>
       <Unit61>
@@ -605,7 +597,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="5"/>
         <CursorPos X="1" Y="36"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="1"/>
         <DefaultSyntaxHighlighter Value="PHP"/>
       </Unit61>
       <Unit62>
@@ -613,7 +605,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="26"/>
         <CursorPos X="1" Y="57"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="1"/>
         <DefaultSyntaxHighlighter Value="PHP"/>
       </Unit62>
       <Unit63>
@@ -621,7 +613,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="1"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit63>
       <Unit64>
@@ -629,7 +621,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="1"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit64>
       <Unit65>
@@ -637,7 +629,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
         <Bookmarks Count="1">
           <Item0 X="14" Y="91" ID="1"/>
         </Bookmarks>
@@ -649,18 +641,16 @@
         <WindowIndex Value="0"/>
         <TopLine Value="354"/>
         <CursorPos X="1" Y="371"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="2"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit66>
       <Unit67>
         <Filename Value="..\..\..\..\..\xml\source\mnXMLUtils.pas"/>
         <UnitName Value="mnXMLUtils"/>
-        <EditorIndex Value="15"/>
         <WindowIndex Value="0"/>
         <TopLine Value="57"/>
         <CursorPos X="23" Y="57"/>
-        <UsageCount Value="32"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="38"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit67>
       <Unit68>
@@ -669,7 +659,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="333"/>
         <CursorPos X="7" Y="350"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit68>
       <Unit69>
@@ -678,7 +668,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit69>
       <Unit70>
         <Filename Value="..\..\..\..\..\socket\source\mnServers.pas"/>
@@ -686,7 +676,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="14" Y="25"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit70>
       <Unit71>
@@ -695,7 +685,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="104"/>
         <CursorPos X="30" Y="130"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit71>
       <Unit72>
@@ -704,7 +694,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="149"/>
         <CursorPos X="3" Y="162"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="10"/>
       </Unit72>
       <Unit73>
         <Filename Value="..\..\..\..\..\socket\source\mnCommandServers.pas"/>
@@ -712,16 +702,16 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit73>
       <Unit74>
         <Filename Value="w:\programs\lazarus\components\synedit\synhighlighterpas.pp"/>
         <UnitName Value="SynHighlighterPas"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="286"/>
-        <CursorPos X="22" Y="314"/>
-        <UsageCount Value="11"/>
+        <TopLine Value="537"/>
+        <CursorPos X="1" Y="537"/>
+        <UsageCount Value="13"/>
       </Unit74>
       <Unit75>
         <Filename Value="W:\programs\lazarus\components\synedit\synhighlighterperl.pas"/>
@@ -729,7 +719,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="10"/>
       </Unit75>
       <Unit76>
         <Filename Value="W:\programs\lazarus\components\synedit\synhighlighterpython.pas"/>
@@ -737,7 +727,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1245"/>
         <CursorPos X="1" Y="1276"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="10"/>
       </Unit76>
       <Unit77>
         <Filename Value="P:\programs\fpc\2.4\src\packages\symbolic\src\symbolic.pas"/>
@@ -745,42 +735,42 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="68" Y="10"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="10"/>
       </Unit77>
       <Unit78>
         <Filename Value="P:\programs\fpc\2.4\src\packages\symbolic\src\parsexpr.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="467"/>
         <CursorPos X="2" Y="498"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="10"/>
       </Unit78>
       <Unit79>
         <Filename Value="P:\programs\fpc\2.4\src\packages\symbolic\src\symbexpr.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1091"/>
         <CursorPos X="1" Y="1122"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="10"/>
       </Unit79>
       <Unit80>
         <Filename Value="P:\programs\fpc\2.4\src\packages\symbolic\src\teval.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="691"/>
         <CursorPos X="2" Y="722"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="10"/>
       </Unit80>
       <Unit81>
         <Filename Value="P:\programs\fpc\2.4\src\packages\symbolic\src\rearrang.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="10"/>
       </Unit81>
       <Unit82>
         <Filename Value="C:\php\php.ini"/>
         <WindowIndex Value="0"/>
         <TopLine Value="978"/>
         <CursorPos X="61" Y="984"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="1"/>
         <DefaultSyntaxHighlighter Value="Ini"/>
       </Unit82>
       <Unit83>
@@ -789,7 +779,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1658"/>
         <CursorPos X="37" Y="1686"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit83>
       <Unit84>
         <Filename Value="W:\work\delphi\etc\SynEdit\Source\SynHighlighterPas.pas"/>
@@ -797,21 +787,21 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1685"/>
         <CursorPos X="1" Y="1704"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="10"/>
       </Unit84>
       <Unit85>
         <Filename Value="W:\programs\lazarus\lcl\include\winapih.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="249"/>
         <CursorPos X="10" Y="265"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="1"/>
       </Unit85>
       <Unit86>
         <Filename Value="C:\logs\xdebug.log"/>
         <WindowIndex Value="0"/>
         <TopLine Value="120"/>
         <CursorPos X="1" Y="144"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="2"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit86>
       <Unit87>
@@ -819,7 +809,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="79" Y="10"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit87>
       <Unit88>
@@ -828,7 +818,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="555"/>
         <CursorPos X="14" Y="570"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit88>
       <Unit89>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\objpas\dateutils.pp"/>
@@ -836,21 +826,21 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="5" Y="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit89>
       <Unit90>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\objpas\dateutil.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1351"/>
         <CursorPos X="66" Y="1353"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit90>
       <Unit91>
         <Filename Value="P:\programs\fpc\2.4\src\rtl\objpas\sysutils\datih.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="23"/>
         <CursorPos X="31" Y="35"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit91>
       <Unit92>
         <Filename Value="..\..\..\..\components\native\ntvTabSets.pas"/>
@@ -858,7 +848,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="586"/>
         <CursorPos X="3" Y="617"/>
-        <UsageCount Value="16"/>
+        <UsageCount Value="14"/>
       </Unit92>
       <Unit93>
         <Filename Value="..\..\..\..\lib\PHPProcessor.pas"/>
@@ -866,7 +856,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="324"/>
         <CursorPos X="1" Y="345"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit93>
       <Unit94>
         <Filename Value="..\..\..\..\lib\SynHighlighterSQLite.pas"/>
@@ -874,7 +864,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="18"/>
+        <UsageCount Value="16"/>
       </Unit94>
       <Unit95>
         <Filename Value="..\..\..\..\lib\SynHighlighterXHTML.pas"/>
@@ -882,7 +872,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="181"/>
         <CursorPos X="21" Y="185"/>
-        <UsageCount Value="14"/>
+        <UsageCount Value="12"/>
       </Unit95>
       <Unit96>
         <Filename Value="..\..\..\..\lib\HTMLProcessor.pas"/>
@@ -890,7 +880,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="677"/>
         <CursorPos X="3" Y="680"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit96>
       <Unit97>
         <Filename Value="..\..\..\..\..\pos\source\posPanels.pas"/>
@@ -898,7 +888,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="29"/>
         <CursorPos X="4" Y="43"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit97>
       <Unit98>
@@ -907,7 +897,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="931"/>
         <CursorPos X="1" Y="945"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit98>
       <Unit99>
@@ -916,7 +906,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="260"/>
         <CursorPos X="17" Y="273"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit99>
       <Unit100>
@@ -925,7 +915,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit100>
       <Unit101>
@@ -934,7 +924,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="683"/>
         <CursorPos X="30" Y="697"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit101>
       <Unit102>
@@ -943,7 +933,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="25"/>
         <CursorPos X="15" Y="39"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit102>
       <Unit103>
@@ -952,7 +942,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="497"/>
         <CursorPos X="9" Y="525"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit103>
       <Unit104>
@@ -961,7 +951,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="891"/>
         <CursorPos X="21" Y="905"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit104>
       <Unit105>
         <Filename Value="w:\programs\lazarus\lcl\buttons.pp"/>
@@ -969,7 +959,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="406"/>
         <CursorPos X="53" Y="432"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit105>
       <Unit106>
         <Filename Value="P:\programs\fpc\2.6\src\rtl\inc\dynlibs.pas"/>
@@ -977,7 +967,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="29"/>
         <CursorPos X="1" Y="49"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit106>
       <Unit107>
         <Filename Value="..\..\..\..\lib\GUIMsgBox.pp"/>
@@ -985,17 +975,15 @@
         <WindowIndex Value="0"/>
         <TopLine Value="57"/>
         <CursorPos X="102" Y="71"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="11"/>
       </Unit107>
       <Unit108>
         <Filename Value="w:\programs\lazarus\lcl\forms.pp"/>
         <UnitName Value="Forms"/>
-        <EditorIndex Value="6"/>
         <WindowIndex Value="0"/>
         <TopLine Value="716"/>
         <CursorPos X="28" Y="731"/>
-        <UsageCount Value="10"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="16"/>
       </Unit108>
       <Unit109>
         <Filename Value="..\..\..\..\components\native\ntvDesigner.pas"/>
@@ -1003,14 +991,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="24" Y="4"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit109>
       <Unit110>
         <Filename Value="w:\programs\lazarus\lcl\include\tiffimage.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="25"/>
         <CursorPos X="16" Y="34"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit110>
       <Unit111>
         <Filename Value="P:\programs\fpc\2.6\src\packages\fcl-base\src\bufstream.pp"/>
@@ -1018,23 +1006,21 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit111>
       <Unit112>
         <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\classesh.inc"/>
-        <EditorIndex Value="8"/>
         <WindowIndex Value="0"/>
         <TopLine Value="322"/>
         <CursorPos X="15" Y="346"/>
-        <UsageCount Value="40"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="46"/>
       </Unit112>
       <Unit113>
         <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\streams.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="10"/>
       </Unit113>
       <Unit114>
         <Filename Value="W:\programs\lazarus\lcl\extctrls.pp"/>
@@ -1042,24 +1028,22 @@
         <WindowIndex Value="0"/>
         <TopLine Value="536"/>
         <CursorPos X="39" Y="544"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="2"/>
       </Unit114>
       <Unit115>
         <Filename Value="w:\programs\lazarus\lcl\include\customsplitter.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="913"/>
         <CursorPos X="22" Y="921"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="2"/>
       </Unit115>
       <Unit116>
         <Filename Value="w:\programs\lazarus\lcl\controls.pp"/>
         <UnitName Value="Controls"/>
-        <EditorIndex Value="19"/>
         <WindowIndex Value="0"/>
         <TopLine Value="308"/>
         <CursorPos X="23" Y="325"/>
-        <UsageCount Value="23"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="29"/>
       </Unit116>
       <Unit117>
         <Filename Value="..\..\..\..\components\native\ntvSpliters.pas"/>
@@ -1067,7 +1051,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="445"/>
         <CursorPos X="17" Y="449"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="3"/>
         <Bookmarks Count="1">
           <Item0 X="1" Y="479" ID="1"/>
         </Bookmarks>
@@ -1077,7 +1061,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="24"/>
         <CursorPos X="3" Y="30"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit118>
       <Unit119>
         <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\math.pp"/>
@@ -1085,7 +1069,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="123"/>
         <CursorPos X="10" Y="139"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="1"/>
       </Unit119>
       <Unit120>
         <Filename Value="w:\programs\lazarus\lcl\themes.pas"/>
@@ -1093,7 +1077,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="490"/>
         <CursorPos X="10" Y="506"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="1"/>
       </Unit120>
       <Unit121>
         <Filename Value="w:\programs\lazarus\lcl\lclstrconsts.pas"/>
@@ -1101,7 +1085,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="477"/>
         <CursorPos X="3" Y="507"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="1"/>
       </Unit121>
       <Unit122>
         <Filename Value="w:\programs\lazarus\lcl\pairsplitter.pas"/>
@@ -1109,14 +1093,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="364"/>
         <CursorPos X="1" Y="382"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit122>
       <Unit123>
         <Filename Value="w:\programs\lazarus\lcl\include\control.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="3223"/>
         <CursorPos X="1" Y="3235"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="10"/>
       </Unit123>
       <Unit124>
         <Filename Value="..\..\..\..\..\comm\source\mnWinCommStreams.pas"/>
@@ -1124,17 +1108,15 @@
         <WindowIndex Value="0"/>
         <TopLine Value="194"/>
         <CursorPos X="37" Y="202"/>
-        <UsageCount Value="2"/>
+        <UsageCount Value="10"/>
       </Unit124>
       <Unit125>
         <Filename Value="w:\programs\lazarus\components\synedit\synedit.pp"/>
         <UnitName Value="SynEdit"/>
-        <EditorIndex Value="7"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="854"/>
-        <CursorPos X="14" Y="870"/>
-        <UsageCount Value="25"/>
-        <Loaded Value="True"/>
+        <TopLine Value="1"/>
+        <CursorPos X="106" Y="2"/>
+        <UsageCount Value="35"/>
       </Unit125>
       <Unit126>
         <Filename Value="..\..\..\..\..\xml\source\mnXMLRttiProfile.pas"/>
@@ -1142,7 +1124,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="9"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit126>
       <Unit127>
@@ -1151,28 +1133,28 @@
         <WindowIndex Value="0"/>
         <TopLine Value="183"/>
         <CursorPos X="23" Y="187"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit127>
       <Unit128>
         <Filename Value="w:\programs\lazarus\lcl\include\filedialog.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="310"/>
         <CursorPos X="16" Y="317"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit128>
       <Unit129>
         <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\lists.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="660"/>
         <CursorPos X="3" Y="671"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit129>
       <Unit130>
         <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\sysutils\sysstrh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="67"/>
         <CursorPos X="10" Y="85"/>
-        <UsageCount Value="11"/>
+        <UsageCount Value="9"/>
       </Unit130>
       <Unit131>
         <Filename Value="C:\temp\curr.pas"/>
@@ -1180,7 +1162,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit131>
       <Unit132>
         <Filename Value="C:\temp\test2.pas"/>
@@ -1188,7 +1170,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="4" Y="8"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit132>
       <Unit133>
         <Filename Value="C:\temp\test3.pp"/>
@@ -1196,7 +1178,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit133>
       <Unit134>
         <Filename Value="C:\temp\test2.pp"/>
@@ -1204,7 +1186,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit134>
       <Unit135>
         <Filename Value="P:\programs\lazarus\components\jcf2\JcfGui\fMain.pas"/>
@@ -1212,7 +1194,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="383"/>
         <CursorPos X="27" Y="393"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit135>
       <Unit136>
         <Filename Value="P:\programs\lazarus\ideintf\projectintf.pas"/>
@@ -1220,7 +1202,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="272"/>
         <CursorPos X="53" Y="287"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit136>
       <Unit137>
         <Filename Value="P:\programs\lazarus\ide\main.pp"/>
@@ -1228,18 +1210,15 @@
         <WindowIndex Value="0"/>
         <TopLine Value="8187"/>
         <CursorPos X="14" Y="8187"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit137>
       <Unit138>
         <Filename Value="mnePHPClasses.pas"/>
         <UnitName Value="mnePHPClasses"/>
-        <IsVisibleTab Value="True"/>
-        <EditorIndex Value="4"/>
         <WindowIndex Value="0"/>
         <TopLine Value="214"/>
-        <CursorPos X="26" Y="231"/>
-        <UsageCount Value="23"/>
-        <Loaded Value="True"/>
+        <CursorPos X="40" Y="217"/>
+        <UsageCount Value="29"/>
       </Unit138>
       <Unit139>
         <Filename Value="..\..\..\..\..\lib\MsgBox.pp"/>
@@ -1247,34 +1226,30 @@
         <WindowIndex Value="0"/>
         <TopLine Value="85"/>
         <CursorPos X="14" Y="100"/>
-        <UsageCount Value="13"/>
+        <UsageCount Value="11"/>
       </Unit139>
       <Unit140>
         <Filename Value="mneClasses.pas"/>
         <UnitName Value="mneClasses"/>
-        <EditorIndex Value="11"/>
         <WindowIndex Value="0"/>
         <TopLine Value="16"/>
         <CursorPos X="38" Y="37"/>
-        <UsageCount Value="27"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="33"/>
       </Unit140>
       <Unit141>
         <Filename Value="mnePASClasses.pas"/>
         <UnitName Value="mnePASClasses"/>
-        <EditorIndex Value="21"/>
         <WindowIndex Value="0"/>
         <TopLine Value="13"/>
         <CursorPos X="38" Y="30"/>
-        <UsageCount Value="24"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="30"/>
       </Unit141>
       <Unit142>
         <Filename Value="W:\programs\lazarus\lcl\include\bevel.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="131"/>
         <CursorPos X="23" Y="133"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit142>
       <Unit143>
         <Filename Value="..\..\..\..\..\socket\source\mnHttpClient.pas"/>
@@ -1282,7 +1257,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="2"/>
         <CursorPos X="44" Y="10"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
         <DefaultSyntaxHighlighter Value="Delphi"/>
       </Unit143>
       <Unit144>
@@ -1291,21 +1266,21 @@
         <WindowIndex Value="0"/>
         <TopLine Value="460"/>
         <CursorPos X="53" Y="474"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit144>
       <Unit145>
         <Filename Value="w:\programs\lazarus\lcl\include\wincontrol.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="6472"/>
         <CursorPos X="16" Y="6475"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit145>
       <Unit146>
         <Filename Value="MainUnit.lfm"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="442"/>
-        <CursorPos X="30" Y="459"/>
-        <UsageCount Value="1"/>
+        <TopLine Value="1017"/>
+        <CursorPos X="30" Y="1026"/>
+        <UsageCount Value="10"/>
         <DefaultSyntaxHighlighter Value="LFM"/>
       </Unit146>
       <Unit147>
@@ -1314,14 +1289,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit147>
       <Unit148>
         <Filename Value="..\todo.txt"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="5"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
         <DefaultSyntaxHighlighter Value="None"/>
       </Unit148>
       <Unit149>
@@ -1330,14 +1305,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="74"/>
         <CursorPos X="14" Y="83"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit149>
       <Unit150>
         <Filename Value="w:\programs\lazarus\lcl\include\sysenvapis_win.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="3"/>
         <CursorPos X="3" Y="13"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit150>
       <Unit151>
         <Filename Value="P:\programs\fpc\2.6\src\packages\winunits-base\src\shellapi.pp"/>
@@ -1345,7 +1320,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1066"/>
         <CursorPos X="10" Y="1075"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit151>
       <Unit152>
         <Filename Value="P:\programs\lazarus\components\jcf2\Notepad\frmJcfNotepad.pas"/>
@@ -1353,7 +1328,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="522"/>
         <CursorPos X="5" Y="531"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit152>
       <Unit153>
         <Filename Value="P:\programs\lazarus\components\jcf2\Parse\UI\fShowParseTree.pas"/>
@@ -1361,7 +1336,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="315"/>
         <CursorPos X="9" Y="328"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit153>
       <Unit154>
         <Filename Value="P:\programs\lazarus\components\jcf2\Ui\fAbout.pas"/>
@@ -1369,7 +1344,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="125"/>
         <CursorPos X="9" Y="134"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit154>
       <Unit155>
         <Filename Value="P:\programs\lazarus\components\jcf2\Ui\fRegistrySettings.pas"/>
@@ -1377,14 +1352,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="305"/>
         <CursorPos X="9" Y="314"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit155>
       <Unit156>
         <Filename Value="P:\programs\lazarus\lcl\include\sysenvapis_win.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="28" Y="10"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit156>
       <Unit157>
         <Filename Value="P:\programs\lazarus\lcl\lclintf.pas"/>
@@ -1392,14 +1367,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="55"/>
         <CursorPos X="16" Y="62"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit157>
       <Unit158>
         <Filename Value="w:\programs\lazarus\lcl\include\sysenvapis_unix.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="11"/>
         <CursorPos X="1" Y="11"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit158>
       <Unit159>
         <Filename Value="P:\programs\lazarus\converter\convertsettings.pas"/>
@@ -1407,7 +1382,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="477"/>
         <CursorPos X="18" Y="488"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit159>
       <Unit160>
         <Filename Value="P:\programs\lazarus\examples\postscript\usamplepostscriptcanvas.pas"/>
@@ -1415,14 +1390,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="286"/>
         <CursorPos X="7" Y="295"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit160>
       <Unit161>
         <Filename Value="P:\programs\fpc\2.6\src\rtl\win\wininc\ascdef.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="460"/>
         <CursorPos X="1" Y="469"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit161>
       <Unit162>
         <Filename Value="w:\programs\lazarus\components\lazutils\fileutil.pas"/>
@@ -1430,7 +1405,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="194"/>
         <CursorPos X="10" Y="213"/>
-        <UsageCount Value="26"/>
+        <UsageCount Value="24"/>
       </Unit162>
       <Unit163>
         <Filename Value="P:\programs\lazarus\components\codetools\basiccodetools.pas"/>
@@ -1438,7 +1413,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="4987"/>
         <CursorPos X="8" Y="5002"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit163>
       <Unit164>
         <Filename Value="P:\programs\lazarus\components\codetools\fileprocs.pas"/>
@@ -1446,7 +1421,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="382"/>
         <CursorPos X="10" Y="396"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit164>
       <Unit165>
         <Filename Value="P:\programs\lazarus\examples\cleandir\dircleaner.pp"/>
@@ -1454,14 +1429,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="806"/>
         <CursorPos X="15" Y="820"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit165>
       <Unit166>
         <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\sysutils\filutilh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="42"/>
         <CursorPos X="10" Y="64"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit166>
       <Unit167>
         <Filename Value="P:\programs\fpc\2.6\src\packages\httpd22\examples\mod_hello.pp"/>
@@ -1469,14 +1444,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="4"/>
         <CursorPos X="16" Y="20"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit167>
       <Unit168>
         <Filename Value="P:\programs\fpc\2.6\src\packages\httpd13\src\http_protocol.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="31"/>
         <CursorPos X="53" Y="32"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit168>
       <Unit169>
         <Filename Value="P:\programs\fpc\2.6\src\packages\httpd20\examples\mod_hello.pp"/>
@@ -1484,21 +1459,21 @@
         <WindowIndex Value="0"/>
         <TopLine Value="58"/>
         <CursorPos X="16" Y="64"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit169>
       <Unit170>
         <Filename Value="P:\programs\fpc\2.6\src\packages\httpd22\src\http_protocol.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="243"/>
         <CursorPos X="56" Y="251"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit170>
       <Unit171>
         <Filename Value="P:\programs\fpc\2.6\src\packages\httpd22\src\ap_mmn.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="119"/>
         <CursorPos X="22" Y="127"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit171>
       <Unit172>
         <Filename Value="P:\programs\fpc\2.6\src\packages\fcl-web\src\base\httpdefs.pp"/>
@@ -1506,7 +1481,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="9"/>
       </Unit172>
       <Unit173>
         <Filename Value="P:\programs\fpc\2.6\src\packages\httpd22\src\httpd.pas"/>
@@ -1514,7 +1489,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="28"/>
         <CursorPos X="42" Y="31"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="9"/>
       </Unit173>
       <Unit174>
         <Filename Value="P:\programs\fpc\2.6\src\packages\httpd22\src\apr\apr.pas"/>
@@ -1522,14 +1497,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit174>
       <Unit175>
         <Filename Value="P:\programs\fpc\2.6\src\packages\httpd22\src\httpd.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="1" Y="1"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit175>
       <Unit176>
         <Filename Value="P:\programs\fpc\2.6\src\packages\httpd22\examples\mod_spelling.pp"/>
@@ -1537,14 +1512,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="595"/>
         <CursorPos X="13" Y="599"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit176>
       <Unit177>
         <Filename Value="P:\programs\fpc\2.6\src\packages\httpd22\src\apr\apr_tables.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="239"/>
         <CursorPos X="11" Y="243"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit177>
       <Unit178>
         <Filename Value="P:\programs\fpc\2.6\src\packages\httpd22\examples\mod_example.pp"/>
@@ -1552,7 +1527,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="402"/>
         <CursorPos X="45" Y="408"/>
-        <UsageCount Value="9"/>
+        <UsageCount Value="7"/>
       </Unit178>
       <Unit179>
         <Filename Value="P:\programs\fpc\2.6\src\packages\fcl-web\src\base\fpapache.pp"/>
@@ -1560,44 +1535,44 @@
         <WindowIndex Value="0"/>
         <TopLine Value="746"/>
         <CursorPos X="1" Y="763"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="3"/>
       </Unit179>
       <Unit180>
         <Filename Value="w:\programs\lazarus\components\lazutils\winfileutil.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="624"/>
         <CursorPos X="11" Y="626"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="21"/>
       </Unit180>
       <Unit181>
         <Filename Value="..\..\..\..\lib\HTMLKeywords.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="98"/>
         <CursorPos X="11" Y="125"/>
-        <UsageCount Value="5"/>
+        <UsageCount Value="3"/>
       </Unit181>
       <Unit182>
         <Filename Value="..\..\..\..\lib\PHPKeywords.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="6"/>
         <CursorPos X="15" Y="12"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit182>
       <Unit183>
         <Filename Value="w:\programs\lazarus\components\synedit\synhighlightersql.pas"/>
         <UnitName Value="SynHighlighterSQL"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1770"/>
-        <CursorPos X="5" Y="1787"/>
-        <UsageCount Value="1"/>
+        <TopLine Value="1699"/>
+        <CursorPos X="68" Y="1726"/>
+        <UsageCount Value="13"/>
       </Unit183>
       <Unit184>
-        <Filename Value="..\..\..\..\..\..\freespider\spidercgi.pas"/>
+        <Filename Value="w:\freespider\spidercgi.pas"/>
         <UnitName Value="SpiderCGI"/>
         <WindowIndex Value="0"/>
         <TopLine Value="10"/>
         <CursorPos X="55" Y="27"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="9"/>
       </Unit184>
       <Unit185>
         <Filename Value="..\editor\IAddons.pas"/>
@@ -1605,14 +1580,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="32" Y="9"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="10"/>
       </Unit185>
       <Unit186>
         <Filename Value="w:\prog\programs\fpc\2.6\src\rtl\objpas\sysutils\osutilsh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="29"/>
         <CursorPos X="14" Y="41"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="9"/>
       </Unit186>
       <Unit187>
         <Filename Value="w:\prog\programs\fpc\2.6\src\rtl\unix\sysutils.pp"/>
@@ -1620,7 +1595,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1363"/>
         <CursorPos X="94" Y="1369"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="9"/>
       </Unit187>
       <Unit188>
         <Filename Value="..\..\..\..\components\native\ntvSplitters.pas"/>
@@ -1628,7 +1603,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="528"/>
         <CursorPos X="20" Y="530"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="9"/>
       </Unit188>
       <Unit189>
         <Filename Value="..\..\..\..\..\lib\base36.pas"/>
@@ -1636,7 +1611,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="10"/>
         <CursorPos X="29" Y="16"/>
-        <UsageCount Value="1"/>
+        <UsageCount Value="9"/>
       </Unit189>
       <Unit190>
         <Filename Value="W:\programs\lazarus\components\synedit\design\syneditlazdsgn.pas"/>
@@ -1644,7 +1619,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="21"/>
         <CursorPos X="20" Y="28"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="10"/>
       </Unit190>
       <Unit191>
         <Filename Value="W:\programs\lazarus\components\synedit\design\allsyneditdsgn.pas"/>
@@ -1652,7 +1627,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1"/>
         <CursorPos X="59" Y="3"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="10"/>
       </Unit191>
       <Unit192>
         <Filename Value="..\..\..\..\..\sard\source\Sard.pas"/>
@@ -1660,7 +1635,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="6"/>
         <CursorPos X="27" Y="12"/>
-        <UsageCount Value="4"/>
+        <UsageCount Value="2"/>
       </Unit192>
       <Unit193>
         <Filename Value="P:\programs\fpc\2.6\src\packages\fcl-base\src\base64.pp"/>
@@ -1668,7 +1643,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="79"/>
         <CursorPos X="28" Y="87"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="1"/>
       </Unit193>
       <Unit194>
         <Filename Value="W:\programs\lazarus\ide\patheditordlg.pas"/>
@@ -1679,7 +1654,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="456"/>
         <CursorPos X="49" Y="459"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="1"/>
         <Bookmarks Count="1">
           <Item0 X="26" Y="469" ID="2"/>
         </Bookmarks>
@@ -1690,7 +1665,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="32"/>
         <CursorPos X="120" Y="41"/>
-        <UsageCount Value="3"/>
+        <UsageCount Value="1"/>
         <Bookmarks Count="1">
           <Item0 X="14" Y="60" ID="1"/>
         </Bookmarks>
@@ -1699,18 +1674,16 @@
         <Filename Value="w:\programs\lazarus\components\synedit\synedittypes.pp"/>
         <UnitName Value="SynEditTypes"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="1"/>
-        <UsageCount Value="12"/>
+        <TopLine Value="48"/>
+        <CursorPos X="3" Y="59"/>
+        <UsageCount Value="14"/>
       </Unit196>
       <Unit197>
         <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\stringl.inc"/>
-        <EditorIndex Value="13"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1191"/>
         <CursorPos X="46" Y="1203"/>
-        <UsageCount Value="25"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="31"/>
       </Unit197>
       <Unit198>
         <Filename Value="w:\programs\lazarus\components\lazutils\ttfile.pas"/>
@@ -1718,7 +1691,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="358"/>
         <CursorPos X="5" Y="374"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit198>
       <Unit199>
         <Filename Value="w:\programs\lazarus\lcl\interfaces\win32\win32int.pp"/>
@@ -1726,7 +1699,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="11"/>
         <CursorPos X="26" Y="27"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit199>
       <Unit200>
         <Filename Value="w:\programs\lazarus\lcl\lmessages.pp"/>
@@ -1734,30 +1707,30 @@
         <WindowIndex Value="0"/>
         <TopLine Value="228"/>
         <CursorPos X="3" Y="243"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit200>
       <Unit201>
         <Filename Value="w:\programs\lazarus\components\synedit\synedithighlighter.pp"/>
         <UnitName Value="SynEditHighlighter"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="1"/>
-        <CursorPos X="1" Y="9"/>
-        <UsageCount Value="14"/>
+        <TopLine Value="1175"/>
+        <CursorPos X="13" Y="1192"/>
+        <UsageCount Value="15"/>
       </Unit201>
       <Unit202>
         <Filename Value="P:\programs\fpc\2.6\src\rtl\inc\systemh.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="236"/>
         <CursorPos X="3" Y="253"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="10"/>
       </Unit202>
       <Unit203>
         <Filename Value="w:\programs\lazarus\components\synedit\lazsynimm.pas"/>
         <UnitName Value="LazSynIMM"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="213"/>
-        <CursorPos X="31" Y="231"/>
-        <UsageCount Value="10"/>
+        <TopLine Value="5"/>
+        <CursorPos X="1" Y="14"/>
+        <UsageCount Value="14"/>
       </Unit203>
       <Unit204>
         <Filename Value="w:\programs\lazarus\components\synedit\syneditmarkup.pp"/>
@@ -1765,7 +1738,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="380"/>
         <CursorPos X="16" Y="397"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit204>
       <Unit205>
         <Filename Value="w:\programs\lazarus\components\synedit\syneditmiscclasses.pp"/>
@@ -1773,7 +1746,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="224"/>
         <CursorPos X="110" Y="240"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit205>
       <Unit206>
         <Filename Value="..\..\..\..\..\lib\mnBase64.pas"/>
@@ -1781,7 +1754,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="53"/>
         <CursorPos X="41" Y="70"/>
-        <UsageCount Value="10"/>
+        <UsageCount Value="8"/>
       </Unit206>
       <Unit207>
         <Filename Value="..\editor\backup\EditorEngine.pas"/>
@@ -1789,7 +1762,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="1335"/>
         <CursorPos X="111" Y="1345"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit207>
       <Unit208>
         <Filename Value="W:\programs\lazarus\components\synedit\synguttercodefolding.pp"/>
@@ -1797,15 +1770,15 @@
         <WindowIndex Value="0"/>
         <TopLine Value="45"/>
         <CursorPos X="26" Y="68"/>
-        <UsageCount Value="8"/>
+        <UsageCount Value="6"/>
       </Unit208>
       <Unit209>
         <Filename Value="w:\programs\lazarus\components\synedit\synedithighlighterfoldbase.pas"/>
         <UnitName Value="SynEditHighlighterFoldBase"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="270"/>
-        <CursorPos X="46" Y="273"/>
-        <UsageCount Value="8"/>
+        <TopLine Value="27"/>
+        <CursorPos X="15" Y="46"/>
+        <UsageCount Value="13"/>
       </Unit209>
       <Unit210>
         <Filename Value="..\..\..\..\lib\SynHighlighterApache.pas"/>
@@ -1813,7 +1786,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="39"/>
         <CursorPos X="15" Y="54"/>
-        <UsageCount Value="7"/>
+        <UsageCount Value="5"/>
       </Unit210>
       <Unit211>
         <Filename Value="w:\programs\lazarus\ide\searchfrm.pas"/>
@@ -1824,14 +1797,14 @@
         <WindowIndex Value="0"/>
         <TopLine Value="768"/>
         <CursorPos X="16" Y="787"/>
-        <UsageCount Value="12"/>
+        <UsageCount Value="10"/>
       </Unit211>
       <Unit212>
         <Filename Value="w:\programs\lazarus\components\lazutils\fileutil.inc"/>
         <WindowIndex Value="0"/>
         <TopLine Value="1401"/>
         <CursorPos X="13" Y="1420"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="21"/>
       </Unit212>
       <Unit213>
         <Filename Value="w:\programs\lazarus\components\codetools\fileprocs.pas"/>
@@ -1839,7 +1812,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="912"/>
         <CursorPos X="24" Y="914"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="21"/>
       </Unit213>
       <Unit214>
         <Filename Value="w:\programs\lazarus\components\lazutils\lazfilecache.pas"/>
@@ -1847,7 +1820,7 @@
         <WindowIndex Value="0"/>
         <TopLine Value="165"/>
         <CursorPos X="3" Y="169"/>
-        <UsageCount Value="6"/>
+        <UsageCount Value="4"/>
       </Unit214>
       <Unit215>
         <Filename Value="w:\programs\lazarus\components\lazutils\masks.pas"/>
@@ -1855,199 +1828,305 @@
         <WindowIndex Value="0"/>
         <TopLine Value="53"/>
         <CursorPos X="3" Y="72"/>
-        <UsageCount Value="23"/>
+        <UsageCount Value="21"/>
       </Unit215>
       <Unit216>
         <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\sysutils\finah.inc"/>
-        <EditorIndex Value="16"/>
         <WindowIndex Value="0"/>
         <TopLine Value="7"/>
         <CursorPos X="10" Y="31"/>
-        <UsageCount Value="30"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="36"/>
       </Unit216>
       <Unit217>
         <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\sysutils\fina.inc"/>
-        <EditorIndex Value="17"/>
         <WindowIndex Value="0"/>
         <TopLine Value="340"/>
         <CursorPos X="20" Y="349"/>
-        <UsageCount Value="30"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="36"/>
       </Unit217>
       <Unit218>
         <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\classes\persist.inc"/>
-        <EditorIndex Value="14"/>
         <WindowIndex Value="0"/>
         <TopLine Value="32"/>
         <CursorPos X="3" Y="36"/>
-        <UsageCount Value="20"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="26"/>
       </Unit218>
       <Unit219>
         <Filename Value="P:\programs\fpc\2.6\src\rtl\win32\classes.pp"/>
         <UnitName Value="Classes"/>
-        <EditorIndex Value="9"/>
         <WindowIndex Value="0"/>
         <TopLine Value="35"/>
         <CursorPos X="1" Y="35"/>
-        <UsageCount Value="17"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="23"/>
       </Unit219>
       <Unit220>
         <Filename Value="w:\programs\lazarus\components\synedit\synhighlighterhashentries.pas"/>
         <UnitName Value="SynHighlighterHashEntries"/>
-        <EditorIndex Value="2"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="98"/>
-        <CursorPos X="50" Y="111"/>
-        <UsageCount Value="17"/>
-        <Loaded Value="True"/>
+        <TopLine Value="163"/>
+        <CursorPos X="51" Y="179"/>
+        <UsageCount Value="26"/>
       </Unit220>
       <Unit221>
         <Filename Value="w:\programs\lazarus\components\synedit\syngutterbase.pp"/>
         <UnitName Value="SynGutterBase"/>
-        <EditorIndex Value="1"/>
         <WindowIndex Value="0"/>
         <TopLine Value="168"/>
         <CursorPos X="23" Y="181"/>
-        <UsageCount Value="11"/>
-        <Loaded Value="True"/>
+        <UsageCount Value="17"/>
       </Unit221>
       <Unit222>
         <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\strutils.pp"/>
         <UnitName Value="strutils"/>
-        <EditorIndex Value="5"/>
         <WindowIndex Value="0"/>
         <TopLine Value="50"/>
         <CursorPos X="10" Y="65"/>
+        <UsageCount Value="16"/>
+      </Unit222>
+      <Unit223>
+        <Filename Value="..\..\..\..\lib\minilib\lib\MsgBox.pp"/>
+        <UnitName Value="MsgBox"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="21"/>
+        <CursorPos X="14" Y="28"/>
+        <UsageCount Value="10"/>
+      </Unit223>
+      <Unit224>
+        <Filename Value="..\..\..\..\lib\minilib\lib\mnLogs.pas"/>
+        <UnitName Value="mnLogs"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="14"/>
+      </Unit224>
+      <Unit225>
+        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\GUIMsgBox.pp"/>
+        <UnitName Value="GUIMsgBox"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="10"/>
+      </Unit225>
+      <Unit226>
+        <Filename Value="w:\programs\lazarus\components\synedit\fpmake.pp"/>
+        <UnitName Value="fpmake"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="3" Y="1"/>
+        <UsageCount Value="14"/>
+      </Unit226>
+      <Unit227>
+        <Filename Value="w:\programs\lazarus\components\synedit\synedit.inc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="32"/>
+        <CursorPos X="8" Y="51"/>
+        <UsageCount Value="11"/>
+      </Unit227>
+      <Unit228>
+        <Filename Value="w:\programs\lazarus\components\synedit\synregexpr.pas"/>
+        <UnitName Value="SynRegExpr"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="35"/>
+        <CursorPos X="9" Y="53"/>
+        <UsageCount Value="13"/>
+      </Unit228>
+      <Unit229>
+        <Filename Value="w:\programs\lazarus\components\synedit\synhighlightercpp.pp"/>
+        <UnitName Value="SynHighlighterCpp"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="13"/>
+      </Unit229>
+      <Unit230>
+        <Filename Value="w:\programs\lazarus\components\synedit\synhighlighterposition.pas"/>
+        <UnitName Value="SynHighlighterPosition"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="283"/>
+        <CursorPos X="76" Y="307"/>
+        <UsageCount Value="13"/>
+      </Unit230>
+      <Unit231>
+        <Filename Value="w:\programs\lazarus\components\synedit\syneditmiscprocs.pp"/>
+        <UnitName Value="SynEditMiscProcs"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="13"/>
+      </Unit231>
+      <Unit232>
+        <Filename Value="w:\programs\lazarus\lcl\lcltype.pp"/>
+        <UnitName Value="LCLType"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="2954"/>
+        <CursorPos X="1" Y="2975"/>
+        <UsageCount Value="13"/>
+      </Unit232>
+      <Unit233>
+        <Filename Value="w:\programs\lazarus\components\synedit\synhighlighterany.pas"/>
+        <UnitName Value="SynHighlighterAny"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="30"/>
+        <CursorPos X="13" Y="48"/>
+        <UsageCount Value="13"/>
+      </Unit233>
+      <Unit234>
+        <Filename Value="w:\programs\lazarus\components\synedit\synhighlighterunixshellscript.pas"/>
+        <UnitName Value="synhighlighterunixshellscript"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="255"/>
+        <CursorPos X="43" Y="266"/>
+        <UsageCount Value="13"/>
+      </Unit234>
+      <Unit235>
+        <Filename Value="P:\programs\fpc\2.6\src\packages\fcl-process\src\simpleipc.pp"/>
+        <UnitName Value="simpleipc"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="10"/>
+      </Unit235>
+      <Unit236>
+        <Filename Value="w:\programs\lazarus\lcl\include\menuitem.inc"/>
+        <EditorIndex Value="2"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="746"/>
+        <CursorPos X="20" Y="750"/>
         <UsageCount Value="10"/>
         <Loaded Value="True"/>
-      </Unit222>
+      </Unit236>
+      <Unit237>
+        <Filename Value="..\lib\PHPUtils.pas"/>
+        <UnitName Value="PHPUtils"/>
+        <WindowIndex Value="0"/>
+        <TopLine Value="1"/>
+        <CursorPos X="1" Y="1"/>
+        <UsageCount Value="10"/>
+      </Unit237>
     </Units>
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="30" HistoryIndex="28">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="MainUnit.pas"/>
-        <Caret Line="554" Column="23" TopLine="528"/>
+        <Caret Line="2378" Column="39" TopLine="2371"/>
       </Position1>
       <Position2>
         <Filename Value="MainUnit.pas"/>
-        <Caret Line="555" Column="40" TopLine="528"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position2>
       <Position3>
         <Filename Value="MainUnit.pas"/>
-        <Caret Line="2388" Column="34" TopLine="2362"/>
+        <Caret Line="449" Column="33" TopLine="434"/>
       </Position3>
       <Position4>
         <Filename Value="MainUnit.pas"/>
-        <Caret Line="486" Column="28" TopLine="471"/>
+        <Caret Line="2378" Column="39" TopLine="2362"/>
       </Position4>
       <Position5>
         <Filename Value="MainUnit.pas"/>
-        <Caret Line="554" Column="40" TopLine="528"/>
+        <Caret Line="449" Column="33" TopLine="440"/>
       </Position5>
       <Position6>
         <Filename Value="MainUnit.pas"/>
-        <Caret Line="2395" Column="34" TopLine="2365"/>
+        <Caret Line="2378" Column="39" TopLine="2362"/>
       </Position6>
       <Position7>
         <Filename Value="MainUnit.pas"/>
-        <Caret Line="2357" Column="56" TopLine="2334"/>
+        <Caret Line="448" Column="33" TopLine="440"/>
       </Position7>
       <Position8>
         <Filename Value="MainUnit.pas"/>
-        <Caret Line="476" Column="51" TopLine="461"/>
+        <Caret Line="2383" Column="1" TopLine="2377"/>
       </Position8>
       <Position9>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="2382" Column="1" TopLine="2382"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1188" Column="12" TopLine="1184"/>
       </Position9>
       <Position10>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1859" Column="29" TopLine="1844"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1" Column="1" TopLine="1"/>
       </Position10>
       <Position11>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="321" Column="14" TopLine="307"/>
+        <Caret Line="288" Column="19" TopLine="273"/>
       </Position11>
       <Position12>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Caret Line="289" Column="21" TopLine="274"/>
       </Position12>
       <Position13>
-        <Filename Value="mnePHPClasses.pas"/>
-        <Caret Line="357" Column="1" TopLine="341"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1962" Column="1" TopLine="1957"/>
       </Position13>
       <Position14>
-        <Filename Value="mnePHPClasses.pas"/>
-        <Caret Line="39" Column="26" TopLine="26"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1968" Column="1" TopLine="1957"/>
       </Position14>
       <Position15>
-        <Filename Value="mnePHPClasses.pas"/>
-        <Caret Line="28" Column="38" TopLine="12"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1969" Column="1" TopLine="1957"/>
       </Position15>
       <Position16>
-        <Filename Value="mnePHPClasses.pas"/>
-        <Caret Line="167" Column="12" TopLine="152"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1971" Column="1" TopLine="1961"/>
       </Position16>
       <Position17>
-        <Filename Value="mnePHPClasses.pas"/>
-        <Caret Line="168" Column="7" TopLine="153"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1972" Column="1" TopLine="1961"/>
       </Position17>
       <Position18>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1854" Column="1" TopLine="1844"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="2609" Column="1" TopLine="2599"/>
       </Position18>
       <Position19>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="2610" Column="1" TopLine="2599"/>
       </Position19>
       <Position20>
-        <Filename Value="MainUnit.pas"/>
-        <Caret Line="15" Column="71" TopLine="1"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="2611" Column="1" TopLine="2599"/>
       </Position20>
       <Position21>
         <Filename Value="..\editor\EditorEngine.pas"/>
-        <Caret Line="248" Column="3" TopLine="231"/>
+        <Caret Line="983" Column="1" TopLine="974"/>
       </Position21>
       <Position22>
-        <Filename Value="mnePHPClasses.pas"/>
-        <Caret Line="168" Column="36" TopLine="153"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="984" Column="1" TopLine="974"/>
       </Position22>
       <Position23>
-        <Filename Value="mnePHPClasses.pas"/>
-        <Caret Line="1" Column="1" TopLine="1"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="985" Column="1" TopLine="974"/>
       </Position23>
       <Position24>
-        <Filename Value="mnePHPClasses.pas"/>
-        <Caret Line="168" Column="36" TopLine="142"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1959" Column="20" TopLine="1952"/>
       </Position24>
       <Position25>
-        <Filename Value="mnePHPClasses.pas"/>
-        <Caret Line="198" Column="44" TopLine="172"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="987" Column="1" TopLine="977"/>
       </Position25>
       <Position26>
-        <Filename Value="mnePHPClasses.pas"/>
-        <Caret Line="313" Column="36" TopLine="287"/>
+        <Filename Value="..\editor\EditorEngine.pas"/>
+        <Caret Line="1191" Column="29" TopLine="1182"/>
       </Position26>
       <Position27>
-        <Filename Value="mnePHPClasses.pas"/>
-        <Caret Line="168" Column="7" TopLine="153"/>
+        <Filename Value="mne.lpr"/>
+        <Caret Line="103" Column="21" TopLine="95"/>
       </Position27>
       <Position28>
-        <Filename Value="mnePHPClasses.pas"/>
-        <Caret Line="233" Column="5" TopLine="221"/>
+        <Filename Value="mne.lpr"/>
+        <Caret Line="125" Column="5" TopLine="116"/>
       </Position28>
       <Position29>
-        <Filename Value="mnePHPClasses.pas"/>
-        <Caret Line="229" Column="22" TopLine="214"/>
+        <Filename Value="mne.lpr"/>
+        <Caret Line="54" Column="36" TopLine="47"/>
       </Position29>
       <Position30>
-        <Filename Value="P:\programs\fpc\2.6\src\rtl\objpas\strutils.pp"/>
-        <Caret Line="65" Column="10" TopLine="50"/>
+        <Filename Value="mne.lpr"/>
+        <Caret Line="123" Column="10" TopLine="116"/>
       </Position30>
     </JumpHistory>
   </ProjectSession>
@@ -2072,7 +2151,7 @@
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="..\editor\EditorEngine.pas"/>
-        <Line Value="3320"/>
+        <Line Value="3319"/>
       </Item3>
     </BreakPoints>
   </Debugging>
