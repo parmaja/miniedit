@@ -1,5 +1,4 @@
 unit mnePASClasses;
-
 {$mode objfpc}{$H+}
 {**
  * Mini Edit
@@ -29,13 +28,13 @@ type
 
   { TPASFile }
 
-  TPASFile = class(TSynEditEditorFile)
+  TPASFile = class(TSourceEditorFile)
   protected
     procedure NewSource; override;
   public
   end;
 
-  TLFMFile = class(TSynEditEditorFile)
+  TLFMFile = class(TTextEditorFile)
   protected
     //procedure NewSource; override;
   public

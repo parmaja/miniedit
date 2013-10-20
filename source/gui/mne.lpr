@@ -42,17 +42,11 @@ uses
   mnePHPIniForm in 'mnePHPIniForm.pas' {PHPIniForm},
   mneBreakpoints in 'mneBreakpoints.pas' {BreakpointsForm},
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
-  SearchProgressForms in '..\editor\SearchProgressForms.pas',
-  EditorDebugger, PHP_xDebug, SelectList,
-  SynHighlighterApache in '..\lib\SynHighlighterApache.pas',
-  IniFiles,
-  mneAddons, mneAssociateForm,
-  mnePHPClasses,
-  mnePASClasses,
-  MsgBox,
-  GUIMsgBox,
-  Classes,
-  PHPUtils in '..\lib\PHPUtils.pas', mnePHPConfigForms, mneSetups, mneSettings;
+  SearchProgressForms, EditorDebugger, PHP_xDebug, SelectList,
+  SynHighlighterApache, IniFiles, mneAddons, mneAssociateForm, mnePHPClasses,
+  mnePASClasses, mneCSVClasses, MsgBox, GUIMsgBox, Classes, PHPUtils,
+  mnePHPConfigForms, mneSetups, mneSettings, mneSARDClasses,
+  EditorClasses;
 
 {$R *.res}
 

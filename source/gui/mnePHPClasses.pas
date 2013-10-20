@@ -18,14 +18,14 @@ uses
   Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   SynHighlighterCSS, SynHighlighterSQL, SynHighlighterXML, SynHighlighterJScript, SynHighlighterXHTML,
-  EditorDebugger, PHP_xDebug,
+  EditorDebugger, EditorClasses, PHP_xDebug,
   mneClasses;
 
 type
 
   { TPHPFile }
 
-  TPHPFile = class(TSynEditEditorFile)
+  TPHPFile = class(TSourceEditorFile)
   protected
   public
     procedure NewSource; override;
@@ -44,19 +44,19 @@ type
 
   { TCssFile }
 
-  TCssFile = class(TEditorFile)
+  TCssFile = class(TSourceEditorFile)
   public
   end;
 
   { TJSFile }
 
-  TJSFile = class(TEditorFile)
+  TJSFile = class(TSourceEditorFile)
   public
   end;
 
   { THTMLFile }
 
-  THTMLFile = class(TEditorFile)
+  THTMLFile = class(TSourceEditorFile)
   public
   end;
 

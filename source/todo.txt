@@ -1,4 +1,14 @@
 [TODO]
+bug: when the hint value is empty, the debugger stops
+bug: f3 find still finding at the last line 
+F12 switch folder/source
+Full Screen
+Autosace when ide deactivated for current file
+Shift F3 revrese find 
+css auto complete
+css add new words (inset, inherit)
+Search in files save the last folder in memory
+When NewAs, there is a public file can be choose, or option to show all file
 escape in editor, exit the app as option
 show folder of current file
 replace + in files, in PHP files must changed

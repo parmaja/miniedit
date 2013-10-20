@@ -1,1 +1,3 @@
 .svn
+/source/gui/*.lps
+/source/gui/mne.res

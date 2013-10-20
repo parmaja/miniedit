@@ -259,7 +259,7 @@ end;
 
 procedure TPHP_xDebug.DoShowFile(const Key, FileName: string; Line: integer);
 begin
-  SetExecuted(Key, FileName, Line);
+  SetExecutedLine(Key, FileName, Line);
 end;
 
 constructor TPHP_xDebug.Create;

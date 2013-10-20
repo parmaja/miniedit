@@ -27,6 +27,7 @@ uses
   Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus, ToolWin,
   Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses, StdActns,
   SynEditHighlighter, SynEdit, IAddons, ntvSplitters, SynHighlighterSQL,
+  EditorClasses,
   {$ifdef WINDOWS}
   TSVN_SCM, TGIT_SCM,
   {$endif}
@@ -665,9 +666,11 @@ begin
     0: BringToFront;
     1:
     begin
-      Engine.Files.OpenFile(IPCServer.StringMessage);
-      BringToFront;
-      Application.BringToFront;
+      if Engine.Files.OpenFile(IPCServer.StringMessage) <> nil then
+      begin
+        BringToFront;
+        Application.BringToFront;
+      end;
     end;
   end;
 end;
@@ -1163,8 +1166,6 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-  //  ThemeServices.us
-  //  ThemeServices.ThemesEnabled := False;
   FMessages := Engine.MessagesList.GetMessages('Messages');
 {$IFOPT D+}
   Extractkeywords.Visible := True;
@@ -1336,12 +1337,12 @@ end;
 
 procedure TMainForm.GotoLineActUpdate(Sender: TObject);
 begin
-  GotoLineAct.Enabled := (Engine.Files.Current <> nil);
+  GotoLineAct.Enabled := (Engine.Files.Current <> nil) and (Engine.Files.Current is ITextEditor);
 end;
 
 procedure TMainForm.GotoLineActExecute(Sender: TObject);
 begin
-  if Engine.Files.Current <> nil then
+  if (Engine.Files.Current <> nil) and (Engine.Files.Current is ITextEditor) then
     Engine.Files.Current.GotoLine;
 end;
 

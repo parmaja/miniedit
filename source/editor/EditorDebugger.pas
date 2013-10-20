@@ -11,7 +11,8 @@ interface
 
 uses
   SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
-  SynEdit;
+  SynEdit,
+  EditorClasses;
 
 type
   TEditBreakpoint = record
@@ -122,8 +123,8 @@ type
     function GetKey: string; virtual;
     property Active: boolean read GetActive write SetActive;
 
-    procedure SetExecuted(Key: string; Edit: TCustomSynEdit; const Line: integer); overload;
-    procedure SetExecuted(Key: string; FileName: string; const Line: integer); overload;
+    procedure SetExecutedLine(Key: string; Edit: TCustomSynEdit; const Line: integer); overload;
+    procedure SetExecutedLine(Key: string; FileName: string; const Line: integer); overload;
     property Breakpoints: TEditorBreakPoints read FBreakpoints;
     property Watches: TEditorWatches read FWatches;
   end;
@@ -246,7 +247,7 @@ begin
   Result := FKey;
 end;
 
-procedure TEditorDebugger.SetExecuted(Key: string; Edit: TCustomSynEdit; const Line: integer);
+procedure TEditorDebugger.SetExecutedLine(Key: string; Edit: TCustomSynEdit; const Line: integer);
 var
   OldLine: integer;
   OldEdit: TCustomSynEdit;
@@ -273,18 +274,18 @@ begin
   end;
 end;
 
-procedure TEditorDebugger.SetExecuted(Key: string; FileName: string; const Line: integer);
+procedure TEditorDebugger.SetExecutedLine(Key: string; FileName: string; const Line: integer);
 var
   aFile: TEditorFile;
 begin
   if FileName <> '' then
   begin
     aFile := Engine.Files.ShowFile(FileName);
-    if (aFile is TSynEditEditorFile) then //{$warning 'bad beavor, i this class must be outside the engine'}
-      SetExecuted(Key, (aFile as TSynEditEditorFile).SynEdit, Line);
+    if (aFile is ISourceEditor) then //{$warning 'bad beavor, this class must be outside the engine'}
+      SetExecutedLine(Key, (aFile as TTextEditorFile).SynEdit, Line);
   end
   else
-    SetExecuted(Key, nil, -1);
+    SetExecutedLine(Key, nil, -1);
 end;
 
 procedure TEditorDebugLink.SetExecutedExit(const AValue: TCustomSynEdit);
