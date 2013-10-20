@@ -616,6 +616,7 @@ begin
 
     if CanShow then
     begin
+      HintInfo.HintStr := s;
       HintInfo.HideTimeout := 10000;
       HintInfo.ReshowTimeout := 1;
     end;
@@ -1019,8 +1020,8 @@ end;
 procedure TMainForm.RunActExecute(Sender: TObject);
 begin
   if Engine.Perspective.Debug <> nil then
-    if Engine.Perspective.Debug.IsRuning then
-      Engine.Perspective.Debug.Run
+    if Engine.Perspective.Debug.Running then
+      Engine.Perspective.Debug.Action(dbaRun)
     else
       RunScript;
 end;
@@ -1752,27 +1753,27 @@ end;
 procedure TMainForm.DBGStartServerActExecute(Sender: TObject);
 begin
   if Engine.Perspective.Debug <> nil then
-    Engine.Perspective.Debug.Start;
+    Engine.Perspective.Debug.Action(dbaStart);
 end;
 
 procedure TMainForm.DBGStopServerActExecute(Sender: TObject);
 begin
   if Engine.Perspective.Debug <> nil then
-    Engine.Perspective.Debug.Stop;
+    Engine.Perspective.Debug.Action(dbaStop);
 end;
 
 procedure TMainForm.DBGStepOverActExecute(Sender: TObject);
 begin
   if Engine.Perspective.Debug <> nil then
-    if Engine.Perspective.Debug.IsRuning then
-      Engine.Perspective.Debug.StepOver;
+    if Engine.Perspective.Debug.Running then
+      Engine.Perspective.Debug.Action(dbaStepOver);
 end;
 
 procedure TMainForm.DBGStepIntoActExecute(Sender: TObject);
 begin
   if Engine.Perspective.Debug <> nil then
-    if Engine.Perspective.Debug.IsRuning then
-      Engine.Perspective.Debug.StepInto;
+    if Engine.Perspective.Debug.Running then
+      Engine.Perspective.Debug.Action(dbaStepInto);
 end;
 
 procedure TMainForm.DBGActiveServerActUpdate(Sender: TObject);
@@ -1790,19 +1791,19 @@ end;
 procedure TMainForm.DBGResetActExecute(Sender: TObject);
 begin
   if Engine.Perspective.Debug <> nil then
-    Engine.Perspective.Debug.Reset;
+    Engine.Perspective.Debug.Action(dbaReset);
 end;
 
 procedure TMainForm.DBGResumeActExecute(Sender: TObject);
 begin
   if Engine.Perspective.Debug <> nil then
-    Engine.Perspective.Debug.Resume;
+    Engine.Perspective.Debug.Action(dbaResume);
 end;
 
 procedure TMainForm.DBGStepOutActExecute(Sender: TObject);
 begin
   if Engine.Perspective.Debug <> nil then
-    Engine.Perspective.Debug.StepOut;
+    Engine.Perspective.Debug.Action(dbaStepOut);
 end;
 
 function TMainForm.GetFolder: string;

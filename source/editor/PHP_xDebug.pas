@@ -82,26 +82,25 @@ type
   private
     FServer: TPHP_xDebugServer;
   protected
-    function GetActive: boolean; override;
-    procedure SetActive(const AValue: boolean); override;
     function CreateBreakPoints: TEditorBreakPoints; override;
     function CreateWatches: TEditorWatches; override;
     procedure DoShowFile(const Key, FileName: string; Line: integer);
+
+    procedure Start;
+    procedure Stop;
+    procedure Reset;
+    procedure Resume;
+    procedure StepInto;
+    procedure StepOver;
+    procedure StepOut;
+    procedure Run;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Start; override;
-    procedure Stop; override;
-    procedure Reset; override;
-    procedure Resume; override;
-    procedure StepInto; override;
-    procedure StepOver; override;
-    procedure StepOut; override;
-    procedure Run; override;
-    procedure RunTo(FileName: string; LineNo: integer); override;
+    procedure Action(AAction: TDebugAction); override;
+    function GetState: TDebugStates; override;
     procedure Lock; override;
     procedure Unlock; override;
-    function IsRuning: boolean; override;
     function GetKey: string; override;
   end;
 
@@ -149,7 +148,7 @@ var
   aAction: TdbgpCustomGet;
 begin
   Result := False;
-  if FDebug.IsRuning then   //there is a connection from XDebug
+  if dbsRunning in FDebug.GetState then   //there is a connection from XDebug
   begin
     if EvalIt then
       aAction := TdbgpEval.Create
@@ -235,16 +234,6 @@ end;
 
 { TPHP_xDebug }
 
-function TPHP_xDebug.GetActive: boolean;
-begin
-  Result := FServer.Active;
-end;
-
-procedure TPHP_xDebug.SetActive(const AValue: boolean);
-begin
-  FServer.Active := AValue;
-end;
-
 function TPHP_xDebug.CreateBreakPoints: TEditorBreakPoints;
 begin
   Result := TPHP_xDebugBreakPoints.Create;
@@ -277,6 +266,29 @@ begin
   inherited;
 end;
 
+procedure TPHP_xDebug.Action(AAction: TDebugAction);
+begin
+  case AAction of
+    dbaStart: Start;
+    dbaStop: Stop;
+    dbaReset: Reset;
+    dbaResume: Resume;
+    dbaStepInto: StepInto;
+    dbaStepOver: StepOver;
+    dbaStepOut: StepOut;
+    dbaRun: Run;
+  end;
+end;
+
+function TPHP_xDebug.GetState: TDebugStates;
+begin
+  Result := [];
+  if FServer.Active then
+    Result := Result + [dbsActive];
+  if FServer.IsRuning then
+    Result := Result + [dbsRunning];
+end;
+
 procedure TPHP_xDebug.Start;
 begin
   FServer.Start;
@@ -286,7 +298,7 @@ procedure TPHP_xDebug.Stop;
 var
   aAction: TdbgpDetach;
 begin
-  if IsRuning then
+  if FServer.IsRuning then
   begin
     FServer.Clear;
     aAction := TdbgpDetach.Create;
@@ -355,15 +367,6 @@ end;
 procedure TPHP_xDebug.Unlock;
 begin
   DBGP.Lock.Leave;
-end;
-
-function TPHP_xDebug.IsRuning: boolean;
-begin
-  Result := FServer.IsRuning;
-end;
-
-procedure TPHP_xDebug.RunTo(FileName: string; LineNo: integer);
-begin
 end;
 
 function TPHP_xDebug.GetKey: string;

@@ -324,6 +324,8 @@ type
 
   { TSynEditEditorFile }
 
+  { TTextEditorFile }
+
   TTextEditorFile = class(TEditorFile, ITextEditor)
   private
     FSynEdit: TSynEdit;
@@ -350,8 +352,8 @@ type
     procedure Show; override;
     function GetHint(HintControl: TControl; CursorPos: TPoint; out vHint: string): Boolean; override;
     function GetGlance: string; override;
-    function GetWatchByMouse(p: TPoint; var v, s, t: string): boolean;
-    function GetWatchByCursor(var v, s, t: string): boolean;
+    function EvalByMouse(p: TPoint; out v, s, t: string): boolean;
+    function EvalByCursor(out v, s, t: string): boolean;
     procedure UpdateAge; override;
     function GetLanguageName: string; override;
 
@@ -1175,8 +1177,9 @@ function TTextEditorFile.GetHint(HintControl: TControl; CursorPos: TPoint; out v
 var
   v, s, t: string;
 begin
-  Result := GetWatchByMouse(CursorPos, v, s, t);
-  vHint := v + ':' + t + '=' + #13#10 + s;
+  Result := EvalByMouse(CursorPos, v, s, t);
+  if Result then
+    vHint := v + ':' + t + '=' + #13#10 + s;
 end;
 
 function TTextEditorFile.GetGlance: string;
@@ -1191,20 +1194,38 @@ begin
   end;
 end;
 
-function TTextEditorFile.GetWatchByMouse(p: TPoint; var v, s, t: string): boolean;
-begin
-end;
-
-function TTextEditorFile.GetWatchByCursor(var v, s, t: string): boolean;
+function TTextEditorFile.EvalByMouse(p: TPoint; out v, s, t: string): boolean;
 var
   l: variant;
 begin
-  if not SynEdit.SelAvail then
-    v := Trim(SynEdit.GetWordAtRowCol(SynEdit.CaretXY))
+  if Engine.Perspective.Debug <> nil then
+  begin
+    if not SynEdit.SelAvail then
+      v := Trim(SynEdit.GetWordAtRowCol(SynEdit.PixelsToRowColumn(p)))
+    else
+      v := SynEdit.SelText;
+    Result := (v <> '') and Engine.Perspective.Debug.Watches.GetValue(v, l, t, False);
+    s := l;
+  end
   else
-    v := SynEdit.SelText;
-  Result := (v <> '') and Engine.Perspective.Debug.Watches.GetValue(v, l, t, False);
-  s := l;
+    Result := False;
+end;
+
+function TTextEditorFile.EvalByCursor(out v, s, t: string): boolean;
+var
+  l: variant;
+begin
+  if Engine.Perspective.Debug <> nil then
+  begin
+    if not SynEdit.SelAvail then
+      v := Trim(SynEdit.GetWordAtRowCol(SynEdit.CaretXY))
+    else
+      v := SynEdit.SelText;
+    Result := (v <> '') and Engine.Perspective.Debug.Watches.GetValue(v, l, t, False);
+    s := l;
+  end
+  else
+    Result := False;
 end;
 
 procedure TTextEditorFile.UpdateAge;
@@ -2353,7 +2374,7 @@ begin
     SaveOptions;
   end;
   if Perspective.Debug <> nil then
-    Perspective.Debug.Stop;
+    Perspective.Debug.Action(dbaStop);
   Files.Clear;
   FIsEngineShutdown := True;
 end;

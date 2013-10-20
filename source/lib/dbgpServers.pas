@@ -1475,14 +1475,17 @@ procedure TdbgpCustomGetWatch.Process(Respond: TdbgpRespond);
 const
   //sCmd = 'property';
   sCmd = 'response';
+var
+  S: string;
 begin
   inherited;
   if Respond[sCmd] <> nil then
   begin
-    if Respond[sCmd].Attributes['encoding'] = 'base64' then
-      VariableValue := DecodeStringBase64(Respond[sCmd].Value)
+    S := Respond[sCmd].Value;
+    if (S <> '') and (Respond[sCmd].Attributes['encoding'] = 'base64') then //bug DecodeStringBase64 when S = ''
+      VariableValue := DecodeStringBase64(S)
     else
-      VariableValue := Respond[sCmd].Value;
+      VariableValue := S;
 
     VariableType := Respond[sCmd].Attributes['type'];
   end

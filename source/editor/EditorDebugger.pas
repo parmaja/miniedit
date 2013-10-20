@@ -15,6 +15,25 @@ uses
   EditorClasses;
 
 type
+  TDebugAction = (
+    dbaStart,
+    dbaStop,
+    dbaReset, //stop debug and stop the run
+    dbaResume, //run and do not stop at breakpoints, or run without debug
+    dbaStepInto,
+    dbaStepOver,
+    dbaStepOut,
+    dbaRun
+   );
+
+   TDebugState = (
+    dbsActive, //Server is active
+    dbsRunning, //There is program in execute
+    dbsDebugging //There is program in execute and debugged
+   );
+
+   TDebugStates = set of TDebugState;
+
   TEditBreakpoint = record
     Handle: integer;
     FileName: string;
@@ -91,37 +110,29 @@ type
     FLink: TEditorDebugLink;
     function GetExecutedControl: TCustomSynEdit;
     function GetExecutedLine: Integer;
-    function GetCaption: string; virtual;
-    procedure Click(Sender: TObject); virtual;
+    function GetActive: Boolean;
+    function GetRunning: boolean;
+    procedure SetActive(AValue: boolean);
     procedure SetExecutedControl(const AValue: TCustomSynEdit);
   protected
-    function GetActive: Boolean; virtual;
-    procedure SetActive(const AValue: Boolean); virtual;
+    function GetCaption: string; virtual;
     function CreateBreakPoints: TEditorBreakPoints; virtual; abstract;
     function CreateWatches: TEditorWatches; virtual; abstract;
   public
     constructor Create;
     destructor Destroy; override;
 
-    procedure Start; virtual;
-    procedure Stop; virtual;
-
-    procedure Reset; virtual; //stop debug and stop the run
-    procedure Resume; virtual; //run and do not stop at breakpoints, or run without debug
-    procedure StepInto; virtual;
-    procedure StepOver; virtual;
-    procedure StepOut; virtual;
-    procedure Run; virtual;
-    procedure Lock; virtual;
-    procedure Unlock; virtual;
-    function IsRuning: boolean; virtual;
-    procedure RunTo(FileName: string; LineNo: integer); virtual;//todo runto
+    procedure Lock; virtual; abstract;
+    procedure Unlock; virtual; abstract;
+    function GetState: TDebugStates; virtual; abstract;
+    procedure Action(AAction: TDebugAction); virtual; abstract;
+    function GetKey: string; virtual;
 
     property ExecutedLine: Integer read GetExecutedLine;
     property ExecutedControl: TCustomSynEdit read GetExecutedControl write SetExecutedControl;
 
-    function GetKey: string; virtual;
     property Active: boolean read GetActive write SetActive;
+    property Running: boolean read GetRunning;
 
     procedure SetExecutedLine(Key: string; Edit: TCustomSynEdit; const Line: integer); overload;
     procedure SetExecutedLine(Key: string; FileName: string; const Line: integer); overload;
@@ -141,9 +152,17 @@ begin
   Result := 'Debug';
 end;
 
-procedure TEditorDebugger.Click(Sender: TObject);
+function TEditorDebugger.GetRunning: boolean;
 begin
-  Active := not Active;
+  Result := dbsRunning in GetState;
+end;
+
+procedure TEditorDebugger.SetActive(AValue: boolean);
+begin
+  if not Active and AValue then
+    Action(dbaStart)
+  else if Active and not AValue then
+    Action(dbaStop);
 end;
 
 procedure TEditorDebugger.SetExecutedControl(const AValue: TCustomSynEdit);
@@ -168,7 +187,7 @@ begin
   inherited;
 end;
 
-function TEditorDebugger.GetActive: boolean;
+function TEditorDebugger.GetActive: Boolean;
 begin
   Result := False;
 end;
@@ -181,65 +200,6 @@ end;
 function TEditorDebugger.GetExecutedLine: Integer;
 begin
   Result := FLink.ExecutedLine;
-end;
-
-procedure TEditorDebugger.SetActive(const AValue: boolean);
-begin
-end;
-
-procedure TEditorDebugger.Start;
-begin
-
-end;
-
-procedure TEditorDebugger.Stop;
-begin
-
-end;
-
-procedure TEditorDebugger.Reset;
-begin
-
-end;
-
-procedure TEditorDebugger.StepInto;
-begin
-
-end;
-
-procedure TEditorDebugger.StepOver;
-begin
-
-end;
-
-procedure TEditorDebugger.StepOut;
-begin
-end;
-
-procedure TEditorDebugger.Run;
-begin
-
-end;
-
-procedure TEditorDebugger.Resume;
-begin
-end;
-
-procedure TEditorDebugger.Lock;
-begin
-end;
-
-procedure TEditorDebugger.Unlock;
-begin
-end;
-
-function TEditorDebugger.IsRuning: boolean;
-begin
-  Result := False;
-end;
-
-procedure TEditorDebugger.RunTo(FileName: string; LineNo: integer);
-begin
 end;
 
 function TEditorDebugger.GetKey: string;
