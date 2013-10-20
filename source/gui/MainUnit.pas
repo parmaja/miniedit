@@ -29,6 +29,10 @@ uses
   SynEditHighlighter, SynEdit, IAddons, ntvSplitters, SynHighlighterSQL,
   EditorClasses,
   {$ifdef WINDOWS}
+  Windows, //TODO, i hate include it
+  {$endif}
+
+  {$ifdef WINDOWS}
   TSVN_SCM, TGIT_SCM,
   {$endif}
   ntvTabSets, mneRun, Registry, SynEditPlugins,
@@ -456,6 +460,7 @@ type
     //    OnActivate = ApplicationEventsActivate
     //    OnHint = ApplicationEventsHint
     function CanOpenInclude: boolean;
+    procedure ForceForegroundWindow;
     procedure SetShowFolderFiles(AValue: TShowFolderFiles);
     procedure SetSortFolderFiles(AValue: TSortFolderFiles);
     procedure UpdateFileHeaderPanel;
@@ -657,19 +662,42 @@ begin
   end;
 end;
 
+procedure TMainForm.ForceForegroundWindow;
+{$ifdef windows}
+var
+  aForeThread, aAppThread: DWORD;
+  aProcessID: DWORD;
+  {$endif}
+begin
+  {$ifdef windows}
+  aProcessID := 0;
+  aForeThread := GetWindowThreadProcessId(GetForegroundWindow(), aProcessID);
+  aAppThread := GetCurrentThreadId();
+
+  if (aForeThread <> aAppThread) then
+  begin
+    AttachThreadInput(aForeThread, aAppThread, True);
+    BringWindowToTop(Handle);
+    AttachThreadInput(aForeThread, aAppThread, False);
+  end
+  else
+    BringWindowToTop(Handle);
+  {$endif}
+  BringToFront;
+end;
+
 procedure TMainForm.IPCServerMessage(Sender: TObject);
 var
   c: integer;
 begin
   c := IPCServer.MsgType;
   case c of
-    0: BringToFront;
+    0: ForceForegroundWindow;
     1:
     begin
       if Engine.Files.OpenFile(IPCServer.StringMessage) <> nil then
       begin
-        BringToFront;
-        Application.BringToFront;
+        ForceForegroundWindow;
       end;
     end;
   end;
@@ -1472,11 +1500,7 @@ begin
   if ecsDebug in State then
     EngineDebug;
   if ecsShow in State then
-  begin
-    BringToFront;
-    {SetWindowPos(handle, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE or SWP_NOSIZE);
-    SetWindowPos(handle, HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE or SWP_NOSIZE);}
-  end;
+    ForceForegroundWindow;
   if ecsEdit in State then
     EngineEdited;
   if ecsProject in State then
