@@ -1658,19 +1658,28 @@ procedure TEditorFiles.CheckChanged;
 var
   i: integer;
   b: Boolean;
+  aList: TObjectList;
 begin
   if not FCheckChanged then
   begin
     Engine.BeginUpdate;
     FCheckChanged := True;
-    b := True;
+    aList := TObjectList.Create(False);
     try
       for i := 0 to Count - 1 do
-      begin
-        if not b then
-          Items[i].UpdateAge
-        else
-          b := Items[i].CheckChanged;
+        aList.Add(Items[i]);
+
+      b := True;
+      try
+        for i := 0 to aList.Count - 1 do
+        begin
+          if not b then
+            (aList.Items[i] as TEditorFile).UpdateAge
+          else
+            b := (aList.Items[i] as TEditorFile).CheckChanged;
+        end;
+      finally
+        aList.Free;
       end;
     finally
       FCheckChanged := False;
