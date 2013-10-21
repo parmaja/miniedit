@@ -15,7 +15,8 @@ interface
 
 uses
   SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs, FileUtil,
-  SynEdit, EditorEngine;
+  SynEdit, EditorEngine,
+  Windows;
 
 type
 
@@ -24,6 +25,7 @@ type
   TTGIT_SCM = class(TEditorSCM)
   private
   protected
+    procedure Execute(App, Cmd: string); override;
     function GetTortoiseProc: string;
     function GetTortoiseMerge: string;
   public
@@ -46,27 +48,27 @@ implementation
 
 procedure TTGIT_SCM.CommitDirectory(Directory: string);
 begin
-  ExecuteProcess(TortoiseProc, '/command:commit /path:"' + Directory + '" /notempfile /closeonend');
+  Execute(TortoiseProc, '/command:commit /path:"' + Directory + '" /notempfile /closeonend');
 end;
 
 procedure TTGIT_SCM.CommitFile(FileName: string);
 begin
-  ExecuteProcess(TortoiseProc, '/command:commit /path:"' + FileName + '" /notempfile /closeonend');
+  Execute(TortoiseProc, '/command:commit /path:"' + FileName + '" /notempfile /closeonend');
 end;
 
 procedure TTGIT_SCM.UpdateDirectory(Directory: string);
 begin
-  ExecuteProcess(TortoiseProc, '/command:update /path:"' + Directory + '" /notempfile /closeonend');
+  Execute(TortoiseProc, '/command:update /path:"' + Directory + '" /notempfile /closeonend');
 end;
 
 procedure TTGIT_SCM.UpdateFile(FileName: string);
 begin
-  ExecuteProcess(TortoiseProc, '/command:update /path:"' + FileName + '" /notempfile /closeonend');
+  Execute(TortoiseProc, '/command:update /path:"' + FileName + '" /notempfile /closeonend');
 end;
 
 procedure TTGIT_SCM.RevertDirectory(Directory: string);
 begin
-  ExecuteProcess(TortoiseProc, '/command:revert /path:"' + Directory + '" /notempfile /closeonend');
+  Execute(TortoiseProc, '/command:revert /path:"' + Directory + '" /notempfile /closeonend');
 end;
 
 procedure TTGIT_SCM.RevertFile(FileName: string);
@@ -75,12 +77,20 @@ end;
 
 procedure TTGIT_SCM.DiffFile(FileName: string);
 begin
-  ExecuteProcess(TortoiseProc, '/command:diff /path:"' + FileName + '" /notempfile /closeonend');
+  Execute(TortoiseProc, '/command:diff /path:"' + FileName + '" /notempfile /closeonend');
 end;
 
 procedure TTGIT_SCM.DiffToFile(FileName, ToFileName: string);
 begin
-  ExecuteProcess(TortoiseMerge, '/base:"' + FileName + '" /mine:' + ToFileName);
+  Execute(TortoiseMerge, '/base:"' + FileName + '" /mine:' + ToFileName);
+end;
+
+procedure TTGIT_SCM.Execute(App, Cmd: string);
+begin
+  if not FileExists(App) then
+    raise Exception.Create('File not found:' + App);
+  if ShellExecute(0, nil, PChar(App), PChar(Cmd), PChar(ExtractFilePath(App)), 1) < 32 then
+    RaiseLastOSError;
 end;
 
 function TTGIT_SCM.GetTortoiseProc: string;
@@ -88,16 +98,16 @@ var
   s: string;
 begin
   s := '';
-  if (s = '') and DirectoryExistsUTF8('C:\Program Files\TortoiseGIT') then
-    s := 'C:\Program Files\TortoiseGIT';
+  if (s = '') and DirectoryExistsUTF8('C:\Program Files\TortoiseGit') then
+    s := 'C:\Program Files\TortoiseGit';
   if s <> '' then
     s := IncludeTrailingPathDelimiter(s);
   if s = '' then
-    Result := 'TortoiseProc.exe'
+    Result := 'TortoiseGitProc.exe'
   else if (s <> '') and SameText(RightStr(s, 4), 'bin\') then
-    Result := '"' + s + 'TortoiseProc.exe"'
+    Result := s + 'TortoiseGitProc.exe'
   else
-    Result := '"' + s + 'bin\TortoiseProc.exe"';
+    Result := s + 'bin\TortoiseGitProc.exe';
 end;
 
 function TTGIT_SCM.GetTortoiseMerge: string;
@@ -105,16 +115,16 @@ var
   s: string;
 begin
   s := '';
-  if (s = '') and DirectoryExistsUTF8('C:\Program Files\TortoiseGIT') then
-    s := 'C:\Program Files\TortoiseGIT';
+  if (s = '') and DirectoryExistsUTF8('C:\Program Files\TortoiseGit') then
+    s := 'C:\Program Files\TortoiseGit';
   if s <> '' then
     s := IncludeTrailingPathDelimiter(s);
   if s = '' then
-    Result := 'TortoiseMerge.exe'
+    Result := 'TortoiseGitMerge.exe'
   else if (s <> '') and SameText(RightStr(s, 4), 'bin\') then
-    Result := '"' + s + 'TortoiseMerge.exe"'
+    Result := '"' + s + 'TortoiseGitMerge.exe"'
   else
-    Result := '"' + s + 'bin\TortoiseMerge.exe"';
+    Result := '"' + s + 'bin\TortoiseGitMerge.exe"';
 end;
 
 constructor TTGIT_SCM.Create;

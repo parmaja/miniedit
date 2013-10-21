@@ -173,7 +173,7 @@ begin
     MaxExecutionTimeEdit.Text := IniFile.ReadString('PHP', 'max_execution_time', '30');
     ExtensionDirEdit.Text := DequoteStr(IniFile.ReadString('PHP', 'extension_dir', ''));
 
-    s := IniFile.FindValue('PHP', 'zend_extension_ts', 'php_xdebug.dll');
+    s := IniFile.FindValue('PHP', 'zend_extension', 'php_xdebug.dll');
     XDebugExtensionPathEdit.Text := s;
     InstallXDebugChk.Checked := s <> '';
     EnablelXDebugChk.Checked := GetOnOff(IniFile.ReadString('PHP', 'xdebug.remote_enable', 'Off'));
@@ -206,4 +206,4 @@ type
 
 initialization
   Addons.Add('PHP', 'OpenPHPConfigAddon', TOpenPHPConfigAddon);
-end.
+end.

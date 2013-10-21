@@ -189,7 +189,7 @@ end;
 
 function TEditorDebugger.GetActive: Boolean;
 begin
-  Result := False;
+  Result := dbsActive in GetState;
 end;
 
 function TEditorDebugger.GetExecutedControl: TCustomSynEdit;

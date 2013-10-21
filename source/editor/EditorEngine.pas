@@ -161,6 +161,7 @@ type
   TEditorSCM = class(TEditorElement)
   private
   protected
+    procedure Execute(App, Cmd:string); virtual; abstract;
   public
     constructor Create; override;
     procedure CommitDirectory(Directory: string); virtual; abstract;
@@ -242,6 +243,7 @@ type
   end;
 
   TEditorFileMode = (efmUnix, efmWindows, efmMac);
+  TEditCapability = set of (ecpAllowCopy, ecpAllowPaste, ecpAllowCut);
 
   { TEditorFile }
 
@@ -255,6 +257,7 @@ type
     FGroup: TFileGroup;
     FRelated: string;
     FMode: TEditorFileMode;
+    function GetCapability: TEditCapability;
     procedure SetGroup(const Value: TFileGroup);
     procedure SetIsEdited(const Value: Boolean);
     procedure SetIsNew(AValue: Boolean);
@@ -265,6 +268,7 @@ type
     function GetIsReadonly: Boolean; virtual;
     procedure SetIsReadonly(const Value: Boolean); virtual;
     function GetControl: TControl; virtual;
+    procedure DoGetCapability(var vCapability: TEditCapability); virtual;
   protected
     procedure Edit;
     procedure DoEdit(Sender: TObject);
@@ -300,8 +304,9 @@ type
     function GetLanguageName: string; virtual; //TODO need to get more good name to this function
     procedure SetLine(Line: Integer); virtual;
     //Clipboard
-    function CanCopy: Boolean; virtual;
-    function CanPaste: Boolean; virtual;
+    function CanCopy: Boolean;
+    function CanPaste: Boolean;
+    property Capability: TEditCapability read GetCapability;
 
     procedure Paste; virtual;
     procedure Copy; virtual;
@@ -322,8 +327,6 @@ type
   published
   end;
 
-  { TSynEditEditorFile }
-
   { TTextEditorFile }
 
   TTextEditorFile = class(TEditorFile, ITextEditor)
@@ -340,6 +343,7 @@ type
 
     procedure DoGutterClickEvent(Sender: TObject; X, Y, Line: integer; Mark: TSynEditMark);
     procedure DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
+    procedure DoGetCapability(var vCapability: TEditCapability); override;
   public
     constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
@@ -357,9 +361,6 @@ type
     procedure UpdateAge; override;
     function GetLanguageName: string; override;
 
-    //TODO: This function must enumrated
-    function CanCopy: Boolean; override;
-    function CanPaste: Boolean; override;
     procedure Copy; override;
     procedure Paste; override;
     procedure Cut; override;
@@ -816,6 +817,7 @@ type
     property MessagesList: TEditorMessagesList read FMessagesList;
     //FilesControl is a panel or any wincontrol that the editor SynEdit put on it
     property FilesControl: TWinControl read FFilesControl write FFilesControl;
+    //BrowseFolder: Current folder
     property BrowseFolder: string read FBrowseFolder write SetBrowseFolder;
     procedure SetDefaultPerspective(vName: string);
     procedure SetDefaultSCM(vName: string);
@@ -1074,6 +1076,17 @@ begin
   end;
 end;
 
+procedure TTextEditorFile.DoGetCapability(var vCapability: TEditCapability);
+begin
+  inherited;
+
+  if SynEdit.SelAvail then
+    vCapability := vCapability + [ecpAllowCopy];
+
+  if SynEdit.CanPaste then
+    vCapability := vCapability + [ecpAllowPaste];
+end;
+
 constructor TTextEditorFile.Create(ACollection: TCollection);
 begin
   inherited;
@@ -1244,16 +1257,6 @@ begin
     Result := SynEdit.Highlighter.GetLanguageName
   else
     Result := inherited;
-end;
-
-function TTextEditorFile.CanCopy: Boolean;
-begin
-  Result := SynEdit.SelAvail;
-end;
-
-function TTextEditorFile.CanPaste: Boolean;
-begin
-  Result := SynEdit.CanPaste;
 end;
 
 procedure TTextEditorFile.Copy;
@@ -2810,12 +2813,12 @@ end;
 
 function TEditorFile.CanCopy: Boolean;
 begin
-  Result := False;
+  Result := ecpAllowCopy in Capability;
 end;
 
 function TEditorFile.CanPaste: Boolean;
 begin
-  Result := False;
+  Result := ecpAllowPaste in Capability
 end;
 
 procedure TEditorFile.Paste;
@@ -2860,9 +2863,19 @@ begin
   end;
 end;
 
+function TEditorFile.GetCapability: TEditCapability;
+begin
+  Result := [];
+end;
+
 function TEditorFile.GetControl: TControl;
 begin
   Result := nil;
+end;
+
+procedure TEditorFile.DoGetCapability(var vCapability: TEditCapability);
+begin
+  vCapability := [];
 end;
 
 function TEditorFile.GetHighlighter: TSynCustomHighlighter;

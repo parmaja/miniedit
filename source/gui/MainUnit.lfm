@@ -450,12 +450,6 @@ object MainForm: TMainForm
         Caption = 'Files'
         TabOrder = 2
       end
-      object Splitter1: TSplitter
-        Left = 0
-        Height = 0
-        Top = 47
-        Width = 5
-      end
     end
     inline OutputEdit: TSynEdit
       Left = 0
@@ -1555,7 +1549,6 @@ object MainForm: TMainForm
       Category = 'SCM'
       Caption = 'Diff File'
       OnExecute = SCMDiffFileActExecute
-      ShortCut = 24644
     end
     object SCMCommitFileAct: TAction
       Category = 'SCM'
@@ -1581,9 +1574,9 @@ object MainForm: TMainForm
       Category = 'Debug'
       Caption = 'Start Server'
       Hint = 'Start XDebug server'
-      ImageIndex = 33
       OnExecute = DBGStartServerActExecute
       OnUpdate = DBGStartServerActUpdate
+      ShortCut = 49220
     end
     object DBGStopServerAct: TAction
       Category = 'Debug'

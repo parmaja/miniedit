@@ -69,7 +69,6 @@ type
     MessagesSpl: TntvSplitter;
     OutputSpl: TntvSplitter;
     SCMTypeAct: TAction;
-    Splitter1: TSplitter;
     TypePnl: TPanel;
     ProjectTypeMnu: TMenuItem;
     ProjectTypeAct: TAction;
@@ -1746,14 +1745,18 @@ end;
 
 procedure TMainForm.DBGStartServerActUpdate(Sender: TObject);
 begin
-  if Engine.Perspective.Debug <> nil then
-    DBGStartServerAct.Enabled := not Engine.Perspective.Debug.Active;
+  DBGStartServerAct.Checked := (Engine.Perspective.Debug <> nil) and Engine.Perspective.Debug.Active;
 end;
 
 procedure TMainForm.DBGStartServerActExecute(Sender: TObject);
 begin
   if Engine.Perspective.Debug <> nil then
-    Engine.Perspective.Debug.Action(dbaStart);
+  begin
+    DBGStartServerAct.Checked := not DBGStartServerAct.Checked;
+    Engine.Perspective.Debug.Active := DBGStartServerAct.Checked;
+  end
+  else
+    DBGStartServerAct.Checked := False;
 end;
 
 procedure TMainForm.DBGStopServerActExecute(Sender: TObject);
