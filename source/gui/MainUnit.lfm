@@ -872,8 +872,17 @@ object MainForm: TMainForm
         Action = SaveAsAct
         OnClick = SaveAsActExecute
       end
+      object MenuItem20: TMenuItem
+        Caption = '-'
+      end
       object MenuItem18: TMenuItem
         Action = RenameAct
+      end
+      object MenuItem19: TMenuItem
+        Action = DeleteAct
+      end
+      object MenuItem21: TMenuItem
+        Caption = '-'
       end
       object Revert1: TMenuItem
         Action = RevertAct

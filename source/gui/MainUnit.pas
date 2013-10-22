@@ -57,6 +57,9 @@ type
   TMainForm = class(TForm)
     DeleteAct: TAction;
     MenuItem18: TMenuItem;
+    MenuItem19: TMenuItem;
+    MenuItem20: TMenuItem;
+    MenuItem21: TMenuItem;
     RenameAct: TAction;
     FindPreviousAct: TAction;
     MenuItem17: TMenuItem;
@@ -630,14 +633,11 @@ begin
 end;
 
 procedure TMainForm.DeleteActExecute(Sender: TObject);
-var
-  s: string;
 begin
   if Engine.Files.Current <> nil then
   begin
-    s := Engine.Files.Current.NakeName;
-    if MsgBox.Msg.Input(s, 'Please enter new name for ' + Engine.Files.Current.NakeName) then
-      Engine.Files.Current.Rename(s);
+    if not MsgBox.Msg.No('Are you sure want delete ' + Engine.Files.Current.NakeName) then
+      Engine.Files.Current.Delete;
   end;
 end;
 

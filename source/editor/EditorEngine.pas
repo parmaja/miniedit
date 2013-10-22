@@ -349,6 +349,7 @@ type
     procedure DoGutterClickEvent(Sender: TObject; X, Y, Line: integer; Mark: TSynEditMark);
     procedure DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
     procedure DoGetCapability(var vCapability: TEditCapability); override;
+    procedure SynEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   public
     constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
@@ -1094,7 +1095,24 @@ begin
     vCapability := vCapability + [ecpAllowPaste];
 end;
 
+procedure TTextEditorFile.SynEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Shift = [ssCtrl] then
+  begin
+    if (Key = VK_INSERT) then
+    begin
+      if not SynEdit.SelAvail then
+      begin
+        SynEdit.SelectWord;
+        SynEdit.CopyToClipboard;
+      end;
+    end;
+  end;
+end;
+
 constructor TTextEditorFile.Create(ACollection: TCollection);
+var
+  aKey: TSynEditKeyStroke;
 begin
   inherited;
   { There is more assigns in TEditorFile.SetGroup and TEditorProfile.Assign}
@@ -1105,9 +1123,7 @@ begin
   FSynEdit.OnSpecialLineMarkup := @DoSpecialLineMarkup;
   FSynEdit.BookMarkOptions.BookmarkImages := EditorResource.BookmarkImages;
   FSynEdit.OnReplaceText := @Engine.DoReplaceText;
-  //  FSynEdit.Gutter.MarksPart(0).DebugMarksImageIndex := 0;
-  //FSynEdit.Gutter.MarksPart.DebugMarksImageIndex := 0;
-  //FSynEdit.Gutter.Parts.Add(TSynBreakPointItem.Create(FSynEdit.Gutter.Parts));
+  FSynEdit.OnKeyDown := @SynEditKeyDown;
 
   FSynEdit.TrimSpaceType := settLeaveLine;
   FSynEdit.BoundsRect := Engine.FilesControl.ClientRect;
@@ -2700,8 +2716,12 @@ begin
     if Name <> '' then
     begin
       p := ExtractFilePath(Name);
-      RenameFileUTF8(Name, p + ToNakeName);
-      Name := p + ToNakeName;
+      if RenameFileUTF8(Name, p + ToNakeName) then
+      begin
+        Engine.RemoveRecentFile(Name);
+        Name := p + ToNakeName;
+        Engine.ProcessRecentFile(Name);
+      end;
     end
     else
       Name := ToNakeName;
@@ -2721,6 +2741,7 @@ begin
     begin
       if DeleteFileUTF8(Name) then
       begin
+        Engine.RemoveRecentFile(Name);
         Name := ExtractFileName(Name);
         IsNew := True;
         IsEdited := True;
@@ -2749,7 +2770,7 @@ var
 begin
   DoRecent := False;
   aName := '';
-  if (FName = '') or AsNewFile then
+  if IsNew or (FName = '') or AsNewFile then
   begin
     aDialog := TSaveDialog.Create(nil);
     aDialog.Title := 'Save file';
