@@ -39,7 +39,8 @@ type
 procedure ShowSearchForm(SynEdit: TSynEdit; SearchHistory, ReplaceHistory: TStringList; ForReplace: Boolean);
 procedure SetTextSearch(ASearchText: string; AReplaceText: string = ''; ASearchOptions: TSynSearchOptions = []);
 function GetTextSearch: string; 
-procedure NextSearchText(SynEdit: TSynEdit);
+procedure SearchTextNext(SynEdit: TSynEdit);
+procedure SearchTextPrevious(SynEdit: TSynEdit);
 
 implementation
 
@@ -77,9 +78,14 @@ begin
   end;
 end;
 
-procedure NextSearchText(SynEdit: TSynEdit);
+procedure SearchTextNext(SynEdit: TSynEdit);
 begin
   InternalSearchText(SynEdit, FSearchOptions - [ssoEntireScope]);
+end;
+
+procedure SearchTextPrevious(SynEdit: TSynEdit);
+begin
+  InternalSearchText(SynEdit, FSearchOptions + [ssoBackwards] - [ssoEntireScope]);
 end;
 
 procedure TSearchForm.SearchReplaceText(SynEdit: TSynEdit);

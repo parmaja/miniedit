@@ -1028,6 +1028,9 @@ object MainForm: TMainForm
         Action = FindNextAct
         OnClick = FindNextActExecute
       end
+      object MenuItem17: TMenuItem
+        Action = FindPreviousAct
+      end
       object QuickSearch: TMenuItem
         Action = QuickFindAct
         AutoCheck = True
@@ -1616,6 +1619,7 @@ object MainForm: TMainForm
       ImageIndex = 33
       OnExecute = DBGActiveServerActExecute
       OnUpdate = DBGActiveServerActUpdate
+      ShortCut = 32888
     end
     object DBGResumeAct: TAction
       Category = 'Debug'
@@ -1758,6 +1762,12 @@ object MainForm: TMainForm
       GroupIndex = 6
       OnExecute = SortByExtensionsActExecute
     end
+    object FindPreviousAct: TAction
+      Category = 'Edit'
+      Caption = 'Find Previous'
+      OnExecute = FindPreviousActExecute
+      ShortCut = 8306
+    end
   end
   object FolderMenu: TPopupMenu
     left = 84
@@ -1877,7 +1887,6 @@ object MainForm: TMainForm
     end
     object ShowValue1: TMenuItem
       Caption = 'Show Value'
-      OnClick = ShowValue1Click
     end
     object AddWatch1: TMenuItem
       Action = DBGAddWatchAct

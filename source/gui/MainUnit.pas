@@ -55,6 +55,8 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    FindPreviousAct: TAction;
+    MenuItem17: TMenuItem;
     SortByExtensionsAct: TAction;
     SortByNamesAct: TAction;
     Bevel1: TBevel;
@@ -330,6 +332,7 @@ type
     procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
     procedure FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
+    procedure FindPreviousActExecute(Sender: TObject);
     procedure FolderCloseBtnClick(Sender: TObject);
     procedure FoldersActExecute(Sender: TObject);
     procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
@@ -423,7 +426,6 @@ type
     procedure DBGResumeActExecute(Sender: TObject);
     procedure DBGStepOutActExecute(Sender: TObject);
     procedure SaveAsActExecute(Sender: TObject);
-    procedure ShowValue1Click(Sender: TObject);
     procedure Add1Click(Sender: TObject);
     procedure Delete1Click(Sender: TObject);
     procedure DBGToggleBreakpointExecute(Sender: TObject);
@@ -631,6 +633,11 @@ end;
 procedure TMainForm.FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
 begin
   Engine.Files.SetCurrentIndex(FileTabs.ItemIndex, True);
+end;
+
+procedure TMainForm.FindPreviousActExecute(Sender: TObject);
+begin
+  Engine.Files.FindPrevious;
 end;
 
 procedure TMainForm.FoldersActExecute(Sender: TObject);
@@ -1877,17 +1884,6 @@ begin
       WatchList.EndUpdate;
     end;
   end;
-end;
-
-procedure TMainForm.ShowValue1Click(Sender: TObject);
-var
-  s, v, t: string;
-begin
-  {if (Engine.Files.Current <> nil) and then
-  begin
-    if Engine.Files.Current.GetWatchByCursor(v, s, t) then
-      ShowMessage(v + ':' + t + '=' + #13 + s); add it to message list
-  end;}
 end;
 
 procedure TMainForm.ShowMessagesList;

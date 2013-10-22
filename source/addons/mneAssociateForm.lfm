@@ -1,22 +1,22 @@
 object AssociateForm: TAssociateForm
   Left = 521
-  Height = 143
+  Height = 168
   Top = 241
   Width = 268
   BorderStyle = bsDialog
   Caption = 'Associate'
-  ClientHeight = 143
+  ClientHeight = 168
   ClientWidth = 268
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.3'
   object Label1: TLabel
     Left = 10
-    Height = 14
+    Height = 13
     Top = 8
-    Width = 27
+    Width = 26
     Caption = 'Open'
     ParentColor = False
   end
@@ -28,32 +28,32 @@ object AssociateForm: TAssociateForm
   end
   object PHPChk: TCheckBox
     Left = 14
-    Height = 22
+    Height = 17
     Top = 26
-    Width = 45
+    Width = 39
     Caption = '.php'
     TabOrder = 0
   end
   object CSSChk: TCheckBox
     Left = 14
-    Height = 22
+    Height = 17
     Top = 44
-    Width = 45
+    Width = 37
     Caption = '.css'
     TabOrder = 1
   end
   object EditAssociateSupportedChk: TCheckBox
     Left = 14
-    Height = 22
+    Height = 17
     Top = 79
-    Width = 213
+    Width = 201
     Caption = 'Associate "Edit" with all supported files'
     TabOrder = 2
   end
   object OkBtn: TButton
     Left = 188
     Height = 25
-    Top = 112
+    Top = 137
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&Ok'
@@ -65,7 +65,7 @@ object AssociateForm: TAssociateForm
   object CancelBtn: TButton
     Left = 113
     Height = 25
-    Top = 112
+    Top = 137
     Width = 75
     Anchors = [akRight, akBottom]
     Cancel = True
@@ -73,4 +73,12 @@ object AssociateForm: TAssociateForm
     ModalResult = 2
     TabOrder = 4
   end
-end
+  object AddEditChk: TCheckBox
+    Left = 14
+    Height = 17
+    Top = 101
+    Width = 208
+    Caption = 'Add "Edit" with miniEdit to context menu'
+    TabOrder = 5
+  end
+end

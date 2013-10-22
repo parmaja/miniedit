@@ -14,7 +14,11 @@ uses
   Dialogs, StdCtrls, ExtCtrls, IAddons;
 
 type
+
+  { TAssociateForm }
+
   TAssociateForm = class(TForm)
+    AddEditChk: TCheckBox;
     PHPChk: TCheckBox;
     CSSChk: TCheckBox;
     EditAssociateSupportedChk: TCheckBox;
@@ -27,6 +31,7 @@ type
   private
     procedure AssociateNow(Cmd, Ext, FileType, WithApplication, Description, Mime: string; WithDDE: Boolean);
     function GetAssociated(Cmd, FileType, Ext: string): Boolean;
+    procedure AddEdit;
   public
     procedure Apply;
     procedure Retrive;
@@ -51,7 +56,7 @@ begin
 {      AssociateNow('Open', '.phpx', 'phpxfile', IncludeTrailingPathDelimiter(Engine.Options.CompilerFolder) + 'php.exe', 'PHP executable script file', 'text/plain', False);}
   end;
 
-  AssociateNow('Open', '.mne-project', 'mne-project', Application.ExeName, 'Mini Edit project file', 'application/miniedit', True);
+  AssociateNow('Open', '.mne-project', 'mne-project', Application.ExeName, 'Mini Edit project file', 'application/miniedit', False);
 
   if CSSChk.Checked then
     AssociateNow('Open', '.css', 'cssfile', Application.ExeName, 'CSS file', 'text/plain', True);
@@ -62,10 +67,16 @@ begin
     try
       Engine.Groups.EnumExtensions(AExtensions);
       for i := 0 to AExtensions.Count - 1 do
-        AssociateNow('Edit', '.' + AExtensions[i], AExtensions[i] + 'file', Application.ExeName, AExtensions[i] + ' files', 'text/plain', True);
+        AssociateNow('Edit', '.' + AExtensions[i], AExtensions[i] + 'file', Application.ExeName, AExtensions[i] + ' files', 'text/plain', False);
     finally
       AExtensions.Free;
     end;
+  end;
+
+
+  if AddEditChk.Checked then
+  begin
+    AddEdit;
   end;
 
   {$ifdef Windows}
@@ -140,6 +151,35 @@ begin
     aReg.Free;
   end;
 end;
+
+procedure TAssociateForm.AddEdit;
+{$ifdef Windows}
+var
+  aReg: TRegistry;
+begin
+  aReg := TRegistry.Create;
+  try
+    aReg.RootKey := HKEY_CLASSES_ROOT;
+    aReg.OpenKey('Applications\mne.exe\shell\open\command', True);
+    aReg.WriteString('', '"'+Application.ExeName+'" "%1"');
+    aReg.CloseKey;
+
+    aReg.OpenKey('\*\Shell\miniEdit', True);
+    aReg.WriteString('', 'Edit with miniEdit');
+
+    aReg.OpenKey('\*\Shell\miniEdit\command', True);
+    aReg.WriteString('', '"'+Application.ExeName+'" "%1"');
+
+    aReg.CloseKey;
+  finally
+    aReg.Free;
+  end;
+end;
+{$else}
+begin
+end;
+{$endif}
+
 {$else}
 begin
 end;

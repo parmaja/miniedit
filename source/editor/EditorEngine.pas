@@ -296,6 +296,7 @@ type
     procedure GotoLine; virtual;
     procedure Find; virtual;
     procedure FindNext; virtual;
+    procedure FindPrevious; virtual;
     procedure Replace; virtual;
     procedure Refresh; virtual;
     function GetHint(HintControl: TControl; CursorPos: TPoint; out vHint: string): Boolean; virtual;
@@ -351,6 +352,7 @@ type
     procedure AssignTo(Dest: TPersistent); override;
     procedure Find; override;
     procedure FindNext; override;
+    procedure FindPrevious; override;
     procedure Replace; override;
     procedure Refresh; override;
     procedure Show; override;
@@ -409,6 +411,7 @@ type
     procedure Replace;
     procedure Find;
     procedure FindNext;
+    procedure FindPrevious;
     procedure CheckChanged;
     procedure CloseAll;
     function GetEditedCount: integer;
@@ -1162,7 +1165,13 @@ end;
 procedure TTextEditorFile.FindNext;
 begin
   inherited;
-  NextSearchText(SynEdit);
+  SearchTextNext(SynEdit);
+end;
+
+procedure TTextEditorFile.FindPrevious;
+begin
+  inherited;
+  SearchTextPrevious(SynEdit);
 end;
 
 procedure TTextEditorFile.Replace;
@@ -1940,6 +1949,12 @@ begin
     Current.FindNext;
 end;
 
+procedure TEditorFiles.FindPrevious;
+begin
+  if Current <> nil then
+    Current.FindPrevious;
+end;
+
 function TEditorFiles.GetCurrent: TEditorFile;
 begin
   Result := FCurrent;
@@ -2565,7 +2580,7 @@ begin
     Current.Refresh;
 end;
 
-function TEditorFiles.ShowFile(const FileName: string; Line: Integer): TEditorFile;
+function TEditorFiles.ShowFile(const FileName: string; Line: integer): TEditorFile;
 begin
   Result := InternalOpenFile(FileName, False);
   Result.SetLine(Line);
@@ -2780,6 +2795,10 @@ begin
 end;
 
 procedure TEditorFile.FindNext;
+begin
+end;
+
+procedure TEditorFile.FindPrevious;
 begin
 end;
 
