@@ -55,6 +55,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    DeleteAct: TAction;
     MenuItem18: TMenuItem;
     RenameAct: TAction;
     FindPreviousAct: TAction;
@@ -333,6 +334,7 @@ type
     FileModeBtn: TSpeedButton;
     procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
+    procedure DeleteActExecute(Sender: TObject);
     procedure FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure FindPreviousActExecute(Sender: TObject);
     procedure FolderCloseBtnClick(Sender: TObject);
@@ -624,6 +626,18 @@ begin
       HintInfo.HideTimeout := 10000;
       HintInfo.ReshowTimeout := 1;
     end;
+  end;
+end;
+
+procedure TMainForm.DeleteActExecute(Sender: TObject);
+var
+  s: string;
+begin
+  if Engine.Files.Current <> nil then
+  begin
+    s := Engine.Files.Current.NakeName;
+    if MsgBox.Msg.Input(s, 'Please enter new name for ' + Engine.Files.Current.NakeName) then
+      Engine.Files.Current.Rename(s);
   end;
 end;
 

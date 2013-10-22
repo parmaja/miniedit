@@ -285,7 +285,8 @@ type
     procedure Assign(Source: TPersistent); override;
     procedure Load(FileName: string);
     procedure Save(FileName: string);
-    procedure Rename(ToName: string); //only name not with the path
+    procedure Rename(ToNakeName: string); //only name not with the path
+    procedure Delete; //only name not with the path
 
     procedure SaveFile(Extension: string = ''; AsNewFile: Boolean = False); virtual;
     procedure Show; virtual;
@@ -2690,19 +2691,45 @@ begin
   UpdateAge;
 end;
 
-procedure TEditorFile.Rename(ToName: string);
+procedure TEditorFile.Rename(ToNakeName: string);
 var
   p: string;
 begin
-  if Name <> '' then
-  begin
-    p := ExtractFilePath(Name);
-    RenameFileUTF8(Name, p + ToName);
-    Name := p + ToName;
-  end
-  else
-    Name := ToName;
-  Engine.UpdateState([ecsRefresh, ecsFolder, ecsState, ecsChanged]);
+  Engine.BeginUpdate;
+  try
+    if Name <> '' then
+    begin
+      p := ExtractFilePath(Name);
+      RenameFileUTF8(Name, p + ToNakeName);
+      Name := p + ToNakeName;
+    end
+    else
+      Name := ToNakeName;
+    Engine.UpdateState([ecsRefresh, ecsFolder, ecsState, ecsChanged]);
+  finally
+    Engine.EndUpdate;
+  end;
+end;
+
+procedure TEditorFile.Delete;
+var
+  p: string;
+begin
+  Engine.BeginUpdate;
+  try
+    if Name <> '' then
+    begin
+      if DeleteFileUTF8(Name) then
+      begin
+        Name := ExtractFileName(Name);
+        IsNew := True;
+        IsEdited := True;
+      end;
+    end;
+    Engine.UpdateState([ecsRefresh, ecsFolder, ecsState, ecsChanged]);
+  finally
+    Engine.EndUpdate;
+  end;
 end;
 
 procedure TEditorFile.SetIsEdited(const Value: Boolean);

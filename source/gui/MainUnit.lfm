@@ -1777,6 +1777,11 @@ object MainForm: TMainForm
       Caption = 'Rename File'
       OnExecute = RenameActExecute
     end
+    object DeleteAct: TAction
+      Category = 'File'
+      Caption = 'Delete File'
+      OnExecute = DeleteActExecute
+    end
   end
   object FolderMenu: TPopupMenu
     left = 84
