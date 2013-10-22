@@ -3,8 +3,9 @@ unit dbgpServers;
 {**
  * Mini Edit
  *
- * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+ * @license   GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author    Zaher Dirkey <zaher at parmaja dot com>
+ * @ref       http://xdebug.org/docs-dbgp.php#id1
  *}
 {
 
@@ -102,8 +103,17 @@ type
   public
     constructor CreateBy(vName, vValue: string);
     function GetCommand: string; override;
-    procedure Process(Respond: TdbgpRespond); override;
   end;
+
+  TdbgpCommandSet = class(TdbgpAction)
+  protected
+    FName: string;
+    FValue: string;
+  public
+    constructor CreateBy(vName, vValue: string);
+    function GetCommand: string; override;
+  end;
+
 
   TdbgpGetCurrent = class(TdbgpAction)
   private
@@ -410,6 +420,20 @@ begin
   Result := FDBGP;
 end;
 
+{ TdbgpCommandSet }
+
+constructor TdbgpCommandSet.CreateBy(vName, vValue: string);
+begin
+  Create;
+  FName := vName;
+  FValue:= vValue;
+end;
+
+function TdbgpCommandSet.GetCommand: string;
+begin
+  Result := FName + ' ' + FValue;
+end;
+
 { TdbgpEval }
 
 function TdbgpEval.GetCommand: string;
@@ -438,13 +462,8 @@ end;
 
 function TdbgpFeatureSet.GetCommand: string;
 begin
-  //Result := 'feature_set -n show_hidden -v 1';
+  // 'feature_set -n show_hidden -v 1';
   Result := 'feature_set -n ' + FName + ' -v '+ FValue;
-end;
-
-procedure TdbgpFeatureSet.Process(Respond: TdbgpRespond);
-begin
-  inherited Process(Respond);
 end;
 
 { TdbgpManager }
@@ -735,7 +754,16 @@ begin
   FLocalSpool.Add(TdbgpFeatureSet.CreateBy('show_hidden', '1'));
   FLocalSpool.Add(TdbgpFeatureSet.CreateBy('max_depth', '1'));
   FLocalSpool.Add(TdbgpFeatureSet.CreateBy('max_children', '1'));
+
   FLocalSpool.Add(TdbgpSetBreakpoints.Create);
+  FLocalSpool.Add(TdbgpCommandSet.CreateBy('breakpoint_set', '-t exception -x Error -s enabled'));
+  //FLocalSpool.Add(TdbgpCommandSet.CreateBy('breakpoint_set', '-t exception -x "Warning" -s enabled'));
+  { or
+    breakpoint_set -t exception -X Error
+    breakpoint_set -t exception -X Warning
+    breakpoint_set -t exception -X Notice
+  }
+
   if Server.BreakOnFirstLine then
   begin
     FLocalSpool.Add(TdbgpStepInto.Create);
