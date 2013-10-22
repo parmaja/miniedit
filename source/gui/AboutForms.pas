@@ -45,6 +45,9 @@ type
 
 implementation
 
+uses
+ VersionInfo;
+
 {$R *.lfm}
 
 procedure TAboutForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -54,7 +57,7 @@ end;
 
 procedure TAboutForm.FormCreate(Sender: TObject);
 begin
-  VersionLbl.Caption := '1.0.0.1';
+  VersionLbl.Caption := VersionInfo.GetFileVersion;
 end;
 
 procedure TAboutForm.SiteLblClick(Sender: TObject);
