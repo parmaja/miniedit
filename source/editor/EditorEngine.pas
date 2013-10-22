@@ -258,6 +258,7 @@ type
     FRelated: string;
     FMode: TEditorFileMode;
     function GetCapability: TEditCapability;
+    function GetNakeName: string;
     procedure SetGroup(const Value: TFileGroup);
     procedure SetIsEdited(const Value: Boolean);
     procedure SetIsNew(AValue: Boolean);
@@ -284,8 +285,9 @@ type
     procedure Assign(Source: TPersistent); override;
     procedure Load(FileName: string);
     procedure Save(FileName: string);
+    procedure Rename(ToName: string); //only name not with the path
 
-    procedure SaveFile(Extension:string = ''; AsNewFile: Boolean = False); virtual;
+    procedure SaveFile(Extension: string = ''; AsNewFile: Boolean = False); virtual;
     procedure Show; virtual;
     procedure Close;
     procedure Reload;
@@ -319,6 +321,7 @@ type
     property Mode: TEditorFileMode read FMode write SetMode default efmUnix;
     property ModeAsText: string read GetModeAsText;
     property Name: string read FName write FName;
+    property NakeName: string read GetNakeName;
     property Related: string read FRelated write FRelated;
     property IsEdited: Boolean read FIsEdited write SetIsEdited;
     property IsNew: Boolean read FIsNew write SetIsNew default False;
@@ -2687,6 +2690,21 @@ begin
   UpdateAge;
 end;
 
+procedure TEditorFile.Rename(ToName: string);
+var
+  p: string;
+begin
+  if Name <> '' then
+  begin
+    p := ExtractFilePath(Name);
+    RenameFileUTF8(Name, p + ToName);
+    Name := p + ToName;
+  end
+  else
+    Name := ToName;
+  Engine.UpdateState([ecsRefresh, ecsFolder, ecsState, ecsChanged]);
+end;
+
 procedure TEditorFile.SetIsEdited(const Value: Boolean);
 begin
   FIsEdited := Value;
@@ -2885,6 +2903,11 @@ end;
 function TEditorFile.GetCapability: TEditCapability;
 begin
   Result := [];
+end;
+
+function TEditorFile.GetNakeName: string;
+begin
+  Result := ExtractFileName(Name);
 end;
 
 function TEditorFile.GetControl: TControl;

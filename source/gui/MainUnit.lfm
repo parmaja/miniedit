@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 218
+  Left = 324
   Height = 416
-  Top = 377
+  Top = 326
   Width = 632
   AllowDropFiles = True
   Caption = 'Mini Edit'
@@ -872,6 +872,9 @@ object MainForm: TMainForm
         Action = SaveAsAct
         OnClick = SaveAsActExecute
       end
+      object MenuItem18: TMenuItem
+        Action = RenameAct
+      end
       object Revert1: TMenuItem
         Action = RevertAct
         OnClick = RevertActExecute
@@ -1302,6 +1305,7 @@ object MainForm: TMainForm
       Hint = 'Save all changed files'
       ImageIndex = 3
       OnExecute = SaveAllActExecute
+      ShortCut = 24659
     end
     object CutAct: TAction
       Category = 'Edit'
@@ -1767,6 +1771,11 @@ object MainForm: TMainForm
       Caption = 'Find Previous'
       OnExecute = FindPreviousActExecute
       ShortCut = 8306
+    end
+    object RenameAct: TAction
+      Category = 'File'
+      Caption = 'Rename File'
+      OnExecute = RenameActExecute
     end
   end
   object FolderMenu: TPopupMenu

@@ -55,6 +55,8 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    MenuItem18: TMenuItem;
+    RenameAct: TAction;
     FindPreviousAct: TAction;
     MenuItem17: TMenuItem;
     SortByExtensionsAct: TAction;
@@ -349,6 +351,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure ProjectTypeActExecute(Sender: TObject);
     procedure RefreshFilesActExecute(Sender: TObject);
+    procedure RenameActExecute(Sender: TObject);
     procedure SaveActExecute(Sender: TObject);
     procedure SaveAllActExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -889,6 +892,18 @@ end;
 procedure TMainForm.RefreshFilesActExecute(Sender: TObject);
 begin
   UpdateFolder;
+end;
+
+procedure TMainForm.RenameActExecute(Sender: TObject);
+var
+  s: string;
+begin
+  if Engine.Files.Current <> nil then
+  begin
+    s := Engine.Files.Current.NakeName;
+    if MsgBox.Msg.Input(s, 'Please enter new name for ' + Engine.Files.Current.NakeName) then
+      Engine.Files.Current.Rename(s);
+  end;
 end;
 
 procedure TMainForm.SaveActExecute(Sender: TObject);
