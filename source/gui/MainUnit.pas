@@ -1446,6 +1446,7 @@ begin
         sffKnown: Engine.Groups.EnumExtensions(AExtensions);
         sffAll: All := True;
       end;
+      AExtensions.Add('mne-project');
 
       aFiles := TStringList.Create;
       try
@@ -1572,7 +1573,9 @@ end;
 procedure TMainForm.ProjectLoaded;
 begin
   if (Engine.Session.IsOpened) and (Engine.Session.Project.RootDir <> '') then
-    Folder := Engine.Session.Project.RootDir;
+  begin
+    Folder := ExpandToPath(Engine.Session.Project.RootDir, ExtractFilePath(Engine.Session.Project.FileName));
+  end;
 end;
 
 procedure TMainForm.ReplaceActExecute(Sender: TObject);
