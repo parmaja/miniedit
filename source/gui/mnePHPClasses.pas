@@ -152,6 +152,8 @@ var
 
   function TryOpen: boolean;
   begin
+    if (aToken[1] = '/') or (aToken[1] = '\') then
+      aToken := RightStr(aToken, Length(aToken) - 1);
     aToken := Engine.ExpandFileName(aToken);
     Result := FileExists(aToken);
     if Result then
@@ -496,10 +498,10 @@ initialization
     Categories.Add(TCSSFileCategory, 'css', [fckPublish]);
     Categories.Add(TJSFileCategory, 'js', [fckPublish]);
 
-    Groups.Add(TPHPFile, 'php', 'PHP Files', 'php/html', ['php', 'inc'], [fgkExecutable, fgkMember, fgkBrowsable, fgkProject]);
-    Groups.Add(TXHTMLFile, 'html', 'HTML Files', 'php/html', ['html', 'xhtml', 'htm', 'tpl'], [fgkMember, fgkBrowsable]);
-    Groups.Add(TCssFile, 'css', 'CSS Files', 'css', ['css'], [fgkMember, fgkBrowsable]);
-    Groups.Add(TJSFile,'js', 'Java Script Files', 'js', ['js'], [fgkMember, fgkBrowsable]);
+    Groups.Add(TPHPFile, 'php', 'PHP Files', 'php/html', ['php', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
+    Groups.Add(TXHTMLFile, 'html', 'HTML Files', 'php/html', ['html', 'xhtml', 'htm', 'tpl'], [fgkAssociated, fgkMember, fgkBrowsable]);
+    Groups.Add(TCssFile, 'css', 'CSS Files', 'css', ['css'], [fgkAssociated, fgkMember, fgkBrowsable]);
+    Groups.Add(TJSFile,'js', 'Java Script Files', 'js', ['js'], [fgkAssociated, fgkMember, fgkBrowsable]);
 
     Perspectives.Add(TPHPPerspective);
   end;

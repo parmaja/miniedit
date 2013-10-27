@@ -152,11 +152,11 @@ initialization
   begin
     Categories.Add(TPASFileCategory, 'pas');
     Categories.Add(TLFMFileCategory, 'lfm');
-    Groups.Add(TPASFile, 'ppr', 'Pascal Project Files', 'pas', ['ppr'], [fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);//PPR meant Pascal project
-    Groups.Add(TPASFile, 'lpr', 'Lazarus Project Files', 'pas', ['lpr'], [fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
-    Groups.Add(TPASFile, 'dpr', 'Delphi Project Files', 'pas', ['dpr'], [fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
-    Groups.Add(TPASFile, 'pas', 'Pascal Files', 'pas', ['pas', 'pp', 'p', 'inc'], [fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
-    Groups.Add(TLFMFile, 'lfm', 'Lazarus Form Files', 'lfm', ['lfm'], [fgkMember, fgkBrowsable], [fgsFolding]);
+    Groups.Add(TPASFile, 'ppr', 'Pascal Project Files', 'pas', ['ppr'], [fgkAssociated, fgkMain, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);//PPR meant Pascal project
+    Groups.Add(TPASFile, 'lpr', 'Lazarus Project Files', 'pas', ['lpr'], [fgkAssociated, fgkMain,fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
+    Groups.Add(TPASFile, 'dpr', 'Delphi Project Files', 'pas', ['dpr'], [fgkAssociated, fgkMain, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
+    Groups.Add(TPASFile, 'pas', 'Pascal Files', 'pas', ['pas', 'pp', 'p', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
+    Groups.Add(TLFMFile, 'lfm', 'Lazarus Form Files', 'lfm', ['lfm'], [fgkAssociated, fgkMember, fgkBrowsable], [fgsFolding]);
 
     Perspectives.Add(TPascalPerspective);
   end;

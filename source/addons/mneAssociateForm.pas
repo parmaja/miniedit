@@ -19,6 +19,7 @@ type
 
   TAssociateForm = class(TForm)
     AddEditChk: TCheckBox;
+    Label2: TLabel;
     PHPChk: TCheckBox;
     CSSChk: TCheckBox;
     EditAssociateSupportedChk: TCheckBox;
@@ -49,6 +50,8 @@ var
   AExtensions: TStringList;
   i: Integer;
 begin
+  AssociateNow('Open', '.mne-project', 'mne-project', Application.ExeName, 'Mini Edit project file', 'application/miniedit', False);
+
   if PHPChk.Checked then
   begin
     AssociateNow('Open', '.php', 'phpfile', Application.ExeName, 'PHP script file', 'text/plain', False);
@@ -56,10 +59,8 @@ begin
 {      AssociateNow('Open', '.phpx', 'phpxfile', IncludeTrailingPathDelimiter(Engine.Options.CompilerFolder) + 'php.exe', 'PHP executable script file', 'text/plain', False);}
   end;
 
-  AssociateNow('Open', '.mne-project', 'mne-project', Application.ExeName, 'Mini Edit project file', 'application/miniedit', False);
-
   if CSSChk.Checked then
-    AssociateNow('Open', '.css', 'cssfile', Application.ExeName, 'CSS file', 'text/plain', True);
+    AssociateNow('Open', '.css', 'cssfile', Application.ExeName, 'CSS file', 'text/plain', False);
 
   if EditAssociateSupportedChk.Checked then
   begin
@@ -68,6 +69,7 @@ begin
       Engine.Groups.EnumExtensions(AExtensions);
       for i := 0 to AExtensions.Count - 1 do
         AssociateNow('Edit', '.' + AExtensions[i], AExtensions[i] + 'file', Application.ExeName, AExtensions[i] + ' files', 'text/plain', False);
+      AssociateNow('Open', '.htaccess', 'htaccessfile', Application.ExeName, '.htaccess files', 'text/plain', False);
     finally
       AExtensions.Free;
     end;

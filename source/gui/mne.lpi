@@ -18,7 +18,7 @@
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
       <RevisionNr Value="2"/>
-      <BuildNr Value="5"/>
+      <BuildNr Value="6"/>
       <Language Value=""/>
       <CharSet Value=""/>
       <StringTable ProductVersion=""/>
@@ -156,7 +156,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item9>
     </RequiredPackages>
-    <Units Count="27">
+    <Units Count="30">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -345,6 +345,21 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="mnePHPClasses"/>
       </Unit26>
+      <Unit27>
+        <Filename Value="mneClasses.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="mneClasses"/>
+      </Unit27>
+      <Unit28>
+        <Filename Value="mnePASClasses.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="mnePASClasses"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="mneCSVClasses.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="mneCSVClasses"/>
+      </Unit29>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

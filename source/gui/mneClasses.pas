@@ -286,10 +286,10 @@ initialization
     Categories.Add(TXMLFileCategory, 'xml');
 
     Groups.Add(TTXTFile, 'txt', 'TXT files', 'txt', ['txt'], []);
-    Groups.Add(TSQLFile, 'sql', 'SQL files', 'SQL', ['sql'], [fgkMember, fgkBrowsable]);
-    Groups.Add(TApacheFile, 'htaccess', 'htaccess files', 'apache', ['htaccess', 'conf'], [fgkBrowsable]);
+    Groups.Add(TSQLFile, 'sql', 'SQL files', 'SQL', ['sql'], [fgkAssociated, fgkMember, fgkBrowsable]);
+    Groups.Add(TApacheFile, 'htaccess', 'htaccess files', 'apache', ['htaccess', 'conf'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TINIFile, 'xml', 'XML files', 'xml', ['xml'], [fgkMember, fgkBrowsable]);
-    Groups.Add(TXMLFile, 'ini', 'INI files', 'ini', ['ini'], []);
+    Groups.Add(TXMLFile, 'ini', 'INI files', 'ini', ['ini'], [fgkAssociated, fgkBrowsable]);
   end;
   Engine.AddInstant('Python', ['py'], TSynPythonSyn, []);
 end.

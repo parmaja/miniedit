@@ -15,7 +15,7 @@ object AssociateForm: TAssociateForm
   object Label1: TLabel
     Left = 10
     Height = 13
-    Top = 8
+    Top = 5
     Width = 26
     Caption = 'Open'
     ParentColor = False
@@ -23,13 +23,13 @@ object AssociateForm: TAssociateForm
   object Bevel1: TBevel
     Left = 4
     Height = 2
-    Top = 68
+    Top = 65
     Width = 259
   end
   object PHPChk: TCheckBox
     Left = 14
     Height = 17
-    Top = 26
+    Top = 23
     Width = 39
     Caption = '.php'
     TabOrder = 0
@@ -37,7 +37,7 @@ object AssociateForm: TAssociateForm
   object CSSChk: TCheckBox
     Left = 14
     Height = 17
-    Top = 44
+    Top = 41
     Width = 37
     Caption = '.css'
     TabOrder = 1
@@ -45,7 +45,7 @@ object AssociateForm: TAssociateForm
   object EditAssociateSupportedChk: TCheckBox
     Left = 14
     Height = 17
-    Top = 79
+    Top = 76
     Width = 201
     Caption = 'Associate "Edit" with all supported files'
     TabOrder = 2
@@ -76,9 +76,17 @@ object AssociateForm: TAssociateForm
   object AddEditChk: TCheckBox
     Left = 14
     Height = 17
-    Top = 101
+    Top = 98
     Width = 208
     Caption = 'Add "Edit" with miniEdit to context menu'
     TabOrder = 5
+  end
+  object Label2: TLabel
+    Left = 17
+    Height = 13
+    Top = 120
+    Width = 216
+    Caption = 'By click ok, it i will associate with .mne-project'
+    ParentColor = False
   end
 end

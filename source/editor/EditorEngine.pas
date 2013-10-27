@@ -574,10 +574,12 @@ type
 
   TFileGroupKind = (
     fgkExecutable,//You can guess what is it :P
-    fgkProject,//this can be the main file for project
-    fgkMember,//a member of project php, inc are memver, c,h,cpp members, pas,pp, p , inc also members, ini,txt not member of any project
-    fgkBrowsable//When open file show it in the extension list
+    fgkMain,//this can be the main file for project
+    fgkMember,//a member of project, inc are member, c, h, cpp members, pas,pp, p , inc also members, ini,txt not member of any project
+    fgkBrowsable,//When open file show it in the extension list
+    fgkAssociated //Editor can be the editor of this files, like .php, .inc, but .txt is not
   );
+
   TFileGroupKinds = set of TFileGroupKind;
 
   TFileGroupStyle = (
@@ -601,7 +603,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     function CreateEditorFile(vFiles: TEditorFiles): TEditorFile; virtual;
-    procedure EnumExtensions(vExtensions: TStringList);
+    procedure EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds = []);
     procedure EnumExtensions(vExtensions: TEditorElements);
     property Category: TFileCategory read FCategory write SetCategory;
     property Extensions: TStringList read FExtensions;
@@ -620,7 +622,7 @@ type
   public
     function Find(vName: string): TFileGroup;
     function Find(vName, vCategory: string): TFileGroup;
-    procedure EnumExtensions(vExtensions: TStringList);
+    procedure EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds = []);
     procedure EnumExtensions(vExtensions: TEditorElements);
     function FindExtension(vExtension: string): TFileGroup;
     //FullFilter return title of that filter for open/save dialog boxes
@@ -3494,7 +3496,7 @@ begin
   FKind := [fgkBrowsable];
 end;
 
-procedure TFileGroup.EnumExtensions(vExtensions: TStringList);
+procedure TFileGroup.EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds);
   procedure AddIt(E: string);
   begin
     if vExtensions.IndexOf(E) < 0 then
@@ -3639,13 +3641,14 @@ begin
   FOptions := TEditorSessionOptions.Create;
 end;
 
-procedure TFileGroups.EnumExtensions(vExtensions: TStringList);
+procedure TFileGroups.EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds);
 var
   i: integer;
 begin
   for i := 0 to Count - 1 do
   begin
-    Items[i].EnumExtensions(vExtensions);
+    if (Kind = []) or (Items[i].Kind = Kind) then
+      Items[i].EnumExtensions(vExtensions);
   end;
 end;
 
