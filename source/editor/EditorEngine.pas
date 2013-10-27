@@ -878,6 +878,8 @@ procedure EnumFiles(Folder, Filter: string; FileList: TStringList);
 function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount,vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean): Boolean;
 procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean);
 
+function GetWordAtRowColEx(SynEdit: TCustomSynEdit; XY: TPoint; BreakChars: TSynIdentChars; Select: boolean): string;
+
 function Engine: TEditorEngine;
 
 const
@@ -1245,7 +1247,8 @@ begin
   if Engine.Perspective.Debug <> nil then
   begin
     if not SynEdit.SelAvail then
-      v := Trim(SynEdit.GetWordAtRowCol(SynEdit.PixelsToRowColumn(p)))
+      v := Trim(GetWordAtRowColEx(SynEdit, SynEdit.PixelsToRowColumn(p), TSynWordBreakChars - ['.', '"', '''', '-', '>'], False))//todo get it from the synedit
+      //v := Trim(SynEdit.GetWordAtRowCol(SynEdit.PixelsToRowColumn(p)))
     else
       v := SynEdit.SelText;
     Result := (v <> '') and Engine.Perspective.Debug.Watches.GetValue(v, l, t, False);
@@ -1901,6 +1904,43 @@ procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; 
 begin
   EnumFileList(Root, Masks, Ignore, @EnumFileListStringsCallback, Strings, vMaxCount, vMaxLevel, ReturnFullPath, Recursive);
 end;
+
+function GetWordAtRowColEx(SynEdit: TCustomSynEdit; XY: TPoint; BreakChars: TSynIdentChars; Select: boolean): string;
+var
+  Line: string;
+  Len, Stop: integer;
+begin
+  Result := '';
+  if (XY.Y >= 1) and (XY.Y <= SynEdit.Lines.Count) then
+  begin
+    Line := SynEdit.Lines[XY.Y - 1];
+    Len := Length(Line);
+    if Len <> 0 then
+    begin
+      if (XY.X > 1) and (XY.X <= Len + 1) and (Line[XY.X] in BreakChars) then
+        XY.X := XY.X - 1;
+      if (XY.X >= 1) and (XY.X <= Len + 1) and not (Line[XY.X] in BreakChars) then
+      begin
+        Stop := XY.X;
+        while (Stop <= Len) and not (Line[Stop] in BreakChars) do
+          Inc(Stop);
+        while (XY.X > 1) and not (Line[XY.X - 1] in BreakChars) do
+          Dec(XY.X);
+        if Stop > XY.X then
+        begin
+          Result := Copy(Line, XY.X, Stop - XY.X);
+          if Select then
+          begin
+            SynEdit.CaretXY := XY;
+            SynEdit.BlockBegin := XY;
+            SynEdit.BlockEnd := Point(XY.x + Length(Result), XY.y);
+          end;
+        end;
+      end;
+    end;
+  end;
+end;
+
 
 { TListFileSearcher }
 

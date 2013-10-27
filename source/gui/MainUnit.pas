@@ -1656,7 +1656,7 @@ begin
   Result := '';
   if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomSynEdit) then
   begin
-    Result := Trim(GetWordAtRowColEx((Engine.Files.Current.Control as TCustomSynEdit), (Engine.Files.Current.Control as TCustomSynEdit).CaretXY, TSynValidStringChars + ['#'], False));
+    Result := Trim(GetWordAtRowColEx((Engine.Files.Current.Control as TCustomSynEdit), (Engine.Files.Current.Control as TCustomSynEdit).CaretXY, TSynWordBreakChars - ['#'], False));
     if Result <> '' then
     begin
       if Result[1] <> '#' then
@@ -1702,7 +1702,7 @@ begin
         if aDialog.Execute then
         begin
           aWord := ColorToRGBHex(aDialog.Color);
-          GetWordAtRowColEx((Engine.Files.Current.Control as TCustomSynEdit), (Engine.Files.Current.Control as TCustomSynEdit).CaretXY, TSynValidStringChars + ['#'], True);
+          GetWordAtRowColEx((Engine.Files.Current.Control as TCustomSynEdit), (Engine.Files.Current.Control as TCustomSynEdit).CaretXY, TSynWordBreakChars - ['#'], True);
           if aIsUpper then
             aWord := UpperCase(aWord)
           else
