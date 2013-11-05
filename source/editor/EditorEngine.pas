@@ -181,6 +181,7 @@ type
   TEditorProject = class(TmnXMLProfile)
   private
     FOptions: TEditorProjectOptions;
+    FPath: string;
     FPerspectiveName: string;
     FRunMode: TRunMode;
     FDescription: string;
@@ -196,6 +197,7 @@ type
     FPerspective: TEditorPerspective;
     FSCM: TEditorSCM;
     procedure SetPerspectiveName(AValue: string);
+    procedure SetRootDir(AValue: string);
     procedure SetSCM(AValue: TEditorSCM);
   protected
     procedure RttiCreateObject(var vObject: TObject; vInstance: TObject; vObjectClass: TClass; const vClassName, vName: string); override;
@@ -204,7 +206,9 @@ type
   public
     constructor Create; virtual;
     destructor Destroy; override;
+    procedure LoadFromFile(FileName: string); override;
     property FileName: string read FFileName write FFileName;
+    property Path: string read FPath write FPath;
     function Save: Boolean;
     function SaveAs: Boolean;
     procedure SetSCMClass(SCMClass: TEditorSCM);
@@ -220,7 +224,7 @@ type
     property SCM: TEditorSCM read FSCM write SetSCM;
 
     property Description: string read FDescription write FDescription;
-    property RootDir: string read FRootDir write FRootDir;
+    property RootDir: string read FRootDir write SetRootDir;
     property RootUrl: string read FRootUrl write FRootUrl;
     property RunMode: TRunMode read FRunMode write FRunMode default prunUrl;
     property SaveDesktop: Boolean read FSaveDesktop write FSaveDesktop default True;
@@ -1247,8 +1251,7 @@ begin
   if Engine.Perspective.Debug <> nil then
   begin
     if not SynEdit.SelAvail then
-      v := Trim(GetWordAtRowColEx(SynEdit, SynEdit.PixelsToRowColumn(p), TSynWordBreakChars - ['.', '"', '''', '-', '>'], False))//todo get it from the synedit
-      //v := Trim(SynEdit.GetWordAtRowCol(SynEdit.PixelsToRowColumn(p)))
+      v := Trim(GetWordAtRowColEx(SynEdit, SynEdit.PixelsToRowColumn(p), TSynWordBreakChars + [' ', #13, #10, #9] - ['.', '"', '''', '-', '>', '[', ']'], False))//todo get it from the synedit
     else
       v := SynEdit.SelText;
     Result := (v <> '') and Engine.Perspective.Debug.Watches.GetValue(v, l, t, False);
@@ -2039,10 +2042,10 @@ var
   s: string;
 begin
   s := ExtractFilePath(Application.ExeName);
-  if Session.Project.RootDir = '' then
+  if Session.Project.Path = '' then
     Result := s
   else
-    Result := ExpandToPath(Session.Project.RootDir, s);
+    Result := Session.Project.Path;
 end;
 
 function TEditorEngine.GetSCM: TEditorSCM;
@@ -2103,7 +2106,7 @@ begin
     aProject := New;
     try
       aProject.LoadFromFile(FileName);
-      aProject.FileName := FileName;
+//      aProject.FileName := FileName;
     except
       aProject.Free;
       raise;
@@ -2484,7 +2487,7 @@ end;
 function TEditorEngine.ExpandFileName(FileName: string): string;
 begin
   if Session.Project <> nil then
-    Result := ExpandToPath(FileName, Session.Project.RootDir)
+    Result := ExpandToPath(FileName, ExpandToPath(Session.Project.RootDir, ExtractFilePath(Session.Project.FileName)))
   else if Files.Current <> nil then
     Result := ExpandToPath(FileName, ExtractFilePath(Files.Current.Name))
   else
@@ -3429,6 +3432,12 @@ begin
   inherited;
 end;
 
+procedure TEditorProject.LoadFromFile(FileName: string);
+begin
+  FFileName := FileName;
+  inherited LoadFromFile(FileName);
+end;
+
 procedure TEditorProject.SetPerspectiveName(AValue: string);
 begin
   if FPerspectiveName <> AValue then
@@ -3441,6 +3450,16 @@ begin
       FPerspective := Engine.DefaultPerspective;
     Engine.UpdateState([ecsChanged, ecsProject]);
   end;
+end;
+
+procedure TEditorProject.SetRootDir(AValue: string);
+begin
+  if FRootDir =AValue then Exit;
+  FRootDir :=AValue;
+  if FRootDir <> '' then
+    FPath := ExpandToPath(FRootDir, ExtractFilePath(FFileName))
+  else
+    FPath := '';
 end;
 
 procedure TEditorProject.SetSCM(AValue: TEditorSCM);

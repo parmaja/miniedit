@@ -7,6 +7,9 @@ unit SelectFiles;
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author    Zaher Dirkey <zaher at parmaja dot com>
  *}
+{bugs
+  IsMatch cant match this with "*sea*" "cust_search_form.inc.php"
+}
 interface
 
 uses
@@ -39,7 +42,10 @@ function ShowSelectFile(vRoot: string): Boolean;
 implementation
 
 uses
-  mneResources, mneClasses;
+  StrUtils, mneResources, mneClasses;
+
+var
+  LastFilter: string = '';
 
 {$R *.lfm}
 
@@ -48,13 +54,18 @@ begin
   with TSelectFileForm.Create(Application) do
   begin
     try
-      EnumFileList(vRoot, Engine.Perspective.Groups.CreateFilter(False), Engine.Options.IgnoreNames, FFiles, 1000, 3, False, True);
+      FilterEdit.Text := LastFilter;
+      FilterEdit.SelectAll;
+      EnumFileList(vRoot, Engine.Perspective.Groups.CreateFilter(False), Engine.Options.IgnoreNames, FFiles, 1000, 10, False, True);
       ShowFiles;
       Result := ShowModal = mrOK;
       if Result then
       begin
         if FilesList.Selected <> nil then
+        begin
+          LastFilter := FilterEdit.Text;
           Engine.Files.OpenFile(vRoot + FilesList.Selected.SubItems[0] + FilesList.Selected.Caption);
+        end;
       end;
       Free;
     finally
@@ -85,15 +96,16 @@ var
   aItem: TListItem;
 begin
   s := FilterEdit.Text;
-  if Pos('*', s) = 0 then
-    s := s + '*';
+  {if (s <> '') and (Pos('*', s) = 0) then
+    s := s + '*';}
   FilesList.Items.BeginUpdate;
   try
     FilesList.Clear;
     for i := 0 to FFiles.Count - 1 do
     begin
       aFileName := ExtractFileName(FFiles[i]);
-      if IsMatch(s, aFileName) then
+      if (s = '')  or (FindPart(s, aFileName) > 0) then
+      //if (s = '') or IsMatch(s, aFileName) then
       begin
         aItem := FilesList.Items.Add;
         aItem.Caption := aFileName;

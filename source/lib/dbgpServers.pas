@@ -752,12 +752,12 @@ begin
   inherited;
   FLocalSpool.Add(TdbgpInit.Create);
   FLocalSpool.Add(TdbgpFeatureSet.CreateBy('show_hidden', '1'));
-  FLocalSpool.Add(TdbgpFeatureSet.CreateBy('max_depth', '1'));
-  FLocalSpool.Add(TdbgpFeatureSet.CreateBy('max_children', '1'));
+  FLocalSpool.Add(TdbgpFeatureSet.CreateBy('max_depth', '3'));
+  FLocalSpool.Add(TdbgpFeatureSet.CreateBy('max_children', '100'));
 
   FLocalSpool.Add(TdbgpSetBreakpoints.Create);
-  FLocalSpool.Add(TdbgpCommandSet.CreateBy('breakpoint_set', '-t exception -x Error -s enabled'));
-  //FLocalSpool.Add(TdbgpCommandSet.CreateBy('breakpoint_set', '-t exception -x "Warning" -s enabled'));
+  FLocalSpool.Add(TdbgpCommandSet.CreateBy('breakpoint_set', '-t exception -X Error -s enabled'));
+  FLocalSpool.Add(TdbgpCommandSet.CreateBy('breakpoint_set', '-t exception -X Warning -s enabled'));
   { or
     breakpoint_set -t exception -X Error
     breakpoint_set -t exception -X Warning
@@ -774,7 +774,7 @@ begin
     FLocalSpool.Add(TdbgpRun.Create);
     FLocalSpool.Add(TdbgpGetWatches.Create);
     FLocalSpool.Add(TdbgpGetCurrent.Create);
-end;
+  end;
 end;
 
 procedure TdbgpConnection.Process;

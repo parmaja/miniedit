@@ -1095,7 +1095,7 @@ end;
 procedure TMainForm.SelectFileActExecute(Sender: TObject);
 begin
   if Engine.Session.IsOpened then
-    ShowSelectFile(Engine.Session.Project.RootDir)
+    ShowSelectFile(Engine.Session.Project.Path)
   else
     ShowSelectFile(Folder);
 end;
@@ -1127,7 +1127,7 @@ begin
   begin
     aFile := (Sender as TMenuItem).Caption;
     if Engine.Session.IsOpened then
-      aFile := ExpandToPath(aFile, Engine.Session.Project.RootDir);
+      aFile := ExpandToPath(aFile, Engine.Session.Project.Path);
     Engine.Files.OpenFile(aFile);
   end;
 end;
@@ -1572,10 +1572,8 @@ end;
 
 procedure TMainForm.ProjectLoaded;
 begin
-  if (Engine.Session.IsOpened) and (Engine.Session.Project.RootDir <> '') then
-  begin
-    Folder := ExpandToPath(Engine.Session.Project.RootDir, ExtractFilePath(Engine.Session.Project.FileName));
-  end;
+  if (Engine.Session.IsOpened) and (Engine.Session.Project.Path <> '') then
+    Folder := Engine.Session.Project.Path;
 end;
 
 procedure TMainForm.ReplaceActExecute(Sender: TObject);
@@ -2114,7 +2112,7 @@ end;
 procedure TMainForm.FolderHomeActExecute(Sender: TObject);
 begin
   if Engine.Session.Project <> nil then
-    Folder := Engine.Session.Project.RootDir;
+    Folder := Engine.Session.Project.Path;
 end;
 
 procedure TMainForm.StatusTimerTimer(Sender: TObject);
@@ -2271,7 +2269,7 @@ begin
   end;
 
   if Engine.Session.Project <> nil then
-    aFolder := Engine.Session.Project.RootDir
+    aFolder := Engine.Session.Project.Path
   else
     aFolder := '';
   if aFolder = '' then
