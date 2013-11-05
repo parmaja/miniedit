@@ -473,14 +473,16 @@ end;
 
 procedure TXHTMLFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
-  FCompletion := TmneSynCompletion.Create(nil);
-  FCompletion.Width := 340;
-  FCompletion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;';//do not add $
-  FCompletion.OnExecute := @DoExecuteCompletion;
-  FCompletion.ShortCut := scCtrl + VK_SPACE;
-  FCompletion.CaseSensitive := False;
-  //Result.Options := [scoLimitToMatchedText, {scoCaseSensitive, }scoUseInsertList, scoUsePrettyText, scoEndCharCompletion, scoCompleteWithTab, scoCompleteWithEnter];
-  //Result.DefaultType := ctCode;
+  if FCompletion = nil then
+  begin
+    FCompletion := TmneSynCompletion.Create(nil);
+    FCompletion.Width := 340;
+    FCompletion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;';//do not add $
+    FCompletion.OnExecute := @DoExecuteCompletion;
+    FCompletion.ShortCut := scCtrl + VK_SPACE;
+    FCompletion.CaseSensitive := False;
+    //FCompletion.OnPaintItem
+  end;
   FCompletion.AddEditor(vSynEdit);
 end;
 
