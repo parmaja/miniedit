@@ -338,6 +338,7 @@ type
     FileModeBtn: TSpeedButton;
     procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
+    procedure CallStackListDblClick(Sender: TObject);
     procedure DeleteActExecute(Sender: TObject);
     procedure FetchCallStackBtnClick(Sender: TObject);
     procedure FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
@@ -631,6 +632,33 @@ begin
       HintInfo.HintStr := s;
       HintInfo.HideTimeout := 10000;
       HintInfo.ReshowTimeout := 1;
+    end;
+  end;
+end;
+
+procedure TMainForm.CallStackListDblClick(Sender: TObject);
+var
+  s: string;
+  aLine, c, l: integer;
+begin
+  if CallStackList.Selected <> nil then
+  begin
+    Engine.Files.OpenFile(CallStackList.Selected.Caption);
+    s := CallStackList.Selected.SubItems[0];
+    if s <> '' then
+    begin
+      aLine := StrToIntDef(s, 0);
+      if aLine > 0 then
+      begin
+        with Engine.Files.Current do
+        if Control is TCustomSynEdit then
+        begin
+          (Control as TCustomSynEdit).CaretY := aLine;
+          (Control as TCustomSynEdit).CaretX := 0;
+          (Control as TCustomSynEdit).SelectLine;
+          (Control as TCustomSynEdit).SetFocus;
+        end;
+      end;
     end;
   end;
 end;
@@ -1943,7 +1971,7 @@ begin
         begin
           aItem := WatchList.Items.Add;
           aItem.ImageIndex := 41;
-          aItem.Caption := Engine.Perspective.Debug.Watches[i].Name;
+          aItem.Caption := Engine.Perspective.Debug.Watches[i].VarName;
           aItem.SubItems.Add(Engine.Perspective.Debug.Watches[i].VarType);
           aItem.SubItems.Add(Engine.Perspective.Debug.Watches[i].Value);
         end;
@@ -2042,6 +2070,7 @@ begin
     if s <> '' then
     begin
       Engine.Perspective.Debug.Watches.Add(s);
+      UpdateWatches;
     end;
   end;
 end;
@@ -2054,7 +2083,10 @@ end;
 procedure TMainForm.DeleteWatch(s: string);
 begin
   if Engine.Perspective.Debug <> nil then
+  begin
     Engine.Perspective.Debug.Watches.Remove(s);
+    UpdateWatches;
+  end;
 end;
 
 procedure TMainForm.DBGToggleBreakpointExecute(Sender: TObject);
@@ -2236,6 +2268,7 @@ begin
           begin
             (Current.Control as TCustomSynEdit).CaretY := aLine;
             (Current.Control as TCustomSynEdit).CaretX := 0;
+            (Current.Control as TCustomSynEdit).SelectLine;
             (Current.Control as TCustomSynEdit).SetFocus;
           end;
         end;
@@ -2355,6 +2388,7 @@ begin
     0: DblClick(MessageList);
     1: DblClick(WatchList);
     2: DblClick(SearchList);
+    3: DblClick(CallStackList);
   end;
 end;
 

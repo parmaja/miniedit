@@ -172,9 +172,7 @@ type
 
   TdbgpCustomGet = class(TdbgpAction)
   public
-    VariableType: string;
-    VariableName: string;
-    VariableValue: variant;
+    Info: TDebugWatchInfo;
   end;
   // Watches
 
@@ -291,15 +289,10 @@ type
   TdbgpWatch = class(TObject)
   private
     FHandle: integer;
-    FVariableName: string;
-    FValue: variant;
-    FVariableType: string;
   public
+    Info: TDebugWatchInfo;
     property Handle: integer read FHandle write FHandle;
   published
-    property VariableName: string read FVariableName write FVariableName;
-    property VariableType: string read FVariableType write FVariableType;
-    property Value: variant read FValue write FValue;
   end;
 
   TdbgpWatches = class(TObjectList)
@@ -315,7 +308,7 @@ type
   public
     function Find(Name: string): TdbgpWatch;
     function Add(Watch: TdbgpWatch): integer; overload;
-    function Add(VariableName: string; Value: variant): integer; overload;
+    function Add(VarName: string; Value: variant): integer; overload;
     procedure AddWatch(Name: string);
     procedure RemoveWatch(Name: string);
     procedure Clean;
@@ -444,7 +437,7 @@ end;
 
 function TdbgpEval.GetData: string;
 begin
-  Result := 'echo ' + VariableName;
+  Result := 'echo ' + Info.VarName;
 end;
 
 procedure TdbgpEval.Process(Respond: TdbgpRespond);
@@ -1103,16 +1096,16 @@ begin
   Result := inherited Add(Watch);
 end;
 
-function TdbgpWatches.Add(VariableName: string; Value: variant): integer;
+function TdbgpWatches.Add(VarName: string; Value: variant): integer;
 var
   aWatch: TdbgpWatch;
 begin
   Inc(CurrentHandle);
   aWatch := TdbgpWatch.Create;
   aWatch.Handle := CurrentHandle;
-  aWatch.VariableName := VariableName;
-  aWatch.VariableType := '';
-  aWatch.Value := Value;
+  aWatch.Info.VarName := VarName;
+  aWatch.Info.VarType := '';
+  aWatch.Info.Value := Value;
   Result := Add(aWatch);
 end;
 
@@ -1145,7 +1138,7 @@ var
 begin
   for i := 0 to Count - 1 do
   begin
-    VarClear(Items[i].FValue);
+    VarClear(Items[i].Info.Value);
   end;
 end;
 
@@ -1156,7 +1149,7 @@ begin
   Result := nil;
   for i := 0 to Count - 1 do
   begin
-    if Items[i].VariableName = Name then
+    if Items[i].Info.VarName = Name then
     begin
       Result := Items[i];
       break;
@@ -1175,7 +1168,7 @@ var
 begin
   aWatch := Find(Name);
   if aWatch <> nil then
-    Result := aWatch.Value
+    Result := aWatch.Info.Value
   else
     VarClear(Result);
 end;
@@ -1185,10 +1178,10 @@ var
   i: integer;
   Founded: Boolean;
 begin
-  Founded:=False;
+  Founded := False;
   for i := 0 to Count - 1 do
   begin
-    if Items[i].VariableName = Name then
+    if Items[i].Info.VarName = Name then
     begin
       Delete(i);
       Founded:=True;
@@ -1225,8 +1218,8 @@ begin
   inherited;
   DBGP.Lock.Enter;
   try
-    Connection.Server.Watches[Index].Value := VariableValue;
-    Connection.Server.Watches[Index].VariableType := VariableType;
+    Connection.Server.Watches[Index].Info.Value := Info.Value;
+    Connection.Server.Watches[Index].Info.VarType := Info.VarType;
   finally
     DBGP.Lock.Leave;
   end;
@@ -1341,8 +1334,8 @@ begin
   inherited;
   DBGP.Lock.Enter;
   try
-    Connection.Server.Watches[Current].Value := VariableValue;
-    Connection.Server.Watches[Current].VariableType := VariableType;
+    Connection.Server.Watches[Current].Info.Value := Info.Value;
+    Connection.Server.Watches[Current].Info.VarType := Info.VarType;
   finally
     DBGP.Lock.Leave;
   end;
@@ -1354,7 +1347,7 @@ begin
   try
     Result := Current < Connection.Server.Watches.Count;
     if Result then
-      VariableName := Connection.Server.Watches[Current].VariableName;
+      Info.VarName := Connection.Server.Watches[Current].Info.VarName;
   finally
     DBGP.Lock.Leave;
   end;
@@ -1499,8 +1492,8 @@ end;
 
 function TdbgpCustomGetWatch.GetCommand: string;
 begin
-  Result := 'property_value -n "' + VariableName + '" -m 1024';
-  //Result := 'property_get -n "' + VariableName + '" -m 1024';
+  Result := 'property_value -n "' + Info.VarName + '" -m 1024';
+  //Result := 'property_get -n "' + VarName + '" -m 1024';
 end;
 
 procedure TdbgpCustomGetWatch.Process(Respond: TdbgpRespond);
@@ -1515,16 +1508,16 @@ begin
   begin
     S := Respond[sCmd].Value;
     if (S <> '') and (Respond[sCmd].Attributes['encoding'] = 'base64') then //bug DecodeStringBase64 when S = ''
-      VariableValue := DecodeStringBase64(S)
+      Info.Value := DecodeStringBase64(S)
     else
-      VariableValue := S;
+      Info.Value := S;
 
-    VariableType := Respond[sCmd].Attributes['type'];
+    Info.VarType := Respond[sCmd].Attributes['type'];
   end
   else
   begin
-    VariableType := '[ERROR]';
-    VariableValue := '';
+    Info.VarType := '[ERROR]';
+    Info.Value := '';
   end;
 end;
 

@@ -8,6 +8,13 @@ uses
   Classes, SysUtils, Contnrs;
 
 type
+  TDebugWatchInfo = record
+    VarName: string;
+    VarType: string;
+    Value: variant;
+  end;
+
+
   TCallStackItem = class(TObject)
   private
     FLine: Integer;

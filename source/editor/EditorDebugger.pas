@@ -40,12 +40,6 @@ type
     Line: Integer;
   end;
 
-  TEditWatch = record
-    Name: string;
-    VarType: string;
-    Value: variant;
-  end;
-
   { TEditorElements }
 
   TEditorItem = class(TObject)
@@ -76,12 +70,12 @@ type
   TEditorWatches = class(TEditorItem)
   private
   protected
-    function GetItems(Index: Integer): TEditWatch; virtual; abstract;
+    function GetItems(Index: Integer): TDebugWatchInfo; virtual; abstract;
   public
     procedure Add(vName: string); virtual; abstract;
     procedure Remove(vName: string); virtual; abstract;
     function GetValue(vName: string; var vValue: Variant; var vType: string; EvalIt: Boolean): boolean; virtual; abstract;
-    property Items[Index: Integer]: TEditWatch read GetItems; default;
+    property Items[Index: Integer]: TDebugWatchInfo read GetItems; default;
   end;
 
   { TEditorDebugLink }

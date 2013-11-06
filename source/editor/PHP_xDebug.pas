@@ -68,7 +68,7 @@ type
   protected
     FDebug: TPHP_xDebug;
     function GetCount: integer; override;
-    function GetItems(Index: integer): TEditWatch; override;
+    function GetItems(Index: integer): TDebugWatchInfo; override;
   public
     procedure Clear; override;
     procedure Add(vName: string); override;
@@ -114,15 +114,13 @@ begin
     Result := Watches.Count;
 end;
 
-function TPHP_xDebugWatches.GetItems(Index: integer): TEditWatch;
+function TPHP_xDebugWatches.GetItems(Index: integer): TDebugWatchInfo;
 var
   aWt: TdbgpWatch;
 begin
   with FDebug.FServer do
     aWt := Watches[Index];
-  Result.Name := aWt.VariableName;
-  Result.Value := aWt.Value;
-  Result.VarType := aWt.VariableType;
+  Result:= aWt.Info;
 end;
 
 procedure TPHP_xDebugWatches.Clear;
@@ -155,15 +153,15 @@ begin
     else
       aAction := TdbgpGetWatchInstance.Create;
     aAction.CreateEvent;
-    aAction.VariableName := vName;
+    aAction.Info.VarName := vName;
     with FDebug.FServer do
     begin
       AddAction(aAction);
       Resume;
       aAction.Event.WaitFor(30000);
       begin
-        vValue := aAction.VariableValue;
-        vType := aAction.VariableType;
+        vValue := aAction.Info.Value;
+        vType := aAction.Info.VarType;
         Result := True;
       end;
       ExtractAction(aAction);
