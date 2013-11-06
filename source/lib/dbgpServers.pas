@@ -380,7 +380,7 @@ type
     property RunCount: Integer read FRunCount;
     property IsRuning: Boolean read GetIsRuning;
     property Watches: TdbgpWatches read FWatches;
-    property StackDepth: Integer read FStackDepth write FStackDepth default 5;
+    property StackDepth: Integer read FStackDepth write FStackDepth;
     property Breakpoints: TdbgpBreakpoints read FBreakpoints;
     property BreakOnFirstLine: Boolean read FBreakOnFirstLine write FBreakOnFirstLine default False;
   published
@@ -487,7 +487,7 @@ begin
   inherited;
   FSpool := TdbgpSpool.Create(True);
   Port := '9000';
-  FStackDepth := 5;
+  FStackDepth := 10;
   FWatches := TdbgpWatches.Create;
   FWatches.FServer := Self;
   FBreakpoints := TdbgpBreakpoints.Create;

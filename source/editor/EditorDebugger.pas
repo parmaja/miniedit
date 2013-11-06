@@ -34,12 +34,6 @@ type
 
    TDebugStates = set of TDebugState;
 
-  TEditBreakpoint = record
-    Handle: Integer;
-    FileName: string;
-    Line: Integer;
-  end;
-
   { TEditorElements }
 
   TEditorItem = class(TObject)
@@ -54,7 +48,7 @@ type
 
   TEditorBreakPoints = class(TEditorItem)
   protected
-    function GetItems(Index: Integer): TEditBreakpoint; virtual; abstract;
+    function GetItems(Index: Integer): TDebugBreakpointInfo; virtual; abstract;
   public
     procedure Toggle(FileName: string; LineNo: Integer); virtual; abstract;
     function Found(FileName: string; LineNo: Integer): boolean; virtual; abstract;
@@ -62,7 +56,7 @@ type
     procedure Remove(FileName: string; Line: Integer); virtual; overload; abstract;
     procedure Remove(Handle: Integer); virtual; overload; abstract;
 
-    property Items[Index: Integer]: TEditBreakpoint read GetItems; default;
+    property Items[Index: Integer]: TDebugBreakpointInfo read GetItems; default;
   end;
 
   { TEditorWatches }
@@ -236,7 +230,9 @@ begin
       ExecutedControl.InvalidateLine(FLink.ExecutedLine);
     end;
     Engine.UpdateState([ecsDebug, ecsShow]);
-  end;
+  end
+  else
+    Engine.UpdateState([ecsDebug]);//needed for update watches
 end;
 
 procedure TEditorDebugger.SetExecutedLine(Key: string; FileName: string; const Line: Integer; vCallStack: TCallStackItems);

@@ -14,6 +14,11 @@ type
     Value: variant;
   end;
 
+  TDebugBreakpointInfo = record
+    Handle: Integer;
+    FileName: string;
+    Line: Integer;
+  end;
 
   TCallStackItem = class(TObject)
   private

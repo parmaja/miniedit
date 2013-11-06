@@ -52,7 +52,7 @@ type
   protected
     FDebug: TPHP_xDebug;
     function GetCount: integer; override;
-    function GetItems(Index: integer): TEditBreakpoint; override;
+    function GetItems(Index: integer): TDebugBreakpointInfo; override;
   public
     procedure Clear; override;
     procedure Toggle(FileName: string; LineNo: integer); override;
@@ -157,15 +157,17 @@ begin
     with FDebug.FServer do
     begin
       AddAction(aAction);
+
       Resume;
+
       aAction.Event.WaitFor(30000);
-      begin
-        vValue := aAction.Info.Value;
-        vType := aAction.Info.VarType;
-        Result := True;
-      end;
+      vValue := aAction.Info.Value;
+      vType := aAction.Info.VarType;
+
       ExtractAction(aAction);
       aAction.Free;
+
+      Result := True;
     end;
   end;
 end;
@@ -178,7 +180,7 @@ begin
     Result := Breakpoints.Count;
 end;
 
-function TPHP_xDebugBreakPoints.GetItems(Index: integer): TEditBreakpoint;
+function TPHP_xDebugBreakPoints.GetItems(Index: integer): TDebugBreakpointInfo;
 var
   aBP: TdbgpBreakpoint;
 begin

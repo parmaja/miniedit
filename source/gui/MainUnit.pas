@@ -1946,7 +1946,7 @@ begin
       finally
       end;
     finally
-      if aIndex >= 0 then
+      if (aIndex >= 0) and (aIndex < CallStackList.Items.Count) then
         CallStackList.ItemIndex := aIndex;
       CallStackList.EndUpdate;
     end;
@@ -1979,7 +1979,7 @@ begin
         Engine.Perspective.Debug.Unlock;
       end;
     finally
-      if aIndex >= 0 then
+      if (aIndex >= 0) and (aIndex < WatchList.Items.Count) then
         WatchList.ItemIndex := aIndex;
       WatchList.EndUpdate;
     end;
@@ -2070,7 +2070,7 @@ begin
     if s <> '' then
     begin
       Engine.Perspective.Debug.Watches.Add(s);
-      UpdateWatches;
+      //UpdateWatches;
     end;
   end;
 end;
@@ -2085,7 +2085,7 @@ begin
   if Engine.Perspective.Debug <> nil then
   begin
     Engine.Perspective.Debug.Watches.Remove(s);
-    UpdateWatches;
+    //UpdateWatches;
   end;
 end;
 
