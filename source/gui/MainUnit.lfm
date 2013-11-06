@@ -716,8 +716,15 @@ object MainForm: TMainForm
         Enabled = False
         AutoWidth = True
         Control = WatchList
+      end    
+      item
+        Caption = 'Call Stack'
+        Name = 'CallStackTab'
+        AutoWidth = True
+        Control = CallStackList
       end>
     Align = alBottom
+    Caption = 'Call Stack'
     Constraints.MinHeight = 60
     TabOrder = 4
     object MessageList: TListView
@@ -758,39 +765,6 @@ object MainForm: TMainForm
       OnDblClick = MessageListDblClick
       OnKeyDown = WatchListKeyDown
     end
-    object WatchList: TListView
-      Left = 3
-      Height = 103
-      Top = 21
-      Width = 626
-      Align = alClient
-      Columns = <      
-        item
-          Caption = 'Variable'
-          Width = 200
-        end      
-        item
-          Caption = 'Type'
-          Width = 100
-        end      
-        item
-          AutoSize = True
-          Caption = 'Value'
-          Width = 322
-        end>
-      ColumnClick = False
-      Font.CharSet = ARABIC_CHARSET
-      Font.Height = -12
-      Font.Name = 'Courier New'
-      ParentFont = False
-      PopupMenu = WatchesPopupMenu
-      ReadOnly = True
-      RowSelect = True
-      TabStop = False
-      TabOrder = 2
-      ViewStyle = vsReport
-      OnKeyDown = WatchListKeyDown
-    end
     object SearchList: TListView
       Left = 3
       Height = 103
@@ -825,6 +799,66 @@ object MainForm: TMainForm
       ViewStyle = vsReport
       OnCustomDrawSubItem = SearchListCustomDrawSubItem
       OnDblClick = SearchListDblClick
+    end
+    object WatchList: TListView
+      Left = 3
+      Height = 103
+      Top = 21
+      Width = 626
+      Align = alClient
+      Columns = <      
+        item
+          Caption = 'Variable'
+          Width = 200
+        end      
+        item
+          Caption = 'Type'
+          Width = 100
+        end      
+        item
+          AutoSize = True
+          Caption = 'Value'
+          Width = 322
+        end>
+      ColumnClick = False
+      Font.CharSet = ARABIC_CHARSET
+      Font.Height = -12
+      Font.Name = 'Courier New'
+      ParentFont = False
+      PopupMenu = WatchesPopupMenu
+      ReadOnly = True
+      RowSelect = True
+      TabStop = False
+      TabOrder = 2
+      ViewStyle = vsReport
+      OnKeyDown = WatchListKeyDown
+    end
+    object CallStackList: TListView
+      Left = 3
+      Height = 103
+      Top = 21
+      Width = 626
+      Align = alClient
+      Columns = <      
+        item
+          Caption = 'File'
+          Width = 300
+        end      
+        item
+          Caption = 'Line'
+          Width = 80
+        end>
+      ColumnClick = False
+      Font.CharSet = ARABIC_CHARSET
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      HideSelection = False
+      ParentFont = False
+      ReadOnly = True
+      RowSelect = True
+      TabStop = False
+      TabOrder = 3
+      ViewStyle = vsReport
     end
   end
   object MessagesSpl: TntvSplitter

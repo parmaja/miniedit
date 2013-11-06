@@ -55,6 +55,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    CallStackList: TListView;
     DeleteAct: TAction;
     MenuItem18: TMenuItem;
     MenuItem19: TMenuItem;
@@ -338,6 +339,7 @@ type
     procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
     procedure DeleteActExecute(Sender: TObject);
+    procedure FetchCallStackBtnClick(Sender: TObject);
     procedure FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure FindPreviousActExecute(Sender: TObject);
     procedure FolderCloseBtnClick(Sender: TObject);
@@ -473,6 +475,7 @@ type
     procedure SetShowFolderFiles(AValue: TShowFolderFiles);
     procedure SetSortFolderFiles(AValue: TSortFolderFiles);
     procedure UpdateFileHeaderPanel;
+    procedure UpdateCallStack;
     procedure EditorChangeState(State: TEditorChangeStates);
     function ChoosePerspective(var vPerspective: TEditorPerspective): Boolean;
     function ChooseSCM(var vSCM: TEditorSCM): Boolean;
@@ -615,7 +618,7 @@ begin
   FoldersAct.Execute;
 end;
 
-procedure TMainForm.ApplicationPropertiesShowHint(var HintStr: string; var CanShow: Boolean; var HintInfo: THintInfo);
+procedure TMainForm.ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
 var
   s: string;
 begin
@@ -638,6 +641,13 @@ begin
   begin
     if not MsgBox.Msg.No('Are you sure want delete ' + Engine.Files.Current.NakeName) then
       Engine.Files.Current.Delete;
+  end;
+end;
+
+procedure TMainForm.FetchCallStackBtnClick(Sender: TObject);
+begin
+  if (Engine.Perspective.Debug <> nil) then
+  begin
   end;
 end;
 
@@ -1867,6 +1877,7 @@ begin
   begin
     DebugPnl.Caption := Engine.Perspective.Debug.GetKey;
     UpdateFileHeaderPanel;
+    UpdateCallStack;
     UpdateWatches;
     Engine.Files.Refresh; // not safe thread
   end;
@@ -1881,6 +1892,37 @@ begin
   FileHeaderPanel.Visible := Engine.Files.Count > 0;
   if FileHeaderPanel.Visible then
     FileHeaderPanel.Refresh;
+end;
+
+procedure TMainForm.UpdateCallStack;
+var
+  i: integer;
+  aItem: TListItem;
+  aIndex: integer;
+begin
+  if Engine.Perspective.Debug <> nil then
+  begin
+    aIndex := CallStackList.ItemIndex;
+    CallStackList.BeginUpdate;
+    try
+      CallStackList.Clear;
+      with Engine.Perspective.Debug do
+      try
+        for i := 0 to CallStack.Count - 1 do
+        begin
+          aItem := CallStackList.Items.Add;
+          aItem.ImageIndex := 41;
+          aItem.Caption := CallStack[i].FileName;
+          aItem.SubItems.Add(IntToStr(CallStack[i].Line));
+        end;
+      finally
+      end;
+    finally
+      if aIndex >= 0 then
+        CallStackList.ItemIndex := aIndex;
+      CallStackList.EndUpdate;
+    end;
+  end;
 end;
 
 procedure TMainForm.UpdateWatches;

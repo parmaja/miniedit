@@ -30,7 +30,7 @@ uses
   mnServers,
   dbgpServers,
   SynEdit,
-  EditorDebugger;
+  EditorDebugger, DebugClasses;
 
 type
   TPHP_xDebug = class;
@@ -84,7 +84,7 @@ type
   protected
     function CreateBreakPoints: TEditorBreakPoints; override;
     function CreateWatches: TEditorWatches; override;
-    procedure DoShowFile(const Key, FileName: string; Line: integer);
+    procedure DoShowFile(const Key, FileName: string; Line: integer; vCallStack: TCallStackItems);
 
     procedure Start;
     procedure Stop;
@@ -246,9 +246,9 @@ begin
   (Result as TPHP_xDebugWatches).FDebug := Self;
 end;
 
-procedure TPHP_xDebug.DoShowFile(const Key, FileName: string; Line: integer);
+procedure TPHP_xDebug.DoShowFile(const Key, FileName: string; Line: integer; vCallStack: TCallStackItems);
 begin
-  SetExecutedLine(Key, FileName, Line);
+  SetExecutedLine(Key, FileName, Line, vCallStack);
 end;
 
 constructor TPHP_xDebug.Create;

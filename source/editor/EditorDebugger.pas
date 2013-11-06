@@ -12,7 +12,7 @@ interface
 uses
   SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
   SynEdit,
-  EditorClasses;
+  EditorClasses, DebugClasses;
 
 type
   TDebugAction = (
@@ -35,9 +35,9 @@ type
    TDebugStates = set of TDebugState;
 
   TEditBreakpoint = record
-    Handle: integer;
+    Handle: Integer;
     FileName: string;
-    Line: integer;
+    Line: Integer;
   end;
 
   TEditWatch = record
@@ -50,25 +50,25 @@ type
 
   TEditorItem = class(TObject)
   protected
-    function GetCount: integer; virtual; abstract;
+    function GetCount: Integer; virtual; abstract;
   public
     procedure Clear; virtual; abstract;
-    property Count: integer read GetCount;
+    property Count: Integer read GetCount;
   end;
 
   { TEditorBreakPoints }
 
   TEditorBreakPoints = class(TEditorItem)
   protected
-    function GetItems(Index: integer): TEditBreakpoint; virtual; abstract;
+    function GetItems(Index: Integer): TEditBreakpoint; virtual; abstract;
   public
-    procedure Toggle(FileName: string; LineNo: integer); virtual; abstract;
-    function Found(FileName: string; LineNo: integer): boolean; virtual; abstract;
-    procedure Add(FileName: string; LineNo: integer); virtual; abstract;
-    procedure Remove(FileName: string; Line: integer); virtual; overload; abstract;
-    procedure Remove(Handle: integer); virtual; overload; abstract;
+    procedure Toggle(FileName: string; LineNo: Integer); virtual; abstract;
+    function Found(FileName: string; LineNo: Integer): boolean; virtual; abstract;
+    procedure Add(FileName: string; LineNo: Integer); virtual; abstract;
+    procedure Remove(FileName: string; Line: Integer); virtual; overload; abstract;
+    procedure Remove(Handle: Integer); virtual; overload; abstract;
 
-    property Items[Index: integer]: TEditBreakpoint read GetItems; default;
+    property Items[Index: Integer]: TEditBreakpoint read GetItems; default;
   end;
 
   { TEditorWatches }
@@ -76,12 +76,12 @@ type
   TEditorWatches = class(TEditorItem)
   private
   protected
-    function GetItems(Index: integer): TEditWatch; virtual; abstract;
+    function GetItems(Index: Integer): TEditWatch; virtual; abstract;
   public
     procedure Add(vName: string); virtual; abstract;
     procedure Remove(vName: string); virtual; abstract;
     function GetValue(vName: string; var vValue: Variant; var vType: string; EvalIt: Boolean): boolean; virtual; abstract;
-    property Items[Index: integer]: TEditWatch read GetItems; default;
+    property Items[Index: Integer]: TEditWatch read GetItems; default;
   end;
 
   { TEditorDebugLink }
@@ -90,14 +90,17 @@ type
   private
     procedure SetExecutedExit(const AValue: TCustomSynEdit);
   public
-    FExecutedLine: integer;
+    FExecutedLine: Integer;
     FExecutedControl: TCustomSynEdit;
+    FCallStack: TCallStackItems;
   protected
     procedure Notification(AComponent: TComponent; Operation: TOperation); override;
   public
     constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
     property ExecutedLine: Integer read FExecutedLine write FExecutedLine;
     property ExecutedControl: TCustomSynEdit read FExecutedControl write SetExecutedExit;
+    property CallStack: TCallStackItems read FCallStack;
   end;
 
   { TEditorDebugger }
@@ -108,6 +111,7 @@ type
     FWatches: TEditorWatches;
     FKey: string;
     FLink: TEditorDebugLink;
+    function GetCallStack: TCallStackItems;
     function GetExecutedControl: TCustomSynEdit;
     function GetExecutedLine: Integer;
     function GetActive: Boolean;
@@ -130,12 +134,13 @@ type
 
     property ExecutedLine: Integer read GetExecutedLine;
     property ExecutedControl: TCustomSynEdit read GetExecutedControl write SetExecutedControl;
+    property CallStack: TCallStackItems read GetCallStack;
 
     property Active: boolean read GetActive write SetActive;
     property Running: boolean read GetRunning;
 
-    procedure SetExecutedLine(Key: string; Edit: TCustomSynEdit; const Line: integer); overload;
-    procedure SetExecutedLine(Key: string; FileName: string; const Line: integer); overload;
+    procedure SetExecutedLine(Key: string; Edit: TCustomSynEdit; const Line: Integer; vCallStack: TCallStackItems); overload;
+    procedure SetExecutedLine(Key: string; FileName: string; const Line: Integer; vCallStack: TCallStackItems); overload;
     property Breakpoints: TEditorBreakPoints read FBreakpoints;
     property Watches: TEditorWatches read FWatches;
   end;
@@ -197,6 +202,11 @@ begin
   Result := FLink.ExecutedControl;
 end;
 
+function TEditorDebugger.GetCallStack: TCallStackItems;
+begin
+  Result := FLink.CallStack;
+end;
+
 function TEditorDebugger.GetExecutedLine: Integer;
 begin
   Result := FLink.ExecutedLine;
@@ -207,9 +217,9 @@ begin
   Result := FKey;
 end;
 
-procedure TEditorDebugger.SetExecutedLine(Key: string; Edit: TCustomSynEdit; const Line: integer);
+procedure TEditorDebugger.SetExecutedLine(Key: string; Edit: TCustomSynEdit; const Line: Integer; vCallStack: TCallStackItems);
 var
-  OldLine: integer;
+  OldLine: Integer;
   OldEdit: TCustomSynEdit;
 begin
   FKey := Key;
@@ -220,6 +230,7 @@ begin
 
     FLink.ExecutedLine := Line;
     FLink.ExecutedControl := Edit;
+    FLink.CallStack.AssignFrom(vCallStack);
 
     if OldEdit <> nil then
       OldEdit.InvalidateLine(OldLine);
@@ -234,7 +245,7 @@ begin
   end;
 end;
 
-procedure TEditorDebugger.SetExecutedLine(Key: string; FileName: string; const Line: integer);
+procedure TEditorDebugger.SetExecutedLine(Key: string; FileName: string; const Line: Integer; vCallStack: TCallStackItems);
 var
   aFile: TEditorFile;
 begin
@@ -242,10 +253,10 @@ begin
   begin
     aFile := Engine.Files.ShowFile(FileName);
     if (aFile is ISourceEditor) then //{$warning 'bad beavor, this class must be outside the engine'}
-      SetExecutedLine(Key, (aFile as TTextEditorFile).SynEdit, Line);
+      SetExecutedLine(Key, (aFile as TTextEditorFile).SynEdit, Line, vCallStack);
   end
   else
-    SetExecutedLine(Key, nil, -1);
+    SetExecutedLine(Key, nil, -1, vCallStack);
 end;
 
 procedure TEditorDebugLink.SetExecutedExit(const AValue: TCustomSynEdit);
@@ -274,6 +285,13 @@ constructor TEditorDebugLink.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FExecutedLine := -1;
+  FCallStack := TCallStackItems.Create;
+end;
+
+destructor TEditorDebugLink.Destroy;
+begin
+  FreeAndNil(FCallStack);
+  inherited Destroy;
 end;
 
 end.

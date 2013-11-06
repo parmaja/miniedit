@@ -20,7 +20,7 @@ interface
 uses
   SysUtils, StrUtils, Classes, Contnrs, Dialogs, Variants,
   mnSockets, mnStreams, mnConnections, mnServers, mnXMLUtils, Base64,
-  mnXMLRttiProfile, mnXMLNodes, SyncObjs, IniFiles;
+  mnXMLRttiProfile, mnXMLNodes, SyncObjs, IniFiles, DebugClasses;
 
 type
   EdbgpException = class(Exception);
@@ -115,14 +115,18 @@ type
   end;
 
 
+  { TdbgpGetCurrent }
+
   TdbgpGetCurrent = class(TdbgpAction)
   private
     FCurKey: string;
     FCurFile: string;
     FCurLine: integer;
+    FCallStack: TCallStackItems;
     procedure ShowFile;
   public
     procedure Created; override;
+    destructor Destroy; override;
     function GetCommand: string; override;
     procedure Process(Respond: TdbgpRespond); override;
   end;
@@ -203,8 +207,6 @@ type
   TdbgpGetWatchInstance = class(TdbgpCustomGetWatch)
   protected
   public
-    destructor Destroy; override;
-    procedure Process(Respond: TdbgpRespond); override;
   end;
 
   TdbgpGetWatches = class(TdbgpCustomGetWatch)
@@ -241,7 +243,6 @@ type
   public
     BreakpointID: integer;
     function GetCommand: string; override;
-    procedure Process(Respond: TdbgpRespond); override;
   end;
 
   { TdbgpConnection }
@@ -329,7 +330,6 @@ type
     FHandle: integer;
     FFileName: string;
   public
-    constructor Create;
     property Handle: integer read FHandle write FHandle;
     property ID: integer read FID write FID;
   published
@@ -342,7 +342,6 @@ type
     CurrentHandle: integer;
     FServer: TdbgpServer;
     function GetItem(Index: integer): TdbgpBreakpoint;
-    procedure SetItem(Index: integer; const Value: TdbgpBreakpoint);
   protected
     property Server: TdbgpServer read FServer;
   public
@@ -352,11 +351,11 @@ type
     function Add(FileName: string; Line: integer): integer; overload;
     function Find(Name: string; Line: integer): TdbgpBreakpoint;
     procedure Toggle(FileName: string; Line: integer);
-    property Items[Index: integer]: TdbgpBreakpoint read GetItem write SetItem; default;
+    property Items[Index: integer]: TdbgpBreakpoint read GetItem; default;
   end;
 
   TdbgpOnServerEvent = procedure(Sender: TObject; Socket: TdbgpConnection) of object;
-  TdbgpOnShowFile = procedure(const Key, FileName: string; Line: integer) of object;
+  TdbgpOnShowFile = procedure(const Key, FileName: string; Line: integer; CallStack: TCallStackItems) of object;
 
   { TdbgpServer }
 
@@ -364,6 +363,7 @@ type
   private
     FBreakOnFirstLine: Boolean;
     FSpool: TdbgpSpool;
+    FStackDepth: Integer;
     FWatches: TdbgpWatches;
     FBreakpoints: TdbgpBreakpoints;
     FRunCount: Integer;
@@ -387,6 +387,7 @@ type
     property RunCount: Integer read FRunCount;
     property IsRuning: Boolean read GetIsRuning;
     property Watches: TdbgpWatches read FWatches;
+    property StackDepth: Integer read FStackDepth write FStackDepth default 5;
     property Breakpoints: TdbgpBreakpoints read FBreakpoints;
     property BreakOnFirstLine: Boolean read FBreakOnFirstLine write FBreakOnFirstLine default False;
   published
@@ -402,7 +403,7 @@ type
     Event: TEvent;
     constructor Create;
     destructor Destroy; override;
-    procedure ShowFile(const Key, FileName: string; Line: integer = -1);
+    procedure ShowFile(const Key, FileName: string; Line: integer = -1; CallStack: TCallStackItems = nil);
     property OnShowFile: TdbgpOnShowFile read FOnShowFile write FOnShowFile;
   end;
 
@@ -482,10 +483,10 @@ begin
   inherited;
 end;
 
-procedure TdbgpManager.ShowFile(const Key, FileName: string; Line: integer);
+procedure TdbgpManager.ShowFile(const Key, FileName: string; Line: integer; CallStack: TCallStackItems);
 begin
   if Assigned(FOnShowFile) then
-    FOnShowFile(Key, FileName, Line);
+    FOnShowFile(Key, FileName, Line, CallStack);
 end;
 
 constructor TdbgpServer.Create(AOwner: TComponent);
@@ -493,9 +494,11 @@ begin
   inherited;
   FSpool := TdbgpSpool.Create(True);
   Port := '9000';
+  FStackDepth := 5;
   FWatches := TdbgpWatches.Create;
   FWatches.FServer := Self;
   FBreakpoints := TdbgpBreakpoints.Create;
+  FBreakpoints.FServer := Self;
   FBreakpoints.FServer := Self;
   FBreakOnFirstLine := False;
 end;
@@ -513,7 +516,7 @@ begin
   Result := RunCount > 0;
 end;
 
-procedure TdbgpServer.Notification(AComponent: TComponent; Operation: TOperation);
+procedure TdbgpServer.Notification(AComponent: TComponent; operation: TOperation);
 begin
   inherited;
 end;
@@ -543,7 +546,7 @@ end;
 
 procedure TdbgpGetCurrent.ShowFile; //this function must Synchronize
 begin
-  DBGP.ShowFile(FCurKey, FCurFile, FCurLine);
+  DBGP.ShowFile(FCurKey, FCurFile, FCurLine, FCallStack);
 end;
 
 procedure TdbgpConnection.DoProcess;
@@ -654,7 +657,7 @@ begin
     try
       Reader.Start;
       Reader.Nodes := Result;
-      Reader.ParseLine(s, 0);
+      Reader.Parse(s);
     finally
       Reader.Free;
     end;
@@ -752,7 +755,7 @@ begin
   inherited;
   FLocalSpool.Add(TdbgpInit.Create);
   FLocalSpool.Add(TdbgpFeatureSet.CreateBy('show_hidden', '1'));
-  FLocalSpool.Add(TdbgpFeatureSet.CreateBy('max_depth', '3'));
+  FLocalSpool.Add(TdbgpFeatureSet.CreateBy('max_depth', IntToStr(Server.StackDepth)));
   FLocalSpool.Add(TdbgpFeatureSet.CreateBy('max_children', '100'));
 
   FLocalSpool.Add(TdbgpSetBreakpoints.Create);
@@ -979,15 +982,39 @@ end;
 { TdbgpGetCurrent }
 
 function TdbgpGetCurrent.GetCommand: string;
+var
+  aDepth: Integer;
 begin
+  aDepth := Connection.Server.StackDepth;
   Result := 'stack_get';
+{  if aDepth > 0 then
+    Result := Result + ' -d ' + IntToStr(aDepth);}
 end;
 
 procedure TdbgpGetCurrent.Process(Respond: TdbgpRespond);
+var
+  i: Integer;
+  s: string;
 begin
   inherited;
+(*
+  <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="http://xdebug.org/dbgp/xdebug" command="stack_get" transaction_id="8">
+  <stack where="App-&gt;__construct" level="0" type="file" filename="file:///W:/web/sites/abrash.com/websale/fw/core/ui/app.php" lineno="200"></stack>
+  <stack where="{main}" level="1" type="file" filename="file:///W:/web/sites/abrash.com/websale/index.php" lineno="8"></stack>
+  </response>
+*)
   if Respond.Root.Items.Count > 0 then
   begin
+    FCallStack := TCallStackItems.Create;
+    try
+      for i := 0 to Respond.Root.Items.Count -1 do
+      begin
+        if SameText(Respond.Root.Items[i].Name, 'stack') then
+          FCallStack.Add(URIToFileName(Respond.Root.Items[i].Attributes.Values['filename']), StrToIntDef(Respond.Root.Items[i].Attributes.Values['lineno'], 0));
+      end;
+    finally
+    end;
+
     FCurFile := URIToFileName(Respond.GetAttribute('stack', 'filename'));
     if FCurFile <> '' then
     begin
@@ -1006,6 +1033,12 @@ procedure TdbgpGetCurrent.Created;
 begin
   inherited;
   Flags := Flags + [dbgpafCheckError];
+end;
+
+destructor TdbgpGetCurrent.Destroy;
+begin
+  FreeAndNil(FCallStack);
+  inherited Destroy;
 end;
 
 { TdbgpRun }
@@ -1257,11 +1290,6 @@ begin
   end;
 end;
 
-procedure TdbgpBreakpoints.SetItem(Index: integer; const Value: TdbgpBreakpoint);
-begin
-  inherited Items[Index] := Value;
-end;
-
 procedure TdbgpBreakpoints.Toggle(FileName: string; Line: integer);
 var
   aBreakpoint: TdbgpBreakpoint;
@@ -1382,36 +1410,12 @@ begin
   Result := 'breakpoint_remove -d ' + IntToStr(BreakpointID);
 end;
 
-procedure TdbgpRemoveBreakpoint.Process(Respond: TdbgpRespond);
-begin
-  inherited;
-end;
-
-{ TdbgpGetWatchInstance }
-
-procedure TdbgpGetWatchInstance.Process(Respond: TdbgpRespond);
-begin
-  inherited;
-end;
-
-destructor TdbgpGetWatchInstance.Destroy;
-begin
-  inherited;
-end;
-
 { TdbgpConnectionSpool }
 
 function TdbgpConnectionSpool.Add(Action: TdbgpAction): integer;
 begin
   Result := inherited Add(Action);
   Action.FConnection := FConnection;
-end;
-
-{ TdbgpBreakpoint }
-
-constructor TdbgpBreakpoint.Create;
-begin
-  inherited;
 end;
 
 {$IFDEF SAVELOG}

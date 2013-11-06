@@ -156,7 +156,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item9>
     </RequiredPackages>
-    <Units Count="30">
+    <Units Count="31">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -360,6 +360,11 @@
         <IsPartOfProject Value="True"/>
         <UnitName Value="mneCSVClasses"/>
       </Unit29>
+      <Unit30>
+        <Filename Value="..\lib\DebugClasses.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="DebugClasses"/>
+      </Unit30>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
