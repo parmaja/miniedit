@@ -35,14 +35,14 @@ uses
   {$ifdef WINDOWS}
   TSVN_SCM, TGIT_SCM,
   {$endif}
-  ntvTabSets, mneRun, Registry, SynEditPlugins,
+  ntvTabSets, mneRun, Registry, SynEditPlugins, mnStreams,
   //Addons
   {$ifdef Windows}
   mneAssociateForm,
   {$endif}
   mnePHPIniForm,
   //end of addons
-  mneAddons, IniFiles, simpleipc, mnUtils, ntvTabs, ntvPageControls;
+  mneAddons, IniFiles, mnFields, simpleipc, mnUtils, ntvTabs, ntvPageControls;
 
 {$i '..\lib\mne.inc'}
 

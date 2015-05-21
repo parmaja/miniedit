@@ -10,6 +10,11 @@ program mne;
  * @url       http://sourceforge.net/projects/minilib
  *}
 
+{
+  good fonts
+  http://www.lowing.org/fonts/
+}
+
 uses
   {$IFDEF UNIX}
   cthreads,
@@ -113,6 +118,7 @@ begin
 end;
 
 begin
+
   if not AnotherInstance then
   begin
     Application.BidiMode := bdLeftToRight;

@@ -17,8 +17,9 @@
       <UseVersionInfo Value="True"/>
       <AutoIncrementBuild Value="True"/>
       <MajorVersionNr Value="1"/>
+      <MinorVersionNr Value="1"/>
       <RevisionNr Value="2"/>
-      <BuildNr Value="10"/>
+      <BuildNr Value="21"/>
       <Language Value=""/>
       <CharSet Value=""/>
       <StringTable ProductVersion=""/>
@@ -53,10 +54,6 @@
               <ShowNotes Value="False"/>
               <ShowHints Value="False"/>
             </Verbosity>
-            <CompilerMessages>
-              <UseMsgFile Value="True"/>
-            </CompilerMessages>
-            <CompilerPath Value="$(CompPath)"/>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -99,9 +96,8 @@
               <ShowHints Value="False"/>
             </Verbosity>
             <CompilerMessages>
-              <UseMsgFile Value="True"/>
+              <IgnoredMessages idx5024="True"/>
             </CompilerMessages>
-            <CompilerPath Value="$(CompPath)"/>
           </Other>
         </CompilerOptions>
       </Item3>
@@ -167,12 +163,10 @@
         <ComponentName Value="SearchForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="SearchForms"/>
       </Unit1>
       <Unit2>
         <Filename Value="..\editor\EditorProfiles.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="EditorProfiles"/>
       </Unit2>
       <Unit3>
         <Filename Value="..\editor\SelectFiles.pas"/>
@@ -180,7 +174,6 @@
         <ComponentName Value="SelectFileForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="SelectFiles"/>
       </Unit3>
       <Unit4>
         <Filename Value="AboutForms.pas"/>
@@ -188,7 +181,6 @@
         <ComponentName Value="AboutForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="AboutForms"/>
       </Unit4>
       <Unit5>
         <Filename Value="..\editor\GotoForms.pas"/>
@@ -196,12 +188,10 @@
         <ComponentName Value="GotoLineForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="GotoForms"/>
       </Unit5>
       <Unit6>
         <Filename Value="..\lib\dbgpServers.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="dbgpServers"/>
       </Unit6>
       <Unit7>
         <Filename Value="..\editor\SearchInFilesForms.pas"/>
@@ -209,7 +199,6 @@
         <ComponentName Value="SearchInFilesForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="SearchInFilesForms"/>
       </Unit7>
       <Unit8>
         <Filename Value="..\editor\SearchProgressForms.pas"/>
@@ -217,7 +206,6 @@
         <ComponentName Value="SearchProgressForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="SearchProgressForms"/>
       </Unit8>
       <Unit9>
         <Filename Value="mneBreakpoints.pas"/>
@@ -225,7 +213,6 @@
         <ComponentName Value="BreakpointsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="mneBreakpoints"/>
       </Unit9>
       <Unit10>
         <Filename Value="mnePHPIniForm.pas"/>
@@ -233,7 +220,6 @@
         <ComponentName Value="PHPIniForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="mnePHPIniForm"/>
       </Unit10>
       <Unit11>
         <Filename Value="mneProjectForms.pas"/>
@@ -241,7 +227,6 @@
         <ComponentName Value="ManageProjectsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="mneProjectForms"/>
       </Unit11>
       <Unit12>
         <Filename Value="mneProjectOptions.pas"/>
@@ -249,12 +234,10 @@
         <ComponentName Value="ProjectForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="mneProjectOptions"/>
       </Unit12>
       <Unit13>
         <Filename Value="..\editor\EditorDebugger.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="EditorDebugger"/>
       </Unit13>
       <Unit14>
         <Filename Value="..\addons\mneAssociateForm.pas"/>
@@ -262,7 +245,6 @@
         <ComponentName Value="AssociateForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="mneAssociateForm"/>
       </Unit14>
       <Unit15>
         <Filename Value="mnePHPConfigForms.pas"/>
@@ -270,12 +252,10 @@
         <ComponentName Value="PHPConfigForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="mnePHPConfigForms"/>
       </Unit15>
       <Unit16>
         <Filename Value="..\editor\PHP_xDebug.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="PHP_xDebug"/>
       </Unit16>
       <Unit17>
         <Filename Value="..\editor\SelectList.pas"/>
@@ -283,7 +263,6 @@
         <ComponentName Value="SelectListForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="SelectList"/>
       </Unit17>
       <Unit18>
         <Filename Value="mneResources.pas"/>
@@ -291,12 +270,10 @@
         <ComponentName Value="EditorResource"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
-        <UnitName Value="mneResources"/>
       </Unit18>
       <Unit19>
         <Filename Value="..\editor\EditorEngine.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="EditorEngine"/>
       </Unit19>
       <Unit20>
         <Filename Value="MainUnit.pas"/>
@@ -304,7 +281,6 @@
         <ComponentName Value="MainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="MainUnit"/>
       </Unit20>
       <Unit21>
         <Filename Value="..\editor\EditorOptions.pas"/>
@@ -312,7 +288,6 @@
         <ComponentName Value="EditorOptionsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="EditorOptions"/>
       </Unit21>
       <Unit22>
         <Filename Value="mneSetups.pas"/>
@@ -320,7 +295,6 @@
         <ComponentName Value="EditorSetupForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="mneSetups"/>
       </Unit22>
       <Unit23>
         <Filename Value="mneSettings.pas"/>
@@ -328,42 +302,34 @@
         <ComponentName Value="EditorSettingForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-        <UnitName Value="mneSettings"/>
       </Unit23>
       <Unit24>
         <Filename Value="..\editor\EditorClasses.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="EditorClasses"/>
       </Unit24>
       <Unit25>
         <Filename Value="mneSARDClasses.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="mneSARDClasses"/>
       </Unit25>
       <Unit26>
         <Filename Value="mnePHPClasses.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="mnePHPClasses"/>
       </Unit26>
       <Unit27>
         <Filename Value="mneClasses.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="mneClasses"/>
       </Unit27>
       <Unit28>
         <Filename Value="mnePASClasses.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="mnePASClasses"/>
       </Unit28>
       <Unit29>
         <Filename Value="mneCSVClasses.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="mneCSVClasses"/>
       </Unit29>
       <Unit30>
         <Filename Value="..\lib\DebugClasses.pas"/>
         <IsPartOfProject Value="True"/>
-        <UnitName Value="DebugClasses"/>
       </Unit30>
     </Units>
   </ProjectOptions>
@@ -390,10 +356,6 @@
         <ShowNotes Value="False"/>
         <ShowHints Value="False"/>
       </Verbosity>
-      <CompilerMessages>
-        <UseMsgFile Value="True"/>
-      </CompilerMessages>
-      <CompilerPath Value="$(CompPath)"/>
     </Other>
   </CompilerOptions>
   <Debugging>

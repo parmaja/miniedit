@@ -503,7 +503,7 @@ initialization
     Groups.Add(TPHPFile, 'php', 'PHP Files', 'php/html', ['php', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
     Groups.Add(TXHTMLFile, 'html', 'HTML Files', 'php/html', ['html', 'xhtml', 'htm', 'tpl'], [fgkAssociated, fgkMember, fgkBrowsable]);
     Groups.Add(TCssFile, 'css', 'CSS Files', 'css', ['css'], [fgkAssociated, fgkMember, fgkBrowsable]);
-    Groups.Add(TJSFile,'js', 'Java Script Files', 'js', ['js'], [fgkAssociated, fgkMember, fgkBrowsable]);
+    Groups.Add(TJSFile,'js', 'Java Script Files', 'js', ['js'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable]);
 
     Perspectives.Add(TPHPPerspective);
   end;
