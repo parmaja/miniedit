@@ -1,14 +1,14 @@
 object MainForm: TMainForm
-  Left = 199
-  Height = 416
-  Top = 158
-  Width = 665
+  Left = 288
+  Height = 528
+  Top = 131
+  Width = 772
   AllowDropFiles = True
   Caption = 'Mini Edit'
-  ClientHeight = 396
-  ClientWidth = 665
+  ClientHeight = 508
+  ClientWidth = 772
   Font.Height = -11
-  Font.Name = 'MS Sans Serif'
+  Font.Name = 'Tahoma'
   Menu = MainMenu
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
@@ -22,7 +22,7 @@ object MainForm: TMainForm
     Left = 0
     Height = 29
     Top = 0
-    Width = 665
+    Width = 772
     AutoSize = True
     EdgeBorders = [ebTop, ebBottom]
     Images = EditorResource.ToolbarImageList
@@ -31,7 +31,7 @@ object MainForm: TMainForm
       Left = 1
       Height = 23
       Top = 2
-      Width = 664
+      Width = 771
       AutoSize = True
       ButtonHeight = 23
       ButtonWidth = 75
@@ -103,13 +103,13 @@ object MainForm: TMainForm
   end
   object FoldersPnl: TPanel
     Left = 0
-    Height = 210
+    Height = 322
     Top = 29
     Width = 200
     Align = alLeft
     BevelOuter = bvNone
     BorderWidth = 5
-    ClientHeight = 210
+    ClientHeight = 322
     ClientWidth = 200
     Constraints.MinHeight = 60
     TabOrder = 0
@@ -209,7 +209,7 @@ object MainForm: TMainForm
     end
     object FileList: TListView
       Left = 5
-      Height = 181
+      Height = 293
       Top = 24
       Width = 190
       Align = alClient
@@ -234,36 +234,36 @@ object MainForm: TMainForm
   end
   object ClientPnl: TPanel
     Left = 207
-    Height = 210
+    Height = 322
     Top = 29
-    Width = 458
+    Width = 565
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 210
-    ClientWidth = 458
+    ClientHeight = 322
+    ClientWidth = 565
     TabOrder = 1
     object EditorsPnl: TPanel
       Left = 0
-      Height = 55
+      Height = 167
       Top = 0
-      Width = 458
+      Width = 565
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 55
-      ClientWidth = 458
+      ClientHeight = 167
+      ClientWidth = 565
       FullRepaint = False
       TabOrder = 0
       object FileHeaderPanel: TPanel
         Left = 0
         Height = 23
         Top = 0
-        Width = 458
+        Width = 565
         Align = alTop
         Alignment = taLeftJustify
         BevelOuter = bvNone
         BorderWidth = 2
         ClientHeight = 23
-        ClientWidth = 458
+        ClientWidth = 565
         Color = 13027052
         Font.Height = -11
         Font.Name = 'MS Sans Serif'
@@ -272,19 +272,13 @@ object MainForm: TMainForm
         PopupMenu = FilePopupMenu
         TabOrder = 0
         Visible = False
-        object Bevel1: TBevel
-          Left = 74
-          Height = 19
-          Top = 2
-          Width = 365
-          Align = alClient
-        end
         object FileNameLbl: TLabel
-          Left = 77
-          Height = 13
+          Left = 91
+          Height = 19
           Hint = 'File name'
-          Top = 4
-          Width = 45
+          Top = 2
+          Width = 455
+          Align = alClient
           Caption = 'File name'
           Layout = tlCenter
           ParentColor = False
@@ -303,7 +297,7 @@ object MainForm: TMainForm
           PopupMenu = FileModeMenu
         end
         object FileCloseBtn: TSpeedButton
-          Left = 439
+          Left = 546
           Height = 19
           Hint = 'Close file'
           Top = 2
@@ -332,24 +326,68 @@ object MainForm: TMainForm
           OnClick = FileCloseBtnClick
           ParentFont = False
         end
+        object BugSignBtn: TSpeedButton
+          Left = 74
+          Height = 19
+          Hint = 'Close file'
+          Top = 2
+          Width = 17
+          Align = alLeft
+          Flat = True
+          Font.CharSet = SYMBOL_CHARSET
+          Font.Color = clWhite
+          Font.Height = -11
+          Font.Name = 'Webdings'
+          Glyph.Data = {
+            36030000424D3603000000000000360000002800000010000000100000000100
+            1800000000000003000000000000000000000000000000000000FF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF007394FF
+            00FFFF00FF007394FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFAD214AFF00FFFF00FFAD214AFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFAD214A007394FF00FF007394AD214A00
+            7394007394AD214A007394FF00FF007394AD214AFF00FFFF00FFFF00FFFF00FF
+            FF00FFAD214A007394007394000000000000000000000000007394007394AD21
+            4AFF00FFFF00FFFF00FFFF00FFAD214A007394FF00FFAD214A000000008CBD00
+            8CBD007394007394000000AD214AFF00FF007394AD214AFF00FFFF00FFFF00FF
+            AD214A00739400000000A5D600A5D6008CBD008CBD0073940073940000000073
+            94AD214AFF00FFFF00FFFF00FFFF00FFFF00FFAD214A00000000C6FF00A5D600
+            8CBD008CBD008CBD007394000000AD214AFF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FF00000000C6FF00A5D6008CBD008CBD008CBD008CBD000000FF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00000000000000C6FF00C6FF00
+            A5D600A5D600A5D6008CBD000000000000FF00FFFF00FFFF00FFFF00FFFF00FF
+            000000FFFFFFFFFFFF00000000C6FF00C6FF00C6FF00A5D6000000FFFFFFFFFF
+            FF000000FF00FFFF00FFFF00FFFF00FF000000AD214AFFFFFFFFFFFF00000000
+            0000000000000000FFFFFFFFFFFFAD214A000000FF00FFFF00FFFF00FFFF00FF
+            000000737373AD214AFFFFFFFFFFFF000000FF00FF000000FFFFFFAD214A7373
+            73000000FF00FFFF00FFFF00FFFF00FFFF00FF000000000000000000000000FF
+            00FFFF00FFFF00FF000000000000000000FF00FFFF00FFFF00FFFF00FFFF00FF
+            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
+            FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
+            00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
+          }
+          Layout = blGlyphTop
+          Visible = False
+          ParentFont = False
+        end
       end
       object QuickFindPnl: TPanel
         Left = 0
         Height = 29
-        Top = 26
-        Width = 458
+        Top = 138
+        Width = 565
         Align = alBottom
         BevelInner = bvSpace
         BevelOuter = bvLowered
         ClientHeight = 29
-        ClientWidth = 458
+        ClientWidth = 565
         TabOrder = 1
         Visible = False
         object Label2: TLabel
           Left = 32
           Height = 13
           Top = 8
-          Width = 23
+          Width = 24
           Caption = 'Find:'
           ParentColor = False
         end
@@ -439,12 +477,13 @@ object MainForm: TMainForm
       end
       object FileTabs: TntvTabSet
         Left = 0
-        Height = 24
+        Height = 23
         Top = 23
-        Width = 458
+        Width = 565
         StoreIndex = False
         ShowButtons = False
         ShowBorder = False
+        AlignTabs = talBottom
         Items = <>
         OnTabSelected = FileTabsTabSelected
         Align = alTop
@@ -455,8 +494,8 @@ object MainForm: TMainForm
     inline OutputEdit: TSynEdit
       Left = 0
       Height = 149
-      Top = 61
-      Width = 458
+      Top = 173
+      Width = 565
       Align = alBottom
       Constraints.MinHeight = 60
       Font.Height = -13
@@ -606,8 +645,8 @@ object MainForm: TMainForm
       Cursor = crVSplit
       Left = 0
       Height = 6
-      Top = 55
-      Width = 458
+      Top = 167
+      Width = 565
       ResizeControl = OutputEdit
       Visible = False
     end
@@ -615,19 +654,19 @@ object MainForm: TMainForm
   object StatusPanel: TPanel
     Left = 0
     Height = 21
-    Top = 375
-    Width = 665
+    Top = 487
+    Width = 772
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 21
-    ClientWidth = 665
+    ClientWidth = 772
     TabOrder = 2
     object MessagePnl: TPanel
       Left = 80
       Height = 19
       Hint = 'Message'
       Top = 1
-      Width = 377
+      Width = 484
       Alignment = taLeftJustify
       Anchors = [akLeft, akRight, akBottom]
       BevelOuter = bvLowered
@@ -635,7 +674,7 @@ object MainForm: TMainForm
       TabOrder = 0
     end
     object DebugPnl: TPanel
-      Left = 563
+      Left = 670
       Height = 19
       Hint = 'Debug Session'
       Top = 1
@@ -647,7 +686,7 @@ object MainForm: TMainForm
       TabOrder = 1
     end
     object CursorPnl: TPanel
-      Left = 481
+      Left = 588
       Height = 19
       Hint = 'Caret Position'
       Top = 1
@@ -658,7 +697,7 @@ object MainForm: TMainForm
       TabOrder = 2
     end
     object StatePnl: TPanel
-      Left = 459
+      Left = 566
       Height = 19
       Hint = 'State'
       Top = 1
@@ -683,8 +722,8 @@ object MainForm: TMainForm
   object MessagesTabs: TntvPageControl
     Left = 0
     Height = 127
-    Top = 248
-    Width = 665
+    Top = 360
+    Width = 772
     StoreIndex = False
     ShowButtons = False
     ShowBorder = False
@@ -720,82 +759,11 @@ object MainForm: TMainForm
     Caption = 'Call Stack'
     Constraints.MinHeight = 60
     TabOrder = 4
-    object MessageList: TListView
-      Left = 3
-      Height = 103
-      Top = 21
-      Width = 659
-      Align = alClient
-      Columns = <      
-        item
-          Caption = 'Type'
-          Width = 100
-        end      
-        item
-          AutoSize = True
-          Caption = 'Message'
-          Width = 555
-        end      
-        item
-          Caption = 'File'
-          Width = 300
-        end      
-        item
-          Caption = 'Line'
-          Width = 433
-        end>
-      ColumnClick = False
-      Font.CharSet = ARABIC_CHARSET
-      Font.Height = -12
-      Font.Name = 'Courier New'
-      ParentFont = False
-      PopupMenu = MessagesPopup
-      ReadOnly = True
-      RowSelect = True
-      TabStop = False
-      TabOrder = 1
-      ViewStyle = vsReport
-      OnDblClick = MessageListDblClick
-      OnKeyDown = WatchListKeyDown
-    end
-    object WatchList: TListView
-      Left = 3
-      Height = 103
-      Top = 21
-      Width = 659
-      Align = alClient
-      Columns = <      
-        item
-          Caption = 'Variable'
-          Width = 200
-        end      
-        item
-          Caption = 'Type'
-          Width = 100
-        end      
-        item
-          AutoSize = True
-          Caption = 'Value'
-          Width = 355
-        end>
-      ColumnClick = False
-      Font.CharSet = ARABIC_CHARSET
-      Font.Height = -12
-      Font.Name = 'Courier New'
-      ParentFont = False
-      PopupMenu = WatchesPopupMenu
-      ReadOnly = True
-      RowSelect = True
-      TabStop = False
-      TabOrder = 2
-      ViewStyle = vsReport
-      OnKeyDown = WatchListKeyDown
-    end
     object CallStackList: TListView
       Left = 3
-      Height = 103
-      Top = 21
-      Width = 659
+      Height = 101
+      Top = 23
+      Width = 766
       Align = alClient
       Columns = <      
         item
@@ -819,11 +787,82 @@ object MainForm: TMainForm
       ViewStyle = vsReport
       OnDblClick = CallStackListDblClick
     end
+    object WatchList: TListView
+      Left = 3
+      Height = 101
+      Top = 23
+      Width = 766
+      Align = alClient
+      Columns = <      
+        item
+          Caption = 'Variable'
+          Width = 200
+        end      
+        item
+          Caption = 'Type'
+          Width = 100
+        end      
+        item
+          AutoSize = True
+          Caption = 'Value'
+          Width = 462
+        end>
+      ColumnClick = False
+      Font.CharSet = ARABIC_CHARSET
+      Font.Height = -12
+      Font.Name = 'Courier New'
+      ParentFont = False
+      PopupMenu = WatchesPopupMenu
+      ReadOnly = True
+      RowSelect = True
+      TabStop = False
+      TabOrder = 2
+      ViewStyle = vsReport
+      OnKeyDown = WatchListKeyDown
+    end
+    object MessageList: TListView
+      Left = 3
+      Height = 101
+      Top = 23
+      Width = 766
+      Align = alClient
+      Columns = <      
+        item
+          Caption = 'Type'
+          Width = 100
+        end      
+        item
+          AutoSize = True
+          Caption = 'Message'
+          Width = 662
+        end      
+        item
+          Caption = 'File'
+          Width = 300
+        end      
+        item
+          Caption = 'Line'
+          Width = 433
+        end>
+      ColumnClick = False
+      Font.CharSet = ARABIC_CHARSET
+      Font.Height = -12
+      Font.Name = 'Courier New'
+      ParentFont = False
+      PopupMenu = MessagesPopup
+      ReadOnly = True
+      RowSelect = True
+      TabStop = False
+      TabOrder = 1
+      ViewStyle = vsReport
+      OnDblClick = MessageListDblClick
+      OnKeyDown = WatchListKeyDown
+    end
     object SearchList: TListView
       Left = 3
-      Height = 103
-      Top = 21
-      Width = 659
+      Height = 101
+      Top = 23
+      Width = 766
       Align = alClient
       Columns = <      
         item
@@ -837,7 +876,7 @@ object MainForm: TMainForm
         item
           AutoSize = True
           Caption = 'Result'
-          Width = 175
+          Width = 282
         end>
       ColumnClick = False
       Font.CharSet = ARABIC_CHARSET
@@ -859,14 +898,14 @@ object MainForm: TMainForm
     Cursor = crVSplit
     Left = 0
     Height = 9
-    Top = 239
-    Width = 665
+    Top = 351
+    Width = 772
     ResizeControl = MessagesTabs
   end
   object FoldersSpl: TntvSplitter
     Cursor = crHSplit
     Left = 200
-    Height = 210
+    Height = 322
     Top = 29
     Width = 7
     ResizeControl = FoldersPnl
@@ -2009,8 +2048,8 @@ object MainForm: TMainForm
     ServerID = 'Parmaja.MiniEdit'
     Global = True
     OnMessage = IPCServerMessage
-    left = 358
-    top = 208
+    left = 97
+    top = 270
   end
   object ApplicationProperties: TApplicationProperties
     OnActivate = ApplicationPropertiesActivate

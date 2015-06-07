@@ -32,6 +32,7 @@ type
   { TEditorOptionsForm }
 
   TEditorOptionsForm = class(TForm)
+    NoAntialiasingChk: TCheckBox;
     Bevel1: TBevel;
     BracketHighlightChk: TCheckBox;
     DefBackgroundCbo: TColorBox;
@@ -120,6 +121,7 @@ type
     GroupCbo: TComboBox;
     UnderlineChk: TCheckBox;
     WordWrapChk: TCheckBox;
+    procedure NoAntialiasingChkChange(Sender: TObject);
     procedure BackgroundCboSelect(Sender: TObject);
     procedure DefaultBackgroundCboSelect(Sender: TObject);
     procedure DefaultForegroundCboSelect(Sender: TObject);
@@ -180,7 +182,7 @@ begin
       GroupCbo.Items.AddObject(aHighlighter.GetLanguageName, aHighlighter);
       if SameText(Select, aHighlighter.GetLanguageName) then
         n := i;
-      Profile.Highlighters.AssignTo(aHighlighter);
+//      Profile.Highlighters.AssignTo(aHighlighter); //Use map, TODO
     end;
     GroupCbo.ItemIndex := n;
     ApplyGroup;
@@ -192,9 +194,9 @@ begin
     if Result then
     begin
       PutData;
-      Profile.Highlighters.Clear;
-      for i := 0 to GroupCbo.Items.Count - 1 do
-        Profile.Highlighters.Assign(TSynCustomHighlighter(GroupCbo.Items.Objects[i]));
+      //Profile.Highlighters.Clear;
+      //for i := 0 to GroupCbo.Items.Count - 1 do
+        //Profile.Highlighters.Assign(TSynCustomHighlighter(GroupCbo.Items.Objects[i]));
     end;
   end
   else
@@ -228,8 +230,16 @@ begin
   LineSpacingEdit.Text := IntToStr(FProfile.ExtraLineSpacing);
   TabWidthEdit.Text := IntToStr(FProfile.TabWidth);
   //Font
-  SampleEdit.Font.Assign(FProfile.Font);
-  FontLbl.Caption := FontLbl.Font.Name + ' ' + IntToStr(FontLbl.Font.Size) + 'pt';
+  SampleEdit.Font.Name := FProfile.FontName;
+  SampleEdit.Font.Size := FProfile.FontSize;
+
+  NoAntialiasingChk.Checked := FProfile.FontNoAntialiasing;
+  if FProfile.FontNoAntialiasing then
+    SampleEdit.Font.Quality := fqNonAntialiased
+  else
+    SampleEdit.Font.Quality := fqDefault;
+
+  FontLbl.Caption := FontLbl.Font.Name + ' ' + IntToStr(FontLbl.Font.Size) + ' pt';
   //Options
   AutoIndentChk.Checked := eoAutoIndent in FProfile.Options;
   TabIndentChk.Checked := eoTabIndent in FProfile.Options;
@@ -307,7 +317,9 @@ begin
   FProfile.ExtraLineSpacing := StrToIntDef(LineSpacingEdit.Text, 0);
   FProfile.TabWidth := StrToIntDef(TabWidthEdit.Text, 8);
   //Font
-  FProfile.Font.Assign(SampleEdit.Font);
+  FProfile.FontName := SampleEdit.Font.Name;
+  FProfile.FontSize := SampleEdit.Font.Size;
+  FProfile.FontNoAntialiasing := SampleEdit.Font.Quality = fqNonAntialiased;
   //Options
   vOptions := FProfile.Options; //Keep old values for unsupported options
   vExtOptions := FProfile.ExtOptions;
@@ -360,6 +372,14 @@ begin
   ApplyElement;
 end;
 
+procedure TEditorOptionsForm.NoAntialiasingChkChange(Sender: TObject);
+begin
+  if NoAntialiasingChk.Checked then
+  SampleEdit.Font.Quality := fqNonAntialiased
+  else
+    SampleEdit.Font.Quality := fqDefault;
+end;
+
 procedure TEditorOptionsForm.DefaultBackgroundCboSelect(Sender: TObject);
 begin
   ApplyElement;
@@ -380,10 +400,12 @@ end;
 procedure TEditorOptionsForm.FontBtnClick(Sender: TObject);
 begin
   FontDialog.Font.Assign(SampleEdit.Font);
+  FontDialog.Options := FontDialog.Options - [fdNoStyleSel];
   if FontDialog.Execute then
   begin
-    SampleEdit.Font.Assign(FontDialog.Font);
-    FontLbl.Caption := FontLbl.Font.Name + ' ' + IntToStr(FontLbl.Font.Size) + 'pt';
+    SampleEdit.Font.Name := FontDialog.Font.Name;
+    SampleEdit.Font.Size := FontDialog.Font.Size;
+    FontLbl.Caption := FontLbl.Font.Name + ' ' + IntToStr(FontLbl.Font.Size) + ' pt';
     ApplyElement;
   end;
 end;

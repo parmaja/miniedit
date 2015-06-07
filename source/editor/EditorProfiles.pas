@@ -50,32 +50,6 @@ type
     property Attribute[Index: string]: TAttributeProfile read GetAttribute; default;
   end;
 
-  THighlighterProfile = class(TCollectionItem)
-  private
-    FName: string;
-    FAttributes: TAttributesProfile;
-  public
-    constructor Create(ACollection: TCollection); override;
-    destructor Destroy; override;
-    procedure AssignTo(Dest: TPersistent); override;
-    procedure Assign(Source: TPersistent); override;
-  published
-    property Name: string read FName write FName;
-    property Attributes: TAttributesProfile read FAttributes;
-  end;
-
-  THighlightersProfile = class(TCollection)
-  private
-    function GetItem(Index: Integer): THighlighterProfile;
-    procedure SetItem(Index: Integer; const Value: THighlighterProfile);
-    function GetHighlighter(Index: string): THighlighterProfile;
-  public
-    procedure AssignTo(Dest: TPersistent); override;
-    procedure Assign(Source: TPersistent); override;
-    property Items[Index: Integer]: THighlighterProfile read GetItem write SetItem;
-    property Highlighter[Index: string]: THighlighterProfile read GetHighlighter; default;
-  end;
-
   { TGutterOptions }
 
   TGutterOptions = class(TPersistent)
@@ -137,16 +111,17 @@ type
     FRightEdge: Integer;
     FSelectedColor: TSynSelectedColor;
     FRightEdgeColor: TColor;
-    FFont: TFont;
+    FFontName: String;
+    FFontSize: Integer;
+    FFontNoAntialiasing: Boolean;
     FBookmarks: TSynBookMarkOpt;
     FOverwriteCaret: TSynEditCaretType;
     FInsertCaret: TSynEditCaretType;
     FOptions: TSynEditorOptions;
     FGutterOptions: TGutterOptions;
     FInsertMode: Boolean;
-    FHighlighters: THighlightersProfile;
+    FAttributes: TAttributesProfile;
     procedure SetExtOptions(const AValue: TSynEditorOptions2);
-    procedure SetFont(const Value: TFont);
     procedure SetOptions(const Value: TSynEditorOptions);
   protected
     procedure GetChildren(Proc: TGetChildProc; Root: TComponent); override;
@@ -159,10 +134,12 @@ type
     procedure AssignTo(Dest: TPersistent); override;
     procedure Reset;
   published
-    property Highlighters: THighlightersProfile read FHighlighters;
+    property Attributes: TAttributesProfile read FAttributes;
     property Options: TSynEditorOptions read FOptions write SetOptions default cDefaultOptions;
     property ExtOptions: TSynEditorOptions2 read FExtOptions write SetExtOptions default [];
-    property Font: TFont read FFont write SetFont;
+    property FontName: String read FFontName write FFontName;
+    property FontSize: Integer read FFontSize write FFontSize;
+    property FontNoAntialiasing: Boolean read FFontNoAntialiasing write FFontNoAntialiasing default False;
     property Gutter: TGutterOptions read FGutterOptions write FGutterOptions;
     property SelectedColor: TSynSelectedColor read FSelectedColor write FSelectedColor;
     property BackgroundColor: TColor read FBackgroundColor write FBackgroundColor default clWindow;
@@ -189,7 +166,10 @@ procedure TEditorProfile.Assign(Source: TPersistent);
 begin
   if Assigned(Source) and (Source is TCustomSynEdit) then
   begin
-    Self.Font.Assign(TCustomSynEdit(Source).Font);
+    Self.FontName := TCustomSynEdit(Source).Font.Name;
+    Self.FontSize := TCustomSynEdit(Source).Font.Size;
+    Self.FontNoAntialiasing := TCustomSynEdit(Source).Font.Quality = fqNonAntialiased;
+
     Self.Gutter.Assign(TCustomSynEdit(Source).Gutter);
     Self.SelectedColor.Assign(TCustomSynEdit(Source).SelectedColor);
 
@@ -213,7 +193,13 @@ var
 begin
   if Assigned(Dest) and (Dest is TCustomSynEdit) then
   begin
-    TCustomSynEdit(Dest).Font.Assign(Self.Font);
+    TCustomSynEdit(Dest).Font.Name := Self.FontName;
+    TCustomSynEdit(Dest).Font.Size := Self.FontSize;
+    if Self.FontNoAntialiasing then
+      TCustomSynEdit(Dest).Font.Quality := fqNonAntialiased
+    else
+      TCustomSynEdit(Dest).Font.Quality := fqDefault;
+
     if TCustomSynEdit(Dest).Highlighter = nil then
     begin
       TCustomSynEdit(Dest).Font.Color := ForegroundColor;
@@ -238,8 +224,6 @@ begin
         TCustomSynEdit(Dest).UnfoldAll;
     end;
 
-    TCustomSynEdit(Dest).Font.Quality := fqNonAntialiased; //not work
-
     TCustomSynEdit(Dest).Options := Self.Options;
     TCustomSynEdit(Dest).ExtraLineSpacing := Self.ExtraLineSpacing;
     TCustomSynEdit(Dest).InsertCaret := Self.InsertCaret;
@@ -260,8 +244,7 @@ begin
   FBookmarks := TSynBookMarkOpt.Create(Self);
   FGutterOptions := TGutterOptions.Create;//ToDO check the Create params
   FSelectedColor := TSynSelectedColor.Create;
-  FFont := TFont.Create;
-  FHighlighters := THighlightersProfile.Create(THighlighterProfile);
+  FAttributes := TAttributesProfile.Create(TAttributeProfile);
   FBackgroundColor := clWindow;
   FForegroundColor := clWindowText;
   CodeFolding := False;
@@ -273,8 +256,7 @@ begin
   FBookMarks.Free;
   FGutterOptions.Free;
   FSelectedColor.Free;
-  FHighlighters.Free;
-  FFont.Free;
+  FAttributes.Free;
   inherited;
 end;
 
@@ -305,8 +287,9 @@ begin
   Gutter.Reset;
   FSelectedColor.Foreground := clHighlightText;
   FSelectedColor.Background := clHighlight;
-  FFont.Name := 'Courier New';
-  FFont.Size := 10;
+  FFontName := 'Courier New';
+  FFontSize := 10;
+  FFontNoAntialiasing := False;
   Options := cDefaultOptions;
   ExtraLineSpacing := 0;
   InsertCaret := ctVerticalLine;
@@ -318,11 +301,6 @@ begin
   TabWidth := 2;
 end;
 
-procedure TEditorProfile.SetFont(const Value: TFont);
-begin
-  FFont.Assign(Value);
-end;
-
 procedure TEditorProfile.SetExtOptions(const AValue: TSynEditorOptions2);
 begin
   if FExtOptions =AValue then exit;
@@ -332,119 +310,6 @@ end;
 procedure TEditorProfile.SetOptions(const Value: TSynEditorOptions);
 begin
   FOptions := Value;
-end;
-
-{ THighlightersProfile }
-
-procedure THighlightersProfile.Assign(Source: TPersistent);
-var
-  Profile: THighlighterProfile;
-begin
-  if Source is TSynCustomHighlighter then
-  begin
-    Profile := Highlighter[TSynCustomHighlighter(Source).GetLanguageName];
-    if Profile = nil then
-    begin
-      Profile := THighlighterProfile.Create(Self);
-      Profile.Name := TSynCustomHighlighter(Source).GetLanguageName;
-    end;
-    Profile.Assign(TSynCustomHighlighter(Source));
-  end
-  else
-    inherited;
-end;
-
-procedure THighlightersProfile.AssignTo(Dest: TPersistent);
-var
-  Profile: THighlighterProfile;
-begin
-  if Dest is TSynCustomHighlighter then
-  begin
-    Profile := Highlighter[TSynCustomHighlighter(Dest).GetLanguageName];
-    if Profile <> nil then
-    begin
-      Profile.AssignTo(TSynCustomHighlighter(Dest));
-    end;
-  end
-  else
-    inherited;
-end;
-
-function THighlightersProfile.GetHighlighter(
-  Index: string): THighlighterProfile;
-var
-  i: Integer;
-begin
-  Result := nil;
-  for i := 0 to Count - 1 do
-  begin
-    if SameText(Items[i].Name, Index) then
-    begin
-      Result := Items[i];
-      break;
-    end;
-  end;
-end;
-
-function THighlightersProfile.GetItem(Index: Integer): THighlighterProfile;
-begin
-  Result := inherited Items[Index] as THighlighterProfile;
-end;
-
-procedure THighlightersProfile.SetItem(Index: Integer;
-  const Value: THighlighterProfile);
-begin
-  inherited Items[Index] := Value;
-end;
-
-{ THighlighterProfile }
-
-procedure THighlighterProfile.Assign(Source: TPersistent);
-var
-  i: Integer;
-  aItem: TAttributeProfile;
-begin
-  if Source is TSynCustomHighlighter then
-  begin
-    Attributes.Clear;
-    for i := 0 to TSynCustomHighlighter(Source).AttrCount - 1 do
-    begin
-      aItem := TAttributeProfile.Create(Attributes);
-      aItem.Assign(TSynCustomHighlighter(Source).Attribute[i]);
-    end;
-  end
-  else
-    inherited;
-end;
-
-procedure THighlighterProfile.AssignTo(Dest: TPersistent);
-var
-  i: Integer;
-  aItem: TAttributeProfile;
-begin
-  if Dest is TSynCustomHighlighter then
-  begin
-    for i := 0 to TSynCustomHighlighter(Dest).AttrCount - 1 do
-    begin
-      aItem := Attributes[TSynCustomHighlighter(Dest).Attribute[i].Name];
-      if aItem <> nil then
-        aItem.AssignTo(TSynCustomHighlighter(Dest).Attribute[i]);
-    end;
-  end
-  else
-    inherited;
-end;
-
-constructor THighlighterProfile.Create(ACollection: TCollection);
-begin
-  inherited;
-  FAttributes := TAttributesProfile.Create(TAttributeProfile);
-end;
-
-destructor THighlighterProfile.Destroy;
-begin
-  FAttributes.Free;
-  inherited;
 end;
 
 { TAttributesProfile }

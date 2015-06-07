@@ -12,7 +12,7 @@ object EditorOptionsForm: TEditorOptionsForm
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
-  LCLVersion = '1.3'
+  LCLVersion = '1.5'
   object PageControl: TPageControl
     Left = 4
     Height = 379
@@ -393,41 +393,41 @@ object EditorOptionsForm: TEditorOptionsForm
         end
         object GutterAutosizeChk: TCheckBox
           Left = 9
-          Height = 17
+          Height = 19
           Top = 22
-          Width = 58
+          Width = 60
           Caption = 'Autosize'
           TabOrder = 1
         end
         object GutterShowLineNumbersChk: TCheckBox
           Left = 9
-          Height = 17
+          Height = 19
           Top = 41
-          Width = 107
+          Width = 109
           Caption = 'Show line numbers'
           TabOrder = 2
         end
         object GutterShowLeaderZerosChk: TCheckBox
           Left = 9
-          Height = 17
+          Height = 19
           Top = 79
-          Width = 110
+          Width = 112
           Caption = 'Show leading zeros'
           TabOrder = 4
         end
         object GutterStartAtZeroChk: TCheckBox
           Left = 9
-          Height = 17
+          Height = 19
           Top = 60
-          Width = 75
+          Width = 77
           Caption = 'Start at zero'
           TabOrder = 3
         end
         object GutterVisibleChk: TCheckBox
           Left = 9
-          Height = 17
+          Height = 19
           Top = 3
-          Width = 48
+          Width = 50
           Caption = 'Visible'
           Checked = True
           State = cbChecked
@@ -478,9 +478,9 @@ object EditorOptionsForm: TEditorOptionsForm
         end
         object ShowSeparatorChk: TCheckBox
           Left = 132
-          Height = 17
+          Height = 19
           Top = 55
-          Width = 94
+          Width = 96
           Caption = 'Show Separator'
           TabOrder = 8
         end
@@ -503,9 +503,9 @@ object EditorOptionsForm: TEditorOptionsForm
         end
         object ShowModifiedLinesChk: TCheckBox
           Left = 132
-          Height = 17
+          Height = 19
           Top = 103
-          Width = 88
+          Width = 90
           Caption = 'Show Modified'
           TabOrder = 10
         end
@@ -528,9 +528,9 @@ object EditorOptionsForm: TEditorOptionsForm
         end
         object CodeFoldingChk: TCheckBox
           Left = 9
-          Height = 17
+          Height = 19
           Top = 100
-          Width = 80
+          Width = 82
           Caption = 'Code Folding'
           TabOrder = 12
         end
@@ -586,23 +586,23 @@ object EditorOptionsForm: TEditorOptionsForm
       object Label11: TLabel
         Left = 5
         Height = 13
-        Top = 65
+        Top = 106
         Width = 41
         Caption = '&Element:'
         ParentColor = False
       end
       object Label12: TLabel
-        Left = 5
+        Left = 2
         Height = 13
-        Top = 38
-        Width = 27
-        Caption = '&Type:'
+        Top = 195
+        Width = 51
+        Caption = '&Language:'
         ParentColor = False
       end
       inline SampleEdit: TSynEdit
         Left = 3
-        Height = 151
-        Top = 198
+        Height = 131
+        Top = 218
         Width = 344
         Anchors = [akTop, akLeft, akRight, akBottom]
         Font.Height = -13
@@ -700,6 +700,7 @@ object EditorOptionsForm: TEditorOptionsForm
             ShiftMask = [ssShift, ssAlt, ssCtrl]
             Command = emcMouseLink
           end>
+        MouseTextActions = <>
         MouseSelActions = <        
           item
             ClickDir = cdDown
@@ -707,7 +708,6 @@ object EditorOptionsForm: TEditorOptionsForm
           end>
         VisibleSpecialChars = [vscSpace, vscTabAtLast]
         ReadOnly = True
-        SelectedColor.FrameEdges = sfeAround
         SelectedColor.BackPriority = 50
         SelectedColor.ForePriority = 50
         SelectedColor.FramePriority = 50
@@ -715,23 +715,17 @@ object EditorOptionsForm: TEditorOptionsForm
         SelectedColor.ItalicPriority = 50
         SelectedColor.UnderlinePriority = 50
         SelectedColor.StrikeOutPriority = 50
-        IncrementColor.FrameEdges = sfeAround
-        HighlightAllColor.FrameEdges = sfeAround
         BracketHighlightStyle = sbhsBoth
         BracketMatchColor.Background = clNone
         BracketMatchColor.Foreground = clNone
-        BracketMatchColor.FrameEdges = sfeAround
         BracketMatchColor.Style = [fsBold]
         FoldedCodeColor.Background = clNone
         FoldedCodeColor.Foreground = clGray
         FoldedCodeColor.FrameColor = clGray
-        FoldedCodeColor.FrameEdges = sfeAround
         MouseLinkColor.Background = clNone
         MouseLinkColor.Foreground = clBlue
-        MouseLinkColor.FrameEdges = sfeAround
         LineHighlightColor.Background = clNone
         LineHighlightColor.Foreground = clNone
-        LineHighlightColor.FrameEdges = sfeAround
         inline SynGutterPartList1: TSynGutterPartList
           object SynGutterMarks1: TSynGutterMarks
             Width = 24
@@ -742,7 +736,6 @@ object EditorOptionsForm: TEditorOptionsForm
             MouseActions = <>
             MarkupInfo.Background = clBtnFace
             MarkupInfo.Foreground = clNone
-            MarkupInfo.FrameEdges = sfeAround
             DigitCount = 2
             ShowOnlyLineNumbersMultiplesOf = 1
             ZeroStart = False
@@ -759,7 +752,6 @@ object EditorOptionsForm: TEditorOptionsForm
             MouseActions = <>
             MarkupInfo.Background = clWhite
             MarkupInfo.Foreground = clGray
-            MarkupInfo.FrameEdges = sfeAround
           end
           object SynGutterCodeFolding1: TSynGutterCodeFolding
             MouseActions = <            
@@ -790,7 +782,6 @@ object EditorOptionsForm: TEditorOptionsForm
               end>
             MarkupInfo.Background = clNone
             MarkupInfo.Foreground = clGray
-            MarkupInfo.FrameEdges = sfeAround
             MouseActionsExpanded = <            
               item
                 ClickCount = ccAny
@@ -818,7 +809,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object BackgroundCbo: TColorBox
         Left = 89
         Height = 22
-        Top = 117
+        Top = 158
         Width = 100
         DefaultColorColor = clWhite
         NoneColorColor = clWhite
@@ -831,7 +822,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object ForegroundCbo: TColorBox
         Left = 89
         Height = 22
-        Top = 90
+        Top = 131
         Width = 100
         Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
         ItemHeight = 16
@@ -841,7 +832,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object ElementCbo: TComboBox
         Left = 71
         Height = 21
-        Top = 61
+        Top = 102
         Width = 274
         ItemHeight = 13
         OnSelect = ElementCboSelect
@@ -850,26 +841,26 @@ object EditorOptionsForm: TEditorOptionsForm
       end
       object BackgroundChk: TCheckBox
         Left = 3
-        Height = 17
-        Top = 121
-        Width = 76
+        Height = 19
+        Top = 159
+        Width = 78
         Caption = 'Background'
         OnClick = BoldChkClick
         TabOrder = 4
       end
       object ForegroundChk: TCheckBox
         Left = 3
-        Height = 17
-        Top = 92
-        Width = 72
+        Height = 19
+        Top = 133
+        Width = 74
         Caption = 'Foreground'
         OnClick = BoldChkClick
         TabOrder = 2
       end
       object GroupCbo: TComboBox
-        Left = 71
+        Left = 73
         Height = 21
-        Top = 34
+        Top = 193
         Width = 274
         ItemHeight = 13
         OnSelect = GroupCboSelect
@@ -879,7 +870,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object FontLbl: TLabel
         Left = 10
         Height = 16
-        Top = 171
+        Top = 13
         Width = 128
         Caption = 'Courier New 10pt'
         Font.Height = -13
@@ -890,7 +881,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object FontBtn: TButton
         Left = 293
         Height = 25
-        Top = 168
+        Top = 7
         Width = 54
         Caption = 'Font'
         OnClick = FontBtnClick
@@ -898,27 +889,27 @@ object EditorOptionsForm: TEditorOptionsForm
       end
       object BoldChk: TCheckBox
         Left = 200
-        Height = 17
-        Top = 115
-        Width = 39
+        Height = 19
+        Top = 152
+        Width = 41
         Caption = '&Bold'
         OnClick = BoldChkClick
         TabOrder = 8
       end
       object ItalicChk: TCheckBox
         Left = 200
-        Height = 17
-        Top = 136
-        Width = 40
+        Height = 19
+        Top = 173
+        Width = 42
         Caption = '&Italic'
         OnClick = BoldChkClick
         TabOrder = 9
       end
       object UnderlineChk: TCheckBox
         Left = 200
-        Height = 17
-        Top = 94
-        Width = 63
+        Height = 19
+        Top = 131
+        Width = 65
         Caption = '&Underline'
         OnClick = BoldChkClick
         TabOrder = 10
@@ -926,7 +917,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object DefBackgroundCbo: TColorBox
         Left = 245
         Height = 22
-        Top = 6
+        Top = 76
         Width = 100
         DefaultColorColor = clWhite
         NoneColorColor = clWhite
@@ -939,7 +930,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object DefForegroundCbo: TColorBox
         Left = 71
         Height = 22
-        Top = 6
+        Top = 76
         Width = 100
         Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
         ItemHeight = 16
@@ -949,7 +940,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object Label13: TLabel
         Left = 5
         Height = 13
-        Top = 11
+        Top = 81
         Width = 54
         Caption = 'Foreground'
         ParentColor = False
@@ -957,7 +948,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object Label14: TLabel
         Left = 182
         Height = 13
-        Top = 11
+        Top = 81
         Width = 58
         Caption = 'Background'
         ParentColor = False
@@ -965,8 +956,17 @@ object EditorOptionsForm: TEditorOptionsForm
       object Bevel1: TBevel
         Left = 3
         Height = 26
-        Top = 167
+        Top = 8
         Width = 283
+      end
+      object NoAntialiasingChk: TCheckBox
+        Left = 8
+        Height = 19
+        Top = 42
+        Width = 90
+        Caption = 'No &Antialiasing'
+        OnChange = NoAntialiasingChkChange
+        TabOrder = 13
       end
     end
   end

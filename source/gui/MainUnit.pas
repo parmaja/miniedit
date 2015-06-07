@@ -57,6 +57,7 @@ type
   TMainForm = class(TForm)
     CallStackList: TListView;
     DeleteAct: TAction;
+    BugSignBtn: TSpeedButton;
     MenuItem18: TMenuItem;
     MenuItem19: TMenuItem;
     MenuItem20: TMenuItem;
@@ -66,7 +67,6 @@ type
     MenuItem17: TMenuItem;
     SortByExtensionsAct: TAction;
     SortByNamesAct: TAction;
-    Bevel1: TBevel;
     FileCloseBtn: TSpeedButton;
     FoldersSpl: TntvSplitter;
     MenuItem14: TMenuItem;

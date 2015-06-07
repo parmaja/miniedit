@@ -1135,6 +1135,7 @@ begin
 
   FSynEdit.TrimSpaceType := settLeaveLine;
   FSynEdit.BoundsRect := Engine.FilesControl.ClientRect;
+  FSynEdit.Font.Quality := fqDefault;
   FSynEdit.BorderStyle := bsNone;
   FSynEdit.ShowHint := True;
   FSynEdit.Visible := False;
@@ -1696,8 +1697,13 @@ begin
     //check if Engine.Categories[i].Completion = nil
     //Engine.Categories[i].Completion.Font := Profile.Font;
     //Engine.Categories[i].Completion.Options := Engine.Categories[i].Completion.Options + [scoTitleIsCentered];
+
+//TODO
+{
     if Engine.Categories[i].Highlighter <> nil then
-      Profile.Highlighters.AssignTo(Engine.Categories[i].Highlighter);
+      Profile.Attributes.AssignTo(Engine.Categories[i].Highlighter);}
+    {if Engine.Categories[i].Highlighter <> nil then
+      Engine.Categories[i].Apply(Profile.Attributes);}
   end;
 
   for i := 0 to Engine.Files.Count - 1 do
