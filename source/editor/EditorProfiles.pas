@@ -54,7 +54,7 @@ type
     procedure SetItem(Index: Integer; const Value: TGlobalAttribute);
     function GetAttribute(Index: string): TGlobalAttribute;
   protected
-    procedure Add(Name: string);
+    procedure Add(Name, Title: string; Foreground, Background: TColor; Style: TFontStyles);
   public
     constructor Create;
     function Find(vName: string): TGlobalAttribute;
@@ -113,15 +113,12 @@ type
 
   TEditorProfile = class(TComponent) //make it as object
   private
-    FBackgroundColor: TColor;
     FCodeFolding: Boolean;
     FExtOptions: TSynEditorOptions2;
-    FForegroundColor: TColor;
     FMaxUndo: Integer;
     FExtraLineSpacing: Integer;
     FTabWidth: Integer;
     FRightEdge: Integer;
-    FSelectedColor: TSynSelectedColor;
     FRightEdgeColor: TColor;
     FFontName: String;
     FFontSize: Integer;
@@ -153,9 +150,6 @@ type
     property FontSize: Integer read FFontSize write FFontSize;
     property FontNoAntialiasing: Boolean read FFontNoAntialiasing write FFontNoAntialiasing default False;
     property Gutter: TGutterOptions read FGutterOptions write FGutterOptions;
-    property SelectedColor: TSynSelectedColor read FSelectedColor write FSelectedColor;
-    property BackgroundColor: TColor read FBackgroundColor write FBackgroundColor default clWindow;
-    property ForegroundColor: TColor read FForegroundColor write FForegroundColor default clWindowText;
     property ExtraLineSpacing: Integer read FExtraLineSpacing write FExtraLineSpacing default 0;
     property RightEdge: Integer read FRightEdge write FRightEdge default 80;
     property RightEdgeColor: TColor read FRightEdgeColor write FRightEdgeColor default clSilver;
@@ -178,12 +172,12 @@ procedure TEditorProfile.Assign(Source: TPersistent);
 begin
   if Assigned(Source) and (Source is TCustomSynEdit) then
   begin
+    //TODO assign attributes
     Self.FontName := TCustomSynEdit(Source).Font.Name;
     Self.FontSize := TCustomSynEdit(Source).Font.Size;
     Self.FontNoAntialiasing := TCustomSynEdit(Source).Font.Quality = fqNonAntialiased;
 
     Self.Gutter.Assign(TCustomSynEdit(Source).Gutter);
-    Self.SelectedColor.Assign(TCustomSynEdit(Source).SelectedColor);
 
     Self.Options := TCustomSynEdit(Source).Options;
     Self.ExtraLineSpacing := TCustomSynEdit(Source).ExtraLineSpacing;
@@ -212,20 +206,12 @@ begin
     else
       TCustomSynEdit(Dest).Font.Quality := fqDefault;
 
-    if TCustomSynEdit(Dest).Highlighter = nil then
-    begin
-      TCustomSynEdit(Dest).Font.Color := ForegroundColor;
-      TCustomSynEdit(Dest).Color := BackgroundColor;
-    end
-    else
-    begin
-      TCustomSynEdit(Dest).Font.Color := TCustomSynEdit(Dest).Highlighter.WhitespaceAttribute.Foreground;
-      TCustomSynEdit(Dest).Color := TCustomSynEdit(Dest).Highlighter.WhitespaceAttribute.Background;//BUG: bad to be here
-    end;
+    TCustomSynEdit(Dest).Font.Color := Attributes.Find('Whitespace').Foreground;
+    TCustomSynEdit(Dest).Color := Attributes.Find('Whitespace').Background;
+    //TCustomSynEdit(Dest).SelectedColor.
 
     TCustomSynEdit(Dest).Options := TCustomSynEdit(Dest).Options - [eoDropFiles]; //make main window accept the files
     TCustomSynEdit(Dest).Gutter.Assign(Self.Gutter);
-    TCustomSynEdit(Dest).SelectedColor.Assign(Self.SelectedColor);
 
     cf := TCustomSynEdit(Dest).Gutter.Parts.ByClass[TSynGutterCodeFolding, 0] as TSynGutterCodeFolding;
     if cf <> nil then
@@ -255,10 +241,7 @@ begin
   FComponentStyle := FComponentStyle + [csSubComponent];
   FBookmarks := TSynBookMarkOpt.Create(Self);
   FGutterOptions := TGutterOptions.Create;//ToDO check the Create params
-  FSelectedColor := TSynSelectedColor.Create;
   FAttributes := TGlobalAttributes.Create;
-  FBackgroundColor := clWindow;
-  FForegroundColor := clWindowText;
   CodeFolding := False;
   Reset;
 end;
@@ -267,7 +250,6 @@ destructor TEditorProfile.Destroy;
 begin
   FBookMarks.Free;
   FGutterOptions.Free;
-  FSelectedColor.Free;
   FAttributes.Free;
   inherited;
 end;
@@ -294,11 +276,7 @@ end;
 
 procedure TEditorProfile.Reset;
 begin
-  ForegroundColor := clWindowText;
-  BackgroundColor := clWindow;
   Gutter.Reset;
-  FSelectedColor.Foreground := clHighlightText;
-  FSelectedColor.Background := clHighlight;
   FFontName := 'Courier New';
   FFontSize := 10;
   FFontNoAntialiasing := False;
@@ -341,45 +319,51 @@ begin
   end;
 end;
 
-procedure TGlobalAttributes.Add(Name: string);
+procedure TGlobalAttributes.Add(Name, Title: string; Foreground, Background: TColor; Style: TFontStyles);
 var
   Item: TGlobalAttribute;
 begin
   Item := (inherited Add() as TGlobalAttribute);
   Item.Name := Name;
+  Item.Title := Title;
+  Item.Foreground := Foreground;
+  Item.Background := Background;
+  Item.Style := Style;
 end;
 
 constructor TGlobalAttributes.Create;
 begin
   inherited Create(TGlobalAttribute);
-  add('Whitespace');
-  add('Text');
+  Add('Whitespace', 'Whitespace', clWhite, TColor($0F192A), []);
+  Add('Selected', 'Selected', TColor($0F192A), clWhite, []);
 
-  Add('Keyword');
-  Add('Symbol');
-  Add('Number');
-  Add('Directive');
-  Add('Object');
-  Add('Identifier');
-  Add('Variable');
-  Add('Value');
-  Add('Datatype');
-  Add('Document');
-  Add('SL_comment');
-  Add('ML_comment');
-  Add('SQ_string');
-  Add('DQ_string');
+  Add('Keyword', 'Keyword', clWhite, TColor($0F192A), []);
+  Add('Symbol', 'Symbol', clWhite, TColor($0F192A), []);
+  Add('Number', 'Number', clWhite, TColor($0F192A), []);
+  Add('Directive', 'Directive', clWhite, TColor($0F192A), []);
+  Add('Object', 'Object', clWhite, TColor($0F192A), []);
+  Add('Identifier', 'Identifier', clWhite, TColor($0F192A), []);
+  Add('Variable', 'Variable', clWhite, TColor($0F192A), []);
+  Add('Value', 'Value', clWhite, TColor($0F192A), []);
+  Add('Datatype', 'Datatype', clWhite, TColor($0F192A), []);
+  Add('Document', 'Document', clWhite, TColor($0F192A), []);
+  Add('SL_comment', 'Single Line comment', clWhite, TColor($0F192A), []);
+  Add('ML_comment', 'Multi Line comment', clWhite, TColor($0F192A), []);
+  Add('SQ_string', 'Single quite string', clWhite, TColor($0F192A), []);
+  Add('DQ_string', 'Double quite string', clWhite, TColor($0F192A), []);
 end;
 
 function TGlobalAttributes.Find(vName: string): TGlobalAttribute;
 var
   i: integer;
+  S: String;
 begin
   Result := nil;
   if vName <> '' then
     for i := 0 to Count - 1 do
     begin
-      if SameText(Items[i].Name, vName) then
+      S := Items[i].Name;
+      if SameText(S, vName) then
       begin
         Result := Items[i];
         break;

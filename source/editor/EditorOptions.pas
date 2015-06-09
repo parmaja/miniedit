@@ -35,11 +35,9 @@ type
     NoAntialiasingChk: TCheckBox;
     Bevel1: TBevel;
     BracketHighlightChk: TCheckBox;
-    DefBackgroundCbo: TColorBox;
     BoldChk: TCheckBox;
     FontBtn: TButton;
     FontLbl: TLabel;
-    DefForegroundCbo: TColorBox;
     CodeFoldingChk: TCheckBox;
     Label15: TLabel;
     Label7: TLabel;
@@ -49,8 +47,6 @@ type
     SeparatorColorCbo: TColorBox;
     GutterForecolorCbo: TColorBox;
     ItalicChk: TCheckBox;
-    Label13: TLabel;
-    Label14: TLabel;
     Label5: TLabel;
     Label6: TLabel;
     PageControl: TPageControl;
@@ -215,8 +211,6 @@ end;
 
 procedure TEditorOptionsForm.GetData;
 begin
-  DefForegroundCbo.Selected := FProfile.ForegroundColor;
-  DefBackgroundCbo.Selected := FProfile.BackgroundColor;
   //Gutter
   GutterVisibleChk.Checked := FProfile.Gutter.Visible;
   GutterAutosizeChk.Checked := FProfile.Gutter.AutoSize;
@@ -303,8 +297,6 @@ var
   end;
 
 begin
-  FProfile.ForegroundColor := DefForegroundCbo.Selected;
-  FProfile.BackgroundColor := DefBackgroundCbo.Selected;
   //Gutter
   FProfile.Gutter.Visible := GutterVisibleChk.Checked;
   FProfile.Gutter.AutoSize := GutterAutosizeChk.Checked;

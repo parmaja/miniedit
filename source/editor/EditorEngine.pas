@@ -1767,11 +1767,9 @@ begin
     //Engine.Categories[i].Completion.Options := Engine.Categories[i].Completion.Options + [scoTitleIsCentered];
 
 //TODO
-{
+
     if Engine.Categories[i].Highlighter <> nil then
-      Profile.Attributes.AssignTo(Engine.Categories[i].Highlighter);}
-    {if Engine.Categories[i].Highlighter <> nil then
-      Engine.Categories[i].Apply(Profile.Attributes);}
+      Engine.Categories[i].Apply(Engine.Categories[i].Highlighter, Profile.Attributes);
   end;
 
   for i := 0 to Engine.Files.Count - 1 do
