@@ -519,6 +519,23 @@ type
 
   TmneSynCompletion = class;
 
+  TMap = class(TObject)
+    Name: string;
+    ToName: string;
+  end;
+
+  { TMapper }
+
+  TMapper = class(TObjectList)
+  private
+    function GetItem(Index: integer): TMap;
+  public
+    function Find(vName: string): TMap;
+    function Add(vName, ToName: string): TMap;
+    function IndexOf(vName: string): Integer;
+    property Items[Index: integer]: TMap read GetItem; default;
+  end;
+
   TFileCategoryKind = (fckPublish);
   TFileCategoryKinds = set of TFileCategoryKind;
 
@@ -529,17 +546,21 @@ type
     FName: string;
     FHighlighter: TSynCustomHighlighter;
     FKind: TFileCategoryKinds;
+    FMapper: TMapper;
     function GetHighlighter: TSynCustomHighlighter;
     function GetItem(Index: Integer): TFileGroup;
   protected
     FCompletion: TmneSynCompletion;
+    procedure InitMappers; virtual;
     procedure DoExecuteCompletion(Sender: TObject); virtual;
-    function CreateHighlighter: TSynCustomHighlighter; virtual;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); virtual;
     procedure InitEdit(vSynEdit: TCustomSynEdit); virtual;
   public
     constructor Create; virtual;
     destructor Destroy; override;
+    function CreateHighlighter: TSynCustomHighlighter; virtual;
+    property Mapper:TMapper read FMapper write FMapper;
+    procedure Apply(AHighlighter: TSynCustomHighlighter; Attributes: TGlobalAttributes);
     property Name: string read FName write FName;
     function Find(vName: string): TFileGroup;
     procedure EnumExtensions(vExtensions: TStringList);
@@ -979,6 +1000,53 @@ begin
       S := S + #$D;
     Stream.WriteBuffer(Pointer(S)^, Length(S));
   end;
+end;
+
+{ TMapper }
+
+function TMapper.GetItem(Index: integer): TMap;
+begin
+  Result := inherited Items[Index] as TMap;
+end;
+
+function TMapper.Find(vName: string): TMap;
+var
+  i: integer;
+begin
+  Result := nil;
+  if vName <> '' then
+    for i := 0 to Count - 1 do
+    begin
+      if SameText(Items[i].Name, vName) then
+      begin
+        Result := Items[i];
+        break;
+      end;
+    end;
+end;
+
+function TMapper.Add(vName, ToName: string): TMap;
+begin
+  Result := TMap.Create;
+  Result.Name := vName;
+  Result.ToName := ToName;
+  inherited Add(Result);
+end;
+
+function TMapper.IndexOf(vName: string): Integer;
+var
+  i: integer;
+begin
+  Result := -1;
+  if vName <> '' then
+    for i := 0 to Count - 1 do
+    begin
+      if SameText(Items[i].Name, vName) then
+      begin
+        Result := i;
+        break;
+      end;
+    end;
 end;
 
 { TTextEditorFile }
@@ -2371,23 +2439,16 @@ var
 begin
   with TEditorOptionsForm.Create(Application) do
   begin
-    aList := TSynHighlighterList.Create;
     try
-      for i := 0 to Engine.Categories.Count - 1 do
-      begin
-        if Engine.Categories[i].Highlighter <> nil then
-          aList.Add(Engine.Categories[i].Highlighter.ClassType);
-      end;
       if (Engine.Files.Current <> nil) then
         aSelect := Engine.Files.Current.GetLanguageName //just to select a language in the combobox
       else
         aSelect := '';
-      if Execute(Profile, aList, aSelect) then
+      if Execute(Profile, aSelect) then
         Apply;
     finally
-      aList.Free;
+      Free;
     end;
-    Free;
   end;
 end;
 
@@ -3364,6 +3425,8 @@ end;
 constructor TFileCategory.Create;
 begin
   inherited Create(False);//childs is groups and already added to Groups and freed by it
+  FMapper := TMapper.Create;
+  InitMappers;
 end;
 
 procedure TFileCategory.EnumExtensions(vExtensions: TStringList);
@@ -3381,6 +3444,30 @@ begin
   Result := nil;
 end;
 
+procedure TFileCategory.Apply(AHighlighter: TSynCustomHighlighter; Attributes: TGlobalAttributes);
+var
+  i, a: Integer;
+  M: TMap;
+  G: TGlobalAttribute;
+  Att: TSynHighlighterAttributes;
+begin
+  for i := 0 to AHighlighter.AttrCount -1 do
+  begin
+    Att := AHighlighter.Attribute[i];
+    M := Mapper.Find(Att.StoredName);
+    if M <> nil then
+    begin
+      G := Attributes.Find(M.ToName);
+      if G <> nil then
+      begin
+        Att.Background := G.Background;
+        Att.Foreground := G.Foreground;
+        Att.Style := G.Style;
+      end;
+    end;
+  end;
+end;
+
 procedure TFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
 end;
@@ -3391,6 +3478,7 @@ end;
 
 destructor TFileCategory.Destroy;
 begin
+  FreeAndNil(FMapper);
   FreeAndNil(FHighlighter);
   FreeAndNil(FCompletion);
   inherited;
@@ -3404,6 +3492,10 @@ end;
 function TFileCategory.GetItem(Index: Integer): TFileGroup;
 begin
   Result := inherited Items[Index] as TFileGroup;
+end;
+
+procedure TFileCategory.InitMappers;
+begin
 end;
 
 function TFileCategory.GetHighlighter: TSynCustomHighlighter;

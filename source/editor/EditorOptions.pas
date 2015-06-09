@@ -108,7 +108,7 @@ type
     Label11: TLabel;
     BackgroundCbo: TColorBox;
     ForegroundCbo: TColorBox;
-    ElementCbo: TComboBox;
+    AttributeCbo: TComboBox;
     GutterBackcolorCbo: TColorBox;
     RightEdgeColorCbo: TColorBox;
     BackgroundChk: TCheckBox;
@@ -118,19 +118,19 @@ type
     TabIndentChk: TCheckBox;
     ResetBtn: TButton;
     Label12: TLabel;
-    GroupCbo: TComboBox;
+    CategoryCbo: TComboBox;
     UnderlineChk: TCheckBox;
     WordWrapChk: TCheckBox;
     procedure NoAntialiasingChkChange(Sender: TObject);
     procedure BackgroundCboSelect(Sender: TObject);
     procedure DefaultBackgroundCboSelect(Sender: TObject);
     procedure DefaultForegroundCboSelect(Sender: TObject);
-    procedure ElementCboSelect(Sender: TObject);
+    procedure AttributeCboSelect(Sender: TObject);
     procedure ForegroundCboSelect(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FontBtnClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
-    procedure GroupCboSelect(Sender: TObject);
+    procedure CategoryCboSelect(Sender: TObject);
     procedure GutterFontChkChange(Sender: TObject);
     procedure KeyListEditing(Sender: TObject; Item: TListItem; var AllowEdit: boolean);
     procedure OkBtnClick(Sender: TObject);
@@ -139,7 +139,6 @@ type
     procedure PageControlChange(Sender: TObject);
     procedure ResetBtnClick(Sender: TObject);
     procedure SampleEditMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
-    procedure ElementCboClick(Sender: TObject);
     procedure GroupCboClick(Sender: TObject);
     procedure BoldChkClick(Sender: TObject);
     procedure BackgroundChkClick(Sender: TObject);
@@ -148,13 +147,13 @@ type
   private
     FProfile: TEditorProfile;
     InChanging: boolean;
-    procedure ApplyGroup;
+    procedure ApplyCategory;
     procedure RetrieveElement;
     procedure ApplyElement;
     procedure GetData;
     procedure PutData;
   public
-    function Execute(Profile: TEditorProfile; Highlighters: TList; Select: string): boolean;
+    function Execute(Profile: TEditorProfile; Select: string): boolean;
   end;
 
 implementation
@@ -162,30 +161,43 @@ implementation
 {$R *.lfm}
 
 uses
-  SynEditTypes;
+  EditorEngine, SynEditTypes;
 
 { TEditorOptionsForm }
 
-function TEditorOptionsForm.Execute(Profile: TEditorProfile; Highlighters: TList; Select: string): boolean;
+function TEditorOptionsForm.Execute(Profile: TEditorProfile; Select: string): boolean;
 var
   i: integer;
   n: Integer;
   aHighlighter: TSynCustomHighlighter;
+  aFileCategory: TFileCategory;
+  S: string;
 begin
   if (Profile <> nil) then
   begin
     FProfile := Profile;
     n := 0;
-    for i := 0 to Highlighters.Count - 1 do
+    for i := 0 to Engine.Categories.Count - 1 do
     begin
-      aHighlighter := TSynCustomHighlighterClass(Highlighters[i]).Create(Self);
-      GroupCbo.Items.AddObject(aHighlighter.GetLanguageName, aHighlighter);
-      if SameText(Select, aHighlighter.GetLanguageName) then
-        n := i;
-//      Profile.Highlighters.AssignTo(aHighlighter); //Use map, TODO
+      aFileCategory := Engine.Categories[i];
+      if aFileCategory.Highlighter <> nil then
+      begin
+        S := aFileCategory.Highlighter.GetLanguageName;
+        CategoryCbo.Items.AddObject(S, aFileCategory);
+        if SameText(Select, S) then
+          n := CategoryCbo.Items.Count - 1;
+      end;
     end;
-    GroupCbo.ItemIndex := n;
-    ApplyGroup;
+    CategoryCbo.ItemIndex := n;
+
+    AttributeCbo.Clear;
+    for i := 0 to Profile.Attributes.Count - 1 do
+    begin
+      AttributeCbo.Items.AddObject(Profile.Attributes.Items[i].Name, Profile.Attributes.Items[i]);
+    end;
+    AttributeCbo.ItemIndex := 0;
+
+    ApplyCategory;
     //Get Data
     GetData;
     //Show the form
@@ -194,9 +206,7 @@ begin
     if Result then
     begin
       PutData;
-      //Profile.Highlighters.Clear;
-      //for i := 0 to GroupCbo.Items.Count - 1 do
-        //Profile.Highlighters.Assign(TSynCustomHighlighter(GroupCbo.Items.Objects[i]));
+      //TODO apply to profile.attributes
     end;
   end
   else
@@ -360,7 +370,7 @@ begin
   InChanging := False;
 end;
 
-procedure TEditorOptionsForm.ElementCboSelect(Sender: TObject);
+procedure TEditorOptionsForm.AttributeCboSelect(Sender: TObject);
 begin
   RetrieveElement;
 end;
@@ -415,9 +425,9 @@ begin
   PageControl.TabIndex := 0;
 end;
 
-procedure TEditorOptionsForm.GroupCboSelect(Sender: TObject);
+procedure TEditorOptionsForm.CategoryCboSelect(Sender: TObject);
 begin
-  ApplyGroup;
+  ApplyCategory;
 end;
 
 procedure TEditorOptionsForm.GutterFontChkChange(Sender: TObject);
@@ -463,8 +473,11 @@ end;
 procedure TEditorOptionsForm.SampleEditMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 var
   Attributes: TSynHighlighterAttributes;
+  M: TMap;
+  G: TGlobalAttribute;
   p: TPoint;
   s: string;
+  aFileCategory: TFileCategory;
 begin
   p := SampleEdit.PixelsToRowColumn(Point(X, Y));
   Attributes := nil;
@@ -473,57 +486,63 @@ begin
   if Attributes = nil then
     Attributes := SampleEdit.Highlighter.WhitespaceAttribute;
   if Attributes <> nil then
-    ElementCbo.ItemIndex := ElementCbo.Items.IndexOf(Attributes.Name)
+  begin
+    aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
+    M := aFileCategory.Mapper.Find(Attributes.StoredName);
+    if M <> nil then
+      G := FProfile.Attributes.Find(M.ToName)
+    else
+      G := nil;
+
+    if G <> nil then
+      AttributeCbo.ItemIndex := AttributeCbo.Items.IndexOf(G.Name)
+    else
+      AttributeCbo.ItemIndex := -1;
+  end
   else
-    ElementCbo.ItemIndex := -1;
+    AttributeCbo.ItemIndex := -1;
   RetrieveElement;
-end;
-
-procedure TEditorOptionsForm.ElementCboClick(Sender: TObject);
-begin
-
 end;
 
 procedure TEditorOptionsForm.RetrieveElement;
 var
   aColor: TColor;
+  aGlobalAttribute: TGlobalAttribute;
 begin
-  if not InChanging and (SampleEdit.Highlighter <> nil) and (ElementCbo.ItemIndex >= 0) then
+  if not InChanging and (AttributeCbo.ItemIndex >= 0) then
   begin
+    aGlobalAttribute := (AttributeCbo.Items.Objects[AttributeCbo.ItemIndex] as TGlobalAttribute);
     InChanging := True;
     try
-      with SampleEdit.Highlighter do
+      aColor := aGlobalAttribute.Foreground;
+      if aColor = clNone then
       begin
-        aColor := Attribute[ElementCbo.ItemIndex].Foreground;
-        if aColor = clNone then
-        begin
-          ForegroundChk.Checked := False;
-          ForegroundCbo.Selected := clBlack;
-        end
-        else
-        begin
-          ForegroundChk.Checked := True;
-          ForegroundCbo.Selected := aColor;
-          ForegroundCbo.Refresh;//bug when custom and then custom colos
-        end;
-
-        aColor := Attribute[ElementCbo.ItemIndex].Background;
-        if aColor = clNone then
-        begin
-          BackgroundChk.Checked := False;
-          BackgroundCbo.Selected := clWindow;
-        end
-        else
-        begin
-          BackgroundChk.Checked := True;
-          BackgroundCbo.Selected := aColor;
-          BackgroundCbo.Refresh;//bug when custom and then custom colors
-        end;
-
-        BoldChk.Checked := (fsBold in Attribute[ElementCbo.ItemIndex].Style);
-        ItalicChk.Checked := (fsItalic in Attribute[ElementCbo.ItemIndex].Style);
-        UnderlineChk.Checked := (fsUnderline in Attribute[ElementCbo.ItemIndex].Style);
+        ForegroundChk.Checked := False;
+        ForegroundCbo.Selected := clBlack;
+      end
+      else
+      begin
+        ForegroundChk.Checked := True;
+        ForegroundCbo.Selected := aColor;
+        ForegroundCbo.Refresh;//bug when custom and then custom colors
       end;
+
+      aColor := aGlobalAttribute.Background;
+      if aColor = clNone then
+      begin
+        BackgroundChk.Checked := False;
+        BackgroundCbo.Selected := clWindow;
+      end
+      else
+      begin
+        BackgroundChk.Checked := True;
+        BackgroundCbo.Selected := aColor;
+        BackgroundCbo.Refresh;//bug when custom and then custom colors
+      end;
+
+      BoldChk.Checked := (fsBold in aGlobalAttribute.Style);
+      ItalicChk.Checked := (fsItalic in aGlobalAttribute.Style);
+      UnderlineChk.Checked := (fsUnderline in aGlobalAttribute.Style);
     finally
       InChanging := False;
     end;
@@ -533,35 +552,37 @@ end;
 procedure TEditorOptionsForm.ApplyElement;
 var
   aFontStyle: TFontStyles;
+  aFileCategory: TFileCategory;
+  aGlobalAttribute: TGlobalAttribute;
 begin
-  if not InChanging and (SampleEdit.Highlighter <> nil) and (ElementCbo.ItemIndex >= 0) then
+  if not InChanging and (AttributeCbo.ItemIndex >= 0) then
   begin
     InChanging := True;
     try
-      with SampleEdit.Highlighter do
-      begin
-        if ForegroundChk.Checked then
-          Attribute[ElementCbo.ItemIndex].Foreground := ForegroundCbo.Selected
-        else
-          Attribute[ElementCbo.ItemIndex].Foreground := clNone;
+      aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
+      aGlobalAttribute := (AttributeCbo.Items.Objects[AttributeCbo.ItemIndex] as TGlobalAttribute);
 
-        if BackgroundChk.Checked then
-          Attribute[ElementCbo.ItemIndex].Background := BackgroundCbo.Selected
-        else
-          Attribute[ElementCbo.ItemIndex].Background := clNone;
+      if ForegroundChk.Checked then
+        aGlobalAttribute.Foreground := ForegroundCbo.Selected
+      else
+        aGlobalAttribute.Foreground := clNone;
 
-        aFontStyle := [];
-        if BoldChk.Checked then
-          aFontStyle := aFontStyle + [fsBold];
-        if ItalicChk.Checked then
-          aFontStyle := aFontStyle + [fsItalic];
-        if UnderlineChk.Checked then
-          aFontStyle := aFontStyle + [fsUnderline];
+      if BackgroundChk.Checked then
+        aGlobalAttribute.Background := BackgroundCbo.Selected
+      else
+        aGlobalAttribute.Background := clNone;
 
-        Attribute[ElementCbo.ItemIndex].Style := aFontStyle;
-        SampleEdit.Color := WhitespaceAttribute.Background;
-        SampleEdit.Font.Color := WhitespaceAttribute.Foreground;
-      end;
+      aFontStyle := [];
+      if BoldChk.Checked then
+        aFontStyle := aFontStyle + [fsBold];
+      if ItalicChk.Checked then
+        aFontStyle := aFontStyle + [fsItalic];
+      if UnderlineChk.Checked then
+        aFontStyle := aFontStyle + [fsUnderline];
+
+      aGlobalAttribute.Style := aFontStyle;
+
+      aFileCategory.Apply(SampleEdit.Highlighter, FProfile.Attributes);
     finally
       InChanging := False;
     end;
@@ -573,19 +594,20 @@ begin
 
 end;
 
-procedure TEditorOptionsForm.ApplyGroup;
+procedure TEditorOptionsForm.ApplyCategory;
 var
   i: integer;
+  aFileCategory: TFileCategory;
 begin
-  SampleEdit.Highlighter := TSynCustomHighlighter(GroupCbo.Items.Objects[GroupCbo.ItemIndex]);
+  aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
+  if (SampleEdit.Highlighter = nil) or (SampleEdit.Highlighter.ClassType <> aFileCategory.Highlighter.ClassType) then
+  begin
+    SampleEdit.Highlighter.Free;
+    SampleEdit.Highlighter := aFileCategory.CreateHighlighter;
+    SampleEdit.Text := SampleEdit.Highlighter.SampleSource;
+  end;
   SampleEdit.Color := SampleEdit.Highlighter.WhitespaceAttribute.Background;
   SampleEdit.Font.Color := SampleEdit.Highlighter.WhitespaceAttribute.Foreground;
-  SampleEdit.Text := SampleEdit.Highlighter.SampleSource;
-  ElementCbo.Clear;
-  for i := 0 to SampleEdit.Highlighter.AttrCount - 1 do
-    if SampleEdit.Highlighter.Attribute[i].Name <> '' then
-      ElementCbo.Items.Add(SampleEdit.Highlighter.Attribute[i].Name);
-  ElementCbo.ItemIndex := 0;
   RetrieveElement;
 end;
 

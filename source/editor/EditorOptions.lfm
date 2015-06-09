@@ -587,8 +587,8 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 5
         Height = 13
         Top = 106
-        Width = 41
-        Caption = '&Element:'
+        Width = 42
+        Caption = '&Attribute:'
         ParentColor = False
       end
       object Label12: TLabel
@@ -829,13 +829,13 @@ object EditorOptionsForm: TEditorOptionsForm
         OnSelect = ForegroundCboSelect
         TabOrder = 3
       end
-      object ElementCbo: TComboBox
+      object AttributeCbo: TComboBox
         Left = 71
         Height = 21
         Top = 102
         Width = 274
         ItemHeight = 13
-        OnSelect = ElementCboSelect
+        OnSelect = AttributeCboSelect
         Style = csDropDownList
         TabOrder = 1
       end
@@ -857,13 +857,13 @@ object EditorOptionsForm: TEditorOptionsForm
         OnClick = BoldChkClick
         TabOrder = 2
       end
-      object GroupCbo: TComboBox
+      object CategoryCbo: TComboBox
         Left = 73
         Height = 21
         Top = 193
         Width = 274
         ItemHeight = 13
-        OnSelect = GroupCboSelect
+        OnSelect = CategoryCboSelect
         Style = csDropDownList
         TabOrder = 0
       end

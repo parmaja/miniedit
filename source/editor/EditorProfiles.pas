@@ -21,33 +21,45 @@ const
     eoShowScrollHint, eoRightMouseMovesCursor, eoTabsToSpaces, eoTabIndent, eoTrimTrailingSpaces, eoKeepCaretX];
 
 type
-  TAttributeProfile = class(TCollectionItem)
+  IGlobalAttributes = interface
+  ['{D4F16257-1809-4BD7-81D2-2D9951A5057D}']
+  end;
+
+  { TGlobalAttribute }
+
+  TGlobalAttribute = class(TCollectionItem)
   private
     FBackground: TColor;
     FForeground: TColor;
     FStyle: TFontStyles;
     FName: string;
+    FTitle: string;
   public
     constructor Create(ACollection: TCollection); override;
     procedure AssignTo(Dest: TPersistent); override;
     procedure Assign(Source: TPersistent); override;
   published
+    property Title: string read FTitle write FTitle;
     property Name: string read FName write FName;
     property Background: TColor read FBackground write FBackground default clNone;
     property Foreground: TColor read FForeground write FForeground default clNone;
     property Style: TFontStyles read FStyle write FStyle default [];
   end;
 
-  { TAttributesProfile }
+  { TGlobalAttributes }
 
-  TAttributesProfile = class(TCollection)
+  TGlobalAttributes = class(TCollection)
   private
-    function GetItem(Index: Integer): TAttributeProfile;
-    procedure SetItem(Index: Integer; const Value: TAttributeProfile);
-    function GetAttribute(Index: string): TAttributeProfile;
+    function GetItem(Index: Integer): TGlobalAttribute;
+    procedure SetItem(Index: Integer; const Value: TGlobalAttribute);
+    function GetAttribute(Index: string): TGlobalAttribute;
+  protected
+    procedure Add(Name: string);
   public
-    property Items[Index: Integer]: TAttributeProfile read GetItem write SetItem;
-    property Attribute[Index: string]: TAttributeProfile read GetAttribute; default;
+    constructor Create;
+    function Find(vName: string): TGlobalAttribute;
+    property Items[Index: Integer]: TGlobalAttribute read GetItem write SetItem; default;
+    property Attribute[Index: string]: TGlobalAttribute read GetAttribute;
   end;
 
   { TGutterOptions }
@@ -120,7 +132,7 @@ type
     FOptions: TSynEditorOptions;
     FGutterOptions: TGutterOptions;
     FInsertMode: Boolean;
-    FAttributes: TAttributesProfile;
+    FAttributes: TGlobalAttributes;
     procedure SetExtOptions(const AValue: TSynEditorOptions2);
     procedure SetOptions(const Value: TSynEditorOptions);
   protected
@@ -134,7 +146,7 @@ type
     procedure AssignTo(Dest: TPersistent); override;
     procedure Reset;
   published
-    property Attributes: TAttributesProfile read FAttributes;
+    property Attributes: TGlobalAttributes read FAttributes;
     property Options: TSynEditorOptions read FOptions write SetOptions default cDefaultOptions;
     property ExtOptions: TSynEditorOptions2 read FExtOptions write SetExtOptions default [];
     property FontName: String read FFontName write FFontName;
@@ -244,7 +256,7 @@ begin
   FBookmarks := TSynBookMarkOpt.Create(Self);
   FGutterOptions := TGutterOptions.Create;//ToDO check the Create params
   FSelectedColor := TSynSelectedColor.Create;
-  FAttributes := TAttributesProfile.Create(TAttributeProfile);
+  FAttributes := TGlobalAttributes.Create;
   FBackgroundColor := clWindow;
   FForegroundColor := clWindowText;
   CodeFolding := False;
@@ -312,9 +324,9 @@ begin
   FOptions := Value;
 end;
 
-{ TAttributesProfile }
+{ TGlobalAttributes }
 
-function TAttributesProfile.GetAttribute(Index: string): TAttributeProfile;
+function TGlobalAttributes.GetAttribute(Index: string): TGlobalAttribute;
 var
   i: Integer;
 begin
@@ -329,20 +341,66 @@ begin
   end;
 end;
 
-function TAttributesProfile.GetItem(Index: Integer): TAttributeProfile;
+procedure TGlobalAttributes.Add(Name: string);
+var
+  Item: TGlobalAttribute;
 begin
-  Result := inherited Items[Index] as TAttributeProfile;
+  Item := (inherited Add() as TGlobalAttribute);
+  Item.Name := Name;
 end;
 
-procedure TAttributesProfile.SetItem(Index: Integer;
-  const Value: TAttributeProfile);
+constructor TGlobalAttributes.Create;
+begin
+  inherited Create(TGlobalAttribute);
+  add('Whitespace');
+  add('Text');
+
+  Add('Keyword');
+  Add('Symbol');
+  Add('Number');
+  Add('Directive');
+  Add('Object');
+  Add('Identifier');
+  Add('Variable');
+  Add('Value');
+  Add('Datatype');
+  Add('Document');
+  Add('SL_comment');
+  Add('ML_comment');
+  Add('SQ_string');
+  Add('DQ_string');
+end;
+
+function TGlobalAttributes.Find(vName: string): TGlobalAttribute;
+var
+  i: integer;
+begin
+  Result := nil;
+  if vName <> '' then
+    for i := 0 to Count - 1 do
+    begin
+      if SameText(Items[i].Name, vName) then
+      begin
+        Result := Items[i];
+        break;
+      end;
+    end;
+end;
+
+function TGlobalAttributes.GetItem(Index: Integer): TGlobalAttribute;
+begin
+  Result := inherited Items[Index] as TGlobalAttribute;
+end;
+
+procedure TGlobalAttributes.SetItem(Index: Integer;
+  const Value: TGlobalAttribute);
 begin
   inherited Items[Index] := Value;
 end;
 
-{ TAttributeProfile }
+{ TGlobalAttribute }
 
-procedure TAttributeProfile.Assign(Source: TPersistent);
+procedure TGlobalAttribute.Assign(Source: TPersistent);
 begin
   if Source is TSynHighlighterAttributes then
   begin
@@ -355,7 +413,7 @@ begin
     inherited;
 end;
 
-procedure TAttributeProfile.AssignTo(Dest: TPersistent);
+procedure TGlobalAttribute.AssignTo(Dest: TPersistent);
 begin
   if Dest is TSynHighlighterAttributes then
   begin
@@ -368,7 +426,7 @@ begin
     inherited;
 end;
 
-constructor TAttributeProfile.Create(ACollection: TCollection);
+constructor TGlobalAttribute.Create(ACollection: TCollection);
 begin
   inherited;
   FBackground := clNone;

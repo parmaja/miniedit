@@ -66,6 +66,7 @@ type
   private
     procedure ExtractKeywords(Files, Variables, Identifiers: TStringList);
   protected
+    procedure InitMappers; override;
     function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddCompletion(AKeyword: string; AKind: integer);
@@ -109,7 +110,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, HTMLProcessor, PHPProcessor;
+  IniFiles, mnStreams, mnUtils, HTMLProcessor, PHPProcessor, SynEditStrConst;
 
 { TXHTMLFile }
 
@@ -469,6 +470,16 @@ begin
     aHighlighter.Free;
     aFile.Free;
   end;
+end;
+
+procedure TXHTMLFileCategory.InitMappers;
+begin
+  inherited;
+  Mapper.Add(SYNS_AttrSpace, 'WHITESPACE');
+  Mapper.Add(SYNS_AttrComment, 'SL_COMMENT');
+  Mapper.Add(SYNS_AttrComment, 'ML_COMMENT');
+  Mapper.Add('Keyword', 'Keyword');
+  Mapper.Add('Document', 'Document');
 end;
 
 procedure TXHTMLFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
