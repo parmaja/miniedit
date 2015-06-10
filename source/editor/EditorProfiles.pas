@@ -117,7 +117,6 @@ type
     FBackcolor: TColor;
     FForecolor: TColor;
     FSavedColor: TColor;
-    FSeparatorColor: TColor;
     FLeftOffset: integer;
     FRightOffset: integer;
     FShowLineNumbers: Boolean;
@@ -138,7 +137,6 @@ type
     property AutoSize: boolean read FAutoSize write FAutoSize default True;
     property Backcolor: TColor read FBackcolor write FBackcolor default clBtnFace;
     property Forecolor: TColor read FForecolor write FForecolor default clBtnText;
-    property SeparatorColor: TColor read FSeparatorColor write FSeparatorColor default clBtnText;
     property ShowSeparator: Boolean read FShowSeparator write FShowSeparator default True;
 
     property SavedColor: TColor read FSavedColor write FSavedColor default clGreen;
@@ -545,8 +543,8 @@ begin
     if sp <> nil then
     begin
       sp.Visible := FShowSeparator;
-      sp.MarkupInfo.Foreground := FSeparatorColor;
-      sp.MarkupInfo.Background := FSeparatorColor;
+      sp.MarkupInfo.Foreground := Backcolor;
+      sp.MarkupInfo.Background := Forecolor;
     end;
     ch := SynGutter.Parts.ByClass[TSynGutterChanges, 0] as TSynGutterChanges;
     if ch <> nil then
@@ -587,7 +585,6 @@ begin
   if sp <> nil then
   begin
     FShowSeparator := sp.Visible;
-    FSeparatorColor := sp.MarkupInfo.Foreground;
   end;
   ch := SynGutter.Parts.ByClass[TSynGutterChanges, 0] as TSynGutterChanges;
   if ch <> nil then
@@ -603,7 +600,6 @@ begin
   FAutoSize := True;
   FBackcolor := clBtnFace;
   FForecolor := clBtnText;
-  FSeparatorColor := clBtnFace;
   FShowSeparator := True;
   FLeftOffset := 0;
   FRightOffset := 0;

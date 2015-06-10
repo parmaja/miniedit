@@ -466,31 +466,13 @@ object EditorOptionsForm: TEditorOptionsForm
           ItemHeight = 16
           TabOrder = 6
         end
-        object SeparatorColorCbo: TColorBox
-          Left = 184
-          Height = 22
-          Top = 74
-          Width = 165
-          Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
-          Anchors = [akTop, akLeft, akRight]
-          ItemHeight = 16
-          TabOrder = 7
-        end
-        object Label6: TLabel
-          Left = 129
-          Height = 13
-          Top = 78
-          Width = 49
-          Caption = 'Separator:'
-          ParentColor = False
-        end
         object ShowSeparatorChk: TCheckBox
           Left = 132
           Height = 19
           Top = 55
           Width = 96
           Caption = 'Show Separator'
-          TabOrder = 8
+          TabOrder = 7
         end
         object SavedColorCbo: TColorBox
           Left = 185
@@ -500,7 +482,7 @@ object EditorOptionsForm: TEditorOptionsForm
           Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
           Anchors = [akTop, akLeft, akRight]
           ItemHeight = 16
-          TabOrder = 9
+          TabOrder = 8
         end
         object Label7: TLabel
           Left = 129
@@ -516,7 +498,7 @@ object EditorOptionsForm: TEditorOptionsForm
           Top = 103
           Width = 90
           Caption = 'Show Modified'
-          TabOrder = 10
+          TabOrder = 9
         end
         object UnsavedColorCbo: TColorBox
           Left = 185
@@ -526,7 +508,7 @@ object EditorOptionsForm: TEditorOptionsForm
           Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
           Anchors = [akTop, akLeft, akRight]
           ItemHeight = 16
-          TabOrder = 11
+          TabOrder = 10
         end
         object Label15: TLabel
           Left = 129
@@ -542,7 +524,7 @@ object EditorOptionsForm: TEditorOptionsForm
           Top = 100
           Width = 82
           Caption = 'Code Folding'
-          TabOrder = 12
+          TabOrder = 11
         end
       end
       object LineSpacingGrp: TGroupBox
@@ -901,6 +883,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Width = 82
         Caption = 'Courier New 10pt'
         Color = clDefault
+        ParentColor = False
         Transparent = False
       end
       object FontBtn: TButton

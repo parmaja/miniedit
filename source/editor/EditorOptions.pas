@@ -49,11 +49,9 @@ type
     SaveDialog: TSaveDialog;
     UnsavedColorCbo: TColorBox;
     ShowSeparatorChk: TCheckBox;
-    SeparatorColorCbo: TColorBox;
     GutterForecolorCbo: TColorBox;
     ItalicChk: TCheckBox;
     Label5: TLabel;
-    Label6: TLabel;
     PageControl: TPageControl;
     OkBtn: TButton;
     CancelBtn: TButton;
@@ -230,7 +228,6 @@ begin
   GutterAutosizeChk.Checked := FProfile.Gutter.AutoSize;
   GutterForecolorCbo.Selected := FProfile.Gutter.Forecolor;
   GutterBackcolorCbo.Selected := FProfile.Gutter.Backcolor;
-  SeparatorColorCbo.Selected := FProfile.Gutter.SeparatorColor;
   ShowSeparatorChk.Checked := FProfile.Gutter.ShowSeparator;
 
   SavedColorCbo.Selected := FProfile.Gutter.Savedcolor;
@@ -257,7 +254,7 @@ begin
   else
     SampleEdit.Font.Quality := fqDefault;
 
-  FontLbl.Caption := FontLbl.Font.Name + ' ' + IntToStr(FontLbl.Font.Size) + ' pt';
+  FontLbl.Caption := SampleEdit.Font.Name + ' ' + IntToStr(SampleEdit.Font.Size) + ' pt';
   //Options
   AutoIndentChk.Checked := eoAutoIndent in FProfile.Options;
   TabIndentChk.Checked := eoTabIndent in FProfile.Options;
@@ -318,7 +315,6 @@ begin
   FProfile.Gutter.AutoSize := GutterAutosizeChk.Checked;
   FProfile.Gutter.Forecolor := GutterForecolorCbo.Selected;
   FProfile.Gutter.Backcolor := GutterBackcolorCbo.Selected;
-  FProfile.Gutter.SeparatorColor := SeparatorColorCbo.Selected;
   FProfile.Gutter.ShowSeparator := ShowSeparatorChk.Checked;
   FProfile.Gutter.ShowLineNumbers := GutterShowLineNumbersChk.Checked;
 
@@ -459,7 +455,7 @@ begin
   begin
     SampleEdit.Font.Name := FontDialog.Font.Name;
     SampleEdit.Font.Size := FontDialog.Font.Size;
-    FontLbl.Caption := FontLbl.Font.Name + ' ' + IntToStr(FontLbl.Font.Size) + ' pt';
+    FontLbl.Caption := FontDialog.Font.Name + ' ' + IntToStr(FontDialog.Font.Size) + ' pt';
     ApplyElement;
   end;
 end;

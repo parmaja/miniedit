@@ -152,7 +152,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item9>
     </RequiredPackages>
-    <Units Count="31">
+    <Units Count="32">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -331,6 +331,10 @@
         <Filename Value="..\lib\DebugClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit30>
+      <Unit31>
+        <Filename Value="..\..\..\..\lib\minilib\lib\ColorUtils.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit31>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -51,7 +51,7 @@ uses
   SynHighlighterApache, IniFiles, mneAddons, mneAssociateForm, mnePHPClasses,
   mnePASClasses, mneCSVClasses, MsgBox, GUIMsgBox, Classes, PHPUtils,
   mnePHPConfigForms, mneSetups, mneSettings, mneSARDClasses,
-  EditorClasses, DebugClasses;
+  EditorClasses, DebugClasses, ColorUtils;
 
 {$R *.res}
 

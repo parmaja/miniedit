@@ -62,6 +62,7 @@ type
     FileHeaderPanel: TPanel;
     FileModeBtn: TBitBtn;
     FileNameLbl: TLabel;
+    FileTabs: TntvTabSet;
     MenuItem18: TMenuItem;
     MenuItem19: TMenuItem;
     MenuItem20: TMenuItem;
@@ -98,7 +99,6 @@ type
     ApplicationProperties: TApplicationProperties;
     MainMenu: TMainMenu;
     file1: TMenuItem;
-    FileTabs: TntvTabSet;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
@@ -538,7 +538,7 @@ implementation
 
 uses
   mnXMLUtils, StrUtils, SearchForms, mneProjectOptions, EditorOptions,
-  EditorProfiles, mneResources, mneSetups, Clipbrd,
+  EditorProfiles, mneResources, mneSetups, Clipbrd, ColorUtils,
   SelectFiles, mneSettings, mneConsts,
   SynEditTypes, AboutForms, mneProjectForms, Types,
   mneBreakpoints,
@@ -1960,15 +1960,21 @@ end;
 
 procedure TMainForm.OptionsChanged;
 begin
-  if Engine.Options.Profile.Attributes.UI.Foreground = clNone then
-    Font.Color := clBtnText
+  {if Engine.Options.Profile.Attributes.UI.Foreground = clNone then
+    ClientPnl.Font.Color := clBtnText
   else
-    Font.Color := Engine.Options.Profile.Attributes.UI.Foreground;
+    ClientPnl.Font.Color := Engine.Options.Profile.Attributes.UI.Foreground;}
 
   if Engine.Options.Profile.Attributes.UI.Foreground = clNone then
     Color := clBtnFace
   else
     Color := Engine.Options.Profile.Attributes.UI.Background;
+
+  FileTabs.Color := clBtnFace;//Engine.Options.Profile.Attributes.UI.Background;
+//  FileTabs.Color := Engine.Options.Profile.Gutter.Backcolor;
+  FileTabs.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
+  FileTabs.ActiveColor := Engine.Options.Profile.Attributes.Whitespace.Background;
+  FileTabs.NormalColor := MixColors(FileTabs.Color, FileTabs.ActiveColor, 75);
 
   FileList.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
   FileList.Color := Engine.Options.Profile.Attributes.Whitespace.Background;
@@ -1979,10 +1985,6 @@ begin
   EditorsPnl.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
   EditorsPnl.Color := Engine.Options.Profile.Attributes.Whitespace.Background;
 
-  FileTabs.Color := Engine.Options.Profile.Gutter.Backcolor;
-
-{  MainBar.Font.Color := Engine.Options.Profile.Attributes.UI.Foreground;
-  MainBar.Color := Engine.Options.Profile.Attributes.Whitespace.Background;}
 end;
 
 procedure TMainForm.UpdateWatches;
