@@ -3452,17 +3452,18 @@ begin
   for i := 0 to AHighlighter.AttrCount -1 do
   begin
     Att := AHighlighter.Attribute[i];
+    G := nil;
+
     M := Mapper.Find(Att.StoredName);
     if M <> nil then
-    begin
       G := Attributes.Find(M.ToName);
-      if G <> nil then
-      begin
-        Att.Background := G.Background;
-        Att.Foreground := G.Foreground;
-        Att.Style := G.Style;
-      end;
-    end;
+
+    if G = nil then
+      G := Attributes.Find('Whitespace');
+
+    Att.Background := G.Background;
+    Att.Foreground := G.Foreground;
+    Att.Style := G.Style;
   end;
 end;
 

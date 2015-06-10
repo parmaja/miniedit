@@ -597,9 +597,8 @@ begin
     SampleEdit.Highlighter.Free;
     SampleEdit.Highlighter := aFileCategory.CreateHighlighter;
     SampleEdit.Text := SampleEdit.Highlighter.SampleSource;
+    aFileCategory.Apply(SampleEdit.Highlighter, FProfile.Attributes);
   end;
-  SampleEdit.Color := SampleEdit.Highlighter.WhitespaceAttribute.Background;
-  SampleEdit.Font.Color := SampleEdit.Highlighter.WhitespaceAttribute.Foreground;
   RetrieveElement;
 end;
 

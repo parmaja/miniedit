@@ -27,7 +27,7 @@ type
 
   { TGlobalAttribute }
 
-  TGlobalAttribute = class(TCollectionItem)
+  TGlobalAttribute = class(TPersistent)
   private
     FBackground: TColor;
     FForeground: TColor;
@@ -35,7 +35,7 @@ type
     FName: string;
     FTitle: string;
   public
-    constructor Create(ACollection: TCollection); override;
+    constructor Create;
     procedure AssignTo(Dest: TPersistent); override;
     procedure Assign(Source: TPersistent); override;
   published
@@ -48,18 +48,55 @@ type
 
   { TGlobalAttributes }
 
-  TGlobalAttributes = class(TCollection)
+  TGlobalAttributes = class(TComponent)
   private
+    FDatatype: TGlobalAttribute;
+    FDirective: TGlobalAttribute;
+    FList: TObjectList;
+
+    FDocument: TGlobalAttribute;
+    FDQ_string: TGlobalAttribute;
+    FIdentifier: TGlobalAttribute;
+    FKeyword: TGlobalAttribute;
+    FML_comment: TGlobalAttribute;
+    FNumber: TGlobalAttribute;
+    FSelected: TGlobalAttribute;
+    FSL_comment: TGlobalAttribute;
+    FSQ_string: TGlobalAttribute;
+    FSymbol: TGlobalAttribute;
+    FValue: TGlobalAttribute;
+    FVariable: TGlobalAttribute;
+    FWhitespace: TGlobalAttribute;
+    function GetCount: Integer;
     function GetItem(Index: Integer): TGlobalAttribute;
-    procedure SetItem(Index: Integer; const Value: TGlobalAttribute);
     function GetAttribute(Index: string): TGlobalAttribute;
   protected
-    procedure Add(Name, Title: string; Foreground, Background: TColor; Style: TFontStyles);
+
   public
-    constructor Create;
+    constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
     function Find(vName: string): TGlobalAttribute;
-    property Items[Index: Integer]: TGlobalAttribute read GetItem write SetItem; default;
+    property Items[Index: Integer]: TGlobalAttribute read GetItem; default;
     property Attribute[Index: string]: TGlobalAttribute read GetAttribute;
+    property Count: Integer read GetCount;
+  published
+    property Whitespace: TGlobalAttribute read FWhitespace;
+    property Selected: TGlobalAttribute read FSelected;
+
+    property Keyword: TGlobalAttribute read FKeyword;
+    property Symbol: TGlobalAttribute read FSymbol;
+    property Number: TGlobalAttribute read FNumber;
+    property Directive: TGlobalAttribute read FDirective;
+    property Identifier: TGlobalAttribute read FIdentifier;
+    property Variable: TGlobalAttribute read FVariable;
+    property Value: TGlobalAttribute read FValue;
+    property Datatype: TGlobalAttribute read FDatatype;
+    property Document: TGlobalAttribute read FDocument;
+    property SL_comment: TGlobalAttribute read FSL_comment;
+    property ML_comment: TGlobalAttribute read FML_comment;
+    property SQ_string: TGlobalAttribute read FSQ_string;
+    property DQ_string: TGlobalAttribute read FDQ_string;
+
   end;
 
   { TGutterOptions }
@@ -241,7 +278,7 @@ begin
   FComponentStyle := FComponentStyle + [csSubComponent];
   FBookmarks := TSynBookMarkOpt.Create(Self);
   FGutterOptions := TGutterOptions.Create;//ToDO check the Create params
-  FAttributes := TGlobalAttributes.Create;
+  FAttributes := TGlobalAttributes.Create(Self);
   CodeFolding := False;
   Reset;
 end;
@@ -319,38 +356,47 @@ begin
   end;
 end;
 
-procedure TGlobalAttributes.Add(Name, Title: string; Foreground, Background: TColor; Style: TFontStyles);
-var
-  Item: TGlobalAttribute;
+
+constructor TGlobalAttributes.Create(AOwner: TComponent);
+
+  procedure Add(var Item: TGlobalAttribute; Name, Title: string; Foreground, Background: TColor; Style: TFontStyles);
+  begin
+    Item := TGlobalAttribute.Create;
+    Item.Name := Name;
+    Item.Title := Title;
+    Item.Foreground := Foreground;
+    Item.Background := Background;
+    Item.Style := Style;
+    FList.Add(Item);
+  end;
+
 begin
-  Item := (inherited Add() as TGlobalAttribute);
-  Item.Name := Name;
-  Item.Title := Title;
-  Item.Foreground := Foreground;
-  Item.Background := Background;
-  Item.Style := Style;
+  inherited Create(AOwner);
+  FComponentStyle := FComponentStyle + [csSubComponent];
+  FList := TObjectList.Create;
+
+  Add(FWhitespace, 'Whitespace', 'Whitespace', clWhite, TColor($0F192A), []);
+  Add(FSelected, 'Selected', 'Selected', TColor($0F192A), clWhite, []);
+
+  Add(FKeyword, 'Keyword', 'Keyword', clWhite, TColor($0F192A), []);
+  Add(FSymbol, 'Symbol', 'Symbol', clWhite, TColor($0F192A), []);
+  Add(FNumber, 'Number', 'Number', clWhite, TColor($0F192A), []);
+  Add(FDirective, 'Directive', 'Directive', clWhite, TColor($0F192A), []);
+  Add(FIdentifier, 'Identifier', 'Identifier', clWhite, TColor($0F192A), []);
+  Add(FVariable, 'Variable', 'Variable', clWhite, TColor($0F192A), []);
+  Add(FValue, 'Value', 'Value', clWhite, TColor($0F192A), []);
+  Add(FDatatype, 'Datatype', 'Datatype', clWhite, TColor($0F192A), []);
+  Add(FDocument, 'Document', 'Document', clWhite, TColor($0F192A), []);
+  Add(FSL_comment, 'SL_comment', 'Single Line comment', clWhite, TColor($0F192A), []);
+  Add(FML_comment, 'ML_comment', 'Multi Line comment', clWhite, TColor($0F192A), []);
+  Add(FSQ_string, 'SQ_string', 'Single quite string', clWhite, TColor($0F192A), []);
+  Add(FDQ_string, 'DQ_string', 'Double quite string', clWhite, TColor($0F192A), []);
 end;
 
-constructor TGlobalAttributes.Create;
+destructor TGlobalAttributes.Destroy;
 begin
-  inherited Create(TGlobalAttribute);
-  Add('Whitespace', 'Whitespace', clWhite, TColor($0F192A), []);
-  Add('Selected', 'Selected', TColor($0F192A), clWhite, []);
-
-  Add('Keyword', 'Keyword', clWhite, TColor($0F192A), []);
-  Add('Symbol', 'Symbol', clWhite, TColor($0F192A), []);
-  Add('Number', 'Number', clWhite, TColor($0F192A), []);
-  Add('Directive', 'Directive', clWhite, TColor($0F192A), []);
-  Add('Object', 'Object', clWhite, TColor($0F192A), []);
-  Add('Identifier', 'Identifier', clWhite, TColor($0F192A), []);
-  Add('Variable', 'Variable', clWhite, TColor($0F192A), []);
-  Add('Value', 'Value', clWhite, TColor($0F192A), []);
-  Add('Datatype', 'Datatype', clWhite, TColor($0F192A), []);
-  Add('Document', 'Document', clWhite, TColor($0F192A), []);
-  Add('SL_comment', 'Single Line comment', clWhite, TColor($0F192A), []);
-  Add('ML_comment', 'Multi Line comment', clWhite, TColor($0F192A), []);
-  Add('SQ_string', 'Single quite string', clWhite, TColor($0F192A), []);
-  Add('DQ_string', 'Double quite string', clWhite, TColor($0F192A), []);
+  FreeAndNil(FList);
+  inherited Destroy;
 end;
 
 function TGlobalAttributes.Find(vName: string): TGlobalAttribute;
@@ -373,13 +419,12 @@ end;
 
 function TGlobalAttributes.GetItem(Index: Integer): TGlobalAttribute;
 begin
-  Result := inherited Items[Index] as TGlobalAttribute;
+  Result := FList[Index] as TGlobalAttribute;
 end;
 
-procedure TGlobalAttributes.SetItem(Index: Integer;
-  const Value: TGlobalAttribute);
+function TGlobalAttributes.GetCount: Integer;
 begin
-  inherited Items[Index] := Value;
+  Result := FList.Count;
 end;
 
 { TGlobalAttribute }
@@ -410,7 +455,7 @@ begin
     inherited;
 end;
 
-constructor TGlobalAttribute.Create(ACollection: TCollection);
+constructor TGlobalAttribute.Create;
 begin
   inherited;
   FBackground := clNone;
