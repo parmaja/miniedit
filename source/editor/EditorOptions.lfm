@@ -955,14 +955,14 @@ object EditorOptionsForm: TEditorOptionsForm
         OnClick = LoadBtnClick
         TabOrder = 13
       end
-      object RevertBtn: TButton
+      object ResetBtn: TButton
         Left = 162
         Height = 26
         Top = 326
         Width = 78
         Anchors = [akLeft, akBottom]
-        Caption = 'Revert'
-        OnClick = RevertBtnClick
+        Caption = 'Reset'
+        OnClick = ResetBtnClick
         TabOrder = 14
       end
     end
@@ -990,14 +990,14 @@ object EditorOptionsForm: TEditorOptionsForm
     ModalResult = 2
     TabOrder = 2
   end
-  object ResetBtn: TButton
-    Left = 3
+  object RevertBtn: TButton
+    Left = 6
     Height = 26
     Top = 386
     Width = 78
     Anchors = [akLeft, akBottom]
-    Caption = 'Reset'
-    OnClick = ResetBtnClick
+    Caption = 'Revert'
+    OnClick = RevertBtnClick
     TabOrder = 3
   end
   object FontDialog: TFontDialog

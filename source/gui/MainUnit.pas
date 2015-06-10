@@ -1965,10 +1965,10 @@ begin
   else
     ClientPnl.Font.Color := Engine.Options.Profile.Attributes.UI.Foreground;}
 
-  if Engine.Options.Profile.Attributes.UI.Foreground = clNone then
+  {if Engine.Options.Profile.Attributes.UI.Foreground = clNone then
     Color := clBtnFace
   else
-    Color := Engine.Options.Profile.Attributes.UI.Background;
+    Color := Engine.Options.Profile.Attributes.UI.Background;}
 
   FileTabs.Color := clBtnFace;//Engine.Options.Profile.Attributes.UI.Background;
 //  FileTabs.Color := Engine.Options.Profile.Gutter.Backcolor;

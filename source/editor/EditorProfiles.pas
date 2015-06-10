@@ -397,24 +397,25 @@ procedure TGlobalAttributes.Reset;
 begin
   FList.Clear;
   Add(FUI, 'UI', 'User Interface', clNone, clNone, []);
-  Add(FWhitespace, 'Whitespace', 'Whitespace', clWhite, TColor($000F192A), []);
-  Add(FSelected, 'Selected', 'Selected', TColor($000F192A), clWhite, []);
+  Add(FWhitespace, 'Whitespace', 'Whitespace', clWhite, TColor($2A190F), []);
+  Add(FSelected, 'Selected', 'Selected', clNone, TColor($DD8B42), []);
 
   Add(FKeyword, 'Keyword', 'Keyword', TColor($3737E8), clNone, []);
-  Add(FSymbol, 'Symbol', 'Symbol', TColor($00E83737), clNone, []);
-  Add(FNumber, 'Number', 'Number', clWhite, TColor($0F192A), []);
-  Add(FDirective, 'Directive', 'Directive', clWhite, TColor($0F192A), []);
-  Add(FIdentifier, 'Identifier', 'Identifier', clWhite, TColor($0F192A), []);
-  Add(FCommon, 'Common', 'Common Functions', clWhite, TColor($0F192A), []);
-  Add(FVariable, 'Variable', 'Variable', clWhite, TColor($0F192A), []);
-  Add(FValue, 'Value', 'Value', clWhite, TColor($0F192A), []);
-  Add(FDatatype, 'Datatype', 'Datatype', clWhite, TColor($0F192A), []);
-  Add(FDocument, 'Document', 'Document', clWhite, TColor($0F192A), []);
-  Add(FComment, 'Comment', 'Comment', clWhite, TColor($0F192A), []);
-  Add(FText, 'Text', 'Text', clWhite, TColor($0F192A), []);
-  Add(FContents, 'Contents', 'Contents', clWhite, TColor($0F192A), []);
-  Add(FQuotedString, 'String', 'String', clWhite, TColor($0F192A), []);
+  Add(FQuotedString, 'String', 'String', TColor($16C11D), clNone, []);
+  Add(FDocument, 'Document', 'Document', TColor($DD8B42), clNone, []);
+  Add(FComment, 'Comment', 'Comment', TColor($DD8B42), clNone, []);
+  Add(FSymbol, 'Symbol', 'Symbol', TColor($FFEDD1), clNone, []);
+  Add(FCommon, 'Common', 'Common Functions', TColor($3EAAFF), clNone, []);
+  Add(FNumber, 'Number', 'Number', TColor($0FDFEA), clNone, []);
 
+  Add(FDirective, 'Directive', 'Directive', clNone, clNone, []);
+  Add(FIdentifier, 'Identifier', 'Identifier', clNone, clNone, []);
+  Add(FText, 'Text', 'Text', clNone, clNone, []);
+
+  Add(FContents, 'Contents', 'Contents', clNone, clNone, []);
+  Add(FVariable, 'Variable', 'Variable', clNone, clNone, []);
+  Add(FValue, 'Value', 'Value', clNone, clNone, []);
+  Add(FDatatype, 'Datatype', 'Datatype', clNone, clNone, []);
 end;
 
 function TGlobalAttributes.Find(vName: string): TGlobalAttribute;

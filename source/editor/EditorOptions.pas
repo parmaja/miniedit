@@ -42,6 +42,7 @@ type
     Label15: TLabel;
     Label7: TLabel;
     OpenDialog: TOpenDialog;
+    ResetBtn: TButton;
     RevertBtn: TButton;
     SaveBtn: TButton;
     LoadBtn: TButton;
@@ -115,7 +116,6 @@ type
     RightMouseMovesChk: TCheckBox;
     InsertModeChk: TCheckBox;
     TabIndentChk: TCheckBox;
-    ResetBtn: TButton;
     Label12: TLabel;
     CategoryCbo: TComboBox;
     UnderlineChk: TCheckBox;
@@ -503,21 +503,21 @@ procedure TEditorOptionsForm.ResetBtnClick(Sender: TObject);
 begin
   InChanging := True;
   try
-    GetData;
+    FAttributes.Reset;
   finally
     InChanging := False;
   end;
+  ApplyCategory;
 end;
 
 procedure TEditorOptionsForm.RevertBtnClick(Sender: TObject);
 begin
   InChanging := True;
   try
-    FProfile.Reset;
+    GetData;
   finally
     InChanging := False;
   end;
-  ApplyCategory;
 end;
 
 procedure TEditorOptionsForm.SampleEditMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
