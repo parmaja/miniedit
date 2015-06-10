@@ -41,8 +41,12 @@ type
     CodeFoldingChk: TCheckBox;
     Label15: TLabel;
     Label7: TLabel;
+    OpenDialog: TOpenDialog;
     RevertBtn: TButton;
+    SaveBtn: TButton;
+    LoadBtn: TButton;
     SavedColorCbo: TColorBox;
+    SaveDialog: TSaveDialog;
     UnsavedColorCbo: TColorBox;
     ShowSeparatorChk: TCheckBox;
     SeparatorColorCbo: TColorBox;
@@ -123,6 +127,7 @@ type
     procedure ForegroundCboChange(Sender: TObject);
     procedure ForegroundCboCloseUp(Sender: TObject);
     procedure ForegroundCboEditingDone(Sender: TObject);
+    procedure LoadBtnClick(Sender: TObject);
     procedure NoAntialiasingChkChange(Sender: TObject);
     procedure BackgroundCboSelect(Sender: TObject);
     procedure DefaultBackgroundCboSelect(Sender: TObject);
@@ -145,6 +150,7 @@ type
     procedure GroupCboClick(Sender: TObject);
     procedure BoldChkClick(Sender: TObject);
     procedure BackgroundChkClick(Sender: TObject);
+    procedure SaveBtnClick(Sender: TObject);
   private
     FProfile: TEditorProfile;
     FAttributes: TGlobalAttributes;
@@ -163,7 +169,7 @@ implementation
 {$R *.lfm}
 
 uses
-  EditorEngine, SynEditTypes;
+  mnXMLRttiProfile,EditorEngine, SynEditTypes;
 
 { TEditorOptionsForm }
 
@@ -395,6 +401,15 @@ procedure TEditorOptionsForm.ForegroundCboEditingDone(Sender: TObject);
 begin
 end;
 
+procedure TEditorOptionsForm.LoadBtnClick(Sender: TObject);
+begin
+  if OpenDialog.Execute then
+  begin
+    XMLReadObjectFile(FAttributes, OpenDialog.FileName);
+    ApplyCategory;
+  end;
+end;
+
 procedure TEditorOptionsForm.ForegroundCboCloseUp(Sender: TObject);
 begin
 
@@ -506,6 +521,7 @@ begin
   finally
     InChanging := False;
   end;
+  ApplyCategory;
 end;
 
 procedure TEditorOptionsForm.SampleEditMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
@@ -661,6 +677,14 @@ begin
   if not InChanging then
     BackgroundChk.Checked := True;
   ApplyElement;
+end;
+
+procedure TEditorOptionsForm.SaveBtnClick(Sender: TObject);
+begin
+  if SaveDialog.Execute then
+  begin
+    XMLWriteObjectFile(FAttributes, SaveDialog.FileName);
+  end;
 end;
 
 end.

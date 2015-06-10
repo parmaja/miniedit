@@ -2,11 +2,11 @@ object EditorOptionsForm: TEditorOptionsForm
   Left = 368
   Height = 416
   Top = 116
-  Width = 369
+  Width = 391
   BorderStyle = bsDialog
   Caption = 'Editor Options'
   ClientHeight = 416
-  ClientWidth = 369
+  ClientWidth = 391
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   OnCreate = FormCreate
@@ -17,23 +17,25 @@ object EditorOptionsForm: TEditorOptionsForm
     Left = 4
     Height = 379
     Top = 4
-    Width = 362
+    Width = 383
     ActivePage = ColorTab
+    Anchors = [akLeft, akRight]
     TabIndex = 2
     TabOrder = 0
     OnChange = PageControlChange
     object OptionsTab: TTabSheet
       Caption = 'Options'
       ClientHeight = 353
-      ClientWidth = 354
+      ClientWidth = 375
       object OptionsGrp: TGroupBox
         Left = 4
         Height = 273
         Top = 2
-        Width = 345
+        Width = 363
+        Anchors = [akTop, akLeft, akRight]
         Caption = 'Options'
         ClientHeight = 255
-        ClientWidth = 341
+        ClientWidth = 359
         TabOrder = 0
         object AutoIndentChk: TCheckBox
           Left = 9
@@ -299,7 +301,8 @@ object EditorOptionsForm: TEditorOptionsForm
           Left = 120
           Height = 21
           Top = -1
-          Width = 186
+          Width = 211
+          Anchors = [akTop, akLeft, akRight]
           ItemHeight = 13
           Items.Strings = (
             'Vertical Line'
@@ -314,7 +317,8 @@ object EditorOptionsForm: TEditorOptionsForm
           Left = 120
           Height = 21
           Top = 24
-          Width = 186
+          Width = 211
+          Anchors = [akTop, akLeft, akRight]
           ItemHeight = 13
           Items.Strings = (
             'Vertical Line'
@@ -330,7 +334,7 @@ object EditorOptionsForm: TEditorOptionsForm
     object GutterTab: TTabSheet
       Caption = 'Display'
       ClientHeight = 353
-      ClientWidth = 354
+      ClientWidth = 375
       object RightEdgeGrp: TGroupBox
         Left = 7
         Height = 100
@@ -378,10 +382,11 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 7
         Height = 195
         Top = 8
-        Width = 341
+        Width = 362
+        Anchors = [akTop, akLeft, akRight]
         Caption = 'Gutter'
         ClientHeight = 177
-        ClientWidth = 337
+        ClientWidth = 358
         TabOrder = 0
         object Label1: TLabel
           Left = 129
@@ -437,8 +442,9 @@ object EditorOptionsForm: TEditorOptionsForm
           Left = 184
           Height = 22
           Top = 25
-          Width = 145
+          Width = 165
           Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
+          Anchors = [akTop, akLeft, akRight]
           ItemHeight = 16
           TabOrder = 5
         end
@@ -454,8 +460,9 @@ object EditorOptionsForm: TEditorOptionsForm
           Left = 185
           Height = 22
           Top = -2
-          Width = 145
+          Width = 165
           Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
+          Anchors = [akTop, akLeft, akRight]
           ItemHeight = 16
           TabOrder = 6
         end
@@ -463,8 +470,9 @@ object EditorOptionsForm: TEditorOptionsForm
           Left = 184
           Height = 22
           Top = 74
-          Width = 145
+          Width = 165
           Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
+          Anchors = [akTop, akLeft, akRight]
           ItemHeight = 16
           TabOrder = 7
         end
@@ -488,8 +496,9 @@ object EditorOptionsForm: TEditorOptionsForm
           Left = 185
           Height = 22
           Top = 124
-          Width = 145
+          Width = 165
           Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
+          Anchors = [akTop, akLeft, akRight]
           ItemHeight = 16
           TabOrder = 9
         end
@@ -513,8 +522,9 @@ object EditorOptionsForm: TEditorOptionsForm
           Left = 185
           Height = 22
           Top = 150
-          Width = 145
+          Width = 165
           Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
+          Anchors = [akTop, akLeft, akRight]
           ItemHeight = 16
           TabOrder = 11
         end
@@ -539,10 +549,11 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 183
         Height = 100
         Top = 216
-        Width = 165
+        Width = 185
+        Anchors = [akTop, akLeft, akRight]
         Caption = 'Line spacing / Tab spacing'
         ClientHeight = 82
-        ClientWidth = 161
+        ClientWidth = 181
         TabOrder = 2
         object Label8: TLabel
           Left = 9
@@ -581,18 +592,25 @@ object EditorOptionsForm: TEditorOptionsForm
     object ColorTab: TTabSheet
       Caption = 'Color'
       ClientHeight = 353
-      ClientWidth = 354
+      ClientWidth = 375
       ImageIndex = 3
+      object Bevel1: TBevel
+        Left = 3
+        Height = 26
+        Top = 8
+        Width = 308
+        Anchors = [akTop, akLeft, akRight]
+      end
       object Label11: TLabel
         Left = 5
         Height = 13
-        Top = 66
+        Top = 67
         Width = 42
         Caption = '&Attribute:'
         ParentColor = False
       end
       object Label12: TLabel
-        Left = 2
+        Left = 8
         Height = 13
         Top = 155
         Width = 51
@@ -601,9 +619,9 @@ object EditorOptionsForm: TEditorOptionsForm
       end
       inline SampleEdit: TSynEdit
         Left = 3
-        Height = 168
+        Height = 141
         Top = 181
-        Width = 344
+        Width = 365
         Anchors = [akTop, akLeft, akRight, akBottom]
         Font.Height = -13
         Font.Name = 'Courier New'
@@ -810,11 +828,12 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 89
         Height = 22
         Top = 118
-        Width = 164
+        Width = 197
         DefaultColorColor = clWhite
         NoneColorColor = clWhite
         Selected = clWhite
         Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
+        Anchors = [akTop, akLeft, akRight]
         ItemHeight = 16
         OnChange = BackgroundCboChange
         OnClick = BackgroundCboClick
@@ -825,8 +844,9 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 89
         Height = 22
         Top = 91
-        Width = 164
+        Width = 197
         Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
+        Anchors = [akTop, akLeft, akRight]
         ItemHeight = 16
         OnChange = ForegroundCboChange
         OnCloseUp = ForegroundCboCloseUp
@@ -838,7 +858,8 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 71
         Height = 21
         Top = 62
-        Width = 274
+        Width = 297
+        Anchors = [akTop, akLeft, akRight]
         ItemHeight = 13
         OnSelect = AttributeCboSelect
         Style = csDropDownList
@@ -866,7 +887,8 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 73
         Height = 21
         Top = 153
-        Width = 274
+        Width = 295
+        Anchors = [akTop, akLeft, akRight]
         ItemHeight = 13
         OnSelect = CategoryCboSelect
         Style = csDropDownList
@@ -874,56 +896,52 @@ object EditorOptionsForm: TEditorOptionsForm
       end
       object FontLbl: TLabel
         Left = 10
-        Height = 16
+        Height = 13
         Top = 13
-        Width = 128
+        Width = 82
         Caption = 'Courier New 10pt'
-        Font.Height = -13
-        Font.Name = 'Courier New'
-        ParentColor = False
-        ParentFont = False
+        Color = clDefault
+        Transparent = False
       end
       object FontBtn: TButton
-        Left = 293
+        Left = 318
         Height = 25
         Top = 7
         Width = 54
+        Anchors = [akTop, akRight]
         Caption = 'Font'
         OnClick = FontBtnClick
         TabOrder = 7
       end
       object BoldChk: TCheckBox
-        Left = 271
+        Left = 304
         Height = 19
         Top = 112
         Width = 41
+        Anchors = [akTop, akRight]
         Caption = '&Bold'
         OnClick = BoldChkClick
         TabOrder = 8
       end
       object ItalicChk: TCheckBox
-        Left = 271
+        Left = 304
         Height = 19
         Top = 133
         Width = 42
+        Anchors = [akTop, akRight]
         Caption = '&Italic'
         OnClick = BoldChkClick
         TabOrder = 9
       end
       object UnderlineChk: TCheckBox
-        Left = 271
+        Left = 304
         Height = 19
         Top = 91
         Width = 65
+        Anchors = [akTop, akRight]
         Caption = '&Underline'
         OnClick = BoldChkClick
         TabOrder = 10
-      end
-      object Bevel1: TBevel
-        Left = 3
-        Height = 26
-        Top = 8
-        Width = 283
       end
       object NoAntialiasingChk: TCheckBox
         Left = 8
@@ -934,10 +952,40 @@ object EditorOptionsForm: TEditorOptionsForm
         OnChange = NoAntialiasingChkChange
         TabOrder = 11
       end
+      object SaveBtn: TButton
+        Left = 83
+        Height = 26
+        Top = 326
+        Width = 78
+        Anchors = [akLeft, akBottom]
+        Caption = 'Save'
+        OnClick = SaveBtnClick
+        TabOrder = 12
+      end
+      object LoadBtn: TButton
+        Left = 5
+        Height = 26
+        Top = 326
+        Width = 78
+        Anchors = [akLeft, akBottom]
+        Caption = 'Load'
+        OnClick = LoadBtnClick
+        TabOrder = 13
+      end
+      object RevertBtn: TButton
+        Left = 162
+        Height = 26
+        Top = 326
+        Width = 78
+        Anchors = [akLeft, akBottom]
+        Caption = 'Revert'
+        OnClick = RevertBtnClick
+        TabOrder = 14
+      end
     end
   end
   object OkBtn: TButton
-    Left = 291
+    Left = 310
     Height = 26
     Top = 386
     Width = 75
@@ -949,7 +997,7 @@ object EditorOptionsForm: TEditorOptionsForm
     TabOrder = 1
   end
   object CancelBtn: TButton
-    Left = 216
+    Left = 235
     Height = 26
     Top = 386
     Width = 75
@@ -960,24 +1008,14 @@ object EditorOptionsForm: TEditorOptionsForm
     TabOrder = 2
   end
   object ResetBtn: TButton
-    Left = 4
+    Left = 3
     Height = 26
     Top = 386
     Width = 78
-    Anchors = [akRight, akBottom]
+    Anchors = [akLeft, akBottom]
     Caption = 'Reset'
     OnClick = ResetBtnClick
     TabOrder = 3
-  end
-  object RevertBtn: TButton
-    Left = 82
-    Height = 26
-    Top = 386
-    Width = 78
-    Anchors = [akRight, akBottom]
-    Caption = 'Revert'
-    OnClick = RevertBtnClick
-    TabOrder = 4
   end
   object FontDialog: TFontDialog
     Font.Height = -11
@@ -986,7 +1024,23 @@ object EditorOptionsForm: TEditorOptionsForm
     MaxFontSize = 0
     Options = [fdEffects, fdFixedPitchOnly, fdNoStyleSel]
     PreviewText = 'Hello World'
-    left = 94
-    top = 322
+    left = 33
+    top = 280
+  end
+  object OpenDialog: TOpenDialog
+    DefaultExt = '.mne-theme'
+    FileName = '*.mne-theme'
+    Filter = 'theme|*.mne-theme'
+    Options = [ofFileMustExist, ofEnableSizing, ofViewDetail]
+    left = 293
+    top = 277
+  end
+  object SaveDialog: TSaveDialog
+    DefaultExt = '.mne-theme'
+    FileName = '*.mne-theme'
+    Filter = 'theme|*.mne-theme'
+    Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
+    left = 309
+    top = 349
   end
 end
