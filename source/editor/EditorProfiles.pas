@@ -21,9 +21,7 @@ const
     eoShowScrollHint, eoRightMouseMovesCursor, eoTabsToSpaces, eoTabIndent, eoTrimTrailingSpaces, eoKeepCaretX];
 
 type
-  IGlobalAttributes = interface
-  ['{D4F16257-1809-4BD7-81D2-2D9951A5057D}']
-  end;
+  TGlobalAttributes = class;
 
   { TGlobalAttribute }
 
@@ -31,13 +29,18 @@ type
   private
     FBackground: TColor;
     FForeground: TColor;
+    FIndex: Integer;
+    FParent: TGlobalAttributes;
     FStyle: TFontStyles;
     FName: string;
     FTitle: string;
+  protected
+    property Parent: TGlobalAttributes read FParent;
   public
     constructor Create;
     procedure AssignTo(Dest: TPersistent); override;
     procedure Assign(Source: TPersistent); override;
+    property Index: Integer read FIndex;
   published
     property Title: string read FTitle write FTitle;
     property Name: string read FName write FName;
@@ -50,23 +53,27 @@ type
 
   TGlobalAttributes = class(TComponent)
   private
+    FContents: TGlobalAttribute;
     FDatatype: TGlobalAttribute;
     FDirective: TGlobalAttribute;
-    FList: TObjectList;
 
     FDocument: TGlobalAttribute;
-    FDQ_string: TGlobalAttribute;
+    FQuotedString: TGlobalAttribute;
     FIdentifier: TGlobalAttribute;
     FKeyword: TGlobalAttribute;
-    FML_comment: TGlobalAttribute;
+
     FNumber: TGlobalAttribute;
     FSelected: TGlobalAttribute;
-    FSL_comment: TGlobalAttribute;
-    FSQ_string: TGlobalAttribute;
+    FComment: TGlobalAttribute;
     FSymbol: TGlobalAttribute;
+    FText: TGlobalAttribute;
+    FUI: TGlobalAttribute;
     FValue: TGlobalAttribute;
     FVariable: TGlobalAttribute;
+    FCommon: TGlobalAttribute;
     FWhitespace: TGlobalAttribute;
+
+    FList: TObjectList;
     function GetCount: Integer;
     function GetItem(Index: Integer): TGlobalAttribute;
     function GetAttribute(Index: string): TGlobalAttribute;
@@ -75,12 +82,15 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure Reset;
     function Find(vName: string): TGlobalAttribute;
     property Items[Index: Integer]: TGlobalAttribute read GetItem; default;
     property Attribute[Index: string]: TGlobalAttribute read GetAttribute;
     property Count: Integer read GetCount;
+    procedure Assign(Source: TPersistent); override;
   published
     property Whitespace: TGlobalAttribute read FWhitespace;
+    property UI: TGlobalAttribute read FUI;
     property Selected: TGlobalAttribute read FSelected;
 
     property Keyword: TGlobalAttribute read FKeyword;
@@ -89,14 +99,14 @@ type
     property Directive: TGlobalAttribute read FDirective;
     property Identifier: TGlobalAttribute read FIdentifier;
     property Variable: TGlobalAttribute read FVariable;
+    property Common: TGlobalAttribute read FCommon;
     property Value: TGlobalAttribute read FValue;
     property Datatype: TGlobalAttribute read FDatatype;
     property Document: TGlobalAttribute read FDocument;
-    property SL_comment: TGlobalAttribute read FSL_comment;
-    property ML_comment: TGlobalAttribute read FML_comment;
-    property SQ_string: TGlobalAttribute read FSQ_string;
-    property DQ_string: TGlobalAttribute read FDQ_string;
-
+    property Text: TGlobalAttribute read FText;
+    property Contents: TGlobalAttribute read FContents;
+    property Comment: TGlobalAttribute read FComment;
+    property QuotedString: TGlobalAttribute read FQuotedString;
   end;
 
   { TGutterOptions }
@@ -243,8 +253,8 @@ begin
     else
       TCustomSynEdit(Dest).Font.Quality := fqDefault;
 
-    TCustomSynEdit(Dest).Font.Color := Attributes.Find('Whitespace').Foreground;
-    TCustomSynEdit(Dest).Color := Attributes.Find('Whitespace').Background;
+    TCustomSynEdit(Dest).Font.Color := Attributes.Whitespace.Foreground;
+    TCustomSynEdit(Dest).Color := Attributes.Whitespace.Background;
     //TCustomSynEdit(Dest).SelectedColor.
 
     TCustomSynEdit(Dest).Options := TCustomSynEdit(Dest).Options - [eoDropFiles]; //make main window accept the files
@@ -313,6 +323,7 @@ end;
 
 procedure TEditorProfile.Reset;
 begin
+  Attributes.Reset;
   Gutter.Reset;
   FFontName := 'Courier New';
   FFontSize := 10;
@@ -359,6 +370,20 @@ end;
 
 constructor TGlobalAttributes.Create(AOwner: TComponent);
 
+begin
+  inherited Create(AOwner);
+  FComponentStyle := FComponentStyle + [csSubComponent];
+  FList := TObjectList.Create(True);
+  Reset;
+end;
+
+destructor TGlobalAttributes.Destroy;
+begin
+  FreeAndNil(FList);
+  inherited Destroy;
+end;
+
+procedure TGlobalAttributes.Reset;
   procedure Add(var Item: TGlobalAttribute; Name, Title: string; Foreground, Background: TColor; Style: TFontStyles);
   begin
     Item := TGlobalAttribute.Create;
@@ -367,36 +392,31 @@ constructor TGlobalAttributes.Create(AOwner: TComponent);
     Item.Foreground := Foreground;
     Item.Background := Background;
     Item.Style := Style;
-    FList.Add(Item);
+    Item.FParent := Self;
+    Item.FIndex := FList.Add(Item);
   end;
 
 begin
-  inherited Create(AOwner);
-  FComponentStyle := FComponentStyle + [csSubComponent];
-  FList := TObjectList.Create;
+  FList.Clear;
+  Add(FUI, 'UI', 'User Interface', clNone, clNone, []);
+  Add(FWhitespace, 'Whitespace', 'Whitespace', clWhite, TColor($000F192A), []);
+  Add(FSelected, 'Selected', 'Selected', TColor($000F192A), clWhite, []);
 
-  Add(FWhitespace, 'Whitespace', 'Whitespace', clWhite, TColor($0F192A), []);
-  Add(FSelected, 'Selected', 'Selected', TColor($0F192A), clWhite, []);
-
-  Add(FKeyword, 'Keyword', 'Keyword', clWhite, TColor($0F192A), []);
-  Add(FSymbol, 'Symbol', 'Symbol', clWhite, TColor($0F192A), []);
+  Add(FKeyword, 'Keyword', 'Keyword', TColor($3737E8), clNone, []);
+  Add(FSymbol, 'Symbol', 'Symbol', TColor($00E83737), clNone, []);
   Add(FNumber, 'Number', 'Number', clWhite, TColor($0F192A), []);
   Add(FDirective, 'Directive', 'Directive', clWhite, TColor($0F192A), []);
   Add(FIdentifier, 'Identifier', 'Identifier', clWhite, TColor($0F192A), []);
+  Add(FCommon, 'Common', 'Common Functions', clWhite, TColor($0F192A), []);
   Add(FVariable, 'Variable', 'Variable', clWhite, TColor($0F192A), []);
   Add(FValue, 'Value', 'Value', clWhite, TColor($0F192A), []);
   Add(FDatatype, 'Datatype', 'Datatype', clWhite, TColor($0F192A), []);
   Add(FDocument, 'Document', 'Document', clWhite, TColor($0F192A), []);
-  Add(FSL_comment, 'SL_comment', 'Single Line comment', clWhite, TColor($0F192A), []);
-  Add(FML_comment, 'ML_comment', 'Multi Line comment', clWhite, TColor($0F192A), []);
-  Add(FSQ_string, 'SQ_string', 'Single quite string', clWhite, TColor($0F192A), []);
-  Add(FDQ_string, 'DQ_string', 'Double quite string', clWhite, TColor($0F192A), []);
-end;
+  Add(FComment, 'Comment', 'Comment', clWhite, TColor($0F192A), []);
+  Add(FText, 'Text', 'Text', clWhite, TColor($0F192A), []);
+  Add(FContents, 'Contents', 'Contents', clWhite, TColor($0F192A), []);
+  Add(FQuotedString, 'String', 'String', clWhite, TColor($0F192A), []);
 
-destructor TGlobalAttributes.Destroy;
-begin
-  FreeAndNil(FList);
-  inherited Destroy;
 end;
 
 function TGlobalAttributes.Find(vName: string): TGlobalAttribute;
@@ -417,6 +437,19 @@ begin
     end;
 end;
 
+procedure TGlobalAttributes.Assign(Source: TPersistent);
+var
+  i: Integer;
+begin
+  if Source is TGlobalAttributes then
+  begin
+    for i := 0 to Count -1 do
+      Items[i].Assign((Source as TGlobalAttributes).Items[i]);
+  end
+  else
+    inherited Assign(Source);
+end;
+
 function TGlobalAttributes.GetItem(Index: Integer): TGlobalAttribute;
 begin
   Result := FList[Index] as TGlobalAttribute;
@@ -433,10 +466,15 @@ procedure TGlobalAttribute.Assign(Source: TPersistent);
 begin
   if Source is TSynHighlighterAttributes then
   begin
-    Name := TSynHighlighterAttributes(Source).Name;
     Background := TSynHighlighterAttributes(Source).Background;
     Foreground := TSynHighlighterAttributes(Source).Foreground;
     Style := TSynHighlighterAttributes(Source).Style;
+  end
+  else if Source is TGlobalAttribute then
+  begin
+    Background := (Source as TGlobalAttribute).Background;
+    Foreground := (Source as TGlobalAttribute).Foreground;
+    Style := (Source as TGlobalAttribute).Style;
   end
   else
     inherited;
@@ -446,7 +484,6 @@ procedure TGlobalAttribute.AssignTo(Dest: TPersistent);
 begin
   if Dest is TSynHighlighterAttributes then
   begin
-  //  TSynHighlighterAttributes(Source).Name := Name;
     TSynHighlighterAttributes(Dest).Background := Background;
     TSynHighlighterAttributes(Dest).Foreground := Foreground;
     TSynHighlighterAttributes(Dest).Style := Style;

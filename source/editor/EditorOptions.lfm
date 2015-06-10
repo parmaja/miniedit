@@ -810,12 +810,14 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 89
         Height = 22
         Top = 118
-        Width = 100
+        Width = 164
         DefaultColorColor = clWhite
         NoneColorColor = clWhite
         Selected = clWhite
         Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
         ItemHeight = 16
+        OnChange = BackgroundCboChange
+        OnClick = BackgroundCboClick
         OnSelect = BackgroundCboSelect
         TabOrder = 5
       end
@@ -823,9 +825,12 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 89
         Height = 22
         Top = 91
-        Width = 100
+        Width = 164
         Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
         ItemHeight = 16
+        OnChange = ForegroundCboChange
+        OnCloseUp = ForegroundCboCloseUp
+        OnEditingDone = ForegroundCboEditingDone
         OnSelect = ForegroundCboSelect
         TabOrder = 3
       end
@@ -888,7 +893,7 @@ object EditorOptionsForm: TEditorOptionsForm
         TabOrder = 7
       end
       object BoldChk: TCheckBox
-        Left = 200
+        Left = 271
         Height = 19
         Top = 112
         Width = 41
@@ -897,7 +902,7 @@ object EditorOptionsForm: TEditorOptionsForm
         TabOrder = 8
       end
       object ItalicChk: TCheckBox
-        Left = 200
+        Left = 271
         Height = 19
         Top = 133
         Width = 42
@@ -906,7 +911,7 @@ object EditorOptionsForm: TEditorOptionsForm
         TabOrder = 9
       end
       object UnderlineChk: TCheckBox
-        Left = 200
+        Left = 271
         Height = 19
         Top = 91
         Width = 65
@@ -963,6 +968,16 @@ object EditorOptionsForm: TEditorOptionsForm
     Caption = 'Reset'
     OnClick = ResetBtnClick
     TabOrder = 3
+  end
+  object RevertBtn: TButton
+    Left = 82
+    Height = 26
+    Top = 386
+    Width = 78
+    Anchors = [akRight, akBottom]
+    Caption = 'Revert'
+    OnClick = RevertBtnClick
+    TabOrder = 4
   end
   object FontDialog: TFontDialog
     Font.Height = -11

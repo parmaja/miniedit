@@ -17,7 +17,7 @@ uses
   mnXMLRttiProfile, mnXMLUtils, mnUtils, LCLType, EditorClasses;
 
 type
-  TEditorChangeStates = set of (ecsChanged, ecsState, ecsRefresh, ecsDebug, ecsShow, ecsEdit, ecsFolder, ecsProject); //ecsShow bring to front
+  TEditorChangeStates = set of (ecsChanged, ecsState, ecsRefresh, ecsOptions, ecsDebug, ecsShow, ecsEdit, ecsFolder, ecsProject); //ecsShow bring to front
   TSynCompletionType = (ctCode, ctHint, ctParams);
 
   TEditorEngine = class;
@@ -2444,6 +2444,7 @@ begin
         aSelect := '';
       if Execute(Profile, aSelect) then
         Apply;
+      Engine.UpdateState([ecsOptions]);
     finally
       Free;
     end;
@@ -2492,6 +2493,7 @@ begin
     end;
     SetDefaultPerspective(Session.Options.DefaultPerspective);
     SetDefaultSCM(Session.Options.DefaultSCM);
+    Engine.UpdateState([ecsOptions]);
   finally
     Engine.EndUpdate;
   end;
@@ -3456,10 +3458,13 @@ begin
 
     M := Mapper.Find(Att.StoredName);
     if M <> nil then
+      G := Attributes.Find(M.Name);
+
+    if M <> nil then
       G := Attributes.Find(M.ToName);
 
     if G = nil then
-      G := Attributes.Find('Whitespace');
+      G := Attributes.Whitespace;
 
     Att.Background := G.Background;
     Att.Foreground := G.Foreground;

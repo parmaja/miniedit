@@ -55,9 +55,13 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    BugSignBtn: TSpeedButton;
     CallStackList: TListView;
     DeleteAct: TAction;
-    BugSignBtn: TSpeedButton;
+    FileCloseBtn: TSpeedButton;
+    FileHeaderPanel: TPanel;
+    FileModeBtn: TBitBtn;
+    FileNameLbl: TLabel;
     MenuItem18: TMenuItem;
     MenuItem19: TMenuItem;
     MenuItem20: TMenuItem;
@@ -67,7 +71,6 @@ type
     MenuItem17: TMenuItem;
     SortByExtensionsAct: TAction;
     SortByNamesAct: TAction;
-    FileCloseBtn: TSpeedButton;
     FoldersSpl: TntvSplitter;
     MenuItem14: TMenuItem;
     MenuItem15: TMenuItem;
@@ -287,8 +290,6 @@ type
     OutputAct: TAction;
     ClientPnl: TPanel;
     EditorsPnl: TPanel;
-    FileHeaderPanel: TPanel;
-    FileNameLbl: TLabel;
     OutputEdit: TSynEdit;
     Output1: TMenuItem;
     DBGRunToCursor: TAction;
@@ -335,7 +336,6 @@ type
     QuickSearchEdit: TEdit;
     QuickFindAct: TAction;
     QuickSearch: TMenuItem;
-    FileModeBtn: TSpeedButton;
     procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
     procedure CallStackListDblClick(Sender: TObject);
@@ -358,6 +358,7 @@ type
     procedure FileListDblClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure ProjectTypeActExecute(Sender: TObject);
+    procedure FileModeBtnClick(Sender: TObject);
     procedure RefreshFilesActExecute(Sender: TObject);
     procedure RenameActExecute(Sender: TObject);
     procedure SaveActExecute(Sender: TObject);
@@ -417,7 +418,6 @@ type
     procedure FileFolder1Click(Sender: TObject);
     procedure OpenColorActUpdate(Sender: TObject);
     procedure OpenColorActExecute(Sender: TObject);
-    procedure FileModeBtnClick(Sender: TObject);
     procedure FolderBtnClick(Sender: TObject);
     procedure SCMCommitActExecute(Sender: TObject);
     procedure SCMDiffFileActExecute(Sender: TObject);
@@ -477,6 +477,7 @@ type
     procedure SetSortFolderFiles(AValue: TSortFolderFiles);
     procedure UpdateFileHeaderPanel;
     procedure UpdateCallStack;
+    procedure OptionsChanged;
     procedure EditorChangeState(State: TEditorChangeStates);
     function ChoosePerspective(var vPerspective: TEditorPerspective): Boolean;
     function ChooseSCM(var vSCM: TEditorSCM): Boolean;
@@ -939,6 +940,16 @@ begin
     if ChoosePerspective(lPerspective) then
       Engine.DefaultPerspective := lPerspective;
   end;
+end;
+
+procedure TMainForm.FileModeBtnClick(Sender: TObject);
+var
+  Pt: TPoint;
+begin
+  Pt.X := FileModeBtn.BoundsRect.Left;
+  Pt.Y := FileModeBtn.BoundsRect.Bottom;
+  Pt := FileModeBtn.ClientToScreen(Pt);
+  FileModeBtn.PopupMenu.Popup(Pt.X, Pt.Y);
 end;
 
 procedure TMainForm.RefreshFilesActExecute(Sender: TObject);
@@ -1582,6 +1593,8 @@ begin
     ProjectLoaded;
   if ecsState in State then
     EngineState;
+  if ecsOptions in State then
+    OptionsChanged;
 end;
 
 function TMainForm.ChoosePerspective(var vPerspective: TEditorPerspective): Boolean;
@@ -1755,16 +1768,6 @@ begin
   end;
 end;
 
-procedure TMainForm.FileModeBtnClick(Sender: TObject);
-var
-  Pt: TPoint;
-begin
-  Pt.X := FileModeBtn.BoundsRect.Left;
-  Pt.Y := FileModeBtn.BoundsRect.Bottom;
-  Pt := FileModeBtn.ClientToScreen(Pt);
-  FileModeBtn.PopupMenu.Popup(Pt.X, Pt.Y);
-end;
-
 procedure TMainForm.StartServer;
 begin
 end;
@@ -1914,9 +1917,11 @@ end;
 procedure TMainForm.UpdateFileHeaderPanel;
 begin
   if (Engine.Files.Current <> nil) and (Engine.Perspective.Debug <> nil) and (Engine.Files.Current.Control = Engine.Perspective.Debug.ExecutedControl) then
-    FileHeaderPanel.Color := $00C6C6EC
+//    FileHeaderPanel.Color := $00C6C6EC
+    BugSignBtn.Visible := True
   else
-    FileHeaderPanel.Color := $00EEE0D7;
+    BugSignBtn.Visible := False;
+    //FileHeaderPanel.Color := $00EEE0D7;
   FileHeaderPanel.Visible := Engine.Files.Count > 0;
   if FileHeaderPanel.Visible then
     FileHeaderPanel.Refresh;
@@ -1951,6 +1956,33 @@ begin
       CallStackList.EndUpdate;
     end;
   end;
+end;
+
+procedure TMainForm.OptionsChanged;
+begin
+  if Engine.Options.Profile.Attributes.UI.Foreground = clNone then
+    Font.Color := clBtnText
+  else
+    Font.Color := Engine.Options.Profile.Attributes.UI.Foreground;
+
+  if Engine.Options.Profile.Attributes.UI.Foreground = clNone then
+    Color := clBtnFace
+  else
+    Color := Engine.Options.Profile.Attributes.UI.Background;
+
+  FileList.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
+  FileList.Color := Engine.Options.Profile.Attributes.Whitespace.Background;
+
+  OutputEdit.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
+  OutputEdit.Color := Engine.Options.Profile.Attributes.Whitespace.Background;
+
+  EditorsPnl.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
+  EditorsPnl.Color := Engine.Options.Profile.Attributes.Whitespace.Background;
+
+  FileTabs.Color := Engine.Options.Profile.Gutter.Backcolor;
+
+{  MainBar.Font.Color := Engine.Options.Profile.Attributes.UI.Foreground;
+  MainBar.Color := Engine.Options.Profile.Attributes.Whitespace.Background;}
 end;
 
 procedure TMainForm.UpdateWatches;

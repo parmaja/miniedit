@@ -41,6 +41,7 @@ type
     CodeFoldingChk: TCheckBox;
     Label15: TLabel;
     Label7: TLabel;
+    RevertBtn: TButton;
     SavedColorCbo: TColorBox;
     UnsavedColorCbo: TColorBox;
     ShowSeparatorChk: TCheckBox;
@@ -117,6 +118,11 @@ type
     CategoryCbo: TComboBox;
     UnderlineChk: TCheckBox;
     WordWrapChk: TCheckBox;
+    procedure BackgroundCboChange(Sender: TObject);
+    procedure BackgroundCboClick(Sender: TObject);
+    procedure ForegroundCboChange(Sender: TObject);
+    procedure ForegroundCboCloseUp(Sender: TObject);
+    procedure ForegroundCboEditingDone(Sender: TObject);
     procedure NoAntialiasingChkChange(Sender: TObject);
     procedure BackgroundCboSelect(Sender: TObject);
     procedure DefaultBackgroundCboSelect(Sender: TObject);
@@ -134,18 +140,18 @@ type
     procedure GutterFontChkClick(Sender: TObject);
     procedure PageControlChange(Sender: TObject);
     procedure ResetBtnClick(Sender: TObject);
+    procedure RevertBtnClick(Sender: TObject);
     procedure SampleEditMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
     procedure GroupCboClick(Sender: TObject);
     procedure BoldChkClick(Sender: TObject);
     procedure BackgroundChkClick(Sender: TObject);
-    procedure ForegroundCboChange(Sender: TObject);
-    procedure BackgroundCboChange(Sender: TObject);
   private
     FProfile: TEditorProfile;
+    FAttributes: TGlobalAttributes;
     InChanging: boolean;
-    procedure ApplyCategory;
-    procedure RetrieveElement;
     procedure ApplyElement;
+    procedure RetrieveElement;
+    procedure ApplyCategory;
     procedure GetData;
     procedure PutData;
   public
@@ -172,37 +178,37 @@ begin
   if (Profile <> nil) then
   begin
     FProfile := Profile;
-    n := 0;
-    for i := 0 to Engine.Categories.Count - 1 do
-    begin
-      aFileCategory := Engine.Categories[i];
-      if aFileCategory.Highlighter <> nil then
+    FAttributes := TGlobalAttributes.Create(nil);
+    try
+      n := 0;
+      for i := 0 to Engine.Categories.Count - 1 do
       begin
-        S := aFileCategory.Highlighter.GetLanguageName;
-        CategoryCbo.Items.AddObject(S, aFileCategory);
-        if SameText(Select, S) then
-          n := CategoryCbo.Items.Count - 1;
+        aFileCategory := Engine.Categories[i];
+        if aFileCategory.Highlighter <> nil then
+        begin
+          S := aFileCategory.Highlighter.GetLanguageName;
+          CategoryCbo.Items.AddObject(S, aFileCategory);
+          if SameText(Select, S) then
+            n := CategoryCbo.Items.Count - 1;
+        end;
       end;
-    end;
-    CategoryCbo.ItemIndex := n;
+      CategoryCbo.ItemIndex := n;
 
-    AttributeCbo.Clear;
-    for i := 0 to Profile.Attributes.Count - 1 do
-    begin
-      AttributeCbo.Items.AddObject(Profile.Attributes.Items[i].Name, Profile.Attributes.Items[i]);
-    end;
-    AttributeCbo.ItemIndex := 0;
+      for i := 0 to FAttributes.Count - 1 do
+      begin
+        AttributeCbo.Items.AddObject(FAttributes.Items[i].Title, FAttributes.Items[i]);
+      end;
+      AttributeCbo.ItemIndex := 0;
 
-    ApplyCategory;
-    //Get Data
-    GetData;
-    //Show the form
-    Result := ShowModal = mrOk;
-    //PutData
-    if Result then
-    begin
-      PutData;
-      //TODO apply to profile.attributes
+      //Get Data
+      GetData;
+      //Show the form
+      Result := ShowModal = mrOk;
+      //PutData
+      if Result then
+        PutData;
+    finally
+      FAttributes.Free;
     end;
   end
   else
@@ -211,6 +217,8 @@ end;
 
 procedure TEditorOptionsForm.GetData;
 begin
+  FAttributes.Assign(FProfile.Attributes);
+
   //Gutter
   GutterVisibleChk.Checked := FProfile.Gutter.Visible;
   GutterAutosizeChk.Checked := FProfile.Gutter.AutoSize;
@@ -273,6 +281,8 @@ begin
   CodeFoldingChk.Checked := FProfile.CodeFolding;
   InsertCaretCbo.ItemIndex := Ord(FProfile.InsertCaret);
   OverwriteCaretCbo.ItemIndex := Ord(FProfile.OverwriteCaret);
+
+  ApplyCategory;
 end;
 
 procedure TEditorOptionsForm.PutData;
@@ -355,6 +365,8 @@ begin
   FProfile.CodeFolding := CodeFoldingChk.Checked;
   FProfile.InsertCaret := TSynEditCaretType(InsertCaretCbo.ItemIndex);
   FProfile.OverwriteCaret := TSynEditCaretType(OverwriteCaretCbo.ItemIndex);
+
+  FProfile.Attributes.Assign(FAttributes);
 end;
 
 procedure TEditorOptionsForm.FormCreate(Sender: TObject);
@@ -369,9 +381,6 @@ end;
 
 procedure TEditorOptionsForm.BackgroundCboSelect(Sender: TObject);
 begin
-  if not InChanging then
-    BackgroundChk.Checked := True;
-  ApplyElement;
 end;
 
 procedure TEditorOptionsForm.NoAntialiasingChkChange(Sender: TObject);
@@ -380,6 +389,37 @@ begin
   SampleEdit.Font.Quality := fqNonAntialiased
   else
     SampleEdit.Font.Quality := fqDefault;
+end;
+
+procedure TEditorOptionsForm.ForegroundCboEditingDone(Sender: TObject);
+begin
+end;
+
+procedure TEditorOptionsForm.ForegroundCboCloseUp(Sender: TObject);
+begin
+
+end;
+
+procedure TEditorOptionsForm.ForegroundCboChange(Sender: TObject);
+begin
+  if not InChanging then
+  begin
+    ForegroundChk.Checked := True;
+    ApplyElement;
+  end;
+end;
+
+procedure TEditorOptionsForm.BackgroundCboClick(Sender: TObject);
+begin
+end;
+
+procedure TEditorOptionsForm.BackgroundCboChange(Sender: TObject);
+begin
+  if not InChanging then
+  begin
+    BackgroundChk.Checked := True;
+    ApplyElement;
+  end;
 end;
 
 procedure TEditorOptionsForm.DefaultBackgroundCboSelect(Sender: TObject);
@@ -394,9 +434,6 @@ end;
 
 procedure TEditorOptionsForm.ForegroundCboSelect(Sender: TObject);
 begin
-  if not InChanging then
-    ForegroundChk.Checked := True;
-  ApplyElement;
 end;
 
 procedure TEditorOptionsForm.FontBtnClick(Sender: TObject);
@@ -453,10 +490,19 @@ end;
 
 procedure TEditorOptionsForm.ResetBtnClick(Sender: TObject);
 begin
-  FProfile.Reset;
   InChanging := True;
   try
     GetData;
+  finally
+    InChanging := False;
+  end;
+end;
+
+procedure TEditorOptionsForm.RevertBtnClick(Sender: TObject);
+begin
+  InChanging := True;
+  try
+    FProfile.Reset;
   finally
     InChanging := False;
   end;
@@ -482,14 +528,13 @@ begin
     aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
     M := aFileCategory.Mapper.Find(Attributes.StoredName);
     if M <> nil then
-      G := FProfile.Attributes.Find(M.ToName)
+      G := FAttributes.Find(M.ToName)
     else
       G := nil;
+    if G = nil then
+      G := FAttributes.Whitespace;
 
-    if G <> nil then
-      AttributeCbo.ItemIndex := AttributeCbo.Items.IndexOf(G.Name)
-    else
-      AttributeCbo.ItemIndex := -1;
+    AttributeCbo.ItemIndex := G.Index;
   end
   else
     AttributeCbo.ItemIndex := -1;
@@ -574,7 +619,9 @@ begin
 
       aGlobalAttribute.Style := aFontStyle;
 
-      aFileCategory.Apply(SampleEdit.Highlighter, FProfile.Attributes);
+      aFileCategory.Apply(SampleEdit.Highlighter, FAttributes);
+      SampleEdit.Font.Color := FAttributes.Whitespace.Foreground;
+      SampleEdit.Color := FAttributes.Whitespace.Background;
     finally
       InChanging := False;
     end;
@@ -597,8 +644,10 @@ begin
     SampleEdit.Highlighter.Free;
     SampleEdit.Highlighter := aFileCategory.CreateHighlighter;
     SampleEdit.Text := SampleEdit.Highlighter.SampleSource;
-    aFileCategory.Apply(SampleEdit.Highlighter, FProfile.Attributes);
   end;
+  aFileCategory.Apply(SampleEdit.Highlighter, FAttributes);
+  SampleEdit.Font.Color := FAttributes.Whitespace.Foreground;
+  SampleEdit.Color := FAttributes.Whitespace.Background;
   RetrieveElement;
 end;
 
@@ -612,14 +661,6 @@ begin
   if not InChanging then
     BackgroundChk.Checked := True;
   ApplyElement;
-end;
-
-procedure TEditorOptionsForm.ForegroundCboChange(Sender: TObject);
-begin
-end;
-
-procedure TEditorOptionsForm.BackgroundCboChange(Sender: TObject);
-begin
 end;
 
 end.

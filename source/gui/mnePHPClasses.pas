@@ -475,11 +475,21 @@ end;
 procedure TXHTMLFileCategory.InitMappers;
 begin
   inherited;
-  Mapper.Add(SYNS_AttrSpace, 'WHITESPACE');
-  Mapper.Add(SYNS_AttrComment, 'SL_COMMENT');
-  Mapper.Add(SYNS_AttrComment, 'ML_COMMENT');
+  Mapper.Add('Whitespace', 'Whitespace');
+  Mapper.Add('Comment', 'Comment');
   Mapper.Add('Keyword', 'Keyword');
   Mapper.Add('Document', 'Document');
+  Mapper.Add('Value', 'Value');
+  Mapper.Add('Function', 'Common');
+  Mapper.Add('Identifier', 'Identifier');
+  Mapper.Add('Html', 'Contents');
+  Mapper.Add('Text', 'Text');
+  Mapper.Add('Number', 'Number');
+  Mapper.Add('String', 'String');
+  Mapper.Add('Symbol', 'Symbol');
+  Mapper.Add('Variable', 'Variable');
+  Mapper.Add('Processor', 'Directive');
+
 end;
 
 procedure TXHTMLFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
