@@ -21,6 +21,7 @@ uses
 
 type
   TSQLFile = class(TTextEditorFile)
+  protected
   public
   end;
 
@@ -41,33 +42,48 @@ type
     procedure NewSource; override;
   end;
 
+  { TSQLFileCategory }
+
   TSQLFileCategory = class(TFileCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
+    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    procedure InitMappers; override;
   public
   end;
+
+  { TApacheFileCategory }
 
   TApacheFileCategory = class(TFileCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
+    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    procedure InitMappers; override;
   public
   end;
+
+  { TINIFileCategory }
 
   TINIFileCategory = class(TFileCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
+    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    procedure InitMappers; override;
   public
   end;
+
+  { TTXTFileCategory }
 
   TTXTFileCategory = class(TFileCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
+    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    procedure InitMappers; override;
   public
   end;
 
+  { TXMLFileCategory }
+
   TXMLFileCategory = class(TFileCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
+    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    procedure InitMappers; override;
   public
   end;
 
@@ -194,37 +210,117 @@ end;
 
 { TSQLFileCategory }
 
-function TSQLFileCategory.CreateHighlighter: TSynCustomHighlighter;
+function TSQLFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynSQLSyn.Create(nil);
+  (Result as TSynSQLSyn).SQLDialect := sqlMySQL;
+end;
+
+procedure TSQLFileCategory.InitMappers;
+begin
+  with Highlighter as TSynSQLSyn do
+  begin
+    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(KeyAttri, attKeyword);
+    Mapper.Add(NumberAttri, attNumber);
+    Mapper.Add(StringAttri, attString);
+    Mapper.Add(SymbolAttri, attSymbol);
+    Mapper.Add(DefaultPackageAttri, attIdentifier);
+    Mapper.Add(ExceptionAttri, attIdentifier);
+    Mapper.Add(FunctionAttri, attCommon);
+    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(PLSQLAttri, attDirective);
+    Mapper.Add(SQLPlusAttri, attDirective);
+    Mapper.Add(TableNameAttri, attName);
+    Mapper.Add(VariableAttri, attVariable);
+    Mapper.Add(DataTypeAttri, attType);
+  end;
 end;
 
 { TTApacheFileCategory }
 
-function TApacheFileCategory.CreateHighlighter: TSynCustomHighlighter;
+function TApacheFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynApacheSyn.Create(nil);
 end;
 
+procedure TApacheFileCategory.InitMappers;
+begin
+  with Highlighter as TSynApacheSyn do
+  begin
+    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(TextAttri, attText);
+    Mapper.Add(SectionAttri, attDirective);
+    Mapper.Add(KeyAttri, attKeyword);
+    Mapper.Add(NumberAttri, attNumber);
+    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(StringAttri, attString);
+    Mapper.Add(SymbolAttri, attSymbol);
+  end;
+end;
+
 { TINIFileCategory }
 
-function TINIFileCategory.CreateHighlighter: TSynCustomHighlighter;
+function TINIFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
   Result := nil;
+end;
+
+procedure TINIFileCategory.InitMappers;
+begin
+{  with Highlighter as TSynAnySyn do
+  begin
+    Mapper.Add('Space', attWorkspace);
+    Mapper.Add('Comment', attComment);
+    Mapper.Add('Document', attDocument);
+    Mapper.Add('Key', attKeyword);
+    Mapper.Add('Number', attNumber);
+    Mapper.Add('String', attString);
+    Mapper.Add('Symbol', attSymbol);
+    Mapper.Add('Section', attDirective);
+    Mapper.Add('Exception', attIdentifier);
+    Mapper.Add('Function', attCommon);
+    Mapper.Add('Identifier', attIdentifier);
+  end;}
 end;
 
 { TTXTFileCategory }
 
-function TTXTFileCategory.CreateHighlighter: TSynCustomHighlighter;
+function TTXTFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
   Result := nil;
 end;
 
+procedure TTXTFileCategory.InitMappers;
+begin
+end;
+
 { TXMLFileCategory }
 
-function TXMLFileCategory.CreateHighlighter: TSynCustomHighlighter;
+function TXMLFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynXMLSyn.Create(nil);
+end;
+
+procedure TXMLFileCategory.InitMappers;
+begin
+  with Highlighter as TSynXMLSyn do
+  begin
+    Mapper.Add(ElementAttri, attName);
+    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(TextAttri, attText);
+    Mapper.Add(EntityRefAttri, attIdentifier);
+    Mapper.Add(ProcessingInstructionAttri, attDirective);
+    Mapper.Add(CDATAAttri, attOutter);
+    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(DocTypeAttri, attComment);
+    Mapper.Add(AttributeAttri, attName);
+    Mapper.Add(NamespaceAttributeAttri, attName);
+    Mapper.Add(AttributeValueAttri, attString);
+    Mapper.Add(NamespaceAttributeAttri, attString);
+    Mapper.Add(SymbolAttri, attSymbol);
+  end;
 end;
 
 { TXMLFile }
@@ -254,5 +350,5 @@ initialization
     Groups.Add(TINIFile, 'xml', 'XML files', 'xml', ['xml'], [fgkMember, fgkBrowsable]);
     Groups.Add(TXMLFile, 'ini', 'INI files', 'ini', ['ini'], [fgkAssociated, fgkBrowsable]);
   end;
-  Engine.AddInstant('Python', ['py'], TSynPythonSyn, []);
+  //Engine.AddInstant('Python', ['py'], TSynPythonSyn, []);
 end.

@@ -23,7 +23,6 @@ type
 
   TmneSynSARDSyn = class(TSynSARDSyn)
   public
-    function GetSampleSource: string; override;
   end;
 
   { TSARDFile }
@@ -39,7 +38,8 @@ type
   TSARDFileCategory = class(TFileCategory)
   private
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
+    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    procedure InitMappers; override;
   public
   end;
 
@@ -60,35 +60,6 @@ implementation
 uses
   IniFiles, mnStreams, mnUtils;
 
-{ TmneSynSARDSyn }
-
-function TmneSynSARDSyn.GetSampleSource: string;
-begin
-  Result := '/*'
-            +'    This examples are worked, and this comment will ignored, not compiled or parsed as we say.'#13
-            +'  */'#13
-            +''#13
-            +'  //Single Line comment'#13
-            +'  CalcIt:Integer(p1, p2){'#13
-            +'      :=p1 * p2 / 2;'#13
-            +'    };'#13
-            +''#13
-            +'  x := {'#13
-            +'        y := 0;'#13
-            +'        x := CalcIt(x, y);'#13
-            +'        := y + x+ 500 * %10; //this is a result return of the block'#13
-            +'    }; //do not forget to add ; here'#13
-            +''#13
-            +'  f := 10.0;'#13
-            +'  f := z + 5.5;'#13
-            +''#13
-            +'  {* Embeded block comment *};'#13
-            +''#13
-            +'  := "Result:" + x + '' It is an example:'#13
-            +'    Multi Line String'#13
-            +'  '';'#13;
-end;
-
 { TSARDPerspective }
 
 procedure TSARDPerspective.Init;
@@ -108,9 +79,23 @@ end;
 
 { TSARDFileCategory }
 
-function TSARDFileCategory.CreateHighlighter: TSynCustomHighlighter;
+function TSARDFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TmneSynSARDSyn.Create(nil);
+end;
+
+procedure TSARDFileCategory.InitMappers;
+begin
+  with Highlighter as TSynSARDSyn do
+  begin
+    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(ObjectAttri, attName);
+    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(NumberAttri, attNumber);
+    Mapper.Add(StringAttri, attString);
+    Mapper.Add(SymbolAttri, attSymbol);
+  end
 end;
 
 { TSARDFile }

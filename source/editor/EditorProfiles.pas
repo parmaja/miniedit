@@ -16,6 +16,30 @@ uses
   Contnrs, Menus, SynEdit, SynEditHighlighter, SynEditMiscClasses, SynEditPointClasses, SynGutterCodeFolding,
   SynGutter, SynEditKeyCmds, Classes, SysUtils;
 
+type
+  TAttributeType = (
+    attUI,
+    attURL,
+    attSelected,
+    attWhitespace,
+    attKeyword,
+    attString,
+    attDocument,
+    attComment,
+    attSymbol,
+    attCommon,
+    attNumber,
+    attDirective,
+    attIdentifier,
+    attText,
+    attOutter,
+    attInner,
+    attVariable,
+    attType,
+    attName,
+    attValue
+   );
+
 const
   cDefaultOptions = [eoAltSetsColumnMode, eoAutoIndent, eoDragDropEditing, eoDropFiles, eoScrollPastEol,
     eoShowScrollHint, eoRightMouseMovesCursor, eoTabsToSpaces, eoTabIndent, eoTrimTrailingSpaces, eoKeepCaretX];
@@ -32,7 +56,7 @@ type
     FIndex: Integer;
     FParent: TGlobalAttributes;
     FStyle: TFontStyles;
-    FName: string;
+    FAttType: TAttributeType;
     FTitle: string;
   protected
     property Parent: TGlobalAttributes read FParent;
@@ -43,7 +67,7 @@ type
     property Index: Integer read FIndex;
   published
     property Title: string read FTitle write FTitle;
-    property Name: string read FName write FName;
+    property AttType: TAttributeType read FAttType write FAttType;
     property Background: TColor read FBackground write FBackground default clNone;
     property Foreground: TColor read FForeground write FForeground default clNone;
     property Style: TFontStyles read FStyle write FStyle default [];
@@ -53,8 +77,10 @@ type
 
   TGlobalAttributes = class(TComponent)
   private
-    FContents: TGlobalAttribute;
-    FDatatype: TGlobalAttribute;
+    FInner: TGlobalAttribute;
+    FOutter: TGlobalAttribute;
+    FDataName: TGlobalAttribute;
+    FDataType: TGlobalAttribute;
     FDirective: TGlobalAttribute;
 
     FDocument: TGlobalAttribute;
@@ -68,6 +94,7 @@ type
     FSymbol: TGlobalAttribute;
     FText: TGlobalAttribute;
     FUI: TGlobalAttribute;
+    FURL: TGlobalAttribute;
     FValue: TGlobalAttribute;
     FVariable: TGlobalAttribute;
     FCommon: TGlobalAttribute;
@@ -76,22 +103,21 @@ type
     FList: TObjectList;
     function GetCount: Integer;
     function GetItem(Index: Integer): TGlobalAttribute;
-    function GetAttribute(Index: string): TGlobalAttribute;
   protected
 
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure Reset;
-    function Find(vName: string): TGlobalAttribute;
+    function Find(AttType: TAttributeType): TGlobalAttribute;
     property Items[Index: Integer]: TGlobalAttribute read GetItem; default;
-    property Attribute[Index: string]: TGlobalAttribute read GetAttribute;
     property Count: Integer read GetCount;
     procedure Assign(Source: TPersistent); override;
   published
     property Whitespace: TGlobalAttribute read FWhitespace;
     property UI: TGlobalAttribute read FUI;
     property Selected: TGlobalAttribute read FSelected;
+    property URL: TGlobalAttribute read FURL;
 
     property Keyword: TGlobalAttribute read FKeyword;
     property Symbol: TGlobalAttribute read FSymbol;
@@ -101,10 +127,12 @@ type
     property Variable: TGlobalAttribute read FVariable;
     property Common: TGlobalAttribute read FCommon;
     property Value: TGlobalAttribute read FValue;
-    property Datatype: TGlobalAttribute read FDatatype;
+    property DataType: TGlobalAttribute read FDataType;
+    property DataName: TGlobalAttribute read FDataName;
     property Document: TGlobalAttribute read FDocument;
     property Text: TGlobalAttribute read FText;
-    property Contents: TGlobalAttribute read FContents;
+    property Outter: TGlobalAttribute read FOutter;
+    property Inner: TGlobalAttribute read FInner;
     property Comment: TGlobalAttribute read FComment;
     property QuotedString: TGlobalAttribute read FQuotedString;
   end;
@@ -353,22 +381,6 @@ end;
 
 { TGlobalAttributes }
 
-function TGlobalAttributes.GetAttribute(Index: string): TGlobalAttribute;
-var
-  i: Integer;
-begin
-  Result := nil;
-  for i := 0 to Count - 1 do
-  begin
-    if SameText(Items[i].Name, Index) then
-    begin
-      Result := Items[i];
-      break;
-    end;
-  end;
-end;
-
-
 constructor TGlobalAttributes.Create(AOwner: TComponent);
 
 begin
@@ -385,10 +397,10 @@ begin
 end;
 
 procedure TGlobalAttributes.Reset;
-  procedure Add(var Item: TGlobalAttribute; Name, Title: string; Foreground, Background: TColor; Style: TFontStyles);
+  procedure Add(var Item: TGlobalAttribute; AttType: TAttributeType; Title: string; Foreground, Background: TColor; Style: TFontStyles);
   begin
     Item := TGlobalAttribute.Create;
-    Item.Name := Name;
+    Item.AttType := AttType;
     Item.Title := Title;
     Item.Foreground := Foreground;
     Item.Background := Background;
@@ -399,44 +411,41 @@ procedure TGlobalAttributes.Reset;
 
 begin
   FList.Clear;
-  Add(FUI, 'UI', 'User Interface', clNone, clNone, []);
-  Add(FWhitespace, 'Whitespace', 'Whitespace', clWhite, TColor($2A190F), []);
-  Add(FSelected, 'Selected', 'Selected', clBlack, TColor($DD8B42), []);
-
-  Add(FKeyword, 'Keyword', 'Keyword', TColor($3737E8), clNone, []);
-  Add(FQuotedString, 'String', 'String', TColor($16C11D), clNone, []);
-  Add(FDocument, 'Document', 'Document', TColor($DD8B42), clNone, []);
-  Add(FComment, 'Comment', 'Comment', TColor($94541B), clNone, []);
-  Add(FSymbol, 'Symbol', 'Symbol', TColor($FFEDD1), clNone, []);
-  Add(FCommon, 'Common', 'Common Functions', TColor($3EAAFF), clNone, []);
-  Add(FNumber, 'Number', 'Number', TColor($0FDFEA), clNone, []);
-
-  Add(FDirective, 'Directive', 'Directive', TColor($3737E8), clNone, []);
-  Add(FIdentifier, 'Identifier', 'Identifier', clNone, clNone, []);
-  Add(FText, 'Text', 'Text', clNone, clNone, []);
-  Add(FContents, 'Contents', 'Contents', TColor($DD8B42), clNone, []);
-
-  Add(FVariable, 'Variable', 'Variable', clSkyBlue, clNone, []);
-  Add(FValue, 'Value', 'Value',  TColor($16C11D), clNone, []);
-  Add(FDatatype, 'Datatype', 'Datatype', TColor($16C11D), clNone, []);
+  Add(FUI, attUI, 'User Interface', clNone, clNone, []);
+  Add(FWhitespace, attWhitespace, 'Whitespace', clWhite, TColor($2A190F), []);
+  Add(FSelected, attSelected, 'Selected', clBlack, TColor($DD8B42), []);
+  Add(FURL, attURL, 'URL', clWhite, TColor($2A190F), []);
+  Add(FKeyword, attKeyword, 'Keyword', TColor($3737E8), clNone, []);
+  Add(FQuotedString, attString, 'String', TColor($16C11D), clNone, []);
+  Add(FDocument, attDocument, 'Document', TColor($DD8B42), clNone, []);
+  Add(FComment, attComment, 'Comment', TColor($94541B), clNone, []);
+  Add(FSymbol, attSymbol, 'Symbol', TColor($FFEDD1), clNone, []);
+  Add(FCommon, attCommon, 'Common Functions', TColor($3EAAFF), clNone, []);
+  Add(FNumber, attNumber, 'Number', TColor($0FDFEA), clNone, []);
+  Add(FDirective, attDirective, 'Directive', TColor($3737E8), clNone, []);
+  Add(FIdentifier, attIdentifier, 'Identifier', clNone, clNone, []);
+  Add(FText, attText, 'Text', clNone, clNone, []);
+  Add(FOutter, attOutter, 'Outter', TColor($DD8B42), clNone, []);
+  Add(FInner, attInner, 'Inner', TColor($16C11D), clNone, []);
+  Add(FVariable, attVariable, 'Variable', clSkyBlue, clNone, []);
+  Add(FDataType, attType, 'Type', TColor($16C11D), clNone, []);
+  Add(FDataName, attName, 'Name', TColor($16C11D), clNone, []);
+  Add(FValue, attValue, 'Value',  TColor($16C11D), clNone, []);
 end;
 
-function TGlobalAttributes.Find(vName: string): TGlobalAttribute;
+function TGlobalAttributes.Find(AttType: TAttributeType): TGlobalAttribute;
 var
   i: integer;
-  S: String;
 begin
   Result := nil;
-  if vName <> '' then
-    for i := 0 to Count - 1 do
+  for i := 0 to Count - 1 do
+  begin
+    if Items[i].AttType = AttType then
     begin
-      S := Items[i].Name;
-      if SameText(S, vName) then
-      begin
-        Result := Items[i];
-        break;
-      end;
+      Result := Items[i];
+      break;
     end;
+  end;
 end;
 
 procedure TGlobalAttributes.Assign(Source: TPersistent);

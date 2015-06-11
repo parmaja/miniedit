@@ -67,7 +67,7 @@ type
     procedure ExtractKeywords(Files, Variables, Identifiers: TStringList);
   protected
     procedure InitMappers; override;
-    function CreateHighlighter: TSynCustomHighlighter; override;
+    function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddCompletion(AKeyword: string; AKind: integer);
     procedure DoExecuteCompletion(Sender: TObject); override;
@@ -78,7 +78,8 @@ type
 
   TCSSFileCategory = class(TFileCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
+    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    procedure InitMappers; override;
   public
   end;
 
@@ -86,7 +87,8 @@ type
 
   TJSFileCategory = class(TFileCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
+    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    procedure InitMappers; override;
   public
   end;
 
@@ -270,14 +272,30 @@ end;
 
 { TCSSFileCategory }
 
-function TCSSFileCategory.CreateHighlighter: TSynCustomHighlighter;
+function TCSSFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynCSSSyn.Create(nil);
 end;
 
+procedure TCSSFileCategory.InitMappers;
+begin
+  with Highlighter as TSynCssSyn do
+  begin
+    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(KeyAttri, attKeyword);
+    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(SelectorAttri, attName);
+    Mapper.Add(NumberAttri, attNumber);
+    Mapper.Add(StringAttri, attString);
+    Mapper.Add(SymbolAttri, attSymbol);
+    Mapper.Add(MeasurementUnitAttri, attVariable);
+  end;
+end;
+
 { TXHTMLFileCategory }
 
-function TXHTMLFileCategory.CreateHighlighter: TSynCustomHighlighter;
+function TXHTMLFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynXHTMLSyn.Create(nil);
 end;
@@ -468,20 +486,23 @@ end;
 
 procedure TXHTMLFileCategory.InitMappers;
 begin
-  Mapper.Add('Whitespace', 'Whitespace');
-  Mapper.Add('Comment', 'Comment');
-  Mapper.Add('Keyword', 'Keyword');
-  Mapper.Add('Document', 'Document');
-  Mapper.Add('Value', 'Value');
-  Mapper.Add('Function', 'Common');
-  Mapper.Add('Identifier', 'Identifier');
-  Mapper.Add('Html', 'Contents');
-  Mapper.Add('Text', 'Text');
-  Mapper.Add('Number', 'Number');
-  Mapper.Add('String', 'String');
-  Mapper.Add('Symbol', 'Symbol');
-  Mapper.Add('Variable', 'Variable');
-  Mapper.Add('Processor', 'Directive');
+  with Highlighter as TSynXHTMLSyn do
+  begin
+    Mapper.Add(WhitespaceAttri, attWhitespace);
+    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(KeywordAttri, attKeyword);
+    Mapper.Add(DocumentAttri, attDocument);
+    Mapper.Add(ValueAttri, attValue);
+    Mapper.Add(FunctionAttri, attCommon);
+    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(HtmlAttri, attOutter);
+    Mapper.Add(TextAttri, attText);
+    Mapper.Add(NumberAttri, attNumber);
+    Mapper.Add(StringAttri, attString);
+    Mapper.Add(SymbolAttri, attSymbol);
+    Mapper.Add(VariableAttri, attVariable);
+    Mapper.Add(ProcessorAttri, attDirective);
+  end;
 end;
 
 procedure TXHTMLFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
@@ -501,9 +522,25 @@ end;
 
 { TJSFileCategory }
 
-function TJSFileCategory.CreateHighlighter: TSynCustomHighlighter;
+function TJSFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynJScriptSyn.Create(nil);
+end;
+
+procedure TJSFileCategory.InitMappers;
+begin
+  with Highlighter as TSynJScriptSyn do
+  begin
+    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(KeyAttri, attKeyword);
+    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(NonReservedKeyAttri, attName);
+    Mapper.Add(NumberAttri, attNumber);
+    Mapper.Add(StringAttri, attString);
+    Mapper.Add(SymbolAttri, attSymbol);
+    Mapper.Add(EventAttri, attVariable);
+  end;
 end;
 
 initialization

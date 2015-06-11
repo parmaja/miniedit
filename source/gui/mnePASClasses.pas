@@ -45,7 +45,8 @@ type
   TPASFileCategory = class(TFileCategory)
   private
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
+    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    procedure InitMappers; override;
   public
   end;
 
@@ -54,7 +55,8 @@ type
   TLFMFileCategory = class(TFileCategory)
   private
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
+    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    procedure InitMappers; override;
   public
   end;
 
@@ -100,9 +102,23 @@ end;
 
 { TLFMFileCategory }
 
-function TLFMFileCategory.CreateHighlighter: TSynCustomHighlighter;
+function TLFMFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynLFMSyn.Create(nil);
+end;
+
+procedure TLFMFileCategory.InitMappers;
+begin
+  with Highlighter as TSynLFMSyn do
+  begin
+    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(KeyAttri, attKeyword);
+    Mapper.Add(NumberAttri, attNumber);
+    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(StringAttri, attString);
+    Mapper.Add(SymbolAttribute, attSymbol);
+  end;
 end;
 
 { TPascalPerspective }
@@ -123,9 +139,27 @@ end;
 
 { TPASFileCategory }
 
-function TPASFileCategory.CreateHighlighter: TSynCustomHighlighter;
+function TPASFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TmneSynPASSyn.Create(nil);
+end;
+
+procedure TPASFileCategory.InitMappers;
+begin
+  with Highlighter as TSynPasSyn do
+  begin
+    Mapper.Add(StringAttri, attString);
+    Mapper.Add(NumberAttri, attNumber);
+    Mapper.Add(KeyAttri, attKeyword);
+    Mapper.Add(SymbolAttri, attSymbol);
+    Mapper.Add(ASMAttri, attInner);
+    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(IDEDirectiveAttri, attDirective);
+    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(CaseLabelAttri, attSymbol);
+    Mapper.Add(DirectiveAttri, attDirective);
+  end;
 end;
 
 { TPASFile }

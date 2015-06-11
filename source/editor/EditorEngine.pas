@@ -521,7 +521,7 @@ type
 
   TMap = class(TObject)
     Name: string;
-    ToName: string;
+    AttType: TAttributeType;
   end;
 
   { TMapper }
@@ -531,7 +531,7 @@ type
     function GetItem(Index: integer): TMap;
   public
     function Find(vName: string): TMap;
-    function Add(vName, ToName: string): TMap;
+    function Add(Attribute: TSynHighlighterAttributes; AttType: TAttributeType): TMap;
     function IndexOf(vName: string): Integer;
     property Items[Index: integer]: TMap read GetItem; default;
   end;
@@ -549,8 +549,10 @@ type
     FMapper: TMapper;
     function GetHighlighter: TSynCustomHighlighter;
     function GetItem(Index: Integer): TFileGroup;
+    function GetMapper: TMapper;
   protected
     FCompletion: TmneSynCompletion;
+    function DoCreateHighlighter: TSynCustomHighlighter; virtual; abstract;
     procedure InitMappers; virtual; abstract;
     procedure DoExecuteCompletion(Sender: TObject); virtual;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); virtual;
@@ -558,8 +560,8 @@ type
   public
     constructor Create(const vName: string; vKind: TFileCategoryKinds = []); virtual;
     destructor Destroy; override;
-    function CreateHighlighter: TSynCustomHighlighter; virtual; abstract;
-    property Mapper:TMapper read FMapper write FMapper;
+    function CreateHighlighter: TSynCustomHighlighter;
+    property Mapper:TMapper read GetMapper write FMapper;
     procedure Apply(AHighlighter: TSynCustomHighlighter; Attributes: TGlobalAttributes);
     property Name: string read FName write FName;
     function Find(vName: string): TFileGroup;
@@ -580,7 +582,7 @@ type
   TCustomFileCategory = class(TFileCategory)
   protected
     FHighlighterClass: TSynCustomHighlighterClass;
-    function CreateHighlighter: TSynCustomHighlighter; override;
+    function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
   end;
@@ -839,7 +841,7 @@ type
     property WorkSpace: string read GetWorkSpace write FWorkSpace;
 
     //AddInstant: Create category and file group for highlighter
-    procedure AddInstant(vName: string; vExtensions: array of string; vHighlighterClass: TSynCustomHighlighterClass; vKind: TFileCategoryKinds);
+    //procedure AddInstant(vName: string; vExtensions: array of string; vHighlighterClass: TSynCustomHighlighterClass; vKind: TFileCategoryKinds);
     property Categories: TFileCategories read FCategories;
     property Groups: TFileGroups read FGroups;
     property Perspectives: TPerspectives read FPerspectives;
@@ -1025,11 +1027,11 @@ begin
     end;
 end;
 
-function TMapper.Add(vName, ToName: string): TMap;
+function TMapper.Add(Attribute: TSynHighlighterAttributes; AttType: TAttributeType): TMap;
 begin
   Result := TMap.Create;
-  Result.Name := vName;
-  Result.ToName := ToName;
+  Result.Name := Attribute.StoredName;
+  Result.AttType := AttType;
   inherited Add(Result);
 end;
 
@@ -1417,7 +1419,7 @@ end;
 
 { TCustomFileCategory }
 
-function TCustomFileCategory.CreateHighlighter: TSynCustomHighlighter;
+function TCustomFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
   Result := FHighlighterClass.Create(nil);
 end;
@@ -1772,8 +1774,8 @@ begin
 
 //TODO
 
-    if Engine.Categories[i].Highlighter <> nil then
-      Engine.Categories[i].Apply(Engine.Categories[i].Highlighter, Profile.Attributes);
+{    if Engine.Categories[i].Highlighter <> nil then
+      Engine.Categories[i].Apply(Engine.Categories[i].Highlighter, Profile.Attributes);}
   end;
 
   for i := 0 to Engine.Files.Count - 1 do
@@ -2564,7 +2566,7 @@ begin
   else
     Result := FileName;
 end;
-
+{
 procedure TEditorEngine.AddInstant(vName:string; vExtensions: array of string; vHighlighterClass: TSynCustomHighlighterClass; vKind: TFileCategoryKinds);
 var
   aFC: TCustomFileCategory;
@@ -2575,7 +2577,7 @@ begin
   Categories.Add(aFC);
   Groups.Add(TFileGroup, TEditorFile, vExtensions[0], vName + ' files', vName, vExtensions, []);
 end;
-
+}
 procedure TEditorEngine.SetDefaultPerspective(vName: string);
 var
   P: TEditorPerspective;
@@ -3420,8 +3422,6 @@ begin
   inherited Create(False);//childs is groups and already added to Groups and freed by it
   FName := vName;
   FKind := vKind;
-  FMapper := TMapper.Create;
-  InitMappers;
 end;
 
 procedure TFileCategory.EnumExtensions(vExtensions: TStringList);
@@ -3446,15 +3446,12 @@ begin
     Att := AHighlighter.Attribute[i];
     G := nil;
 
-    M := Mapper.Find(Att.StoredName);
+    M := Mapper.Find(Att.Name);
     if M <> nil then
-      G := Attributes.Find(M.Name);
+      G := Attributes.Find(M.AttType);
 
     if M <> nil then
-      G := Attributes.Find(M.ToName);
-
-    if G = nil then
-      G := Attributes.Find(Att.StoredName);
+      G := Attributes.Find(M.AttType);
 
     if G = nil then
       G := Attributes.Whitespace;
@@ -3481,6 +3478,22 @@ begin
   inherited;
 end;
 
+function TFileCategory.CreateHighlighter: TSynCustomHighlighter;
+begin
+  Result := DoCreateHighlighter;
+  if Result <> nil then
+  begin
+    if FMapper = nil then
+    begin
+      FMapper := TMapper.Create;
+      InitMappers;
+      if Result.AttrCount <> Mapper.Count then
+        raise Exception.Create('Mapper count not equal to AttrCount for: ' + Result.ClassName);
+    end;
+    Apply(Result, Engine.Options.Profile.Attributes);
+  end;
+end;
+
 function TFileCategory.Find(vName: string): TFileGroup;
 begin
   Result := inherited Find(vName) as TFileGroup;
@@ -3489,6 +3502,13 @@ end;
 function TFileCategory.GetItem(Index: Integer): TFileGroup;
 begin
   Result := inherited Items[Index] as TFileGroup;
+end;
+
+function TFileCategory.GetMapper: TMapper;
+begin
+  Result := FMapper;
+  if FMapper = nil then
+    raise Exception.Create('Mapper is null');
 end;
 
 function TFileCategory.GetHighlighter: TSynCustomHighlighter;

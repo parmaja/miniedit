@@ -541,12 +541,10 @@ begin
   if Attributes <> nil then
   begin
     aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
-    s := Attributes.StoredName;
+    s := Attributes.Name;
     M := aFileCategory.Mapper.Find(s);
     if M <> nil then
-      G := FAttributes.Find(M.ToName)
-    else
-      G := FAttributes.Find(s);
+      G := FAttributes.Find(M.AttType);
 
     if G = nil then
       G := FAttributes.Whitespace;
