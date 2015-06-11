@@ -253,7 +253,10 @@ begin
 
     TCustomSynEdit(Dest).Font.Color := Attributes.Whitespace.Foreground;
     TCustomSynEdit(Dest).Color := Attributes.Whitespace.Background;
-    //TCustomSynEdit(Dest).SelectedColor.
+    TCustomSynEdit(Dest).SelectedColor.Foreground := Attributes.Selected.Foreground;
+    TCustomSynEdit(Dest).SelectedColor.Background := Attributes.Selected.Background;
+    TCustomSynEdit(Dest).BracketMatchColor.Foreground := Attributes.Selected.Foreground;
+    TCustomSynEdit(Dest).BracketMatchColor.Background := Attributes.Selected.Background;
 
     TCustomSynEdit(Dest).Options := TCustomSynEdit(Dest).Options - [eoDropFiles]; //make main window accept the files
     TCustomSynEdit(Dest).Gutter.Assign(Self.Gutter);
@@ -398,24 +401,24 @@ begin
   FList.Clear;
   Add(FUI, 'UI', 'User Interface', clNone, clNone, []);
   Add(FWhitespace, 'Whitespace', 'Whitespace', clWhite, TColor($2A190F), []);
-  Add(FSelected, 'Selected', 'Selected', clNone, TColor($DD8B42), []);
+  Add(FSelected, 'Selected', 'Selected', clBlack, TColor($DD8B42), []);
 
   Add(FKeyword, 'Keyword', 'Keyword', TColor($3737E8), clNone, []);
   Add(FQuotedString, 'String', 'String', TColor($16C11D), clNone, []);
   Add(FDocument, 'Document', 'Document', TColor($DD8B42), clNone, []);
-  Add(FComment, 'Comment', 'Comment', TColor($DD8B42), clNone, []);
+  Add(FComment, 'Comment', 'Comment', TColor($94541B), clNone, []);
   Add(FSymbol, 'Symbol', 'Symbol', TColor($FFEDD1), clNone, []);
   Add(FCommon, 'Common', 'Common Functions', TColor($3EAAFF), clNone, []);
   Add(FNumber, 'Number', 'Number', TColor($0FDFEA), clNone, []);
 
-  Add(FDirective, 'Directive', 'Directive', clNone, clNone, []);
+  Add(FDirective, 'Directive', 'Directive', TColor($3737E8), clNone, []);
   Add(FIdentifier, 'Identifier', 'Identifier', clNone, clNone, []);
   Add(FText, 'Text', 'Text', clNone, clNone, []);
+  Add(FContents, 'Contents', 'Contents', TColor($DD8B42), clNone, []);
 
-  Add(FContents, 'Contents', 'Contents', clNone, clNone, []);
-  Add(FVariable, 'Variable', 'Variable', clNone, clNone, []);
-  Add(FValue, 'Value', 'Value', clNone, clNone, []);
-  Add(FDatatype, 'Datatype', 'Datatype', clNone, clNone, []);
+  Add(FVariable, 'Variable', 'Variable', clSkyBlue, clNone, []);
+  Add(FValue, 'Value', 'Value',  TColor($16C11D), clNone, []);
+  Add(FDatatype, 'Datatype', 'Datatype', TColor($16C11D), clNone, []);
 end;
 
 function TGlobalAttributes.Find(vName: string): TGlobalAttribute;

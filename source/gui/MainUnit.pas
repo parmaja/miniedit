@@ -948,7 +948,7 @@ var
 begin
   Pt.X := FileModeBtn.BoundsRect.Left;
   Pt.Y := FileModeBtn.BoundsRect.Bottom;
-  Pt := FileModeBtn.ClientToScreen(Pt);
+  Pt := FileModeBtn.Parent.ClientToScreen(Pt);
   FileModeBtn.PopupMenu.Popup(Pt.X, Pt.Y);
 end;
 

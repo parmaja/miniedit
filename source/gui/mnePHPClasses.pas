@@ -72,7 +72,6 @@ type
     procedure DoAddCompletion(AKeyword: string; AKind: integer);
     procedure DoExecuteCompletion(Sender: TObject); override;
   public
-    constructor Create; override;
   end;
 
   { TCSSFileCategory }
@@ -421,11 +420,6 @@ begin
   end;
 end;
 
-constructor TXHTMLFileCategory.Create;
-begin
-  inherited Create;
-end;
-
 procedure TXHTMLFileCategory.ExtractKeywords(Files, Variables, Identifiers: TStringList);
 var
   aFile: TStringList;
@@ -474,7 +468,6 @@ end;
 
 procedure TXHTMLFileCategory.InitMappers;
 begin
-  inherited;
   Mapper.Add('Whitespace', 'Whitespace');
   Mapper.Add('Comment', 'Comment');
   Mapper.Add('Keyword', 'Keyword');
@@ -489,7 +482,6 @@ begin
   Mapper.Add('Symbol', 'Symbol');
   Mapper.Add('Variable', 'Variable');
   Mapper.Add('Processor', 'Directive');
-
 end;
 
 procedure TXHTMLFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
@@ -517,9 +509,9 @@ end;
 initialization
   with Engine do
   begin
-    Categories.Add(TXHTMLFileCategory, 'php/html', [fckPublish]);
-    Categories.Add(TCSSFileCategory, 'css', [fckPublish]);
-    Categories.Add(TJSFileCategory, 'js', [fckPublish]);
+    Categories.Add(TXHTMLFileCategory.Create('php/html', [fckPublish]));
+    Categories.Add(TCSSFileCategory.Create('css', [fckPublish]));
+    Categories.Add(TJSFileCategory.Create('js', [fckPublish]));
 
     Groups.Add(TPHPFile, 'php', 'PHP Files', 'php/html', ['php', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
     Groups.Add(TXHTMLFile, 'html', 'HTML Files', 'php/html', ['html', 'xhtml', 'htm', 'tpl'], [fgkAssociated, fgkMember, fgkBrowsable]);

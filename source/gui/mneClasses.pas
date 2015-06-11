@@ -242,11 +242,11 @@ initialization
   with Engine do
   begin
     //Categories.Add('', TTXTFile, TTXTFileCategory);
-    Categories.Add(TTXTFileCategory, 'txt');
-    Categories.Add(TSQLFileCategory, 'sql');
-    Categories.Add(TApacheFileCategory, 'apache', []);
-    Categories.Add(TINIFileCategory, 'ini');
-    Categories.Add(TXMLFileCategory, 'xml');
+    Categories.Add(TTXTFileCategory.Create('txt'));
+    Categories.Add(TSQLFileCategory.Create('sql'));
+    Categories.Add(TApacheFileCategory.Create('apache', []));
+    Categories.Add(TINIFileCategory.Create('ini'));
+    Categories.Add(TXMLFileCategory.Create('xml'));
 
     Groups.Add(TTXTFile, 'txt', 'TXT files', 'txt', ['txt'], []);
     Groups.Add(TSQLFile, 'sql', 'SQL files', 'SQL', ['sql'], [fgkAssociated, fgkMember, fgkBrowsable]);

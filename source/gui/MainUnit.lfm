@@ -488,6 +488,7 @@ object MainForm: TMainForm
           ClickDir = cdDown
           Command = emcStartDragMove
         end>
+      Options = [eoAutoIndent, eoBracketHighlight, eoGroupUndo, eoHideRightMargin, eoScrollPastEol, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces]
       VisibleSpecialChars = [vscSpace, vscTabAtLast]
       ReadOnly = True
       SelectedColor.BackPriority = 50

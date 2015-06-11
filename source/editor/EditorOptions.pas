@@ -32,6 +32,7 @@ type
   { TEditorOptionsForm }
 
   TEditorOptionsForm = class(TForm)
+    EdgeVisibleChk: TCheckBox;
     NoAntialiasingChk: TCheckBox;
     Bevel1: TBevel;
     BracketHighlightChk: TCheckBox;
@@ -279,6 +280,7 @@ begin
   HideShowScrollbarsChk.Checked := eoHideShowScrollbars in FProfile.Options;
   ShowSpecialCharsChk.Checked := eoShowSpecialChars in FProfile.Options;
   BracketHighlightChk.Checked := eoBracketHighlight in FProfile.Options;
+  EdgeVisibleChk.Checked := not (eoHideRightMargin in FProfile.Options);
   //Caret
   InsertModeChk.Checked := FProfile.InsertMode;
   CodeFoldingChk.Checked := FProfile.CodeFolding;
@@ -360,6 +362,7 @@ begin
   SetFlag(eoHideShowScrollbars, HideShowScrollbarsChk.Checked);
   SetFlag(eoShowSpecialChars, ShowSpecialCharsChk.Checked);
   SetFlag(eoBracketHighlight, BracketHighlightChk.Checked);
+  SetFlag(eoHideRightMargin, not EdgeVisibleChk.Checked);
   FProfile.Options := vOptions;
   FProfile.ExtOptions := vExtOptions;
   //Caret
@@ -538,11 +541,13 @@ begin
   if Attributes <> nil then
   begin
     aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
-    M := aFileCategory.Mapper.Find(Attributes.StoredName);
+    s := Attributes.StoredName;
+    M := aFileCategory.Mapper.Find(s);
     if M <> nil then
       G := FAttributes.Find(M.ToName)
     else
-      G := nil;
+      G := FAttributes.Find(s);
+
     if G = nil then
       G := FAttributes.Whitespace;
 
@@ -632,8 +637,14 @@ begin
       aGlobalAttribute.Style := aFontStyle;
 
       aFileCategory.Apply(SampleEdit.Highlighter, FAttributes);
+
       SampleEdit.Font.Color := FAttributes.Whitespace.Foreground;
       SampleEdit.Color := FAttributes.Whitespace.Background;
+      SampleEdit.SelectedColor.Foreground := FAttributes.Selected.Foreground;
+      SampleEdit.SelectedColor.Background := FAttributes.Selected.Background;
+      SampleEdit.BracketMatchColor.Foreground := FAttributes.Selected.Foreground;
+      SampleEdit.BracketMatchColor.Background := FAttributes.Selected.Background;
+
     finally
       InChanging := False;
     end;

@@ -150,8 +150,8 @@ end;
 initialization
   with Engine do
   begin
-    Categories.Add(TPASFileCategory, 'pas');
-    Categories.Add(TLFMFileCategory, 'lfm');
+    Categories.Add(TPASFileCategory.Create('pas'));
+    Categories.Add(TLFMFileCategory.Create('lfm'));
     Groups.Add(TPASFile, 'ppr', 'Pascal Project Files', 'pas', ['ppr'], [fgkAssociated, fgkMain, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);//PPR meant Pascal project
     Groups.Add(TPASFile, 'lpr', 'Lazarus Project Files', 'pas', ['lpr'], [fgkAssociated, fgkMain,fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
     Groups.Add(TPASFile, 'dpr', 'Delphi Project Files', 'pas', ['dpr'], [fgkAssociated, fgkMain, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);

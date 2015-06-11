@@ -123,7 +123,7 @@ end;
 initialization
   with Engine do
   begin
-    Categories.Add(TSARDFileCategory, 'SARD');
+    Categories.Add(TSARDFileCategory.Create('Sard'));
     Groups.Add(TSARDFile, 'sard', 'SARD Files', 'sard', ['sard'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
 
     Perspectives.Add(TSARDPerspective);
