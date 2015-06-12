@@ -14,12 +14,13 @@ uses
   mnXMLNodes, SyncObjs;
 
 {$i '..\lib\mne.inc'}
+
 type
   TRunErrorType = (
-  errError,
-  errWarning,
-  errParse,
-  errNotice
+    errError,
+    errWarning,
+    errParse,
+    errNotice
   );
 
   TRunLog = record

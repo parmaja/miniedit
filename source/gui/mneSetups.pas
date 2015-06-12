@@ -14,10 +14,15 @@ uses
   mneClasses, Dialogs, StdCtrls, FileUtil, IniFiles;
 
 type
+
+  { TEditorSetupForm }
+
   TEditorSetupForm = class(TForm)
     Label1: TLabel;
     Label2: TLabel;
     Button1: TButton;
+    Label3: TLabel;
+    NeedToRestartLbl: TLabel;
     OkBtn: TButton;
     CancelBtn: TButton;
     WorkspaceEdit: TComboBox;
@@ -63,7 +68,7 @@ begin
     ForceDirectories(WorkspaceEdit.Text);
     aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
     try
-      aIniFile.WriteString(SysPlatform, 'Workspace', IncludeTrailingPathDelimiter(WorkspaceEdit.Text));
+      aIniFile.WriteString(SysPlatform, 'Workspace', ExcludeTrailingPathDelimiter(WorkspaceEdit.Text));
     finally
       aIniFile.Free;
     end;
@@ -85,7 +90,8 @@ begin
   WorkspaceEdit.Items.Add(GetUserDir);
   WorkspaceEdit.Items.Add('/usr/workspace');
   {$endif}
-  WorkspaceEdit.Items.Add(ExtractFilePath(Application.ExeName));
+  WorkspaceEdit.Items.Add('$home');
+  WorkspaceEdit.Items.Add(Application.Location);
   aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
   try
     WorkspaceEdit.Text := aIniFile.ReadString(SysPlatform, 'Workspace', '');
@@ -94,4 +100,4 @@ begin
   end;
 end;
 
-end.
+end.

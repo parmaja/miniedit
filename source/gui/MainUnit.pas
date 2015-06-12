@@ -1,7 +1,5 @@
 unit MainUnit;
-
-{$mode objfpc}
-{$H+}
+{$mode objfpc}{$H+}
 {**
  * Mini Edit
  *
@@ -67,6 +65,7 @@ type
     MenuItem19: TMenuItem;
     MenuItem20: TMenuItem;
     MenuItem21: TMenuItem;
+    WorkspaceMnu: TMenuItem;
     RenameAct: TAction;
     FindPreviousAct: TAction;
     MenuItem17: TMenuItem;
@@ -464,6 +463,7 @@ type
     procedure CloseQuickSearchBtnClick(Sender: TObject);
     procedure QuickFindActExecute(Sender: TObject);
     procedure QuickFindActUpdate(Sender: TObject);
+    procedure WorkspaceMnuClick(Sender: TObject);
   private
     //ApplicationEvents: TApplicationEvents;
     FMessages: TEditorMessages;
@@ -558,11 +558,19 @@ var
   aIniFile: TIniFile;
   aEngineFile, lFilePath: string;
   aWorkspace: string;
+  s: string;
+  env: TStringList;
 begin
   inherited;
   aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
   try
-    aWorkspace := IncludeTrailingPathDelimiter(aIniFile.ReadString(SysPlatform, 'Workspace', ''));
+    aWorkspace := aIniFile.ReadString(SysPlatform, 'Workspace', '');
+    env := TStringList.Create; //TODO move it to Engine
+    s := SysUtils.GetEnvironmentVariable('HOME');
+    env.Add('HOME=' + s);
+    aWorkspace := VarReplace(aWorkspace, env);
+    aWorkspace := IncludeTrailingPathDelimiter(aWorkspace);
+    env.Free;
   finally
     aIniFile.Free;
   end;
@@ -2548,6 +2556,16 @@ begin
   begin
     QuickFindAct.Enabled := Engine.Files.Count > 0;
     QuickFindAct.Checked := QuickFindPnl.Visible;
+  end;
+end;
+
+procedure TMainForm.WorkspaceMnuClick(Sender: TObject);
+begin
+  with TEditorSetupForm.Create(Application) do
+  begin
+    NeedToRestartLbl.Visible := True;
+    ShowModal;
+    Free;
   end;
 end;
 

@@ -1290,6 +1290,10 @@ object MainForm: TMainForm
         Action = SettingAct
         OnClick = SettingActExecute
       end
+      object WorkspaceMnu: TMenuItem
+        Caption = 'Setup Workpsace'
+        OnClick = WorkspaceMnuClick
+      end
       object N6: TMenuItem
         Caption = '-'
       end
