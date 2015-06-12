@@ -212,8 +212,6 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Assign(Source: TPersistent); override;
-    procedure AssignTo(Dest: TPersistent); override;
     procedure Reset;
   published
     property Attributes: TGlobalAttributes read FAttributes;
@@ -240,76 +238,6 @@ uses
   SynGutterBase, SynGutterLineNumber, SynGutterChanges;
 
 { TEditorProfile }
-
-procedure TEditorProfile.Assign(Source: TPersistent);
-begin
-  if Assigned(Source) and (Source is TCustomSynEdit) then
-  begin
-    //TODO assign attributes
-    Self.FontName := TCustomSynEdit(Source).Font.Name;
-    Self.FontSize := TCustomSynEdit(Source).Font.Size;
-    Self.FontNoAntialiasing := TCustomSynEdit(Source).Font.Quality = fqNonAntialiased;
-
-    Self.Gutter.Assign(TCustomSynEdit(Source).Gutter);
-
-    Self.Options := TCustomSynEdit(Source).Options;
-    Self.ExtraLineSpacing := TCustomSynEdit(Source).ExtraLineSpacing;
-    Self.InsertCaret := TCustomSynEdit(Source).InsertCaret;
-    Self.OverwriteCaret := TCustomSynEdit(Source).OverwriteCaret;
-    Self.MaxUndo := TCustomSynEdit(Source).MaxUndo;
-    Self.RightEdge := TCustomSynEdit(Source).RightEdge;
-    Self.RightEdgeColor := TCustomSynEdit(Source).RightEdgeColor;
-    Self.TabWidth := TCustomSynEdit(Source).TabWidth;
-  end
-  else
-    inherited;
-end;
-
-procedure TEditorProfile.AssignTo(Dest: TPersistent);
-var
-  cf: TSynGutterCodeFolding;
-  OldCF: Boolean;
-begin
-  if Assigned(Dest) and (Dest is TCustomSynEdit) then
-  begin
-    TCustomSynEdit(Dest).Font.Name := Self.FontName;
-    TCustomSynEdit(Dest).Font.Size := Self.FontSize;
-    if Self.FontNoAntialiasing then
-      TCustomSynEdit(Dest).Font.Quality := fqNonAntialiased
-    else
-      TCustomSynEdit(Dest).Font.Quality := fqDefault;
-
-    TCustomSynEdit(Dest).Font.Color := Attributes.Whitespace.Foreground;
-    TCustomSynEdit(Dest).Color := Attributes.Whitespace.Background;
-    TCustomSynEdit(Dest).SelectedColor.Foreground := Attributes.Selected.Foreground;
-    TCustomSynEdit(Dest).SelectedColor.Background := Attributes.Selected.Background;
-    TCustomSynEdit(Dest).BracketMatchColor.Foreground := Attributes.Selected.Foreground;
-    TCustomSynEdit(Dest).BracketMatchColor.Background := Attributes.Selected.Background;
-
-    TCustomSynEdit(Dest).Options := TCustomSynEdit(Dest).Options - [eoDropFiles]; //make main window accept the files
-    TCustomSynEdit(Dest).Gutter.Assign(Self.Gutter);
-
-    cf := TCustomSynEdit(Dest).Gutter.Parts.ByClass[TSynGutterCodeFolding, 0] as TSynGutterCodeFolding;
-    if cf <> nil then
-    begin
-      OldCF := cf.Visible;
-      cf.Visible := CodeFolding and (TCustomSynEdit(Dest).Highlighter <> nil) and (hcCodeFolding in TCustomSynEdit(Dest).Highlighter.Capabilities);
-      if (cf.Visible) and (cf.Visible <> OldCF) then
-        TCustomSynEdit(Dest).UnfoldAll;
-    end;
-
-    TCustomSynEdit(Dest).Options := Self.Options;
-    TCustomSynEdit(Dest).ExtraLineSpacing := Self.ExtraLineSpacing;
-    TCustomSynEdit(Dest).InsertCaret := Self.InsertCaret;
-    TCustomSynEdit(Dest).OverwriteCaret := Self.OverwriteCaret;
-    TCustomSynEdit(Dest).MaxUndo := Self.MaxUndo;
-    TCustomSynEdit(Dest).RightEdge := Self.RightEdge;
-    TCustomSynEdit(Dest).RightEdgeColor := Self.RightEdgeColor;
-    TCustomSynEdit(Dest).TabWidth := Self.TabWidth;
-  end
-  else
-    inherited;
-end;
 
 constructor TEditorProfile.Create(AOwner: TComponent);
 begin

@@ -269,7 +269,7 @@ type
     function GetModeAsText: string;
     procedure SetMode(const Value: TEditorFileMode);
   protected
-    procedure AssignGroup(const Value: TFileGroup); virtual;
+    procedure GroupChanged; virtual;
     function GetIsReadonly: Boolean; virtual;
     procedure SetIsReadonly(const Value: Boolean); virtual;
     function GetControl: TWinControl; virtual;
@@ -347,7 +347,7 @@ type
     function GetControl: TWinControl; override;
     procedure DoLoad(FileName: string); override;
     procedure DoSave(FileName: string); override;
-    procedure AssignGroup(const Value: TFileGroup); override;
+    procedure GroupChanged; override;
 
     procedure DoGutterClickEvent(Sender: TObject; X, Y, Line: integer; Mark: TSynEditMark);
     procedure DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
@@ -1101,13 +1101,13 @@ begin
   SaveAsMode(FileName, Mode, SynEdit.Lines);
 end;
 
-procedure TTextEditorFile.AssignGroup(const Value: TFileGroup);
+procedure TTextEditorFile.GroupChanged;
 begin
-  inherited AssignGroup(Value);
-  if Value <> nil then
+  inherited;
+  if Group <> nil then
   begin
     FSynEdit.Highlighter := FGroup.Category.Highlighter;
-    Value.Category.InitCompletion(FSynEdit);
+    FGroup.Category.InitCompletion(FSynEdit);
 
     if (fgkExecutable in FGroup.Kind) then
       with TSynDebugMarksPart.Create(FSynEdit.Gutter.Parts) do
@@ -1119,10 +1119,9 @@ begin
 
     FSynEdit.Gutter.SeparatorPart(0).Index := FSynEdit.Gutter.Parts.Count - 1;
 
-    Value.Category.InitEdit(FSynEdit);
+    FGroup.Category.InitEdit(FSynEdit);
     //Engine.MacroRecorder.AddEditor(FSynEdit);
   end;
-  Engine.Options.Profile.AssignTo(FSynEdit);//TODO dublicated assign?
 end;
 
 procedure TTextEditorFile.DoGutterClickEvent(Sender: TObject; X, Y, Line: integer; Mark: TSynEditMark);
@@ -1213,9 +1212,53 @@ begin
 end;
 
 procedure TTextEditorFile.Assign(Source: TPersistent);
+var
+  aProfile: TEditorProfile;
+  cf: TSynGutterCodeFolding;
+  OldCF: Boolean;
 begin
   if Source is TEditorProfile then
-    (Source as TEditorProfile).AssignTo(SynEdit)
+  begin
+    aProfile := Source as TEditorProfile;
+
+    SynEdit.Font.Name := aProfile.FontName;
+    SynEdit.Font.Size := aProfile.FontSize;
+    if aProfile.FontNoAntialiasing then
+      SynEdit.Font.Quality := fqNonAntialiased
+    else
+      SynEdit.Font.Quality := fqDefault;
+
+    SynEdit.Font.Color := aProfile.Attributes.Whitespace.Foreground;
+    SynEdit.Color := aProfile.Attributes.Whitespace.Background;
+    SynEdit.SelectedColor.Foreground := aProfile.Attributes.Selected.Foreground;
+    SynEdit.SelectedColor.Background := aProfile.Attributes.Selected.Background;
+    SynEdit.BracketMatchColor.Foreground := aProfile.Attributes.Selected.Foreground;
+    SynEdit.BracketMatchColor.Background := aProfile.Attributes.Selected.Background;
+
+    SynEdit.Options := SynEdit.Options - [eoDropFiles]; //make main window accept the files
+    SynEdit.Gutter.Assign(aProfile.Gutter);
+
+    cf := SynEdit.Gutter.Parts.ByClass[TSynGutterCodeFolding, 0] as TSynGutterCodeFolding;
+    if cf <> nil then
+    begin
+      OldCF := cf.Visible;
+      cf.Visible := aProfile.CodeFolding and (SynEdit.Highlighter <> nil) and (hcCodeFolding in SynEdit.Highlighter.Capabilities);
+      if (cf.Visible) and (cf.Visible <> OldCF) then
+        SynEdit.UnfoldAll;
+    end;
+
+    SynEdit.Options := aProfile.Options;
+    SynEdit.ExtraLineSpacing := aProfile.ExtraLineSpacing;
+    SynEdit.InsertCaret := aProfile.InsertCaret;
+    SynEdit.OverwriteCaret := aProfile.OverwriteCaret;
+    SynEdit.MaxUndo := aProfile.MaxUndo;
+    SynEdit.RightEdge := aProfile.RightEdge;
+    SynEdit.RightEdgeColor := aProfile.RightEdgeColor;
+    SynEdit.TabWidth := aProfile.TabWidth;
+
+    if Group.Category.Highlighter <> nil then
+      Group.Category.Apply(Group.Category.Highlighter, aProfile.Attributes);
+  end
   else if (Source is TEditorDesktopFile) then
   begin
     with (Source as TEditorDesktopFile) do
@@ -1231,9 +1274,7 @@ end;
 
 procedure TTextEditorFile.AssignTo(Dest: TPersistent);
 begin
-  if Dest is TEditorProfile then
-    //(Source as TEditorProfile).AssignTo(SynEdit)//TODO
-  else if (Dest is TEditorDesktopFile) then
+  if (Dest is TEditorDesktopFile) then
   begin
     with (Dest as TEditorDesktopFile) do
     begin
@@ -1620,6 +1661,7 @@ begin
   else
     Result := TTextEditorFile.Create(Engine.Files);
   Result.Group := vGroup;
+  Result.Assign(Engine.Options.Profile);
 end;
 
 function TEditorPerspective.CreateEditorProject: TEditorProject;
@@ -1758,7 +1800,6 @@ begin
   try
     for i := 0 to Engine.Files.Count - 1 do
     begin
-  //    Engine.Files[i].Group.Category.Apply(Engine.Files[i].Highlighter, Profile.Attributes);}
       Engine.Files[i].Assign(Profile);
       if List.IndexOf(Engine.Files[i].Group.Category) < 0 then
         List.Add(Engine.Files[i].Group.Category);
@@ -1770,8 +1811,8 @@ begin
       //List[i].Completion.Font := Profile.Font;
       //List[i].Completion.Options := List[i].Completion.Options + [scoTitleIsCentered];
 
-      if List[i].Highlighter <> nil then
-        List[i].Apply(List[i].Highlighter, Profile.Attributes);
+{      if List[i].Highlighter <> nil then
+        List[i].Apply(List[i].Highlighter, Profile.Attributes);}
     end;
 
     List.Free;
@@ -2777,7 +2818,6 @@ end;
 
 procedure TEditorFile.Assign(Source: TPersistent);
 begin
-  inherited Assign(Source);
 end;
 
 procedure TEditorFile.DoEdit(Sender: TObject);
@@ -3068,8 +3108,7 @@ begin
   if FGroup <> Value then
   begin
     FGroup := Value;
-    if FGroup <> nil then
-      AssignGroup(FGroup);
+    GroupChanged;
   end;
 end;
 
@@ -3206,7 +3245,7 @@ begin
   end;
 end;
 
-procedure TEditorFile.AssignGroup(const Value: TFileGroup);
+procedure TEditorFile.GroupChanged;
 begin
 end;
 
