@@ -16,7 +16,7 @@ uses
   Dialogs, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit,
   Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  SynHighlighterSQL, SynHighlighterXML, SynHighlighterApache,
+  SynHighlighterSQL, SynHighlighterXML, SynHighlighterApache, SynHighlighterINI,
   SynHighlighterPython;
 
 type
@@ -102,7 +102,7 @@ function GetHighlighterAttriAtRowColEx2(SynEdit: TCustomSynEdit; const XY: TPoin
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils;
+  IniFiles, mnStreams, mnUtils, SynHighlighterSQLite;
 
 function ColorToRGBHex(Color: TColor): string;
 var
@@ -212,15 +212,16 @@ end;
 
 function TSQLFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
-  Result := TSynSQLSyn.Create(nil);
-  (Result as TSynSQLSyn).SQLDialect := sqlMySQL;
+  {Result := TSynSQLSyn.Create(nil);
+  (Result as TSynSQLSyn).SQLDialect := sqlMySQL;}
+  Result := TSynSqliteSyn.Create(nil);
 end;
 
 procedure TSQLFileCategory.InitMappers;
 begin
-  with Highlighter as TSynSQLSyn do
+  with Highlighter as TSynSqliteSyn do
   begin
-    Mapper.Add(SpaceAttri, attWhitespace);
+{    Mapper.Add(SpaceAttri, attWhitespace);
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(NumberAttri, attNumber);
@@ -234,7 +235,19 @@ begin
     Mapper.Add(SQLPlusAttri, attDirective);
     Mapper.Add(TableNameAttri, attName);
     Mapper.Add(VariableAttri, attVariable);
+    Mapper.Add(DataTypeAttri, attType);}
+
+    Mapper.Add(CommentAttri, attComment);
     Mapper.Add(DataTypeAttri, attType);
+    Mapper.Add(ObjectAttri, attName);
+    Mapper.Add(FunctionAttri, attStandard);
+    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(KeyAttri, attKeyword);
+    Mapper.Add(NumberAttri, attNumber);
+    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(StringAttri, attString);
+    Mapper.Add(SymbolAttri, attSymbol);
+    Mapper.Add(VariableAttri, attVariable);
   end;
 end;
 
@@ -264,25 +277,22 @@ end;
 
 function TINIFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
-  Result := nil;
+  Result := TSynINISyn.Create(nil);
 end;
 
 procedure TINIFileCategory.InitMappers;
 begin
-{  with Highlighter as TSynAnySyn do
+  with Highlighter as TSynINISyn do
   begin
-    Mapper.Add('Space', attWorkspace);
-    Mapper.Add('Comment', attComment);
-    Mapper.Add('Document', attDocument);
-    Mapper.Add('Key', attKeyword);
-    Mapper.Add('Number', attNumber);
-    Mapper.Add('String', attString);
-    Mapper.Add('Symbol', attSymbol);
-    Mapper.Add('Section', attDirective);
-    Mapper.Add('Exception', attIdentifier);
-    Mapper.Add('Function', attCommon);
-    Mapper.Add('Identifier', attIdentifier);
-  end;}
+    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(TextAttri, attComment);
+    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(KeyAttri, attKeyword);
+    Mapper.Add(NumberAttri, attNumber);
+    Mapper.Add(StringAttri, attString);
+    Mapper.Add(SymbolAttri, attSymbol);
+    Mapper.Add(SectionAttri, attDirective);
+  end;
 end;
 
 { TTXTFileCategory }

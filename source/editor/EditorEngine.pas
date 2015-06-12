@@ -1765,22 +1765,30 @@ end;
 procedure TEditorOptions.Apply;
 var
   i: integer;
+  List: TFileCategories;
 begin
-  for i := 0 to Engine.Categories.Count - 1 do
-  begin
-    //check if Engine.Categories[i].Completion = nil
-    //Engine.Categories[i].Completion.Font := Profile.Font;
-    //Engine.Categories[i].Completion.Options := Engine.Categories[i].Completion.Options + [scoTitleIsCentered];
+  List := TFileCategories.create(False);
+  try
+    for i := 0 to Engine.Files.Count - 1 do
+    begin
+  //    Engine.Files[i].Group.Category.Apply(Engine.Files[i].Highlighter, Profile.Attributes);}
+      Engine.Files[i].Assign(Profile);
+      if List.IndexOf(Engine.Files[i].Group.Category) < 0 then
+        List.Add(Engine.Files[i].Group.Category);
+    end;
 
-//TODO
+    for i := 0 to List.Count - 1 do
+    begin
+      //check if List[i].Completion = nil
+      //List[i].Completion.Font := Profile.Font;
+      //List[i].Completion.Options := List[i].Completion.Options + [scoTitleIsCentered];
 
-{    if Engine.Categories[i].Highlighter <> nil then
-      Engine.Categories[i].Apply(Engine.Categories[i].Highlighter, Profile.Attributes);}
-  end;
+      if List[i].Highlighter <> nil then
+        List[i].Apply(List[i].Highlighter, Profile.Attributes);
+    end;
 
-  for i := 0 to Engine.Files.Count - 1 do
-  begin
-    Engine.Files[i].Assign(Profile);
+    List.Free;
+  finally
   end;
 end;
 

@@ -209,7 +209,7 @@ begin
       GetData;
       //Show the form
       Result := ShowModal = mrOk;
-      //PutData
+
       if Result then
         PutData;
     finally

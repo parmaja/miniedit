@@ -27,7 +27,7 @@ type
     attDocument,
     attComment,
     attSymbol,
-    attCommon,
+    attStandard,
     attNumber,
     attDirective,
     attIdentifier,
@@ -97,7 +97,7 @@ type
     FURL: TGlobalAttribute;
     FValue: TGlobalAttribute;
     FVariable: TGlobalAttribute;
-    FCommon: TGlobalAttribute;
+    FStandard: TGlobalAttribute;
     FWhitespace: TGlobalAttribute;
 
     FList: TObjectList;
@@ -125,7 +125,7 @@ type
     property Directive: TGlobalAttribute read FDirective;
     property Identifier: TGlobalAttribute read FIdentifier;
     property Variable: TGlobalAttribute read FVariable;
-    property Common: TGlobalAttribute read FCommon;
+    property Standard: TGlobalAttribute read FStandard;
     property Value: TGlobalAttribute read FValue;
     property DataType: TGlobalAttribute read FDataType;
     property DataName: TGlobalAttribute read FDataName;
@@ -420,7 +420,7 @@ begin
   Add(FDocument, attDocument, 'Document', TColor($DD8B42), clNone, []);
   Add(FComment, attComment, 'Comment', TColor($94541B), clNone, []);
   Add(FSymbol, attSymbol, 'Symbol', TColor($FFEDD1), clNone, []);
-  Add(FCommon, attCommon, 'Common Functions', TColor($3EAAFF), clNone, []);
+  Add(FStandard, attStandard, 'Standard', TColor($3EAAFF), clNone, []);
   Add(FNumber, attNumber, 'Number', TColor($0FDFEA), clNone, []);
   Add(FDirective, attDirective, 'Directive', TColor($3737E8), clNone, []);
   Add(FIdentifier, attIdentifier, 'Identifier', clNone, clNone, []);
@@ -428,7 +428,7 @@ begin
   Add(FOutter, attOutter, 'Outter', TColor($DD8B42), clNone, []);
   Add(FInner, attInner, 'Inner', TColor($16C11D), clNone, []);
   Add(FVariable, attVariable, 'Variable', clSkyBlue, clNone, []);
-  Add(FDataType, attType, 'Type', TColor($16C11D), clNone, []);
+  Add(FDataType, attType, 'Type', TColor($2f7adf), clNone, []);
   Add(FDataName, attName, 'Name', TColor($16C11D), clNone, []);
   Add(FValue, attValue, 'Value',  TColor($16C11D), clNone, []);
 end;
