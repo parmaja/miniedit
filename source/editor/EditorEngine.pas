@@ -556,6 +556,7 @@ type
     procedure DoExecuteCompletion(Sender: TObject); virtual;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); virtual;
     procedure InitEdit(vSynEdit: TCustomSynEdit); virtual;
+    function GetIsText: Boolean; virtual;
   public
     constructor Create(const vName: string; vKind: TFileCategoryKinds = []); virtual;
     destructor Destroy; override;
@@ -565,6 +566,7 @@ type
     property Name: string read FName write FName;
     function Find(vName: string): TFileGroup;
     procedure EnumExtensions(vExtensions: TStringList);
+    property IsText: Boolean read GetIsText;
     property Highlighter: TSynCustomHighlighter read GetHighlighter;
     property Completion: TmneSynCompletion read FCompletion;
     property Kind: TFileCategoryKinds read FKind;
@@ -573,16 +575,11 @@ type
 
   TFileCategoryClass = class of TFileCategory;
 
+  { TTextFileCategory }
 
-  { TCustomFileCategory
-    to add instant category, we will not add new Category class for every highlighter
-  }
-
-  TCustomFileCategory = class(TFileCategory)
+  TTextFileCategory = class(TFileCategory)
   protected
-    FHighlighterClass: TSynCustomHighlighterClass;
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
-    procedure InitMappers; override;
+    function GetIsText: Boolean; override;
   public
   end;
 
@@ -1003,6 +1000,13 @@ begin
       S := S + #$D;
     Stream.WriteBuffer(Pointer(S)^, Length(S));
   end;
+end;
+
+{ TTextFileCategory }
+
+function TTextFileCategory.GetIsText: Boolean;
+begin
+  Result := True;
 end;
 
 { TMapper }
@@ -1443,17 +1447,6 @@ end;
 function TmneSynCompletion.OwnedByEditor: Boolean;
 begin
   Result := False;
-end;
-
-{ TCustomFileCategory }
-
-function TCustomFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
-begin
-  Result := FHighlighterClass.Create(nil);
-end;
-
-procedure TCustomFileCategory.InitMappers;
-begin
 end;
 
 { TEditorSCM }
@@ -3555,6 +3548,11 @@ begin
   if FHighlighter = nil then
     FHighlighter := CreateHighlighter;
   Result := FHighlighter;
+end;
+
+function TFileCategory.GetIsText: Boolean;
+begin
+  Result := True;
 end;
 
 procedure TFileCategory.DoExecuteCompletion(Sender: TObject);

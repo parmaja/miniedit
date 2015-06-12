@@ -837,6 +837,7 @@ begin
       Folder := ExtractFilePath(Engine.Files.Current.Name);
     SaveAct.Enabled := Engine.Files.Current.IsEdited;
     SaveAllAct.Enabled := Engine.Files.GetEditedCount > 0;
+    FileModeBtn.Visible := Engine.Files.Current.Group.Category.IsText;
   end
   else
   begin
@@ -844,6 +845,7 @@ begin
     FileModeBtn.Caption := '';
     SaveAct.Enabled := False;
     SaveAllAct.Enabled := False;
+    FileModeBtn.Visible := False;
   end;
   //  DebugPnl.Visible := DebugPnl.Caption <> '';
   UpdateFileHeaderPanel;

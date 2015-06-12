@@ -43,7 +43,7 @@ type
 
   { TSQLFileCategory }
 
-  TSQLFileCategory = class(TFileCategory)
+  TSQLFileCategory = class(TTextFileCategory)
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
@@ -52,7 +52,7 @@ type
 
   { TApacheFileCategory }
 
-  TApacheFileCategory = class(TFileCategory)
+  TApacheFileCategory = class(TTextFileCategory)
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
@@ -61,7 +61,7 @@ type
 
   { TINIFileCategory }
 
-  TINIFileCategory = class(TFileCategory)
+  TINIFileCategory = class(TTextFileCategory)
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
@@ -70,7 +70,7 @@ type
 
   { TTXTFileCategory }
 
-  TTXTFileCategory = class(TFileCategory)
+  TTXTFileCategory = class(TTextFileCategory)
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
@@ -79,7 +79,7 @@ type
 
   { TXMLFileCategory }
 
-  TXMLFileCategory = class(TFileCategory)
+  TXMLFileCategory = class(TTextFileCategory)
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;

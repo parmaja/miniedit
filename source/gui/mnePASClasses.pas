@@ -42,7 +42,7 @@ type
 
   { TPASFileCategory }
 
-  TPASFileCategory = class(TFileCategory)
+  TPASFileCategory = class(TTextFileCategory)
   private
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
@@ -52,7 +52,7 @@ type
 
   { TLFMFileCategory }
 
-  TLFMFileCategory = class(TFileCategory)
+  TLFMFileCategory = class(TTextFileCategory)
   private
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;

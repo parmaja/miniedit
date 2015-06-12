@@ -62,7 +62,7 @@ type
 
   { TXHTMLFileCategory }
 
-  TXHTMLFileCategory = class(TFileCategory)
+  TXHTMLFileCategory = class(TTextFileCategory)
   private
     procedure ExtractKeywords(Files, Variables, Identifiers: TStringList);
   protected
@@ -76,7 +76,7 @@ type
 
   { TCSSFileCategory }
 
-  TCSSFileCategory = class(TFileCategory)
+  TCSSFileCategory = class(TTextFileCategory)
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
@@ -85,7 +85,7 @@ type
 
   { TJSFileCategory }
 
-  TJSFileCategory = class(TFileCategory)
+  TJSFileCategory = class(TTextFileCategory)
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;

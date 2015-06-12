@@ -35,7 +35,7 @@ type
 
   { TSARDFileCategory }
 
-  TSARDFileCategory = class(TFileCategory)
+  TSARDFileCategory = class(TTextFileCategory)
   private
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
