@@ -251,7 +251,7 @@ type
 
   { TEditorFile }
 
-  TEditorFile = class(TCollectionItem)
+  TEditorFile = class(TCollectionItem, IFileEditor)
   private
     FName: string;
     FIsNew: Boolean;
@@ -272,15 +272,14 @@ type
     procedure AssignGroup(const Value: TFileGroup); virtual;
     function GetIsReadonly: Boolean; virtual;
     procedure SetIsReadonly(const Value: Boolean); virtual;
-    function GetControl: TControl; virtual;
+    function GetControl: TWinControl; virtual;
     procedure DoGetCapability(var vCapability: TEditCapability); virtual;
   protected
     procedure Edit;
     procedure DoEdit(Sender: TObject);
     procedure DoStatusChange(Sender: TObject; Changes: TSynStatusChanges);
     procedure UpdateAge; virtual;
-    function GetHighlighter: TSynCustomHighlighter; virtual;
-    procedure NewSource; virtual;
+    procedure NewContent; virtual;
     procedure DoLoad(FileName: string); virtual; abstract;
     procedure DoSave(FileName: string); virtual; abstract;
   public
@@ -332,7 +331,7 @@ type
     property IsNew: Boolean read FIsNew write SetIsNew default False;
     property IsReadOnly: Boolean read GetIsReadonly write SetIsReadonly;
     property Group: TFileGroup read FGroup write SetGroup;
-    property Control: TControl read GetControl;
+    property Control: TWinControl read GetControl;
   published
   end;
 
@@ -345,7 +344,7 @@ type
     LastGotoLine: Integer;
     function GetIsReadonly: Boolean; override;
     procedure SetIsReadonly(const Value: Boolean); override;
-    function GetControl: TControl; override;
+    function GetControl: TWinControl; override;
     procedure DoLoad(FileName: string); override;
     procedure DoSave(FileName: string); override;
     procedure AssignGroup(const Value: TFileGroup); override;
@@ -382,7 +381,7 @@ type
     property SynEdit: TSynEdit read FSynEdit;
   end;
 
-  TSourceEditorFile = class(TTextEditorFile, ISourceEditor, IExecuteEditor, IWatchEditor)
+  TSourceEditorFile = class(TTextEditorFile, ITextEditor, IExecuteEditor, IWatchEditor)
   end;
 
   { TEditorFiles }
@@ -601,6 +600,8 @@ type
 
   TFileGroupKind = (
     fgkExecutable,//You can guess what is it :P
+    fgkText, //Is it an Text Editor like SQL or PHP
+    fgkEditor, // Can be editable
     fgkMain,//this can be the main file for project
     fgkMember,//a member of project, inc are member, c, h, cpp members, pas,pp, p , inc also members, ini,txt not member of any project
     fgkBrowsable,//When open file show it in the extension list
@@ -781,7 +782,7 @@ type
     FUpdateState: TEditorChangeStates;
     FUpdateCount: integer;
     FFiles: TEditorFiles;
-    FFilesControl: TWinControl;
+    FContainer: TWinControl;
     FOptions: TEditorOptions;
     FSearchEngine: TSynEditSearch;
     FCategories: TFileCategories;
@@ -852,8 +853,8 @@ type
     property Session: TEditorSession read FSession;
     property Options: TEditorOptions read FOptions;
     property MessagesList: TEditorMessagesList read FMessagesList;
-    //FilesControl is a panel or any wincontrol that the editor SynEdit put on it
-    property FilesControl: TWinControl read FFilesControl write FFilesControl;
+    //Container is a panel or any wincontrol that the editor SynEdit put on it
+    property Container: TWinControl read FContainer write FContainer;
     //BrowseFolder: Current folder
     property BrowseFolder: string read FBrowseFolder write SetBrowseFolder;
     procedure SetDefaultPerspective(vName: string);
@@ -1063,7 +1064,7 @@ begin
   SynEdit.ReadOnly := Value;
 end;
 
-function TTextEditorFile.GetControl: TControl;
+function TTextEditorFile.GetControl: TWinControl;
 begin
   Result := SynEdit;
 end;
@@ -1074,7 +1075,6 @@ var
   Size: integer;
   Stream: TFileStream;
 begin
-  FileName := ExpandFileName(FileName);
   try
     Stream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
     SynEdit.BeginUpdate;
@@ -1088,18 +1088,11 @@ begin
         Contents := ChangeTabsToSpace(Contents, SynEdit.TabWidth);
       end;
       SynEdit.Lines.Text := Contents;
-      Name := FileName;
-      IsEdited := False;
-      IsNew := False;
-      UpdateAge;
     finally
       SynEdit.EndUpdate;
       Stream.Free;
     end;
   finally
-    {on E: EStreamError do
-    else
-      raise;}
   end;
 end;
 
@@ -1194,7 +1187,7 @@ var
 begin
   inherited;
   { There is more assigns in TEditorFile.SetGroup and TEditorProfile.Assign}
-  FSynEdit := TSynEdit.Create(Engine.FilesControl);
+  FSynEdit := TSynEdit.Create(Engine.Container);
   FSynEdit.OnChange := @DoEdit;
   FSynEdit.OnStatusChange := @DoStatusChange;
   FSynEdit.OnGutterClick := @DoGutterClickEvent;
@@ -1204,15 +1197,13 @@ begin
   FSynEdit.OnKeyDown := @SynEditKeyDown;
 
   FSynEdit.TrimSpaceType := settLeaveLine;
-  FSynEdit.BoundsRect := Engine.FilesControl.ClientRect;
+  FSynEdit.BoundsRect := Engine.Container.ClientRect;
   FSynEdit.Font.Quality := fqDefault;
   FSynEdit.BorderStyle := bsNone;
   FSynEdit.ShowHint := True;
   FSynEdit.Visible := False;
-  FSynEdit.Align := alClient;
-  FSynEdit.Realign;
   FSynEdit.WantTabs := True;
-  FSynEdit.Parent := Engine.FilesControl;
+  FSynEdit.Parent := Engine.Container;
 end;
 
 destructor TTextEditorFile.Destroy;
@@ -1288,10 +1279,6 @@ end;
 procedure TTextEditorFile.Show;
 begin
   inherited;
-  SynEdit.Visible := True;
-  SynEdit.Show;
-  SynEdit.BringToFront;
-  (Engine.FilesControl.Owner as TCustomForm).ActiveControl := SynEdit;
 end;
 
 function TTextEditorFile.GetHint(HintControl: TControl; CursorPos: TPoint; out vHint: string): Boolean;
@@ -2216,7 +2203,7 @@ begin
     else
       aGroup := Engine.Groups.Find(vGroupName);
     Result := Engine.Perspective.CreateEditorFile(aGroup);
-    Result.NewSource;
+    Result.NewContent;
     Result.Edit;
     Current := Result;
     Engine.UpdateState([ecsChanged, ecsState, ecsRefresh]);
@@ -2803,6 +2790,10 @@ procedure TEditorFile.Load(FileName: string);
 begin
   FileName := ExpandFileName(FileName);
   DoLoad(FileName);
+  Name := FileName;
+  IsEdited := False;
+  IsNew := False;
+  UpdateAge;
 end;
 
 procedure SaveAsMode(const FileName: string; Mode: TEditorFileMode; Strings: TStrings);
@@ -2885,6 +2876,15 @@ end;
 
 procedure TEditorFile.Show;
 begin
+  if Control <> nil then
+  begin
+    Control.Align := alClient;
+    Control.Realign;
+    Control.Visible := True;
+    Control.Show;
+    Control.BringToFront;
+    (Engine.Container.Owner as TCustomForm).ActiveControl := Control as TWinControl;
+  end;
 end;
 
 procedure TEditorFile.SaveFile(Extension:string; AsNewFile: Boolean);
@@ -3083,7 +3083,7 @@ begin
   Result := ExtractFileName(Name);
 end;
 
-function TEditorFile.GetControl: TControl;
+function TEditorFile.GetControl: TWinControl;
 begin
   Result := nil;
 end;
@@ -3091,14 +3091,6 @@ end;
 procedure TEditorFile.DoGetCapability(var vCapability: TEditCapability);
 begin
   vCapability := [];
-end;
-
-function TEditorFile.GetHighlighter: TSynCustomHighlighter;
-begin
-  if Group <> nil then
-    Result := Group.Category.Highlighter
-  else
-    Result := nil;
 end;
 
 function TEditorFile.GetIsReadonly: Boolean;
@@ -3117,7 +3109,7 @@ procedure TEditorFile.SetIsReadonly(const Value: Boolean);
 begin
 end;
 
-procedure TEditorFile.NewSource;
+procedure TEditorFile.NewContent;
 begin
 end;
 

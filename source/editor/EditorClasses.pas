@@ -17,16 +17,16 @@ uses
     IFileEditor = interface
     end;
 
-    ITextEditor = interface
-      function CanCopy: Boolean;
+    IClipboardEditor = interface(IFileEditor)
       function CanPaste: Boolean;
-      procedure Copy;
       procedure Paste;
       procedure Cut;
+      function CanCopy: Boolean;
+      procedure Copy;
       procedure SelectAll;
     end;
 
-    ISourceEditor = interface(ITextEditor)
+    ITextEditor = interface(IClipboardEditor)
     end;
 
     IExecuteEditor = interface

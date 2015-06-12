@@ -242,7 +242,7 @@ begin
   if FileName <> '' then
   begin
     aFile := Engine.Files.ShowFile(FileName);
-    if (aFile is ISourceEditor) then //{$warning 'bad beavor, this class must be outside the engine'}
+    if (aFile is ITextEditor) then //{$warning 'bad beavor, this class must be outside the engine'}
       SetExecutedLine(Key, (aFile as TTextEditorFile).SynEdit, Line, vCallStack);
   end
   else

@@ -1,5 +1,4 @@
 unit mneClasses;
-
 {$mode objfpc}{$H+}
 {**
  * Mini Edit
@@ -39,7 +38,7 @@ type
 
   TXMLFile = class(TTextEditorFile)
   public
-    procedure NewSource; override;
+    procedure NewContent; override;
   end;
 
   { TSQLFileCategory }
@@ -335,7 +334,7 @@ end;
 
 { TXMLFile }
 
-procedure TXMLFile.NewSource;
+procedure TXMLFile.NewContent;
 begin
   SynEdit.Text := '<?xml version="1.0" encoding="iso-8859-1" ?>';
   SynEdit.Lines.Add('');

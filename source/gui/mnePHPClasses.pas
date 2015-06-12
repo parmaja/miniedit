@@ -28,7 +28,7 @@ type
   TPHPFile = class(TSourceEditorFile)
   protected
   public
-    procedure NewSource; override;
+    procedure NewContent; override;
     procedure OpenInclude; override;
     function CanOpenInclude: Boolean; override;
     function Run: Boolean; override;
@@ -39,7 +39,7 @@ type
   TXHTMLFile = class(TPHPFile)
   protected
   public
-    procedure NewSource; override;
+    procedure NewContent; override;
   end;
 
   { TCssFile }
@@ -115,7 +115,7 @@ uses
 
 { TXHTMLFile }
 
-procedure TXHTMLFile.NewSource;
+procedure TXHTMLFile.NewContent;
 begin
   SynEdit.Text :=   '<?xml version="1.0" encoding="UTF-8"?>';
   SynEdit.Lines.Add('<!DOCTYPE html PUBLIC');
@@ -135,7 +135,7 @@ end;
 
 { TPHPFile }
 
-procedure TPHPFile.NewSource;
+procedure TPHPFile.NewContent;
 begin
   SynEdit.Text := '<?php';
   SynEdit.Lines.Add('');

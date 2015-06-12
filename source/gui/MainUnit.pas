@@ -567,7 +567,7 @@ begin
     aIniFile.Free;
   end;
   Engine.Workspace := ExpandToPath(aWorkspace, Application.Location);
-  Engine.FilesControl := EditorsPnl;
+  Engine.Container := EditorsPnl;
   //FileTabs.Align := alClient;
   Engine.OnChangedState := @EditorChangeState;
   Engine.OnReplaceText:= @OnReplaceText;

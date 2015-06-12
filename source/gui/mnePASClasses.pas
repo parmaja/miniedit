@@ -30,13 +30,13 @@ type
 
   TPASFile = class(TSourceEditorFile)
   protected
-    procedure NewSource; override;
+    procedure NewContent; override;
   public
   end;
 
   TLFMFile = class(TTextEditorFile)
   protected
-    //procedure NewSource; override;
+    //procedure NewContent; override;
   public
   end;
 
@@ -164,9 +164,9 @@ end;
 
 { TPASFile }
 
-procedure TPASFile.NewSource;
+procedure TPASFile.NewContent;
 begin
-  inherited NewSource;
+  inherited NewContent;
   SynEdit.Text := 'unit ';
   SynEdit.Lines.Add('');
   SynEdit.Lines.Add('interface');

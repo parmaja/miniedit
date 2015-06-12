@@ -29,7 +29,7 @@ type
 
   TSARDFile = class(TSourceEditorFile)
   protected
-    procedure NewSource; override;
+    procedure NewContent; override;
   public
   end;
 
@@ -100,9 +100,9 @@ end;
 
 { TSARDFile }
 
-procedure TSARDFile.NewSource;
+procedure TSARDFile.NewContent;
 begin
-  inherited NewSource;
+  inherited NewContent;
 end;
 
 initialization
