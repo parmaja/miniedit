@@ -62,7 +62,7 @@ type
 
   { TPascalPerspective }
 
-  TPascalPerspective = class(TEditorPerspective)
+  TPascalTendency = class(TEditorTendency)
   protected
     procedure Init; override;
   public
@@ -121,9 +121,9 @@ begin
   end;
 end;
 
-{ TPascalPerspective }
+{ TPascalTendency }
 
-procedure TPascalPerspective.Init;
+procedure TPascalTendency.Init;
 begin
   FName := 'Pascal';
   FTitle := 'Pascal project';
@@ -192,6 +192,6 @@ initialization
     Groups.Add(TPASFile, 'pas', 'Pascal Files', 'pas', ['pas', 'pp', 'p', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
     Groups.Add(TLFMFile, 'lfm', 'Lazarus Form Files', 'lfm', ['lfm'], [fgkAssociated, fgkMember, fgkBrowsable], [fgsFolding]);
 
-    Perspectives.Add(TPascalPerspective);
+    Tendencies.Add(TPascalTendency);
   end;
 end.

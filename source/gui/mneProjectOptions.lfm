@@ -1,21 +1,21 @@
 object ProjectForm: TProjectForm
   Left = 461
-  Height = 275
+  Height = 211
   Top = 184
   Width = 398
   BorderStyle = bsDialog
   Caption = 'Project Options'
-  ClientHeight = 275
+  ClientHeight = 211
   ClientWidth = 398
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.5'
   object Label3: TLabel
     Left = 12
-    Height = 14
+    Height = 13
     Top = 9
     Width = 64
     Caption = 'Project &Name'
@@ -25,154 +25,113 @@ object ProjectForm: TProjectForm
   end
   object Label4: TLabel
     Left = 12
-    Height = 14
+    Height = 13
     Top = 33
-    Width = 55
+    Width = 53
     Caption = '&Description'
     FocusControl = DescriptionEdit
     ParentColor = False
   end
   object Label1: TLabel
     Left = 6
-    Height = 14
-    Top = 164
-    Width = 283
+    Height = 13
+    Top = 138
+    Width = 270
     Caption = 'Roo&t path of your project usefull when enumrate your files'
     ParentColor = False
-  end
-  object Label2: TLabel
-    Left = 6
-    Height = 14
-    Top = 206
-    Width = 135
-    Caption = '&Url for run it in http web site'
-    ParentColor = False
-  end
-  object Label6: TLabel
-    Left = 11
-    Height = 14
-    Top = 140
-    Width = 49
-    Caption = '&Run Mode'
-    FocusControl = RunModeCbo
-    ParentColor = False
-  end
-  object Bevel1: TBevel
-    Left = 4
-    Height = 2
-    Top = 129
-    Width = 384
   end
   object OkBtn: TButton
     Left = 319
     Height = 25
-    Top = 248
+    Top = 184
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&Ok'
     Default = True
     ModalResult = 1
     OnClick = OkBtnClick
-    TabOrder = 9
+    TabOrder = 7
   end
   object CancelBtn: TButton
     Left = 243
     Height = 25
-    Top = 248
+    Top = 184
     Width = 75
     Anchors = [akRight, akBottom]
     Cancel = True
     Caption = '&Cancel'
     ModalResult = 2
-    TabOrder = 10
+    TabOrder = 8
   end
   object NameEdit: TEdit
     Left = 89
-    Height = 23
+    Height = 21
     Top = 6
     Width = 303
     TabOrder = 0
   end
   object DescriptionEdit: TEdit
     Left = 89
-    Height = 23
-    Top = 30
+    Height = 21
+    Top = 31
     Width = 303
     TabOrder = 1
   end
   object SaveDesktopChk: TCheckBox
     Left = 12
-    Height = 22
+    Height = 19
     Top = 106
-    Width = 277
+    Width = 270
     Caption = 'Save Desktop, &Reopen last opend files in this project'
     TabOrder = 4
   end
   object RootDirEdit: TEdit
-    Left = 6
-    Height = 23
-    Top = 181
+    Left = 11
+    Height = 21
+    Top = 155
     Width = 352
-    TabOrder = 6
+    TabOrder = 5
   end
   object Button3: TButton
-    Left = 360
+    Left = 366
     Height = 20
-    Top = 182
+    Top = 155
     Width = 22
     Caption = '...'
     OnClick = Button3Click
-    TabOrder = 7
+    TabOrder = 6
   end
-  object RootUrlEdit: TEdit
-    Left = 6
-    Height = 23
-    Top = 222
-    Width = 388
-    TabOrder = 8
-  end
-  object RunModeCbo: TComboBox
-    Left = 76
-    Height = 27
-    Top = 134
-    Width = 166
-    ItemHeight = 0
-    Style = csDropDownList
-    TabOrder = 5
-  end
-  object PerspectiveCbo: TComboBox
+  object TendencyCbo: TComboBox
     Left = 89
-    Height = 27
-    Top = 54
+    Height = 21
+    Top = 56
     Width = 303
-    ItemHeight = 0
+    ItemHeight = 13
     Style = csDropDownList
     TabOrder = 2
   end
   object Label7: TLabel
     Left = 12
-    Height = 14
-    Top = 58
-    Width = 61
+    Height = 13
+    Top = 59
+    Width = 60
     Caption = 'Project Type'
-    FocusControl = RunModeCbo
     ParentColor = False
   end
   object Label8: TLabel
     Left = 12
-    Height = 14
+    Height = 13
     Top = 87
-    Width = 73
+    Width = 70
     Caption = 'Source Control'
-    FocusControl = RunModeCbo
     ParentColor = False
   end
   object SCMCbo: TComboBox
     Left = 89
-    Height = 27
+    Height = 21
     Top = 82
     Width = 303
-    ItemHeight = 0
+    ItemHeight = 13
     Style = csDropDownList
     TabOrder = 3
   end
@@ -180,4 +139,4 @@ object ProjectForm: TProjectForm
     left = 320
     top = 101
   end
-end
+end

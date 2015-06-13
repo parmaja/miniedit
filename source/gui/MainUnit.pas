@@ -479,7 +479,7 @@ type
     procedure UpdateCallStack;
     procedure OptionsChanged;
     procedure EditorChangeState(State: TEditorChangeStates);
-    function ChoosePerspective(var vPerspective: TEditorPerspective): Boolean;
+    function ChooseTendency(var vTendency: TEditorTendency): Boolean;
     function ChooseSCM(var vSCM: TEditorSCM): Boolean;
 
     procedure EngineChanged;
@@ -511,7 +511,7 @@ type
     procedure LogMessage(Sender: TObject; AText: string);
 
     procedure RunTerminated(Sender: TObject);
-    procedure RunScript;
+    procedure RunFile;
     //
     procedure Log(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
     procedure Log(ACaption, AMsg: string); overload;
@@ -558,25 +558,19 @@ var
   aIniFile: TIniFile;
   aEngineFile, lFilePath: string;
   aWorkspace: string;
-  s: string;
-  env: TStringList;
 begin
   inherited;
   aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
   try
     aWorkspace := aIniFile.ReadString(SysPlatform, 'Workspace', '');
-    env := TStringList.Create; //TODO move it to Engine
-    s := SysUtils.GetEnvironmentVariable('HOME');
-    env.Add('HOME=' + s);
-    aWorkspace := VarReplace(aWorkspace, env);
+    aWorkspace := VarReplace(aWorkspace, Engine.Environment);
     aWorkspace := IncludeTrailingPathDelimiter(aWorkspace);
-    env.Free;
   finally
     aIniFile.Free;
   end;
   Engine.Workspace := ExpandToPath(aWorkspace, Application.Location);
   Engine.Container := EditorsPnl;
-  //FileTabs.Align := alClient;
+
   Engine.OnChangedState := @EditorChangeState;
   Engine.OnReplaceText:= @OnReplaceText;
   if (aWorkspace <> '') then
@@ -683,7 +677,7 @@ end;
 
 procedure TMainForm.FetchCallStackBtnClick(Sender: TObject);
 begin
-  if (Engine.Perspective.Debug <> nil) then
+  if (Engine.Tendency.Debug <> nil) then
   begin
   end;
 end;
@@ -782,11 +776,11 @@ var
 begin
   //AExtensions := TEditorElements.Create;
   try
-    if Engine.Perspective is TDefaultPerspective then
+    if Engine.Tendency is TDefaultTendency then
       G := Engine.Groups
     else
-      G := Engine.Perspective.Groups;
-    //Engine.Perspective.EnumExtensions(AExtensions);
+      G := Engine.Tendency.Groups;
+    //Engine.Tendency.EnumExtensions(AExtensions);
     if ShowSelectList('Select file type', G, [slfUseNameTitle], E) then
       Engine.Files.New(E);
   finally
@@ -936,19 +930,19 @@ end;
 
 procedure TMainForm.ProjectTypeActExecute(Sender: TObject);
 var
-  lPerspective: TEditorPerspective;
+  lTendency: TEditorTendency;
 begin
   if Engine.Session.IsOpened then
   begin
-    lPerspective := Engine.Session.Project.Perspective;
-    if ChoosePerspective(lPerspective) then
-      Engine.Session.Project.PerspectiveName := lPerspective.Name;
+    lTendency := Engine.Session.Project.Tendency;
+    if ChooseTendency(lTendency) then
+      Engine.Session.Project.TendencyName := lTendency.Name;
   end
   else
   begin
-    lPerspective := Engine.DefaultPerspective;
-    if ChoosePerspective(lPerspective) then
-      Engine.DefaultPerspective := lPerspective;
+    lTendency := Engine.DefaultTendency;
+    if ChooseTendency(lTendency) then
+      Engine.DefaultTendency := lTendency;
   end;
 end;
 
@@ -1113,11 +1107,11 @@ end;
 
 procedure TMainForm.RunActExecute(Sender: TObject);
 begin
-  if Engine.Perspective.Debug <> nil then
-    if Engine.Perspective.Debug.Running then
-      Engine.Perspective.Debug.Action(dbaRun)
+  if Engine.Tendency.Debug <> nil then
+    if Engine.Tendency.Debug.Running then
+      Engine.Tendency.Debug.Action(dbaRun)
     else
-      RunScript;
+      RunFile;
 end;
 
 procedure TMainForm.ProjectOptionsActExecute(Sender: TObject);
@@ -1347,8 +1341,8 @@ begin
   SCMMnu.Visible := Engine.SCM <> nil;
   if Engine.SCM <> nil then
     SCMMnu.Caption := Engine.SCM.Name;
-  DebugMnu.Visible := Engine.Perspective.Debug <> nil;
-  TypePnl.Caption := Engine.Perspective.Name;
+  DebugMnu.Visible := Engine.Tendency.Debug <> nil;
+  TypePnl.Caption := Engine.Tendency.Name;
 end;
 
 procedure TMainForm.SaveAsProjectActExecute(Sender: TObject);
@@ -1501,7 +1495,7 @@ begin
     AExtensions := TStringList.Create;
     try
       case ShowFolderFiles of
-        sffRelated: Engine.Perspective.Groups.EnumExtensions(AExtensions);
+        sffRelated: Engine.Tendency.Groups.EnumExtensions(AExtensions);
         sffKnown: Engine.Groups.EnumExtensions(AExtensions);
         sffAll: All := True;
       end;
@@ -1607,16 +1601,16 @@ begin
     OptionsChanged;
 end;
 
-function TMainForm.ChoosePerspective(var vPerspective: TEditorPerspective): Boolean;
+function TMainForm.ChooseTendency(var vTendency: TEditorTendency): Boolean;
 var
   aName: string;
 begin
-  if (vPerspective <> nil) then
-    aName := vPerspective.Name
+  if (vTendency <> nil) then
+    aName := vTendency.Name
   else
     aName := '';
-  Result := ShowSelectList('Select project type', Engine.Perspectives, [], aName);
-  vPerspective := Engine.Perspectives.Find(aName);
+  Result := ShowSelectList('Select project type', Engine.Tendencies, [], aName);
+  vTendency := Engine.Tendencies.Find(aName);
 end;
 
 function TMainForm.ChooseSCM(var vSCM: TEditorSCM): Boolean;
@@ -1827,21 +1821,21 @@ end;
 
 procedure TMainForm.DBGStopServerActUpdate(Sender: TObject);
 begin
-  if Engine.Perspective.Debug <> nil then
-    DBGStopServerAct.Enabled := Engine.Perspective.Debug.Active;
+  if Engine.Tendency.Debug <> nil then
+    DBGStopServerAct.Enabled := Engine.Tendency.Debug.Active;
 end;
 
 procedure TMainForm.DBGStartServerActUpdate(Sender: TObject);
 begin
-  DBGStartServerAct.Checked := (Engine.Perspective.Debug <> nil) and Engine.Perspective.Debug.Active;
+  DBGStartServerAct.Checked := (Engine.Tendency.Debug <> nil) and Engine.Tendency.Debug.Active;
 end;
 
 procedure TMainForm.DBGStartServerActExecute(Sender: TObject);
 begin
-  if Engine.Perspective.Debug <> nil then
+  if Engine.Tendency.Debug <> nil then
   begin
     DBGStartServerAct.Checked := not DBGStartServerAct.Checked;
-    Engine.Perspective.Debug.Active := DBGStartServerAct.Checked;
+    Engine.Tendency.Debug.Active := DBGStartServerAct.Checked;
   end
   else
     DBGStartServerAct.Checked := False;
@@ -1849,52 +1843,52 @@ end;
 
 procedure TMainForm.DBGStopServerActExecute(Sender: TObject);
 begin
-  if Engine.Perspective.Debug <> nil then
-    Engine.Perspective.Debug.Action(dbaStop);
+  if Engine.Tendency.Debug <> nil then
+    Engine.Tendency.Debug.Action(dbaStop);
 end;
 
 procedure TMainForm.DBGStepOverActExecute(Sender: TObject);
 begin
-  if Engine.Perspective.Debug <> nil then
-    if Engine.Perspective.Debug.Running then
-      Engine.Perspective.Debug.Action(dbaStepOver);
+  if Engine.Tendency.Debug <> nil then
+    if Engine.Tendency.Debug.Running then
+      Engine.Tendency.Debug.Action(dbaStepOver);
 end;
 
 procedure TMainForm.DBGStepIntoActExecute(Sender: TObject);
 begin
-  if Engine.Perspective.Debug <> nil then
-    if Engine.Perspective.Debug.Running then
-      Engine.Perspective.Debug.Action(dbaStepInto);
+  if Engine.Tendency.Debug <> nil then
+    if Engine.Tendency.Debug.Running then
+      Engine.Tendency.Debug.Action(dbaStepInto);
 end;
 
 procedure TMainForm.DBGActiveServerActUpdate(Sender: TObject);
 begin
-  if Engine.Perspective.Debug <> nil then
-    DBGActiveServerAct.Checked := Engine.Perspective.Debug.Active;
+  if Engine.Tendency.Debug <> nil then
+    DBGActiveServerAct.Checked := Engine.Tendency.Debug.Active;
 end;
 
 procedure TMainForm.DBGActiveServerActExecute(Sender: TObject);
 begin
-  if Engine.Perspective.Debug <> nil then
-    Engine.Perspective.Debug.Active := not DBGActiveServerAct.Checked;
+  if Engine.Tendency.Debug <> nil then
+    Engine.Tendency.Debug.Active := not DBGActiveServerAct.Checked;
 end;
 
 procedure TMainForm.DBGResetActExecute(Sender: TObject);
 begin
-  if Engine.Perspective.Debug <> nil then
-    Engine.Perspective.Debug.Action(dbaReset);
+  if Engine.Tendency.Debug <> nil then
+    Engine.Tendency.Debug.Action(dbaReset);
 end;
 
 procedure TMainForm.DBGResumeActExecute(Sender: TObject);
 begin
-  if Engine.Perspective.Debug <> nil then
-    Engine.Perspective.Debug.Action(dbaResume);
+  if Engine.Tendency.Debug <> nil then
+    Engine.Tendency.Debug.Action(dbaResume);
 end;
 
 procedure TMainForm.DBGStepOutActExecute(Sender: TObject);
 begin
-  if Engine.Perspective.Debug <> nil then
-    Engine.Perspective.Debug.Action(dbaStepOut);
+  if Engine.Tendency.Debug <> nil then
+    Engine.Tendency.Debug.Action(dbaStepOut);
 end;
 
 function TMainForm.GetFolder: string;
@@ -1914,9 +1908,9 @@ end;
 
 procedure TMainForm.EngineDebug;
 begin
-  if Assigned(Engine) and (Engine.Perspective.Debug <> nil) then
+  if Assigned(Engine) and (Engine.Tendency.Debug <> nil) then
   begin
-    DebugPnl.Caption := Engine.Perspective.Debug.GetKey;
+    DebugPnl.Caption := Engine.Tendency.Debug.GetKey;
     UpdateFileHeaderPanel;
     UpdateCallStack;
     UpdateWatches;
@@ -1926,7 +1920,7 @@ end;
 
 procedure TMainForm.UpdateFileHeaderPanel;
 begin
-  if (Engine.Files.Current <> nil) and (Engine.Perspective.Debug <> nil) and (Engine.Files.Current.Control = Engine.Perspective.Debug.ExecutedControl) then
+  if (Engine.Files.Current <> nil) and (Engine.Tendency.Debug <> nil) and (Engine.Files.Current.Control = Engine.Tendency.Debug.ExecutedControl) then
 //    FileHeaderPanel.Color := $00C6C6EC
     BugSignBtn.Visible := True
   else
@@ -1943,13 +1937,13 @@ var
   aItem: TListItem;
   aIndex: integer;
 begin
-  if Engine.Perspective.Debug <> nil then
+  if Engine.Tendency.Debug <> nil then
   begin
     aIndex := CallStackList.ItemIndex;
     CallStackList.BeginUpdate;
     try
       CallStackList.Clear;
-      with Engine.Perspective.Debug do
+      with Engine.Tendency.Debug do
       try
         for i := 0 to CallStack.Count - 1 do
         begin
@@ -2003,24 +1997,24 @@ var
   aItem: TListItem;
   aIndex: integer;
 begin
-  if Engine.Perspective.Debug <> nil then
+  if Engine.Tendency.Debug <> nil then
   begin
     aIndex := WatchList.ItemIndex;
     WatchList.BeginUpdate;
     try
       WatchList.Clear;
-      Engine.Perspective.Debug.Lock;
+      Engine.Tendency.Debug.Lock;
       try
-        for i := 0 to Engine.Perspective.Debug.Watches.Count - 1 do
+        for i := 0 to Engine.Tendency.Debug.Watches.Count - 1 do
         begin
           aItem := WatchList.Items.Add;
           aItem.ImageIndex := 41;
-          aItem.Caption := Engine.Perspective.Debug.Watches[i].VarName;
-          aItem.SubItems.Add(Engine.Perspective.Debug.Watches[i].VarType);
-          aItem.SubItems.Add(Engine.Perspective.Debug.Watches[i].Value);
+          aItem.Caption := Engine.Tendency.Debug.Watches[i].VarName;
+          aItem.SubItems.Add(Engine.Tendency.Debug.Watches[i].VarType);
+          aItem.SubItems.Add(Engine.Tendency.Debug.Watches[i].Value);
         end;
       finally
-        Engine.Perspective.Debug.Unlock;
+        Engine.Tendency.Debug.Unlock;
       end;
     finally
       if (aIndex >= 0) and (aIndex < WatchList.Items.Count) then
@@ -2108,12 +2102,12 @@ end;
 
 procedure TMainForm.AddWatch(s: string);
 begin
-  if Engine.Perspective.Debug <> nil then
+  if Engine.Tendency.Debug <> nil then
   begin
     s := Trim(s);
     if s <> '' then
     begin
-      Engine.Perspective.Debug.Watches.Add(s);
+      Engine.Tendency.Debug.Watches.Add(s);
       //UpdateWatches;
     end;
   end;
@@ -2126,9 +2120,9 @@ end;
 
 procedure TMainForm.DeleteWatch(s: string);
 begin
-  if Engine.Perspective.Debug <> nil then
+  if Engine.Tendency.Debug <> nil then
   begin
-    Engine.Perspective.Debug.Watches.Remove(s);
+    Engine.Tendency.Debug.Watches.Remove(s);
     //UpdateWatches;
   end;
 end;
@@ -2137,17 +2131,17 @@ procedure TMainForm.DBGToggleBreakpointExecute(Sender: TObject);
 var
   aLine: integer;
 begin
-  if Engine.Perspective.Debug <> nil then
+  if Engine.Tendency.Debug <> nil then
   begin
     if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomSynEdit) and (ActiveControl = Engine.Files.Current.Control) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
       with Engine.Files.Current do
       begin
         aLine := (Control as TCustomSynEdit).CaretY;
-        Engine.Perspective.Debug.Lock;
+        Engine.Tendency.Debug.Lock;
         try
-          Engine.Perspective.Debug.Breakpoints.Toggle(Name, aLine);
+          Engine.Tendency.Debug.Breakpoints.Toggle(Name, aLine);
         finally
-          Engine.Perspective.Debug.Unlock;
+          Engine.Tendency.Debug.Unlock;
         end;
         (Control as TCustomSynEdit).InvalidateLine(aLine);
       end;
@@ -2173,12 +2167,12 @@ begin
   end;
 end;
 
-procedure TMainForm.RunScript;
+procedure TMainForm.RunFile;
 begin
   if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
   begin
     SaveAllAct.Execute;
-    Engine.Files.Current.Run;
+    Engine.Tendency.Run;
   end;
 end;
 

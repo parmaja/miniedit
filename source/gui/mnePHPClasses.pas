@@ -31,7 +31,6 @@ type
     procedure NewContent; override;
     procedure OpenInclude; override;
     function CanOpenInclude: Boolean; override;
-    function Run: Boolean; override;
   end;
 
   { TXHTMLFile }
@@ -92,9 +91,23 @@ type
   public
   end;
 
+  TPHPRunMode = (prunNone, prunConsole, prunUrl);
+
+  { TPHPProject }
+
+  TPHPProject = class(TEditorProject)
+  private
+    FRootUrl: string;
+    FRunMode: TPHPRunMode;
+  public
+    property RunMode: TPHPRunMode read FRunMode write FRunMode;
+    property RootUrl: string read FRootUrl write FRootUrl;
+  end;
+{
+}
   { TPHPPerspective }
 
-  TPHPPerspective = class(TEditorPerspective)
+  TPHPTendency = class(TEditorTendency)
   private
     FHTMLHelpFile: string;
     FPHPHelpFile: string;
@@ -103,6 +116,8 @@ type
     function CreateDebugger: TEditorDebugger; override;
     procedure Init; override;
   public
+    procedure Run; override;
+  published
     property PHPPath: string read FPHPPath write FPHPPath;
     property PHPHelpFile: string read FPHPHelpFile write FPHPHelpFile;
     property HTMLHelpFile: string read FHTMLHelpFile write FHTMLHelpFile;
@@ -205,19 +220,20 @@ begin
   end;
 end;
 
-function TPHPFile.Run: Boolean;
+{ TPHPTendency }
+
+procedure TPHPTendency.Run;
 var
   aFile: string;
   aRoot: string;
-  aUrlMode: TRunMode;
+  aUrlMode: TPHPRunMode;
 begin
-  Result := False;
-  //todo move to Perspective
+  //todo move to Tendency
   aFile := Name;
   if (Engine.Session.IsOpened) then
   begin
     aFile := ExpandToPath(aFile, Engine.Session.Project.RootDir);
-    aUrlMode := Engine.Session.Project.RunMode;
+    aUrlMode := (Engine.Session.Project as TPHPProject).RunMode;
   end
   else
   begin
@@ -233,9 +249,8 @@ begin
         if SameText((MidStr(aFile, 1, Length(aRoot))), aRoot) then
         begin
           aFile := MidStr(aFile, Length(aRoot) + 1, MaxInt);
-          aFile := IncludeSlash(Engine.Session.Project.RootUrl) + aFile;
+          aFile := IncludeSlash((Engine.Session.Project as TPHPProject).RootUrl) + aFile;
           //ShellExecute(0, 'open', PChar(aFile), '', PChar(ExtractFilePath(aFile)), SW_SHOWNOACTIVATE);//TODO Jihad
-          Result := True;
         end;
       end;
     end;
@@ -245,20 +260,17 @@ begin
         aRoot := IncludeTrailingPathDelimiter(Engine.Options.CompilerFolder) + 'php.exe'
       else
         aRoot := 'php.exe';}
-      Result := True;
       //        ShellExecute(0, '', PChar(aRoot), PChar(aFile), PChar(ExtractFilePath(aFile)), SW_SHOWNOACTIVATE);
     end;
   end;
 end;
 
-{ TPHPPerspective }
-
-function TPHPPerspective.CreateDebugger: TEditorDebugger;
+function TPHPTendency.CreateDebugger: TEditorDebugger;
 begin
   Result := TPHP_xDebug.Create;
 end;
 
-procedure TPHPPerspective.Init;
+procedure TPHPTendency.Init;
 begin
   FTitle := 'PHP project';
   FDescription := 'PHP Files, *.php, *.inc';
@@ -555,6 +567,6 @@ initialization
     Groups.Add(TCssFile, 'css', 'CSS Files', 'css', ['css'], [fgkAssociated, fgkMember, fgkBrowsable]);
     Groups.Add(TJSFile,'js', 'Java Script Files', 'js', ['js'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable]);
 
-    Perspectives.Add(TPHPPerspective);
+    Tendencies.Add(TPHPTendency);
   end;
 end.

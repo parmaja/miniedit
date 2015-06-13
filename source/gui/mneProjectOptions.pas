@@ -27,17 +27,12 @@ type
     Label3: TLabel;
     DescriptionEdit: TEdit;
     Label4: TLabel;
-    PerspectiveCbo: TComboBox;
+    TendencyCbo: TComboBox;
     SCMCbo: TComboBox;
     SaveDesktopChk: TCheckBox;
     Label1: TLabel;
-    Label2: TLabel;
-    Label6: TLabel;
     RootDirEdit: TEdit;
     Button3: TButton;
-    RootUrlEdit: TEdit;
-    RunModeCbo: TComboBox;
-    Bevel1: TBevel;
     procedure Label3Click(Sender: TObject);
     procedure OkBtnClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -90,11 +85,9 @@ begin
   FProject.Name := NameEdit.Text;
   FProject.Description := DescriptionEdit.Text;
   FProject.RootDir := RootDirEdit.Text;
-  FProject.RootUrl := RootUrlEdit.Text;
-  FProject.RunMode := TRunMode(RunModeCbo.ItemIndex);
   FProject.SaveDesktop := SaveDesktopChk.Checked;
-  if PerspectiveCbo.ItemIndex >= 0 then
-    FProject.PerspectiveName := TEditorPerspective(PerspectiveCbo.Items.Objects[PerspectiveCbo.ItemIndex]).Name;
+  if TendencyCbo.ItemIndex >= 0 then
+    FProject.TendencyName := TEditorTendency(TendencyCbo.Items.Objects[TendencyCbo.ItemIndex]).Name;
   FProject.SetSCMClass(TEditorSCM(SCMCbo.Items.Objects[SCMCbo.ItemIndex]));
 end;
 
@@ -103,10 +96,8 @@ begin
   NameEdit.Text := FProject.Name;
   DescriptionEdit.Text := FProject.Description;
   RootDirEdit.Text := FProject.RootDir;
-  RootUrlEdit.Text := FProject.RootUrl;
-  RunModeCbo.ItemIndex := Ord(FProject.RunMode);
   SaveDesktopChk.Checked := FProject.SaveDesktop;
-  PerspectiveCbo.ItemIndex := Engine.Perspectives.IndexOf(FProject.PerspectiveName);
+  TendencyCbo.ItemIndex := Engine.Tendencies.IndexOf(FProject.TendencyName);
   if FProject.SCM <> nil then
     SCMCbo.ItemIndex := Engine.SourceManagements.IndexOf(FProject.SCM.Name)
   else
@@ -141,20 +132,15 @@ procedure TProjectForm.FormCreate(Sender: TObject);
 var
   i:Integer;
 begin
-  RunModeCbo.Items.Add('None');
-  RunModeCbo.Items.Add('Console');
-  RunModeCbo.Items.Add('HTTP URL');
-  RunModeCbo.ItemIndex := 0;
-
-  PerspectiveCbo.Items.BeginUpdate;
+  TendencyCbo.Items.BeginUpdate;
   try
-    for i := 0 to Engine.Perspectives.Count -1 do
+    for i := 0 to Engine.Tendencies.Count -1 do
     begin
-      PerspectiveCbo.Items.AddObject(Engine.Perspectives[i].Title, Engine.Perspectives[i]);
+      TendencyCbo.Items.AddObject(Engine.Tendencies[i].Title, Engine.Tendencies[i]);
     end;
-    PerspectiveCbo.ItemIndex := 0;
+    TendencyCbo.ItemIndex := 0;
   finally
-    PerspectiveCbo.Items.EndUpdate;
+    TendencyCbo.Items.EndUpdate;
   end;
 
   SCMCbo.Items.BeginUpdate;

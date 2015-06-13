@@ -48,7 +48,7 @@ type
 
   { TSARDPerspective }
 
-  TSARDPerspective = class(TEditorPerspective)
+  TSARDTendency = class(TEditorTendency)
   protected
     procedure Init; override;
     function CreateDebugger: TEditorDebugger; override;
@@ -60,9 +60,9 @@ implementation
 uses
   IniFiles, mnStreams, mnUtils;
 
-{ TSARDPerspective }
+{ TSARDTendency }
 
-procedure TSARDPerspective.Init;
+procedure TSARDTendency.Init;
 begin
   FName := 'SARD';
   FTitle := 'SARD project';
@@ -71,7 +71,7 @@ begin
   AddGroup('sard', 'sard');
 end;
 
-function TSARDPerspective.CreateDebugger: TEditorDebugger;
+function TSARDTendency.CreateDebugger: TEditorDebugger;
 begin
   //Result := TSardEditorDebugger.Create;
   Result := inherited CreateDebugger;
@@ -111,6 +111,6 @@ initialization
     Categories.Add(TSARDFileCategory.Create('Sard'));
     Groups.Add(TSARDFile, 'sard', 'SARD Files', 'sard', ['sard'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
 
-    Perspectives.Add(TSARDPerspective);
+    Tendencies.Add(TSARDTendency);
   end;
 end.

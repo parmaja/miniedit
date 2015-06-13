@@ -74,8 +74,6 @@ type
     property Files: TEditorDesktopFiles read FFiles;
   end;
 
-  TRunMode = (prunNone, prunConsole, prunUrl);
-
   TEditorProjectOptions = class(TPersistent)
   public
   end;
@@ -111,13 +109,13 @@ type
   end;
 
   {
-    TEditorPerspective
+    Tendency
     Run, Compile, Collect file groups and have special properties
   }
 
-  { TEditorPerspective }
+  { TEditorTendency }
 
-  TEditorPerspective = class(TEditorElement)
+  TEditorTendency = class(TEditorElement)
   private
     FGroups: TFileGroups;
     FDebug: TEditorDebugger;
@@ -130,6 +128,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
+    procedure Run; virtual;
     function FindExtension(vExtension: string): TFileGroup;
     function CreateEditorFile(vGroup: string): TEditorFile; virtual;
     function CreateEditorFile(vGroup: TFileGroup): TEditorFile; virtual;
@@ -141,14 +140,14 @@ type
     property Debug: TEditorDebugger read FDebug;//todo
   end;
 
-  TEditorPerspectiveClass = class of TEditorPerspective;
+  TEditorTendencyClass = class of TEditorTendency;
 
-  { TDefaultPerspective }
+  { TDefaultTendency }
   {
-    used only if no perspective defined
+    used only if no Tendency defined
   }
 
-  TDefaultPerspective = class(TEditorPerspective)
+  TDefaultTendency = class(TEditorTendency)
   protected
     procedure Init; override;
     function GetGroups: TFileGroups; override;
@@ -182,8 +181,7 @@ type
   private
     FOptions: TEditorProjectOptions;
     FPath: string;
-    FPerspectiveName: string;
-    FRunMode: TRunMode;
+    FTendencyName: string;
     FDescription: string;
     FRootUrl: string;
     FRootDir: string;
@@ -194,9 +192,9 @@ type
     FCachedIdentifiers: THashedStringList;
     FCachedVariables: THashedStringList;
     FCachedAge: DWORD;
-    FPerspective: TEditorPerspective;
+    FTendency: TEditorTendency;
     FSCM: TEditorSCM;
-    procedure SetPerspectiveName(AValue: string);
+    procedure SetTendencyName(AValue: string);
     procedure SetRootDir(AValue: string);
     procedure SetSCM(AValue: TEditorSCM);
   protected
@@ -215,18 +213,16 @@ type
     property CachedVariables: THashedStringList read FCachedVariables;
     property CachedIdentifiers: THashedStringList read FCachedIdentifiers;
     property CachedAge: Cardinal read FCachedAge write FCachedAge;
-    //Perspective here point to one of Engine.Perspectives so it is not owned by project
-    property Perspective: TEditorPerspective read FPerspective default nil;
+    //Tendency here point to one of Engine.Tendencies so it is not owned by project
+    property Tendency: TEditorTendency read FTendency default nil;
   published
     property Name: string read FName write FName;
-    property PerspectiveName: string read FPerspectiveName write SetPerspectiveName;
+    property TendencyName: string read FTendencyName write SetTendencyName;
     //SCM now owned by project and saved or loaded with it, the SCM object so assigned to will be freed with the project
     property SCM: TEditorSCM read FSCM write SetSCM;
 
     property Description: string read FDescription write FDescription;
     property RootDir: string read FRootDir write SetRootDir;
-    property RootUrl: string read FRootUrl write FRootUrl;
-    property RunMode: TRunMode read FRunMode write FRunMode default prunUrl;
     property SaveDesktop: Boolean read FSaveDesktop write FSaveDesktop default True;
     property Desktop: TEditorDesktop read FDesktop stored FSaveDesktop;
     property Options: TEditorProjectOptions read FOptions write FOptions default nil;
@@ -320,8 +316,7 @@ type
     procedure Cut; virtual;
     procedure SelectAll; virtual;
 
-    //run the file or run the project depend on the project type (perspective)
-    function Run: Boolean; virtual;
+    //run the file or run the project depend on the project type (Tendency)
     property Mode: TEditorFileMode read FMode write SetMode default efmUnix;
     property ModeAsText: string read GetModeAsText;
     property Name: string read FName write FName;
@@ -381,7 +376,7 @@ type
     property SynEdit: TSynEdit read FSynEdit;
   end;
 
-  TSourceEditorFile = class(TTextEditorFile, ITextEditor, IExecuteEditor, IWatchEditor)
+  TSourceEditorFile = class(TTextEditorFile, IExecuteEditor, IWatchEditor)
   end;
 
   { TEditorFiles }
@@ -508,11 +503,11 @@ type
 
   TEditorSessionOptions = class(TmnXMLProfile)
   private
-    FDefaultPerspective: string;
+    FDefaultTendency: string;
     FDefaultSCM: string;
   public
   published
-    property DefaultPerspective: string read FDefaultPerspective write FDefaultPerspective;
+    property DefaultTendency: string read FDefaultTendency write FDefaultTendency;
     property DefaultSCM: string read FDefaultSCM write FDefaultSCM;
   end;
 
@@ -658,16 +653,16 @@ type
     property Items[Index: integer]: TFileGroup read GetItem; default;
   end;
 
-  { TPerspectives }
+  { TTendencies }
 
-  TPerspectives = class(TEditorElements)
+  TTendencies = class(TEditorElements)
   private
-    function GetItem(Index: integer): TEditorPerspective;
+    function GetItem(Index: integer): TEditorTendency;
   public
-    function Find(vName: string): TEditorPerspective;
-    procedure Add(vEditorPerspective: TEditorPerspectiveClass);
-    procedure Add(vEditorPerspective: TEditorPerspective);
-    property Items[Index: integer]: TEditorPerspective read GetItem; default;
+    function Find(vName: string): TEditorTendency;
+    procedure Add(vEditorTendency: TEditorTendencyClass);
+    procedure Add(vEditorTendency: TEditorTendency);
+    property Items[Index: integer]: TEditorTendency read GetItem; default;
   end;
 
   { TSourceManagements }
@@ -768,13 +763,13 @@ type
 
   TEditorEngine = class(TObject)
   private
-    //if the project not defined any perspective this is the default one
-    FDefaultPerspective: TEditorPerspective;
+    //if the project not defined any Tendency this is the default one
+    FDefaultTendency: TEditorTendency;
     FDefaultSCM: TEditorSCM;
-    //FInternalPerspective used only there is no any default Perspective defined, it is mean simple editor without any project type
-    FInternalPerspective: TDefaultPerspective;
+    //FInternalTendency used only there is no any default Tendency defined, it is mean simple editor without any project type
+    FInternalTendency: TDefaultTendency;
     FForms: TEditorFormList;
-    FPerspectives: TPerspectives;
+    FTendencies: TTendencies;
     FSourceManagements: TSourceManagements;
     FUpdateState: TEditorChangeStates;
     FUpdateCount: integer;
@@ -794,13 +789,14 @@ type
     FOnReplaceText: TReplaceTextEvent;
     //Extenstion Cache
     //FExtenstionCache: TExtenstionCache; //TODO
-    function GetPerspective: TEditorPerspective;
+    FEnvironment: TStringList;
+    function GetTendency: TEditorTendency;
     function GetSCM: TEditorSCM;
     function GetRoot: string;
     function GetUpdating: Boolean;
     procedure SetBrowseFolder(const Value: string);
     function GetWorkSpace: string;
-    procedure SetDefaultPerspective(AValue: TEditorPerspective);
+    procedure SetDefaultTendency(AValue: TEditorTendency);
     procedure SetDefaultSCM(AValue: TEditorSCM);
   protected
     FInUpdateState: Integer;
@@ -840,9 +836,10 @@ type
 
     //AddInstant: Create category and file group for highlighter
     //procedure AddInstant(vName: string; vExtensions: array of string; vHighlighterClass: TSynCustomHighlighterClass; vKind: TFileCategoryKinds);
+
     property Categories: TFileCategories read FCategories;
     property Groups: TFileGroups read FGroups;
-    property Perspectives: TPerspectives read FPerspectives;
+    property Tendencies: TTendencies read FTendencies;
     property SourceManagements: TSourceManagements read FSourceManagements;
     property Forms: TEditorFormList read FForms;
     //
@@ -854,16 +851,18 @@ type
     property Container: TWinControl read FContainer write FContainer;
     //BrowseFolder: Current folder
     property BrowseFolder: string read FBrowseFolder write SetBrowseFolder;
-    procedure SetDefaultPerspective(vName: string);
+    procedure SetDefaultTendency(vName: string);
     procedure SetDefaultSCM(vName: string);
-    property DefaultPerspective: TEditorPerspective read FDefaultPerspective write SetDefaultPerspective;
+    property DefaultTendency: TEditorTendency read FDefaultTendency write SetDefaultTendency;
     property DefaultSCM: TEditorSCM read FDefaultSCM write SetDefaultSCM;
-    property Perspective: TEditorPerspective read GetPerspective;
+    property Tendency: TEditorTendency read GetTendency;
     property SCM: TEditorSCM read GetSCM;
     //property MacroRecorder: TSynMacroRecorder read FMacroRecorder;
     property OnChangedState: TOnEditorChangeState read FOnChangedState write FOnChangedState;
     property OnReplaceText: TReplaceTextEvent read FOnReplaceText write FOnReplaceText;
     //debugger
+
+    property Environment: TStringList read FEnvironment write FEnvironment;
   published
   end;
 
@@ -1132,14 +1131,14 @@ procedure TTextEditorFile.DoGutterClickEvent(Sender: TObject; X, Y, Line: intege
 var
   aLine: integer;
 begin
-  if (Engine.Perspective.Debug <> nil) and (fgkExecutable in Group.Kind) then
+  if (Engine.Tendency.Debug <> nil) and (fgkExecutable in Group.Kind) then
   begin
     aLine := SynEdit.PixelsToRowColumn(Point(X, Y)).y;
-    Engine.Perspective.Debug.Lock;
+    Engine.Tendency.Debug.Lock;
     try
-      Engine.Perspective.Debug.Breakpoints.Toggle(Name, aLine);
+      Engine.Tendency.Debug.Breakpoints.Toggle(Name, aLine);
     finally
-      Engine.Perspective.Debug.Unlock;
+      Engine.Tendency.Debug.Unlock;
     end;
     SynEdit.InvalidateLine(aLine);
   end;
@@ -1147,9 +1146,9 @@ end;
 
 procedure TTextEditorFile.DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
 begin
-  if (Engine.Perspective.Debug <> nil) and (Engine.Perspective.Debug.ExecutedControl = Sender) then
+  if (Engine.Tendency.Debug <> nil) and (Engine.Tendency.Debug.ExecutedControl = Sender) then
   begin
-    if Engine.Perspective.Debug.ExecutedLine = Line then
+    if Engine.Tendency.Debug.ExecutedLine = Line then
     begin
       Special := True;
       Markup.Background := clNavy;
@@ -1351,13 +1350,13 @@ function TTextEditorFile.EvalByMouse(p: TPoint; out v, s, t: string): boolean;
 var
   l: variant;
 begin
-  if Engine.Perspective.Debug <> nil then
+  if Engine.Tendency.Debug <> nil then
   begin
     if not SynEdit.SelAvail then
       v := Trim(GetWordAtRowColEx(SynEdit, SynEdit.PixelsToRowColumn(p), TSynWordBreakChars + [' ', #13, #10, #9] - ['.', '"', '''', '-', '>', '[', ']'], False))//todo get it from the synedit
     else
       v := SynEdit.SelText;
-    Result := (v <> '') and Engine.Perspective.Debug.Watches.GetValue(v, l, t, False);
+    Result := (v <> '') and Engine.Tendency.Debug.Watches.GetValue(v, l, t, False);
     s := l;
   end
   else
@@ -1368,13 +1367,13 @@ function TTextEditorFile.EvalByCursor(out v, s, t: string): boolean;
 var
   l: variant;
 begin
-  if Engine.Perspective.Debug <> nil then
+  if Engine.Tendency.Debug <> nil then
   begin
     if not SynEdit.SelAvail then
       v := Trim(SynEdit.GetWordAtRowCol(SynEdit.CaretXY))
     else
       v := SynEdit.SelText;
-    Result := (v <> '') and Engine.Perspective.Debug.Watches.GetValue(v, l, t, False);
+    Result := (v <> '') and Engine.Tendency.Debug.Watches.GetValue(v, l, t, False);
     s := l;
   end
   else
@@ -1529,21 +1528,21 @@ begin
   FImageIndex := -1;
 end;
 
-{ TDefaultPerspective }
+{ TDefaultTendency }
 
-procedure TDefaultPerspective.Init;
+procedure TDefaultTendency.Init;
 begin
   FTitle := 'Default';
   FName := 'Default';
   FDescription := 'Default project type';
 end;
 
-function TDefaultPerspective.GetGroups: TFileGroups;
+function TDefaultTendency.GetGroups: TFileGroups;
 begin
   Result := Engine.Groups;
 end;
 
-function TDefaultPerspective.GetDefaultGroup: TFileGroup;
+function TDefaultTendency.GetDefaultGroup: TFileGroup;
 begin
   Result := Groups.Find('txt');
 end;
@@ -1580,14 +1579,14 @@ begin
   inherited Add(aItem);
 end;
 
-{ TEditorPerspective }
+{ TEditorTendency }
 
-function TEditorPerspective.GetGroups: TFileGroups;
+function TEditorTendency.GetGroups: TFileGroups;
 begin
   Result := FGroups;
 end;
 
-procedure TEditorPerspective.AddGroup(vName, vCategory: string);
+procedure TEditorTendency.AddGroup(vName, vCategory: string);
 var
   G: TFileGroup;
   C: TFileCategory;
@@ -1606,29 +1605,33 @@ begin
   Groups.Add(G);
 end;
 
-function TEditorPerspective.CreateDebugger: TEditorDebugger;
+function TEditorTendency.CreateDebugger: TEditorDebugger;
 begin
   Result := nil;
 end;
 
-constructor TEditorPerspective.Create;
+constructor TEditorTendency.Create;
 begin
   inherited;
   FGroups := TFileGroups.Create(False);//it already owned by Engine.Groups
   FDebug := CreateDebugger;
   Init;
 {  if Groups.Count = 0 then
-    raise Exception.Create('You must add groups in Init method');}//removed DefaultPerspective has no groups
+    raise Exception.Create('You must add groups in Init method');}//removed DefaultTendency has no groups
 end;
 
-destructor TEditorPerspective.Destroy;
+destructor TEditorTendency.Destroy;
 begin
   FreeAndNil(FDebug);
   FreeAndNil(FGroups);
   inherited;
 end;
 
-function TEditorPerspective.FindExtension(vExtension: string): TFileGroup;
+procedure TEditorTendency.Run;
+begin
+end;
+
+function TEditorTendency.FindExtension(vExtension: string): TFileGroup;
 begin
   if LeftStr(vExtension, 1) = '.' then
     vExtension := Copy(vExtension, 2, MaxInt);
@@ -1637,7 +1640,7 @@ begin
     Result := Engine.Groups.FindExtension(vExtension)
 end;
 
-function TEditorPerspective.CreateEditorFile(vGroup: string): TEditorFile;
+function TEditorTendency.CreateEditorFile(vGroup: string): TEditorFile;
 var
   G: TFileGroup;
 begin
@@ -1647,7 +1650,7 @@ begin
   Result := CreateEditorFile(G);
 end;
 
-function TEditorPerspective.CreateEditorFile(vGroup: TFileGroup): TEditorFile;
+function TEditorTendency.CreateEditorFile(vGroup: TFileGroup): TEditorFile;
 begin
   if vGroup <> nil then
     Result := vGroup.CreateEditorFile(Engine.Files)
@@ -1657,13 +1660,13 @@ begin
   Result.Assign(Engine.Options.Profile);
 end;
 
-function TEditorPerspective.CreateEditorProject: TEditorProject;
+function TEditorTendency.CreateEditorProject: TEditorProject;
 begin
   Result := TEditorProject.Create;
-  Result.PerspectiveName := Name;
+  Result.TendencyName := Name;
 end;
 
-function TEditorPerspective.GetDefaultGroup: TFileGroup;
+function TEditorTendency.GetDefaultGroup: TFileGroup;
 begin
   if Groups.Count > 0 then
     Result := Groups[0]
@@ -1671,30 +1674,30 @@ begin
     Result := Engine.Groups[0];//first group in all groups, naah //TODO wrong wrong
 end;
 
-{ TPerspectives }
+{ TTendencies }
 
-function TPerspectives.GetItem(Index: integer): TEditorPerspective;
+function TTendencies.GetItem(Index: integer): TEditorTendency;
 begin
-  Result := inherited Items[Index] as TEditorPerspective;
+  Result := inherited Items[Index] as TEditorTendency;
 end;
 
-function TPerspectives.Find(vName: string): TEditorPerspective;
+function TTendencies.Find(vName: string): TEditorTendency;
 begin
-  Result := inherited Find(vName) as TEditorPerspective;
+  Result := inherited Find(vName) as TEditorTendency;
 end;
 
-procedure TPerspectives.Add(vEditorPerspective: TEditorPerspectiveClass);
+procedure TTendencies.Add(vEditorTendency: TEditorTendencyClass);
 var
-  aItem: TEditorPerspective;
+  aItem: TEditorTendency;
 begin
-  RegisterClass(vEditorPerspective);
-  aItem := vEditorPerspective.Create;
+  RegisterClass(vEditorTendency);
+  aItem := vEditorTendency.Create;
   Add(aItem);
 end;
 
-procedure TPerspectives.Add(vEditorPerspective: TEditorPerspective);
+procedure TTendencies.Add(vEditorTendency: TEditorTendency);
 begin
-  inherited Add(vEditorPerspective);
+  inherited Add(vEditorTendency);
 end;
 
 { TSynDebugMarksPart }
@@ -1876,21 +1879,26 @@ end;
 constructor TEditorEngine.Create;
 begin
   inherited;
+  Environment := TStringList.Create;
   FMessagesList := TEditorMessagesList.Create;
   //FMacroRecorder := TSynMacroRecorder.Create(nil);
   //FMacroRecorder.OnStateChange := DoMacroStateChange;
-  FInternalPerspective := TDefaultPerspective.Create;
+  FEnvironment.Add('HOME=' + SysUtils.GetEnvironmentVariable('HOME'));
+  FEnvironment.Add('EXE=' + Application.ExeName);
+  FEnvironment.Add('LOCATION=' + Application.Location);
+
+  FInternalTendency := TDefaultTendency.Create;
   FForms := TEditorFormList.Create(True);
   FOptions := TEditorOptions.Create;
   FCategories := TFileCategories.Create(True);
   FGroups := TFileGroups.Create(True);
-  FPerspectives := TPerspectives.Create(True);
+  FTendencies := TTendencies.Create(True);
   FSourceManagements := TSourceManagements.Create(True);
   FSearchEngine := TSynEditSearch.Create;
   FFiles := TEditorFiles.Create(TEditorFile);
   FSession := TEditorSession.Create;
   Extenstion := 'mne-project';
-  Perspectives.Add(FInternalPerspective);
+  Tendencies.Add(FInternalTendency);
 end;
 
 destructor TEditorEngine.Destroy;
@@ -1901,14 +1909,15 @@ begin
   FreeAndNil(FSession);
   FreeAndNil(FCategories);
   FreeAndNil(FGroups);
-  FreeAndNil(FPerspectives);
+  FreeAndNil(FTendencies);
   FreeAndNil(FSearchEngine);
   FreeAndNil(FOptions);
   //FreeAndNil(FMacroRecorder);
   FreeAndNil(FMessagesList);
   FOnChangedState := nil;
-  FInternalPerspective := nil;
+  FInternalTendency := nil;
   FreeAndNil(FForms);
+  FreeAndNil(FEnvironment);
   inherited;
 end;
 
@@ -2165,14 +2174,14 @@ begin
     Result := nil;
 end;
 
-function TEditorEngine.GetPerspective: TEditorPerspective;
+function TEditorEngine.GetTendency: TEditorTendency;
 begin
-  if (Session <> nil) and (Session.Project <> nil) and (Session.Project.Perspective <> nil) then
-    Result := Session.Project.Perspective
-  else if DefaultPerspective <> nil then
-    Result := FDefaultPerspective
+  if (Session <> nil) and (Session.Project <> nil) and (Session.Project.Tendency <> nil) then
+    Result := Session.Project.Tendency
+  else if DefaultTendency <> nil then
+    Result := FDefaultTendency
   else
-    Result := FInternalPerspective;
+    Result := FInternalTendency;
 end;
 
 function TEditorFiles.InternalOpenFile(FileName: string; AppendToRecent: Boolean): TEditorFile;
@@ -2189,7 +2198,7 @@ begin
   Result := FindFile(lFileName);
   if Result = nil then
   begin
-    Result := Engine.Perspective.CreateEditorFile(Engine.Perspective.FindExtension(ExtractFileExt(lFileName)));
+    Result := Engine.Tendency.CreateEditorFile(Engine.Tendency.FindExtension(ExtractFileExt(lFileName)));
     Result.Load(lFileName);
   end;
   if AppendToRecent then
@@ -2233,10 +2242,10 @@ begin
   Engine.BeginUpdate;
   try
     if vGroupName = '' then
-      aGroup := Engine.Perspective.GetDefaultGroup
+      aGroup := Engine.Tendency.GetDefaultGroup
     else
       aGroup := Engine.Groups.Find(vGroupName);
-    Result := Engine.Perspective.CreateEditorFile(aGroup);
+    Result := Engine.Tendency.CreateEditorFile(aGroup);
     Result.NewContent;
     Result.Edit;
     Current := Result;
@@ -2248,7 +2257,7 @@ end;
 
 function TEditorFiles.New(Category, Name, Related: string; ReadOnly, Executable: Boolean): TEditorFile;
 begin
-  Result := Engine.Perspective.CreateEditorFile(Category);
+  Result := Engine.Tendency.CreateEditorFile(Category);
   Result.IsReadOnly := ReadOnly;
   Result.Name := Name;
   Result.Related := Related;
@@ -2258,7 +2267,7 @@ end;
 
 function TEditorSession.New: TEditorProject;
 begin
-  Result := Engine.Perspective.CreateEditorProject;
+  Result := Engine.Tendency.CreateEditorProject;
 end;
 
 procedure TEditorFiles.Next;
@@ -2287,7 +2296,7 @@ begin
     aDialog.Filter := Engine.Groups.CreateFilter;
     aDialog.FilterIndex := 0;
     aDialog.InitialDir := Engine.BrowseFolder;
-    aDialog.DefaultExt := Engine.Perspective.GetDefaultGroup.Extensions[0];
+    aDialog.DefaultExt := Engine.Tendency.GetDefaultGroup.Extensions[0];
     //aDialog.FileName := '*' + aDialog.DefaultExt;
     if aDialog.Execute then
     begin
@@ -2517,16 +2526,16 @@ begin
   try
     Options.Load(Workspace + 'mne-options.xml');
     Session.Options.SafeLoadFromFile(LowerCase(Workspace + 'mne-' + SysPlatform + '-options.xml'));
-    for i := 0 to Perspectives.Count - 1 do
+    for i := 0 to Tendencies.Count - 1 do
     begin
-      if Perspectives[i].OSDepended then
-        aFile := LowerCase(Workspace + 'mne-' + SysPlatform + '-' + Perspectives[i].Name + '.xml')
+      if Tendencies[i].OSDepended then
+        aFile := LowerCase(Workspace + 'mne-' + SysPlatform + '-' + Tendencies[i].Name + '.xml')
       else
-        aFile := LowerCase(Workspace + 'mne-' + Perspectives[i].Name + '.xml');
+        aFile := LowerCase(Workspace + 'mne-' + Tendencies[i].Name + '.xml');
       if FileExists(aFile) then
-        XMLReadObjectFile(Perspectives[i], aFile);
+        XMLReadObjectFile(Tendencies[i], aFile);
     end;
-    SetDefaultPerspective(Session.Options.DefaultPerspective);
+    SetDefaultTendency(Session.Options.DefaultTendency);
     SetDefaultSCM(Session.Options.DefaultSCM);
     Engine.UpdateState([ecsOptions]);
   finally
@@ -2541,14 +2550,14 @@ var
 begin
   Options.Save;
   Session.Options.SaveToFile(LowerCase(Workspace + 'mne-' + SysPlatform + '-options.xml'));
-  for i := 0 to Perspectives.Count - 1 do
+  for i := 0 to Tendencies.Count - 1 do
   begin
-    if Perspectives[i].OSDepended then
-      aFile := LowerCase(Workspace + 'mne-' + SysPlatform + '-' + Perspectives[i].Name + '.xml')
+    if Tendencies[i].OSDepended then
+      aFile := LowerCase(Workspace + 'mne-' + SysPlatform + '-' + Tendencies[i].Name + '.xml')
     else
-      aFile := LowerCase(Workspace + 'mne-' + Perspectives[i].Name + '.xml');
+      aFile := LowerCase(Workspace + 'mne-' + Tendencies[i].Name + '.xml');
     if FileExists(aFile) then
-      XMLWriteObjectFile(Perspectives[i], aFile);
+      XMLWriteObjectFile(Tendencies[i], aFile);
   end;
 end;
 
@@ -2558,8 +2567,8 @@ begin
   begin
     SaveOptions;
   end;
-  if Perspective.Debug <> nil then
-    Perspective.Debug.Action(dbaStop);
+  if Tendency.Debug <> nil then
+    Tendency.Debug.Action(dbaStop);
   Files.Clear;
   FIsEngineShutdown := True;
 end;
@@ -2607,14 +2616,14 @@ begin
   Groups.Add(TFileGroup, TEditorFile, vExtensions[0], vName + ' files', vName, vExtensions, []);
 end;
 }
-procedure TEditorEngine.SetDefaultPerspective(vName: string);
+procedure TEditorEngine.SetDefaultTendency(vName: string);
 var
-  P: TEditorPerspective;
+  P: TEditorTendency;
 begin
-  P := Perspectives.Find(vName);
+  P := Tendencies.Find(vName);
   if P = nil then
-    P := FInternalPerspective;
-  DefaultPerspective := P;
+    P := FInternalTendency;
+  DefaultTendency := P;
 end;
 
 procedure TEditorEngine.SetDefaultSCM(vName: string);
@@ -2677,13 +2686,13 @@ begin
   Result := IncludeTrailingPathDelimiter(FWorkSpace);
 end;
 
-procedure TEditorEngine.SetDefaultPerspective(AValue: TEditorPerspective);
+procedure TEditorEngine.SetDefaultTendency(AValue: TEditorTendency);
 begin
-  if FDefaultPerspective = AValue then
+  if FDefaultTendency = AValue then
     exit;
-  FDefaultPerspective := AValue;
-  if FDefaultPerspective <> nil then
-    Session.Options.DefaultPerspective := FDefaultPerspective.Name;
+  FDefaultTendency := AValue;
+  if FDefaultTendency <> nil then
+    Session.Options.DefaultTendency := FDefaultTendency.Name;
   Engine.UpdateState([ecsChanged, ecsProject]);
 end;
 
@@ -2941,7 +2950,7 @@ begin
       if Group <> nil then
         aDialog.DefaultExt := Group.Extensions[0]
       else
-        aDialog.DefaultExt := Engine.Perspective.GetDefaultGroup.Extensions[0];
+        aDialog.DefaultExt := Engine.Tendency.GetDefaultGroup.Extensions[0];
     end;
     aDialog.FileName := '*' + aDialog.DefaultExt;
 
@@ -3078,11 +3087,6 @@ end;
 
 procedure TEditorFile.SelectAll;
 begin
-end;
-
-function TEditorFile.Run: Boolean;
-begin
-  Result := False;
 end;
 
 procedure TEditorFile.UpdateAge;
@@ -3358,7 +3362,7 @@ begin
     if vGroup <> nil then
       aDefaultGroup := vGroup
     else
-      aDefaultGroup := Engine.Perspective.GetDefaultGroup;
+      aDefaultGroup := Engine.Tendency.GetDefaultGroup;
     AddIt(aDefaultGroup);
     for i := 0 to Count - 1 do
     begin
@@ -3586,16 +3590,16 @@ begin
   inherited LoadFromFile(FileName);
 end;
 
-procedure TEditorProject.SetPerspectiveName(AValue: string);
+procedure TEditorProject.SetTendencyName(AValue: string);
 begin
-  if FPerspectiveName <> AValue then
+  if FTendencyName <> AValue then
   begin
-    FPerspectiveName :=AValue;
-    FPerspective := nil;
-    if FPerspectiveName <> '' then
-      FPerspective := Engine.Perspectives.Find(PerspectiveName);
-    if FPerspective = nil then
-      FPerspective := Engine.DefaultPerspective;
+    FTendencyName :=AValue;
+    FTendency := nil;
+    if FTendencyName <> '' then
+      FTendency := Engine.Tendencies.Find(TendencyName);
+    if FTendency = nil then
+      FTendency := Engine.DefaultTendency;
     Engine.UpdateState([ecsChanged, ecsProject]);
   end;
 end;
@@ -3939,24 +3943,24 @@ var
 
 begin
   //inherited;
-  if Engine.Perspective.Debug <> nil then
+  if Engine.Tendency.Debug <> nil then
   begin
     lh := TSynEdit(SynEdit).LineHeight;
     iw := EditorResource.DebugImages.Width;
 
-    Engine.Perspective.Debug.Lock;
+    Engine.Tendency.Debug.Lock;
     try
-      for i := 0 to Engine.Perspective.Debug.Breakpoints.Count - 1 do
+      for i := 0 to Engine.Tendency.Debug.Breakpoints.Count - 1 do
       begin
-        if SameText(Engine.Perspective.Debug.Breakpoints[i].FileName, FEditorFile.Name) then//need improve
-          DrawIndicator(Engine.Perspective.Debug.Breakpoints[i].Line, DEBUG_IMAGE_BREAKPOINT);
+        if SameText(Engine.Tendency.Debug.Breakpoints[i].FileName, FEditorFile.Name) then//need improve
+          DrawIndicator(Engine.Tendency.Debug.Breakpoints[i].Line, DEBUG_IMAGE_BREAKPOINT);
       end;
     finally
-      Engine.Perspective.Debug.Unlock;
+      Engine.Tendency.Debug.Unlock;
     end;
 
-    if (Engine.Perspective.Debug.ExecutedControl = SynEdit) and (Engine.Perspective.Debug.ExecutedLine >= 0) then
-      DrawIndicator(Engine.Perspective.Debug.ExecutedLine, DEBUG_IMAGE_EXECUTE);
+    if (Engine.Tendency.Debug.ExecutedControl = SynEdit) and (Engine.Tendency.Debug.ExecutedLine >= 0) then
+      DrawIndicator(Engine.Tendency.Debug.ExecutedLine, DEBUG_IMAGE_EXECUTE);
   end;
 end;
 
@@ -3982,23 +3986,23 @@ var
 begin
   Engine.BeginUpdate;
   try
-    if Engine.Perspective.Debug <> nil then
+    if Engine.Tendency.Debug <> nil then
     begin
-      Engine.Perspective.Debug.Lock;
+      Engine.Tendency.Debug.Lock;
       try
-  {      Engine.Perspective.Debug.BreakpointsClear;
+  {      Engine.Tendency.Debug.BreakpointsClear;
         for i := 0 to Breakpoints.Count - 1 do
         begin
-          Engine.Perspective.Debug.Breakpoints.Add(Breakpoints[i].FileName, Breakpoints[i].Line);
+          Engine.Tendency.Debug.Breakpoints.Add(Breakpoints[i].FileName, Breakpoints[i].Line);
         end;
 
-        Engine.Perspective.Debug.Watches.Clear;
+        Engine.Tendency.Debug.Watches.Clear;
         for i := 0 to Watches.Count - 1 do
         begin
-          Engine.Perspective.Debug.Watches.Add(Watches[i].VariableName, Watches[i].Value);
+          Engine.Tendency.Debug.Watches.Add(Watches[i].VariableName, Watches[i].Value);
         end;}
       finally
-        Engine.Perspective.Debug.Unlock;
+        Engine.Tendency.Debug.Unlock;
       end;
       Engine.UpdateState([ecsDebug]);
     end;
@@ -4031,19 +4035,19 @@ var
 begin
 {  Breakpoints.Clear;
   Watches.Clear;
-  Engine.Perspective.Debug.Lock;
+  Engine.Tendency.Debug.Lock;
   try
-    for i := 0 to Engine.Perspective.Debug.Breakpoints.Count - 1 do
+    for i := 0 to Engine.Tendency.Debug.Breakpoints.Count - 1 do
     begin
-      Breakpoints.Add(Engine.Perspective.Debug.Breakpoints[i].FileName, Engine.Perspective.Debug.Breakpoints[i].Line);
+      Breakpoints.Add(Engine.Tendency.Debug.Breakpoints[i].FileName, Engine.Tendency.Debug.Breakpoints[i].Line);
     end;
 
-    for i := 0 to Engine.Perspective.Debug.Watches.Count - 1 do
+    for i := 0 to Engine.Tendency.Debug.Watches.Count - 1 do
     begin
-      Watches.Add(Engine.Perspective.Debug.Watches[i].VariableName, Engine.Perspective.Debug.Watches[i].Value);
+      Watches.Add(Engine.Tendency.Debug.Watches[i].VariableName, Engine.Tendency.Debug.Watches[i].Value);
     end;
   finally
-    Engine.Perspective.Debug.Unlock;
+    Engine.Tendency.Debug.Unlock;
   end;}
 
   Files.Clear;

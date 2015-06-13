@@ -50,11 +50,11 @@ end;
 
 procedure TBreakpointsForm.FormCreate(Sender: TObject);
 begin
-  Engine.Perspective.Debug.Lock;
+  Engine.Tendency.Debug.Lock;
   try
     Reload;
   finally
-    Engine.Perspective.Debug.Unlock;
+    Engine.Tendency.Debug.Unlock;
   end;
 end;
 
@@ -64,13 +64,13 @@ var
   aItem: TListItem;
 begin
   BreakpointList.Clear;
-  for i := 0 to Engine.Perspective.Debug.Breakpoints.Count - 1 do
+  for i := 0 to Engine.Tendency.Debug.Breakpoints.Count - 1 do
   begin
     aItem := BreakpointList.Items.Add;
     aItem.ImageIndex := 40;
-    aItem.Data := Pointer(Engine.Perspective.Debug.Breakpoints[i].Handle);
-    aItem.Caption := Engine.Perspective.Debug.Breakpoints[i].FileName;
-    aItem.SubItems.Add(IntToStr(Engine.Perspective.Debug.Breakpoints[i].Line));
+    aItem.Data := Pointer(Engine.Tendency.Debug.Breakpoints[i].Handle);
+    aItem.Caption := Engine.Tendency.Debug.Breakpoints[i].FileName;
+    aItem.SubItems.Add(IntToStr(Engine.Tendency.Debug.Breakpoints[i].Line));
   end;
 end;
 
@@ -78,26 +78,26 @@ procedure TBreakpointsForm.Button2Click(Sender: TObject);
 begin
   if BreakpointList.Selected <> nil then
   begin
-    Engine.Perspective.Debug.Lock;
+    Engine.Tendency.Debug.Lock;
     try
-      Engine.Perspective.Debug.Breakpoints.Remove(Integer(BreakpointList.Selected.Data));
+      Engine.Tendency.Debug.Breakpoints.Remove(Integer(BreakpointList.Selected.Data));
       Reload;
       Engine.UpdateState([ecsDebug]);
     finally
-      Engine.Perspective.Debug.Unlock;
+      Engine.Tendency.Debug.Unlock;
     end;
   end;
 end;
 
 procedure TBreakpointsForm.Button1Click(Sender: TObject);
 begin
-  Engine.Perspective.Debug.Lock;
+  Engine.Tendency.Debug.Lock;
   try
-    Engine.Perspective.Debug.Breakpoints.Clear;
+    Engine.Tendency.Debug.Breakpoints.Clear;
     Reload;
     Engine.UpdateState([ecsDebug]);
   finally
-    Engine.Perspective.Debug.Unlock;
+    Engine.Tendency.Debug.Unlock;
   end;
 end;
 

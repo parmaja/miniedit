@@ -30,7 +30,7 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
   protected
-    FPerspective: TPHPPerspective;
+    FTendency: TPHPTendency;
   public
     procedure Apply;
     procedure Retrive;
@@ -90,19 +90,19 @@ end;
 
 procedure TPHPConfigForm.Apply;
 begin
-  FPerspective.PHPPath := PHPPathEdit.Text;
-  FPerspective.PHPHelpFile := PHPManualEdit.Text;
-  FPerspective.HTMLHelpFile := HTMLManualEdit.Text;
+  FTendency.PHPPath := PHPPathEdit.Text;
+  FTendency.PHPHelpFile := PHPManualEdit.Text;
+  FTendency.HTMLHelpFile := HTMLManualEdit.Text;
 end;
 
 procedure TPHPConfigForm.Retrive;
 begin
-  PHPPathEdit.Text := FPerspective.PHPPath;
-  PHPManualEdit.Text := FPerspective.PHPHelpFile;
-  HTMLManualEdit.Text := FPerspective.HTMLHelpFile;
+  PHPPathEdit.Text := FTendency.PHPPath;
+  PHPManualEdit.Text := FTendency.PHPHelpFile;
+  HTMLManualEdit.Text := FTendency.HTMLHelpFile;
 end;
 
 initialization
-  Engine.Forms.Add(TPHPPerspective, TPHPConfigForm);
+  Engine.Forms.Add(TPHPTendency, TPHPConfigForm);
 end.
 
