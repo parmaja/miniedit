@@ -12,7 +12,7 @@ object EditorSettingForm: TEditorSettingForm
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '1.1'
+  LCLVersion = '1.5'
   object OkBtn: TButton
     Left = 347
     Height = 26
@@ -40,12 +40,12 @@ object EditorSettingForm: TEditorSettingForm
     Height = 243
     Top = 3
     Width = 419
-    ActivePage = TabSheet4
-    TabIndex = 1
+    ActivePage = TabSheet2
+    TabIndex = 0
     TabOrder = 2
     object TabSheet2: TTabSheet
       Caption = 'Options'
-      ClientHeight = 212
+      ClientHeight = 217
       ClientWidth = 411
       ImageIndex = 1
       object Label3: TLabel
@@ -70,33 +70,33 @@ object EditorSettingForm: TEditorSettingForm
         Top = 77
         Width = 15
         Associate = CollectTimeoutEdit
-        Min = 0
         Max = 1000
+        Min = 0
         Position = 0
         TabOrder = 1
         Wrap = False
       end
       object CollectAutoCompleteChk: TCheckBox
         Left = 7
-        Height = 17
+        Height = 19
         Top = 53
-        Width = 305
+        Width = 307
         Caption = 'Auto complete variables and identifiers in whole project folder'
         TabOrder = 2
       end
       object SendOutputToNewFileChk: TCheckBox
         Left = 7
-        Height = 17
+        Height = 19
         Top = 30
-        Width = 127
+        Width = 129
         Caption = 'Send output to new file'
         TabOrder = 3
       end
       object AutoStartDebugServerChk: TCheckBox
         Left = 7
-        Height = 17
+        Height = 19
         Top = 9
-        Width = 189
+        Width = 191
         Caption = 'Auto start debug mode when startup'
         TabOrder = 4
       end
