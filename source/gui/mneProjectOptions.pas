@@ -18,6 +18,7 @@ type
   { TProjectForm }
 
   TProjectForm = class(TForm)
+    MoreBtn: TButton;
     Label7: TLabel;
     Label8: TLabel;
     OkBtn: TButton;
@@ -33,6 +34,8 @@ type
     Label1: TLabel;
     RootDirEdit: TEdit;
     Button3: TButton;
+    procedure MoreBtnClick(Sender: TObject);
+    procedure CancelBtnClick(Sender: TObject);
     procedure Label3Click(Sender: TObject);
     procedure OkBtnClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -75,6 +78,17 @@ begin
 
 end;
 
+procedure TProjectForm.CancelBtnClick(Sender: TObject);
+begin
+
+end;
+
+procedure TProjectForm.MoreBtnClick(Sender: TObject);
+begin
+  if FProject.Options <> nil then
+    FProject.Options.Show;
+end;
+
 procedure TProjectForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   CloseAction := caFree;
@@ -102,6 +116,7 @@ begin
     SCMCbo.ItemIndex := Engine.SourceManagements.IndexOf(FProject.SCM.Name)
   else
     SCMCbo.ItemIndex := 0;
+  MoreBtn.Visible := FProject.Options <> nil;
 end;
 
 procedure TProjectForm.Button2Click(Sender: TObject);

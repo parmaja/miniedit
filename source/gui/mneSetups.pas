@@ -65,7 +65,6 @@ begin
   end
   else
   begin
-    ForceDirectories(WorkspaceEdit.Text);
     aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
     try
       aIniFile.WriteString(SysPlatform, 'Workspace', ExcludeTrailingPathDelimiter(WorkspaceEdit.Text));

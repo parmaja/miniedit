@@ -44,14 +44,14 @@ uses
   HTMLProcessor in '..\lib\HTMLProcessor.pas',
   PHPProcessor in '..\lib\PHPProcessor.pas',
   mneRun in 'mneRun.pas',
-  mnePHPIniForm in 'mnePHPIniForm.pas' {PHPIniForm},
   mneBreakpoints in 'mneBreakpoints.pas' {BreakpointsForm},
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
   SearchProgressForms, EditorDebugger, PHP_xDebug, SelectList,
-  SynHighlighterApache, IniFiles, mneAddons, mneAssociateForm, mnePHPClasses,
-  mnePASClasses, mneCSVClasses, MsgBox, GUIMsgBox, Classes, PHPUtils,
-  mnePHPConfigForms, mneSetups, mneSettings, mneSARDClasses,
-  EditorClasses, DebugClasses, ColorUtils, mneViewClasses;
+  SynHighlighterApache, IniFiles, mneAddons, mneAssociateForm,
+  mneExtends,
+  mneCSVClasses, MsgBox, GUIMsgBox, Classes, PHPUtils,
+  mneSetups, mneSettings, mneSARDClasses,
+  EditorClasses, DebugClasses, mneViewClasses;
 
 {$R *.res}
 

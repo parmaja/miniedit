@@ -53,6 +53,8 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    TypeOptionsMnu: TMenuItem;
+    TypeOptionsAct: TAction;
     BugSignBtn: TSpeedButton;
     CallStackList: TListView;
     DeleteAct: TAction;
@@ -83,7 +85,7 @@ type
     SCMTypeAct: TAction;
     TypePnl: TPanel;
     ProjectTypeMnu: TMenuItem;
-    ProjectTypeAct: TAction;
+    SelectProjectTypeAct: TAction;
     MenuItem10: TMenuItem;
     MenuItem11: TMenuItem;
     MenuItem12: TMenuItem;
@@ -356,7 +358,7 @@ type
     procedure CloseActExecute(Sender: TObject);
     procedure FileListDblClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
-    procedure ProjectTypeActExecute(Sender: TObject);
+    procedure SelectProjectTypeActExecute(Sender: TObject);
     procedure FileModeBtnClick(Sender: TObject);
     procedure RefreshFilesActExecute(Sender: TObject);
     procedure RenameActExecute(Sender: TObject);
@@ -388,6 +390,7 @@ type
     procedure ShowKnownActExecute(Sender: TObject);
     procedure SortByExtensionsActExecute(Sender: TObject);
     procedure SortByNamesActExecute(Sender: TObject);
+    procedure TypeOptionsActExecute(Sender: TObject);
     procedure UnixMnuClick(Sender: TObject);
     procedure WindowsMnuClick(Sender: TObject);
     procedure MacMnuClick(Sender: TObject);
@@ -569,6 +572,8 @@ begin
     aIniFile.Free;
   end;
   Engine.Workspace := ExpandToPath(aWorkspace, Application.Location);
+  //ForceDirectories(Engine.Workspace);
+
   Engine.Container := EditorsPnl;
 
   Engine.OnChangedState := @EditorChangeState;
@@ -928,7 +933,7 @@ begin
     end;
 end;
 
-procedure TMainForm.ProjectTypeActExecute(Sender: TObject);
+procedure TMainForm.SelectProjectTypeActExecute(Sender: TObject);
 var
   lTendency: TEditorTendency;
 begin
@@ -1107,11 +1112,7 @@ end;
 
 procedure TMainForm.RunActExecute(Sender: TObject);
 begin
-  if Engine.Tendency.Debug <> nil then
-    if Engine.Tendency.Debug.Running then
-      Engine.Tendency.Debug.Action(dbaRun)
-    else
-      RunFile;
+  RunFile;
 end;
 
 procedure TMainForm.ProjectOptionsActExecute(Sender: TObject);
@@ -1264,6 +1265,11 @@ end;
 procedure TMainForm.SortByNamesActExecute(Sender: TObject);
 begin
   SortFolderFiles := srtfByNames;
+end;
+
+procedure TMainForm.TypeOptionsActExecute(Sender: TObject);
+begin
+  Engine.Tendency.Show;
 end;
 
 procedure TMainForm.UnixMnuClick(Sender: TObject);
@@ -2169,11 +2175,8 @@ end;
 
 procedure TMainForm.RunFile;
 begin
-  if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
-  begin
-    SaveAllAct.Execute;
-    Engine.Tendency.Run;
-  end;
+  SaveAllAct.Execute;
+  Engine.Tendency.Run;
 end;
 
 procedure TMainForm.DBGBreakpointsActExecute(Sender: TObject);

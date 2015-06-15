@@ -95,12 +95,15 @@ type
 
   { TPHPProject }
 
+  { TPHPProjectOptions }
+
   TPHPProjectOptions = class(TEditorProjectOptions)
   private
     FRootUrl: string;
     FRunMode: TPHPRunMode;
   public
     constructor Create; override;
+    function Show: Boolean; override;
   published
     property RunMode: TPHPRunMode read FRunMode write FRunMode;
     property RootUrl: string read FRootUrl write FRootUrl;
@@ -123,6 +126,7 @@ type
   public
     procedure Run; override;
     constructor Create; override;
+    procedure Show; override;
   published
     property PHPPath: string read FPHPPath write FPHPPath;
     property PHPHelpFile: string read FPHPHelpFile write FPHPHelpFile;
@@ -132,13 +136,18 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, HTMLProcessor, PHPProcessor, SynEditStrConst;
+  IniFiles, mnStreams, mnUtils, HTMLProcessor, PHPProcessor, SynEditStrConst, mnePHPConfigForms;
 
 { TPHPProject }
 
 constructor TPHPProjectOptions.Create;
 begin
   inherited;
+end;
+
+function TPHPProjectOptions.Show: Boolean;
+begin
+  Result :=inherited Show;
 end;
 
 { TXHTMLFile }
@@ -241,7 +250,16 @@ var
   aRoot: string;
   aUrlMode: TPHPRunMode;
 begin
-  //todo move to Tendency
+{
+    if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
+
+    if Engine.Tendency.Debug <> nil then
+    if Engine.Tendency.Debug.Running then
+      Engine.Tendency.Debug.Action(dbaRun)
+    else}
+  ExecuteProcess('cmd ',['/c "php.exe "' + Engine.Files.Current.Name + '" & pause'], []);
+  exit;
+
   aFile := Name;
   if (Engine.Session.IsOpened) then
   begin
@@ -281,6 +299,19 @@ end;
 constructor TPHPTendency.Create;
 begin
   inherited Create;
+end;
+
+procedure TPHPTendency.Show;
+begin
+  with TPHPConfigForm.Create(Application) do
+  begin
+    FTendency := Self;
+    Retrive;
+    if ShowModal = mrOK then
+    begin
+      Apply;
+    end;
+  end;
 end;
 
 function TPHPTendency.CreateDebugger: TEditorDebugger;

@@ -30,8 +30,8 @@ type
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
   protected
-    FTendency: TPHPTendency;
   public
+    FTendency: TPHPTendency;
     procedure Apply;
     procedure Retrive;
   end;
@@ -102,7 +102,5 @@ begin
   HTMLManualEdit.Text := FTendency.HTMLHelpFile;
 end;
 
-initialization
-  Engine.Forms.Add(TPHPTendency, TPHPConfigForm);
 end.
 

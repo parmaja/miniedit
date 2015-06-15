@@ -9,12 +9,13 @@ unit EditorEngine;
 interface
 
 uses
-  Messages, SysUtils, Forms, StrUtils, Dialogs, Variants, Classes, Controls, Graphics, Contnrs, Types,
-  IniFiles, EditorOptions, EditorProfiles, SynEditMarks, SynCompletion, SynEditTypes,
-  SynEditMiscClasses, SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, SynEdit,
-  SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase,
-  dbgpServers, PHP_xDebug, FileUtil, Masks,
-  mnXMLRttiProfile, mnXMLUtils, mnUtils, LCLType, EditorClasses;
+  Messages, SysUtils, Forms, StrUtils, Dialogs, Variants, Classes, Controls,
+  Graphics, Contnrs, Types, IniFiles, EditorOptions, EditorProfiles,
+  SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses,
+  SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch,
+  SynEdit, SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase,
+  dbgpServers, FileUtil, Masks, mnXMLRttiProfile, mnXMLUtils,
+  mnUtils, LCLType, EditorClasses;
 
 type
   TEditorChangeStates = set of (ecsChanged, ecsState, ecsRefresh, ecsOptions, ecsDebug, ecsShow, ecsEdit, ecsFolder, ecsProject); //ecsShow bring to front
@@ -126,6 +127,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     procedure Run; virtual;
+    procedure Show; virtual;
     function FindExtension(vExtension: string): TFileGroup;
     function CreateEditorFile(vGroup: string): TEditorFile; virtual;
     function CreateEditorFile(vGroup: TFileGroup): TEditorFile; virtual;
@@ -775,7 +777,7 @@ type
     FDefaultSCM: TEditorSCM;
     //FInternalTendency used only there is no any default Tendency defined, it is mean simple editor without any project type
     FInternalTendency: TDefaultTendency;
-    FForms: TEditorFormList;
+//    FForms: TEditorFormList;
     FTendencies: TTendencies;
     FSourceManagements: TSourceManagements;
     FUpdateState: TEditorChangeStates;
@@ -848,7 +850,7 @@ type
     property Groups: TFileGroups read FGroups;
     property Tendencies: TTendencies read FTendencies;
     property SourceManagements: TSourceManagements read FSourceManagements;
-    property Forms: TEditorFormList read FForms;
+    //property Forms: TEditorFormList read FForms;
     //
     property Files: TEditorFiles read FFiles;
     property Session: TEditorSession read FSession;
@@ -1650,6 +1652,11 @@ procedure TEditorTendency.Run;
 begin
 end;
 
+procedure TEditorTendency.Show;
+begin
+  MsgBox.Msg.Show('No Options');
+end;
+
 function TEditorTendency.FindExtension(vExtension: string): TFileGroup;
 begin
   if LeftStr(vExtension, 1) = '.' then
@@ -1687,7 +1694,7 @@ end;
 
 function TEditorTendency.CreateOptions: TEditorProjectOptions;
 begin
-  Result := TEditorProjectOptions.Create;
+  Result := nil;
 end;
 
 function TEditorTendency.GetDefaultGroup: TFileGroup;
@@ -1903,7 +1910,7 @@ end;
 constructor TEditorEngine.Create;
 begin
   inherited;
-  Environment := TStringList.Create;
+  FEnvironment := TStringList.Create;
   FMessagesList := TEditorMessagesList.Create;
   //FMacroRecorder := TSynMacroRecorder.Create(nil);
   //FMacroRecorder.OnStateChange := DoMacroStateChange;
@@ -1912,7 +1919,7 @@ begin
   FEnvironment.Add('LOCATION=' + Application.Location);
 
   FInternalTendency := TDefaultTendency.Create;
-  FForms := TEditorFormList.Create(True);
+  //FForms := TEditorFormList.Create(True);
   FOptions := TEditorOptions.Create;
   FCategories := TFileCategories.Create(True);
   FGroups := TFileGroups.Create(True);
@@ -1940,7 +1947,7 @@ begin
   FreeAndNil(FMessagesList);
   FOnChangedState := nil;
   FInternalTendency := nil;
-  FreeAndNil(FForms);
+  //FreeAndNil(FForms);
   FreeAndNil(FEnvironment);
   inherited;
 end;
