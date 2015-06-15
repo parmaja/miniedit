@@ -95,17 +95,21 @@ type
 
   { TPHPProject }
 
-  TPHPProject = class(TEditorProject)
+  TPHPProjectOptions = class(TEditorProjectOptions)
   private
     FRootUrl: string;
     FRunMode: TPHPRunMode;
   public
+    constructor Create; override;
+  published
     property RunMode: TPHPRunMode read FRunMode write FRunMode;
     property RootUrl: string read FRootUrl write FRootUrl;
   end;
 {
 }
   { TPHPPerspective }
+
+  { TPHPTendency }
 
   TPHPTendency = class(TEditorTendency)
   private
@@ -114,9 +118,11 @@ type
     FPHPPath: string;
   protected
     function CreateDebugger: TEditorDebugger; override;
+    function CreateOptions: TEditorProjectOptions; override;
     procedure Init; override;
   public
     procedure Run; override;
+    constructor Create; override;
   published
     property PHPPath: string read FPHPPath write FPHPPath;
     property PHPHelpFile: string read FPHPHelpFile write FPHPHelpFile;
@@ -127,6 +133,13 @@ implementation
 
 uses
   IniFiles, mnStreams, mnUtils, HTMLProcessor, PHPProcessor, SynEditStrConst;
+
+{ TPHPProject }
+
+constructor TPHPProjectOptions.Create;
+begin
+  inherited;
+end;
 
 { TXHTMLFile }
 
@@ -233,7 +246,7 @@ begin
   if (Engine.Session.IsOpened) then
   begin
     aFile := ExpandToPath(aFile, Engine.Session.Project.RootDir);
-    aUrlMode := (Engine.Session.Project as TPHPProject).RunMode;
+    aUrlMode := (Engine.Session.Project.Options as TPHPProjectOptions).RunMode;
   end
   else
   begin
@@ -249,7 +262,7 @@ begin
         if SameText((MidStr(aFile, 1, Length(aRoot))), aRoot) then
         begin
           aFile := MidStr(aFile, Length(aRoot) + 1, MaxInt);
-          aFile := IncludeSlash((Engine.Session.Project as TPHPProject).RootUrl) + aFile;
+          aFile := IncludeSlash((Engine.Session.Project.Options as TPHPProjectOptions).RootUrl) + aFile;
           //ShellExecute(0, 'open', PChar(aFile), '', PChar(ExtractFilePath(aFile)), SW_SHOWNOACTIVATE);//TODO Jihad
         end;
       end;
@@ -265,9 +278,19 @@ begin
   end;
 end;
 
+constructor TPHPTendency.Create;
+begin
+  inherited Create;
+end;
+
 function TPHPTendency.CreateDebugger: TEditorDebugger;
 begin
   Result := TPHP_xDebug.Create;
+end;
+
+function TPHPTendency.CreateOptions: TEditorProjectOptions;
+begin
+  Result := TPHPProjectOptions.Create;
 end;
 
 procedure TPHPTendency.Init;

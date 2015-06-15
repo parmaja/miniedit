@@ -26,6 +26,7 @@ type
   TFileGroups = class;
   TEditorFile = class;
   TEditorProject = class;
+  TEditorProjectOptions = class;
 
   EEditorException = class(Exception)
   private
@@ -72,10 +73,6 @@ type
     procedure Save;
   published
     property Files: TEditorDesktopFiles read FFiles;
-  end;
-
-  TEditorProjectOptions = class(TPersistent)
-  public
   end;
 
   { TEditorElement }
@@ -132,7 +129,8 @@ type
     function FindExtension(vExtension: string): TFileGroup;
     function CreateEditorFile(vGroup: string): TEditorFile; virtual;
     function CreateEditorFile(vGroup: TFileGroup): TEditorFile; virtual;
-    function CreateEditorProject: TEditorProject; virtual;
+    function CreateEditorProject: TEditorProject;
+    function CreateOptions: TEditorProjectOptions; virtual;
     function GetDefaultGroup: TFileGroup; virtual;
     //OSDepended: When save to file, the filename changed depend on the os system name
     property OSDepended: Boolean read FOSDepended;
@@ -175,9 +173,17 @@ type
 
   TEditorSCMClass = class of TEditorSCM;
 
+  { TEditorProjectOptions }
+
+  TEditorProjectOptions = class(TPersistent)
+  public
+    constructor Create; virtual;
+    function Show: Boolean; virtual; //Show Dialog options
+  end;
+
   { TEditorProject }
 
-  TEditorProject = class(TmnXMLProfile)
+  TEditorProject = class sealed(TmnXMLProfile)
   private
     FOptions: TEditorProjectOptions;
     FPath: string;
@@ -194,6 +200,7 @@ type
     FCachedAge: DWORD;
     FTendency: TEditorTendency;
     FSCM: TEditorSCM;
+    procedure SetTendency(AValue: TEditorTendency);
     procedure SetTendencyName(AValue: string);
     procedure SetRootDir(AValue: string);
     procedure SetSCM(AValue: TEditorSCM);
@@ -214,7 +221,7 @@ type
     property CachedIdentifiers: THashedStringList read FCachedIdentifiers;
     property CachedAge: Cardinal read FCachedAge write FCachedAge;
     //Tendency here point to one of Engine.Tendencies so it is not owned by project
-    property Tendency: TEditorTendency read FTendency default nil;
+    property Tendency: TEditorTendency read FTendency write SetTendency;
   published
     property Name: string read FName write FName;
     property TendencyName: string read FTendencyName write SetTendencyName;
@@ -1001,6 +1008,18 @@ begin
   end;
 end;
 
+{ TEditorProjectOptions }
+
+constructor TEditorProjectOptions.Create;
+begin
+  inherited;
+end;
+
+function TEditorProjectOptions.Show: Boolean;
+begin
+  Result := False;
+end;
+
 { TTextFileCategory }
 
 function TTextFileCategory.GetIsText: Boolean;
@@ -1664,6 +1683,11 @@ function TEditorTendency.CreateEditorProject: TEditorProject;
 begin
   Result := TEditorProject.Create;
   Result.TendencyName := Name;
+end;
+
+function TEditorTendency.CreateOptions: TEditorProjectOptions;
+begin
+  Result := TEditorProjectOptions.Create;
 end;
 
 function TEditorTendency.GetDefaultGroup: TFileGroup;
@@ -3591,16 +3615,27 @@ begin
 end;
 
 procedure TEditorProject.SetTendencyName(AValue: string);
+var
+  aTendency: TEditorTendency;
 begin
-  if FTendencyName <> AValue then
+  FTendencyName := AValue;
+
+  aTendency := Engine.Tendencies.Find(TendencyName);
+  if aTendency = nil then
+    aTendency := Engine.DefaultTendency;
+
+  Tendency := aTendency;
+
+  Engine.UpdateState([ecsChanged, ecsProject]); //TODO move to caller
+end;
+
+procedure TEditorProject.SetTendency(AValue: TEditorTendency);
+begin
+  if FTendency <> AValue then
   begin
-    FTendencyName :=AValue;
-    FTendency := nil;
-    if FTendencyName <> '' then
-      FTendency := Engine.Tendencies.Find(TendencyName);
-    if FTendency = nil then
-      FTendency := Engine.DefaultTendency;
-    Engine.UpdateState([ecsChanged, ecsProject]);
+    FTendency :=AValue;
+    FOptions.Free;
+    FOptions := FTendency.CreateOptions;
   end;
 end;
 
