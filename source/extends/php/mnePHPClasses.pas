@@ -91,7 +91,7 @@ type
   public
   end;
 
-  TPHPRunMode = (prunNone, prunConsole, prunUrl);
+  TPHPRunMode = (prunConsole, prunUrl);
 
   { TPHPProject }
 
@@ -250,48 +250,58 @@ var
   aRoot: string;
   aUrlMode: TPHPRunMode;
 begin
-{
-    if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
+  //if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
 
-    if Engine.Tendency.Debug <> nil then
-    if Engine.Tendency.Debug.Running then
-      Engine.Tendency.Debug.Action(dbaRun)
-    else}
-  ExecuteProcess('cmd ',['/c "php.exe "' + Engine.Files.Current.Name + '" & pause'], []);
-  exit;
-
-  aFile := Name;
-  if (Engine.Session.IsOpened) then
-  begin
-    aFile := ExpandToPath(aFile, Engine.Session.Project.RootDir);
-    aUrlMode := (Engine.Session.Project.Options as TPHPProjectOptions).RunMode;
-  end
+  if Engine.Tendency.Debug <> nil then
+  if Engine.Tendency.Debug.Running then
+    Engine.Tendency.Debug.Action(dbaRun)
   else
   begin
-    aUrlMode := prunNone;
-  end;
-
-  case aUrlMode of
-    prunUrl:
+    if (Engine.Session.IsOpened) then
     begin
-      if Engine.Session.IsOpened then
+      aFile := Engine.Session.Project.RootDir;
+      aFile := ExpandToPath(aFile, Engine.Session.Project.RootDir);
+      aUrlMode := (Engine.Session.Project.Options as TPHPProjectOptions).RunMode;
+      aRoot := IncludeTrailingPathDelimiter(Engine.Session.Project.RootDir);
+    end
+    else
+    begin
+      //Check the file is executable
+      if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
       begin
-        aRoot := IncludeTrailingPathDelimiter(Engine.Session.Project.RootDir);
-        if SameText((MidStr(aFile, 1, Length(aRoot))), aRoot) then
+        aFile := Engine.Files.Current.Name;
+        aUrlMode := prunConsole;
+      end
+    end;
+
+    if aFile <> '' then
+    begin
+      case aUrlMode of
+        prunUrl:
         begin
-          aFile := MidStr(aFile, Length(aRoot) + 1, MaxInt);
-          aFile := IncludeSlash((Engine.Session.Project.Options as TPHPProjectOptions).RootUrl) + aFile;
-          //ShellExecute(0, 'open', PChar(aFile), '', PChar(ExtractFilePath(aFile)), SW_SHOWNOACTIVATE);//TODO Jihad
+          if Engine.Session.IsOpened then
+          begin
+            if SameText((MidStr(aFile, 1, Length(aRoot))), aRoot) then
+            begin
+              aFile := MidStr(aFile, Length(aRoot) + 1, MaxInt);
+              aFile := IncludeSlash((Engine.Session.Project.Options as TPHPProjectOptions).RootUrl) + aFile;
+              //ShellExecute(0, 'open', PChar(aFile), '', PChar(ExtractFilePath(aFile)), SW_SHOWNOACTIVATE);
+            end;
+          end;
+        end;
+        prunConsole:
+        begin
+          {$ifdef windows}
+          ExecuteProcess('cmd ',['/c "php.exe "' + aFile + '" & pause'], []);
+          {$endif}
+
+          {$ifdef linux}
+          {$endif}
+
+          {$ifdef macos}
+          {$endif}
         end;
       end;
-    end;
-    prunConsole:
-    begin
-      {if Engine.Options.CompilerFolder <> '' then
-        aRoot := IncludeTrailingPathDelimiter(Engine.Options.CompilerFolder) + 'php.exe'
-      else
-        aRoot := 'php.exe';}
-      //        ShellExecute(0, '', PChar(aRoot), PChar(aFile), PChar(ExtractFilePath(aFile)), SW_SHOWNOACTIVATE);
     end;
   end;
 end;

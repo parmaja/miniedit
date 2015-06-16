@@ -48,6 +48,7 @@ type
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
+    function GetIsText: Boolean; override;
   public
   end;
 
@@ -116,6 +117,11 @@ end;
 
 procedure TPNGFileCategory.InitMappers;
 begin
+end;
+
+function TPNGFileCategory.GetIsText: Boolean;
+begin
+  Result := False;
 end;
 
 initialization

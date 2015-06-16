@@ -163,8 +163,8 @@ type
     procedure Reset; virtual;
   published
     property AutoSize: boolean read FAutoSize write FAutoSize default True;
-    property Backcolor: TColor read FBackcolor write FBackcolor default clBtnFace;
-    property Forecolor: TColor read FForecolor write FForecolor default clBtnText;
+    property Backcolor: TColor read FBackcolor write FBackcolor default $4b4b4b;
+    property Forecolor: TColor read FForecolor write FForecolor default clWhite;
     property ShowSeparator: Boolean read FShowSeparator write FShowSeparator default True;
 
     property SavedColor: TColor read FSavedColor write FSavedColor default clGreen;
@@ -539,8 +539,8 @@ end;
 procedure TGutterOptions.Reset;
 begin
   FAutoSize := True;
-  FBackcolor := clBtnFace;
-  FForecolor := clBtnText;
+  FBackcolor := $4b4b4b;
+  FForecolor := clWhite;
   FShowSeparator := True;
   FLeftOffset := 0;
   FRightOffset := 0;

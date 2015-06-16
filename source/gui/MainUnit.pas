@@ -837,6 +837,7 @@ begin
       Engine.Files.Current.Control.PopupMenu := EditorPopupMenu;
     FileNameLbl.Caption := Engine.Files.Current.Name;
     FileModeBtn.Caption := Engine.Files.Current.ModeAsText;
+    FileModeBtn.Visible := Engine.Files.Current.Group.Category.IsText;
     FileTabs.ItemIndex := Engine.Files.Current.Index;
     if Engine.Files.Current.Name <> '' then
       FileTabs.Items[FileTabs.ItemIndex].Caption := ExtractFileName(Engine.Files.Current.Name);
@@ -844,15 +845,14 @@ begin
       Folder := ExtractFilePath(Engine.Files.Current.Name);
     SaveAct.Enabled := Engine.Files.Current.IsEdited;
     SaveAllAct.Enabled := Engine.Files.GetEditedCount > 0;
-    FileModeBtn.Visible := Engine.Files.Current.Group.Category.IsText;
   end
   else
   begin
     FileNameLbl.Caption := '';
     FileModeBtn.Caption := '';
+    FileModeBtn.Visible := False;
     SaveAct.Enabled := False;
     SaveAllAct.Enabled := False;
-    FileModeBtn.Visible := False;
   end;
   //  DebugPnl.Visible := DebugPnl.Caption <> '';
   UpdateFileHeaderPanel;
