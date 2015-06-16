@@ -2,6 +2,11 @@
 
 Mini Edit is an open source desktop application for edit files like PHP, HTML and Pascal using UTF8 encoding.
 
+### Target
+  Simple
+  Portable
+  Fast
+
 ### Features
 
 * UTF8 encoding
@@ -13,13 +18,8 @@ Mini Edit is an open source desktop application for edit files like PHP, HTML an
 * Until now it is very Fast
 * Tortoise SVN/GIT integrated
 
-### Download 
-Download it from sourceforge.net minilib project
-
-http://sourceforge.net/projects/minilib/files/miniEdit/
-
-### Compile 
+### Compile
  - Use source code from github.com in branch "release", "master" branch is my upstream work.
- - FPC 2.6.2 or later
+ - FreePascal FPC 2.6.4 or later
  - Lazarus last update from svn repo
  - MiniLib from http://sourceforge.net/projects/minilib
