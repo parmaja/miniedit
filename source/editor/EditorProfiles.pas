@@ -42,7 +42,7 @@ type
 
 const
   cDefaultOptions = [eoAltSetsColumnMode, eoAutoIndent, eoDragDropEditing, eoDropFiles, eoScrollPastEol,
-    eoShowScrollHint, eoRightMouseMovesCursor, eoTabsToSpaces, eoTabIndent, eoTrimTrailingSpaces, eoKeepCaretX];
+    eoShowScrollHint, eoHideRightMargin, eoRightMouseMovesCursor, eoTabsToSpaces, eoTabIndent, eoTrimTrailingSpaces, eoKeepCaretX];
 
 type
   TGlobalAttributes = class;
@@ -286,6 +286,7 @@ begin
   FFontSize := 10;
   FFontNoAntialiasing := False;
   Options := cDefaultOptions;
+  //ExtOptions :=
   ExtraLineSpacing := 0;
   InsertCaret := ctVerticalLine;
   OverwriteCaret := ctBlock;

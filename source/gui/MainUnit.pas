@@ -20,7 +20,7 @@ SynEdit:
 interface
 
 uses
-  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, MsgBox,
   LMessages, lCLType, LCLIntf, LCLProc, EditorDebugger, FileUtil,
   Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus, ToolWin,
   Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses, StdActns,
@@ -475,6 +475,7 @@ type
     //    OnActivate = ApplicationEventsActivate
     //    OnHint = ApplicationEventsHint
     function CanOpenInclude: boolean;
+    procedure CatchErr(Sender: TObject; e: exception);
     procedure ForceForegroundWindow;
     procedure SetShowFolderFiles(AValue: TShowFolderFiles);
     procedure SetSortFolderFiles(AValue: TSortFolderFiles);
@@ -545,7 +546,7 @@ uses
   SelectFiles, mneSettings, mneConsts,
   SynEditTypes, AboutForms, mneProjectForms, Types,
   mneBreakpoints,
-  SearchInFilesForms, SelectList, MsgBox;
+  SearchInFilesForms, SelectList;
 
 function SortByExt(List: TStringList; Index1, Index: Integer): Integer;
 begin
@@ -1289,6 +1290,8 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
+  Application.OnException := @CatchErr;
+
   FMessages := Engine.MessagesList.GetMessages('Messages');
 {$IFOPT D+}
   Extractkeywords.Visible := True;
@@ -2590,6 +2593,11 @@ end;
 procedure TMainForm.Log(ACaption, AMsg: string);
 begin
   Log(0, ACaption, AMsg, '', 0);
+end;
+
+procedure TMainForm.CatchErr(Sender: TObject; e: exception);
+begin
+  MsgBox.Msg.Error(e.Message);
 end;
 
 end.

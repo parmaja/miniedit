@@ -52,12 +52,12 @@ object EditorSettingForm: TEditorSettingForm
         Left = 7
         Height = 13
         Top = 80
-        Width = 214
-        Caption = 'This words will be cached and updated every'
+        Width = 259
+        Caption = 'Autocomplete words will be cached and updated every'
         ParentColor = False
       end
       object CollectTimeoutEdit: TEdit
-        Left = 224
+        Left = 272
         Height = 21
         Top = 77
         Width = 61
@@ -65,7 +65,7 @@ object EditorSettingForm: TEditorSettingForm
         Text = '0'
       end
       object CollectTimeoutSpn: TUpDown
-        Left = 285
+        Left = 333
         Height = 21
         Top = 77
         Width = 15
@@ -87,7 +87,7 @@ object EditorSettingForm: TEditorSettingForm
       object SendOutputToNewFileChk: TCheckBox
         Left = 7
         Height = 19
-        Top = 30
+        Top = 31
         Width = 129
         Caption = 'Send output to new file'
         TabOrder = 3
@@ -103,9 +103,17 @@ object EditorSettingForm: TEditorSettingForm
       object Label4: TLabel
         Left = 7
         Height = 13
-        Top = 100
+        Top = 104
         Width = 326
         Caption = 'You must have a project and define the root folder to use this feature.'
+        ParentColor = False
+      end
+      object Label1: TLabel
+        Left = 354
+        Height = 13
+        Top = 81
+        Width = 42
+        Caption = 'Seconds'
         ParentColor = False
       end
     end
@@ -147,7 +155,7 @@ object EditorSettingForm: TEditorSettingForm
         TitleFont.Name = 'MS Sans Serif'
         ColWidths = (
           129
-          272
+          255
         )
       end
       object IgnoreNamesEdit: TEdit

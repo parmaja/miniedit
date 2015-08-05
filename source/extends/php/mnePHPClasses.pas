@@ -12,14 +12,13 @@ unit mnePHPClasses;
 interface
 
 uses
-  Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
-  LCLintf, LCLType,
-  Dialogs, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit,
-  Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
+  Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics,
+  Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
+  SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  SynHighlighterCSS, SynHighlighterSQL, SynHighlighterXML, SynHighlighterJScript, SynHighlighterXHTML,
-  EditorDebugger, EditorClasses, PHP_xDebug,
-  mneClasses;
+  SynHighlighterCSS, SynHighlighterSQL, SynHighlighterXML,
+  SynHighlighterJScript, SynHighlighterXHTML, SynHighlighterMultiProc,
+  EditorDebugger, EditorClasses, PHP_xDebug, mneClasses;
 
 type
 

@@ -19,6 +19,7 @@ type
 
   TEditorSettingForm = class(TForm)
     IgnoreNamesEdit: TEdit;
+    Label1: TLabel;
     Label11: TLabel;
     Label12: TLabel;
     Label4: TLabel;
