@@ -45,6 +45,7 @@ type
     OpenDialog: TOpenDialog;
     ResetBtn: TButton;
     RevertBtn: TButton;
+    SampleEdit: TSynEdit;
     SaveBtn: TButton;
     LoadBtn: TButton;
     SavedColorCbo: TColorBox;
@@ -105,7 +106,6 @@ type
     DisableScrollArrowsChk: TCheckBox;
     ShowSpecialCharsChk: TCheckBox;
     ColorTab: TTabSheet;
-    SampleEdit: TSynEdit;
     Label11: TLabel;
     BackgroundCbo: TColorBox;
     ForegroundCbo: TColorBox;
@@ -161,6 +161,7 @@ type
     procedure PutData;
   public
     function Execute(Profile: TEditorProfile; Select: string): boolean;
+    destructor Destroy; override;
   end;
 
 implementation
@@ -218,6 +219,16 @@ begin
   end
   else
     Result := False;
+end;
+
+destructor TEditorOptionsForm.Destroy;
+var
+  aHighlighter : TSynCustomHighlighter;
+begin
+  aHighlighter := SampleEdit.Highlighter;
+  SampleEdit.Highlighter := nil;
+  aHighlighter.Free;
+  inherited Destroy;
 end;
 
 procedure TEditorOptionsForm.GetData;

@@ -1647,6 +1647,7 @@ end;
 
 destructor TMainForm.Destroy;
 begin
+  Application.OnException := nil;
   inherited;
 end;
 

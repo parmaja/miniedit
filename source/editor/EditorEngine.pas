@@ -564,7 +564,8 @@ type
   public
     constructor Create(const vName: string; vKind: TFileCategoryKinds = []); virtual;
     destructor Destroy; override;
-    function CreateHighlighter: TSynCustomHighlighter;
+    function CreateHighlighter: TSynCustomHighlighter; //todo replace with doCreate....
+    procedure InitHighlighter;
     property Mapper:TMapper read GetMapper write FMapper;
     procedure Apply(AHighlighter: TSynCustomHighlighter; Attributes: TGlobalAttributes);
     property Name: string read FName write FName;
@@ -1943,6 +1944,7 @@ begin
   FreeAndNil(FTendencies);
   FreeAndNil(FSearchEngine);
   FreeAndNil(FOptions);
+  FreeAndNil(FSourceManagements);
   //FreeAndNil(FMacroRecorder);
   FreeAndNil(FMessagesList);
   FOnChangedState := nil;
@@ -3540,24 +3542,32 @@ end;
 destructor TFileCategory.Destroy;
 begin
   FreeAndNil(FMapper);
-  FreeAndNil(FHighlighter);
   FreeAndNil(FCompletion);
+  FreeAndNil(FHighlighter);
   inherited;
 end;
 
 function TFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := DoCreateHighlighter;
-  if Result <> nil then
+end;
+
+procedure TFileCategory.InitHighlighter;
+begin
+  if FHighlighter = nil then
   begin
-    if FMapper = nil then
+    FHighlighter := CreateHighlighter; //CreateHighlighter maybe return nil so check it again
+    if FHighlighter <> nil then
     begin
-      FMapper := TMapper.Create;
-      InitMappers;
-      if Result.AttrCount <> Mapper.Count then
-        raise Exception.Create('Mapper count not equal to AttrCount for: ' + Result.ClassName);
+      if FMapper = nil then
+      begin
+        FMapper := TMapper.Create;
+        InitMappers;
+        if FHighlighter.AttrCount <> Mapper.Count then
+          raise Exception.Create('Mapper count not equal to AttrCount for: ' + FHighlighter.ClassName);
+      end;
+      Apply(FHighlighter, Engine.Options.Profile.Attributes);
     end;
-    Apply(Result, Engine.Options.Profile.Attributes);
   end;
 end;
 
@@ -3580,8 +3590,7 @@ end;
 
 function TFileCategory.GetHighlighter: TSynCustomHighlighter;
 begin
-  if FHighlighter = nil then
-    FHighlighter := CreateHighlighter;
+  InitHighlighter;
   Result := FHighlighter;
 end;
 

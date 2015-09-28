@@ -26,7 +26,7 @@ uses
   Registry,
   SysUtils,
   simpleipc,
-  Themes, Interfaces,
+  Themes, SynEditHighlighter, Interfaces,
   MainUnit in 'MainUnit.pas' {MainForm},
   mneProjectOptions in 'mneProjectOptions.pas' {ProjectForm},
   SearchForms in '..\editor\SearchForms.pas' {SearchForm},
@@ -35,14 +35,11 @@ uses
   EditorEngine in '..\editor\EditorEngine.pas',
   mneResources in 'mneResources.pas' {EditorResource: TDataModule},
   SelectFiles in '..\editor\SelectFiles.pas' {SelectFileForm},
-  SynHighlighterXHTML in '..\lib\SynHighlighterXHTML.pas',
   mneClasses in 'mneClasses.pas',
   mneConsts in 'mneConsts.pas',
   AboutForms in 'AboutForms.pas' {AboutForm},
   mneProjectForms in 'mneProjectForms.pas' {ManageProjectsForm},
   GotoForms in '..\editor\GotoForms.pas' {GotoLineForm},
-  HTMLProcessor in '..\lib\HTMLProcessor.pas',
-  PHPProcessor in '..\lib\PHPProcessor.pas',
   mneRun in 'mneRun.pas',
   mneBreakpoints in 'mneBreakpoints.pas' {BreakpointsForm},
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
@@ -112,15 +109,20 @@ end;
 
 procedure Run;
 begin
+  {$IFDEF DEBUG}
+  //* http://wiki.freepascal.org/leakview
+  if FileExists(Application.Location+'heap.trc') then
+    DeleteFile(Application.Location+'heap.trc');
+  SetHeapTraceOutput(Application.Location+'heap.trc');
+  {$ENDIF DEBUG}
   Application.CreateForm(TEditorResource, EditorResource);
   Application.CreateForm(TMainForm, MainForm);
 end;
 
 begin
-
   if not AnotherInstance then
   begin
-    Application.BidiMode := bdLeftToRight;
+//    Application.BidiMode := bdLeftToRight;
     Application.Initialize;
     if CheckSetup then
     begin
