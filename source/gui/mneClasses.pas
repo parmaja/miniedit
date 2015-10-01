@@ -101,7 +101,7 @@ function GetHighlighterAttriAtRowColEx2(SynEdit: TCustomSynEdit; const XY: TPoin
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, SynHighlighterSQLite;
+  IniFiles, mnStreams, mnUtils, SynHighlighterStdSQL;
 
 function ColorToRGBHex(Color: TColor): string;
 var
@@ -213,29 +213,13 @@ function TSQLFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
   {Result := TSynSQLSyn.Create(nil);
   (Result as TSynSQLSyn).SQLDialect := sqlMySQL;}
-  Result := TSynSqliteSyn.Create(nil);
+  Result := TSynStdSQLSyn.Create(nil);
 end;
 
 procedure TSQLFileCategory.InitMappers;
 begin
-  with Highlighter as TSynSqliteSyn do
+  with Highlighter as TSynStdSQLSyn do
   begin
-{    Mapper.Add(SpaceAttri, attWhitespace);
-    Mapper.Add(CommentAttri, attComment);
-    Mapper.Add(KeyAttri, attKeyword);
-    Mapper.Add(NumberAttri, attNumber);
-    Mapper.Add(StringAttri, attString);
-    Mapper.Add(SymbolAttri, attSymbol);
-    Mapper.Add(DefaultPackageAttri, attIdentifier);
-    Mapper.Add(ExceptionAttri, attIdentifier);
-    Mapper.Add(FunctionAttri, attCommon);
-    Mapper.Add(IdentifierAttri, attIdentifier);
-    Mapper.Add(PLSQLAttri, attDirective);
-    Mapper.Add(SQLPlusAttri, attDirective);
-    Mapper.Add(TableNameAttri, attName);
-    Mapper.Add(VariableAttri, attVariable);
-    Mapper.Add(DataTypeAttri, attType);}
-
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(DataTypeAttri, attType);
     Mapper.Add(ObjectAttri, attName);

@@ -1,0 +1,133 @@
+object CSVForm: TCSVForm
+  Left = 0
+  Height = 240
+  Top = 0
+  Width = 695
+  ClientHeight = 240
+  ClientWidth = 695
+  Color = clDefault
+  ParentColor = False
+  TabOrder = 0
+  DesignLeft = 374
+  DesignTop = 227
+  object Panel2: TPanel
+    Left = 0
+    Height = 26
+    Top = 0
+    Width = 695
+    Align = alTop
+    BevelOuter = bvNone
+    ClientHeight = 26
+    ClientWidth = 695
+    TabOrder = 0
+    object FetchedLbl: TLabel
+      Left = 100
+      Height = 26
+      Top = 0
+      Width = 50
+      Align = alLeft
+      Alignment = taRightJustify
+      AutoSize = False
+      Caption = 'Fetched: '
+      Layout = tlCenter
+      ParentColor = False
+    end
+    object FetchCountLbl: TLabel
+      Left = 150
+      Height = 26
+      Top = 0
+      Width = 545
+      Align = alClient
+      AutoSize = False
+      Caption = '0'
+      Layout = tlCenter
+      ParentColor = False
+    end
+    object StopBtn2: TButton
+      Left = 50
+      Height = 26
+      Top = 0
+      Width = 50
+      Align = alLeft
+      Caption = 'Clear'
+      OnClick = StopBtn2Click
+      TabOrder = 0
+    end
+    object StopBtn: TButton
+      Left = 0
+      Height = 26
+      Top = 0
+      Width = 50
+      Align = alLeft
+      Caption = 'S&top'
+      OnClick = StopBtnClick
+      TabOrder = 1
+    end
+  end
+  object DataGrid: TStringGrid
+    Left = 0
+    Height = 214
+    Top = 26
+    Width = 695
+    Align = alClient
+    AlternateColor = 14197366
+    AutoEdit = False
+    ColCount = 3
+    ColumnClickSorts = True
+    DefaultDrawing = False
+    DefaultRowHeight = 18
+    FixedColor = cl3DLight
+    Font.CharSet = ANSI_CHARSET
+    Font.Color = clBlack
+    Font.Height = -13
+    Font.Name = 'Tahoma'
+    Font.Pitch = fpVariable
+    Font.Quality = fqDraft
+    MouseWheelOption = mwGrid
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected, goColSizing, goColMoving, goEditing, goRelaxedRowSelect, goDblClickAutoSize, goSmoothScroll, goHeaderHotTracking, goHeaderPushedLook, goRowHighlight]
+    ParentFont = False
+    PopupMenu = GridPopupMenu
+    TabOrder = 1
+    TitleFont.CharSet = ANSI_CHARSET
+    TitleFont.Color = clBlack
+    TitleFont.Height = -11
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Pitch = fpVariable
+    TitleFont.Quality = fqDraft
+    OnDrawCell = DataGridDrawCell
+    OnEditingDone = DataGridEditingDone
+    OnKeyDown = DataGridKeyDown
+    ColWidths = (
+      22
+      77
+      77
+    )
+  end
+  object GridPopupMenu: TPopupMenu
+    left = 280
+    top = 94
+    object MenuItem6: TMenuItem
+      Caption = 'Copy Selected'
+      OnClick = MenuItem6Click
+    end
+    object MenuItem2: TMenuItem
+      Caption = 'Add Column'
+      OnClick = MenuItem2Click
+    end
+    object MenuItem3: TMenuItem
+      Caption = 'Delete Columns'
+      OnClick = MenuItem3Click
+    end
+    object MenuItem4: TMenuItem
+      Caption = 'Add Row'
+    end
+    object MenuItem5: TMenuItem
+      Caption = 'Delete Rows'
+      OnClick = MenuItem5Click
+    end
+    object MenuItem1: TMenuItem
+      Caption = 'Clear'
+      OnClick = MenuItem1Click
+    end
+  end
+end

@@ -77,9 +77,11 @@ end;
 function TPNGFile.GetContents: TImagePanel;
 begin
   if FContents = nil then
+  begin
     FContents := TImagePanel.Create(Engine.Container);
+    FContents.Parent := Engine.Container;
+  end;
   Result := FContents;
-  FContents.Parent := Engine.Container;
 end;
 
 function TPNGFile.GetControl: TWinControl;

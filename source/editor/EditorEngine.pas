@@ -2958,7 +2958,8 @@ begin
     Control.Visible := True;
     Control.Show;
     Control.BringToFront;
-    (Engine.Container.Owner as TCustomForm).ActiveControl := Control as TWinControl;
+    if Control.CanFocus then //TODO, focus the read control inside that control
+      (Engine.Container.Owner as TCustomForm).ActiveControl := Control as TWinControl;
   end;
 end;
 

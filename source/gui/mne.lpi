@@ -19,7 +19,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="2"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="25"/>
+      <BuildNr Value="26"/>
       <Language Value=""/>
       <CharSet Value=""/>
       <Attributes pvaPreRelease="True"/>
@@ -36,7 +36,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends\php;..\extends\pascal;..\extends\d;..\..\..\..\lib\minilib\lazarus\lib;D:\dev\lazarus\components\synedit\"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends\php;..\extends\pascal;..\extends\d;..\..\..\..\lib\minilib\lazarus\lib;D:\dev\lazarus\components\synedit\;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Linking>
@@ -67,7 +67,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends\php;..\extends\pascal;..\extends\d;..\..\..\..\lib\minilib\lazarus\lib"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends\php;..\extends\pascal;..\extends\d;..\..\..\..\lib\minilib\lazarus\lib;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Parsing>
@@ -119,41 +119,47 @@
         <Display Value=":1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="9">
+    <RequiredPackages Count="11">
       <Item1>
-        <PackageName Value="MiniCommons"/>
+        <PackageName Value="MiniDB"/>
       </Item1>
       <Item2>
-        <PackageName Value="MiniLib"/>
+        <PackageName Value="MiniConnections"/>
       </Item2>
       <Item3>
-        <PackageName Value="MiniSockets"/>
+        <PackageName Value="MiniCommons"/>
       </Item3>
       <Item4>
-        <PackageName Value="MiniXML"/>
-        <MinVersion Valid="True"/>
+        <PackageName Value="MiniLib"/>
       </Item4>
       <Item5>
-        <PackageName Value="NativeLib"/>
-        <MinVersion Valid="True"/>
+        <PackageName Value="MiniSockets"/>
       </Item5>
       <Item6>
-        <PackageName Value="SynEdit"/>
-        <MinVersion Major="1" Valid="True"/>
+        <PackageName Value="MiniXML"/>
+        <MinVersion Valid="True"/>
       </Item6>
       <Item7>
-        <PackageName Value="LCL"/>
+        <PackageName Value="NativeLib"/>
+        <MinVersion Valid="True"/>
       </Item7>
       <Item8>
-        <PackageName Value="LCLBase"/>
-        <MinVersion Major="1" Release="1" Valid="True"/>
+        <PackageName Value="SynEdit"/>
+        <MinVersion Major="1" Valid="True"/>
       </Item8>
       <Item9>
+        <PackageName Value="LCL"/>
+      </Item9>
+      <Item10>
+        <PackageName Value="LCLBase"/>
+        <MinVersion Major="1" Release="1" Valid="True"/>
+      </Item10>
+      <Item11>
         <PackageName Value="FCL"/>
         <MinVersion Major="1" Release="1" Valid="True"/>
-      </Item9>
+      </Item11>
     </RequiredPackages>
-    <Units Count="36">
+    <Units Count="38">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -303,56 +309,70 @@
         <IsPartOfProject Value="True"/>
       </Unit24>
       <Unit25>
-        <Filename Value="mneCSVClasses.pas"/>
+        <Filename Value="..\lib\DebugClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit25>
       <Unit26>
-        <Filename Value="..\lib\DebugClasses.pas"/>
+        <Filename Value="mneViewClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit26>
       <Unit27>
-        <Filename Value="mneViewClasses.pas"/>
+        <Filename Value="..\extends\pascal\mnePASClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit27>
       <Unit28>
-        <Filename Value="..\extends\pascal\mnePASClasses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit28>
-      <Unit29>
         <Filename Value="..\extends\php\mnePHPConfigForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PHPConfigForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit29>
-      <Unit30>
+      </Unit28>
+      <Unit29>
         <Filename Value="..\extends\php\mnePHPIniForm.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PHPIniForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit29>
+      <Unit30>
+        <Filename Value="..\extends\php\mnePHPClasses.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit30>
       <Unit31>
-        <Filename Value="..\extends\php\mnePHPClasses.pas"/>
+        <Filename Value="..\extends\d\mneDClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit31>
       <Unit32>
-        <Filename Value="..\extends\d\mneDClasses.pas"/>
+        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\SynHighlighterD.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit32>
       <Unit33>
-        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\SynHighlighterD.pas"/>
+        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\SynHighlighterMultiProc.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit33>
       <Unit34>
-        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\SynHighlighterMultiProc.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit34>
-      <Unit35>
         <Filename Value="D:\dev\lazarus\components\synedit\synedithighlighter.pp"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SynEditHighlighter"/>
+      </Unit34>
+      <Unit35>
+        <Filename Value="..\extends\csv\mneCSVClasses.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit35>
+      <Unit36>
+        <Filename Value="..\extends\csv\mneCSVForms.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CSVForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit36>
+      <Unit37>
+        <Filename Value="..\..\..\..\lib\minilib\connection\source\ui\CSVOptionsForms.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CSVOptionsForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit37>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -363,7 +383,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;D:\dev\lazarus\components\synedit\"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <Linking>
