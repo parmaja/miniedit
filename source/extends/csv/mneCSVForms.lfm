@@ -36,7 +36,7 @@ object CSVForm: TCSVForm
       Left = 150
       Height = 26
       Top = 0
-      Width = 545
+      Width = 495
       Align = alClient
       AutoSize = False
       Caption = '0'
@@ -63,6 +63,16 @@ object CSVForm: TCSVForm
       OnClick = StopBtnClick
       TabOrder = 1
     end
+    object StopBtn3: TButton
+      Left = 645
+      Height = 26
+      Top = 0
+      Width = 50
+      Align = alRight
+      Caption = 'Options'
+      OnClick = StopBtn3Click
+      TabOrder = 2
+    end
   end
   object DataGrid: TStringGrid
     Left = 0
@@ -70,7 +80,7 @@ object CSVForm: TCSVForm
     Top = 26
     Width = 695
     Align = alClient
-    AlternateColor = 14197366
+    AlternateColor = 14408667
     AutoEdit = False
     ColCount = 3
     ColumnClickSorts = True
@@ -84,7 +94,7 @@ object CSVForm: TCSVForm
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
     MouseWheelOption = mwGrid
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected, goColSizing, goColMoving, goEditing, goRelaxedRowSelect, goDblClickAutoSize, goSmoothScroll, goHeaderHotTracking, goHeaderPushedLook, goRowHighlight]
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected, goColSizing, goColMoving, goEditing, goRelaxedRowSelect, goDblClickAutoSize, goSmoothScroll, goHeaderHotTracking, goHeaderPushedLook, goCellHints, goRowHighlight]
     ParentFont = False
     PopupMenu = GridPopupMenu
     TabOrder = 1
@@ -96,7 +106,9 @@ object CSVForm: TCSVForm
     TitleFont.Quality = fqDraft
     OnDrawCell = DataGridDrawCell
     OnEditingDone = DataGridEditingDone
+    OnGetEditText = DataGridGetEditText
     OnKeyDown = DataGridKeyDown
+    OnSelectEditor = DataGridSelectEditor
     ColWidths = (
       22
       77
@@ -111,7 +123,7 @@ object CSVForm: TCSVForm
       OnClick = MenuItem6Click
     end
     object MenuItem2: TMenuItem
-      Caption = 'Add Column'
+      Caption = 'Add Columns'
       OnClick = MenuItem2Click
     end
     object MenuItem3: TMenuItem
@@ -119,7 +131,8 @@ object CSVForm: TCSVForm
       OnClick = MenuItem3Click
     end
     object MenuItem4: TMenuItem
-      Caption = 'Add Row'
+      Caption = 'Add Rows'
+      OnClick = MenuItem4Click
     end
     object MenuItem5: TMenuItem
       Caption = 'Delete Rows'

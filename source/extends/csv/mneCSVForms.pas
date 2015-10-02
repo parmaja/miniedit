@@ -7,6 +7,7 @@ interface
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Grids, ExtCtrls, StdCtrls,
   LCLType, Graphics, Menus, EditorEngine,
+  MsgBox,
   mnStreams, mncConnections, mncCSV;
 
 type
@@ -27,31 +28,38 @@ type
     GridPopupMenu: TPopupMenu;
     StopBtn: TButton;
     StopBtn2: TButton;
+    StopBtn3: TButton;
 
     procedure DataGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
     procedure DataGridEditingDone(Sender: TObject);
-
+    procedure DataGridGetEditText(Sender: TObject; ACol, ARow: Integer; var Value: string);
     procedure DataGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+
+      procedure DataGridSelectEditor(Sender: TObject; aCol, aRow: Integer; var Editor: TWinControl);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
+    procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem5Click(Sender: TObject);
     procedure MenuItem6Click(Sender: TObject);
     procedure StopBtn2Click(Sender: TObject);
+    procedure StopBtn3Click(Sender: TObject);
     procedure StopBtnClick(Sender: TObject);
   private
     FOnChanged: TNotifyEvent;
+    FOldValue: String;
   protected
     FCancel: Boolean;
     IsNumbers: array of boolean;
     procedure Changed;
   public
+    CSVOptions: TmncCSVOptions;
     property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
     procedure ClearGrid;
     procedure Load(FileName: string);
     procedure Save(FileName: string);
     procedure FillGrid(SQLCMD: TmncCommand; Title: String; Append: Boolean = False);
-
+    constructor Create(TheOwner: TComponent); override;
   end;
 
 implementation
@@ -109,13 +117,13 @@ begin
           ((aRow >= DataGrid.Selection.Top) and (aRow <= DataGrid.Selection.Bottom) and (aCol >= DataGrid.Selection.Left) and (aCol <= DataGrid.Selection.Right))
     then
   begin
-    DataGrid.Canvas.Brush.Color := $00D8A276;
+    DataGrid.Canvas.Brush.Color := clBlack;
     DataGrid.Canvas.FillRect(aRect);
-    //DataGrid.Canvas.Font.Color := clWhite;
+    DataGrid.Canvas.Font.Color := clWhite;
   end
   else if (aRow = DataGrid.Row) then
   begin
-    DataGrid.Canvas.Brush.Color := $00E0C6A3;
+    DataGrid.Canvas.Brush.Color := DataGrid.AlternateColor; //$00D0BA98;//$00E0C6A3;
     DataGrid.Canvas.FillRect(aRect);
   end;
   DataGrid.DefaultDrawCell(aCol, aRow, aRect, aState);
@@ -126,10 +134,26 @@ begin
   Changed;
 end;
 
+procedure TCSVForm.DataGridGetEditText(Sender: TObject; ACol, ARow: Integer; var Value: string);
+begin
+  FOldValue := Value;
+end;
+
 procedure TCSVForm.DataGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if (Key = VK_C) and (Shift = [ssCtrl]) then
     DataGrid.CopyToClipboard(True)
+  else if (Key = VK_ESCAPE) and (Shift = []) then
+  begin
+    DataGrid.EditorMode := False;
+    DataGrid.Cells[DataGrid.Col, DataGrid.Row] := FOldValue;
+  end;
+end;
+
+procedure TCSVForm.DataGridSelectEditor(Sender: TObject; aCol, aRow: Integer; var Editor: TWinControl);
+begin
+  Editor.Color := clBlack;
+  Editor.Font.Color := clWhite;
 end;
 
 procedure TCSVForm.MenuItem1Click(Sender: TObject);
@@ -138,8 +162,14 @@ begin
 end;
 
 procedure TCSVForm.MenuItem2Click(Sender: TObject);
+var
+  s: string;
 begin
-
+  if Msg.Input(s, 'Enter columns count to add') then
+  begin
+    DataGrid.ColCount := DataGrid.ColCount + StrToIntDef(s, 0);
+    Changed;
+  end;
 end;
 
 procedure TCSVForm.MenuItem3Click(Sender: TObject);
@@ -147,6 +177,17 @@ begin
   //DataGrid.DeleteCol(DataGrid.Col);
   RemoveCols(DataGrid, DataGrid.Selection.Left,DataGrid.Selection.Right - DataGrid.Selection.Left + 1);
   Engine.Files.Edited;
+end;
+
+procedure TCSVForm.MenuItem4Click(Sender: TObject);
+var
+  s: string;
+begin
+  if Msg.Input(s, 'Enter rows count to add') then
+  begin
+    DataGrid.RowCount := DataGrid.RowCount + StrToIntDef(s, 0);
+    Changed;
+  end;
 end;
 
 procedure TCSVForm.MenuItem5Click(Sender: TObject);
@@ -164,6 +205,17 @@ end;
 procedure TCSVForm.StopBtn2Click(Sender: TObject);
 begin
   ClearGrid;
+end;
+
+procedure TCSVForm.StopBtn3Click(Sender: TObject);
+var
+  aCSVOptions: TmncCSVOptions;
+begin
+  aCSVOptions := CSVOptions;
+  if ShowCSVOptions('Export CSV', aCSVOptions) then
+  begin
+    CSVOptions := aCSVOptions;
+  end
 end;
 
 procedure TCSVForm.StopBtnClick(Sender: TObject);
@@ -204,8 +256,8 @@ begin
       s := '';
       for c := 1 to DataGrid.ColCount -1 do
       begin
-        if c>1 then
-          s := s + ';';
+        if c > 1 then
+          s := s + CSVOptions.DelimiterChar;
         s := s + DataGrid.Cells[c, r];
       end;
 
@@ -225,19 +277,14 @@ var
   csvCnn: TmncCSVConnection;
   csvSes: TmncCSVSession;
   csvCMD: TmncCSVCommand;
-  aCSVOptions: TmncCSVOptions;
 begin
   ClearGrid;
   csvCnn := TmncCSVConnection.Create;
   csvSes := TmncCSVSession.Create(csvCnn);
   try
-    FillByte(aCSVOptions, Sizeof(aCSVOptions), 0);
-    aCSVOptions.HeaderLine := hdrNormal;
-    aCSVOptions.DelimiterChar := ',';
-    aCSVOptions.EndOfLine := sUnixEndOfLine;
-    if ShowCSVOptions('Export CSV', aCSVOptions) then
+    if ShowCSVOptions('Export CSV', CSVOptions) then
     begin
-      csvSes.CSVOptions := aCSVOptions;
+      csvSes.CSVOptions := CSVOptions;
       csvCnn.Connect;
       csvSes.Start;
       aFile := TFileStream.Create(FileName, fmOpenRead);
@@ -391,6 +438,15 @@ begin
   finally
     StopBtn.Enabled := False;
   end;
+end;
+
+constructor TCSVForm.Create(TheOwner: TComponent);
+begin
+  inherited Create(TheOwner);
+  FillByte(CSVOptions, Sizeof(CSVOptions), 0);
+  CSVOptions.HeaderLine := hdrNormal;
+  CSVOptions.DelimiterChar := ',';
+  CSVOptions.EndOfLine := sUnixEndOfLine;
 end;
 
 end.

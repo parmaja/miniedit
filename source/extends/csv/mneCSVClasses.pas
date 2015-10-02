@@ -75,7 +75,6 @@ begin
     FContents.Parent := Engine.Container;
     FContents.Align := alClient;
     FContents.OnChanged := @DoEdit;
-
   end;
   Result := FContents;
 end;
