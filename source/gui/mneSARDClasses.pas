@@ -64,6 +64,7 @@ uses
 
 procedure TSARDTendency.Init;
 begin
+  FCapabilities := [capRun, capProjectOptions, capOptions];
   FName := 'SARD';
   FTitle := 'SARD project';
   FDescription := 'SARD Files, *.sard';

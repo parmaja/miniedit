@@ -111,6 +111,10 @@ type
     Run, Compile, Collect file groups and have special properties
   }
 
+  TEditorCapability = (capRun, capCompile, capLink, capOSDepended, capOptions, capProjectOptions);
+
+  TEditorCapabilities = set of TEditorCapability;
+
   { TEditorTendency }
 
   TEditorTendency = class(TEditorElement)
@@ -118,7 +122,7 @@ type
     FGroups: TFileGroups;
     FDebug: TEditorDebugger;
   protected
-    FOSDepended: Boolean;
+    FCapabilities: TEditorCapabilities;
     procedure AddGroup(vName, vCategory: string);
     function CreateDebugger: TEditorDebugger; virtual;
     function GetGroups: TFileGroups; virtual;
@@ -135,7 +139,7 @@ type
     function CreateOptions: TEditorProjectOptions; virtual;
     function GetDefaultGroup: TFileGroup; virtual;
     //OSDepended: When save to file, the filename changed depend on the os system name
-    property OSDepended: Boolean read FOSDepended;
+    property Capabilities: TEditorCapabilities read FCapabilities;
     property Groups: TFileGroups read GetGroups;
     property Debug: TEditorDebugger read FDebug;//todo
   end;
@@ -447,19 +451,13 @@ type
 
   TEditorOptions = class(TmnXMLProfile)
   private
-    FFileName: string;
     FIgnoreNames: string;
     FShowFolder: Boolean;
     FShowFolderFiles: TShowFolderFiles;
     FSortFolderFiles: TSortFolderFiles;
     FWindowMaxmized: Boolean;
     FBoundRect: TRect;
-    FSearchHistory: TStringList;
-    FProfile: TEditorProfile;
     FCompilerFolder: string;
-    FRecentFiles: TStringList;
-    FRecentProjects: TStringList;
-    FProjects: TStringList;
     FShowMessages: Boolean;
     FCollectAutoComplete: Boolean;
     FCollectTimeout: DWORD;
@@ -470,8 +468,15 @@ type
     FOutputHeight: integer;
     FMessagesHeight: integer;
     FFoldersWidth: integer;
-    FSearchFolderHistory: TStringList;
+
     FExtraExtensions: TStringList;
+    FSearchFolderHistory: TStringList;
+    FSearchHistory: TStringList;
+    FProfile: TEditorProfile;
+
+    FRecentFiles: TStringList;
+    FRecentProjects: TStringList;
+    FProjects: TStringList;
     procedure SetRecentFiles(const Value: TStringList);
     procedure SetRecentProjects(const Value: TStringList);
     procedure SetProjects(const Value: TStringList);
@@ -480,11 +485,20 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure Apply; virtual;
-    procedure Load(vFileName: string);
-    procedure Save;
+    procedure Load(vWorkspace: string);
+    procedure Save(vWorkspace: string);
     procedure Show;
-    property FileName: string read FFileName write FFileName;
+
     property BoundRect: TRect read FBoundRect write FBoundRect; //not saved yet
+
+    property RecentFiles: TStringList read FRecentFiles write SetRecentFiles;
+    property RecentProjects: TStringList read FRecentProjects write SetRecentProjects;
+    property Projects: TStringList read FProjects write SetProjects;
+
+    property Profile: TEditorProfile read FProfile;
+    property SearchHistory: TStringList read FSearchHistory;
+    property ReplaceHistory: TStringList read FReplaceHistory;
+    property SearchFolderHistory: TStringList read FSearchFolderHistory;
   published
     property ExtraExtensions: TStringList read FExtraExtensions write FExtraExtensions;
     property IgnoreNames: string read FIgnoreNames write FIgnoreNames;
@@ -501,13 +515,6 @@ type
     property SendOutputToNewFile: Boolean read FSendOutputToNewFile write FSendOutputToNewFile default False;
     property AutoStartDebugServer: Boolean read FAutoStartDebugServer write FAutoStartDebugServer default False;
     property WindowMaxmized: Boolean read FWindowMaxmized write FWindowMaxmized default False;
-    property SearchHistory: TStringList read FSearchHistory;
-    property ReplaceHistory: TStringList read FReplaceHistory;
-    property SearchFolderHistory: TStringList read FSearchFolderHistory;
-    property Profile: TEditorProfile read FProfile;
-    property RecentFiles: TStringList read FRecentFiles write SetRecentFiles;
-    property RecentProjects: TStringList read FRecentProjects write SetRecentProjects;
-    property Projects: TStringList read FProjects write SetProjects;
   end;
 
   TEditorSessionOptions = class(TmnXMLProfile)
@@ -730,7 +737,7 @@ type
     procedure Open;
     //Is project opened
     property IsOpened: Boolean read GetIsOpened;
-    //Current is the opened project if it is nil it is mean not opened any project.
+    //Current is the opened project, if it is a nil that mean there is no opened project.
     property Project: TEditorProject read FProject write SetProject;
     //Session Options is depend on the system used not shared between OSs
     property Options: TEditorSessionOptions read FOptions;
@@ -2238,10 +2245,24 @@ begin
     Engine.ProcessRecentFile(lFileName);
 end;
 
-procedure TEditorOptions.Load(vFileName: string);
+procedure TEditorOptions.Load(vWorkspace: string);
+  procedure SafeLoad(s: TStringList; vName:string);
+  begin
+    if FileExistsUTF8(vName) then
+      s.LoadFromFile(vName);
+  end;
 begin
-  SafeLoadFromFile(vFileName);
-  FileName := vFileName;
+  SafeLoadFromFile(vWorkspace + 'mne-options.xml');
+  Profile.SafeLoadFromFile(vWorkspace + 'mne-editor.xml');
+
+  SafeLoad(RecentFiles, vWorkspace + 'mne-recent-files.ini');
+  SafeLoad(RecentProjects, vWorkspace + 'mne-recent-projects.ini');
+  SafeLoad(Projects, vWorkspace + 'mne-projects.ini');
+
+  SafeLoad(SearchHistory, vWorkspace + 'mne-search-history.ini');
+  SafeLoad(ReplaceHistory, vWorkspace + 'mne-replace-history.ini');
+  SafeLoad(SearchFolderHistory, vWorkspace + 'mne-folder-history.ini');
+
   Apply;
 end;
 
@@ -2458,11 +2479,20 @@ begin
     Current.SaveFile(ExtractFileExt(Current.Name), True);
 end;
 
-procedure TEditorOptions.Save;
+procedure TEditorOptions.Save(vWorkspace: string);
 begin
-  if (FileName <> '') and DirectoryExistsUTF8(ExtractFilePath(FileName)) then
+  if DirectoryExistsUTF8(vWorkspace) then
   begin
-    SaveToFile(FileName);
+    Profile.SaveToFile(vWorkspace + 'mne-editor.xml');
+    SaveToFile(vWorkspace + 'mne-options.xml');
+    RecentFiles.SaveToFile(vWorkspace + 'mne-recent-files.ini');
+    RecentProjects.SaveToFile(vWorkspace + 'mne-recent-projects.ini');
+    Projects.SaveToFile(vWorkspace + 'mne-projects.ini');
+
+    SearchHistory.SaveToFile(vWorkspace + 'mne-search-history.ini');
+    ReplaceHistory.SaveToFile(vWorkspace + 'mne-replace-history.ini');
+    SearchFolderHistory.SaveToFile(vWorkspace + 'mne-folder-history.ini');
+
     Engine.UpdateState([ecsFolder]);
   end;
 end;
@@ -2557,16 +2587,19 @@ var
 begin
   Engine.BeginUpdate;
   try
-    Options.Load(Workspace + 'mne-options.xml');
-    Session.Options.SafeLoadFromFile(LowerCase(Workspace + 'mne-' + SysPlatform + '-options.xml'));
+    Options.Load(Workspace);
+    Session.Options.SafeLoadFromFile(LowerCase(Workspace + 'mne-options-' + SysPlatform + '.xml'));
     for i := 0 to Tendencies.Count - 1 do
     begin
-      if Tendencies[i].OSDepended then
-        aFile := LowerCase(Workspace + 'mne-' + SysPlatform + '-' + Tendencies[i].Name + '.xml')
-      else
-        aFile := LowerCase(Workspace + 'mne-' + Tendencies[i].Name + '.xml');
-      if FileExists(aFile) then
-        XMLReadObjectFile(Tendencies[i], aFile);
+      if capOptions in Tendencies[i].Capabilities then
+      begin
+        if capOSDepended in Tendencies[i].Capabilities then
+          aFile := LowerCase(Workspace + 'mne-tendency-' + SysPlatform + '-' + Tendencies[i].Name + '.xml')
+        else
+          aFile := LowerCase(Workspace + 'mne-tendency-' + Tendencies[i].Name + '.xml');
+        if FileExists(aFile) then
+          XMLReadObjectFile(Tendencies[i], aFile);
+      end;
     end;
     SetDefaultTendency(Session.Options.DefaultTendency);
     SetDefaultSCM(Session.Options.DefaultSCM);
@@ -2581,16 +2614,19 @@ var
   aFile: string;
   i: integer;
 begin
-  Options.Save;
-  Session.Options.SaveToFile(LowerCase(Workspace + 'mne-' + SysPlatform + '-options.xml'));
+  Options.Save(WorkSpace);
+  Session.Options.SaveToFile(LowerCase(Workspace + 'mne-options' + SysPlatform + '.xml'));
+
   for i := 0 to Tendencies.Count - 1 do
   begin
-    if Tendencies[i].OSDepended then
-      aFile := LowerCase(Workspace + 'mne-' + SysPlatform + '-' + Tendencies[i].Name + '.xml')
-    else
-      aFile := LowerCase(Workspace + 'mne-' + Tendencies[i].Name + '.xml');
-    if FileExists(aFile) then
+    if capOptions in Tendencies[i].Capabilities then
+    begin
+      if capOSDepended in Tendencies[i].Capabilities then
+        aFile := LowerCase(Workspace + 'mne-tendency-' + SysPlatform + '-' + Tendencies[i].Name + '.xml')
+      else
+        aFile := LowerCase(Workspace + 'mne-tendency-' + Tendencies[i].Name + '.xml');
       XMLWriteObjectFile(Tendencies[i], aFile);
+    end;
   end;
 end;
 
@@ -3294,7 +3330,7 @@ begin
   FSearchHistory := TStringList.Create;
   FReplaceHistory := TStringList.Create;
   FSearchFolderHistory := TStringList.Create;
-  FProfile := TEditorProfile.Create(nil);
+  FProfile := TEditorProfile.Create;
   FExtraExtensions := TStringList.Create;
   FRecentFiles := TStringList.Create;
   FRecentProjects := TStringList.Create;
@@ -3323,8 +3359,8 @@ end;
 
 procedure TEditorOptions.SetProjects(const Value: TStringList);
 begin
-  if FRecentProjects <> Value then
-    FRecentProjects.Assign(Value);
+  if FProjects <> Value then
+    FProjects.Assign(Value);
 end;
 
 procedure TEditorOptions.SetRecentFiles(const Value: TStringList);

@@ -71,7 +71,7 @@ begin
     if Result then
     begin
       Apply;
-      Engine.Options.Save;
+      Engine.Options.Save(Engine.WorkSpace);
     end;
   end;
 end;

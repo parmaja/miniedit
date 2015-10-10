@@ -123,7 +123,7 @@ begin
   end
   else if (aRow = DataGrid.Row) then
   begin
-    DataGrid.Canvas.Brush.Color := DataGrid.AlternateColor; //$00D0BA98;//$00E0C6A3;
+    DataGrid.Canvas.Brush.Color := DataGrid.AlternateColor;
     DataGrid.Canvas.FillRect(aRect);
   end;
   DataGrid.DefaultDrawCell(aCol, aRow, aRect, aState);

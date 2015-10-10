@@ -13,6 +13,7 @@ interface
 
 uses
   Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, Registry, ExtCtrls, Buttons, ImgList,
+  mnXMLRttiProfile,
   Contnrs, Menus, SynEdit, SynEditHighlighter, SynEditMiscClasses, SynEditPointClasses, SynGutterCodeFolding,
   SynGutter, SynEditKeyCmds, Classes, SysUtils;
 
@@ -184,7 +185,7 @@ type
 
   { TEditorProfile }
 
-  TEditorProfile = class(TComponent) //make it as object
+  TEditorProfile = class(TmnXMLProfile)
   private
     FCodeFolding: Boolean;
     FExtOptions: TSynEditorOptions2;
@@ -206,11 +207,8 @@ type
     procedure SetExtOptions(const AValue: TSynEditorOptions2);
     procedure SetOptions(const Value: TSynEditorOptions);
   protected
-    procedure GetChildren(Proc: TGetChildProc; Root: TComponent); override;
-    function GetChildOwner: TComponent; override;
-    function GetChildParent: TComponent; override;
   public
-    constructor Create(AOwner: TComponent); override;
+    constructor Create;
     destructor Destroy; override;
     procedure Reset;
   published
@@ -239,13 +237,12 @@ uses
 
 { TEditorProfile }
 
-constructor TEditorProfile.Create(AOwner: TComponent);
+constructor TEditorProfile.Create;
 begin
   inherited;
-  FComponentStyle := FComponentStyle + [csSubComponent];
-  FBookmarks := TSynBookMarkOpt.Create(Self);
-  FGutterOptions := TGutterOptions.Create;//ToDO check the Create params
-  FAttributes := TGlobalAttributes.Create(Self);
+  FBookmarks := TSynBookMarkOpt.Create(nil);
+  FGutterOptions := TGutterOptions.Create;//TODO check the Create params
+  FAttributes := TGlobalAttributes.Create(nil);
   CodeFolding := False;
   Reset;
 end;
@@ -256,26 +253,6 @@ begin
   FGutterOptions.Free;
   FAttributes.Free;
   inherited;
-end;
-
-function TEditorProfile.GetChildOwner: TComponent;
-begin
-  Result := Self;
-end;
-
-function TEditorProfile.GetChildParent: TComponent;
-begin
-  Result := Self;
-end;
-
-procedure TEditorProfile.GetChildren(Proc: TGetChildProc;
-  Root: TComponent);
-var
-  i: Integer;
-begin
-  inherited;
-  for i := 0 to ComponentCount - 1 do
-    Proc(Components[i]);
 end;
 
 procedure TEditorProfile.Reset;

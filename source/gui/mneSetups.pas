@@ -80,16 +80,17 @@ var
   aIniFile: TIniFile;
 begin
   WorkspaceEdit.Items.Add('.');
+  WorkspaceEdit.Items.Add('.' + DirectorySeparator + 'config');
   {$ifdef windows}
-  WorkspaceEdit.Items.Add('C:\workspace');
+  WorkspaceEdit.Items.Add('C:\workspace\miniedit');
   if DirectoryExistsUTF8('D:\') then
-    WorkspaceEdit.Items.Add('D:\workspace');
-  WorkspaceEdit.Items.Add('\workspace');
+    WorkspaceEdit.Items.Add('D:\workspace\miniedit');
+  WorkspaceEdit.Items.Add('\workspace\miniedit');
   {$else}
   WorkspaceEdit.Items.Add(GetUserDir);
-  WorkspaceEdit.Items.Add('/usr/workspace');
+  WorkspaceEdit.Items.Add('/usr/workspace/miniedit');
   {$endif}
-  WorkspaceEdit.Items.Add('$home');
+  WorkspaceEdit.Items.Add('$home' + DirectorySeparator + 'miniedit');
   WorkspaceEdit.Items.Add(Application.Location);
   aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
   try

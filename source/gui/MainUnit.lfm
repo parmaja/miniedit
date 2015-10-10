@@ -1,5 +1,5 @@
 object MainForm: TMainForm
-  Left = 234
+  Left = 431
   Height = 614
   Top = 141
   Width = 772
@@ -112,31 +112,30 @@ object MainForm: TMainForm
     Width = 200
     Align = alLeft
     BevelOuter = bvNone
-    BorderWidth = 5
     ClientHeight = 408
     ClientWidth = 200
     Constraints.MinHeight = 60
     TabOrder = 0
     object FolderPanel: TPanel
-      Left = 5
-      Height = 19
-      Top = 5
-      Width = 190
+      Left = 0
+      Height = 21
+      Top = 0
+      Width = 200
       Align = alTop
       Alignment = taLeftJustify
       BevelOuter = bvNone
-      ClientHeight = 19
-      ClientWidth = 190
+      ClientHeight = 21
+      ClientWidth = 200
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
       ParentFont = False
       TabOrder = 0
       object FolderCloseBtn: TSpeedButton
-        Left = 171
-        Height = 16
-        Top = 2
+        Left = 184
+        Height = 21
+        Top = 0
         Width = 16
-        Anchors = [akTop, akRight, akBottom]
+        Align = alRight
         Flat = True
         Font.CharSet = SYMBOL_CHARSET
         Font.Height = -11
@@ -159,19 +158,12 @@ object MainForm: TMainForm
         OnClick = FolderCloseBtnClick
         ParentFont = False
       end
-      object Label1: TLabel
-        Left = 5
-        Height = 13
-        Top = 2
-        Width = 29
-        Caption = 'Folder'
-        ParentColor = False
-      end
       object FolderBtn: TSpeedButton
-        Left = 155
-        Height = 16
-        Top = 2
+        Left = 168
+        Height = 21
+        Top = 0
         Width = 16
+        Align = alRight
         Anchors = [akTop, akRight]
         Flat = True
         Font.CharSet = ARABIC_CHARSET
@@ -210,13 +202,40 @@ object MainForm: TMainForm
         ParentFont = False
         PopupMenu = FolderMenu
       end
+      object BrowseTabs: TntvTabSet
+        Left = 0
+        Height = 21
+        Top = 0
+        Width = 168
+        StoreIndex = False
+        ShowButtons = False
+        ShowBorder = False
+        AlignTabs = talBottom
+        Items = <        
+          item
+            Caption = 'Folders'
+            Name = 'FoldersTab'
+            AutoWidth = True
+          end        
+          item
+            Caption = 'Project'
+            Name = 'ProjectTab'
+            AutoWidth = True
+          end>
+        OnTabSelected = BrowseTabsTabSelected
+        Align = alClient
+        Caption = 'Files'
+        ParentColor = False
+        TabOrder = 0
+      end
     end
     object FileList: TListView
-      Left = 5
-      Height = 379
+      Left = 3
+      Height = 381
       Top = 24
-      Width = 190
+      Width = 194
       Align = alClient
+      BorderSpacing.Around = 3
       Columns = <      
         item
           AutoSize = True
@@ -760,6 +779,44 @@ object MainForm: TMainForm
     Caption = 'Call Stack'
     Constraints.MinHeight = 60
     TabOrder = 4
+    object MessageList: TListView
+      Left = 3
+      Height = 101
+      Top = 23
+      Width = 766
+      Align = alClient
+      Columns = <      
+        item
+          Caption = 'Type'
+          Width = 100
+        end      
+        item
+          AutoSize = True
+          Caption = 'Message'
+          Width = 662
+        end      
+        item
+          Caption = 'File'
+          Width = 300
+        end      
+        item
+          Caption = 'Line'
+          Width = 433
+        end>
+      ColumnClick = False
+      Font.CharSet = ARABIC_CHARSET
+      Font.Height = -12
+      Font.Name = 'Courier New'
+      ParentFont = False
+      PopupMenu = MessagesPopup
+      ReadOnly = True
+      RowSelect = True
+      TabStop = False
+      TabOrder = 1
+      ViewStyle = vsReport
+      OnDblClick = MessageListDblClick
+      OnKeyDown = WatchListKeyDown
+    end
     object CallStackList: TListView
       Left = 3
       Height = 101
@@ -819,44 +876,6 @@ object MainForm: TMainForm
       TabStop = False
       TabOrder = 2
       ViewStyle = vsReport
-      OnKeyDown = WatchListKeyDown
-    end
-    object MessageList: TListView
-      Left = 3
-      Height = 101
-      Top = 23
-      Width = 766
-      Align = alClient
-      Columns = <      
-        item
-          Caption = 'Type'
-          Width = 100
-        end      
-        item
-          AutoSize = True
-          Caption = 'Message'
-          Width = 662
-        end      
-        item
-          Caption = 'File'
-          Width = 300
-        end      
-        item
-          Caption = 'Line'
-          Width = 433
-        end>
-      ColumnClick = False
-      Font.CharSet = ARABIC_CHARSET
-      Font.Height = -12
-      Font.Name = 'Courier New'
-      ParentFont = False
-      PopupMenu = MessagesPopup
-      ReadOnly = True
-      RowSelect = True
-      TabStop = False
-      TabOrder = 1
-      ViewStyle = vsReport
-      OnDblClick = MessageListDblClick
       OnKeyDown = WatchListKeyDown
     end
     object SearchList: TListView
@@ -1443,7 +1462,7 @@ object MainForm: TMainForm
     object FoldersAct: TAction
       Category = 'View'
       AutoCheck = True
-      Caption = 'Folder'
+      Caption = 'Browse'
       Checked = True
       ImageIndex = 28
       OnExecute = FoldersActExecute

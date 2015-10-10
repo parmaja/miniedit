@@ -53,6 +53,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    BrowseTabs: TntvTabSet;
     TypeOptionsMnu: TMenuItem;
     TypeOptionsAct: TAction;
     BugSignBtn: TSpeedButton;
@@ -327,7 +328,6 @@ type
     SwitchFocusAct: TAction;
     SwitchFocus1: TMenuItem;
     N16: TMenuItem;
-    Label1: TLabel;
     FolderBtn: TSpeedButton;
     QuickFindPnl: TPanel;
     Label2: TLabel;
@@ -339,6 +339,8 @@ type
     QuickSearch: TMenuItem;
     procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
+
+      procedure BrowseTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure CallStackListDblClick(Sender: TObject);
     procedure DeleteActExecute(Sender: TObject);
     procedure FetchCallStackBtnClick(Sender: TObject);
@@ -643,6 +645,11 @@ begin
       HintInfo.ReshowTimeout := 1;
     end;
   end;
+end;
+
+procedure TMainForm.BrowseTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
+begin
+  FileList.Visible := True;
 end;
 
 procedure TMainForm.CallStackListDblClick(Sender: TObject);
@@ -1637,7 +1644,10 @@ end;
 procedure TMainForm.ProjectLoaded;
 begin
   if (Engine.Session.IsOpened) and (Engine.Session.Project.Path <> '') then
+  begin
     Folder := Engine.Session.Project.Path;
+
+  end;
 end;
 
 procedure TMainForm.ReplaceActExecute(Sender: TObject);

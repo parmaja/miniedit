@@ -335,6 +335,7 @@ end;
 
 procedure TPHPTendency.Init;
 begin
+  FCapabilities := [capRun, capProjectOptions, capOptions];
   FTitle := 'PHP project';
   FDescription := 'PHP Files, *.php, *.inc';
   FName := 'PHP';

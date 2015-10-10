@@ -50,22 +50,20 @@ type
 
   TDProjectOptions = class(TEditorProjectOptions)
   private
-    FRootUrl: string;
+    FMainFile: string;
     FRunMode: TDRunMode;
   public
     constructor Create; override;
     function Show: Boolean; override;
   published
     property RunMode: TDRunMode read FRunMode write FRunMode;
-    property RootUrl: string read FRootUrl write FRootUrl;
+    property MainFile: string read FMainFile write FMainFile;
   end;
 
   { TDTendency }
 
   TDTendency = class(TEditorTendency)
   private
-    FHTMLHelpFile: string;
-    FDHelpFile: string;
     FDPath: string;
   protected
     function CreateDebugger: TEditorDebugger; override;
@@ -77,14 +75,12 @@ type
     procedure Show; override;
   published
     property DPath: string read FDPath write FDPath;
-    property DHelpFile: string read FDHelpFile write FDHelpFile;
-    property HTMLHelpFile: string read FHTMLHelpFile write FHTMLHelpFile;
   end;
 
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, HTMLProcessor, SynEditStrConst{, mneDConfigForms};
+  IniFiles, mnStreams, mnUtils, HTMLProcessor, SynEditStrConst, mneDConfigForms;
 
 { TDProject }
 
@@ -203,22 +199,10 @@ begin
     if aFile <> '' then
     begin
       case aUrlMode of
-        prunUrl:
-        begin
-          if Engine.Session.IsOpened then
-          begin
-            if SameText((MidStr(aFile, 1, Length(aRoot))), aRoot) then
-            begin
-              aFile := MidStr(aFile, Length(aRoot) + 1, MaxInt);
-              aFile := IncludeSlash((Engine.Session.Project.Options as TDProjectOptions).RootUrl) + aFile;
-              //ShellExecute(0, 'open', PChar(aFile), '', PChar(ExtractFilePath(aFile)), SW_SHOWNOACTIVATE);
-            end;
-          end;
-        end;
         prunConsole:
         begin
           {$ifdef windows}
-          ExecuteProcess('cmd ',['/c "D.exe "' + aFile + '" & pause'], []);
+          ExecuteProcess('cmd ',['/c "dmd.exe "' + aFile + '" & pause'], []);
           {$endif}
 
           {$ifdef linux}
@@ -239,7 +223,7 @@ end;
 
 procedure TDTendency.Show;
 begin
-  {with TDConfigForm.Create(Application) do
+  with TDConfigForm.Create(Application) do
   begin
     FTendency := Self;
     Retrive;
@@ -247,7 +231,7 @@ begin
     begin
       Apply;
     end;
-  end;}
+  end;
 end;
 
 function TDTendency.CreateDebugger: TEditorDebugger;
@@ -262,6 +246,7 @@ end;
 
 procedure TDTendency.Init;
 begin
+  FCapabilities := [capRun, capCompile, capLink, capProjectOptions, capOptions];
   FTitle := 'D project';
   FDescription := 'D Files, *.D, *.inc';
   FName := 'D';
