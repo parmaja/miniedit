@@ -54,7 +54,7 @@ type
     FRunMode: TDRunMode;
   public
     constructor Create; override;
-    function Show: Boolean; override;
+    function CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame; override;
   published
     property RunMode: TDRunMode read FRunMode write FRunMode;
     property MainFile: string read FMainFile write FMainFile;
@@ -80,7 +80,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, HTMLProcessor, SynEditStrConst, mneDConfigForms;
+  IniFiles, mnStreams, mnUtils, HTMLProcessor, SynEditStrConst, mneDConfigForms, mneDProjectFrames;
 
 { TDProject }
 
@@ -89,9 +89,10 @@ begin
   inherited;
 end;
 
-function TDProjectOptions.Show: Boolean;
+function TDProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame;
 begin
-  Result :=inherited Show;
+  Result := TDProjectFrame.Create(AOwner);
+  TDProjectFrame(Result).Options := AProject.Options as TDProjectOptions;
 end;
 
 { TDFile }

@@ -240,7 +240,7 @@ object MainForm: TMainForm
         item
           AutoSize = True
           Caption = 'File Name'
-          Width = 186
+          Width = 190
         end>
       HideSelection = False
       PopupMenu = FolderMenu
@@ -932,7 +932,7 @@ object MainForm: TMainForm
   end
   object MainMenu: TMainMenu
     Images = EditorResource.ToolbarImageList
-    left = 84
+    left = 91
     top = 71
     object file1: TMenuItem
       Caption = '&File'
@@ -1036,18 +1036,18 @@ object MainForm: TMainForm
       object N7: TMenuItem
         Caption = '-'
       end
-      object ProjectOptionsMnu: TMenuItem
-        Action = ProjectOptionsAct
-        OnClick = ProjectOptionsActExecute
-      end
       object ProjectTypeMnu: TMenuItem
         Action = SelectProjectTypeAct
+      end
+      object MenuItem13: TMenuItem
+        Action = SCMTypeAct
       end
       object TypeOptionsMnu: TMenuItem
         Action = TypeOptionsAct
       end
-      object MenuItem13: TMenuItem
-        Action = SCMTypeAct
+      object ProjectOptionsMnu: TMenuItem
+        Action = ProjectOptionsAct
+        OnClick = ProjectOptionsActExecute
       end
     end
     object veiw1: TMenuItem
@@ -1881,7 +1881,7 @@ object MainForm: TMainForm
     end
     object TypeOptionsAct: TAction
       Category = 'Project'
-      Caption = 'Type Options'
+      Caption = 'General Options'
       OnExecute = TypeOptionsActExecute
     end
     object SCMTypeAct: TAction

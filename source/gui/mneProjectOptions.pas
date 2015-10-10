@@ -18,36 +18,37 @@ type
   { TProjectForm }
 
   TProjectForm = class(TForm)
-    MoreBtn: TButton;
+    Button3: TButton;
+    DescriptionEdit: TEdit;
+    Label1: TLabel;
+    Label3: TLabel;
+    Label4: TLabel;
     Label7: TLabel;
     Label8: TLabel;
+    NameEdit: TEdit;
     OkBtn: TButton;
     CancelBtn: TButton;
     OpenDialog: TOpenDialog;
-    NameEdit: TEdit;
-    Label3: TLabel;
-    DescriptionEdit: TEdit;
-    Label4: TLabel;
-    TendencyCbo: TComboBox;
-    SCMCbo: TComboBox;
-    SaveDesktopChk: TCheckBox;
-    Label1: TLabel;
+    PageControl: TPageControl;
     RootDirEdit: TEdit;
-    Button3: TButton;
-    procedure MoreBtnClick(Sender: TObject);
-    procedure CancelBtnClick(Sender: TObject);
+    SaveDesktopChk: TCheckBox;
+    SCMCbo: TComboBox;
+    TabSheet1: TTabSheet;
+    TendencyCbo: TComboBox;
     procedure Label3Click(Sender: TObject);
     procedure OkBtnClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure PageControlChange(Sender: TObject);
   private
     FProject: TEditorProject;
+    FFrame: TFrame;
   protected
   public
-    procedure Retrive;
     procedure Apply;
+    procedure Retrive;
   end;
 
 function ShowProjectForm(vProject: TEditorProject): Boolean;
@@ -78,17 +79,6 @@ begin
 
 end;
 
-procedure TProjectForm.CancelBtnClick(Sender: TObject);
-begin
-
-end;
-
-procedure TProjectForm.MoreBtnClick(Sender: TObject);
-begin
-  if FProject.Options <> nil then
-    FProject.Options.Show;
-end;
-
 procedure TProjectForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   CloseAction := caFree;
@@ -103,10 +93,27 @@ begin
   if TendencyCbo.ItemIndex >= 0 then
     FProject.TendencyName := TEditorTendency(TendencyCbo.Items.Objects[TendencyCbo.ItemIndex]).Name;
   FProject.SetSCMClass(TEditorSCM(SCMCbo.Items.Objects[SCMCbo.ItemIndex]));
+  if Supports(FFrame, IEditorFrame) then
+    (FFrame as IEditorFrame).Apply;
 end;
 
 procedure TProjectForm.Retrive;
+var
+  TabSheet: TTabSheet;
 begin
+  FFrame := FProject.Options.CreateOptionsFrame(Self, FProject);
+  if FFrame <> nil then
+  begin
+    TabSheet := PageControl.AddTabSheet;
+    TabSheet.Caption := FProject.Tendency.Title;
+
+    FFrame.Parent := TabSheet;
+    FFrame.Align := alClient;
+    FFrame.Visible := True;
+    if Supports(FFrame, IEditorFrame) then
+      (FFrame as IEditorFrame).Retrieve;
+  end;
+
   NameEdit.Text := FProject.Name;
   DescriptionEdit.Text := FProject.Description;
   RootDirEdit.Text := FProject.RootDir;
@@ -116,7 +123,6 @@ begin
     SCMCbo.ItemIndex := Engine.SourceManagements.IndexOf(FProject.SCM.Name)
   else
     SCMCbo.ItemIndex := 0;
-  MoreBtn.Visible := FProject.Options <> nil;
 end;
 
 procedure TProjectForm.Button2Click(Sender: TObject);
@@ -169,6 +175,11 @@ begin
   finally
     SCMCbo.Items.EndUpdate;
   end;
+end;
+
+procedure TProjectForm.PageControlChange(Sender: TObject);
+begin
+
 end;
 
 end.

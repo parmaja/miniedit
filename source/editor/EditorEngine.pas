@@ -36,6 +36,12 @@ type
     property ErrorLine: integer read FErrorLine write FErrorLine;
   end;
 
+  IEditorFrame = interface
+  ['{5466AAF9-FA4E-4AFE-94F2-569963F9B40F}']
+    procedure Apply;
+    procedure Retrieve;
+  end;
+
   TEditorDesktopFile = class(TCollectionItem)
   private
     FFileName: string;
@@ -184,7 +190,8 @@ type
   TEditorProjectOptions = class(TPersistent)
   public
     constructor Create; virtual;
-    function Show: Boolean; virtual; //Show Dialog options
+    function Show: Boolean; virtual; //TODO REMOVE IT
+    function CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame; virtual;
   end;
 
   { TEditorProject }
@@ -1028,6 +1035,11 @@ end;
 function TEditorProjectOptions.Show: Boolean;
 begin
   Result := False;
+end;
+
+function TEditorProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame;
+begin
+  Result := nil;
 end;
 
 { TTextFileCategory }
@@ -2615,7 +2627,7 @@ var
   i: integer;
 begin
   Options.Save(WorkSpace);
-  Session.Options.SaveToFile(LowerCase(Workspace + 'mne-options' + SysPlatform + '.xml'));
+  Session.Options.SaveToFile(LowerCase(Workspace + 'mne-options-' + SysPlatform + '.xml'));
 
   for i := 0 to Tendencies.Count - 1 do
   begin

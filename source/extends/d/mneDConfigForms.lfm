@@ -1,0 +1,59 @@
+object DConfigForm: TDConfigForm
+  Left = 287
+  Height = 180
+  Top = 170
+  Width = 398
+  BorderStyle = bsSingle
+  Caption = 'D Config'
+  ClientHeight = 180
+  ClientWidth = 398
+  OnClose = FormClose
+  Position = poMainFormCenter
+  LCLVersion = '1.5'
+  object DPathEdit: TEdit
+    Left = 11
+    Height = 23
+    Top = 64
+    Width = 360
+    TabOrder = 0
+  end
+  object Button3: TButton
+    Left = 371
+    Height = 21
+    Top = 65
+    Width = 22
+    Caption = '...'
+    OnClick = Button3Click
+    TabOrder = 1
+  end
+  object Label1: TLabel
+    Left = 11
+    Height = 15
+    Top = 45
+    Width = 35
+    Caption = 'D path'
+    ParentColor = False
+  end
+  object OkBtn: TButton
+    Left = 319
+    Height = 25
+    Top = 152
+    Width = 75
+    Anchors = [akLeft, akBottom]
+    Caption = '&Ok'
+    Default = True
+    ModalResult = 1
+    TabOrder = 2
+  end
+  object CancelBtn: TButton
+    Left = 242
+    Height = 25
+    Top = 152
+    Width = 75
+    Anchors = [akLeft, akBottom]
+    Cancel = True
+    Caption = '&Cancel'
+    ModalResult = 2
+    TabOrder = 3
+  end
+end

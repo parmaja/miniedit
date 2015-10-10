@@ -1,0 +1,34 @@
+object DProjectFrame: TDProjectFrame
+  Left = 0
+  Height = 133
+  Top = 0
+  Width = 284
+  ClientHeight = 133
+  ClientWidth = 284
+  TabOrder = 0
+  DesignLeft = 244
+  DesignTop = 230
+  object MainEdit: TEdit
+    Left = 68
+    Height = 23
+    Top = 19
+    Width = 124
+    TabOrder = 0
+  end
+  object Label2: TLabel
+    Left = 11
+    Height = 15
+    Top = 21
+    Width = 46
+    Caption = 'Main file'
+    ParentColor = False
+  end
+  object Button4: TButton
+    Left = 196
+    Height = 21
+    Top = 20
+    Width = 22
+    Caption = '...'
+    TabOrder = 1
+  end
+end
