@@ -523,6 +523,10 @@ type
     property SendOutputToNewFile: Boolean read FSendOutputToNewFile write FSendOutputToNewFile default False;
     property AutoStartDebugServer: Boolean read FAutoStartDebugServer write FAutoStartDebugServer default False;
     property WindowMaxmized: Boolean read FWindowMaxmized write FWindowMaxmized default False;
+    property WindowTop: Integer read FBoundRect.Top write FBoundRect.Top;
+    property WindowLeft: Integer read FBoundRect.Left write FBoundRect.Left;
+    property WindowRight: Integer read FBoundRect.Right write FBoundRect.Right;
+    property WindoBottom: Integer read FBoundRect.Bottom write FBoundRect.Bottom;
   end;
 
   TEditorSessionOptions = class(TmnXMLProfile)

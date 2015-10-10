@@ -349,6 +349,8 @@ type
     procedure FolderCloseBtnClick(Sender: TObject);
     procedure FoldersActExecute(Sender: TObject);
     procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
+    procedure FormShow(Sender: TObject);
+    procedure FormWindowStateChange(Sender: TObject);
     procedure IPCServerMessage(Sender: TObject);
     procedure NewAsActExecute(Sender: TObject);
     procedure OpenActExecute(Sender: TObject);
@@ -600,11 +602,6 @@ begin
   UpdateFoldersPnl;
   UpdateMessagesPnl;
   UpdateOutputPnl;
-  if Engine.Options.WindowMaxmized then
-    WindowState := wsMaximized;
-{  else
-    BoundsRect := Engine.Options.BoundRect;}
-
   // Open any files passed in the command line
   if (ParamCount > 0) and not (SameText(ParamStr(1), '/dde')) then
   begin
@@ -738,6 +735,14 @@ begin
   finally
     Engine.EndUpdate;
   end;
+end;
+
+procedure TMainForm.FormShow(Sender: TObject);
+begin
+end;
+
+procedure TMainForm.FormWindowStateChange(Sender: TObject);
+begin
 end;
 
 procedure TMainForm.ForceForegroundWindow;
@@ -1017,6 +1022,12 @@ end;
 
 procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
+  if WindowState <> wsMaximized then
+    Engine.Options.BoundRect := BoundsRect;
+
+  Engine.Options.WindowMaxmized := WindowState = wsMaximized;
+
+
   Engine.Options.ShowFolder := FoldersAct.Checked;
   Engine.Options.ShowFolderFiles := ShowFolderFiles;
   Engine.Options.SortFolderFiles := SortFolderFiles;
@@ -1027,8 +1038,6 @@ begin
   Engine.Options.MessagesHeight := MessagesTabs.Height;
   Engine.Options.FoldersWidth := FoldersPnl.Width;
 
-  Engine.Options.WindowMaxmized := WindowState = wsMaximized;
-  Engine.Options.BoundRect := BoundsRect;
   Engine.Session.Close;
   if FRunProject <> nil then
     FRunProject.Terminate;
@@ -1330,6 +1339,12 @@ begin
   IPCServer.ServerID := sApplicationID;
   IPCServer.StartServer;
   LoadAddons;
+
+
+  BoundsRect := Engine.Options.BoundRect;
+
+  if Engine.Options.WindowMaxmized then
+    WindowState := wsMaximized;
 
   if Engine.Options.AutoOpenProject then
   begin

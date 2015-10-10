@@ -18,6 +18,8 @@ object MainForm: TMainForm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnDropFiles = FormDropFiles
+  OnShow = FormShow
+  OnWindowStateChange = FormWindowStateChange
   Position = poDefaultPosOnly
   ShowHint = True
   LCLVersion = '1.5'
