@@ -190,7 +190,6 @@ type
   TEditorProjectOptions = class(TPersistent)
   public
     constructor Create; virtual;
-    function Show: Boolean; virtual; //TODO REMOVE IT
     function CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame; virtual;
   end;
 
@@ -199,7 +198,7 @@ type
   TEditorProject = class sealed(TmnXMLProfile)
   private
     FOptions: TEditorProjectOptions;
-    FPath: string;
+    FPath1: string;
     FTendencyName: string;
     FDescription: string;
     FRootUrl: string;
@@ -226,7 +225,7 @@ type
     destructor Destroy; override;
     procedure LoadFromFile(FileName: string); override;
     property FileName: string read FFileName write FFileName;
-    property Path: string read FPath write FPath;
+    property Path: string read FPath1 write FPath1;
     function Save: Boolean;
     function SaveAs: Boolean;
     procedure SetSCMClass(SCMClass: TEditorSCM);
@@ -458,6 +457,7 @@ type
 
   TEditorOptions = class(TmnXMLProfile)
   private
+    FAutoOpenProject: Boolean;
     FIgnoreNames: string;
     FShowFolder: Boolean;
     FShowFolderFiles: TShowFolderFiles;
@@ -507,6 +507,7 @@ type
     property ReplaceHistory: TStringList read FReplaceHistory;
     property SearchFolderHistory: TStringList read FSearchFolderHistory;
   published
+    property AutoOpenProject: Boolean read FAutoOpenProject write FAutoOpenProject;
     property ExtraExtensions: TStringList read FExtraExtensions write FExtraExtensions;
     property IgnoreNames: string read FIgnoreNames write FIgnoreNames;
     property CollectAutoComplete: Boolean read FCollectAutoComplete write FCollectAutoComplete default False;
@@ -1030,11 +1031,6 @@ end;
 constructor TEditorProjectOptions.Create;
 begin
   inherited;
-end;
-
-function TEditorProjectOptions.Show: Boolean;
-begin
-  Result := False;
 end;
 
 function TEditorProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame;
@@ -1714,7 +1710,7 @@ end;
 
 function TEditorTendency.CreateOptions: TEditorProjectOptions;
 begin
-  Result := nil;
+  Result := TEditorProjectOptions.Create;
 end;
 
 function TEditorTendency.GetDefaultGroup: TFileGroup;
@@ -2544,7 +2540,7 @@ begin
     if FProject <> nil then
       FreeAndNil(FProject);
     FProject := Value;
-    Engine.UpdateState([ecsChanged, ecsState, ecsRefresh]);
+    Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
   end;
 end;
 
@@ -3706,12 +3702,14 @@ end;
 
 procedure TEditorProject.SetRootDir(AValue: string);
 begin
-  if FRootDir =AValue then Exit;
-  FRootDir :=AValue;
-  if FRootDir <> '' then
-    FPath := ExpandToPath(FRootDir, ExtractFilePath(FFileName))
-  else
-    FPath := '';
+  if FRootDir <> AValue then
+  begin
+    FRootDir :=AValue;
+    if FRootDir <> '' then
+      FPath1 := ExpandToPath(FRootDir, ExtractFilePath(FFileName))
+    else
+      FPath1 := '';
+  end;
 end;
 
 procedure TEditorProject.SetSCM(AValue: TEditorSCM);

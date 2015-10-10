@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  EditorEngine, mneDClasses;
+  EditorEngine, SelectFiles, mneDClasses;
 
 type
 
@@ -18,11 +18,12 @@ type
     MainEdit: TEdit;
     Label2: TLabel;
     OkBtn: TButton;
-    procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
   protected
   public
-    Options: TDProjectOptions;
+    //Options: TDProjectOptions;
+    Project: TEditorProject;
     procedure Apply;
     procedure Retrieve;
   end;
@@ -33,18 +34,22 @@ implementation
 
 { TDProjectFrame }
 
-procedure TDProjectFrame.Button3Click(Sender: TObject);
+procedure TDProjectFrame.Button4Click(Sender: TObject);
+var
+  s: string;
 begin
+  ShowSelectFile(Project.Path, s);
+  MainEdit.Text := s;
 end;
 
 procedure TDProjectFrame.Apply;
 begin
-  Options.MainFile := MainEdit.Text;
+  (Project.Options as TDProjectOptions).MainFile := MainEdit.Text;
 end;
 
 procedure TDProjectFrame.Retrieve;
 begin
-  MainEdit.Text := Options.MainFile;
+  MainEdit.Text := (Project.Options as TDProjectOptions).MainFile;
 end;
 
 end.

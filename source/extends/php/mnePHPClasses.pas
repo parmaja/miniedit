@@ -92,8 +92,6 @@ type
 
   TPHPRunMode = (prunConsole, prunUrl);
 
-  { TPHPProject }
-
   { TPHPProjectOptions }
 
   TPHPProjectOptions = class(TEditorProjectOptions)
@@ -102,7 +100,7 @@ type
     FRunMode: TPHPRunMode;
   public
     constructor Create; override;
-    function Show: Boolean; override;
+    function CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame; override;
   published
     property RunMode: TPHPRunMode read FRunMode write FRunMode;
     property RootUrl: string read FRootUrl write FRootUrl;
@@ -144,9 +142,11 @@ begin
   inherited;
 end;
 
-function TPHPProjectOptions.Show: Boolean;
+function TPHPProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame;
 begin
-  Result :=inherited Show;
+  Result := nil;//not now
+{  Result := TPHPProjectFrame.Create(AOwner);
+  TPHPProjectFrame(Result).Options := AProject.Options as TPHPProjectOptions;}
 end;
 
 { TXHTMLFile }

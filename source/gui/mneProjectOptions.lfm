@@ -41,12 +41,13 @@ object ProjectForm: TProjectForm
     Height = 232
     Top = 5
     Width = 463
-    ActivePage = TabSheet1
+    ActivePage = GeneralSheet
     Anchors = [akTop, akLeft, akRight, akBottom]
     TabIndex = 0
     TabOrder = 2
     OnChange = PageControlChange
-    object TabSheet1: TTabSheet
+    OnChanging = PageControlChanging
+    object GeneralSheet: TTabSheet
       Caption = 'General'
       ClientHeight = 206
       ClientWidth = 455
@@ -152,7 +153,7 @@ object ProjectForm: TProjectForm
     end
   end
   object OpenDialog: TOpenDialog
-    left = 70
-    top = 183
+    left = 85
+    top = 216
   end
 end

@@ -92,7 +92,7 @@ end;
 function TDProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame;
 begin
   Result := TDProjectFrame.Create(AOwner);
-  TDProjectFrame(Result).Options := AProject.Options as TDProjectOptions;
+  TDProjectFrame(Result).Project := AProject;
 end;
 
 { TDFile }

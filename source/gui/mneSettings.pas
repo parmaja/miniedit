@@ -18,6 +18,7 @@ type
   { TEditorSettingForm }
 
   TEditorSettingForm = class(TForm)
+    AutoOpenProjectChk: TCheckBox;
     IgnoreNamesEdit: TEdit;
     Label1: TLabel;
     Label11: TLabel;
@@ -80,6 +81,7 @@ procedure TEditorSettingForm.Apply;
 var
   i, c: Integer;
 begin
+  FEngine.Options.AutoOpenProject := AutoOpenProjectChk.Checked;
   FEngine.Options.CollectAutoComplete := CollectAutoCompleteChk.Checked;
   FEngine.Options.CollectTimeout := CollectTimeoutSpn.Position;
   FEngine.Options.SendOutputToNewFile := SendOutputToNewFileChk.Checked;
@@ -100,6 +102,7 @@ procedure TEditorSettingForm.Retrive;
 var
   i, c: Integer;
 begin
+  AutoOpenProjectChk.Checked := FEngine.Options.AutoOpenProject;
   CollectAutoCompleteChk.Checked := FEngine.Options.CollectAutoComplete;
   CollectTimeoutSpn.Position := FEngine.Options.CollectTimeout;
   SendOutputToNewFileChk.Checked := FEngine.Options.SendOutputToNewFile;

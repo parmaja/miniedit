@@ -12,23 +12,26 @@ object DProjectFrame: TDProjectFrame
     Left = 68
     Height = 23
     Top = 19
-    Width = 124
+    Width = 181
+    Anchors = [akTop, akLeft, akRight]
     TabOrder = 0
   end
   object Label2: TLabel
     Left = 11
     Height = 15
-    Top = 21
+    Top = 22
     Width = 46
     Caption = 'Main file'
     ParentColor = False
   end
   object Button4: TButton
-    Left = 196
+    Left = 253
     Height = 21
     Top = 20
     Width = 22
+    Anchors = [akTop, akRight]
     Caption = '...'
+    OnClick = Button4Click
     TabOrder = 1
   end
 end

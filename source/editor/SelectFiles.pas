@@ -37,7 +37,7 @@ type
     procedure ShowFiles;
   end;
 
-function ShowSelectFile(vRoot: string): Boolean;
+function ShowSelectFile(vRoot: string; out FileName: string): Boolean;
 
 implementation
 
@@ -49,7 +49,7 @@ var
 
 {$R *.lfm}
 
-function ShowSelectFile(vRoot: string): Boolean;
+function ShowSelectFile(vRoot: string; out FileName: string): Boolean;
 begin
   with TSelectFileForm.Create(Application) do
   begin
@@ -64,8 +64,10 @@ begin
         if FilesList.Selected <> nil then
         begin
           LastFilter := FilterEdit.Text;
-          Engine.Files.OpenFile(vRoot + FilesList.Selected.SubItems[0] + FilesList.Selected.Caption);
-        end;
+          FileName := vRoot + FilesList.Selected.SubItems[0] + DirectorySeparator + FilesList.Selected.Caption;
+        end
+        else
+          Result := False;
       end;
       Free;
     finally

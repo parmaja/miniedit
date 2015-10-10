@@ -33,7 +33,7 @@ type
     RootDirEdit: TEdit;
     SaveDesktopChk: TCheckBox;
     SCMCbo: TComboBox;
-    TabSheet1: TTabSheet;
+    GeneralSheet: TTabSheet;
     TendencyCbo: TComboBox;
     procedure Label3Click(Sender: TObject);
     procedure OkBtnClick(Sender: TObject);
@@ -42,12 +42,13 @@ type
     procedure Button3Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure PageControlChange(Sender: TObject);
+    procedure PageControlChanging(Sender: TObject; var AllowChange: Boolean);
   private
     FProject: TEditorProject;
     FFrame: TFrame;
   protected
   public
-    procedure Apply;
+    procedure Apply(GeneralOnly: Boolean = False);
     procedure Retrive;
   end;
 
@@ -84,7 +85,7 @@ begin
   CloseAction := caFree;
 end;
 
-procedure TProjectForm.Apply;
+procedure TProjectForm.Apply(GeneralOnly: Boolean);
 begin
   FProject.Name := NameEdit.Text;
   FProject.Description := DescriptionEdit.Text;
@@ -93,7 +94,7 @@ begin
   if TendencyCbo.ItemIndex >= 0 then
     FProject.TendencyName := TEditorTendency(TendencyCbo.Items.Objects[TendencyCbo.ItemIndex]).Name;
   FProject.SetSCMClass(TEditorSCM(SCMCbo.Items.Objects[SCMCbo.ItemIndex]));
-  if Supports(FFrame, IEditorFrame) then
+  if not GeneralOnly and Supports(FFrame, IEditorFrame) then
     (FFrame as IEditorFrame).Apply;
 end;
 
@@ -180,6 +181,12 @@ end;
 procedure TProjectForm.PageControlChange(Sender: TObject);
 begin
 
+end;
+
+procedure TProjectForm.PageControlChanging(Sender: TObject; var AllowChange: Boolean);
+begin
+  if PageControl.ActivePage = GeneralSheet then
+    Apply(True);
 end;
 
 end.

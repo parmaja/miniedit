@@ -1892,8 +1892,8 @@ object MainForm: TMainForm
     end
   end
   object FolderMenu: TPopupMenu
-    left = 79
-    top = 196
+    left = 62
+    top = 215
     object Home1: TMenuItem
       Action = FolderHomeAct
       OnClick = FolderHomeActExecute
@@ -1943,8 +1943,8 @@ object MainForm: TMainForm
     end
   end
   object FileModeMenu: TPopupMenu
-    left = 259
-    top = 151
+    left = 290
+    top = 170
     object UnixMnu: TMenuItem
       Caption = 'Unix'
       OnClick = UnixMnuClick
@@ -2023,8 +2023,8 @@ object MainForm: TMainForm
     end
   end
   object WatchesPopupMenu: TPopupMenu
-    left = 186
-    top = 127
+    left = 194
+    top = 110
     object Add1: TMenuItem
       Caption = 'Add'
       OnClick = Add1Click

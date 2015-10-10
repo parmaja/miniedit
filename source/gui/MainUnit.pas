@@ -930,7 +930,8 @@ begin
       Engine.Files.SaveAll;
   end;
 
-  if (Engine.Session.IsOpened) then
+  if CanClose and (Engine.Session.IsOpened) then
+  begin
     if (Engine.Session.Project.FileName = '') then
     begin
       mr := MsgBox.Msg.YesNoCancel('Save project ' + Engine.Session.Project.Name + ' before close?');
@@ -938,7 +939,10 @@ begin
         CanClose := False
       else if mr = msgcYes then
         Engine.Session.Project.Save;
-    end;
+    end
+    else
+      Engine.Session.Project.Save;
+  end;
 end;
 
 procedure TMainForm.SelectProjectTypeActExecute(Sender: TObject);
@@ -1128,6 +1132,8 @@ begin
   if Engine.Session.IsOpened then
   begin
     ShowProjectForm(Engine.Session.Project);
+    if Engine.Session.Project.FileName <> '' then
+      Engine.Session.Project.Save;
     Engine.UpdateState([ecsChanged]);
   end;
 end;
@@ -1136,12 +1142,20 @@ procedure TMainForm.NewProjectActExecute(Sender: TObject);
 var
   aProject: TEditorProject;
 begin
-  Engine.Session.Close;
-  aProject := Engine.Session.New;
-  if ShowProjectForm(aProject) then
-    Engine.Session.Project := aProject
-  else
-    aProject.Free;
+  Engine.BeginUpdate;
+  try
+    if (Engine.Session.Project = nil) or (Engine.Session.Project.Save) then
+    begin
+      //Engine.Session.Close;
+      aProject := Engine.Session.New;
+      if ShowProjectForm(aProject) then
+        Engine.Session.Project := aProject
+      else
+        aProject.Free;
+    end;
+  finally
+    Engine.EndUpdate;
+  end;
 end;
 
 procedure TMainForm.OpenProjectActExecute(Sender: TObject);
@@ -1155,11 +1169,17 @@ begin
 end;
 
 procedure TMainForm.SelectFileActExecute(Sender: TObject);
+var
+  aFileName: string;
+  r: boolean;
 begin
   if Engine.Session.IsOpened then
-    ShowSelectFile(Engine.Session.Project.Path)
+    r := ShowSelectFile(Engine.Session.Project.Path, aFileName)
   else
-    ShowSelectFile(Folder);
+    r := ShowSelectFile(Folder, aFileName);
+
+  if r then
+    Engine.Files.OpenFile(aFileName);
 end;
 
 procedure TMainForm.EnumRecentFile;
@@ -1310,6 +1330,12 @@ begin
   IPCServer.ServerID := sApplicationID;
   IPCServer.StartServer;
   LoadAddons;
+
+  if Engine.Options.AutoOpenProject then
+  begin
+    if Engine.Options.RecentProjects.Count > 0 then
+      Engine.Session.Load(Engine.Options.RecentProjects[0]);
+  end;
 end;
 
 procedure TMainForm.CheckActExecute(Sender: TObject);
@@ -1646,7 +1672,6 @@ begin
   if (Engine.Session.IsOpened) and (Engine.Session.Project.Path <> '') then
   begin
     Folder := Engine.Session.Project.Path;
-
   end;
 end;
 
