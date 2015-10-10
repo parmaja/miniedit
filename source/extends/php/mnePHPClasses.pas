@@ -290,7 +290,7 @@ begin
         prunConsole:
         begin
           {$ifdef windows}
-          ExecuteProcess('cmd ',['/c "php.exe "' + aFile + '" & pause'], []);
+          ExecuteProcess('cmd ','/c "php.exe ' + aFile + '" & pause', []);
           {$endif}
 
           {$ifdef linux}

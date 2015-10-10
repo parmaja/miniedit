@@ -5,8 +5,8 @@ unit mneDProjectFrames;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  EditorEngine, SelectFiles, mneDClasses;
+  Classes, SysUtils, FileUtil, SynEdit, Forms, Controls, Graphics, Dialogs,
+  StdCtrls, EditorEngine, SelectFiles, mneDClasses;
 
 type
 
@@ -15,9 +15,11 @@ type
   TDProjectFrame = class(TFrame, IEditorFrame)
     Button4: TButton;
     CancelBtn: TButton;
+    PathsLbl: TLabel;
     MainEdit: TEdit;
     Label2: TLabel;
     OkBtn: TButton;
+    PathsEdit: TSynEdit;
     procedure Button4Click(Sender: TObject);
   private
   protected
@@ -45,11 +47,13 @@ end;
 procedure TDProjectFrame.Apply;
 begin
   (Project.Options as TDProjectOptions).MainFile := MainEdit.Text;
+  (Project.Options as TDProjectOptions).Paths.Assign(PathsEdit.Lines);
 end;
 
 procedure TDProjectFrame.Retrieve;
 begin
   MainEdit.Text := (Project.Options as TDProjectOptions).MainFile;
+  PathsEdit.Lines.Assign((Project.Options as TDProjectOptions).Paths);
 end;
 
 end.

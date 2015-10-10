@@ -49,11 +49,15 @@ type
   TDProjectOptions = class(TEditorProjectOptions)
   private
     FMainFile: string;
+    FPaths: TStrings;
+    procedure SetPaths(AValue: TStrings);
   public
     constructor Create; override;
+    destructor Destroy; override;
     function CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame; override;
   published
     property MainFile: string read FMainFile write FMainFile;
+    property Paths: TStrings read FPaths write SetPaths;
   end;
 
   { TDTendency }
@@ -80,9 +84,21 @@ uses
 
 { TDProject }
 
+procedure TDProjectOptions.SetPaths(AValue: TStrings);
+begin
+  FPaths.Assign(AValue);
+end;
+
 constructor TDProjectOptions.Create;
 begin
   inherited;
+  FPaths := TStringList.Create;
+end;
+
+destructor TDProjectOptions.Destroy;
+begin
+  FreeAndNil(FPaths);
+  inherited Destroy;
 end;
 
 function TDProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame;
@@ -168,32 +184,41 @@ var
   aFile: string;
   aRoot: string;
   aCompiler: string;
+  s: string;
+  i: Integer;
+  Options: TDProjectOptions;
 begin
   //if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
+  Options := nil;
 
   if (Engine.Session.IsOpened) then
   begin
-    aFile := ExpandToPath(aFile, (Engine.Session.Project.Options as TDProjectOptions).MainFile);
-    if (aFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
-      aFile := Engine.Files.Current.Name;
+    Options := (Engine.Session.Project.Options as TDProjectOptions);
     aRoot := IncludeTrailingPathDelimiter(Engine.Session.Project.RootDir);
-  end
-  else
-  begin
-    //Check the file is executable
-    if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
-    begin
-      aFile := Engine.Files.Current.Name;
-    end
+    aFile := ExpandToPath(Options.MainFile, aRoot);
   end;
+  if (aFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
+    aFile := Engine.Files.Current.Name;
+  if (aRoot = '') then
+    aRoot := ExtractFileDir(aFile);
 
   if aFile <> '' then
   begin
     aCompiler := Compiler;
     if aCompiler = '' then
       aCompiler := 'dmd.exe';
+
+    s := '';
+    for i := 0 to Options.Paths.Count - 1 do
+    begin
+      if Trim(Options.Paths[i]) <>'' then
+        s := s + '-I'+Trim(Options.Paths[i]) + ' ';
+    end;
+    s := aCompiler + ' ' + s + aFile;
+
     {$ifdef windows}
-    ExecuteProcess('cmd ',['/c "'+ aCompiler +' "' + aFile + '" & pause'], []);
+    SetCurrentDir(aRoot);
+    ExecuteProcess('cmd ', '/c "'+ s + '" & pause', []);
     {$endif}
 
     {$ifdef linux}
@@ -235,7 +260,7 @@ end;
 procedure TDTendency.Init;
 begin
   FCapabilities := [capRun, capCompile, capLink, capProjectOptions, capOptions];
-  FTitle := 'D project';
+  FTitle := 'D Lang';
   FDescription := 'D Files, *.D, *.inc';
   FName := 'D';
   FImageIndex := -1;
