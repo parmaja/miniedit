@@ -1247,8 +1247,8 @@ object MainForm: TMainForm
         OnClick = SCMCompareToActExecute
       end
     end
-    object DebugMnu: TMenuItem
-      Caption = 'Debug'
+    object ExecuteMnu: TMenuItem
+      Caption = 'Execute'
       object StartServer1: TMenuItem
         Action = DBGStartServerAct
         OnClick = DBGStartServerActExecute

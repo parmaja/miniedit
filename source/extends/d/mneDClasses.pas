@@ -44,19 +44,15 @@ type
   public
   end;
 
-  TDRunMode = (prunConsole, prunUrl);
-
   { TDProjectOptions }
 
   TDProjectOptions = class(TEditorProjectOptions)
   private
     FMainFile: string;
-    FRunMode: TDRunMode;
   public
     constructor Create; override;
     function CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame; override;
   published
-    property RunMode: TDRunMode read FRunMode write FRunMode;
     property MainFile: string read FMainFile write FMainFile;
   end;
 
@@ -64,7 +60,7 @@ type
 
   TDTendency = class(TEditorTendency)
   private
-    FDPath: string;
+    FCompiler: string;
   protected
     function CreateDebugger: TEditorDebugger; override;
     function CreateOptions: TEditorProjectOptions; override;
@@ -74,7 +70,7 @@ type
     constructor Create; override;
     procedure Show; override;
   published
-    property DPath: string read FDPath write FDPath;
+    property Compiler: string read FCompiler write FCompiler;
   end;
 
 implementation
@@ -171,49 +167,40 @@ procedure TDTendency.Run;
 var
   aFile: string;
   aRoot: string;
-  aUrlMode: TDRunMode;
+  aCompiler: string;
 begin
   //if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
 
-  if Engine.Tendency.Debug <> nil then
-  if Engine.Tendency.Debug.Running then
-    Engine.Tendency.Debug.Action(dbaRun)
+  if (Engine.Session.IsOpened) then
+  begin
+    aFile := ExpandToPath(aFile, (Engine.Session.Project.Options as TDProjectOptions).MainFile);
+    if (aFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
+      aFile := Engine.Files.Current.Name;
+    aRoot := IncludeTrailingPathDelimiter(Engine.Session.Project.RootDir);
+  end
   else
   begin
-    if (Engine.Session.IsOpened) then
+    //Check the file is executable
+    if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
     begin
-      aFile := Engine.Session.Project.RootDir;
-      aFile := ExpandToPath(aFile, Engine.Session.Project.RootDir);
-      aUrlMode := (Engine.Session.Project.Options as TDProjectOptions).RunMode;
-      aRoot := IncludeTrailingPathDelimiter(Engine.Session.Project.RootDir);
+      aFile := Engine.Files.Current.Name;
     end
-    else
-    begin
-      //Check the file is executable
-      if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
-      begin
-        aFile := Engine.Files.Current.Name;
-        aUrlMode := prunConsole;
-      end
-    end;
+  end;
 
-    if aFile <> '' then
-    begin
-      case aUrlMode of
-        prunConsole:
-        begin
-          {$ifdef windows}
-          ExecuteProcess('cmd ',['/c "dmd.exe "' + aFile + '" & pause'], []);
-          {$endif}
+  if aFile <> '' then
+  begin
+    aCompiler := Compiler;
+    if aCompiler = '' then
+      aCompiler := 'dmd.exe';
+    {$ifdef windows}
+    ExecuteProcess('cmd ',['/c "'+ aCompiler +' "' + aFile + '" & pause'], []);
+    {$endif}
 
-          {$ifdef linux}
-          {$endif}
+    {$ifdef linux}
+    {$endif}
 
-          {$ifdef macos}
-          {$endif}
-        end;
-      end;
-    end;
+    {$ifdef macos}
+    {$endif}
   end;
 end;
 

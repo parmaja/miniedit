@@ -251,14 +251,13 @@ var
 begin
   //if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
 
-  if Engine.Tendency.Debug <> nil then
+  if Engine.Tendency.Debug <> nil then //TODO review
   if Engine.Tendency.Debug.Running then
     Engine.Tendency.Debug.Action(dbaRun)
   else
   begin
     if (Engine.Session.IsOpened) then
     begin
-      aFile := Engine.Session.Project.RootDir;
       aFile := ExpandToPath(aFile, Engine.Session.Project.RootDir);
       aUrlMode := (Engine.Session.Project.Options as TPHPProjectOptions).RunMode;
       aRoot := IncludeTrailingPathDelimiter(Engine.Session.Project.RootDir);
@@ -335,7 +334,7 @@ end;
 
 procedure TPHPTendency.Init;
 begin
-  FCapabilities := [capRun, capProjectOptions, capOptions];
+  FCapabilities := [capRun, capDebug, capDebugServer, capProjectOptions, capOptions];
   FTitle := 'PHP project';
   FDescription := 'PHP Files, *.php, *.inc';
   FName := 'PHP';

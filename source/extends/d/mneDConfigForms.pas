@@ -16,7 +16,7 @@ type
     CancelBtn: TButton;
     Label1: TLabel;
     OkBtn: TButton;
-    DPathEdit: TEdit;
+    CompilerEdit: TEdit;
     procedure Button3Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
@@ -40,11 +40,11 @@ procedure TDConfigForm.Button3Click(Sender: TObject);
 var
   aFolder: String;
 begin
-  aFolder := DPathEdit.Text;
+  {aFolder := CompilerEdit.Text;
   if SelectFolder('Select D directory', '', aFolder) then
   begin
-    DPathEdit.Text := aFolder;
-  end;
+    CompilerEdit.Text := aFolder;
+  end;}
 end;
 
 procedure TDConfigForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -56,12 +56,12 @@ end;
 
 procedure TDConfigForm.Apply;
 begin
-  FTendency.DPath := DPathEdit.Text;
+  FTendency.Compiler := CompilerEdit.Text;
 end;
 
 procedure TDConfigForm.Retrive;
 begin
-  DPathEdit.Text := FTendency.DPath;
+  CompilerEdit.Text := FTendency.Compiler;
 end;
 
 end.

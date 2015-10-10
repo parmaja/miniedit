@@ -159,7 +159,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="39">
+    <Units Count="40">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -374,12 +374,19 @@
         <ResourceBaseClass Value="Form"/>
       </Unit37>
       <Unit38>
+        <Filename Value="..\extends\d\mneDConfigForms.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="DConfigForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit38>
+      <Unit39>
         <Filename Value="..\extends\d\mneDProjectFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="DProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit38>
+      </Unit39>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

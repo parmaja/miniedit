@@ -260,7 +260,7 @@ type
     RevertMnu: TMenuItem;
     DBGStartServerAct: TAction;
     DBGStopServerAct: TAction;
-    DebugMnu: TMenuItem;
+    ExecuteMnu: TMenuItem;
     StartServer1: TMenuItem;
     DBGStopServerAct1: TMenuItem;
     DBGStepIntoAct: TAction;
@@ -1398,7 +1398,8 @@ begin
   SCMMnu.Visible := Engine.SCM <> nil;
   if Engine.SCM <> nil then
     SCMMnu.Caption := Engine.SCM.Name;
-  DebugMnu.Visible := Engine.Tendency.Debug <> nil;
+  ExecuteMnu.Visible := capRun in Engine.Tendency.Capabilities;
+  RunAct.Visible := capRun in Engine.Tendency.Capabilities;
   TypePnl.Caption := Engine.Tendency.Name;
 end;
 

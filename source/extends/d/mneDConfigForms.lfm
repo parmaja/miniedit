@@ -10,18 +10,20 @@ object DConfigForm: TDConfigForm
   OnClose = FormClose
   Position = poMainFormCenter
   LCLVersion = '1.5'
-  object DPathEdit: TEdit
+  object CompilerEdit: TEdit
     Left = 11
     Height = 23
-    Top = 64
+    Top = 28
     Width = 360
+    Anchors = [akTop, akLeft, akRight]
     TabOrder = 0
   end
   object Button3: TButton
     Left = 371
     Height = 21
-    Top = 65
+    Top = 29
     Width = 22
+    Anchors = [akTop, akRight]
     Caption = '...'
     OnClick = Button3Click
     TabOrder = 1
@@ -29,9 +31,9 @@ object DConfigForm: TDConfigForm
   object Label1: TLabel
     Left = 11
     Height = 15
-    Top = 45
-    Width = 35
-    Caption = 'D path'
+    Top = 9
+    Width = 58
+    Caption = 'D compiler'
     ParentColor = False
   end
   object OkBtn: TButton

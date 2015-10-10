@@ -117,7 +117,7 @@ type
     Run, Compile, Collect file groups and have special properties
   }
 
-  TEditorCapability = (capRun, capCompile, capLink, capOSDepended, capOptions, capProjectOptions);
+  TEditorCapability = (capRun, capCompile, capLink, capDebug, capDebugServer, capTrace, capOSDepended, capOptions, capProjectOptions);
 
   TEditorCapabilities = set of TEditorCapability;
 
