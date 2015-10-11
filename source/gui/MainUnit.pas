@@ -609,7 +609,13 @@ begin
     Folder := ExtractFilePath(lFilePath);
     // The filename is expanded, if necessary, in EditorEngine.TEditorFiles.InternalOpenFile
     Engine.Files.OpenFile(lFilePath);
+  end
+  else if Engine.Options.AutoOpenProject then
+  begin
+    if Engine.Options.RecentProjects.Count > 0 then
+      Engine.Session.Load(Engine.Options.RecentProjects[0]);
   end;
+
   if Engine.Options.AutoStartDebugServer then
     DBGStartServerAct.Execute;
 end;
@@ -1346,11 +1352,6 @@ begin
   if Engine.Options.WindowMaxmized then
     WindowState := wsMaximized;
 
-  if Engine.Options.AutoOpenProject then
-  begin
-    if Engine.Options.RecentProjects.Count > 0 then
-      Engine.Session.Load(Engine.Options.RecentProjects[0]);
-  end;
 end;
 
 procedure TMainForm.CheckActExecute(Sender: TObject);
@@ -2545,11 +2546,10 @@ end;
 
 procedure TMainForm.SwitchFocusActExecute(Sender: TObject);
 begin
-  if FoldersAct.Checked and (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomControl) and (Engine.Files.Current.Control as TCustomControl).Focused then
+  if FoldersAct.Checked and not FileList.Focused then
     FileList.SetFocus
   else if (Engine.Files.Current <> nil) then
-    if (Engine.Files.Current.Control is TCustomControl) then
-      (Engine.Files.Current.Control as TCustomControl).SetFocus;
+    Engine.Files.Current.Activate;
 end;
 
 procedure TMainForm.QuickSearchNextBtnClick(Sender: TObject);

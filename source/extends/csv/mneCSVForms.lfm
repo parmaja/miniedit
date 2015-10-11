@@ -126,7 +126,6 @@ object CSVForm: TCSVForm
     TitleFont.Pitch = fpVariable
     TitleFont.Quality = fqDraft
     OnDrawCell = DataGridDrawCell
-    OnEditingDone = DataGridEditingDone
     OnGetEditText = DataGridGetEditText
     OnKeyDown = DataGridKeyDown
     OnSelectEditor = DataGridSelectEditor

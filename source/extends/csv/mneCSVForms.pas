@@ -34,7 +34,6 @@ type
 
     procedure ConfigFileBtnClick(Sender: TObject);
     procedure DataGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
-    procedure DataGridEditingDone(Sender: TObject);
     procedure DataGridGetEditText(Sender: TObject; ACol, ARow: Integer; var Value: string);
     procedure DataGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 
@@ -130,7 +129,10 @@ begin
           ((aRow >= DataGrid.Selection.Top) and (aRow <= DataGrid.Selection.Bottom) and (aCol >= DataGrid.Selection.Left) and (aCol <= DataGrid.Selection.Right))
     then
   begin
-    DataGrid.Canvas.Brush.Color := clBlack;
+    if DataGrid.Focused then
+      DataGrid.Canvas.Brush.Color := clBlack
+    else
+      DataGrid.Canvas.Brush.Color := clGray;
     DataGrid.Canvas.FillRect(aRect);
     DataGrid.Canvas.Font.Color := clWhite;
   end
@@ -146,11 +148,6 @@ procedure TCSVForm.ConfigFileBtnClick(Sender: TObject);
 begin
   SaveConfigFile;
   RefreshControls;
-end;
-
-procedure TCSVForm.DataGridEditingDone(Sender: TObject);
-begin
-
 end;
 
 procedure TCSVForm.DataGridGetEditText(Sender: TObject; ACol, ARow: Integer; var Value: string);

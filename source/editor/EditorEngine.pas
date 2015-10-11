@@ -319,6 +319,7 @@ type
     function CanOpenInclude: Boolean; virtual;
     function CheckChanged: Boolean;
     //
+    procedure Activate; virtual;
     procedure GotoLine; virtual;
     procedure Find; virtual;
     procedure FindNext; virtual;
@@ -3003,8 +3004,6 @@ begin
 end;
 
 procedure TEditorFile.Show;
-var
-  aControl: TWinControl;
 begin
   if Control <> nil then
   begin
@@ -3013,18 +3012,7 @@ begin
     Control.Visible := True;
     Control.Show;
     Control.BringToFront;
-    if Control.CanFocus then //TODO, focus the read control inside that control
-    begin
-      if Supports(Control, IEditorFrame) then
-        aControl := (Control as IEditorFrame).GetMainControl
-      else
-        aControl := nil;
-
-      if aControl = nil then
-        aControl := Control as TWinControl;
-
-      (Engine.Container.Owner as TCustomForm).ActiveControl := aControl;
-    end;
+    Activate;
   end;
 end;
 
@@ -3115,6 +3103,24 @@ begin
       else
         Close;
     end;
+  end;
+end;
+
+procedure TEditorFile.Activate;
+var
+  aControl: TWinControl;
+begin
+  if Control.CanFocus then
+  begin
+    if Supports(Control, IEditorFrame) then
+      aControl := (Control as IEditorFrame).GetMainControl
+    else
+      aControl := nil;
+
+    if aControl = nil then
+      aControl := Control as TWinControl;
+
+    (Engine.Container.Owner as TCustomForm).ActiveControl := aControl;
   end;
 end;
 
