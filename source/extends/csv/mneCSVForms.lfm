@@ -130,6 +130,7 @@ object CSVForm: TCSVForm
     OnGetEditText = DataGridGetEditText
     OnKeyDown = DataGridKeyDown
     OnSelectEditor = DataGridSelectEditor
+    OnSetEditText = DataGridSetEditText
     ColWidths = (
       22
       77

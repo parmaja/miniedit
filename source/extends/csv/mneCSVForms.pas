@@ -39,6 +39,8 @@ type
     procedure DataGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 
     procedure DataGridSelectEditor(Sender: TObject; aCol, aRow: Integer; var Editor: TWinControl);
+
+      procedure DataGridSetEditText(Sender: TObject; ACol, ARow: Integer; const Value: string);
     procedure DelConfigFileBtnClick(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
@@ -59,7 +61,8 @@ type
     procedure Changed;
   public
     CSVOptions: TmncCSVOptions;
-
+    FInteractive: Boolean;
+    FLoading: Boolean;
     procedure RefreshControls;
     function IsConfigFileExists: Boolean;
     procedure SaveConfigFile;
@@ -147,7 +150,7 @@ end;
 
 procedure TCSVForm.DataGridEditingDone(Sender: TObject);
 begin
-  Changed;
+
 end;
 
 procedure TCSVForm.DataGridGetEditText(Sender: TObject; ACol, ARow: Integer; var Value: string);
@@ -170,6 +173,11 @@ procedure TCSVForm.DataGridSelectEditor(Sender: TObject; aCol, aRow: Integer; va
 begin
   Editor.Color := clBlack;
   Editor.Font.Color := clWhite;
+end;
+
+procedure TCSVForm.DataGridSetEditText(Sender: TObject; ACol, ARow: Integer; const Value: string);
+begin
+  Changed;
 end;
 
 procedure TCSVForm.DelConfigFileBtnClick(Sender: TObject);
@@ -226,7 +234,8 @@ end;
 
 procedure TCSVForm.StopBtn2Click(Sender: TObject);
 begin
-  ClearGrid;
+  if not Msg.No('Are you sure you want to clear it') then
+    ClearGrid;
 end;
 
 procedure TCSVForm.OptionsBtnClick(Sender: TObject);
@@ -247,7 +256,7 @@ end;
 
 procedure TCSVForm.Changed;
 begin
-  if Assigned(FOnChanged) then
+  if not FLoading and Assigned(FOnChanged) then
     FOnChanged(Self);
 end;
 
@@ -333,47 +342,52 @@ begin
 
   RefreshControls;
 
-  ClearGrid;
-  csvCnn := TmncCSVConnection.Create;
-  csvSes := TmncCSVSession.Create(csvCnn);
+  FLoading := True;
   try
-    b := IsConfigFileExists;
-    if b then
-      Ini := TIniFile.Create(FFileName + '.conf')
-    else
-      Ini := TIniFile.Create(Engine.WorkSpace + 'mne-csv-options.ini');
+    ClearGrid;
+    csvCnn := TmncCSVConnection.Create;
+    csvSes := TmncCSVSession.Create(csvCnn);
     try
-      CSVOptions.LoadFromIni('options', Ini);
-    finally
-      Ini.Free;
-    end;
-
-    if b or ShowCSVOptions('Export CSV', CSVOptions) then
-    begin
-      csvSes.CSVOptions := CSVOptions;
-      csvCnn.Connect;
-      csvSes.Start;
-      aFile := TFileStream.Create(FileName, fmOpenRead);
-      csvCMD := TmncCSVCommand.Create(csvSes, aFile, csvmRead);
-      csvCMD.EmptyLine := elSkip;
+      b := IsConfigFileExists;
+      if b then
+        Ini := TIniFile.Create(FFileName + '.conf')
+      else
+        Ini := TIniFile.Create(Engine.WorkSpace + 'mne-csv-options.ini');
       try
-        csvCMD.Execute;
-        FillGrid(csvCMD, 'File: ' + FileName);
-      finally
-        aFile.Free;
-        csvCMD.Free;
-      end;
-
-      Ini := TIniFile.Create(Engine.WorkSpace + 'mne-csv-options.ini');
-      try
-        CSVOptions.SaveToIni('options', Ini);
+        CSVOptions.LoadFromIni('options', Ini);
       finally
         Ini.Free;
       end;
+
+      if b or ShowCSVOptions('Export CSV', CSVOptions) then
+      begin
+        csvSes.CSVOptions := CSVOptions;
+        csvCnn.Connect;
+        csvSes.Start;
+        aFile := TFileStream.Create(FileName, fmOpenRead);
+        csvCMD := TmncCSVCommand.Create(csvSes, aFile, csvmRead);
+        csvCMD.EmptyLine := elSkip;
+        try
+          csvCMD.Execute;
+          FillGrid(csvCMD, 'File: ' + FileName);
+        finally
+          aFile.Free;
+          csvCMD.Free;
+        end;
+
+        Ini := TIniFile.Create(Engine.WorkSpace + 'mne-csv-options.ini');
+        try
+          CSVOptions.SaveToIni('options', Ini);
+        finally
+          Ini.Free;
+        end;
+      end;
+    finally
+      csvSes.Free;
+      csvCnn.Free;
     end;
   finally
-    csvSes.Free;
-    csvCnn.Free;
+    FLoading := False;
   end;
 end;
 
@@ -417,6 +431,8 @@ begin
   DataGrid.FocusColor := clBlack;
   StopBtn.Enabled := True;
   Steps := 100;
+  if not FInteractive then
+    DataGrid.BeginUpdate;
   try
     IsNumbers := nil;
     if Title = '' then
@@ -459,15 +475,18 @@ begin
         IsNumbers[i] := b;
       end;
       c := 1;
+      if FInteractive then
+        CalcWidths;
       CalcWidths;
     end;
-    Application.ProcessMessages;
+    if FInteractive then
+      Application.ProcessMessages;
 
     while not SQLCMD.Done do
     begin
       if DataGrid.RowCount <= (c + 1) then
       begin
-        if (c >= Steps) then
+        if not FInteractive or (c >= Steps) then
           DataGrid.RowCount := c + Steps
         else
           DataGrid.RowCount := c + 1;
@@ -487,8 +506,11 @@ begin
       //before 100 rows will see the grid row by row filled, cheeting the eyes of user
       if (c < Steps) or (Frac(c / Steps) = 0) then
       begin
-        FetchCountLbl.Caption := IntToStr(c - 1);
-        CalcWidths;
+        if FInteractive then
+        begin
+          FetchCountLbl.Caption := IntToStr(c - 1);
+          CalcWidths;
+        end;
         Application.ProcessMessages;
         {if c > 100000 then
           steps := 100000
@@ -509,6 +531,8 @@ begin
     DataGrid.RowCount := c;
     FetchCountLbl.Caption := IntToStr(c - 1);
   finally
+    if not FInteractive then
+      DataGrid.EndUpdate(True);
     StopBtn.Enabled := False;
   end;
 end;
