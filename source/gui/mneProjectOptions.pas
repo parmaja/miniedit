@@ -94,8 +94,8 @@ begin
   if TendencyCbo.ItemIndex >= 0 then
     FProject.TendencyName := TEditorTendency(TendencyCbo.Items.Objects[TendencyCbo.ItemIndex]).Name;
   FProject.SetSCMClass(TEditorSCM(SCMCbo.Items.Objects[SCMCbo.ItemIndex]));
-  if not GeneralOnly and Supports(FFrame, IEditorFrame) then
-    (FFrame as IEditorFrame).Apply;
+  if not GeneralOnly and Supports(FFrame, IEditorOptions) then
+    (FFrame as IEditorOptions).Apply;
 end;
 
 procedure TProjectForm.Retrive;
@@ -111,8 +111,8 @@ begin
     FFrame.Parent := TabSheet;
     FFrame.Align := alClient;
     FFrame.Visible := True;
-    if Supports(FFrame, IEditorFrame) then
-      (FFrame as IEditorFrame).Retrieve;
+    if Supports(FFrame, IEditorOptions) then
+      (FFrame as IEditorOptions).Retrieve;
   end;
 
   NameEdit.Text := FProject.Name;

@@ -19,7 +19,7 @@ object CSVForm: TCSVForm
     BevelOuter = bvNone
     ClientHeight = 26
     ClientWidth = 695
-    TabOrder = 0
+    TabOrder = 1
     object FetchedLbl: TLabel
       Left = 100
       Height = 26
@@ -36,7 +36,7 @@ object CSVForm: TCSVForm
       Left = 150
       Height = 26
       Top = 0
-      Width = 495
+      Width = 323
       Align = alClient
       AutoSize = False
       Caption = '0'
@@ -51,7 +51,7 @@ object CSVForm: TCSVForm
       Align = alLeft
       Caption = 'Clear'
       OnClick = StopBtn2Click
-      TabOrder = 0
+      TabOrder = 1
     end
     object StopBtn: TButton
       Left = 0
@@ -61,17 +61,38 @@ object CSVForm: TCSVForm
       Align = alLeft
       Caption = 'S&top'
       OnClick = StopBtnClick
-      TabOrder = 1
+      TabOrder = 0
     end
-    object StopBtn3: TButton
+    object OptionsBtn: TButton
       Left = 645
       Height = 26
       Top = 0
       Width = 50
       Align = alRight
       Caption = 'Options'
-      OnClick = StopBtn3Click
+      OnClick = OptionsBtnClick
+      TabOrder = 4
+    end
+    object DelConfigFileBtn: TButton
+      Left = 473
+      Height = 26
+      Top = 0
+      Width = 86
+      Align = alRight
+      Caption = 'Delete Config'
+      OnClick = DelConfigFileBtnClick
       TabOrder = 2
+      Visible = False
+    end
+    object SaveConfigFileBtn: TButton
+      Left = 559
+      Height = 26
+      Top = 0
+      Width = 86
+      Align = alRight
+      Caption = 'Save Config'
+      OnClick = ConfigFileBtnClick
+      TabOrder = 3
     end
   end
   object DataGrid: TStringGrid
@@ -97,7 +118,7 @@ object CSVForm: TCSVForm
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected, goColSizing, goColMoving, goEditing, goRelaxedRowSelect, goDblClickAutoSize, goSmoothScroll, goHeaderHotTracking, goHeaderPushedLook, goCellHints, goRowHighlight]
     ParentFont = False
     PopupMenu = GridPopupMenu
-    TabOrder = 1
+    TabOrder = 0
     TitleFont.CharSet = ANSI_CHARSET
     TitleFont.Color = clBlack
     TitleFont.Height = -11

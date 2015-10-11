@@ -12,7 +12,7 @@ type
 
   { TDProjectFrame }
 
-  TDProjectFrame = class(TFrame, IEditorFrame)
+  TDProjectFrame = class(TFrame, IEditorOptions)
     Button4: TButton;
     CancelBtn: TButton;
     PathsLbl: TLabel;

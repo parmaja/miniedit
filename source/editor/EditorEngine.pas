@@ -36,10 +36,15 @@ type
     property ErrorLine: integer read FErrorLine write FErrorLine;
   end;
 
-  IEditorFrame = interface
+  IEditorOptions = interface
   ['{5466AAF9-FA4E-4AFE-94F2-569963F9B40F}']
     procedure Apply;
     procedure Retrieve;
+  end;
+
+  IEditorFrame = interface
+  ['{A18AE254-B91C-4354-ACD5-3E4FA9884AD0}']
+    function GetMainControl: TWinControl; //Like datagrid in csv form
   end;
 
   TEditorDesktopFile = class(TCollectionItem)
@@ -2998,6 +3003,8 @@ begin
 end;
 
 procedure TEditorFile.Show;
+var
+  aControl: TWinControl;
 begin
   if Control <> nil then
   begin
@@ -3007,7 +3014,17 @@ begin
     Control.Show;
     Control.BringToFront;
     if Control.CanFocus then //TODO, focus the read control inside that control
-      (Engine.Container.Owner as TCustomForm).ActiveControl := Control as TWinControl;
+    begin
+      if Supports(Control, IEditorFrame) then
+        aControl := (Control as IEditorFrame).GetMainControl
+      else
+        aControl := nil;
+
+      if aControl = nil then
+        aControl := Control as TWinControl;
+
+      (Engine.Container.Owner as TCustomForm).ActiveControl := aControl;
+    end;
   end;
 end;
 

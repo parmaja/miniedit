@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Grids, ExtCtrls, StdCtrls,
-  LCLType, Graphics, Menus, EditorEngine,
+  LCLType, Graphics, Menus, EditorEngine, IniFiles,
   MsgBox,
   mnStreams, mncConnections, mncCSV;
 
@@ -14,7 +14,8 @@ type
 
   { TCSVForm }
 
-  TCSVForm = class(TFrame)
+  TCSVForm = class(TFrame, IEditorFrame)
+    SaveConfigFileBtn: TButton;
     DataGrid: TStringGrid;
     FetchCountLbl: TLabel;
     FetchedLbl: TLabel;
@@ -28,14 +29,17 @@ type
     GridPopupMenu: TPopupMenu;
     StopBtn: TButton;
     StopBtn2: TButton;
-    StopBtn3: TButton;
+    OptionsBtn: TButton;
+    DelConfigFileBtn: TButton;
 
+    procedure ConfigFileBtnClick(Sender: TObject);
     procedure DataGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
     procedure DataGridEditingDone(Sender: TObject);
     procedure DataGridGetEditText(Sender: TObject; ACol, ARow: Integer; var Value: string);
     procedure DataGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 
-      procedure DataGridSelectEditor(Sender: TObject; aCol, aRow: Integer; var Editor: TWinControl);
+    procedure DataGridSelectEditor(Sender: TObject; aCol, aRow: Integer; var Editor: TWinControl);
+    procedure DelConfigFileBtnClick(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
@@ -43,7 +47,7 @@ type
     procedure MenuItem5Click(Sender: TObject);
     procedure MenuItem6Click(Sender: TObject);
     procedure StopBtn2Click(Sender: TObject);
-    procedure StopBtn3Click(Sender: TObject);
+    procedure OptionsBtnClick(Sender: TObject);
     procedure StopBtnClick(Sender: TObject);
   private
     FOnChanged: TNotifyEvent;
@@ -51,15 +55,21 @@ type
   protected
     FCancel: Boolean;
     IsNumbers: array of boolean;
+    FFileName: string;
     procedure Changed;
   public
     CSVOptions: TmncCSVOptions;
+
+    procedure RefreshControls;
+    function IsConfigFileExists: Boolean;
+    procedure SaveConfigFile;
     property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
     procedure ClearGrid;
     procedure Load(FileName: string);
     procedure Save(FileName: string);
     procedure FillGrid(SQLCMD: TmncCommand; Title: String; Append: Boolean = False);
     constructor Create(TheOwner: TComponent); override;
+    function GetMainControl: TWinControl;
   end;
 
 implementation
@@ -129,6 +139,12 @@ begin
   DataGrid.DefaultDrawCell(aCol, aRow, aRect, aState);
 end;
 
+procedure TCSVForm.ConfigFileBtnClick(Sender: TObject);
+begin
+  SaveConfigFile;
+  RefreshControls;
+end;
+
 procedure TCSVForm.DataGridEditingDone(Sender: TObject);
 begin
   Changed;
@@ -154,6 +170,12 @@ procedure TCSVForm.DataGridSelectEditor(Sender: TObject; aCol, aRow: Integer; va
 begin
   Editor.Color := clBlack;
   Editor.Font.Color := clWhite;
+end;
+
+procedure TCSVForm.DelConfigFileBtnClick(Sender: TObject);
+begin
+  DeleteFileUTF8(FFileName + '.conf');
+  RefreshControls;
 end;
 
 procedure TCSVForm.MenuItem1Click(Sender: TObject);
@@ -207,7 +229,7 @@ begin
   ClearGrid;
 end;
 
-procedure TCSVForm.StopBtn3Click(Sender: TObject);
+procedure TCSVForm.OptionsBtnClick(Sender: TObject);
 var
   aCSVOptions: TmncCSVOptions;
 begin
@@ -227,6 +249,29 @@ procedure TCSVForm.Changed;
 begin
   if Assigned(FOnChanged) then
     FOnChanged(Self);
+end;
+
+procedure TCSVForm.RefreshControls;
+begin
+  DelConfigFileBtn.Visible := IsConfigFileExists;
+  SaveConfigFileBtn.Visible := not DelConfigFileBtn.Visible;
+end;
+
+function TCSVForm.IsConfigFileExists: Boolean;
+begin
+  Result := FileExistsUTF8(FFileName + '.conf');
+end;
+
+procedure TCSVForm.SaveConfigFile;
+var
+  ini: TIniFile;
+begin
+  ini := TIniFile.Create(FFileName + '.conf');
+  try
+    CSVOptions.SaveToIni('options', ini);
+  finally
+    ini.Free;
+  end;
 end;
 
 procedure TCSVForm.ClearGrid;
@@ -249,6 +294,7 @@ var
   r, c:Integer;
   s: string;
 begin
+  FFileName := FileName;
   aFile := TFileStream.Create(FileName, fmCreate or fmOpenWrite);
   try
     for r := 0 to DataGrid.RowCount -1 do
@@ -267,6 +313,9 @@ begin
   finally
     aFile.Free;
   end;
+  if IsConfigFileExists then
+    SaveConfigFile;
+  //RefreshControls;
 end;
 
 procedure TCSVForm.Load(FileName: string);
@@ -274,15 +323,32 @@ var
   aFile: TFileStream;
   r, c:Integer;
   s: string;
+  b: Boolean;
   csvCnn: TmncCSVConnection;
   csvSes: TmncCSVSession;
   csvCMD: TmncCSVCommand;
+  Ini: TIniFile;
 begin
+  FFileName := FileName;
+
+  RefreshControls;
+
   ClearGrid;
   csvCnn := TmncCSVConnection.Create;
   csvSes := TmncCSVSession.Create(csvCnn);
   try
-    if ShowCSVOptions('Export CSV', CSVOptions) then
+    b := IsConfigFileExists;
+    if b then
+      Ini := TIniFile.Create(FFileName + '.conf')
+    else
+      Ini := TIniFile.Create(Engine.WorkSpace + 'mne-csv-options.ini');
+    try
+      CSVOptions.LoadFromIni('options', Ini);
+    finally
+      Ini.Free;
+    end;
+
+    if b or ShowCSVOptions('Export CSV', CSVOptions) then
     begin
       csvSes.CSVOptions := CSVOptions;
       csvCnn.Connect;
@@ -296,6 +362,13 @@ begin
       finally
         aFile.Free;
         csvCMD.Free;
+      end;
+
+      Ini := TIniFile.Create(Engine.WorkSpace + 'mne-csv-options.ini');
+      try
+        CSVOptions.SaveToIni('options', Ini);
+      finally
+        Ini.Free;
       end;
     end;
   finally
@@ -447,6 +520,11 @@ begin
   CSVOptions.HeaderLine := hdrNormal;
   CSVOptions.DelimiterChar := ',';
   CSVOptions.EndOfLine := sUnixEndOfLine;
+end;
+
+function TCSVForm.GetMainControl: TWinControl;
+begin
+  Result := DataGrid;
 end;
 
 end.

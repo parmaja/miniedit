@@ -340,7 +340,7 @@ type
     procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
 
-      procedure BrowseTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
+    procedure BrowseTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure CallStackListDblClick(Sender: TObject);
     procedure DeleteActExecute(Sender: TObject);
     procedure FetchCallStackBtnClick(Sender: TObject);
@@ -670,7 +670,7 @@ begin
           (Control as TCustomSynEdit).CaretX := 0;
           (Control as TCustomSynEdit).SelectLine;
           (Control as TCustomSynEdit).SetFocus;
-        end;
+        end
       end;
     end;
   end;

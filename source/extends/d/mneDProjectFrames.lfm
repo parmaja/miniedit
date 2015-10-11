@@ -11,7 +11,7 @@ object DProjectFrame: TDProjectFrame
   object MainEdit: TEdit
     Left = 68
     Height = 23
-    Top = 19
+    Top = 8
     Width = 257
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 0
@@ -19,7 +19,7 @@ object DProjectFrame: TDProjectFrame
   object Label2: TLabel
     Left = 11
     Height = 15
-    Top = 22
+    Top = 12
     Width = 46
     Caption = 'Main file'
     ParentColor = False
@@ -27,7 +27,7 @@ object DProjectFrame: TDProjectFrame
   object Button4: TButton
     Left = 329
     Height = 21
-    Top = 20
+    Top = 9
     Width = 22
     Anchors = [akTop, akRight]
     Caption = '...'
@@ -36,8 +36,8 @@ object DProjectFrame: TDProjectFrame
   end
   inline PathsEdit: TSynEdit
     Left = 5
-    Height = 186
-    Top = 75
+    Height = 105
+    Top = 156
     Width = 349
     Anchors = [akTop, akLeft, akRight, akBottom]
     Constraints.MinHeight = 60
@@ -603,9 +603,9 @@ object DProjectFrame: TDProjectFrame
     end
   end
   object PathsLbl: TLabel
-    Left = 11
+    Left = 6
     Height = 15
-    Top = 57
+    Top = 135
     Width = 29
     Caption = 'Paths'
     ParentColor = False
