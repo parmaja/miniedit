@@ -10,7 +10,7 @@ unit MainUnit;
 
 SynEdit:
     - Make PaintTransient in TCustomerHighlighter as virtual and called from DoOnPaintTransientEx like calling OnPaintTransient
-    - Need a retrive the Range when call GetHighlighterAttriAtRowColEx
+    - Need a retrieve the Range when call GetHighlighterAttriAtRowColEx
     - "Reset" method in TSynHighlighterAttributes to reassign property to default such as fBackground := fBackgroundDefault it is usfull to load and reload properties from file (XML one)
 
   MessageList TabStop must be False, can not Maximize window in startup the application (When it is take the focus)
@@ -54,6 +54,8 @@ type
 
   TMainForm = class(TForm)
     BrowseTabs: TntvTabSet;
+    MenuItem22: TMenuItem;
+    MenuItem23: TMenuItem;
     TypeOptionsMnu: TMenuItem;
     TypeOptionsAct: TAction;
     BugSignBtn: TSpeedButton;
@@ -352,6 +354,8 @@ type
     procedure FormShow(Sender: TObject);
     procedure FormWindowStateChange(Sender: TObject);
     procedure IPCServerMessage(Sender: TObject);
+    procedure MenuItem22Click(Sender: TObject);
+    procedure MenuItem23Click(Sender: TObject);
     procedure NewAsActExecute(Sender: TObject);
     procedure OpenActExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -792,6 +796,18 @@ begin
   end;
 end;
 
+procedure TMainForm.MenuItem22Click(Sender: TObject);
+begin
+  if Engine.Session.IsOpened then
+    Folder := ExtractFilePath(Engine.Session.Project.FileName);
+end;
+
+procedure TMainForm.MenuItem23Click(Sender: TObject);
+begin
+  if Engine.Files.Current <> nil then
+    Folder := ExtractFilePath(Engine.Files.Current.Name);
+end;
+
 procedure TMainForm.NewAsActExecute(Sender: TObject);
 var
   //AExtensions: TEditorElements;
@@ -863,7 +879,7 @@ begin
     if Folder = '' then
       Folder := ExtractFilePath(Engine.Files.Current.Name);
     SaveAct.Enabled := Engine.Files.Current.IsEdited;
-    SaveAllAct.Enabled := Engine.Files.GetEditedCount > 0;
+    SaveAllAct.Enabled := Engine.GetIsChanged;
   end
   else
   begin
@@ -949,10 +965,10 @@ begin
       if mr = msgcCancel then
         CanClose := False
       else if mr = msgcYes then
-        Engine.Session.Project.Save;
+        Engine.Session.Save;
     end
     else
-      Engine.Session.Project.Save;
+      Engine.Session.Save;
   end;
 end;
 
@@ -1027,8 +1043,7 @@ end;
 procedure TMainForm.SaveAllActExecute(Sender: TObject);
 begin
   Engine.Files.SaveAll;
-  if Engine.Session.Project <> nil then
-    Engine.Session.Project.Save;
+  Engine.Session.Save;
 end;
 
 procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -1151,10 +1166,8 @@ procedure TMainForm.ProjectOptionsActExecute(Sender: TObject);
 begin
   if Engine.Session.IsOpened then
   begin
-    ShowProjectForm(Engine.Session.Project);
-    if Engine.Session.Project.FileName <> '' then
-      Engine.Session.Project.Save;
-    Engine.UpdateState([ecsChanged]);
+    if ShowProjectForm(Engine.Session.Project) then
+      Engine.Session.Changed;
   end;
 end;
 
@@ -1165,14 +1178,17 @@ var
 begin
   Engine.BeginUpdate;
   try
-    if (Engine.Session.Project = nil) or (Engine.Session.Project.Save) then
+    if (not Engine.Session.IsOpened) or (Engine.Session.Save) then
     begin
       aTendency := nil;
       if ChooseTendency(aTendency) then
       begin
         aProject := Engine.Session.New(aTendency);
         if ShowProjectForm(aProject) then
-          Engine.Session.Project := aProject
+        begin
+          Engine.Session.Project := aProject;
+          Engine.Session.Changed;
+        end
         else
           aProject.Free;
       end;
@@ -1189,7 +1205,7 @@ end;
 
 procedure TMainForm.SaveProjectActExecute(Sender: TObject);
 begin
-  Engine.Session.Project.Save;
+  Engine.Session.Save;
 end;
 
 procedure TMainForm.SelectFileActExecute(Sender: TObject);
@@ -1416,7 +1432,7 @@ end;
 procedure TMainForm.SaveAsProjectActExecute(Sender: TObject);
 begin
   if Engine.Session.IsOpened then
-    Engine.Session.Project.SaveAs;
+    Engine.Session.SaveAs;
 end;
 
 procedure TMainForm.ProjectOpenFolderActExecute(Sender: TObject);
@@ -2291,7 +2307,7 @@ end;
 
 procedure TMainForm.FolderHomeActExecute(Sender: TObject);
 begin
-  if Engine.Session.Project <> nil then
+  if Engine.Session.IsOpened then
     Folder := Engine.Session.Project.Path;
 end;
 
@@ -2449,7 +2465,7 @@ begin
       aText := (Current.Control as TCustomSynEdit).GetWordAtRowCol((Current.Control as TCustomSynEdit).CaretXY);
   end;
 
-  if Engine.Session.Project <> nil then
+  if Engine.Session.IsOpened then
     aFolder := Engine.Session.Project.Path
   else
     aFolder := '';

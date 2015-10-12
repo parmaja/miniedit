@@ -47,7 +47,7 @@ type
   protected
   public
     procedure Apply(GeneralOnly: Boolean = False);
-    procedure Retrive;
+    procedure Retrieve;
   end;
 
 function ShowProjectForm(vProject: TEditorProject): Boolean;
@@ -63,7 +63,8 @@ begin
   with TProjectForm.Create(Application) do
   begin
     FProject := vProject;
-    Retrive;
+    Retrieve;
+    ActiveControl := NameEdit;
     Result := ShowModal = mrOk;
   end;
 end;
@@ -94,7 +95,7 @@ begin
     (FFrame as IEditorOptions).Apply;
 end;
 
-procedure TProjectForm.Retrive;
+procedure TProjectForm.Retrieve;
 var
   TabSheet: TTabSheet;
 begin

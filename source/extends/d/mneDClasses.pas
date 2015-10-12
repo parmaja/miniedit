@@ -239,7 +239,7 @@ begin
   with TDConfigForm.Create(Application) do
   begin
     FTendency := Self;
-    Retrive;
+    Retrieve;
     if ShowModal = mrOK then
     begin
       Apply;

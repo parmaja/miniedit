@@ -35,7 +35,7 @@ type
     procedure AddEdit;
   public
     procedure Apply;
-    procedure Retrive;
+    procedure Retrieve;
   end;
 
 implementation
@@ -187,7 +187,7 @@ begin
 end;
 {$endif}
 
-procedure TAssociateForm.Retrive;
+procedure TAssociateForm.Retrieve;
 begin
   PHPChk.Checked := GetAssociated('Open', 'phpfile', '.php');
   CSSChk.Checked := GetAssociated('Open', 'cssfile', '.css');
@@ -195,7 +195,7 @@ end;
 
 procedure TAssociateForm.FormCreate(Sender: TObject);
 begin
-  Retrive;
+  Retrieve;
 end;
 
 procedure TAssociateForm.OkBtnClick(Sender: TObject);

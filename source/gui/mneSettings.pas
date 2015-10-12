@@ -47,7 +47,7 @@ type
   private
     FEngine: TEditorEngine;
     FExtraExtensions: array of string;
-    procedure Retrive;
+    procedure Retrieve;
     procedure Apply;
   public
   end;
@@ -67,7 +67,7 @@ begin
   with TEditorSettingForm.Create(Application) do
   begin
     FEngine := Engine;
-    Retrive;
+    Retrieve;
     Result := ShowModal = mrOk;
     if Result then
     begin
@@ -98,7 +98,7 @@ begin
   FEngine.Options.IgnoreNames := IgnoreNamesEdit.Text;
 end;
 
-procedure TEditorSettingForm.Retrive;
+procedure TEditorSettingForm.Retrieve;
 var
   i, c: Integer;
 begin

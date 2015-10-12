@@ -50,7 +50,7 @@ type
   private
     { Private declarations }
   public
-    procedure Retrive;
+    procedure Retrieve;
     procedure Apply;
   end;
 
@@ -67,7 +67,7 @@ procedure ShowPHPIniForm;
 begin
   with TPHPIniForm.Create(Application) do
   begin
-    //Retrive;
+    //Retrieve;
     if ShowModal = mrOK then
       Apply;
   end;
@@ -144,11 +144,11 @@ begin
   if OpenDialog.Execute then
   begin
     PHPIniFileEdit.Text := OpenDialog.FileName;
-    Retrive;
+    Retrieve;
   end;
 end;
 
-procedure TPHPIniForm.Retrive;
+procedure TPHPIniForm.Retrieve;
 var
   IniFile: TPHPIniFile;
   s: string;

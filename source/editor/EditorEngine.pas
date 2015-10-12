@@ -61,9 +61,12 @@ type
     property TopLine: integer read FTopLine write FTopLine default 1;
   end;
 
+  { TEditorDesktopFiles }
+
   TEditorDesktopFiles = class(TCollection)
   private
     FCurrentFile: string;
+    FCurrentFolder: string;
     function GetItems(Index: integer): TEditorDesktopFile;
   protected
   public
@@ -73,6 +76,7 @@ type
     property Items[Index: integer]: TEditorDesktopFile read GetItems; default;
   published
     property CurrentFile: string read FCurrentFile write FCurrentFile;
+    property CurrentFolder: string read FCurrentFolder write FCurrentFolder;
   end;
 
   TEditorDesktop = class(TPersistent)
@@ -231,8 +235,6 @@ type
     procedure LoadFromFile(FileName: string); override;
     property FileName: string read FFileName write FFileName;
     property Path: string read FPath1 write FPath1;
-    function Save: Boolean;
-    function SaveAs: Boolean;
     procedure SetSCMClass(SCMClass: TEditorSCM);
     property CachedVariables: THashedStringList read FCachedVariables;
     property CachedIdentifiers: THashedStringList read FCachedIdentifiers;
@@ -347,7 +349,7 @@ type
     property Name: string read FName write FName;
     property NakeName: string read GetNakeName;
     property Related: string read FRelated write FRelated;
-    property IsEdited: Boolean read FIsEdited write SetIsEdited;
+    property IsEdited: Boolean read FIsEdited write SetIsEdited; //TODO rename to IsChanged
     property IsNew: Boolean read FIsNew write SetIsNew default False;
     property IsReadOnly: Boolean read GetIsReadonly write SetIsReadonly;
     property Group: TFileGroup read FGroup write SetGroup;
@@ -742,6 +744,7 @@ type
 
   TEditorSession = class(TObject)
   private
+    FIsChanged: Boolean;
     FOptions: TEditorSessionOptions;
     FProject: TEditorProject;
     procedure SetProject(const Value: TEditorProject);
@@ -749,17 +752,23 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+    procedure Changed;
     procedure Load(FileName: string);
     function New: TEditorProject;
     function New(Tendency: TEditorTendency): TEditorProject;
     procedure Close;
     procedure Open;
+    function Save(AProject: TEditorProject): Boolean;
+    function SaveAs(AProject: TEditorProject): Boolean;
+    function Save: Boolean;
+    function SaveAs: Boolean;
     //Is project opened
     property IsOpened: Boolean read GetIsOpened;
     //Current is the opened project, if it is a nil that mean there is no opened project.
     property Project: TEditorProject read FProject write SetProject;
     //Session Options is depend on the system used not shared between OSs
     property Options: TEditorSessionOptions read FOptions;
+    property IsChanged: Boolean read FIsChanged;
   end;
 
   TEditorMessagesList = class;
@@ -893,6 +902,7 @@ type
     property DefaultSCM: TEditorSCM read FDefaultSCM write SetDefaultSCM;
     property Tendency: TEditorTendency read GetTendency;
     property SCM: TEditorSCM read GetSCM;
+    function GetIsChanged: Boolean;
     //property MacroRecorder: TSynMacroRecorder read FMacroRecorder;
     property OnChangedState: TOnEditorChangeState read FOnChangedState write FOnChangedState;
     property OnReplaceText: TReplaceTextEvent read FOnReplaceText write FOnReplaceText;
@@ -2295,7 +2305,7 @@ begin
     aProject := New;
     try
       aProject.LoadFromFile(FileName);
-//      aProject.FileName := FileName;
+      FIsChanged := False;
     except
       aProject.Free;
       raise;
@@ -2423,12 +2433,58 @@ begin
     aDialog.InitialDir := Engine.BrowseFolder;
     aDialog.FileName := '*' + aDialog.DefaultExt;
     if aDialog.Execute then
-    begin
       Load(aDialog.FileName);
+  finally
+    aDialog.Free;
+  end;
+end;
+
+function TEditorSession.Save(AProject: TEditorProject): Boolean;
+begin
+  if AProject.FileName = '' then
+    Result := SaveAs(AProject)
+  else
+  begin
+    AProject.SaveToFile(AProject.FileName);
+    Engine.ProcessRecentProject(AProject.FileName);
+    Engine.UpdateState([ecsFolder, ecsChanged, ecsState, ecsRefresh]);
+    Result := True;
+    FIsChanged := False;
+  end;
+end;
+
+function TEditorSession.Save: Boolean;
+begin
+  if Project <> nil then
+    Save(Project);
+end;
+
+function TEditorSession.SaveAs(AProject: TEditorProject): Boolean;
+var
+  aDialog: TSaveDialog;
+begin
+  aDialog := TSaveDialog.Create(nil);
+  try
+    aDialog.Title := 'Save project';
+    aDialog.DefaultExt := Engine.Extenstion;
+    aDialog.Filter := 'Project files (*.' + Engine.Extenstion + ')|*.' + Engine.Extenstion + '|All files|*.*';
+    aDialog.InitialDir := Engine.BrowseFolder;
+    aDialog.FileName := AProject.Name + aDialog.DefaultExt;
+    Result := aDialog.Execute;
+    if Result then
+    begin
+      AProject.FileName := aDialog.FileName;
+      Save(AProject);
     end;
   finally
     aDialog.Free;
   end;
+end;
+
+function TEditorSession.SaveAs: Boolean;
+begin
+  if Project <> nil then
+    SaveAs(Project);
 end;
 
 procedure TEditorFiles.Prior;
@@ -2724,6 +2780,11 @@ begin
   DefaultSCM := SourceManagements.Find(vName);
 end;
 
+function TEditorEngine.GetIsChanged: Boolean;
+begin
+  Result := (Files.GetEditedCount > 0) or Session.IsChanged;
+end;
+
 procedure TEditorEngine.DoChangedState(State: TEditorChangeStates);
 begin
   if Assigned(FOnChangedState) then
@@ -2767,6 +2828,7 @@ begin
   FBrowseFolder := Value;
   if FBrowseFolder <> '' then
     FBrowseFolder := IncludeTrailingPathDelimiter(FBrowseFolder);
+  UpdateState([ecsFolder]);
 end;
 
 procedure TEditorEngine.DoMacroStateChange(Sender: TObject);
@@ -3694,8 +3756,6 @@ end;
 
 destructor TEditorProject.Destroy;
 begin
-  if FileName <> '' then
-    Save;
   FDesktop.Free;
   FCachedVariables.Free;
   FCachedIdentifiers.Free;
@@ -3765,41 +3825,6 @@ begin
   inherited;
   if not Failed and FSaveDesktop then
     Desktop.Load;
-end;
-
-function TEditorProject.Save: Boolean;
-begin
-  if FileName = '' then
-    Result := SaveAs
-  else
-  begin
-    SaveToFile(FileName);
-    Engine.ProcessRecentProject(FileName);
-    Engine.UpdateState([ecsFolder, ecsChanged, ecsState, ecsRefresh]);
-    Result := True;
-  end;
-end;
-
-function TEditorProject.SaveAs: Boolean;
-var
-  aDialog: TSaveDialog;
-begin
-  aDialog := TSaveDialog.Create(nil);
-  try
-    aDialog.Title := 'Save project';
-    aDialog.DefaultExt := Engine.Extenstion;
-    aDialog.Filter := 'Project files (*.' + Engine.Extenstion + ')|*.' + Engine.Extenstion + '|All files|*.*';
-    aDialog.InitialDir := Engine.BrowseFolder;
-    aDialog.FileName := Name + aDialog.DefaultExt;
-    Result := aDialog.Execute;
-    if Result then
-    begin
-      FileName := aDialog.FileName;
-      Save;
-    end;
-  finally
-    aDialog.Free;
-  end;
 end;
 
 procedure TEditorProject.SetSCMClass(SCMClass: TEditorSCM);
@@ -3967,9 +3992,17 @@ end;
 
 destructor TEditorSession.Destroy;
 begin
+  if (FProject <> nil) and (FProject.FileName <> '') then
+    Save;
   FProject := nil;
   FreeAndNil(FOptions);
   inherited;
+end;
+
+procedure TEditorSession.Changed;
+begin
+  FIsChanged := True;
+  Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
 end;
 
 function TEditorSession.GetIsOpened: Boolean;
@@ -4152,6 +4185,7 @@ begin
       end;
     end;
     Engine.Files.SetActiveFile(Files.CurrentFile);
+    Engine.BrowseFolder := Files.CurrentFolder;
   finally
     Engine.EndUpdate;
     Files.Clear;
@@ -4181,11 +4215,13 @@ begin
     Engine.Tendency.Debug.Unlock;
   end;}
 
+  Files.CurrentFolder := Engine.BrowseFolder;
   Files.Clear;
   if Engine.Files.Current <> nil then
     Files.CurrentFile := Engine.Files.Current.Name
   else
     Files.CurrentFile := '';
+
   for i := 0 to Engine.Files.Count - 1 do
   begin
     aFile := Engine.Files[i];

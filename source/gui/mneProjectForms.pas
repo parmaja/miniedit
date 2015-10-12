@@ -105,7 +105,7 @@ begin
   try
     if ShowProjectForm(aProject) then
     begin
-      if aProject.Save then
+      if Engine.Session.Save(aProject) then
       begin
         Engine.ProcessProject(aProject.FileName);
         Engine.ProcessRecentProject(aProject.FileName);

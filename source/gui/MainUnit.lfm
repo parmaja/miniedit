@@ -1894,11 +1894,19 @@ object MainForm: TMainForm
     end
   end
   object FolderMenu: TPopupMenu
-    left = 62
-    top = 215
+    left = 146
+    top = 58
     object Home1: TMenuItem
       Action = FolderHomeAct
       OnClick = FolderHomeActExecute
+    end
+    object MenuItem22: TMenuItem
+      Caption = 'Project Folder'
+      OnClick = MenuItem22Click
+    end
+    object MenuItem23: TMenuItem
+      Caption = 'File Folder'
+      OnClick = MenuItem23Click
     end
     object FolderOpenAct1: TMenuItem
       Action = FolderOpenAct
@@ -1913,7 +1921,7 @@ object MainForm: TMainForm
       OnClick = GotoFolder1Click
     end
     object FileFolder1: TMenuItem
-      Caption = 'File Folder'
+      Caption = 'Browse File Folder'
       OnClick = FileFolder1Click
     end
     object MenuItem2: TMenuItem
@@ -2062,8 +2070,8 @@ object MainForm: TMainForm
     top = 91
   end
   object MessagesPopup: TPopupMenu
-    left = 157
-    top = 190
+    left = 144
+    top = 179
     object Clear1: TMenuItem
       Caption = 'Clear'
       OnClick = Clear1Click
@@ -2088,7 +2096,7 @@ object MainForm: TMainForm
   object ApplicationProperties: TApplicationProperties
     OnActivate = ApplicationPropertiesActivate
     OnShowHint = ApplicationPropertiesShowHint
-    left = 83
-    top = 138
+    left = 52
+    top = 133
   end
 end

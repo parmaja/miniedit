@@ -3,6 +3,7 @@ object ProjectForm: TProjectForm
   Height = 267
   Top = 184
   Width = 471
+  ActiveControl = NameEdit
   BorderStyle = bsDialog
   Caption = 'Project Options'
   ClientHeight = 267
@@ -23,7 +24,7 @@ object ProjectForm: TProjectForm
     Default = True
     ModalResult = 1
     OnClick = OkBtnClick
-    TabOrder = 0
+    TabOrder = 1
   end
   object CancelBtn: TButton
     Left = 316
@@ -34,7 +35,7 @@ object ProjectForm: TProjectForm
     Cancel = True
     Caption = '&Cancel'
     ModalResult = 2
-    TabOrder = 1
+    TabOrder = 2
   end
   object PageControl: TPageControl
     Left = 4
@@ -44,7 +45,7 @@ object ProjectForm: TProjectForm
     ActivePage = GeneralSheet
     Anchors = [akTop, akLeft, akRight, akBottom]
     TabIndex = 0
-    TabOrder = 2
+    TabOrder = 0
     OnChange = PageControlChange
     OnChanging = PageControlChanging
     object GeneralSheet: TTabSheet
@@ -105,7 +106,7 @@ object ProjectForm: TProjectForm
         Height = 21
         Top = 155
         Width = 352
-        TabOrder = 3
+        TabOrder = 4
       end
       object Button3: TButton
         Left = 366
@@ -114,12 +115,12 @@ object ProjectForm: TProjectForm
         Width = 22
         Caption = '...'
         OnClick = Button3Click
-        TabOrder = 4
+        TabOrder = 5
       end
       object Label8: TLabel
         Left = 12
         Height = 13
-        Top = 87
+        Top = 61
         Width = 70
         Caption = 'Source Control'
         ParentColor = False
@@ -127,11 +128,11 @@ object ProjectForm: TProjectForm
       object SCMCbo: TComboBox
         Left = 89
         Height = 21
-        Top = 82
+        Top = 56
         Width = 303
         ItemHeight = 13
         Style = csDropDownList
-        TabOrder = 5
+        TabOrder = 3
       end
     end
   end

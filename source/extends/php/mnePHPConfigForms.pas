@@ -33,7 +33,7 @@ type
   public
     FTendency: TPHPTendency;
     procedure Apply;
-    procedure Retrive;
+    procedure Retrieve;
   end;
 
 implementation
@@ -95,7 +95,7 @@ begin
   FTendency.HTMLHelpFile := HTMLManualEdit.Text;
 end;
 
-procedure TPHPConfigForm.Retrive;
+procedure TPHPConfigForm.Retrieve;
 begin
   PHPPathEdit.Text := FTendency.PHPPath;
   PHPManualEdit.Text := FTendency.PHPHelpFile;

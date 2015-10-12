@@ -24,7 +24,7 @@ type
   public
     FTendency: TDTendency;
     procedure Apply;
-    procedure Retrive;
+    procedure Retrieve;
   end;
 
 implementation
@@ -59,7 +59,7 @@ begin
   FTendency.Compiler := CompilerEdit.Text;
 end;
 
-procedure TDConfigForm.Retrive;
+procedure TDConfigForm.Retrieve;
 begin
   CompilerEdit.Text := FTendency.Compiler;
 end;
