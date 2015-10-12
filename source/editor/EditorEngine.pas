@@ -751,6 +751,7 @@ type
     destructor Destroy; override;
     procedure Load(FileName: string);
     function New: TEditorProject;
+    function New(Tendency: TEditorTendency): TEditorProject;
     procedure Close;
     procedure Open;
     //Is project opened
@@ -2339,7 +2340,12 @@ end;
 
 function TEditorSession.New: TEditorProject;
 begin
-  Result := Engine.Tendency.CreateEditorProject;
+  Result := New(Engine.Tendency);
+end;
+
+function TEditorSession.New(Tendency: TEditorTendency): TEditorProject;
+begin
+  Result := Tendency.CreateEditorProject;
 end;
 
 procedure TEditorFiles.Next;
@@ -3721,7 +3727,7 @@ procedure TEditorProject.SetTendency(AValue: TEditorTendency);
 begin
   if FTendency <> AValue then
   begin
-    FTendency :=AValue;
+    FTendency := AValue;
     FOptions.Free;
     FOptions := FTendency.CreateOptions;
   end;

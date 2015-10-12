@@ -23,7 +23,6 @@ type
     Label1: TLabel;
     Label3: TLabel;
     Label4: TLabel;
-    Label7: TLabel;
     Label8: TLabel;
     NameEdit: TEdit;
     OkBtn: TButton;
@@ -34,7 +33,6 @@ type
     SaveDesktopChk: TCheckBox;
     SCMCbo: TComboBox;
     GeneralSheet: TTabSheet;
-    TendencyCbo: TComboBox;
     procedure Label3Click(Sender: TObject);
     procedure OkBtnClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -91,8 +89,6 @@ begin
   FProject.Description := DescriptionEdit.Text;
   FProject.RootDir := RootDirEdit.Text;
   FProject.SaveDesktop := SaveDesktopChk.Checked;
-  if TendencyCbo.ItemIndex >= 0 then
-    FProject.TendencyName := TEditorTendency(TendencyCbo.Items.Objects[TendencyCbo.ItemIndex]).Name;
   FProject.SetSCMClass(TEditorSCM(SCMCbo.Items.Objects[SCMCbo.ItemIndex]));
   if not GeneralOnly and Supports(FFrame, IEditorOptions) then
     (FFrame as IEditorOptions).Apply;
@@ -119,7 +115,6 @@ begin
   DescriptionEdit.Text := FProject.Description;
   RootDirEdit.Text := FProject.RootDir;
   SaveDesktopChk.Checked := FProject.SaveDesktop;
-  TendencyCbo.ItemIndex := Engine.Tendencies.IndexOf(FProject.TendencyName);
   if FProject.SCM <> nil then
     SCMCbo.ItemIndex := Engine.SourceManagements.IndexOf(FProject.SCM.Name)
   else
@@ -154,17 +149,6 @@ procedure TProjectForm.FormCreate(Sender: TObject);
 var
   i:Integer;
 begin
-  TendencyCbo.Items.BeginUpdate;
-  try
-    for i := 0 to Engine.Tendencies.Count -1 do
-    begin
-      TendencyCbo.Items.AddObject(Engine.Tendencies[i].Title, Engine.Tendencies[i]);
-    end;
-    TendencyCbo.ItemIndex := 0;
-  finally
-    TendencyCbo.Items.EndUpdate;
-  end;
-
   SCMCbo.Items.BeginUpdate;
   try
     SCMCbo.Items.Add('None');

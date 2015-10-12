@@ -76,7 +76,7 @@ object MainForm: TMainForm
       object ToolButton6: TToolButton
         Left = 376
         Top = 0
-        Action = RunAct
+        Action = DBGRunAct
       end
       object ToolButton7: TToolButton
         Left = 451
@@ -1261,8 +1261,8 @@ object MainForm: TMainForm
         Caption = '-'
       end
       object Run2: TMenuItem
-        Action = RunAct
-        OnClick = RunActExecute
+        Action = DBGRunAct
+        OnClick = DBGRunActExecute
       end
       object Check1: TMenuItem
         Action = CheckAct
@@ -1505,11 +1505,11 @@ object MainForm: TMainForm
       Caption = 'About'
       OnExecute = AboutActExecute
     end
-    object RunAct: TAction
-      Category = 'Project'
+    object DBGRunAct: TAction
+      Category = 'Debug'
       Caption = 'Run'
       ImageIndex = 36
-      OnExecute = RunActExecute
+      OnExecute = DBGRunActExecute
       ShortCut = 120
     end
     object CheckAct: TAction

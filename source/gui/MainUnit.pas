@@ -149,7 +149,7 @@ type
     KeywordAct: TAction;
     KeywordMnu: TMenuItem;
     About2: TMenuItem;
-    RunAct: TAction;
+    DBGRunAct: TAction;
     CheckAct: TAction;
     ProjectMnu: TMenuItem;
     Run2: TMenuItem;
@@ -380,7 +380,7 @@ type
     procedure EditorOptionsActExecute(Sender: TObject);
     procedure SCMTypeActExecute(Sender: TObject);
     procedure SettingActExecute(Sender: TObject);
-    procedure RunActExecute(Sender: TObject);
+    procedure DBGRunActExecute(Sender: TObject);
     procedure ProjectOptionsActExecute(Sender: TObject);
     procedure NewProjectActExecute(Sender: TObject);
     procedure OpenProjectActExecute(Sender: TObject);
@@ -962,9 +962,12 @@ var
 begin
   if Engine.Session.IsOpened then
   begin
-    lTendency := Engine.Session.Project.Tendency;
-    if ChooseTendency(lTendency) then
-      Engine.Session.Project.TendencyName := lTendency.Name;
+    if not MsgBox.Msg.No('You cannot change the type without losing project setting, are you sure?') then
+    begin
+      lTendency := Engine.Session.Project.Tendency;
+      if ChooseTendency(lTendency) then
+        Engine.Session.Project.TendencyName := lTendency.Name;
+    end;
   end
   else
   begin
@@ -1139,7 +1142,7 @@ begin
   ShowSettingForm(Engine);
 end;
 
-procedure TMainForm.RunActExecute(Sender: TObject);
+procedure TMainForm.DBGRunActExecute(Sender: TObject);
 begin
   RunFile;
 end;
@@ -1158,17 +1161,21 @@ end;
 procedure TMainForm.NewProjectActExecute(Sender: TObject);
 var
   aProject: TEditorProject;
+  aTendency: TEditorTendency;
 begin
   Engine.BeginUpdate;
   try
     if (Engine.Session.Project = nil) or (Engine.Session.Project.Save) then
     begin
-      //Engine.Session.Close;
-      aProject := Engine.Session.New;
-      if ShowProjectForm(aProject) then
-        Engine.Session.Project := aProject
-      else
-        aProject.Free;
+      aTendency := nil;
+      if ChooseTendency(aTendency) then
+      begin
+        aProject := Engine.Session.New(aTendency);
+        if ShowProjectForm(aProject) then
+          Engine.Session.Project := aProject
+        else
+          aProject.Free;
+      end;
     end;
   finally
     Engine.EndUpdate;
@@ -1402,7 +1409,7 @@ begin
   if Engine.SCM <> nil then
     SCMMnu.Caption := Engine.SCM.Name;
   ExecuteMnu.Visible := capRun in Engine.Tendency.Capabilities;
-  RunAct.Visible := capRun in Engine.Tendency.Capabilities;
+  DBGRunAct.Visible := capRun in Engine.Tendency.Capabilities;
   TypePnl.Caption := Engine.Tendency.Name;
 end;
 

@@ -13,7 +13,7 @@ uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics,
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
-  SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
+  SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles, EditorDebugger,
   SynHighlighterPas, SynHighlighterLFM;
 
 type
@@ -61,10 +61,13 @@ type
 
   { TDProjectOptions }
 
-  TDProjectOptions = class(TEditorProjectOptions)
+  { TPasProjectOptions }
+
+  TPasProjectOptions = class(TEditorProjectOptions)
   private
     FMainFile: string;
     FPaths: TStrings;
+    FUseCFG: Boolean;
     procedure SetPaths(AValue: TStrings);
   public
     constructor Create; override;
@@ -72,6 +75,7 @@ type
     function CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame; override;
   published
     property MainFile: string read FMainFile write FMainFile;
+    property UseCFG: Boolean read FUseCFG write FUseCFG default True;
     property Paths: TStrings read FPaths write SetPaths;
   end;
 
@@ -81,6 +85,8 @@ type
   private
     FCompiler: string;
   protected
+    function CreateDebugger: TEditorDebugger; override;
+    function CreateOptions: TEditorProjectOptions; override;
     procedure Init; override;
   public
     procedure Show; override;
@@ -92,26 +98,27 @@ implementation
 uses
   IniFiles, mnStreams, mnUtils, mnePasProjectFrames, mnePasConfigForms;
 
-{ TDProjectOptions }
+{ TPasProjectOptions }
 
-procedure TDProjectOptions.SetPaths(AValue: TStrings);
+procedure TPasProjectOptions.SetPaths(AValue: TStrings);
 begin
   FPaths.Assign(AValue);
 end;
 
-constructor TDProjectOptions.Create;
+constructor TPasProjectOptions.Create;
 begin
   inherited Create;
   FPaths := TStringList.Create;
+  FUseCFG := True;
 end;
 
-destructor TDProjectOptions.Destroy;
+destructor TPasProjectOptions.Destroy;
 begin
   FreeAndNil(FPaths);
   inherited Destroy;
 end;
 
-function TDProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame;
+function TPasProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame;
 begin
   Result := TPasProjectFrame.Create(AOwner);
   TPasProjectFrame(Result).Project := AProject;
@@ -166,6 +173,16 @@ begin
 end;
 
 { TPasTendency }
+
+function TPasTendency.CreateDebugger: TEditorDebugger;
+begin
+  Result := nil;
+end;
+
+function TPasTendency.CreateOptions: TEditorProjectOptions;
+begin
+  Result := TPasProjectOptions.Create;;
+end;
 
 procedure TPasTendency.Init;
 begin

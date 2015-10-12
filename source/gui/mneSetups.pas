@@ -80,7 +80,8 @@ var
   aIniFile: TIniFile;
 begin
   WorkspaceEdit.Items.Add('.');
-  WorkspaceEdit.Items.Add('.' + DirectorySeparator + 'config');
+  WorkspaceEdit.Items.Add('.' + DirectorySeparator + '.miniedit');
+  WorkspaceEdit.Items.Add('.' + DirectorySeparator + 'setting');
   {$ifdef windows}
   WorkspaceEdit.Items.Add('C:\workspace\miniedit');
   if DirectoryExistsUTF8('D:\') then

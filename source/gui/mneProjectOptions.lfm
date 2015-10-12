@@ -116,23 +116,6 @@ object ProjectForm: TProjectForm
         OnClick = Button3Click
         TabOrder = 4
       end
-      object TendencyCbo: TComboBox
-        Left = 89
-        Height = 21
-        Top = 56
-        Width = 303
-        ItemHeight = 13
-        Style = csDropDownList
-        TabOrder = 5
-      end
-      object Label7: TLabel
-        Left = 12
-        Height = 13
-        Top = 59
-        Width = 60
-        Caption = 'Project Type'
-        ParentColor = False
-      end
       object Label8: TLabel
         Left = 12
         Height = 13
@@ -148,7 +131,7 @@ object ProjectForm: TProjectForm
         Width = 303
         ItemHeight = 13
         Style = csDropDownList
-        TabOrder = 6
+        TabOrder = 5
       end
     end
   end
