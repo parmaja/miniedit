@@ -33,6 +33,8 @@ type
     DelConfigFileBtn: TButton;
 
     procedure ConfigFileBtnClick(Sender: TObject);
+
+      procedure DataGridColRowMoved(Sender: TObject; IsColumn: Boolean; sIndex, tIndex: Integer);
     procedure DataGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
     procedure DataGridGetEditText(Sender: TObject; ACol, ARow: Integer; var Value: string);
     procedure DataGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -119,7 +121,6 @@ end;
 
 procedure TCSVForm.DataGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
 begin
-  //aState := aState + [gdSelected];
   if (aRow < DataGrid.FixedRows) or (aCol < DataGrid.FixedCols) then
   begin
     DataGrid.Canvas.Brush.Color := DataGrid.FixedColor;
@@ -148,6 +149,11 @@ procedure TCSVForm.ConfigFileBtnClick(Sender: TObject);
 begin
   SaveConfigFile;
   RefreshControls;
+end;
+
+procedure TCSVForm.DataGridColRowMoved(Sender: TObject; IsColumn: Boolean; sIndex, tIndex: Integer);
+begin
+  Changed;
 end;
 
 procedure TCSVForm.DataGridGetEditText(Sender: TObject; ACol, ARow: Integer; var Value: string);
@@ -184,8 +190,26 @@ begin
 end;
 
 procedure TCSVForm.MenuItem1Click(Sender: TObject);
+var
+  r, c: Integer;
 begin
-  ClearGrid;
+  if not Msg.No('Are you sure you want to clear cells') then
+  begin
+    with DataGrid do
+    begin
+      BeginUpdate;
+      try
+        for r := Selection.Top to Selection.Bottom do
+          for c := Selection.Left to Selection.Right do
+          begin
+            Cells[c, r] := '';
+          end;
+      finally
+        EndUpdate;
+      end;
+    end;
+    Changed;
+  end;
 end;
 
 procedure TCSVForm.MenuItem2Click(Sender: TObject);
@@ -203,7 +227,7 @@ procedure TCSVForm.MenuItem3Click(Sender: TObject);
 begin
   //DataGrid.DeleteCol(DataGrid.Col);
   RemoveCols(DataGrid, DataGrid.Selection.Left,DataGrid.Selection.Right - DataGrid.Selection.Left + 1);
-  Engine.Files.Edited;
+  Changed;
 end;
 
 procedure TCSVForm.MenuItem4Click(Sender: TObject);
@@ -221,7 +245,7 @@ procedure TCSVForm.MenuItem5Click(Sender: TObject);
 begin
   //DataGrid.DeleteRow(DataGrid.Row);
   RemoveRows(DataGrid, DataGrid.Selection.Top,DataGrid.Selection.Bottom - DataGrid.Selection.Top + 1);
-  Engine.Files.Edited;
+  Changed;
 end;
 
 procedure TCSVForm.MenuItem6Click(Sender: TObject);
@@ -232,7 +256,10 @@ end;
 procedure TCSVForm.StopBtn2Click(Sender: TObject);
 begin
   if not Msg.No('Are you sure you want to clear it') then
+  begin
     ClearGrid;
+    Changed;
+  end;
 end;
 
 procedure TCSVForm.OptionsBtnClick(Sender: TObject);
@@ -291,7 +318,6 @@ begin
   DataGrid.ColCount := 1;
   DataGrid.RowCount := 1;
   DataGrid.Cells[0, 0] := '';
-  Engine.Files.Edited;
 end;
 
 procedure TCSVForm.Save(FileName: string);

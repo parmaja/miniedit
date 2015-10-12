@@ -1024,6 +1024,8 @@ end;
 procedure TMainForm.SaveAllActExecute(Sender: TObject);
 begin
   Engine.Files.SaveAll;
+  if Engine.Session.Project <> nil then
+    Engine.Session.Project.Save;
 end;
 
 procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);

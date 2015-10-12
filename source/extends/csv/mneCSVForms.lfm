@@ -104,7 +104,6 @@ object CSVForm: TCSVForm
     AlternateColor = 14408667
     AutoEdit = False
     ColCount = 3
-    ColumnClickSorts = True
     DefaultDrawing = False
     DefaultRowHeight = 18
     FixedColor = cl3DLight
@@ -115,7 +114,7 @@ object CSVForm: TCSVForm
     Font.Pitch = fpVariable
     Font.Quality = fqDraft
     MouseWheelOption = mwGrid
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected, goColSizing, goColMoving, goEditing, goRelaxedRowSelect, goDblClickAutoSize, goSmoothScroll, goHeaderHotTracking, goHeaderPushedLook, goCellHints, goRowHighlight]
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected, goColSizing, goRowMoving, goColMoving, goEditing, goRelaxedRowSelect, goDblClickAutoSize, goSmoothScroll, goHeaderHotTracking, goHeaderPushedLook, goCellHints, goRowHighlight]
     ParentFont = False
     PopupMenu = GridPopupMenu
     TabOrder = 0
@@ -125,6 +124,7 @@ object CSVForm: TCSVForm
     TitleFont.Name = 'Tahoma'
     TitleFont.Pitch = fpVariable
     TitleFont.Quality = fqDraft
+    OnColRowMoved = DataGridColRowMoved
     OnDrawCell = DataGridDrawCell
     OnGetEditText = DataGridGetEditText
     OnKeyDown = DataGridKeyDown
@@ -143,6 +143,10 @@ object CSVForm: TCSVForm
       Caption = 'Copy Selected'
       OnClick = MenuItem6Click
     end
+    object MenuItem1: TMenuItem
+      Caption = 'Clear Selected'
+      OnClick = MenuItem1Click
+    end
     object MenuItem2: TMenuItem
       Caption = 'Add Columns'
       OnClick = MenuItem2Click
@@ -158,10 +162,6 @@ object CSVForm: TCSVForm
     object MenuItem5: TMenuItem
       Caption = 'Delete Rows'
       OnClick = MenuItem5Click
-    end
-    object MenuItem1: TMenuItem
-      Caption = 'Clear'
-      OnClick = MenuItem1Click
     end
   end
 end

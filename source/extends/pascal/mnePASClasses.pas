@@ -1,4 +1,4 @@
-unit mnePASClasses;
+unit mnePasClasses;
 {$mode objfpc}{$H+}
 {**
  * Mini Edit
@@ -10,10 +10,9 @@ unit mnePASClasses;
 interface
 
 uses
-  Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
-  LCLintf, LCLType,
-  Dialogs, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit,
-  Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
+  Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics,
+  Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
+  SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   SynHighlighterPas, SynHighlighterLFM;
 
@@ -60,18 +59,63 @@ type
   public
   end;
 
-  { TPascalPerspective }
+  { TDProjectOptions }
 
-  TPascalTendency = class(TEditorTendency)
+  TDProjectOptions = class(TEditorProjectOptions)
+  private
+    FMainFile: string;
+    FPaths: TStrings;
+    procedure SetPaths(AValue: TStrings);
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+    function CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame; override;
+  published
+    property MainFile: string read FMainFile write FMainFile;
+    property Paths: TStrings read FPaths write SetPaths;
+  end;
+
+  { TPasTendency }
+
+  TPasTendency = class(TEditorTendency)
+  private
+    FCompiler: string;
   protected
     procedure Init; override;
   public
+    procedure Show; override;
+    property Compiler: string read FCompiler write FCompiler;
   end;
 
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils;
+  IniFiles, mnStreams, mnUtils, mnePasProjectFrames, mnePasConfigForms;
+
+{ TDProjectOptions }
+
+procedure TDProjectOptions.SetPaths(AValue: TStrings);
+begin
+  FPaths.Assign(AValue);
+end;
+
+constructor TDProjectOptions.Create;
+begin
+  inherited Create;
+  FPaths := TStringList.Create;
+end;
+
+destructor TDProjectOptions.Destroy;
+begin
+  FreeAndNil(FPaths);
+  inherited Destroy;
+end;
+
+function TDProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame;
+begin
+  Result := TPasProjectFrame.Create(AOwner);
+  TPasProjectFrame(Result).Project := AProject;
+end;
 
 { TmneSynPASSyn }
 
@@ -121,9 +165,9 @@ begin
   end;
 end;
 
-{ TPascalTendency }
+{ TPasTendency }
 
-procedure TPascalTendency.Init;
+procedure TPasTendency.Init;
 begin
   FCapabilities := [capRun, capCompile, capLink, capProjectOptions, capOptions];
   FName := 'Pascal';
@@ -136,6 +180,19 @@ begin
   AddGroup('ppr', 'pas');
   AddGroup('lfm', 'lfm');
   //AddGroup('inc');
+end;
+
+procedure TPasTendency.Show;
+begin
+  with TPasConfigForm.Create(Application) do
+  begin
+    FTendency := Self;
+    Retrive;
+    if ShowModal = mrOK then
+    begin
+      Apply;
+    end;
+  end;
 end;
 
 { TPASFileCategory }
@@ -193,6 +250,6 @@ initialization
     Groups.Add(TPASFile, 'pas', 'Pascal Files', 'pas', ['pas', 'pp', 'p', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
     Groups.Add(TLFMFile, 'lfm', 'Lazarus Form Files', 'lfm', ['lfm'], [fgkAssociated, fgkMember, fgkBrowsable], [fgsFolding]);
 
-    Tendencies.Add(TPascalTendency);
+    Tendencies.Add(TPasTendency);
   end;
 end.
