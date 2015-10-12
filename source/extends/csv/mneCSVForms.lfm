@@ -127,6 +127,7 @@ object CSVForm: TCSVForm
     OnColRowMoved = DataGridColRowMoved
     OnDrawCell = DataGridDrawCell
     OnGetEditText = DataGridGetEditText
+    OnHeaderClick = DataGridHeaderClick
     OnKeyDown = DataGridKeyDown
     OnSelectEditor = DataGridSelectEditor
     OnSetEditText = DataGridSetEditText
@@ -162,6 +163,13 @@ object CSVForm: TCSVForm
     object MenuItem5: TMenuItem
       Caption = 'Delete Rows'
       OnClick = MenuItem5Click
+    end
+    object MenuItem7: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem8: TMenuItem
+      Caption = 'Rename header'
+      OnClick = MenuItem8Click
     end
   end
 end

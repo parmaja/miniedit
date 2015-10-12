@@ -15,6 +15,8 @@ type
   { TCSVForm }
 
   TCSVForm = class(TFrame, IEditorFrame)
+    MenuItem7: TMenuItem;
+    MenuItem8: TMenuItem;
     SaveConfigFileBtn: TButton;
     DataGrid: TStringGrid;
     FetchCountLbl: TLabel;
@@ -37,6 +39,8 @@ type
       procedure DataGridColRowMoved(Sender: TObject; IsColumn: Boolean; sIndex, tIndex: Integer);
     procedure DataGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
     procedure DataGridGetEditText(Sender: TObject; ACol, ARow: Integer; var Value: string);
+
+      procedure DataGridHeaderClick(Sender: TObject; IsColumn: Boolean; Index: Integer);
     procedure DataGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 
     procedure DataGridSelectEditor(Sender: TObject; aCol, aRow: Integer; var Editor: TWinControl);
@@ -49,6 +53,7 @@ type
     procedure MenuItem4Click(Sender: TObject);
     procedure MenuItem5Click(Sender: TObject);
     procedure MenuItem6Click(Sender: TObject);
+    procedure MenuItem8Click(Sender: TObject);
     procedure StopBtn2Click(Sender: TObject);
     procedure OptionsBtnClick(Sender: TObject);
     procedure StopBtnClick(Sender: TObject);
@@ -64,6 +69,7 @@ type
     CSVOptions: TmncCSVOptions;
     FInteractive: Boolean;
     FLoading: Boolean;
+    procedure RenameHeader(Index: Integer);
     procedure RefreshControls;
     function IsConfigFileExists: Boolean;
     procedure SaveConfigFile;
@@ -161,6 +167,12 @@ begin
   FOldValue := Value;
 end;
 
+procedure TCSVForm.DataGridHeaderClick(Sender: TObject; IsColumn: Boolean; Index: Integer);
+begin
+  if IsColumn then
+    RenameHeader(Index);
+end;
+
 procedure TCSVForm.DataGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if (Key = VK_C) and (Shift = [ssCtrl]) then
@@ -216,6 +228,7 @@ procedure TCSVForm.MenuItem2Click(Sender: TObject);
 var
   s: string;
 begin
+  s := '1';
   if Msg.Input(s, 'Enter columns count to add') then
   begin
     DataGrid.ColCount := DataGrid.ColCount + StrToIntDef(s, 0);
@@ -234,6 +247,7 @@ procedure TCSVForm.MenuItem4Click(Sender: TObject);
 var
   s: string;
 begin
+  s := '1';
   if Msg.Input(s, 'Enter rows count to add') then
   begin
     DataGrid.RowCount := DataGrid.RowCount + StrToIntDef(s, 0);
@@ -251,6 +265,11 @@ end;
 procedure TCSVForm.MenuItem6Click(Sender: TObject);
 begin
   DataGrid.CopyToClipboard(True);
+end;
+
+procedure TCSVForm.MenuItem8Click(Sender: TObject);
+begin
+  RenameHeader(DataGrid.Col);
 end;
 
 procedure TCSVForm.StopBtn2Click(Sender: TObject);
@@ -282,6 +301,18 @@ procedure TCSVForm.Changed;
 begin
   if not FLoading and Assigned(FOnChanged) then
     FOnChanged(Self);
+end;
+
+procedure TCSVForm.RenameHeader(Index: Integer);
+var
+  s: string;
+begin
+  s := 'Header' + IntToStr(Index);
+  if MsgBox.Msg.Input(s, 'Rename column header') then
+  begin
+    DataGrid.Cells[Index, 0] := s;
+    Changed;
+  end;
 end;
 
 procedure TCSVForm.RefreshControls;
