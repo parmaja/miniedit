@@ -1,4 +1,19 @@
 unit mneCSVForms;
+{**
+ *  This file is part of the "Mini Library"
+ *
+ * @license   modifiedLGPL (modified of http://www.gnu.org/licenses/lgpl.html)
+ *            See the file COPYING.MLGPL, included in this distribution,
+ * @author    Zaher Dirkey <zaher at parmaja dot com>
+ *}
+
+{*TODO
+  * No header grid
+  * Sort column
+  * Options on Tendency
+  * View as text
+  * Find and Replace
+}
 
 {$mode objfpc}{$H+}
 
@@ -17,6 +32,7 @@ type
   TCSVForm = class(TFrame, IEditorFrame)
     MenuItem7: TMenuItem;
     MenuItem8: TMenuItem;
+    IsRtlMnu: TMenuItem;
     SaveConfigFileBtn: TButton;
     DataGrid: TStringGrid;
     FetchCountLbl: TLabel;
@@ -36,11 +52,11 @@ type
 
     procedure ConfigFileBtnClick(Sender: TObject);
 
-      procedure DataGridColRowMoved(Sender: TObject; IsColumn: Boolean; sIndex, tIndex: Integer);
+    procedure DataGridColRowMoved(Sender: TObject; IsColumn: Boolean; sIndex, tIndex: Integer);
     procedure DataGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
     procedure DataGridGetEditText(Sender: TObject; ACol, ARow: Integer; var Value: string);
 
-      procedure DataGridHeaderClick(Sender: TObject; IsColumn: Boolean; Index: Integer);
+    procedure DataGridHeaderClick(Sender: TObject; IsColumn: Boolean; Index: Integer);
     procedure DataGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 
     procedure DataGridSelectEditor(Sender: TObject; aCol, aRow: Integer; var Editor: TWinControl);
@@ -54,6 +70,7 @@ type
     procedure MenuItem5Click(Sender: TObject);
     procedure MenuItem6Click(Sender: TObject);
     procedure MenuItem8Click(Sender: TObject);
+    procedure IsRtlMnuClick(Sender: TObject);
     procedure StopBtn2Click(Sender: TObject);
     procedure OptionsBtnClick(Sender: TObject);
     procedure StopBtnClick(Sender: TObject);
@@ -66,6 +83,7 @@ type
     FFileName: string;
     procedure Changed;
   public
+    IsRTL: Boolean;
     CSVOptions: TmncCSVOptions;
     FInteractive: Boolean;
     FLoading: Boolean;
@@ -272,6 +290,13 @@ begin
   RenameHeader(DataGrid.Col);
 end;
 
+procedure TCSVForm.IsRtlMnuClick(Sender: TObject);
+begin
+  IsRTL := IsRtlMnu.Checked;
+  RefreshControls;
+  Changed;
+end;
+
 procedure TCSVForm.StopBtn2Click(Sender: TObject);
 begin
   if not Msg.No('Are you sure you want to clear it') then
@@ -289,6 +314,7 @@ begin
   if ShowCSVOptions('Export CSV', aCSVOptions) then
   begin
     CSVOptions := aCSVOptions;
+    Changed;
   end
 end;
 
@@ -319,6 +345,11 @@ procedure TCSVForm.RefreshControls;
 begin
   DelConfigFileBtn.Visible := IsConfigFileExists;
   SaveConfigFileBtn.Visible := not DelConfigFileBtn.Visible;
+  IsRTLMnu.Checked := IsRTL;
+  if IsRTL then
+    DataGrid.BiDiMode := bdRightToLeft
+  else
+    DataGrid.BiDiMode := bdLeftToRight;
 end;
 
 function TCSVForm.IsConfigFileExists: Boolean;
@@ -333,6 +364,7 @@ begin
   ini := TIniFile.Create(FFileName + '.conf');
   try
     CSVOptions.SaveToIni('options', ini);
+    ini.WriteBool('ui', 'rtl', IsRTL);
   finally
     ini.Free;
   end;
@@ -356,6 +388,7 @@ var
   aFile: TFileStream;
   r, c:Integer;
   s: string;
+  ansi: ansistring;
 begin
   FFileName := FileName;
   aFile := TFileStream.Create(FileName, fmCreate or fmOpenWrite);
@@ -370,15 +403,20 @@ begin
         s := s + DataGrid.Cells[c, r];
       end;
 
-      s := s + sWinEndOfLine;
-      aFile.WriteBuffer(Pointer(S)^, length(s));
+      s := s + CSVOptions.EndOfLine;
+      if CSVOptions.ANSIContents then
+      begin
+        ansi := UTF8Decode(s);
+        aFile.WriteBuffer(Pointer(ansi)^, length(ansi));
+      end
+      else
+        aFile.WriteBuffer(Pointer(S)^, length(s));
     end;
   finally
     aFile.Free;
   end;
   if IsConfigFileExists then
     SaveConfigFile;
-  //RefreshControls;
 end;
 
 procedure TCSVForm.Load(FileName: string);
@@ -394,8 +432,6 @@ var
 begin
   FFileName := FileName;
 
-  RefreshControls;
-
   FLoading := True;
   try
     ClearGrid;
@@ -409,9 +445,12 @@ begin
         Ini := TIniFile.Create(Engine.WorkSpace + 'mne-csv-options.ini');
       try
         CSVOptions.LoadFromIni('options', Ini);
+        IsRTL := Ini.ReadBool('ui', 'rtl', false);
       finally
         Ini.Free;
       end;
+
+      RefreshControls;
 
       if b or ShowCSVOptions('Export CSV', CSVOptions) then
       begin
@@ -443,6 +482,8 @@ begin
   finally
     FLoading := False;
   end;
+  if DataGrid.Columns.Count >0 then
+    DataGrid.Columns[1].Alignment := taRightJustify;
 end;
 
 procedure TCSVForm.FillGrid(SQLCMD: TmncCommand; Title: String; Append: Boolean);

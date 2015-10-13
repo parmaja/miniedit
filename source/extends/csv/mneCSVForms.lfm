@@ -21,7 +21,7 @@ object CSVForm: TCSVForm
     ClientWidth = 695
     TabOrder = 1
     object FetchedLbl: TLabel
-      Left = 100
+      Left = 272
       Height = 26
       Top = 0
       Width = 50
@@ -33,7 +33,7 @@ object CSVForm: TCSVForm
       ParentColor = False
     end
     object FetchCountLbl: TLabel
-      Left = 150
+      Left = 322
       Height = 26
       Top = 0
       Width = 323
@@ -44,7 +44,7 @@ object CSVForm: TCSVForm
       ParentColor = False
     end
     object StopBtn2: TButton
-      Left = 50
+      Left = 222
       Height = 26
       Top = 0
       Width = 50
@@ -54,42 +54,42 @@ object CSVForm: TCSVForm
       TabOrder = 1
     end
     object StopBtn: TButton
-      Left = 0
-      Height = 26
-      Top = 0
-      Width = 50
-      Align = alLeft
-      Caption = 'S&top'
-      OnClick = StopBtnClick
-      TabOrder = 0
-    end
-    object OptionsBtn: TButton
       Left = 645
       Height = 26
       Top = 0
       Width = 50
       Align = alRight
+      Caption = 'S&top'
+      OnClick = StopBtnClick
+      TabOrder = 0
+    end
+    object OptionsBtn: TButton
+      Left = 0
+      Height = 26
+      Top = 0
+      Width = 50
+      Align = alLeft
       Caption = 'Options'
       OnClick = OptionsBtnClick
       TabOrder = 4
     end
     object DelConfigFileBtn: TButton
-      Left = 473
+      Left = 50
       Height = 26
       Top = 0
       Width = 86
-      Align = alRight
+      Align = alLeft
       Caption = 'Delete Config'
       OnClick = DelConfigFileBtnClick
       TabOrder = 2
       Visible = False
     end
     object SaveConfigFileBtn: TButton
-      Left = 559
+      Left = 136
       Height = 26
       Top = 0
       Width = 86
-      Align = alRight
+      Align = alLeft
       Caption = 'Save Config'
       OnClick = ConfigFileBtnClick
       TabOrder = 3
@@ -140,6 +140,11 @@ object CSVForm: TCSVForm
   object GridPopupMenu: TPopupMenu
     left = 280
     top = 94
+    object IsRtlMnu: TMenuItem
+      AutoCheck = True
+      Caption = 'Right To Left'
+      OnClick = IsRtlMnuClick
+    end
     object MenuItem6: TMenuItem
       Caption = 'Copy Selected'
       OnClick = MenuItem6Click

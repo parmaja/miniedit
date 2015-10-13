@@ -26,7 +26,7 @@ uses
   Registry,
   SysUtils,
   simpleipc,
-  Themes, SynEditHighlighter, Interfaces,
+  Themes, cmdbox, SynEditHighlighter, Interfaces,
   MainUnit in 'MainUnit.pas' {MainForm},
   mneProjectOptions in 'mneProjectOptions.pas' {ProjectForm},
   SearchForms in '..\editor\SearchForms.pas' {SearchForm},
@@ -45,11 +45,11 @@ uses
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
   SearchProgressForms, EditorDebugger, PHP_xDebug, SelectList,
   SynHighlighterApache, IniFiles, mneAddons, mneAssociateForm, mneExtends,
-  mnePasProjectFrames, mnePasConfigForms, mnePasClasses, mneCSVClasses,
-  mneDClasses, mneDProjectFrames, mneDConfigForms, MsgBox, CSVOptionsForms,
-  GUIMsgBox, Classes, PHPUtils, SynHighlighterD, SynHighlighterMultiProc,
-  mneSetups, mneSettings, mneSARDClasses, EditorClasses, DebugClasses,
-  mneViewClasses, mneCSVForms;
+  mneCMDForms, mneCMDClasses, mnePasProjectFrames, mnePasConfigForms,
+  mnePasClasses, mneCSVClasses, mneDClasses, mneDProjectFrames, mneDConfigForms,
+  MsgBox, mnStreams, CSVOptionsForms, mncCSV, GUIMsgBox, Classes, PHPUtils,
+  SynHighlighterD, SynHighlighterMultiProc, mneSetups, mneSettings,
+  mneSARDClasses, EditorClasses, DebugClasses, mneViewClasses, mneCSVForms;
 
 {$R *.res}
 
@@ -124,7 +124,6 @@ end;
 begin
   if not AnotherInstance then
   begin
-//    Application.BidiMode := bdLeftToRight;
     Application.Initialize;
     if CheckSetup then
     begin

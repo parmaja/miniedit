@@ -613,11 +613,6 @@ begin
     Folder := ExtractFilePath(lFilePath);
     // The filename is expanded, if necessary, in EditorEngine.TEditorFiles.InternalOpenFile
     Engine.Files.OpenFile(lFilePath);
-  end
-  else if Engine.Options.AutoOpenProject then
-  begin
-    if Engine.Options.RecentProjects.Count > 0 then
-      Engine.Session.Load(Engine.Options.RecentProjects[0]);
   end;
 
   if Engine.Options.AutoStartDebugServer then
@@ -749,6 +744,11 @@ end;
 
 procedure TMainForm.FormShow(Sender: TObject);
 begin
+  if (ParamCount =0) and Engine.Options.AutoOpenProject then
+  begin
+    if Engine.Options.RecentProjects.Count > 0 then
+      Engine.Session.Load(Engine.Options.RecentProjects[0]);
+  end;
 end;
 
 procedure TMainForm.FormWindowStateChange(Sender: TObject);

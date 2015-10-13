@@ -636,11 +636,11 @@ var
   aMatched: boolean;
 begin
   Result := nil;
-  Stream.ReadUntil(#0, s, aMatched);
+  Stream.ReadUntil(#0, true, s, aMatched);
   if Connected and aMatched and (S <> '') then
   begin
     Result := TdbgpRespond.Create;
-    Stream.ReadUntil(#0, s, aMatched);
+    Stream.ReadUntil(#0, true, s, aMatched);
     s := Trim(s);
     {$IFDEF SAVELOG}
     SaveLog(s);
