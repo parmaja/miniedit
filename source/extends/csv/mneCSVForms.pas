@@ -482,8 +482,8 @@ begin
   finally
     FLoading := False;
   end;
-  if DataGrid.Columns.Count >0 then
-    DataGrid.Columns[1].Alignment := taRightJustify;
+  {if DataGrid.Columns.Count >0 then
+    DataGrid.Columns[1].Alignment := taRightJustify;}
 end;
 
 procedure TCSVForm.FillGrid(SQLCMD: TmncCommand; Title: String; Append: Boolean);

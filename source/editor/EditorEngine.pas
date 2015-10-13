@@ -126,7 +126,7 @@ type
     Run, Compile, Collect file groups and have special properties
   }
 
-  TEditorCapability = (capRun, capCompile, capLink, capDebug, capDebugServer, capTrace, capOSDepended, capOptions, capProjectOptions);
+  TEditorCapability = (capRun, capCompile, capLink, capDebug, capDebugServer, capTrace, capOSDepended, capBrowser, capOptions, capProjectOptions);
 
   TEditorCapabilities = set of TEditorCapability;
 
@@ -1940,7 +1940,7 @@ end;
 
 procedure TEditorSession.Close;
 begin
-  FProject := nil;
+  FreeAndNil(FProject);
   Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
 end;
 
@@ -3759,6 +3759,7 @@ begin
   FDesktop.Free;
   FCachedVariables.Free;
   FCachedIdentifiers.Free;
+  FreeAndNil(FOptions);
   inherited;
 end;
 
@@ -4217,6 +4218,7 @@ begin
 
   Files.CurrentFolder := Engine.BrowseFolder;
   Files.Clear;
+
   if Engine.Files.Current <> nil then
     Files.CurrentFile := Engine.Files.Current.Name
   else

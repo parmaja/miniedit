@@ -1427,6 +1427,7 @@ begin
   ExecuteMnu.Visible := capRun in Engine.Tendency.Capabilities;
   DBGRunAct.Visible := capRun in Engine.Tendency.Capabilities;
   TypePnl.Caption := Engine.Tendency.Name;
+  BrowseTabs.Items[1].Visible := False;//capBrowser in Engine.Tendency.Capabilities;
 end;
 
 procedure TMainForm.SaveAsProjectActExecute(Sender: TObject);
