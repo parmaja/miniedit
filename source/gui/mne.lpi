@@ -36,7 +36,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\..\..\..\lib\minilib\lib;..\extends\cmd;..\..\..\..\lib\minilib\connection\source"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\..\..\..\lib\minilib\lib;..\..\..\..\lib\minilib\connection\source;..\extends\console"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Linking>
@@ -67,7 +67,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\extends\cmd"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\extends\console"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Parsing>
@@ -409,18 +409,18 @@
         <IsPartOfProject Value="True"/>
       </Unit42>
       <Unit43>
-        <Filename Value="..\extends\cmd\mneCMDForms.pas"/>
+        <Filename Value="..\..\..\..\lib\minilib\connection\source\mncCSV.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="CMDForm"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Frame"/>
       </Unit43>
       <Unit44>
-        <Filename Value="..\extends\cmd\mneCMDClasses.pas"/>
+        <Filename Value="..\extends\console\mneConsoleForms.pas"/>
         <IsPartOfProject Value="True"/>
+        <ComponentName Value="ConsoleForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit44>
       <Unit45>
-        <Filename Value="..\..\..\..\lib\minilib\connection\source\mncCSV.pas"/>
+        <Filename Value="..\extends\console\mneConsoleClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit45>
     </Units>
@@ -433,7 +433,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\..\..\..\lib\minilib\lib;..\extends\cmd;..\..\..\..\lib\minilib\connection\source"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\..\..\..\lib\minilib\lib;..\..\..\..\lib\minilib\connection\source;..\extends\console"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <Linking>

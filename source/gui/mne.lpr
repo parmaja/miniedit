@@ -45,7 +45,7 @@ uses
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
   SearchProgressForms, EditorDebugger, PHP_xDebug, SelectList,
   SynHighlighterApache, IniFiles, mneAddons, mneAssociateForm, mneExtends,
-  mneCMDForms, mneCMDClasses, mnePasProjectFrames, mnePasConfigForms,
+  mneConsoleClasses, mneConsoleForms, mnePasProjectFrames, mnePasConfigForms,
   mnePasClasses, mneCSVClasses, mneDClasses, mneDProjectFrames, mneDConfigForms,
   MsgBox, mnStreams, CSVOptionsForms, mncCSV, GUIMsgBox, Classes, PHPUtils,
   SynHighlighterD, SynHighlighterMultiProc, mneSetups, mneSettings,

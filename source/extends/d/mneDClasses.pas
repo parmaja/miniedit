@@ -48,6 +48,7 @@ type
 
   TDProjectOptions = class(TEditorProjectOptions)
   private
+    FExpandPaths: Boolean;
     FMainFile: string;
     FPaths: TStrings;
     procedure SetPaths(AValue: TStrings);
@@ -58,6 +59,7 @@ type
   published
     property MainFile: string read FMainFile write FMainFile;
     property Paths: TStrings read FPaths write SetPaths;
+    property ExpandPaths: Boolean read FExpandPaths write FExpandPaths;
   end;
 
   { TDTendency }
@@ -128,7 +130,7 @@ var
   begin
     if (aToken[1] = '/') or (aToken[1] = '\') then
       aToken := RightStr(aToken, Length(aToken) - 1);
-    aToken := Engine.ExpandFileName(aToken);
+    aToken := Engine.ExpandFile(aToken);
     Result := FileExists(aToken);
     if Result then
       Engine.Files.OpenFile(aToken);
@@ -186,6 +188,7 @@ var
   aCompiler: string;
   s: string;
   i: Integer;
+  aPath: string;
   Options: TDProjectOptions;
 begin
   //if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
@@ -194,7 +197,7 @@ begin
   if (Engine.Session.IsOpened) then
   begin
     Options := (Engine.Session.Project.Options as TDProjectOptions);
-    aRoot := IncludeTrailingPathDelimiter(Engine.Session.Project.RootDir);
+    aRoot := Engine.Session.GetRoot;
     aFile := ExpandToPath(Options.MainFile, aRoot);
   end;
   if (aFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
@@ -211,8 +214,13 @@ begin
     s := '';
     for i := 0 to Options.Paths.Count - 1 do
     begin
-      if Trim(Options.Paths[i]) <>'' then
-        s := s + '-I'+Trim(Options.Paths[i]) + ' ';
+      aPath := Trim(Options.Paths[i]);
+      if aPath <>'' then
+      begin
+        if Options.ExpandPaths then
+          aPath := Engine.ExpandFile(aPath);
+        s := s + '-I' +aPath + ' ';
+      end;
     end;
     s := aCompiler + ' ' + s + aFile;
 

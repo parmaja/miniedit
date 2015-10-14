@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 431
+  Left = 200
   Height = 614
-  Top = 141
+  Top = 101
   Width = 772
   AllowDropFiles = True
   Caption = 'Mini Edit'
@@ -104,6 +104,12 @@ object MainForm: TMainForm
         Top = 0
         Action = OutputAct
         Style = tbsCheck
+      end
+      object ToolButton4: TToolButton
+        Left = 693
+        Top = 0
+        Caption = 'Test'
+        OnClick = ToolButton4Click
       end
     end
   end
@@ -781,44 +787,6 @@ object MainForm: TMainForm
     Caption = 'Call Stack'
     Constraints.MinHeight = 60
     TabOrder = 4
-    object MessageList: TListView
-      Left = 3
-      Height = 101
-      Top = 23
-      Width = 766
-      Align = alClient
-      Columns = <      
-        item
-          Caption = 'Type'
-          Width = 100
-        end      
-        item
-          AutoSize = True
-          Caption = 'Message'
-          Width = 662
-        end      
-        item
-          Caption = 'File'
-          Width = 300
-        end      
-        item
-          Caption = 'Line'
-          Width = 433
-        end>
-      ColumnClick = False
-      Font.CharSet = ARABIC_CHARSET
-      Font.Height = -12
-      Font.Name = 'Courier New'
-      ParentFont = False
-      PopupMenu = MessagesPopup
-      ReadOnly = True
-      RowSelect = True
-      TabStop = False
-      TabOrder = 1
-      ViewStyle = vsReport
-      OnDblClick = MessageListDblClick
-      OnKeyDown = WatchListKeyDown
-    end
     object CallStackList: TListView
       Left = 3
       Height = 101
@@ -878,6 +846,44 @@ object MainForm: TMainForm
       TabStop = False
       TabOrder = 2
       ViewStyle = vsReport
+      OnKeyDown = WatchListKeyDown
+    end
+    object MessageList: TListView
+      Left = 3
+      Height = 101
+      Top = 23
+      Width = 766
+      Align = alClient
+      Columns = <      
+        item
+          Caption = 'Type'
+          Width = 100
+        end      
+        item
+          AutoSize = True
+          Caption = 'Message'
+          Width = 662
+        end      
+        item
+          Caption = 'File'
+          Width = 300
+        end      
+        item
+          Caption = 'Line'
+          Width = 433
+        end>
+      ColumnClick = False
+      Font.CharSet = ARABIC_CHARSET
+      Font.Height = -12
+      Font.Name = 'Courier New'
+      ParentFont = False
+      PopupMenu = MessagesPopup
+      ReadOnly = True
+      RowSelect = True
+      TabStop = False
+      TabOrder = 1
+      ViewStyle = vsReport
+      OnDblClick = MessageListDblClick
       OnKeyDown = WatchListKeyDown
     end
     object SearchList: TListView

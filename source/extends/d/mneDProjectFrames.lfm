@@ -610,4 +610,12 @@ object DProjectFrame: TDProjectFrame
     Caption = 'Paths'
     ParentColor = False
   end
+  object ExpandPathsChk: TCheckBox
+    Left = 63
+    Height = 19
+    Top = 131
+    Width = 96
+    Caption = 'Expand pathes'
+    TabOrder = 3
+  end
 end

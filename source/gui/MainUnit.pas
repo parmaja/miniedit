@@ -38,7 +38,7 @@ uses
   {$ifdef Windows}
   mneAssociateForm,
   {$endif}
-  mnePHPIniForm,
+  mnePHPIniForm, mneConsoleForms,
   //end of addons
   mneAddons, IniFiles, mnFields, simpleipc, mnUtils, ntvTabs, ntvPageControls;
 
@@ -56,6 +56,7 @@ type
     BrowseTabs: TntvTabSet;
     MenuItem22: TMenuItem;
     MenuItem23: TMenuItem;
+    ToolButton4: TToolButton;
     TypeOptionsMnu: TMenuItem;
     TypeOptionsAct: TAction;
     BugSignBtn: TSpeedButton;
@@ -398,6 +399,7 @@ type
     procedure ShowKnownActExecute(Sender: TObject);
     procedure SortByExtensionsActExecute(Sender: TObject);
     procedure SortByNamesActExecute(Sender: TObject);
+    procedure ToolButton4Click(Sender: TObject);
     procedure TypeOptionsActExecute(Sender: TObject);
     procedure UnixMnuClick(Sender: TObject);
     procedure WindowsMnuClick(Sender: TObject);
@@ -501,6 +503,7 @@ type
     procedure EngineEdited;
     procedure EngineState;
     procedure ProjectLoaded;
+    procedure ProjectChanged;
     procedure UpdateFolder;
     procedure UpdateProject;
     procedure SetFolder(const Value: string);
@@ -575,12 +578,12 @@ begin
   aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
   try
     aWorkspace := aIniFile.ReadString(SysPlatform, 'Workspace', '');
-    aWorkspace := VarReplace(aWorkspace, Engine.Environment);
-    aWorkspace := IncludeTrailingPathDelimiter(aWorkspace);
+    aWorkspace := IncludeTrailingPathDelimiter(Engine.EnvReplace(aWorkspace));
   finally
     aIniFile.Free;
   end;
   Engine.Workspace := ExpandToPath(aWorkspace, Application.Location);
+  Engine.Environment.Add('Workspace=' + aWorkspace);
   //ForceDirectories(Engine.Workspace);
 
   Engine.Container := EditorsPnl;
@@ -844,7 +847,12 @@ begin
     for i := 0 to Engine.Files.Count - 1 do
     begin
       if Engine.Files[i].Name = '' then
-        FileTabs.Items.AddItem(Engine.Files[i].Group.Name, '*' + Engine.Files[i].Group.Name + '*')
+      begin
+        if Engine.Files[i].Group <> nil then
+          FileTabs.Items.AddItem(Engine.Files[i].Group.Name, '*' + Engine.Files[i].Group.Name + '*')
+        else
+          FileTabs.Items.AddItem('', '* No Name *');
+      end
       else
         FileTabs.Items.AddItem(ExtractFileName(Engine.Files[i].Name), ExtractFileName(Engine.Files[i].Name));
     end;
@@ -872,7 +880,7 @@ begin
       Engine.Files.Current.Control.PopupMenu := EditorPopupMenu;
     FileNameLbl.Caption := Engine.Files.Current.Name;
     FileModeBtn.Caption := Engine.Files.Current.ModeAsText;
-    FileModeBtn.Visible := Engine.Files.Current.Group.Category.IsText;
+    FileModeBtn.Visible := Engine.Files.Current.IsText;
     FileTabs.ItemIndex := Engine.Files.Current.Index;
     if Engine.Files.Current.Name <> '' then
       FileTabs.Items[FileTabs.ItemIndex].Caption := ExtractFileName(Engine.Files.Current.Name);
@@ -1214,7 +1222,7 @@ var
   r: boolean;
 begin
   if Engine.Session.IsOpened then
-    r := ShowSelectFile(Engine.Session.Project.Path, aFileName)
+    r := ShowSelectFile(Engine.Session.Project.RootDir, aFileName)
   else
     r := ShowSelectFile(Folder, aFileName);
 
@@ -1249,7 +1257,7 @@ begin
   begin
     aFile := (Sender as TMenuItem).Caption;
     if Engine.Session.IsOpened then
-      aFile := ExpandToPath(aFile, Engine.Session.Project.Path);
+      aFile := ExpandToPath(aFile, Engine.Session.Project.RootDir);
     Engine.Files.OpenFile(aFile);
   end;
 end;
@@ -1333,6 +1341,21 @@ end;
 procedure TMainForm.SortByNamesActExecute(Sender: TObject);
 begin
   SortFolderFiles := srtfByNames;
+end;
+
+procedure TMainForm.ToolButton4Click(Sender: TObject);
+var
+  aControl: TConsoleForm;
+begin
+  aControl := TConsoleForm.Create(Application);
+  aControl.Parent := Engine.Container;
+  Engine.Files.New('CMD', aControl);
+  aControl.CMDBox.Color := clWhite;
+  aControl.CMDBox.Font.Color := clBlack;
+  aControl.CMDBox.TextColor(clBlack);
+  aControl.CMDBox.TextBackground(clWhite);
+  aControl.CMDBox.Write('لاتحزن!');
+  //aControl.CMDBox.InputSelColor
 end;
 
 procedure TMainForm.TypeOptionsActExecute(Sender: TObject);
@@ -1679,6 +1702,8 @@ begin
   if ecsEdit in State then
     EngineEdited;
   if ecsProject in State then
+    ProjectChanged;
+  if ecsProjectLoaded in State then
     ProjectLoaded;
   if ecsState in State then
     EngineState;
@@ -1712,10 +1737,11 @@ end;
 
 procedure TMainForm.ProjectLoaded;
 begin
-  if (Engine.Session.IsOpened) and (Engine.Session.Project.Path <> '') then
-  begin
-    Folder := Engine.Session.Project.Path;
-  end;
+  Folder := Engine.GetRoot;
+end;
+
+procedure TMainForm.ProjectChanged;
+begin
 end;
 
 procedure TMainForm.ReplaceActExecute(Sender: TObject);
@@ -2308,8 +2334,7 @@ end;
 
 procedure TMainForm.FolderHomeActExecute(Sender: TObject);
 begin
-  if Engine.Session.IsOpened then
-    Folder := Engine.Session.Project.Path;
+  Folder := Engine.GetRoot;
 end;
 
 procedure TMainForm.StatusTimerTimer(Sender: TObject);
@@ -2466,10 +2491,8 @@ begin
       aText := (Current.Control as TCustomSynEdit).GetWordAtRowCol((Current.Control as TCustomSynEdit).CaretXY);
   end;
 
-  if Engine.Session.IsOpened then
-    aFolder := Engine.Session.Project.Path
-  else
-    aFolder := '';
+  aFolder := Engine.GetRoot;
+
   if aFolder = '' then
     aFolder := Folder;
   MessagesAct.Checked := True;

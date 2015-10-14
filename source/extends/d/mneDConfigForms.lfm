@@ -58,4 +58,8 @@ object DConfigForm: TDConfigForm
     ModalResult = 2
     TabOrder = 3
   end
+  object OpenDialog: TOpenDialog
+    left = 90
+    top = 70
+  end
 end

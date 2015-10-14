@@ -17,6 +17,9 @@ uses
     IFileEditor = interface
     end;
 
+    IControlEditor = interface(IFileEditor)
+    end;
+
     IClipboardEditor = interface(IFileEditor)
       function CanPaste: Boolean;
       procedure Paste;

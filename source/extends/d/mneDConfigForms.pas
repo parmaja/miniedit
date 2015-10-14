@@ -17,6 +17,7 @@ type
     Label1: TLabel;
     OkBtn: TButton;
     CompilerEdit: TEdit;
+    OpenDialog: TOpenDialog;
     procedure Button3Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
@@ -37,14 +38,14 @@ uses
 { TDConfigForm }
 
 procedure TDConfigForm.Button3Click(Sender: TObject);
-var
-  aFolder: String;
 begin
-  {aFolder := CompilerEdit.Text;
-  if SelectFolder('Select D directory', '', aFolder) then
+  OpenDialog.Filter := 'EXE files|*.exe|All files|*.*';
+  OpenDialog.FileName := CompilerEdit.Text;
+  OpenDialog.InitialDir := ExtractFilePath(OpenDialog.FileName);
+  if OpenDialog.Execute then
   begin
-    CompilerEdit.Text := aFolder;
-  end;}
+    CompilerEdit.Text := OpenDialog.FileName;
+  end;
 end;
 
 procedure TDConfigForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);

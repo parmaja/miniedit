@@ -11,7 +11,7 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  EditorEngine, mneClasses, Dialogs, StdCtrls, ExtCtrls, ComCtrls;
+  EditorEngine, mneClasses, Dialogs, StdCtrls, ExtCtrls, ComCtrls, Menus;
 
 type
 
@@ -24,16 +24,21 @@ type
     Label3: TLabel;
     Label4: TLabel;
     Label8: TLabel;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
     NameEdit: TEdit;
     OkBtn: TButton;
     CancelBtn: TButton;
-    OpenDialog: TOpenDialog;
     PageControl: TPageControl;
+    PathPopupMenu: TPopupMenu;
     RootDirEdit: TEdit;
     SaveDesktopChk: TCheckBox;
     SCMCbo: TComboBox;
     GeneralSheet: TTabSheet;
     procedure Label3Click(Sender: TObject);
+    procedure MenuItem1Click(Sender: TObject);
+    procedure MenuItem3Click(Sender: TObject);
     procedure OkBtnClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure Button2Click(Sender: TObject);
@@ -46,6 +51,7 @@ type
     FFrame: TFrame;
   protected
   public
+    procedure SelectPathFolder;
     procedure Apply(GeneralOnly: Boolean = False);
     procedure Retrieve;
   end;
@@ -79,9 +85,24 @@ begin
 
 end;
 
+procedure TProjectForm.MenuItem1Click(Sender: TObject);
+begin
+  RootDirEdit.Text := Engine.BrowseFolder;
+end;
+
+procedure TProjectForm.MenuItem3Click(Sender: TObject);
+begin
+  SelectPathFolder;
+end;
+
 procedure TProjectForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   CloseAction := caFree;
+end;
+
+procedure TProjectForm.Button2Click(Sender: TObject);
+begin
+
 end;
 
 procedure TProjectForm.Apply(GeneralOnly: Boolean);
@@ -122,18 +143,12 @@ begin
     SCMCbo.ItemIndex := 0;
 end;
 
-procedure TProjectForm.Button2Click(Sender: TObject);
+procedure TProjectForm.Button3Click(Sender: TObject);
 begin
-  OpenDialog.Filter := 'EXE files|*.exe|All files|*.*';
-//  OpenDialog.FileName := ProgramEdit.Text;
-  OpenDialog.InitialDir := ExtractFilePath(OpenDialog.FileName);
-  if OpenDialog.Execute then
-  begin
-//    ProgramEdit.Text := OpenDialog.FileName;
-  end;
+  SelectPathFolder;
 end;
 
-procedure TProjectForm.Button3Click(Sender: TObject);
+procedure TProjectForm.SelectPathFolder;
 var
   aFolder: string;
 begin

@@ -1,5 +1,6 @@
 unit EditorEngine;
 {$mode objfpc}{$H+}
+{$INTERFACES CORBA} //Needed for interfaces without guid
 {**
  * Mini Edit
  *
@@ -18,7 +19,7 @@ uses
   mnUtils, LCLType, EditorClasses;
 
 type
-  TEditorChangeStates = set of (ecsChanged, ecsState, ecsRefresh, ecsOptions, ecsDebug, ecsShow, ecsEdit, ecsFolder, ecsProject); //ecsShow bring to front
+  TEditorChangeStates = set of (ecsChanged, ecsState, ecsRefresh, ecsOptions, ecsDebug, ecsShow, ecsEdit, ecsFolder, ecsProject, ecsProjectLoaded); //ecsShow bring to front
   TSynCompletionType = (ctCode, ctHint, ctParams);
 
   TEditorEngine = class;
@@ -37,13 +38,13 @@ type
   end;
 
   IEditorOptions = interface
-  ['{5466AAF9-FA4E-4AFE-94F2-569963F9B40F}']
+    ['{3D32B7C6-7D6A-4E95-B616-4374BCDAAD37}']
     procedure Apply;
     procedure Retrieve;
   end;
 
-  IEditorFrame = interface
-  ['{A18AE254-B91C-4354-ACD5-3E4FA9884AD0}']
+  IEditorControl = interface
+    ['{8C2646A1-2738-4830-8107-CF8753D14EBD}']
     function GetMainControl: TWinControl; //Like datagrid in csv form
   end;
 
@@ -207,7 +208,6 @@ type
   TEditorProject = class sealed(TmnXMLProfile)
   private
     FOptions: TEditorProjectOptions;
-    FPath1: string;
     FTendencyName: string;
     FDescription: string;
     FRootUrl: string;
@@ -234,7 +234,6 @@ type
     destructor Destroy; override;
     procedure LoadFromFile(FileName: string); override;
     property FileName: string read FFileName write FFileName;
-    property Path: string read FPath1 write FPath1;
     procedure SetSCMClass(SCMClass: TEditorSCM);
     property CachedVariables: THashedStringList read FCachedVariables;
     property CachedIdentifiers: THashedStringList read FCachedIdentifiers;
@@ -284,7 +283,9 @@ type
     FRelated: string;
     FMode: TEditorFileMode;
     function GetCapability: TEditCapability;
+    function GetIsText: Boolean;
     function GetNakeName: string;
+    function GetPath: string;
     procedure SetGroup(const Value: TFileGroup);
     procedure SetIsEdited(const Value: Boolean);
     procedure SetIsNew(AValue: Boolean);
@@ -308,6 +309,7 @@ type
     constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
+    procedure AssignTo(Dest: TPersistent); override;
     procedure Load(FileName: string);
     procedure Save(FileName: string);
     procedure Rename(ToNakeName: string); //only name not with the path
@@ -346,8 +348,10 @@ type
     //run the file or run the project depend on the project type (Tendency)
     property Mode: TEditorFileMode read FMode write SetMode default efmUnix;
     property ModeAsText: string read GetModeAsText;
+    property IsText: Boolean read GetIsText;
     property Name: string read FName write FName;
     property NakeName: string read GetNakeName;
+    property Path: string read GetPath;
     property Related: string read FRelated write FRelated;
     property IsEdited: Boolean read FIsEdited write SetIsEdited; //TODO rename to IsChanged
     property IsNew: Boolean read FIsNew write SetIsNew default False;
@@ -355,6 +359,22 @@ type
     property Group: TFileGroup read FGroup write SetGroup;
     property Control: TWinControl read GetControl;
   published
+  end;
+
+  { TControlEditorFile }
+
+  TControlEditorFile = class(TEditorFile, IControlEditor)
+  private
+    FControl: TWinControl;
+    procedure SetControl(AValue: TWinControl);
+  protected
+    function GetControl: TWinControl; override;
+    function GetIsReadonly: Boolean; override;
+    procedure DoLoad(FileName: string); override;
+    procedure DoSave(FileName: string); override;
+  public
+    destructor Destroy; override;
+    property Control: TWinControl read GetControl write SetControl;
   end;
 
   { TTextEditorFile }
@@ -429,6 +449,7 @@ type
     procedure SetCurrentIndex(Index: integer; vRefresh: Boolean);
     function New(vGroupName: string = ''): TEditorFile; overload;
     function New(Category, Name, Related: string; ReadOnly, Executable: Boolean): TEditorFile; overload;
+    function New(Name: string; Control: TWinControl): TEditorFile; overload;
     procedure Open;
     procedure Save;
     procedure SaveAll;
@@ -762,6 +783,7 @@ type
     function SaveAs(AProject: TEditorProject): Boolean;
     function Save: Boolean;
     function SaveAs: Boolean;
+    function GetRoot: string;
     //Is project opened
     property IsOpened: Boolean read GetIsOpened;
     //Current is the opened project, if it is a nil that mean there is no opened project.
@@ -837,7 +859,6 @@ type
     FEnvironment: TStringList;
     function GetTendency: TEditorTendency;
     function GetSCM: TEditorSCM;
-    function GetRoot: string;
     function GetUpdating: Boolean;
     procedure SetBrowseFolder(const Value: string);
     function GetWorkSpace: string;
@@ -874,9 +895,11 @@ type
     property Updating: Boolean read GetUpdating;
     procedure EndUpdate;
 
-    function ExpandFileName(FileName: string): string;
+    function EnvReplace(S: string; ForVar: string = ''): string;
+    function ExpandFile(FileName: string): string;
+    function GetRoot: string;
     property Extenstion: string read FExtenstion write FExtenstion;
-    property Root: string read GetRoot;
+
     property WorkSpace: string read GetWorkSpace write FWorkSpace;
 
     //AddInstant: Create category and file group for highlighter
@@ -1045,6 +1068,47 @@ begin
       S := S + #$D;
     Stream.WriteBuffer(Pointer(S)^, Length(S));
   end;
+end;
+
+{ TControlEditorFile }
+
+procedure TControlEditorFile.SetControl(AValue: TWinControl);
+begin
+  if FControl <> AValue then
+  begin
+    if FControl <> nil then
+      FControl.Free;
+    FControl := AValue;
+    FControl.Align := alClient;
+    FControl.Parent := Engine.Container;
+    //FControl.Visible := True;
+  end;
+end;
+
+function TControlEditorFile.GetControl: TWinControl;
+begin
+  Result := FControl;
+end;
+
+function TControlEditorFile.GetIsReadonly: Boolean;
+begin
+  Result := True;
+end;
+
+procedure TControlEditorFile.DoLoad(FileName: string);
+begin
+
+end;
+
+procedure TControlEditorFile.DoSave(FileName: string);
+begin
+
+end;
+
+destructor TControlEditorFile.Destroy;
+begin
+  FreeAndNil(FControl);
+  inherited Destroy;
 end;
 
 { TEditorProjectOptions }
@@ -1953,7 +2017,7 @@ begin
   //FMacroRecorder.OnStateChange := DoMacroStateChange;
   FEnvironment.Add('HOME=' + SysUtils.GetEnvironmentVariable('HOME'));
   FEnvironment.Add('EXE=' + Application.ExeName);
-  FEnvironment.Add('LOCATION=' + Application.Location);
+  FEnvironment.Add('MINIEDIT=' + Application.Location);
 
   FInternalTendency := TDefaultTendency.Create;
   //FForms := TEditorFormList.Create(True);
@@ -2223,14 +2287,17 @@ begin
 end;
 
 function TEditorEngine.GetRoot: string;
-var
-  s: string;
 begin
-  s := ExtractFilePath(Application.ExeName);
-  if Session.Project.Path = '' then
-    Result := s
+  if Session.IsOpened then
+  begin
+    if (Session.Project.RootDir <> '') then
+      Result := EnvReplace(Session.Project.RootDir, 'root')
+    else
+      Result := ExtractFilePath(Session.Project.FileName);
+  end
   else
-    Result := Session.Project.Path;
+    Result := Application.Location;
+  Result := ExpandFileName(IncludePathSeparator(Result));
 end;
 
 function TEditorEngine.GetSCM: TEditorSCM;
@@ -2312,7 +2379,7 @@ begin
     end;
     Project := aProject;
     Engine.ProcessRecentProject(FileName);
-    Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
+    Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject, ecsProjectLoaded]);
   finally
     Engine.EndUpdate;
   end;
@@ -2346,6 +2413,20 @@ begin
   Result.Related := Related;
   Current := Result;
   Engine.UpdateState([ecsChanged, ecsState, ecsRefresh]);
+end;
+
+function TEditorFiles.New(Name: string; Control: TWinControl): TEditorFile;
+begin
+  BeginUpdate;
+  try
+    Result := TControlEditorFile.Create(Engine.Files);
+    (Result as TControlEditorFile).Control := Control;
+    Result.Name := Name;
+    Engine.UpdateState([ecsChanged, ecsState, ecsRefresh]);
+    Current := Result;
+  finally
+    EndUpdate;
+  end;
 end;
 
 function TEditorSession.New: TEditorProject;
@@ -2487,6 +2568,24 @@ begin
     SaveAs(Project);
 end;
 
+function TEditorSession.GetRoot: string;
+begin
+  if IsOpened then
+  begin
+    if (Project.RootDir <> '') then
+      Result := Engine.EnvReplace(Project.RootDir, 'root')
+    else
+      Result := ExtractFilePath(Project.FileName);
+  end
+  else if Engine.Files.Current <> nil then
+    Result := ExtractFilePath(Engine.Files.Current.Name)
+  else if Engine.BrowseFolder <> '' then
+    Result := Engine.BrowseFolder
+  else
+    Result := Application.Location;
+  Result := ExpandFileName(IncludePathSeparator(Result));
+end;
+
 procedure TEditorFiles.Prior;
 var
   i: integer;
@@ -2612,7 +2711,7 @@ begin
     if FProject <> nil then
       FreeAndNil(FProject);
     FProject := Value;
-    Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
+    Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject, ecsProjectLoaded]);
   end;
 end;
 
@@ -2744,14 +2843,34 @@ begin
   Result := FUpdateCount > 0;
 end;
 
-function TEditorEngine.ExpandFileName(FileName: string): string;
+function TEditorEngine.EnvReplace(S: string; ForVar: string): string;
+var
+  List: TStringList;
 begin
-  if Session.Project <> nil then
-    Result := ExpandToPath(FileName, ExpandToPath(Session.Project.RootDir, ExtractFilePath(Session.Project.FileName)))
-  else if Files.Current <> nil then
-    Result := ExpandToPath(FileName, ExtractFilePath(Files.Current.Name))
-  else
-    Result := FileName;
+  List := TStringList.Create;
+  try
+    List.Assign(Environment);
+    if not SameText(ForVar, 'ROOT') then
+      List.Add('ROOT=' + GetRoot)
+    else
+    begin
+      if Session.IsOpened then
+        List.Add('ROOT=' + ExtractFilePath(Session.Project.FileName))
+      else
+        List.Add('ROOT=' + Application.Location)
+    end;
+
+    if Files.Current <> nil then
+      List.Add('FileDir=' + Files.Current.Path);
+    Result := VarReplace(S, List, '?');
+  finally
+    List.Free;
+  end;
+end;
+
+function TEditorEngine.ExpandFile(FileName: string): string;
+begin
+  Result := ExpandFileName(ExpandToPath(FileName, Session.GetRoot));
 end;
 {
 procedure TEditorEngine.AddInstant(vName:string; vExtensions: array of string; vHighlighterClass: TSynCustomHighlighterClass; vKind: TFileCategoryKinds);
@@ -2977,6 +3096,10 @@ procedure TEditorFile.Assign(Source: TPersistent);
 begin
 end;
 
+procedure TEditorFile.AssignTo(Dest: TPersistent);
+begin
+end;
+
 procedure TEditorFile.DoEdit(Sender: TObject);
 begin
   Edit;
@@ -3180,8 +3303,8 @@ var
 begin
   if Control.CanFocus then
   begin
-    if Supports(Control, IEditorFrame) then
-      aControl := (Control as IEditorFrame).GetMainControl
+    if Supports(Control, IEditorControl) then
+      aControl := (Control as IEditorControl).GetMainControl
     else
       aControl := nil;
 
@@ -3287,9 +3410,19 @@ begin
   Result := [];
 end;
 
+function TEditorFile.GetIsText: Boolean;
+begin
+  Result := (Group <> nil) and Group.Category.IsText;
+end;
+
 function TEditorFile.GetNakeName: string;
 begin
   Result := ExtractFileName(Name);
+end;
+
+function TEditorFile.GetPath: string;
+begin
+  Result := ExtractFilePath(Name);
 end;
 
 function TEditorFile.GetControl: TWinControl;
@@ -3797,13 +3930,7 @@ end;
 procedure TEditorProject.SetRootDir(AValue: string);
 begin
   if FRootDir <> AValue then
-  begin
-    FRootDir :=AValue;
-    if FRootDir <> '' then
-      FPath1 := ExpandToPath(FRootDir, ExtractFilePath(FFileName))
-    else
-      FPath1 := '';
-  end;
+    FRootDir := AValue;
 end;
 
 procedure TEditorProject.SetSCM(AValue: TEditorSCM);

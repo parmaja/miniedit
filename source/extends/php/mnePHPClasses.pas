@@ -192,7 +192,7 @@ var
   begin
     if (aToken[1] = '/') or (aToken[1] = '\') then
       aToken := RightStr(aToken, Length(aToken) - 1);
-    aToken := Engine.ExpandFileName(aToken);
+    aToken := Engine.ExpandFile(aToken);
     Result := FileExists(aToken);
     if Result then
       Engine.Files.OpenFile(aToken);

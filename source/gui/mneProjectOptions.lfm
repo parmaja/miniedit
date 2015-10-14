@@ -106,6 +106,7 @@ object ProjectForm: TProjectForm
         Height = 21
         Top = 155
         Width = 352
+        PopupMenu = PathPopupMenu
         TabOrder = 4
       end
       object Button3: TButton
@@ -136,8 +137,19 @@ object ProjectForm: TProjectForm
       end
     end
   end
-  object OpenDialog: TOpenDialog
-    left = 85
-    top = 216
+  object PathPopupMenu: TPopupMenu
+    left = 131
+    top = 199
+    object MenuItem3: TMenuItem
+      Caption = 'Select Folder'
+      OnClick = MenuItem3Click
+    end
+    object MenuItem1: TMenuItem
+      Caption = 'Current Folder'
+      OnClick = MenuItem1Click
+    end
+    object MenuItem2: TMenuItem
+      Caption = 'Home'
+    end
   end
 end

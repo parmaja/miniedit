@@ -29,7 +29,7 @@ type
 
   { TCSVForm }
 
-  TCSVForm = class(TFrame, IEditorFrame)
+  TCSVForm = class(TFrame, IEditorControl)
     MenuItem7: TMenuItem;
     MenuItem8: TMenuItem;
     IsRtlMnu: TMenuItem;
