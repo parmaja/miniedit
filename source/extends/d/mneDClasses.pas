@@ -44,7 +44,7 @@ type
   public
   end;
 
-  TmneRunMode = (runProcess, runConsole, runInternal, runURL);
+  TmneRunMode = (runConsole, runInternal, runProcess, runURL);
 
   { TDProjectOptions }
 
@@ -357,7 +357,7 @@ initialization
   begin
     Categories.Add(TDFileCategory.Create('D', [fckPublish]));
 
-    Groups.Add(TDFile, 'D', 'D Files', 'D', ['D', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
+    Groups.Add(TDFile, 'D', 'D Files', 'D', ['d', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
 
     Tendencies.Add(TDTendency);
   end;

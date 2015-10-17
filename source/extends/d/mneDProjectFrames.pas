@@ -63,9 +63,10 @@ procedure TDProjectFrame.Retrieve;
 begin
   DOptions := (Project.Options as TDProjectOptions);
 
-  RunModeCbo.Items.Add('Process');
   RunModeCbo.Items.Add('Console');
   RunModeCbo.Items.Add('Internal');
+  RunModeCbo.Items.Add('Process');
+  RunModeCbo.Items.Add('URL');
 
   RunModeCbo.ItemIndex := ord(DOptions.RunMode);
   MainEdit.Text := DOptions.MainFile;

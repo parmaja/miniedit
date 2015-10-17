@@ -248,7 +248,10 @@ var
   aFile: string;
   aRoot: string;
   aUrlMode: TPHPRunMode;
+  Options: TPHPProjectOptions;
 begin
+  Options := nil;
+
   //if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
 
   if Engine.Tendency.Debug <> nil then //TODO review
@@ -258,9 +261,11 @@ begin
   begin
     if (Engine.Session.IsOpened) then
     begin
-      aFile := ExpandToPath(aFile, Engine.Session.Project.RootDir);
-      aUrlMode := (Engine.Session.Project.Options as TPHPProjectOptions).RunMode;
-      aRoot := IncludeTrailingPathDelimiter(Engine.Session.Project.RootDir);
+      Options := (Engine.Session.Project.Options as TPHPProjectOptions);
+      aUrlMode := Options.RunMode;
+      aRoot := Engine.Session.GetRoot;
+      //aFile := ExpandToPath(Options.MainFile, aRoot);
+      aFile := Engine.Files.Current.Name;
     end
     else
     begin

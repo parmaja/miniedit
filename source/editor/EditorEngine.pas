@@ -2251,7 +2251,7 @@ begin
   Result := nil;
   for i := 0 to Count - 1 do
   begin
-    if SameFileName(vFileName, Items[i].Name) then
+    if SameText(vFileName, Items[i].Name) then
     begin
       Result := Items[i];
       break;
