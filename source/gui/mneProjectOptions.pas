@@ -23,11 +23,13 @@ type
     Label1: TLabel;
     Label3: TLabel;
     Label4: TLabel;
+    Label5: TLabel;
     Label8: TLabel;
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     NameEdit: TEdit;
+    TitleEdit: TEdit;
     OkBtn: TButton;
     CancelBtn: TButton;
     PageControl: TPageControl;
@@ -107,6 +109,7 @@ end;
 
 procedure TProjectForm.Apply(GeneralOnly: Boolean);
 begin
+  FProject.Title := TitleEdit.Text;
   FProject.Name := NameEdit.Text;
   FProject.Description := DescriptionEdit.Text;
   FProject.RootDir := RootDirEdit.Text;
@@ -133,6 +136,7 @@ begin
       (FFrame as IEditorOptions).Retrieve;
   end;
 
+  TitleEdit.Text := FProject.Title;
   NameEdit.Text := FProject.Name;
   DescriptionEdit.Text := FProject.Description;
   RootDirEdit.Text := FProject.RootDir;

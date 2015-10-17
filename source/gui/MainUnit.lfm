@@ -105,12 +105,6 @@ object MainForm: TMainForm
         Action = OutputAct
         Style = tbsCheck
       end
-      object ToolButton4: TToolButton
-        Left = 693
-        Top = 0
-        Caption = 'Test'
-        OnClick = ToolButton4Click
-      end
     end
   end
   object FoldersPnl: TPanel
@@ -284,6 +278,7 @@ object MainForm: TMainForm
       ClientWidth = 565
       FullRepaint = False
       TabOrder = 0
+      OnClick = EditorsPnlClick
       object QuickFindPnl: TPanel
         Left = 0
         Height = 29
@@ -1498,6 +1493,9 @@ object MainForm: TMainForm
       Category = 'View'
       Caption = 'Close'
       OnExecute = CloseActExecute
+      SecondaryShortCuts.Strings = (
+        'Ctrl+W'
+      )
       ShortCut = 16499
     end
     object ExitAct: TFileExit
@@ -1913,6 +1911,10 @@ object MainForm: TMainForm
     object MenuItem23: TMenuItem
       Caption = 'File Folder'
       OnClick = MenuItem23Click
+    end
+    object MenuItem24: TMenuItem
+      Caption = 'Copy File Name'
+      OnClick = MenuItem24Click
     end
     object FolderOpenAct1: TMenuItem
       Action = FolderOpenAct

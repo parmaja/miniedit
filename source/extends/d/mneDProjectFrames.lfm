@@ -11,15 +11,15 @@ object DProjectFrame: TDProjectFrame
   object MainEdit: TEdit
     Left = 68
     Height = 23
-    Top = 8
+    Top = 36
     Width = 257
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 0
   end
   object Label2: TLabel
-    Left = 11
+    Left = 8
     Height = 15
-    Top = 12
+    Top = 41
     Width = 46
     Caption = 'Main file'
     ParentColor = False
@@ -27,7 +27,7 @@ object DProjectFrame: TDProjectFrame
   object Button4: TButton
     Left = 329
     Height = 21
-    Top = 9
+    Top = 37
     Width = 22
     Anchors = [akTop, akRight]
     Caption = '...'
@@ -605,7 +605,7 @@ object DProjectFrame: TDProjectFrame
   object PathsLbl: TLabel
     Left = 6
     Height = 15
-    Top = 135
+    Top = 134
     Width = 29
     Caption = 'Paths'
     ParentColor = False
@@ -613,9 +613,50 @@ object DProjectFrame: TDProjectFrame
   object ExpandPathsChk: TCheckBox
     Left = 63
     Height = 19
-    Top = 131
+    Top = 133
     Width = 96
     Caption = 'Expand pathes'
     TabOrder = 3
+  end
+  object ExpandPathsChk1: TCheckBox
+    Left = 16
+    Height = 19
+    Top = 108
+    Width = 217
+    Caption = 'Auto include files from included path'
+    TabOrder = 4
+  end
+  object ExpandPathsChk2: TCheckBox
+    Left = 16
+    Height = 19
+    Top = 86
+    Width = 203
+    Caption = 'Auto include path from root folder'
+    TabOrder = 5
+  end
+  object RunModeCbo: TComboBox
+    Left = 68
+    Height = 23
+    Top = 9
+    Width = 186
+    ItemHeight = 15
+    Style = csDropDownList
+    TabOrder = 6
+  end
+  object Label3: TLabel
+    Left = 9
+    Height = 15
+    Top = 14
+    Width = 55
+    Caption = 'Run Mode'
+    ParentColor = False
+  end
+  object PauseChk: TCheckBox
+    Left = 264
+    Height = 19
+    Top = 11
+    Width = 99
+    Caption = 'Pause after run'
+    TabOrder = 7
   end
 end

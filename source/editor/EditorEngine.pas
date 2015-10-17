@@ -221,6 +221,7 @@ type
     FCachedAge: DWORD;
     FTendency: TEditorTendency;
     FSCM: TEditorSCM;
+    FTitle: string;
     procedure SetTendency(AValue: TEditorTendency);
     procedure SetTendencyName(AValue: string);
     procedure SetRootDir(AValue: string);
@@ -242,6 +243,7 @@ type
     property Tendency: TEditorTendency read FTendency write SetTendency;
   published
     property Name: string read FName write FName;
+    property Title: string read FTitle write FTitle;
     property TendencyName: string read FTendencyName write SetTendencyName;
     //SCM now owned by project and saved or loaded with it, the SCM object so assigned to will be freed with the project
     property SCM: TEditorSCM read FSCM write SetSCM;
@@ -1388,7 +1390,7 @@ begin
   begin
     with (Source as TEditorDesktopFile) do
     begin
-      SynEdit.CaretX := CaretX;
+//      SynEdit.CaretX := CaretX;
       SynEdit.CaretY := CaretY;
       SynEdit.TopLine := TopLine;
     end;

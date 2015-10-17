@@ -15,7 +15,12 @@ type
   TDProjectFrame = class(TFrame, IEditorOptions)
     Button4: TButton;
     CancelBtn: TButton;
+    PauseChk: TCheckBox;
+    Label3: TLabel;
+    RunModeCbo: TComboBox;
     ExpandPathsChk: TCheckBox;
+    ExpandPathsChk1: TCheckBox;
+    ExpandPathsChk2: TCheckBox;
     PathsLbl: TLabel;
     MainEdit: TEdit;
     Label2: TLabel;
@@ -23,6 +28,7 @@ type
     PathsEdit: TSynEdit;
     procedure Button4Click(Sender: TObject);
   private
+    DOptions: TDProjectOptions;
   protected
   public
     //Options: TDProjectOptions;
@@ -47,16 +53,24 @@ end;
 
 procedure TDProjectFrame.Apply;
 begin
-  (Project.Options as TDProjectOptions).MainFile := MainEdit.Text;
-  (Project.Options as TDProjectOptions).ExpandPaths := ExpandPathsChk.Checked;
-  (Project.Options as TDProjectOptions).Paths.Assign(PathsEdit.Lines);
+  DOptions.RunMode := TmneRunMode(RunModeCbo.ItemIndex);
+  DOptions.MainFile := MainEdit.Text;
+  DOptions.ExpandPaths := ExpandPathsChk.Checked;
+  DOptions.Paths.Assign(PathsEdit.Lines);
 end;
 
 procedure TDProjectFrame.Retrieve;
 begin
-  MainEdit.Text := (Project.Options as TDProjectOptions).MainFile;
-  ExpandPathsChk.Checked := (Project.Options as TDProjectOptions).ExpandPaths;
-  PathsEdit.Lines.Assign((Project.Options as TDProjectOptions).Paths);
+  DOptions := (Project.Options as TDProjectOptions);
+
+  RunModeCbo.Items.Add('Process');
+  RunModeCbo.Items.Add('Console');
+  RunModeCbo.Items.Add('Internal');
+
+  RunModeCbo.ItemIndex := ord(DOptions.RunMode);
+  MainEdit.Text := DOptions.MainFile;
+  ExpandPathsChk.Checked := DOptions.ExpandPaths;
+  PathsEdit.Lines.Assign(DOptions.Paths);
 
 end;
 

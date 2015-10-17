@@ -1,0 +1,63 @@
+object ConsoleForm: TConsoleForm
+  Left = 0
+  Height = 240
+  Top = 0
+  Width = 695
+  ClientHeight = 240
+  ClientWidth = 695
+  Color = clDefault
+  ParentColor = False
+  TabOrder = 0
+  DesignLeft = 366
+  DesignTop = 191
+  object ConsoleFooterPnl: TPanel
+    Left = 0
+    Height = 22
+    Top = 218
+    Width = 695
+    Align = alBottom
+    BevelInner = bvLowered
+    BevelOuter = bvNone
+    BorderWidth = 2
+    TabOrder = 0
+  end
+  object ContentPanel: TPanel
+    Left = 0
+    Height = 218
+    Top = 0
+    Width = 695
+    Align = alClient
+    BevelOuter = bvNone
+    BorderWidth = 5
+    ClientHeight = 218
+    ClientWidth = 695
+    TabOrder = 1
+    object CMDBox: TCmdBox
+      Left = 5
+      Height = 208
+      Top = 5
+      Width = 685
+      Align = alClient
+      CaretColor = clBlack
+      CaretType = cartUser
+      CaretWidth = 1
+      CaretHeight = 12
+      CaretYShift = 3
+      LineCount = 1000
+      Font.CharSet = ARABIC_CHARSET
+      Font.Color = clSilver
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      Font.Pitch = fpFixed
+      Font.Quality = fqDraft
+      BackGroundColor = clWhite
+      TabWidth = 60
+      HistoryMax = 10
+      InputSelColor = clBlue
+      InputSelBackGround = clWhite
+      CaretInterval = 500
+      EscapeCodeType = esctCmdBox
+      GraphicalCharacterWidth = 10
+    end
+  end
+end

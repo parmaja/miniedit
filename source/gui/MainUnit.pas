@@ -56,7 +56,7 @@ type
     BrowseTabs: TntvTabSet;
     MenuItem22: TMenuItem;
     MenuItem23: TMenuItem;
-    ToolButton4: TToolButton;
+    MenuItem24: TMenuItem;
     TypeOptionsMnu: TMenuItem;
     TypeOptionsAct: TAction;
     BugSignBtn: TSpeedButton;
@@ -346,6 +346,7 @@ type
     procedure BrowseTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure CallStackListDblClick(Sender: TObject);
     procedure DeleteActExecute(Sender: TObject);
+    procedure EditorsPnlClick(Sender: TObject);
     procedure FetchCallStackBtnClick(Sender: TObject);
     procedure FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure FindPreviousActExecute(Sender: TObject);
@@ -357,6 +358,7 @@ type
     procedure IPCServerMessage(Sender: TObject);
     procedure MenuItem22Click(Sender: TObject);
     procedure MenuItem23Click(Sender: TObject);
+    procedure MenuItem24Click(Sender: TObject);
     procedure NewAsActExecute(Sender: TObject);
     procedure OpenActExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -693,6 +695,11 @@ begin
   end;
 end;
 
+procedure TMainForm.EditorsPnlClick(Sender: TObject);
+begin
+
+end;
+
 procedure TMainForm.FetchCallStackBtnClick(Sender: TObject);
 begin
   if (Engine.Tendency.Debug <> nil) then
@@ -811,6 +818,12 @@ begin
     Folder := ExtractFilePath(Engine.Files.Current.Name);
 end;
 
+procedure TMainForm.MenuItem24Click(Sender: TObject);
+begin
+  if FileList.Selected <> nil then
+    Clipbrd.Clipboard.AsText := Folder + FileList.Selected.Caption;
+end;
+
 procedure TMainForm.NewAsActExecute(Sender: TObject);
 var
   //AExtensions: TEditorElements;
@@ -862,8 +875,8 @@ begin
   FileTabs.Visible := FileTabs.Items.Count > 0;
   if Engine.Files.Current = nil then
     QuickFindPnl.Visible := False;
-  if (Engine.Session.IsOpened) and (Engine.Session.Project.Name <> '') then
-    Caption := Engine.Session.Project.Name + ' - ' + sApplicationTitle
+  if (Engine.Session.IsOpened) and (Engine.Session.Project.Title <> '') then
+    Caption := Engine.Session.Project.Title + ' - ' + sApplicationTitle
   else
     Caption := sApplicationTitle;
   Application.Title := Caption;
@@ -1344,18 +1357,7 @@ begin
 end;
 
 procedure TMainForm.ToolButton4Click(Sender: TObject);
-var
-  aControl: TConsoleForm;
 begin
-  aControl := TConsoleForm.Create(Application);
-  aControl.Parent := Engine.Container;
-  Engine.Files.New('CMD', aControl);
-  aControl.CMDBox.Color := clWhite;
-  aControl.CMDBox.Font.Color := clBlack;
-  aControl.CMDBox.TextColor(clBlack);
-  aControl.CMDBox.TextBackground(clWhite);
-  aControl.CMDBox.Write('لاتحزن!');
-  //aControl.CMDBox.InputSelColor
 end;
 
 procedure TMainForm.TypeOptionsActExecute(Sender: TObject);

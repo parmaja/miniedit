@@ -45,11 +45,12 @@ uses
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
   SearchProgressForms, EditorDebugger, PHP_xDebug, SelectList,
   SynHighlighterApache, IniFiles, mneAddons, mneAssociateForm, mneExtends,
-  mneConsoleClasses, mneConsoleForms, mnePasProjectFrames, mnePasConfigForms,
-  mnePasClasses, mneCSVClasses, mneDClasses, mneDProjectFrames, mneDConfigForms,
-  MsgBox, mnStreams, CSVOptionsForms, mncCSV, GUIMsgBox, Classes, PHPUtils,
-  SynHighlighterD, SynHighlighterMultiProc, mneSetups, mneSettings,
-  mneSARDClasses, EditorClasses, DebugClasses, mneViewClasses, mneCSVForms;
+  mneConsoleClasses, mneConsoleForms, uTerminal, mnePasProjectFrames,
+  mnePasConfigForms, mnePasClasses, mneCSVClasses, mneDClasses,
+  mneDProjectFrames, mneDConfigForms, MsgBox, mnStreams, CSVOptionsForms,
+  mncCSV, GUIMsgBox, Classes, PHPUtils, SynHighlighterD,
+  SynHighlighterMultiProc, mneSetups, mneSettings, mneSARDClasses,
+  EditorClasses, DebugClasses, mneViewClasses, mneCSVForms;
 
 {$R *.res}
 
