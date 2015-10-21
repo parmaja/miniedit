@@ -162,7 +162,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item12>
     </RequiredPackages>
-    <Units Count="47">
+    <Units Count="48">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -427,6 +427,10 @@
         <Filename Value="..\extends\console\uTerminal.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit46>
+      <Unit47>
+        <Filename Value="mneRun.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit47>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

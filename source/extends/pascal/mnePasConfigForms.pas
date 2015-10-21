@@ -1,17 +1,17 @@
-unit mneDConfigForms;
+unit mnePasConfigForms;
 
 {$mode objfpc}{$H+}
 
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls, mneDClasses;
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls, mnePasClasses;
 
 type
 
-  { TDConfigForm }
+  { TPasConfigForm }
 
-  TDConfigForm = class(TForm)
+  TPasConfigForm = class(TForm)
     Button3: TButton;
     CancelBtn: TButton;
     Label1: TLabel;
@@ -23,7 +23,7 @@ type
   private
   protected
   public
-    FTendency: TDTendency;
+    FTendency: TPasTendency;
     procedure Apply;
     procedure Retrieve;
   end;
@@ -35,9 +35,9 @@ uses
 
 {$R *.lfm}
 
-{ TDConfigForm }
+{ TPasConfigForm }
 
-procedure TDConfigForm.Button3Click(Sender: TObject);
+procedure TPasConfigForm.Button3Click(Sender: TObject);
 begin
   OpenDialog.Filter := 'EXE files|*.exe|All files|*.*';
   OpenDialog.FileName := CompilerEdit.Text;
@@ -48,21 +48,21 @@ begin
   end;
 end;
 
-procedure TDConfigForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+procedure TPasConfigForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   if ModalResult = mrOk then
   begin
   end;
 end;
 
-procedure TDConfigForm.Apply;
+procedure TPasConfigForm.Apply;
 begin
-  FTendency.Launcher := CompilerEdit.Text;
+  FTendency.Compiler := CompilerEdit.Text;
 end;
 
-procedure TDConfigForm.Retrieve;
+procedure TPasConfigForm.Retrieve;
 begin
-  CompilerEdit.Text := FTendency.Launcher;
+  CompilerEdit.Text := FTendency.Compiler;
 end;
 
 end.

@@ -87,6 +87,7 @@ type
   end;
 
 function CreateConsoleThread: TConsoleThread;
+function ExecuteConsole(Shell: string): TConsoleThread;
 
 implementation
 
@@ -107,6 +108,15 @@ begin
   Result:= TUnixConThread.Create(True);
 end;
 {$ENDIF}
+
+function ExecuteConsole(Shell: string): TConsoleThread;
+var
+  aThread: TConsoleThread;
+begin
+  aThread := CreateConsoleThread;
+  aThread.Shell := Shell;
+  aThread.Start;
+end;
 
 end.
 

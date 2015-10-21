@@ -521,13 +521,6 @@ type
     procedure MoveListIndex(vForward: boolean);
     procedure OnReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
   protected
-    FRunProject: TRunProject;
-    //
-
-    procedure ScriptError(Sender: TObject; AText: string; AType: TRunErrorType; AFileName: string; ALineNo: integer);
-    procedure LogMessage(Sender: TObject; AText: string);
-
-    procedure RunTerminated(Sender: TObject);
     procedure RunFile;
     //
     procedure Log(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
@@ -875,8 +868,15 @@ begin
   FileTabs.Visible := FileTabs.Items.Count > 0;
   if Engine.Files.Current = nil then
     QuickFindPnl.Visible := False;
-  if (Engine.Session.IsOpened) and (Engine.Session.Project.Title <> '') then
-    Caption := Engine.Session.Project.Title + ' - ' + sApplicationTitle
+  if (Engine.Session.IsOpened) then
+  begin
+    if (Engine.Session.Project.Title <> '') then
+      Caption := Engine.Session.Project.Title + ' - ' + sApplicationTitle
+    else if (Engine.Session.Project.Name <> '') then
+      Caption := Engine.Session.Project.Name + ' - ' + sApplicationTitle
+    else
+      Caption := 'No Name - ' + sApplicationTitle;
+  end
   else
     Caption := sApplicationTitle;
   Application.Title := Caption;
@@ -908,7 +908,7 @@ begin
     FileModeBtn.Caption := '';
     FileModeBtn.Visible := False;
     SaveAct.Enabled := False;
-    SaveAllAct.Enabled := False;
+    SaveAllAct.Enabled := Engine.GetIsChanged;
   end;
   //  DebugPnl.Visible := DebugPnl.Caption <> '';
   UpdateFileHeaderPanel;
@@ -1086,8 +1086,6 @@ begin
   Engine.Options.FoldersWidth := FoldersPnl.Width;
 
   Engine.Session.Close;
-  if FRunProject <> nil then
-    FRunProject.Terminate;
   Engine.OnChangedState := nil;
   Engine.Shutdown;
   //HtmlHelp(Application.Handle, nil, HH_CLOSE_ALL, 0);
@@ -1208,7 +1206,6 @@ begin
         if ShowProjectForm(aProject) then
         begin
           Engine.Session.Project := aProject;
-          Engine.Session.Changed;
         end
         else
           aProject.Free;
@@ -2012,11 +2009,6 @@ begin
   Result := Engine.BrowseFolder;
 end;
 
-procedure TMainForm.RunTerminated(Sender: TObject);
-begin
-  FRunProject := nil;
-end;
-
 procedure TMainForm.SaveAsActExecute(Sender: TObject);
 begin
   Engine.Files.SaveAs;
@@ -2681,16 +2673,6 @@ begin
     else //msgcCancel
       ReplaceAction := raCancel;
   end;
-end;
-
-procedure TMainForm.ScriptError(Sender: TObject; AText: string; AType: TRunErrorType; AFileName: string; ALineNo: integer);
-begin
-  Log(0, RunErrorTypes[AType], AText, AFileName, ALineNo);
-end;
-
-procedure TMainForm.LogMessage(Sender: TObject; AText: string);
-begin
-  Log('Message', AText);
 end;
 
 procedure TMainForm.Log(ACaption, AMsg: string);

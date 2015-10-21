@@ -1,5 +1,6 @@
 unit EditorEngine;
 {$mode objfpc}{$H+}
+{$ModeSwitch advancedrecords}
 {$INTERFACES CORBA} //Needed for interfaces without guid
 {**
  * Mini Edit
@@ -122,6 +123,20 @@ type
     property Items[Index: integer]: TEditorElement read GetItem; default;
   end;
 
+  TmneRunMode = (runShell, runConsole, runTerminal, runProcess, runURL);
+
+  { TmneRunInfo }
+
+  TmneRunInfo = record
+    Root: string; //cur dir for the project
+    Mode: TmneRunMode;
+    Pause: Boolean;
+    URL: string;
+    Command: string; //file to run
+    Params: string; //file to run
+    RunFile: string; //file to run
+    function GetCommandLine: string;
+  end;
   {
     Tendency
     Run, Compile, Collect file groups and have special properties
@@ -137,16 +152,18 @@ type
   private
     FGroups: TFileGroups;
     FDebug: TEditorDebugger;
+    FLauncher: string;
   protected
     FCapabilities: TEditorCapabilities;
     procedure AddGroup(vName, vCategory: string);
     function CreateDebugger: TEditorDebugger; virtual;
     function GetGroups: TFileGroups; virtual;
     procedure Init; virtual; abstract;
+    procedure DoRun(Info: TmneRunInfo); virtual;
   public
     constructor Create; override;
     destructor Destroy; override;
-    procedure Run; virtual;
+    procedure Run;
     procedure Show; virtual;
     function FindExtension(vExtension: string): TFileGroup;
     function CreateEditorFile(vGroup: string): TEditorFile; virtual;
@@ -157,6 +174,7 @@ type
     //OSDepended: When save to file, the filename changed depend on the os system name
     property Capabilities: TEditorCapabilities read FCapabilities;
     property Groups: TFileGroups read GetGroups;
+    property Launcher: string read FLauncher write FLauncher;
     property Debug: TEditorDebugger read FDebug;//todo
   end;
 
@@ -198,9 +216,20 @@ type
   { TEditorProjectOptions }
 
   TEditorProjectOptions = class(TPersistent)
+  private
+    FMainFile: string;
+    FPauseConsole: Boolean;
+    FRootUrl: string;
+    FRunMode: TmneRunMode;
   public
     constructor Create; virtual;
     function CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame; virtual;
+  published
+    property RunMode: TmneRunMode read FRunMode write FRunMode;
+    property RootUrl: string read FRootUrl write FRootUrl;
+    property MainFile: string read FMainFile write FMainFile;
+    //RunWait do not end until use press any key or enter
+    property PauseConsole: Boolean read FPauseConsole write FPauseConsole;
   end;
 
   { TEditorProject }
@@ -1072,6 +1101,17 @@ begin
   end;
 end;
 
+{ TmneRunInfo }
+
+function TmneRunInfo.GetCommandLine: string;
+begin
+  Result := Command;
+  if Params <> '' then
+    Result := Result + ' ' + Params;
+  if RunFile <> '' then
+    Result := Result + ' ' + RunFile;
+end;
+
 { TControlEditorFile }
 
 procedure TControlEditorFile.SetControl(AValue: TWinControl);
@@ -1710,6 +1750,10 @@ begin
   Result := FGroups;
 end;
 
+procedure TEditorTendency.DoRun(Info: TmneRunInfo);
+begin
+end;
+
 procedure TEditorTendency.AddGroup(vName, vCategory: string);
 var
   G: TFileGroup;
@@ -1752,7 +1796,37 @@ begin
 end;
 
 procedure TEditorTendency.Run;
+var
+  p: TmneRunInfo;
+  s: string;
 begin
+  s := Name;
+  if (Engine.Tendency.Debug <> nil) and (Engine.Tendency.Debug.Running) then
+    Engine.Tendency.Debug.Action(dbaRun)
+  else
+  begin
+    p.Root := Engine.Session.GetRoot;
+    if (Engine.Session.IsOpened) then
+    begin
+      p.Mode := Engine.Session.Project.Options.RunMode;
+      p.RunFile := ExpandToPath(Engine.Session.Project.Options.MainFile, p.Root);
+      p.Pause := Engine.Session.Project.Options.PauseConsole;
+    end
+    else
+    begin
+      p.Mode := runConsole;
+      p.Pause := True;
+    end;
+    if (p.RunFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
+      p.RunFile := Engine.Files.Current.Name;
+
+    if (p.RunFile <> '') then
+    begin
+      if (p.Root = '') then
+        p.Root := ExtractFileDir(p.RunFile);
+      DoRun(p);
+    end;
+  end;
 end;
 
 procedure TEditorTendency.Show;
@@ -2006,6 +2080,7 @@ end;
 
 procedure TEditorSession.Close;
 begin
+  Engine.Files.CloseAll;
   FreeAndNil(FProject);
   Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
 end;
@@ -2368,9 +2443,9 @@ procedure TEditorSession.Load(FileName: string);
 var
   aProject: TEditorProject;
 begin
+  Close; //must free before load project for save the desktop and sure to save its files
   Engine.BeginUpdate;
   try
-    Close; //must free before load project for save the desktop and sure to save its files
     aProject := New;
     try
       aProject.LoadFromFile(FileName);
@@ -2710,10 +2785,16 @@ procedure TEditorSession.SetProject(const Value: TEditorProject);
 begin
   if FProject <> Value then
   begin
-    if FProject <> nil then
-      FreeAndNil(FProject);
-    FProject := Value;
-    Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject, ecsProjectLoaded]);
+    Engine.BeginUpdate;
+    try
+      if IsOpened then
+        Close;
+      FProject := Value;
+      Changed;
+      Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject, ecsProjectLoaded]);
+    finally
+      Engine.EndUpdate;
+    end;
   end;
 end;
 

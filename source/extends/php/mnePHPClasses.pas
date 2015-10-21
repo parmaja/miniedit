@@ -13,12 +13,13 @@ interface
 
 uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics,
-  Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
-  SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
-  SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  SynHighlighterCSS, SynHighlighterSQL, SynHighlighterXML,
-  SynHighlighterJScript, SynHighlighterXHTML, SynHighlighterMultiProc,
-  EditorDebugger, EditorClasses, PHP_xDebug, mneClasses;
+  Process, Contnrs, LCLintf, LCLType, Dialogs, EditorOptions,
+  SynEditHighlighter, SynEditSearch, SynEdit, Registry, EditorEngine,
+  mnXMLRttiProfile, mnXMLUtils, SynEditTypes, SynCompletion,
+  SynHighlighterHashEntries, EditorProfiles, SynHighlighterCSS,
+  SynHighlighterSQL, SynHighlighterXML, SynHighlighterJScript,
+  SynHighlighterXHTML, SynHighlighterMultiProc, HTMLProcessor, EditorDebugger,
+  EditorClasses, PHP_xDebug, mneClasses, mneRun, uTerminal;
 
 type
 
@@ -90,20 +91,14 @@ type
   public
   end;
 
-  TPHPRunMode = (prunConsole, prunUrl);
-
   { TPHPProjectOptions }
 
   TPHPProjectOptions = class(TEditorProjectOptions)
   private
-    FRootUrl: string;
-    FRunMode: TPHPRunMode;
   public
     constructor Create; override;
     function CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame; override;
   published
-    property RunMode: TPHPRunMode read FRunMode write FRunMode;
-    property RootUrl: string read FRootUrl write FRootUrl;
   end;
 {
 }
@@ -120,8 +115,8 @@ type
     function CreateDebugger: TEditorDebugger; override;
     function CreateOptions: TEditorProjectOptions; override;
     procedure Init; override;
+    procedure DoRun(Info: TmneRunInfo); override;
   public
-    procedure Run; override;
     constructor Create; override;
     procedure Show; override;
   published
@@ -133,7 +128,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, HTMLProcessor, PHPProcessor, SynEditStrConst, mnePHPConfigForms;
+  IniFiles, mnStreams, mnUtils, PHPProcessor, SynEditStrConst, mnePHPConfigForms;
 
 { TPHPProject }
 
@@ -243,69 +238,30 @@ end;
 
 { TPHPTendency }
 
-procedure TPHPTendency.Run;
+procedure TPHPTendency.DoRun(Info: TmneRunInfo);
 var
   aFile: string;
   aRoot: string;
-  aUrlMode: TPHPRunMode;
   Options: TPHPProjectOptions;
+  s, outstr : string;
+  aRun: TmneRun;
 begin
   Options := nil;
 
   //if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
 
-  if Engine.Tendency.Debug <> nil then //TODO review
-  if Engine.Tendency.Debug.Running then
-    Engine.Tendency.Debug.Action(dbaRun)
-  else
-  begin
-    if (Engine.Session.IsOpened) then
-    begin
-      Options := (Engine.Session.Project.Options as TPHPProjectOptions);
-      aUrlMode := Options.RunMode;
-      aRoot := Engine.Session.GetRoot;
-      //aFile := ExpandToPath(Options.MainFile, aRoot);
-      aFile := Engine.Files.Current.Name;
-    end
-    else
-    begin
-      //Check the file is executable
-      if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
-      begin
-        aFile := Engine.Files.Current.Name;
-        aUrlMode := prunConsole;
-      end
-    end;
+  if (Engine.Session.IsOpened) then
+    Options := (Engine.Session.Project.Options as TPHPProjectOptions);
 
-    if aFile <> '' then
-    begin
-      case aUrlMode of
-        prunUrl:
-        begin
-          if Engine.Session.IsOpened then
-          begin
-            if SameText((MidStr(aFile, 1, Length(aRoot))), aRoot) then
-            begin
-              aFile := MidStr(aFile, Length(aRoot) + 1, MaxInt);
-              aFile := IncludeSlash((Engine.Session.Project.Options as TPHPProjectOptions).RootUrl) + aFile;
-              //ShellExecute(0, 'open', PChar(aFile), '', PChar(ExtractFilePath(aFile)), SW_SHOWNOACTIVATE);
-            end;
-          end;
-        end;
-        prunConsole:
-        begin
-          {$ifdef windows}
-          ExecuteProcess('cmd ','/c "php.exe ' + aFile + '" & pause', []);
-          {$endif}
+  Info.Command := Launcher;
+  if Info.Command = '' then
+    Info.Command := 'php.exe';
 
-          {$ifdef linux}
-          {$endif}
-
-          {$ifdef macos}
-          {$endif}
-        end;
-      end;
-    end;
+  aRun := TmneRun.Create(Info);
+  try
+    aRun.Execute;
+  finally
+    aRun.Free;
   end;
 end;
 

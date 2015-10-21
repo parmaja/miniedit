@@ -54,6 +54,7 @@ end;
 procedure TDProjectFrame.Apply;
 begin
   DOptions.RunMode := TmneRunMode(RunModeCbo.ItemIndex);
+  DOptions.PauseConsole := PauseChk.Checked;
   DOptions.MainFile := MainEdit.Text;
   DOptions.ExpandPaths := ExpandPathsChk.Checked;
   DOptions.Paths.Assign(PathsEdit.Lines);
@@ -62,17 +63,17 @@ end;
 procedure TDProjectFrame.Retrieve;
 begin
   DOptions := (Project.Options as TDProjectOptions);
-
+  RunModeCbo.Items.Add('Shell');
   RunModeCbo.Items.Add('Console');
-  RunModeCbo.Items.Add('Internal');
+  RunModeCbo.Items.Add('Terminal');
   RunModeCbo.Items.Add('Process');
   RunModeCbo.Items.Add('URL');
 
   RunModeCbo.ItemIndex := ord(DOptions.RunMode);
+  PauseChk.Checked := DOptions.PauseConsole;
   MainEdit.Text := DOptions.MainFile;
   ExpandPathsChk.Checked := DOptions.ExpandPaths;
   PathsEdit.Lines.Assign(DOptions.Paths);
-
 end;
 
 end.

@@ -55,7 +55,7 @@ object ProjectForm: TProjectForm
       object Label3: TLabel
         Left = 12
         Height = 13
-        Top = 9
+        Top = 37
         Width = 56
         Caption = 'Project &Title'
         FocusControl = NameEdit
@@ -65,7 +65,7 @@ object ProjectForm: TProjectForm
       object Label4: TLabel
         Left = 12
         Height = 13
-        Top = 66
+        Top = 72
         Width = 53
         Caption = '&Description'
         FocusControl = DescriptionEdit
@@ -82,16 +82,16 @@ object ProjectForm: TProjectForm
       object NameEdit: TEdit
         Left = 89
         Height = 21
-        Top = 29
+        Top = 9
         Width = 303
         TabOrder = 0
       end
       object DescriptionEdit: TEdit
         Left = 89
         Height = 21
-        Top = 64
+        Top = 70
         Width = 303
-        TabOrder = 1
+        TabOrder = 2
       end
       object SaveDesktopChk: TCheckBox
         Left = 12
@@ -99,7 +99,7 @@ object ProjectForm: TProjectForm
         Top = 237
         Width = 270
         Caption = 'Save Desktop, &Reopen last opend files in this project'
-        TabOrder = 2
+        TabOrder = 3
       end
       object RootDirEdit: TEdit
         Left = 11
@@ -107,21 +107,21 @@ object ProjectForm: TProjectForm
         Top = 209
         Width = 352
         PopupMenu = PathPopupMenu
-        TabOrder = 4
+        TabOrder = 5
       end
       object Button3: TButton
         Left = 366
-        Height = 20
-        Top = 155
+        Height = 22
+        Top = 208
         Width = 22
         Caption = '...'
         OnClick = Button3Click
-        TabOrder = 5
+        TabOrder = 6
       end
       object Label8: TLabel
         Left = 12
         Height = 13
-        Top = 94
+        Top = 100
         Width = 70
         Caption = 'Source Control'
         ParentColor = False
@@ -129,23 +129,23 @@ object ProjectForm: TProjectForm
       object SCMCbo: TComboBox
         Left = 89
         Height = 21
-        Top = 89
+        Top = 95
         Width = 303
         ItemHeight = 13
         Style = csDropDownList
-        TabOrder = 3
+        TabOrder = 4
       end
       object TitleEdit: TEdit
         Left = 89
         Height = 21
-        Top = 4
+        Top = 32
         Width = 303
-        TabOrder = 6
+        TabOrder = 1
       end
       object Label5: TLabel
         Left = 12
         Height = 13
-        Top = 32
+        Top = 12
         Width = 64
         Caption = 'Project &Name'
         FocusControl = TitleEdit

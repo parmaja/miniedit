@@ -1,34 +1,34 @@
-object DProjectFrame: TDProjectFrame
+object PasProjectFrame: TPasProjectFrame
   Left = 0
-  Height = 267
+  Height = 250
   Top = 0
-  Width = 370
-  ClientHeight = 267
-  ClientWidth = 370
+  Width = 367
+  ClientHeight = 250
+  ClientWidth = 367
   TabOrder = 0
   DesignLeft = 363
   DesignTop = 223
   object MainEdit: TEdit
     Left = 68
     Height = 23
-    Top = 36
-    Width = 267
+    Top = 38
+    Width = 264
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 0
   end
   object Label2: TLabel
-    Left = 8
+    Left = 11
     Height = 15
-    Top = 41
+    Top = 42
     Width = 46
     Caption = 'Main file'
     ParentColor = False
   end
   object Button4: TButton
-    Left = 339
-    Height = 21
-    Top = 37
-    Width = 22
+    Left = 333
+    Height = 23
+    Top = 38
+    Width = 24
     Anchors = [akTop, akRight]
     Caption = '...'
     OnClick = Button4Click
@@ -37,8 +37,8 @@ object DProjectFrame: TDProjectFrame
   inline PathsEdit: TSynEdit
     Left = 5
     Height = 105
-    Top = 156
-    Width = 359
+    Top = 144
+    Width = 356
     Anchors = [akTop, akLeft, akRight, akBottom]
     Constraints.MinHeight = 60
     Font.Height = -13
@@ -605,46 +605,54 @@ object DProjectFrame: TDProjectFrame
   object PathsLbl: TLabel
     Left = 6
     Height = 15
-    Top = 134
+    Top = 121
     Width = 29
     Caption = 'Paths'
     ParentColor = False
   end
-  object ExpandPathsChk: TCheckBox
-    Left = 63
+  object UseCFGFileChk: TCheckBox
+    Left = 15
     Height = 19
-    Top = 133
-    Width = 96
-    Caption = 'Expand pathes'
+    Top = 96
+    Width = 85
+    Caption = 'Use CFG File'
     TabOrder = 3
   end
-  object ExpandPathsChk1: TCheckBox
-    Left = 16
-    Height = 19
-    Top = 108
-    Width = 217
-    Caption = 'Auto include files from included path'
+  object ExeEdit: TEdit
+    Left = 91
+    Height = 23
+    Top = 66
+    Width = 241
+    Anchors = [akTop, akLeft, akRight]
     TabOrder = 4
   end
-  object ExpandPathsChk2: TCheckBox
-    Left = 16
+  object Label3: TLabel
+    Left = 11
+    Height = 15
+    Top = 70
+    Width = 73
+    Caption = 'Execute name'
+    ParentColor = False
+  end
+  object ExpandPathsChk: TCheckBox
+    Left = 58
     Height = 19
-    Top = 86
-    Width = 203
-    Caption = 'Auto include path from root folder'
+    Top = 120
+    Width = 96
+    Caption = 'Expand pathes'
     TabOrder = 5
   end
   object RunModeCbo: TComboBox
     Left = 68
     Height = 23
     Top = 9
-    Width = 196
+    Width = 186
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 15
     Style = csDropDownList
     TabOrder = 6
   end
-  object Label3: TLabel
+  object Label4: TLabel
     Left = 9
     Height = 15
     Top = 14
@@ -653,7 +661,7 @@ object DProjectFrame: TDProjectFrame
     ParentColor = False
   end
   object PauseChk: TCheckBox
-    Left = 269
+    Left = 261
     Height = 19
     Top = 11
     Width = 99

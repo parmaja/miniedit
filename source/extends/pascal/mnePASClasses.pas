@@ -13,8 +13,8 @@ uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics,
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
-  SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles, EditorDebugger,
-  SynHighlighterPas, SynHighlighterLFM;
+  SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
+  EditorDebugger, mneRun, SynHighlighterPas, SynHighlighterLFM;
 
 type
 
@@ -65,7 +65,8 @@ type
 
   TPasProjectOptions = class(TEditorProjectOptions)
   private
-    FMainFile: string;
+    FExeName: string;
+    FExpandPaths: Boolean;
     FPaths: TStrings;
     FUseCFG: Boolean;
     procedure SetPaths(AValue: TStrings);
@@ -74,9 +75,10 @@ type
     destructor Destroy; override;
     function CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame; override;
   published
-    property MainFile: string read FMainFile write FMainFile;
     property UseCFG: Boolean read FUseCFG write FUseCFG default True;
     property Paths: TStrings read FPaths write SetPaths;
+    property ExpandPaths: Boolean read FExpandPaths write FExpandPaths;
+    property ExeName: string read FExeName write FExeName;
   end;
 
   { TPasTendency }
@@ -88,6 +90,7 @@ type
     function CreateDebugger: TEditorDebugger; override;
     function CreateOptions: TEditorProjectOptions; override;
     procedure Init; override;
+    procedure DoRun(Info: TmneRunInfo); override;
   public
     procedure Show; override;
     property Compiler: string read FCompiler write FCompiler;
@@ -197,6 +200,47 @@ begin
   AddGroup('ppr', 'pas');
   AddGroup('lfm', 'lfm');
   //AddGroup('inc');
+end;
+
+procedure TPasTendency.DoRun(Info: TmneRunInfo);
+var
+  aParams: string;
+  s: string;
+  i: Integer;
+  aPath: string;
+  Options: TPasProjectOptions;
+  aRun: TmneRun;
+begin
+  if (Engine.Session.IsOpened) then
+    Options := (Engine.Session.Project.Options as TPasProjectOptions)
+  else
+    Options := nil;
+
+  Info.Command := Launcher;
+  if Info.Command = '' then
+    Info.Command := 'fpc.exe';
+
+  if Options <> nil then
+  begin
+    Info.Params := '';
+    for i := 0 to Options.Paths.Count - 1 do
+    begin
+      aPath := Trim(Options.Paths[i]);
+      if aPath <>'' then
+      begin
+        if Options.ExpandPaths then
+          aPath := Engine.ExpandFile(aPath);
+        Info.Params := Info.Params + '-I' +aPath + ' ';
+      end;
+    end;
+  end;
+
+  aRun := TmneRun.Create(Info);
+  try
+    aRun.Execute;
+  finally
+    aRun.Free;
+  end;
 end;
 
 procedure TPasTendency.Show;

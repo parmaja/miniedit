@@ -19,7 +19,7 @@ uses
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   SynHighlighterD,
   EditorDebugger, EditorClasses,
-  mneClasses, mneConsoleClasses, mneConsoleForms, uTerminal;
+  mneClasses, mneRun, mneConsoleClasses, mneConsoleForms, uTerminal;
 
 type
 
@@ -44,24 +44,18 @@ type
   public
   end;
 
-  TmneRunMode = (runConsole, runInternal, runProcess, runURL);
-
   { TDProjectOptions }
 
   TDProjectOptions = class(TEditorProjectOptions)
   private
     FExpandPaths: Boolean;
-    FMainFile: string;
     FPaths: TStrings;
-    FRunMode: TmneRunMode;
     procedure SetPaths(AValue: TStrings);
   public
     constructor Create; override;
     destructor Destroy; override;
     function CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame; override;
   published
-    property RunMode: TmneRunMode read FRunMode write FRunMode;
-    property MainFile: string read FMainFile write FMainFile;
     property Paths: TStrings read FPaths write SetPaths;
     property ExpandPaths: Boolean read FExpandPaths write FExpandPaths;
   end;
@@ -70,17 +64,17 @@ type
 
   TDTendency = class(TEditorTendency)
   private
-    FCompiler: string;
+//    FCompiler: string;
   protected
     function CreateDebugger: TEditorDebugger; override;
     function CreateOptions: TEditorProjectOptions; override;
     procedure Init; override;
+    procedure DoRun(Info: TmneRunInfo); override;
   public
-    procedure Run; override;
     constructor Create; override;
     procedure Show; override;
   published
-    property Compiler: string read FCompiler write FCompiler;
+//    property Compiler: string read FCompiler write FCompiler;
   end;
 
 implementation
@@ -183,69 +177,29 @@ begin
   end;
 end;
 
-function CreateInernalConsole(Command, Params: string): TConsoleForm;
-var
-  aControl: TConsoleForm;
-  thread: TConsoleThread;
-begin
-  aControl := TConsoleForm.Create(Application);
-  aControl.Parent := Engine.Container;
-  Engine.Files.New('CMD', aControl);
-
-  aControl.CMDBox.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
-  aControl.CMDBox.BackGroundColor := Engine.Options.Profile.Attributes.Whitespace.Background;
-  aControl.ContentPanel.Color := aControl.CMDBox.BackGroundColor;
-
-  aControl.CMDBox.Font.Name := Engine.Options.Profile.FontName;
-  aControl.CMDBox.Font.Size := Engine.Options.Profile.FontSize;
-
-  aControl.CMDBox.TextColor(Engine.Options.Profile.Attributes.Whitespace.Foreground);
-  aControl.CMDBox.TextBackground(Engine.Options.Profile.Attributes.Whitespace.Background);
-  aControl.CMDBox.Write('Ready!'#13#10);
-  //aControl.CMDBox.InputSelColor
-  thread := CreateConsoleThread;
-  thread.CmdBox := aControl.CmdBox;
-  thread.Shell := Command + ' '+ Params ;
-  thread.Resume;
-
-  Result := aControl;
-  Engine.UpdateState([ecsRefresh]);
-end;
-
 { TDTendency }
 
-procedure TDTendency.Run;
+procedure TDTendency.DoRun(Info: TmneRunInfo);
 var
-  aFile: string;
-  aRoot: string;
-  aCompiler: string;
   aParams: string;
   s: string;
   i: Integer;
   aPath: string;
   Options: TDProjectOptions;
+  aRun: TmneRun;
 begin
-  //if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
-  Options := nil;
-
   if (Engine.Session.IsOpened) then
-  begin
-    Options := (Engine.Session.Project.Options as TDProjectOptions);
-    aRoot := Engine.Session.GetRoot;
-    aFile := ExpandToPath(Options.MainFile, aRoot);
-  end;
-  if (aFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
-    aFile := Engine.Files.Current.Name;
-  if (aRoot = '') then
-    aRoot := ExtractFileDir(aFile);
+    Options := (Engine.Session.Project.Options as TDProjectOptions)
+  else
+    Options := nil;
 
-  if aFile <> '' then
-  begin
-    aCompiler := Compiler;
-    if aCompiler = '' then
-      aCompiler := 'rdmd.exe';
+  Info.Command := Launcher;
+  if Info.Command = '' then
+    Info.Command := 'rdmd.exe';
 
-    aParams := '';
+  if Options <> nil then
+  begin
+    Info.Params := '';
     for i := 0 to Options.Paths.Count - 1 do
     begin
       aPath := Trim(Options.Paths[i]);
@@ -253,28 +207,16 @@ begin
       begin
         if Options.ExpandPaths then
           aPath := Engine.ExpandFile(aPath);
-        aParams := aParams + '-I' +aPath + ' ';
+        Info.Params := Info.Params + '-I' +aPath + ' ';
       end;
     end;
-    aParams := aParams + aFile;
+  end;
 
-    {$ifdef windows}
-    SetCurrentDir(aRoot);
-    if Options.RunMode = runConsole then
-    begin
-      ExecuteProcess('cmd ', '/c "'+ aCompiler + ' ' + aParams + '" & pause', []);
-    end
-    else if Options.RunMode = runInternal then
-    begin
-      CreateInernalConsole(aCompiler, aParams)
-    end;
-    {$endif}
-
-    {$ifdef linux}
-    {$endif}
-
-    {$ifdef macos}
-    {$endif}
+  aRun := TmneRun.Create(Info);
+  try
+    aRun.Execute;
+  finally
+    aRun.Free;
   end;
 end;
 
