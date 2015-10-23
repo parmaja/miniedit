@@ -15,6 +15,8 @@ type
   TDProjectFrame = class(TFrame, IEditorOptions)
     Button4: TButton;
     CancelBtn: TButton;
+    Label4: TLabel;
+    ConfigFileEdit: TEdit;
     PauseChk: TCheckBox;
     Label3: TLabel;
     RunModeCbo: TComboBox;
@@ -56,6 +58,7 @@ begin
   DOptions.RunMode := TmneRunMode(RunModeCbo.ItemIndex);
   DOptions.PauseConsole := PauseChk.Checked;
   DOptions.MainFile := MainEdit.Text;
+  DOptions.ConfigFile := ConfigFileEdit.Text;
   DOptions.ExpandPaths := ExpandPathsChk.Checked;
   DOptions.Paths.Assign(PathsEdit.Lines);
 end;
@@ -72,6 +75,7 @@ begin
   RunModeCbo.ItemIndex := ord(DOptions.RunMode);
   PauseChk.Checked := DOptions.PauseConsole;
   MainEdit.Text := DOptions.MainFile;
+  ConfigFileEdit.Text := DOptions.ConfigFile;
   ExpandPathsChk.Checked := DOptions.ExpandPaths;
   PathsEdit.Lines.Assign(DOptions.Paths);
 end;

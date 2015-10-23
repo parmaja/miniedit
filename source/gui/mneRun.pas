@@ -11,7 +11,7 @@ unit mneRun;
 interface
 
 uses
-  Forms, SysUtils, StrUtils, Classes, SyncObjs,
+  Forms, SysUtils, StrUtils, Classes, SyncObjs, process,
   mnStreams, EditorEngine, mneConsoleForms, uTerminal, mnXMLUtils;
 
 {$i '..\lib\mne.inc'}
@@ -32,9 +32,26 @@ type
     LineNo: Integer;
   end;
 
+  TmneOnWrite = procedure(S: string) of object;
+
+  { TmneConsoleThread }
+
+  TmneConsoleThread = class(TThread)
+  private
+    FOnWrite: TmneOnWrite;
+    FBuffer: string;
+  public
+    Result: Integer;
+    Info: TmneRunInfo;
+    Process: TProcess;
+    procedure FlushBuffer;
+    procedure Execute; override;
+    property OnWrite: TmneOnWrite read FOnWrite write FOnWrite;
+  end;
+
   { TmneRunProject }
 
-  TmneRun = class(TObject)
+  TmneConsole = class(TObject)
   private
     function CreateInernalConsole(AInfo: TmneRunInfo): TConsoleForm;
   protected
@@ -47,26 +64,94 @@ type
 
 implementation
 
-uses
-  process;
+{ TmneConsoleThread }
 
-{ TmneRun }
+procedure TmneConsoleThread.FlushBuffer;
+begin
+  if Assigned(FOnWrite) then
+  begin
+    FOnWrite(FBuffer);
+    FBuffer := '';
+  end;
+end;
 
-constructor TmneRun.Create(AInfo: TmneRunInfo);
+procedure TmneConsoleThread.Execute;
+const
+  READ_BYTES = 1024;
+var
+  C, Count, L: Integer;
+  Status: integer;
+  FirstTime: Boolean;
+begin
+  Process := TProcess.Create(nil);
+  Result := -1;
+  FirstTime := True;
+  Count := 0;
+  C := 0;
+  Process.Options :=  [poUsePipes, poStderrToOutPut];
+  Process.ShowWindow := swoHIDE;
+  Process.InheritHandles := True;
+  //Process.ConsoleTitle := Info.RunFile;
+  Process.XTermProgram := 'ConEmu';
+  Process.CommandLine := Info.GetCommandLine;
+  if Info.Root <> '' then
+    Process.CurrentDirectory := Info.Root;
+  try
+    try
+      Process.Execute;
+      while not Terminated and (FirstTime or Process.Running or (C > 0)) do
+      begin
+        L := Length(FBuffer);
+        Setlength(FBuffer, L + READ_BYTES);
+        C := Process.Output.Read(FBuffer[1 + L], READ_BYTES);
+        if Assigned(FOnWrite) then
+        begin
+          SetLength(FBuffer, L + C);
+          Synchronize(@FlushBuffer);
+        end;
+        if C > 0 then
+          Inc(Count, C)
+        else
+          Sleep(100);
+        FirstTime := False;
+      end;
+      if Terminated and Process.Running then
+        Process.Terminate(0);
+      if not Assigned(FOnWrite) then
+        SetLength(FBuffer, Count);
+      Status := Process.ExitStatus;
+      Result := 0;
+    except
+      on e : Exception do
+      begin
+        if Process.Running and Terminated then
+          Process.Terminate(0);
+        if not Assigned(FOnWrite) then
+          SetLength(FBuffer, Count);
+      end;
+    end;
+  finally
+    FreeAndNil(Process);
+  end;
+end;
+
+{ TmneConsole }
+
+constructor TmneConsole.Create(AInfo: TmneRunInfo);
 begin
   inherited Create;
   Info := AInfo;
 end;
 
-destructor TmneRun.Destroy;
+destructor TmneConsole.Destroy;
 begin
   inherited Destroy;
 end;
 
-function TmneRun.CreateInernalConsole(AInfo: TmneRunInfo): TConsoleForm;
+function TmneConsole.CreateInernalConsole(AInfo: TmneRunInfo): TConsoleForm;
 var
   aControl: TConsoleForm;
-  thread: TConsoleThread;
+  thread: TmneConsoleThread;
 begin
   aControl := TConsoleForm.Create(Application);
   aControl.Parent := Engine.Container;
@@ -81,18 +166,24 @@ begin
 
   aControl.CMDBox.TextColor(Engine.Options.Profile.Attributes.Whitespace.Foreground);
   aControl.CMDBox.TextBackground(Engine.Options.Profile.Attributes.Whitespace.Background);
-  aControl.CMDBox.Write('Ready!'#13#10);
-  //aControl.CMDBox.InputSelColor
+  aControl.CMDBox.Write(Info.GetCommandLine+#13#10);
+
+  thread := TmneConsoleThread.Create(true);
+  thread.Info := AInfo;
+  thread.OnWrite := @aControl.WriteText;
+  thread.Start;
+
+{  //aControl.CMDBox.InputSelColor
   thread := CreateConsoleThread;
   thread.CmdBox := aControl.CmdBox;
   thread.Shell := AInfo.GetCommandLine;
-  thread.Start;
+  thread.Start;}
 
   Result := aControl;
   Engine.UpdateState([ecsRefresh]);
 end;
 
-procedure TmneRun.Execute;
+procedure TmneConsole.Execute;
 var
   s: string;
   p: TProcess;

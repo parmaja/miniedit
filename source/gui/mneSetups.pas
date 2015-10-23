@@ -11,7 +11,7 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  mneClasses, Dialogs, StdCtrls, FileUtil, IniFiles;
+  mneClasses, Dialogs, StdCtrls, FileUtil, LazFileUtils, IniFiles;
 
 type
 

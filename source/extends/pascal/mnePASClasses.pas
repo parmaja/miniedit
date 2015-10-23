@@ -209,7 +209,7 @@ var
   i: Integer;
   aPath: string;
   Options: TPasProjectOptions;
-  aRun: TmneRun;
+  aRun: TmneConsole;
 begin
   if (Engine.Session.IsOpened) then
     Options := (Engine.Session.Project.Options as TPasProjectOptions)
@@ -235,7 +235,7 @@ begin
     end;
   end;
 
-  aRun := TmneRun.Create(Info);
+  aRun := TmneConsole.Create(Info);
   try
     aRun.Execute;
   finally

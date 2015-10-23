@@ -19,7 +19,7 @@ uses
   SynHighlighterHashEntries, EditorProfiles, SynHighlighterCSS,
   SynHighlighterSQL, SynHighlighterXML, SynHighlighterJScript,
   SynHighlighterXHTML, SynHighlighterMultiProc, HTMLProcessor, EditorDebugger,
-  EditorClasses, PHP_xDebug, mneClasses, mneRun, uTerminal;
+  EditorClasses, PHP_xDebug, mneClasses, mneRun, uTerminal, mnePHPProjectFrames;
 
 type
 
@@ -139,9 +139,8 @@ end;
 
 function TPHPProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame;
 begin
-  Result := nil;//not now
-{  Result := TPHPProjectFrame.Create(AOwner);
-  TPHPProjectFrame(Result).Options := AProject.Options as TPHPProjectOptions;}
+  Result := TPHPProjectFrame.Create(AOwner);
+  TPHPProjectFrame(Result).Project := AProject;
 end;
 
 { TXHTMLFile }
@@ -244,7 +243,7 @@ var
   aRoot: string;
   Options: TPHPProjectOptions;
   s, outstr : string;
-  aRun: TmneRun;
+  aRun: TmneConsole;
 begin
   Options := nil;
 
@@ -257,7 +256,7 @@ begin
   if Info.Command = '' then
     Info.Command := 'php.exe';
 
-  aRun := TmneRun.Create(Info);
+  aRun := TmneConsole.Create(Info);
   try
     aRun.Execute;
   finally

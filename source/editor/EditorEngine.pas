@@ -16,7 +16,7 @@ uses
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase,
-  dbgpServers, FileUtil, Masks, mnXMLRttiProfile, mnXMLUtils,
+  dbgpServers, Masks, mnXMLRttiProfile, mnXMLUtils, FileUtil, LazFileUtils,
   mnUtils, LCLType, EditorClasses;
 
 type
@@ -174,8 +174,9 @@ type
     //OSDepended: When save to file, the filename changed depend on the os system name
     property Capabilities: TEditorCapabilities read FCapabilities;
     property Groups: TFileGroups read GetGroups;
-    property Launcher: string read FLauncher write FLauncher;
     property Debug: TEditorDebugger read FDebug;//todo
+  published
+    property Launcher: string read FLauncher write FLauncher;
   end;
 
   TEditorTendencyClass = class of TEditorTendency;
@@ -228,7 +229,7 @@ type
     property RunMode: TmneRunMode read FRunMode write FRunMode;
     property RootUrl: string read FRootUrl write FRootUrl;
     property MainFile: string read FMainFile write FMainFile;
-    //RunWait do not end until use press any key or enter
+    //PauseConsole do not end until use press any key or enter
     property PauseConsole: Boolean read FPauseConsole write FPauseConsole;
   end;
 
@@ -798,7 +799,9 @@ type
   private
     FIsChanged: Boolean;
     FOptions: TEditorSessionOptions;
+    FProcess: TObject;
     FProject: TEditorProject;
+    procedure SetProcess(AValue: TObject);
     procedure SetProject(const Value: TEditorProject);
     function GetIsOpened: Boolean;
   public
@@ -822,6 +825,8 @@ type
     //Session Options is depend on the system used not shared between OSs
     property Options: TEditorSessionOptions read FOptions;
     property IsChanged: Boolean read FIsChanged;
+    //Process the project running if it is null, process should nil it after finish
+    property Process: TObject read FProcess write SetProcess;
   end;
 
   TEditorMessagesList = class;
@@ -2449,12 +2454,12 @@ begin
     aProject := New;
     try
       aProject.LoadFromFile(FileName);
-      FIsChanged := False;
     except
       aProject.Free;
       raise;
     end;
     Project := aProject;
+    FIsChanged := False;
     Engine.ProcessRecentProject(FileName);
     Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject, ecsProjectLoaded]);
   finally
@@ -2614,7 +2619,9 @@ end;
 function TEditorSession.Save: Boolean;
 begin
   if Project <> nil then
-    Save(Project);
+    Result := Save(Project)
+  else
+    Result := False;
 end;
 
 function TEditorSession.SaveAs(AProject: TEditorProject): Boolean;
@@ -2642,7 +2649,9 @@ end;
 function TEditorSession.SaveAs: Boolean;
 begin
   if Project <> nil then
-    SaveAs(Project);
+    Result := SaveAs(Project)
+  else
+    Result := False;
 end;
 
 function TEditorSession.GetRoot: string;
@@ -2798,6 +2807,12 @@ begin
   end;
 end;
 
+procedure TEditorSession.SetProcess(AValue: TObject);
+begin
+  if FProcess =AValue then Exit;
+  FProcess :=AValue;
+end;
+
 procedure TEditorOptions.Show;
 var
   i: integer;
@@ -2941,6 +2956,11 @@ begin
         List.Add('ROOT=' + ExtractFilePath(Session.Project.FileName))
       else
         List.Add('ROOT=' + Application.Location)
+    end;
+
+    if Session.IsOpened then
+    begin
+      List.Add('MAIN=' + Session.Project.Options.MainFile);
     end;
 
     if Files.Current <> nil then

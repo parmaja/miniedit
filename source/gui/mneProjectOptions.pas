@@ -123,6 +123,7 @@ procedure TProjectForm.Retrieve;
 var
   TabSheet: TTabSheet;
 begin
+  Caption := Caption + ' [' + FProject.Tendency.Name + ']';
   FFrame := FProject.Options.CreateOptionsFrame(Self, FProject);
   if FFrame <> nil then
   begin

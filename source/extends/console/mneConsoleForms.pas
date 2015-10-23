@@ -29,9 +29,13 @@ type
   { TConsoleForm }
 
   TConsoleForm = class(TFrame)
+    Button1: TButton;
     CMDBox: TCmdBox;
     ConsoleFooterPnl: TPanel;
     ContentPanel: TPanel;
+    procedure Button1Click(Sender: TObject);
+    procedure CMDBoxAny(ACmdBox: TCmdBox; InputData: TColorstring);
+    procedure CMDBoxInput(ACmdBox: TCmdBox; Input: string);
   private
     FOnChanged: TNotifyEvent;
   protected
@@ -40,11 +44,27 @@ type
   public
     constructor Create(TheOwner: TComponent); override;
     property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
+    procedure WriteText(S: string);
   end;
 
 implementation
 
 {$R *.lfm}
+
+procedure TConsoleForm.Button1Click(Sender: TObject);
+begin
+  CMDBox.StartRead(clWhite, clBlack, 'zaza', clRed, clBlue);
+end;
+
+procedure TConsoleForm.CMDBoxAny(ACmdBox: TCmdBox; InputData: TColorstring);
+begin
+
+end;
+
+procedure TConsoleForm.CMDBoxInput(ACmdBox: TCmdBox; Input: string);
+begin
+  //
+end;
 
 procedure TConsoleForm.Changed;
 begin
@@ -56,6 +76,11 @@ constructor TConsoleForm.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
   //CMDBox.Write('Ready!');
+end;
+
+procedure TConsoleForm.WriteText(S: string);
+begin
+  CMDBox.Write(S);
 end;
 
 end.

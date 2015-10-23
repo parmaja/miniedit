@@ -20,7 +20,8 @@ unit mneCSVForms;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Grids, ExtCtrls, StdCtrls,
+  Classes, SysUtils, Forms, Controls, Grids, ExtCtrls, StdCtrls,
+  FileUtil, LazFileUtils,
   LCLType, Graphics, Menus, EditorEngine, IniFiles,
   MsgBox,
   mnStreams, mncConnections, mncCSV;

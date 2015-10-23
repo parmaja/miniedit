@@ -116,6 +116,7 @@ begin
   aThread := CreateConsoleThread;
   aThread.Shell := Shell;
   aThread.Start;
+  Result := aThread;
 end;
 
 end.

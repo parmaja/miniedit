@@ -14,7 +14,7 @@ unit TSVN_SCM;
 interface
 
 uses
-  SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs, FileUtil,
+  SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs, FileUtil, LazFileUtils,
   SynEdit, EditorEngine;
 
 type

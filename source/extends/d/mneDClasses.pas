@@ -48,6 +48,7 @@ type
 
   TDProjectOptions = class(TEditorProjectOptions)
   private
+    FConfigFile: string;
     FExpandPaths: Boolean;
     FPaths: TStrings;
     procedure SetPaths(AValue: TStrings);
@@ -58,6 +59,7 @@ type
   published
     property Paths: TStrings read FPaths write SetPaths;
     property ExpandPaths: Boolean read FExpandPaths write FExpandPaths;
+    property ConfigFile: string read FConfigFile write FConfigFile;
   end;
 
   { TDTendency }
@@ -186,7 +188,7 @@ var
   i: Integer;
   aPath: string;
   Options: TDProjectOptions;
-  aRun: TmneRun;
+  aRun: TmneConsole;
 begin
   if (Engine.Session.IsOpened) then
     Options := (Engine.Session.Project.Options as TDProjectOptions)
@@ -210,9 +212,14 @@ begin
         Info.Params := Info.Params + '-I' +aPath + ' ';
       end;
     end;
+
+    Info.Params := Info.Params + ' -run';
+
+    if Options.ConfigFile <> '' then
+      Info.Params := Info.Params + ' @' + Engine.EnvReplace(Options.ConfigFile);
   end;
 
-  aRun := TmneRun.Create(Info);
+  aRun := TmneConsole.Create(Info);
   try
     aRun.Execute;
   finally

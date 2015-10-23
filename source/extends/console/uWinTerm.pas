@@ -75,7 +75,7 @@ type
 implementation
 
 uses
-  FileUtil;
+  FileUtil, LazUTF8;
 
 { TWinTerm }
 
@@ -83,9 +83,9 @@ constructor TWinTerm.Create;
 begin
   if not isConsole then
     begin
-      //AllocConsole();
-      //FConsoleWindow:= GetConsoleWindow();
-      //ShowWindow(FConsoleWindow, SW_HIDE);
+{      AllocConsole();
+      FConsoleWindow:= GetConsoleWindow();
+      ShowWindow(FConsoleWindow, SW_HIDE);}
     end;
 end;
 

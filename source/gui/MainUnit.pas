@@ -21,7 +21,7 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, MsgBox,
-  LMessages, lCLType, LCLIntf, LCLProc, EditorDebugger, FileUtil,
+  LMessages, lCLType, LCLIntf, LCLProc, EditorDebugger, FileUtil, LazFileUtils,
   Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus, ToolWin,
   Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses, StdActns,
   SynEditHighlighter, SynEdit, IAddons, ntvSplitters, SynHighlighterSQL,

@@ -19,7 +19,18 @@ object ConsoleForm: TConsoleForm
     BevelInner = bvLowered
     BevelOuter = bvNone
     BorderWidth = 2
+    ClientHeight = 22
+    ClientWidth = 695
     TabOrder = 0
+    object Button1: TButton
+      Left = 37
+      Height = 25
+      Top = -3
+      Width = 75
+      Caption = 'Button1'
+      OnClick = Button1Click
+      TabOrder = 0
+    end
   end
   object ContentPanel: TPanel
     Left = 0
@@ -43,6 +54,8 @@ object ConsoleForm: TConsoleForm
       CaretWidth = 1
       CaretHeight = 12
       CaretYShift = 3
+      OnInput = CMDBoxInput
+      OnAny = CMDBoxAny
       LineCount = 1000
       Font.CharSet = ARABIC_CHARSET
       Font.Color = clSilver
