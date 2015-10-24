@@ -11,7 +11,7 @@ unit mneRun;
 interface
 
 uses
-  Forms, SysUtils, StrUtils, Classes, SyncObjs, process,
+  windows, Forms, SysUtils, StrUtils, Classes, SyncObjs, process,
   mnStreams, EditorEngine, mneConsoleForms, uTerminal, mnXMLUtils;
 
 {$i '..\lib\mne.inc'}
@@ -79,7 +79,7 @@ procedure TmneConsoleThread.Execute;
 const
   READ_BYTES = 1024;
 var
-  C, Count, L: Integer;
+  C, Count, L: DWORD;
   Status: integer;
   FirstTime: Boolean;
 begin
@@ -88,11 +88,12 @@ begin
   FirstTime := True;
   Count := 0;
   C := 0;
-  Process.Options :=  [poUsePipes, poStderrToOutPut];
+  Process.Options :=  [poUsePipes];
   Process.ShowWindow := swoHIDE;
-  Process.InheritHandles := True;
+
+  //Process.PipeBufferSize := 10;
+  //Process.InheritHandles := True;
   //Process.ConsoleTitle := Info.RunFile;
-  Process.XTermProgram := 'ConEmu';
   Process.CommandLine := Info.GetCommandLine;
   if Info.Root <> '' then
     Process.CurrentDirectory := Info.Root;
@@ -101,7 +102,13 @@ begin
       Process.Execute;
       while not Terminated and (FirstTime or Process.Running or (C > 0)) do
       begin
+        //Process.Input.WriteAnsiString('Zaher'#13#10);
         L := Length(FBuffer);
+        if not PeekNamedPipe(Process.Output.Handle, nil, 0, nil, @C, nil) then
+          C := 0;
+
+        C := Process.Output.NumBytesAvailable;
+
         Setlength(FBuffer, L + READ_BYTES);
         C := Process.Output.Read(FBuffer[1 + L], READ_BYTES);
         if Assigned(FOnWrite) then
@@ -152,6 +159,7 @@ function TmneConsole.CreateInernalConsole(AInfo: TmneRunInfo): TConsoleForm;
 var
   aControl: TConsoleForm;
   thread: TmneConsoleThread;
+  //thread: TConsoleThread;
 begin
   aControl := TConsoleForm.Create(Application);
   aControl.Parent := Engine.Container;

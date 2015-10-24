@@ -53,10 +53,12 @@ type
   { TMainForm }
 
   TMainForm = class(TForm)
+    DBGCompileAct: TAction;
     BrowseTabs: TntvTabSet;
     MenuItem22: TMenuItem;
     MenuItem23: TMenuItem;
     MenuItem24: TMenuItem;
+    MenuItem25: TMenuItem;
     TypeOptionsMnu: TMenuItem;
     TypeOptionsAct: TAction;
     BugSignBtn: TSpeedButton;
@@ -287,7 +289,7 @@ type
     N13: TMenuItem;
     Refresh1: TMenuItem;
     ShowValue1: TMenuItem;
-    DBGToggleBreakpoint: TAction;
+    DBGToggleBreakpointAct: TAction;
     N14: TMenuItem;
     DBGToggleBreakpoint1: TMenuItem;
     oggleBreakpoint1: TMenuItem;
@@ -297,7 +299,7 @@ type
     EditorsPnl: TPanel;
     OutputEdit: TSynEdit;
     Output1: TMenuItem;
-    DBGRunToCursor: TAction;
+    DBGRunToCursorAct: TAction;
     RunToCursor1: TMenuItem;
     DBGBreakpointsAct: TAction;
     Breakpoints1: TMenuItem;
@@ -453,7 +455,7 @@ type
     procedure SaveAsActExecute(Sender: TObject);
     procedure Add1Click(Sender: TObject);
     procedure Delete1Click(Sender: TObject);
-    procedure DBGToggleBreakpointExecute(Sender: TObject);
+    procedure DBGToggleBreakpointActExecute(Sender: TObject);
     procedure OutputActExecute(Sender: TObject);
     procedure DBGBreakpointsActExecute(Sender: TObject);
     procedure CopyFileNameActExecute(Sender: TObject);
@@ -1741,6 +1743,26 @@ end;
 
 procedure TMainForm.ProjectChanged;
 begin
+  with Engine.Tendency do
+  begin
+    DBGRunAct.Enabled := capRun in Capabilities;
+    DBGCompileAct.Enabled := capCompile in Capabilities;
+    DBGResumeAct.Enabled := capRun in Capabilities;
+    DBGResetAct.Enabled := capRun in Capabilities;
+
+    DBGStartServerAct.Enabled := capDebugServer in Capabilities;
+    DBGStopServerAct.Enabled := capDebugServer in Capabilities;
+    DBGActiveServerAct.Enabled := capDebugServer in Capabilities;
+
+    DBGAddWatchAct.Enabled := capTrace in Capabilities;
+    DBGBreakpointsAct.Enabled := capTrace in Capabilities;
+    DBGToggleBreakpointAct.Enabled := capTrace in Capabilities;
+
+    DBGStepOverAct.Enabled := capTrace in Capabilities;
+    DBGStepIntoAct.Enabled := capTrace in Capabilities;
+    DBGStepOutAct.Enabled := capTrace in Capabilities;
+    DBGRunToCursorAct.Enabled := capTrace in Capabilities;
+  end;
 end;
 
 procedure TMainForm.ReplaceActExecute(Sender: TObject);
@@ -2235,7 +2257,7 @@ begin
   end;
 end;
 
-procedure TMainForm.DBGToggleBreakpointExecute(Sender: TObject);
+procedure TMainForm.DBGToggleBreakpointActExecute(Sender: TObject);
 var
   aLine: integer;
 begin

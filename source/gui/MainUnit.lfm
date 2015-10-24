@@ -1265,6 +1265,9 @@ object MainForm: TMainForm
         Action = DBGRunAct
         OnClick = DBGRunActExecute
       end
+      object MenuItem25: TMenuItem
+        Action = DBGCompileAct
+      end
       object Check1: TMenuItem
         Action = CheckAct
         OnClick = CheckActExecute
@@ -1282,7 +1285,7 @@ object MainForm: TMainForm
         OnClick = DBGStepOutActExecute
       end
       object RunToCursor1: TMenuItem
-        Action = DBGRunToCursor
+        Action = DBGRunToCursorAct
       end
       object Reset2: TMenuItem
         Action = DBGResetAct
@@ -1301,8 +1304,8 @@ object MainForm: TMainForm
         OnClick = DBGAddWatchActExecute
       end
       object DBGToggleBreakpoint1: TMenuItem
-        Action = DBGToggleBreakpoint
-        OnClick = DBGToggleBreakpointExecute
+        Action = DBGToggleBreakpointAct
+        OnClick = DBGToggleBreakpointActExecute
       end
       object Breakpoints1: TMenuItem
         Action = DBGBreakpointsAct
@@ -1749,15 +1752,15 @@ object MainForm: TMainForm
       OnExecute = DBGStepOutActExecute
       ShortCut = 8310
     end
-    object DBGToggleBreakpoint: TAction
+    object DBGToggleBreakpointAct: TAction
       Category = 'Debug'
       Caption = 'Toggle Breakpoint'
       Hint = 'Toggle point at line and currrent file'
       ImageIndex = 40
-      OnExecute = DBGToggleBreakpointExecute
+      OnExecute = DBGToggleBreakpointActExecute
       ShortCut = 116
     end
-    object DBGRunToCursor: TAction
+    object DBGRunToCursorAct: TAction
       Category = 'Debug'
       Caption = 'Run To Cursor'
       ShortCut = 115
@@ -1896,6 +1899,11 @@ object MainForm: TMainForm
       Hint = 'Source control managment type'
       OnExecute = SCMTypeActExecute
     end
+    object DBGCompileAct: TAction
+      Category = 'Debug'
+      Caption = 'Compile'
+      ImageIndex = 42
+    end
   end
   object FolderMenu: TPopupMenu
     left = 146
@@ -2022,8 +2030,8 @@ object MainForm: TMainForm
       Caption = '-'
     end
     object oggleBreakpoint1: TMenuItem
-      Action = DBGToggleBreakpoint
-      OnClick = DBGToggleBreakpointExecute
+      Action = DBGToggleBreakpointAct
+      OnClick = DBGToggleBreakpointActExecute
     end
     object ShowValue1: TMenuItem
       Caption = 'Show Value'
