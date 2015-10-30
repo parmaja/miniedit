@@ -1,6 +1,13 @@
 unit DebugClasses;
-
 {$mode objfpc}{$H+}
+{$ModeSwitch advancedrecords}
+{$INTERFACES CORBA}
+{**
+ * Mini Edit
+ *
+ * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+ * @author    Zaher Dirkey <zaher at parmaja dot com>
+ *}
 
 interface
 
@@ -8,6 +15,22 @@ uses
   Classes, SysUtils, Contnrs;
 
 type
+
+  TmneRunMode = (runShell, runConsole, runTerminal, runProcess, runURL);
+
+  { TmneRunInfo }
+
+  TmneRunInfo = record
+    Root: string; //cur dir for the project
+    Mode: TmneRunMode;
+    Pause: Boolean;
+    URL: string;
+    Command: string; //file to run
+    Params: string; //file to run
+    RunFile: string; //file to run
+    function GetCommandLine: string;
+  end;
+
   TDebugWatchInfo = record
     VarName: string;
     VarType: string;
@@ -20,6 +43,8 @@ type
     Line: Integer;
   end;
 
+  { TCallStackItem }
+
   TCallStackItem = class(TObject)
   private
     FLine: Integer;
@@ -29,8 +54,6 @@ type
     property FileName: string read FFileName write FFileName;
     property Line: integer read FLine write FLine;
   end;
-
-  { TCallStackItem }
 
   { TCallStackItems }
 
@@ -46,6 +69,17 @@ type
   end;
 
 implementation
+
+{ TmneRunInfo }
+
+function TmneRunInfo.GetCommandLine: string;
+begin
+  Result := Command;
+  if Params <> '' then
+    Result := Result + ' ' + Params;
+  if RunFile <> '' then
+    Result := Result + ' ' + RunFile;
+end;
 
 { TCallStackItems }
 

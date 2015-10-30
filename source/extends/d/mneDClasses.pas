@@ -12,14 +12,12 @@ unit mneDClasses;
 interface
 
 uses
-  Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
-  LCLintf, LCLType,
-  Dialogs, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit,
-  Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
+  Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics,
+  Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
+  SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  SynHighlighterD,
-  EditorDebugger, EditorClasses,
-  mneClasses, mneRun, mneConsoleClasses, mneConsoleForms, uTerminal;
+  SynHighlighterD, EditorDebugger, EditorClasses, mneClasses, EditorRun,
+  DebugClasses, mneConsoleClasses, mneConsoleForms, uTerminal;
 
 type
 
@@ -188,7 +186,7 @@ var
   i: Integer;
   aPath: string;
   Options: TDProjectOptions;
-  aRun: TmneConsole;
+  aRun: TmneRun;
 begin
   if (Engine.Session.IsOpened) then
     Options := (Engine.Session.Project.Options as TDProjectOptions)
@@ -219,12 +217,7 @@ begin
       Info.Params := Info.Params + ' @' + Engine.EnvReplace(Options.ConfigFile);
   end;
 
-  aRun := TmneConsole.Create(Info);
-  try
-    aRun.Execute;
-  finally
-    aRun.Free;
-  end;
+  Engine.Session.Run.Start;
 end;
 
 constructor TDTendency.Create;

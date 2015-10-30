@@ -1,4 +1,6 @@
 unit mneConsoleForms;
+{$mode objfpc}{$H+}
+
 {**
  *  This file is part of the "Mini Library"
  *
@@ -15,13 +17,12 @@ unit mneConsoleForms;
   * Find and Replace
 }
 
-{$mode objfpc}{$H+}
 
 interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Grids, ExtCtrls, StdCtrls,
-  LCLType, Graphics, Menus, uCMDBox, EditorEngine, IniFiles,
+  LCLType, Graphics, Menus, uCMDBox, IniFiles,
   MsgBox, mnStreams;
 
 type

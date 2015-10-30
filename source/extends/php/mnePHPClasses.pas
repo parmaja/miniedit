@@ -19,7 +19,8 @@ uses
   SynHighlighterHashEntries, EditorProfiles, SynHighlighterCSS,
   SynHighlighterSQL, SynHighlighterXML, SynHighlighterJScript,
   SynHighlighterXHTML, SynHighlighterMultiProc, HTMLProcessor, EditorDebugger,
-  EditorClasses, PHP_xDebug, mneClasses, mneRun, uTerminal, mnePHPProjectFrames;
+  EditorClasses, PHP_xDebug, mneClasses, EditorRun, DebugClasses, uTerminal,
+  mnePHPProjectFrames;
 
 type
 
@@ -243,7 +244,7 @@ var
   aRoot: string;
   Options: TPHPProjectOptions;
   s, outstr : string;
-  aRun: TmneConsole;
+  aRun: TmneRun;
 begin
   Options := nil;
 
@@ -256,12 +257,7 @@ begin
   if Info.Command = '' then
     Info.Command := 'php.exe';
 
-  aRun := TmneConsole.Create(Info);
-  try
-    aRun.Execute;
-  finally
-    aRun.Free;
-  end;
+  Engine.Session.Run.Start;
 end;
 
 constructor TPHPTendency.Create;

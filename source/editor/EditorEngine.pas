@@ -16,8 +16,8 @@ uses
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase,
-  dbgpServers, Masks, mnXMLRttiProfile, mnXMLUtils, FileUtil, LazFileUtils,
-  mnUtils, LCLType, EditorClasses;
+  dbgpServers, DebugClasses, Masks, mnXMLRttiProfile, mnXMLUtils, FileUtil,
+  LazFileUtils, mnUtils, ConsoleProcess, LCLType, EditorClasses, EditorRun;
 
 type
   TEditorChangeStates = set of (ecsChanged, ecsState, ecsRefresh, ecsOptions, ecsDebug, ecsShow, ecsEdit, ecsFolder, ecsProject, ecsProjectLoaded); //ecsShow bring to front
@@ -122,21 +122,6 @@ type
     function IndexOf(vName: string): Integer;
     property Items[Index: integer]: TEditorElement read GetItem; default;
   end;
-
-  TmneRunMode = (runShell, runConsole, runTerminal, runProcess, runURL);
-
-  { TmneRunInfo }
-
-  TmneRunInfo = record
-    Root: string; //cur dir for the project
-    Mode: TmneRunMode;
-    Pause: Boolean;
-    URL: string;
-    Command: string; //file to run
-    Params: string; //file to run
-    RunFile: string; //file to run
-    function GetCommandLine: string;
-  end;
   {
     Tendency
     Run, Compile, Collect file groups and have special properties
@@ -176,7 +161,7 @@ type
     property Groups: TFileGroups read GetGroups;
     property Debug: TEditorDebugger read FDebug;//todo
   published
-    property Launcher: string read FLauncher write FLauncher;
+    property Launcher: string read FLauncher write FLauncher; //like php.exe or rdmd.exe
   end;
 
   TEditorTendencyClass = class of TEditorTendency;
@@ -590,16 +575,6 @@ type
     property WindoBottom: Integer read FBoundRect.Bottom write FBoundRect.Bottom;
   end;
 
-  TEditorSessionOptions = class(TmnXMLProfile)
-  private
-    FDefaultTendency: string;
-    FDefaultSCM: string;
-  public
-  published
-    property DefaultTendency: string read FDefaultTendency write FDefaultTendency;
-    property DefaultSCM: string read FDefaultSCM write FDefaultSCM;
-  end;
-
   TmneSynCompletion = class;
 
   TMap = class(TObject)
@@ -789,6 +764,16 @@ type
     property Items[Index: integer]: TEditorFormItem read GetItem; default;
   end;
 
+  TEditorSessionOptions = class(TmnXMLProfile)
+  private
+    FDefaultTendency: string;
+    FDefaultSCM: string;
+  public
+  published
+    property DefaultTendency: string read FDefaultTendency write FDefaultTendency;
+    property DefaultSCM: string read FDefaultSCM write FDefaultSCM;
+  end;
+
   {
     Session object to manage the current opened project, only one project can open.
   }
@@ -801,9 +786,11 @@ type
     FOptions: TEditorSessionOptions;
     FProcess: TObject;
     FProject: TEditorProject;
+    FRun: TmneRun;
     procedure SetProcess(AValue: TObject);
     procedure SetProject(const Value: TEditorProject);
     function GetIsOpened: Boolean;
+    procedure SetRun(AValue: TmneRun);
   public
     constructor Create;
     destructor Destroy; override;
@@ -827,6 +814,7 @@ type
     property IsChanged: Boolean read FIsChanged;
     //Process the project running if it is null, process should nil it after finish
     property Process: TObject read FProcess write SetProcess;
+    property Run: TmneRun read FRun write SetRun;
   end;
 
   TEditorMessagesList = class;
@@ -871,6 +859,7 @@ type
     FDefaultSCM: TEditorSCM;
     //FInternalTendency used only there is no any default Tendency defined, it is mean simple editor without any project type
     FInternalTendency: TDefaultTendency;
+    FOnLog: TmnOnWrite;
 //    FForms: TEditorFormList;
     FTendencies: TTendencies;
     FSourceManagements: TSourceManagements;
@@ -963,6 +952,7 @@ type
     property SCM: TEditorSCM read GetSCM;
     function GetIsChanged: Boolean;
     //property MacroRecorder: TSynMacroRecorder read FMacroRecorder;
+    property OnLog: TmnOnWrite read FOnLog write FOnLog;
     property OnChangedState: TOnEditorChangeState read FOnChangedState write FOnChangedState;
     property OnReplaceText: TReplaceTextEvent read FOnReplaceText write FOnReplaceText;
     //debugger
@@ -1106,17 +1096,6 @@ begin
   end;
 end;
 
-{ TmneRunInfo }
-
-function TmneRunInfo.GetCommandLine: string;
-begin
-  Result := Command;
-  if Params <> '' then
-    Result := Result + ' ' + Params;
-  if RunFile <> '' then
-    Result := Result + ' ' + RunFile;
-end;
-
 { TControlEditorFile }
 
 procedure TControlEditorFile.SetControl(AValue: TWinControl);
@@ -1144,12 +1123,10 @@ end;
 
 procedure TControlEditorFile.DoLoad(FileName: string);
 begin
-
 end;
 
 procedure TControlEditorFile.DoSave(FileName: string);
 begin
-
 end;
 
 destructor TControlEditorFile.Destroy;
@@ -4223,6 +4200,8 @@ end;
 
 destructor TEditorSession.Destroy;
 begin
+  Run.Stop;
+  FreeAndNil(FRun);
   if (FProject <> nil) and (FProject.FileName <> '') then
     Save;
   FProject := nil;
@@ -4241,10 +4220,17 @@ begin
   Result := FProject <> nil;
 end;
 
+procedure TEditorSession.SetRun(AValue: TmneRun);
+begin
+  if FRun =AValue then Exit;
+  FRun :=AValue;
+end;
+
 constructor TEditorSession.Create;
 begin
   inherited;
   FOptions := TEditorSessionOptions.Create;
+  FRun := TmneRun.Create;
 end;
 
 procedure TFileGroups.EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds);

@@ -2,11 +2,11 @@ object MainForm: TMainForm
   Left = 200
   Height = 614
   Top = 101
-  Width = 772
+  Width = 713
   AllowDropFiles = True
   Caption = 'Mini Edit'
   ClientHeight = 594
-  ClientWidth = 772
+  ClientWidth = 713
   Font.CharSet = ANSI_CHARSET
   Font.Height = -13
   Font.Name = 'Tahoma'
@@ -27,7 +27,7 @@ object MainForm: TMainForm
     Left = 0
     Height = 29
     Top = 0
-    Width = 772
+    Width = 713
     AutoSize = True
     EdgeBorders = [ebTop, ebBottom]
     Images = EditorResource.ToolbarImageList
@@ -37,7 +37,7 @@ object MainForm: TMainForm
       Left = 1
       Height = 23
       Top = 2
-      Width = 771
+      Width = 712
       AutoSize = True
       ButtonHeight = 23
       ButtonWidth = 75
@@ -261,21 +261,21 @@ object MainForm: TMainForm
     Left = 207
     Height = 408
     Top = 29
-    Width = 565
+    Width = 506
     Align = alClient
     BevelOuter = bvNone
     ClientHeight = 408
-    ClientWidth = 565
+    ClientWidth = 506
     TabOrder = 1
     object EditorsPnl: TPanel
       Left = 0
       Height = 228
       Top = 25
-      Width = 565
+      Width = 506
       Align = alClient
       BevelOuter = bvNone
       ClientHeight = 228
-      ClientWidth = 565
+      ClientWidth = 506
       FullRepaint = False
       TabOrder = 0
       OnClick = EditorsPnlClick
@@ -283,12 +283,12 @@ object MainForm: TMainForm
         Left = 0
         Height = 29
         Top = 199
-        Width = 565
+        Width = 506
         Align = alBottom
         BevelInner = bvSpace
         BevelOuter = bvLowered
         ClientHeight = 29
-        ClientWidth = 565
+        ClientWidth = 506
         TabOrder = 0
         Visible = False
         object Label2: TLabel
@@ -387,7 +387,7 @@ object MainForm: TMainForm
         Left = 0
         Height = 23
         Top = 0
-        Width = 565
+        Width = 506
         StoreIndex = False
         ShowButtons = False
         ShowBorder = False
@@ -404,7 +404,7 @@ object MainForm: TMainForm
       Left = 0
       Height = 149
       Top = 259
-      Width = 565
+      Width = 506
       Align = alBottom
       Constraints.MinHeight = 60
       Font.Height = -13
@@ -556,7 +556,7 @@ object MainForm: TMainForm
       Left = 0
       Height = 6
       Top = 253
-      Width = 565
+      Width = 506
       ResizeControl = OutputEdit
       Visible = False
     end
@@ -564,13 +564,13 @@ object MainForm: TMainForm
       Left = 0
       Height = 25
       Top = 0
-      Width = 565
+      Width = 506
       Align = alTop
       Alignment = taLeftJustify
       BevelOuter = bvNone
       BorderWidth = 2
       ClientHeight = 25
-      ClientWidth = 565
+      ClientWidth = 506
       PopupMenu = FilePopupMenu
       TabOrder = 2
       Visible = False
@@ -579,7 +579,7 @@ object MainForm: TMainForm
         Height = 21
         Hint = 'File name'
         Top = 2
-        Width = 455
+        Width = 396
         Align = alClient
         Caption = 'File name'
         Layout = tlCenter
@@ -587,7 +587,7 @@ object MainForm: TMainForm
         PopupMenu = FilePopupMenu
       end
       object FileCloseBtn: TSpeedButton
-        Left = 546
+        Left = 487
         Height = 21
         Hint = 'Close file'
         Top = 2
@@ -661,7 +661,7 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object FileModeBtn: TBitBtn
-        Left = 474
+        Left = 415
         Height = 21
         Top = 2
         Width = 72
@@ -678,18 +678,18 @@ object MainForm: TMainForm
     Left = 0
     Height = 21
     Top = 573
-    Width = 772
+    Width = 713
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 21
-    ClientWidth = 772
+    ClientWidth = 713
     TabOrder = 2
     object MessagePnl: TPanel
       Left = 80
       Height = 19
       Hint = 'Message'
       Top = 1
-      Width = 484
+      Width = 425
       Alignment = taLeftJustify
       Anchors = [akLeft, akRight, akBottom]
       BevelOuter = bvLowered
@@ -697,7 +697,7 @@ object MainForm: TMainForm
       TabOrder = 0
     end
     object DebugPnl: TPanel
-      Left = 670
+      Left = 611
       Height = 19
       Hint = 'Debug Session'
       Top = 1
@@ -709,7 +709,7 @@ object MainForm: TMainForm
       TabOrder = 1
     end
     object CursorPnl: TPanel
-      Left = 588
+      Left = 529
       Height = 19
       Hint = 'Caret Position'
       Top = 1
@@ -720,7 +720,7 @@ object MainForm: TMainForm
       TabOrder = 2
     end
     object StatePnl: TPanel
-      Left = 566
+      Left = 507
       Height = 19
       Hint = 'State'
       Top = 1
@@ -746,7 +746,7 @@ object MainForm: TMainForm
     Left = 0
     Height = 127
     Top = 446
-    Width = 772
+    Width = 713
     StoreIndex = False
     ShowButtons = False
     ShowBorder = False
@@ -786,7 +786,7 @@ object MainForm: TMainForm
       Left = 3
       Height = 101
       Top = 23
-      Width = 766
+      Width = 707
       Align = alClient
       Columns = <      
         item
@@ -814,7 +814,7 @@ object MainForm: TMainForm
       Left = 3
       Height = 101
       Top = 23
-      Width = 766
+      Width = 707
       Align = alClient
       Columns = <      
         item
@@ -828,7 +828,7 @@ object MainForm: TMainForm
         item
           AutoSize = True
           Caption = 'Value'
-          Width = 462
+          Width = 403
         end>
       ColumnClick = False
       Font.CharSet = ARABIC_CHARSET
@@ -847,7 +847,7 @@ object MainForm: TMainForm
       Left = 3
       Height = 101
       Top = 23
-      Width = 766
+      Width = 707
       Align = alClient
       Columns = <      
         item
@@ -857,7 +857,7 @@ object MainForm: TMainForm
         item
           AutoSize = True
           Caption = 'Message'
-          Width = 662
+          Width = 603
         end      
         item
           Caption = 'File'
@@ -885,7 +885,7 @@ object MainForm: TMainForm
       Left = 3
       Height = 101
       Top = 23
-      Width = 766
+      Width = 707
       Align = alClient
       Columns = <      
         item
@@ -899,7 +899,7 @@ object MainForm: TMainForm
         item
           AutoSize = True
           Caption = 'Result'
-          Width = 282
+          Width = 223
         end>
       ColumnClick = False
       Font.CharSet = ARABIC_CHARSET
@@ -922,7 +922,7 @@ object MainForm: TMainForm
     Left = 0
     Height = 9
     Top = 437
-    Width = 772
+    Width = 713
     ResizeControl = MessagesTabs
   end
   object FoldersSpl: TntvSplitter
@@ -1269,8 +1269,8 @@ object MainForm: TMainForm
         Action = DBGCompileAct
       end
       object Check1: TMenuItem
-        Action = CheckAct
-        OnClick = CheckActExecute
+        Action = DBGCheckAct
+        OnClick = DBGCheckActExecute
       end
       object StepInto1: TMenuItem
         Action = DBGStepIntoAct
@@ -1519,11 +1519,25 @@ object MainForm: TMainForm
       OnExecute = DBGRunActExecute
       ShortCut = 120
     end
-    object CheckAct: TAction
-      Category = 'Project'
-      Caption = 'Check'
-      OnExecute = CheckActExecute
+    object DBGCompileAct: TAction
+      Category = 'Debug'
+      Caption = 'Compile'
+      ImageIndex = 42
       ShortCut = 16504
+    end
+    object DBGCheckAct: TAction
+      Category = 'Debug'
+      Caption = 'Check'
+      OnExecute = DBGCheckActExecute
+      ShortCut = 16504
+    end
+    object DBGStartServerAct: TAction
+      Category = 'Debug'
+      Caption = 'Start Server'
+      Hint = 'Start XDebug server'
+      OnExecute = DBGStartServerActExecute
+      OnUpdate = DBGStartServerActUpdate
+      ShortCut = 49220
     end
     object FolderOpenAllAct: TAction
       Category = 'Folder'
@@ -1689,99 +1703,10 @@ object MainForm: TMainForm
       Caption = 'Update'
       OnExecute = SCMUpdateActExecute
     end
-    object DBGStartServerAct: TAction
-      Category = 'Debug'
-      Caption = 'Start Server'
-      Hint = 'Start XDebug server'
-      OnExecute = DBGStartServerActExecute
-      OnUpdate = DBGStartServerActUpdate
-      ShortCut = 49220
-    end
-    object DBGStopServerAct: TAction
-      Category = 'Debug'
-      Caption = 'Stop Server'
-      Hint = 'Stop XDebug Server'
-      OnExecute = DBGStopServerActExecute
-      OnUpdate = DBGStopServerActUpdate
-    end
-    object DBGStepIntoAct: TAction
-      Category = 'Debug'
-      Caption = 'Step Into'
-      Hint = 'Step into'
-      ImageIndex = 39
-      OnExecute = DBGStepIntoActExecute
-      ShortCut = 118
-    end
-    object DBGStepOverAct: TAction
-      Category = 'Debug'
-      Caption = 'Step Over'
-      Hint = 'Step over'
-      ImageIndex = 37
-      OnExecute = DBGStepOverActExecute
-      ShortCut = 119
-    end
-    object DBGResetAct: TAction
-      Category = 'Debug'
-      Caption = 'Reset'
-      Hint = 'Reset or break executing'
-      ImageIndex = 29
-      OnExecute = DBGResetActExecute
-      ShortCut = 16497
-    end
-    object DBGActiveServerAct: TAction
-      Category = 'Debug'
-      Caption = 'Debug'
-      Hint = 'XDebug Server Run'
-      ImageIndex = 33
-      OnExecute = DBGActiveServerActExecute
-      OnUpdate = DBGActiveServerActUpdate
-      ShortCut = 32888
-    end
-    object DBGResumeAct: TAction
-      Category = 'Debug'
-      Caption = 'Resume'
-      Hint = 'Run php without debug'
-      OnExecute = DBGResumeActExecute
-      ShortCut = 8305
-    end
-    object DBGStepOutAct: TAction
-      Category = 'Debug'
-      Caption = 'Step Out'
-      Hint = 'Step out'
-      ImageIndex = 38
-      OnExecute = DBGStepOutActExecute
-      ShortCut = 8310
-    end
-    object DBGToggleBreakpointAct: TAction
-      Category = 'Debug'
-      Caption = 'Toggle Breakpoint'
-      Hint = 'Toggle point at line and currrent file'
-      ImageIndex = 40
-      OnExecute = DBGToggleBreakpointActExecute
-      ShortCut = 116
-    end
-    object DBGRunToCursorAct: TAction
-      Category = 'Debug'
-      Caption = 'Run To Cursor'
-      ShortCut = 115
-    end
-    object DBGBreakpointsAct: TAction
-      Category = 'Debug'
-      Caption = 'Breakpoints'
-      OnExecute = DBGBreakpointsActExecute
-      ShortCut = 49218
-    end
     object CopyFileNameAct: TAction
       Category = 'File'
       Caption = 'Copy file name'
       OnExecute = CopyFileNameActExecute
-    end
-    object DBGAddWatchAct: TAction
-      Category = 'Debug'
-      Caption = 'Add Watch'
-      ImageIndex = 41
-      OnExecute = DBGAddWatchActExecute
-      ShortCut = 16500
     end
     object FolderHomeAct: TAction
       Category = 'Folder'
@@ -1899,10 +1824,86 @@ object MainForm: TMainForm
       Hint = 'Source control managment type'
       OnExecute = SCMTypeActExecute
     end
-    object DBGCompileAct: TAction
+    object DBGStopServerAct: TAction
       Category = 'Debug'
-      Caption = 'Compile'
-      ImageIndex = 42
+      Caption = 'Stop Server'
+      Hint = 'Stop XDebug Server'
+      OnExecute = DBGStopServerActExecute
+      OnUpdate = DBGStopServerActUpdate
+    end
+    object DBGStepIntoAct: TAction
+      Category = 'Debug'
+      Caption = 'Step Into'
+      Hint = 'Step into'
+      ImageIndex = 39
+      OnExecute = DBGStepIntoActExecute
+      ShortCut = 118
+    end
+    object DBGStepOverAct: TAction
+      Category = 'Debug'
+      Caption = 'Step Over'
+      Hint = 'Step over'
+      ImageIndex = 37
+      OnExecute = DBGStepOverActExecute
+      ShortCut = 119
+    end
+    object DBGStepOutAct: TAction
+      Category = 'Debug'
+      Caption = 'Step Out'
+      Hint = 'Step out'
+      ImageIndex = 38
+      OnExecute = DBGStepOutActExecute
+      ShortCut = 8310
+    end
+    object DBGRunToCursorAct: TAction
+      Category = 'Debug'
+      Caption = 'Run To Cursor'
+      ShortCut = 115
+    end
+    object DBGActiveServerAct: TAction
+      Category = 'Debug'
+      Caption = 'Debug'
+      Hint = 'XDebug Server Run'
+      ImageIndex = 33
+      OnExecute = DBGActiveServerActExecute
+      OnUpdate = DBGActiveServerActUpdate
+      ShortCut = 32888
+    end
+    object DBGToggleBreakpointAct: TAction
+      Category = 'Debug'
+      Caption = 'Toggle Breakpoint'
+      Hint = 'Toggle point at line and currrent file'
+      ImageIndex = 40
+      OnExecute = DBGToggleBreakpointActExecute
+      ShortCut = 116
+    end
+    object DBGBreakpointsAct: TAction
+      Category = 'Debug'
+      Caption = 'Breakpoints'
+      OnExecute = DBGBreakpointsActExecute
+      ShortCut = 49218
+    end
+    object DBGResetAct: TAction
+      Category = 'Debug'
+      Caption = 'Reset'
+      Hint = 'Reset or break executing'
+      ImageIndex = 29
+      OnExecute = DBGResetActExecute
+      ShortCut = 16497
+    end
+    object DBGResumeAct: TAction
+      Category = 'Debug'
+      Caption = 'Resume'
+      Hint = 'Run without debug'
+      OnExecute = DBGResumeActExecute
+      ShortCut = 8305
+    end
+    object DBGAddWatchAct: TAction
+      Category = 'Debug'
+      Caption = 'Add Watch'
+      ImageIndex = 41
+      OnExecute = DBGAddWatchActExecute
+      ShortCut = 16500
     end
   end
   object FolderMenu: TPopupMenu

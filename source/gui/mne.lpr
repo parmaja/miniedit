@@ -40,7 +40,7 @@ uses
   AboutForms in 'AboutForms.pas' {AboutForm},
   mneProjectForms in 'mneProjectForms.pas' {ManageProjectsForm},
   GotoForms in '..\editor\GotoForms.pas' {GotoLineForm},
-  mneRun in 'mneRun.pas',
+  EditorRun in '..\editor\EditorRun.pas',
   mneBreakpoints in 'mneBreakpoints.pas' {BreakpointsForm},
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
   SearchProgressForms, EditorDebugger, PHP_xDebug, SelectList,
@@ -50,7 +50,7 @@ uses
   mneDClasses, mneDProjectFrames, mneDConfigForms, MsgBox, mnStreams,
   CSVOptionsForms, mncCSV, GUIMsgBox, Classes, PHPUtils, SynHighlighterD,
   SynHighlighterMultiProc, mneSetups, mneSettings, mneSARDClasses,
-  EditorClasses, DebugClasses, mneViewClasses, mneCSVForms;
+  EditorClasses, DebugClasses, mneViewClasses, mneCSVForms, ConsoleProcess;
 
 {$R *.res}
 

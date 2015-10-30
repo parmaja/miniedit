@@ -33,7 +33,7 @@ uses
   {$ifdef WINDOWS}
   TSVN_SCM, TGIT_SCM,
   {$endif}
-  ntvTabSets, mneRun, Registry, SynEditPlugins, mnStreams,
+  ntvTabSets, EditorRun, Registry, SynEditPlugins, mnStreams,
   //Addons
   {$ifdef Windows}
   mneAssociateForm,
@@ -155,7 +155,7 @@ type
     KeywordMnu: TMenuItem;
     About2: TMenuItem;
     DBGRunAct: TAction;
-    CheckAct: TAction;
+    DBGCheckAct: TAction;
     ProjectMnu: TMenuItem;
     Run2: TMenuItem;
     Check1: TMenuItem;
@@ -409,7 +409,7 @@ type
     procedure WindowsMnuClick(Sender: TObject);
     procedure MacMnuClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure CheckActExecute(Sender: TObject);
+    procedure DBGCheckActExecute(Sender: TObject);
     procedure AboutActExecute(Sender: TObject);
     procedure SaveAsProjectActExecute(Sender: TObject);
     procedure ProjectOpenFolderActExecute(Sender: TObject);
@@ -507,9 +507,8 @@ type
     procedure EngineEdited;
     procedure EngineState;
     procedure ProjectLoaded;
-    procedure ProjectChanged;
     procedure UpdateFolder;
-    procedure UpdateProject;
+    procedure ProjectChanged;
     procedure SetFolder(const Value: string);
     procedure ReopenClick(Sender: TObject);
     procedure ReopenProjectClick(Sender: TObject);
@@ -527,6 +526,8 @@ type
     //
     procedure Log(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
     procedure Log(ACaption, AMsg: string); overload;
+    procedure Log(AMsg: string);
+    procedure DoOutput(S: string);
     procedure FollowFolder(vFolder: string; FocusIt: Boolean);
     procedure ShowMessagesList;
     procedure ShowWatchesList;
@@ -587,6 +588,8 @@ begin
 
   Engine.OnChangedState := @EditorChangeState;
   Engine.OnReplaceText:= @OnReplaceText;
+  Engine.OnLog := @DoOutput;
+
   if (aWorkspace <> '') then
   begin
     Engine.Startup;
@@ -884,7 +887,7 @@ begin
   Application.Title := Caption;
   EnumRecentFile;
   EnumRecentProjects;
-  UpdateProject;
+  ProjectChanged;
 end;
 
 procedure TMainForm.EngineRefresh;
@@ -1403,7 +1406,7 @@ begin
 
 end;
 
-procedure TMainForm.CheckActExecute(Sender: TObject);
+procedure TMainForm.DBGCheckActExecute(Sender: TObject);
 begin
   if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
   begin
@@ -1434,7 +1437,7 @@ begin
   end;
 end;
 
-procedure TMainForm.UpdateProject;
+procedure TMainForm.ProjectChanged;
 var
   b: boolean;
 begin
@@ -1448,10 +1451,32 @@ begin
   SCMMnu.Visible := Engine.SCM <> nil;
   if Engine.SCM <> nil then
     SCMMnu.Caption := Engine.SCM.Name;
-  ExecuteMnu.Visible := capRun in Engine.Tendency.Capabilities;
-  DBGRunAct.Visible := capRun in Engine.Tendency.Capabilities;
   TypePnl.Caption := Engine.Tendency.Name;
   BrowseTabs.Items[1].Visible := False;//capBrowser in Engine.Tendency.Capabilities;
+
+  with Engine.Tendency do
+  begin
+    ExecuteMnu.Visible := capRun in Engine.Tendency.Capabilities;
+
+    DBGRunAct.Enabled := capRun in Capabilities;
+    DBGCompileAct.Visible := capCompile in Capabilities;
+    DBGResumeAct.Enabled := capRun in Capabilities;
+    DBGResetAct.Enabled := capRun in Capabilities;
+
+    DBGStartServerAct.Enabled := capDebugServer in Capabilities;
+    DBGStopServerAct.Enabled := capDebugServer in Capabilities;
+    DBGActiveServerAct.Enabled := capDebugServer in Capabilities;
+
+    DBGAddWatchAct.Enabled := capTrace in Capabilities;
+    DBGBreakpointsAct.Enabled := capTrace in Capabilities;
+    DBGToggleBreakpointAct.Enabled := capTrace in Capabilities;
+
+    DBGStepOverAct.Enabled := capTrace in Capabilities;
+    DBGStepIntoAct.Enabled := capTrace in Capabilities;
+    DBGStepOutAct.Enabled := capTrace in Capabilities;
+    DBGRunToCursorAct.Enabled := capTrace in Capabilities;
+  end;
+
 end;
 
 procedure TMainForm.SaveAsProjectActExecute(Sender: TObject);
@@ -1739,30 +1764,6 @@ end;
 procedure TMainForm.ProjectLoaded;
 begin
   Folder := Engine.GetRoot;
-end;
-
-procedure TMainForm.ProjectChanged;
-begin
-  with Engine.Tendency do
-  begin
-    DBGRunAct.Enabled := capRun in Capabilities;
-    DBGCompileAct.Enabled := capCompile in Capabilities;
-    DBGResumeAct.Enabled := capRun in Capabilities;
-    DBGResetAct.Enabled := capRun in Capabilities;
-
-    DBGStartServerAct.Enabled := capDebugServer in Capabilities;
-    DBGStopServerAct.Enabled := capDebugServer in Capabilities;
-    DBGActiveServerAct.Enabled := capDebugServer in Capabilities;
-
-    DBGAddWatchAct.Enabled := capTrace in Capabilities;
-    DBGBreakpointsAct.Enabled := capTrace in Capabilities;
-    DBGToggleBreakpointAct.Enabled := capTrace in Capabilities;
-
-    DBGStepOverAct.Enabled := capTrace in Capabilities;
-    DBGStepIntoAct.Enabled := capTrace in Capabilities;
-    DBGStepOutAct.Enabled := capTrace in Capabilities;
-    DBGRunToCursorAct.Enabled := capTrace in Capabilities;
-  end;
 end;
 
 procedure TMainForm.ReplaceActExecute(Sender: TObject);
@@ -2700,6 +2701,16 @@ end;
 procedure TMainForm.Log(ACaption, AMsg: string);
 begin
   Log(0, ACaption, AMsg, '', 0);
+end;
+
+procedure TMainForm.Log(AMsg: string);
+begin
+  Log('', AMsg);
+end;
+
+procedure TMainForm.DoOutput(S: string);
+begin
+  OutputEdit.Text := OutputEdit.Text + S;
 end;
 
 procedure TMainForm.CatchErr(Sender: TObject; e: exception);

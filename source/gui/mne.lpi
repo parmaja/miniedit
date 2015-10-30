@@ -162,7 +162,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item12>
     </RequiredPackages>
-    <Units Count="49">
+    <Units Count="50">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -438,6 +438,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
       </Unit48>
+      <Unit49>
+        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\ConsoleProcess.pp"/>
+        <IsPartOfProject Value="True"/>
+      </Unit49>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -448,7 +452,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);D:\dev\lazarus\ide\include\"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\..\..\..\lib\minilib\lib;..\..\..\..\lib\minilib\connection\source;..\extends\console"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\..\..\..\lib\minilib\lib;..\..\..\..\lib\minilib\connection\source;..\extends\console;..\..\..\..\lib\minilib\lazarus\lib"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <Linking>

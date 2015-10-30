@@ -48,6 +48,7 @@ object ProjectForm: TProjectForm
     TabOrder = 0
     OnChange = PageControlChange
     OnChanging = PageControlChanging
+    Options = [nboKeyboardTabSwitch]
     object GeneralSheet: TTabSheet
       Caption = 'General'
       ClientHeight = 268
@@ -155,8 +156,8 @@ object ProjectForm: TProjectForm
     end
   end
   object PathPopupMenu: TPopupMenu
-    left = 421
-    top = 119
+    left = 300
+    top = 178
     object MenuItem3: TMenuItem
       Caption = 'Select Folder'
       OnClick = MenuItem3Click

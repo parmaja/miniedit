@@ -14,7 +14,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  EditorDebugger, mneRun, SynHighlighterPas, SynHighlighterLFM;
+  EditorDebugger, EditorRun, DebugClasses, SynHighlighterPas, SynHighlighterLFM;
 
 type
 
@@ -209,14 +209,14 @@ var
   i: Integer;
   aPath: string;
   Options: TPasProjectOptions;
-  aRun: TmneConsole;
+  aRun: TmneRun;
 begin
   if (Engine.Session.IsOpened) then
     Options := (Engine.Session.Project.Options as TPasProjectOptions)
   else
     Options := nil;
 
-  Info.Command := Launcher;
+  Info.Command := Compiler;
   if Info.Command = '' then
     Info.Command := 'fpc.exe';
 
@@ -235,12 +235,7 @@ begin
     end;
   end;
 
-  aRun := TmneConsole.Create(Info);
-  try
-    aRun.Execute;
-  finally
-    aRun.Free;
-  end;
+  Engine.Session.Run.Start;
 end;
 
 procedure TPasTendency.Show;
