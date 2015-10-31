@@ -76,11 +76,11 @@ type
     FRun: TmneRun;
     FItems: TmneRunItems;
     FCurrent: TmneRunItem;
-    procedure DoTerminate; override;
   public
     constructor Create(ARun: TmneRun);
     destructor Destroy; override;
     procedure Execute; override;
+    procedure Stop;
     property Items: TmneRunItems read FItems;
     property Current: TmneRunItem read FCurrent;
   end;
@@ -92,6 +92,7 @@ type
     FPool: TmneRunPool;
     function GetActive: Boolean;
   protected
+    procedure PoolTerminated(Sender: TObject);
   public
     constructor Create;
     destructor Destroy; override;
@@ -120,9 +121,12 @@ begin
   end
 end;
 
-procedure TmneRunPool.DoTerminate;
+procedure TmneRunPool.Stop;
 begin
-
+  if FCurrent <> nil then
+    FCurrent.Stop;
+  Terminate;
+  WaitFor;
 end;
 
 constructor TmneRunPool.Create(ARun: TmneRun);
@@ -154,6 +158,11 @@ begin
   Result := FPool <> nil;
 end;
 
+procedure TmneRun.PoolTerminated(Sender: TObject);
+begin
+  FPool := nil;
+end;
+
 constructor TmneRun.Create;
 begin
   inherited Create;
@@ -175,7 +184,11 @@ end;
 function TmneRun.Add(AItemClass: TmneRunItemClass): TmneRunItem;
 begin
   if FPool = nil then
+  begin
     FPool := TmneRunPool.Create(Self);
+    FPool.FreeOnTerminate := False;
+  end;
+
   if AItemClass = nil then
     Result := TmneRunItem.Create(FPool)
   else
@@ -239,7 +252,7 @@ var
   Status: integer;
 begin
   case Info.Mode of
-    runShell:
+    runLog:
     begin
       FPool.Synchronize(FPool, @CreateControl);
       CreateConsole(Info);
@@ -278,9 +291,8 @@ end;
 
 procedure TmneRunItem.Stop;
 begin
-  FProcess.Terminate(1);
-  FProcess.WaitOnExit;
-  FProcess.Free;
+  if FProcess <> nil then
+    FProcess.Terminate(1);
 end;
 
 constructor TmneRunItem.Create(APool: TmneRunPool);
@@ -293,9 +305,8 @@ procedure TmneRun.Stop;
 begin
   if FPool <> nil then
   begin
-    FPool.Terminate;
-    FPool.WaitFor;
-    FreeAndNil(FPool);
+    FPool.Stop;
+    //FreeAndNil(FPool);
   end;
 end;
 

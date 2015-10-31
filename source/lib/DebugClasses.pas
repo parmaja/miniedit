@@ -17,7 +17,7 @@ uses
 type
   TmneRunAction = (rnaCompile, rnaExecute, rnaDebug, rnaLink);
   TmneRunActions = set of TmneRunAction;
-  TmneRunMode = (runShell, runConsole, runTerminal, runProcess, runURL);
+  TmneRunMode = (runLog, runConsole, runTerminal, runProcess, runURL);
 
   { TmneRunInfo }
 

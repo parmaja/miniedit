@@ -201,7 +201,7 @@ begin
     if aRunItem.Info.Command = '' then
       aRunItem.Info.Command := 'dmd.exe';
 
-    aRunItem.Info.Mode := runTerminal;
+    aRunItem.Info.Mode := runLog;
     aRunItem.Info.Pause := true;
     aRunItem.Info.CurrentDirectory := Info.Root;
 
