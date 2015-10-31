@@ -193,42 +193,46 @@ begin
   else
     Options := TDProjectOptions.Create;//Default options
 
-  aRunItem := TmneRunItem.Create(Engine.Session.Run);
-  Engine.Session.Run.Items.Add(aRunItem);
-
-  aRunItem.Info.Command := Info.Command;
-  if aRunItem.Info.Command = '' then
-    aRunItem.Info.Command := 'dmd.exe';
-
-  aRunItem.Info.Mode := runTerminal;
-  aRunItem.Info.Pause := true;
-  aRunItem.Info.CurrentDirectory := Info.Root;
-
-  aRunItem.Info.Params := Info.MainFile + #13;
-
-  for i := 0 to Options.Paths.Count - 1 do
+  if rnaCompile in Info.Actions then
   begin
-    aPath := Trim(Options.Paths[i]);
-    if aPath <>'' then
+    aRunItem := Engine.Session.Run.Add;
+
+    aRunItem.Info.Command := Info.Command;
+    if aRunItem.Info.Command = '' then
+      aRunItem.Info.Command := 'dmd.exe';
+
+    aRunItem.Info.Mode := runTerminal;
+    aRunItem.Info.Pause := true;
+    aRunItem.Info.CurrentDirectory := Info.Root;
+
+    aRunItem.Info.Params := Info.MainFile + #13;
+
+    for i := 0 to Options.Paths.Count - 1 do
     begin
-      if Options.ExpandPaths then
-        aPath := Engine.ExpandFile(aPath);
-      aRunItem.Info.Params := aRunItem.Info.Params + '-I' +aPath + #13;
+      aPath := Trim(Options.Paths[i]);
+      if aPath <>'' then
+      begin
+        if Options.ExpandPaths then
+          aPath := Engine.ExpandFile(aPath);
+        aRunItem.Info.Params := aRunItem.Info.Params + '-I' +aPath + #13;
+      end;
     end;
+
+    aRunItem.Info.Params := aRunItem.Info.Params + '-v'#13;
+
+    if Options.ConfigFile <> '' then
+      aRunItem.Info.Params := aRunItem.Info.Params + '@' + Engine.EnvReplace(Options.ConfigFile) + #13;
   end;
 
-  aRunItem.Info.Params := aRunItem.Info.Params + '-v'#13;
+  if rnaExecute in Info.Actions then
+  begin
+    aRunItem := Engine.Session.Run.Add;
 
-  if Options.ConfigFile <> '' then
-    aRunItem.Info.Params := aRunItem.Info.Params + '@' + Engine.EnvReplace(Options.ConfigFile) + #13;
-
-  aRunItem := TmneRunItem.Create(Engine.Session.Run);
-  Engine.Session.Run.Items.Add(aRunItem);
-
-  aRunItem.Info.Mode := Options.RunMode;
-  aRunItem.Info.CurrentDirectory := Info.Root;
-  aRunItem.Info.Pause := true;
-  aRunItem.Info.Command := ChangeFileExt(Info.MainFile, '.exe');
+    aRunItem.Info.Mode := Options.RunMode;
+    aRunItem.Info.CurrentDirectory := Info.Root;
+    aRunItem.Info.Pause := true;
+    aRunItem.Info.Command := ChangeFileExt(Info.MainFile, '.exe');
+  end;
 
   Engine.Session.Run.Start;
 end;

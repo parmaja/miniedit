@@ -15,12 +15,14 @@ uses
   Classes, SysUtils, Contnrs;
 
 type
-
+  TmneRunAction = (rnaCompile, rnaExecute, rnaLink);
+  TmneRunActions = set of TmneRunAction;
   TmneRunMode = (runShell, runConsole, runTerminal, runProcess, runURL);
 
   { TmneRunInfo }
 
   TmneRunInfo = record
+    Actions: TmneRunActions;
     Mode: TmneRunMode;
     Root: string; //cur dir for the project
     Pause: Boolean;

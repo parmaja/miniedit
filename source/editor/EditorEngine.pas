@@ -148,7 +148,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
-    procedure Run;
+    procedure Run(RunActions: TmneRunActions);
     procedure Show; virtual;
     function FindExtension(vExtension: string): TFileGroup;
     function CreateEditorFile(vGroup: string): TEditorFile; virtual;
@@ -1777,12 +1777,13 @@ begin
   inherited;
 end;
 
-procedure TEditorTendency.Run;
+procedure TEditorTendency.Run(RunActions: TmneRunActions);
 var
   p: TmneRunInfo;
   s: string;
 begin
   s := Name;
+  p.Actions := RunActions;
   if (Engine.Tendency.Debug <> nil) and (Engine.Tendency.Debug.Running) then
     Engine.Tendency.Debug.Action(dbaRun)
   else

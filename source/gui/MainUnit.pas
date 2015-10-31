@@ -40,7 +40,8 @@ uses
   {$endif}
   mnePHPIniForm, mneConsoleForms,
   //end of addons
-  mneAddons, IniFiles, mnFields, simpleipc, mnUtils, ntvTabs, ntvPageControls;
+  mneAddons, DebugClasses, IniFiles, mnFields, simpleipc, mnUtils, ntvTabs,
+  ntvPageControls;
 
 {$i '..\lib\mne.inc'}
 
@@ -347,6 +348,7 @@ type
 
     procedure BrowseTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure CallStackListDblClick(Sender: TObject);
+    procedure DBGCompileActExecute(Sender: TObject);
     procedure DeleteActExecute(Sender: TObject);
     procedure EditorsPnlClick(Sender: TObject);
     procedure FetchCallStackBtnClick(Sender: TObject);
@@ -523,6 +525,7 @@ type
     procedure OnReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
   protected
     procedure RunFile;
+    procedure CompileFile;
     //
     procedure Log(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
     procedure Log(ACaption, AMsg: string); overload;
@@ -682,6 +685,11 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TMainForm.DBGCompileActExecute(Sender: TObject);
+begin
+  CompileFile;
 end;
 
 procedure TMainForm.DeleteActExecute(Sender: TObject);
@@ -2301,7 +2309,13 @@ end;
 procedure TMainForm.RunFile;
 begin
   SaveAllAct.Execute;
-  Engine.Tendency.Run;
+  Engine.Tendency.Run([rnaCompile, rnaExecute]);
+end;
+
+procedure TMainForm.CompileFile;
+begin
+  SaveAllAct.Execute;
+  Engine.Tendency.Run([rnaCompile]);
 end;
 
 procedure TMainForm.DBGBreakpointsActExecute(Sender: TObject);

@@ -1523,6 +1523,7 @@ object MainForm: TMainForm
       Category = 'Debug'
       Caption = 'Compile'
       ImageIndex = 42
+      OnExecute = DBGCompileActExecute
       ShortCut = 16504
     end
     object DBGCheckAct: TAction

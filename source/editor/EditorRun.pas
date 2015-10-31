@@ -36,17 +36,7 @@ type
 
   TmneRun = class;
   TmneRunItem = class;
-
-  { TmneConsoleThread }
-
-  TmneConsoleThread = class(TmnConsoleThread)
-  protected
-    procedure DoTerminate; override;
-  public
-    Capsule: TmneRunItem;
-    constructor Create(ACapsule: TmneRunItem);
-    destructor Destroy; override;
-  end;
+  TmneRunPool = class;
 
   { TmneRunItem }
 
@@ -54,17 +44,21 @@ type
   private
     FNextOnFail: Boolean;
   protected
-    aControl: TConsoleForm;
-    FThread: TmneConsoleThread;
-    Run: TmneRun;
-    procedure CreateConsole(AInfo: TmneCommandInfo; NewTab: Boolean);
+    FProcess: TProcess;
+    FControl: TConsoleForm;
+    FOnWrite: TmnOnWrite;
+    FPool: TmneRunPool;
+    procedure CreateControl;
+    procedure CreateConsole(AInfo: TmneCommandInfo);
   public
     Info: TmneCommandInfo;
     procedure Execute; virtual;
     procedure Stop; virtual;
-    constructor Create(ARun: TmneRun);
+    constructor Create(APool: TmneRunPool);
     property NextOnFail: Boolean read FNextOnFail write FNextOnFail;
   end;
+
+  TmneRunItemClass = class of TmneRunItem;
 
   { TmneRunItems }
 
@@ -75,22 +69,37 @@ type
     property Items[Index: integer]: TmneRunItem read GetItem; default;
   end;
 
+  { TmneRunPool }
+
+  TmneRunPool = class(TThread)
+  protected
+    FRun: TmneRun;
+    FItems: TmneRunItems;
+    FCurrent: TmneRunItem;
+    procedure DoTerminate; override;
+  public
+    constructor Create(ARun: TmneRun);
+    destructor Destroy; override;
+    procedure Execute; override;
+    property Items: TmneRunItems read FItems;
+    property Current: TmneRunItem read FCurrent;
+  end;
+
   { TmneRunProject }
 
   TmneRun = class(TObject)
   private
-    FActive: Boolean;
-    FItems: TmneRunItems;
+    FPool: TmneRunPool;
+    function GetActive: Boolean;
   protected
   public
-    Current: TmneRunItem;
     constructor Create;
     destructor Destroy; override;
+    function Add(AItemClass: TmneRunItemClass = nil): TmneRunItem; //Return same as parameter
     procedure Start;
-    procedure Next;
     procedure Stop;
-    property Items: TmneRunItems read FItems;
-    property Active: Boolean read FActive;
+    property Active: Boolean read GetActive;
+    property Pool: TmneRunPool read FPool;
   end;
 
 implementation
@@ -98,25 +107,38 @@ implementation
 uses
   EditorEngine;
 
-{ TmneConsoleThread }
+{ TmneRunPool }
 
-procedure TmneConsoleThread.DoTerminate;
+procedure TmneRunPool.Execute;
 begin
-  Process.Terminate(2);
-  inherited;
+  while not Terminated and (Items.Count > 0) do
+  begin
+    FCurrent := Items[0];
+    Items.Extract(Current);
+    Current.Execute;
+    Current.Free;
+  end
 end;
 
-constructor TmneConsoleThread.Create(ACapsule: TmneRunItem);
+procedure TmneRunPool.DoTerminate;
 begin
-  inherited Create;
-  Capsule := ACapsule;
+
 end;
 
-destructor TmneConsoleThread.Destroy;
+constructor TmneRunPool.Create(ARun: TmneRun);
 begin
-//  FreeAndNil(Capsule);
+  inherited Create(True);
+  FItems := TmneRunItems.Create(True);
+  FRun := ARun;
+end;
+
+destructor TmneRunPool.Destroy;
+begin
+  FreeAndNil(FItems);
   inherited Destroy;
 end;
+
+{ TmneConsoleThread }
 
 { TmneRunItems }
 
@@ -127,73 +149,87 @@ end;
 
 { TmneRun }
 
+function TmneRun.GetActive: Boolean;
+begin
+  Result := FPool <> nil;
+end;
+
 constructor TmneRun.Create;
 begin
   inherited Create;
-  FItems := TmneRunItems.Create(True);
 end;
 
 destructor TmneRun.Destroy;
 begin
-  FreeAndNil(FItems);
+  Stop;
   inherited Destroy;
 end;
 
 procedure TmneRun.Start;
 begin
-  Next;
+  if FPool = nil then
+    Exception.Create('There is no thread Pool');
+  FPool.Start;
 end;
 
-procedure TmneRun.Next;
+function TmneRun.Add(AItemClass: TmneRunItemClass): TmneRunItem;
 begin
-  Application.ProcessMessages;
-  if Current <> nil then
-  begin
-    Current.Stop;
-    Current.Free;
-  end;
-  if Items.Count > 0 then
-  begin
-    FActive := True;
-    Current := Items[0];
-    Items.Extract(Current);
-    Current.Execute; //the thread will free it, or it self
-  end
+  if FPool = nil then
+    FPool := TmneRunPool.Create(Self);
+  if AItemClass = nil then
+    Result := TmneRunItem.Create(FPool)
   else
-    FActive := False;
+    Result := AItemClass.Create(FPool);
+  FPool.Items.Add(Result);
 end;
 
-procedure TmneRunItem.CreateConsole(AInfo: TmneCommandInfo; NewTab: Boolean);
+procedure TmneRunItem.CreateControl;
 begin
-  FThread := TmneConsoleThread.Create(Self);
-  FThread.FreeOnTerminate := False;
-  FThread.Executable := AInfo.Command;
-  FThread.Parameters.Text := AInfo.Params;
-  FThread.CurrentDirectory := AInfo.CurrentDirectory;
-
-  if NewTab then
+  if Info.Mode = runTerminal then
   begin
-    aControl := TConsoleForm.Create(Application);
-    aControl.Parent := Engine.Container;
-    Engine.Files.New('CMD', aControl);
+    FControl := TConsoleForm.Create(Application);
+    FControl.Parent := Engine.Container;
+    Engine.Files.New('CMD', FControl);
 
-    aControl.CMDBox.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
-    aControl.CMDBox.BackGroundColor := Engine.Options.Profile.Attributes.Whitespace.Background;
-    aControl.ContentPanel.Color := aControl.CMDBox.BackGroundColor;
+    FControl.CMDBox.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
+    FControl.CMDBox.BackGroundColor := Engine.Options.Profile.Attributes.Whitespace.Background;
+    FControl.ContentPanel.Color := FControl.CMDBox.BackGroundColor;
 
-    aControl.CMDBox.Font.Name := Engine.Options.Profile.FontName;
-    aControl.CMDBox.Font.Size := Engine.Options.Profile.FontSize;
+    FControl.CMDBox.Font.Name := Engine.Options.Profile.FontName;
+    FControl.CMDBox.Font.Size := Engine.Options.Profile.FontSize;
 
-    aControl.CMDBox.TextColor(Engine.Options.Profile.Attributes.Whitespace.Foreground);
-    aControl.CMDBox.TextBackground(Engine.Options.Profile.Attributes.Whitespace.Background);
-    //aControl.CMDBox.Write(Info.GetCommandLine+#13#10);
-    FThread.OnWrite := @aControl.WriteText;
+    FControl.CMDBox.TextColor(Engine.Options.Profile.Attributes.Whitespace.Foreground);
+    FControl.CMDBox.TextBackground(Engine.Options.Profile.Attributes.Whitespace.Background);
+    FControl.CMDBox.Write('Ready!'+#13#10);
+    FOnWrite := @FControl.WriteText;
     Engine.UpdateState([ecsRefresh]);
   end
   else
-    FThread.OnWrite := Engine.OnLog;
+    FOnWrite := Engine.OnLog;
+end;
 
-  FThread.Start;
+procedure TmneRunItem.CreateConsole(AInfo: TmneCommandInfo);
+var
+  ProcessObject: TmnProcessObject;
+begin
+  FProcess := TProcess.Create(nil);
+  FProcess.Options :=  [poUsePipes];
+  FProcess.ShowWindow := swoHIDE;
+
+  //FProcess.PipeBufferSize := 10;
+  //FProcess.ConsoleTitle := Info.RunFile;
+  FProcess.Executable := AInfo.Command;
+  FProcess.Parameters.Text := AInfo.Params;
+  FProcess.CurrentDirectory := AInfo.CurrentDirectory;
+  FProcess.InheritHandles := True;
+
+  ProcessObject := TmnProcessObject.Create(FProcess, FPool, FOnWrite);
+  try
+    ProcessObject.Read;
+  finally
+    FreeAndNil(FProcess);
+    FreeAndNil(ProcessObject);
+  end;
 end;
 
 procedure TmneRunItem.Execute;
@@ -201,16 +237,17 @@ var
   s: string;
   p: TProcess;
   Status: integer;
-  aRun: TmneRun;
 begin
   case Info.Mode of
     runShell:
     begin
-      CreateConsole(Info, false);
+      FPool.Synchronize(FPool, @CreateControl);
+      CreateConsole(Info);
     end;
     runTerminal:
     begin
-      CreateConsole(Info, true);
+      FPool.Synchronize(FPool, @CreateControl);
+      CreateConsole(Info);
       //not free myself the thread will do
     end;
     runConsole:
@@ -221,10 +258,8 @@ begin
         s := s + ' & pause';
       Status := ExecuteProcess('cmd ', s, [ExecInheritsHandles]);
 
-      aRun := Run;
-      Free; //Free myself
-      if Status = 0 then
-        aRun.Next;
+{      if Status = 0 then
+        aRun.Next;}
     end;
     runUrl:
     begin
@@ -236,33 +271,32 @@ begin
           //Info.RunFile := IncludeSlash(Info.Url) + Info.RunFile;
         end;
       end;
-      Free; //Free myself
-      Run.Next;
+//      Run.Next;
     end;
   end;
 end;
 
 procedure TmneRunItem.Stop;
 begin
-  FThread.Terminate;
-  FThread.WaitFor;
-  FThread.Free;
+  FProcess.Terminate(1);
+  FProcess.WaitOnExit;
+  FProcess.Free;
 end;
 
-constructor TmneRunItem.Create(ARun: TmneRun);
+constructor TmneRunItem.Create(APool: TmneRunPool);
 begin
   inherited Create;
-  Run := ARun;
+  FPool := APool;
 end;
 
 procedure TmneRun.Stop;
 begin
-  if Current <> nil then
+  if FPool <> nil then
   begin
-    Current.Stop;
-    Current.Free;
+    FPool.Terminate;
+    FPool.WaitFor;
+    FreeAndNil(FPool);
   end;
-  FActive := False; //TODO
 end;
 
 end.

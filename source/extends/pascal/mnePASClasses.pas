@@ -216,8 +216,7 @@ begin
   else
     Options := nil;
 
-  aRunItem := TmneRunItem.Create(Engine.Session.Run);
-  Engine.Session.Run.Items.Add(aRunItem);
+  aRunItem := Engine.Session.Run.Add;
 
   Info.Command := Compiler;
   if Info.Command = '' then
