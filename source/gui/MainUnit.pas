@@ -277,7 +277,7 @@ type
     StepOver1: TMenuItem;
     Reset2: TMenuItem;
     DBGActiveServerAct: TAction;
-    DBGResumeAct: TAction;
+    DBGExecuteAct: TAction;
     ResumeMnu: TMenuItem;
     DBGStepOutAct: TAction;
     DBGStepOutAct1: TMenuItem;
@@ -452,7 +452,7 @@ type
     procedure DBGActiveServerActUpdate(Sender: TObject);
     procedure DBGActiveServerActExecute(Sender: TObject);
     procedure DBGResetActExecute(Sender: TObject);
-    procedure DBGResumeActExecute(Sender: TObject);
+    procedure DBGExecuteActExecute(Sender: TObject);
     procedure DBGStepOutActExecute(Sender: TObject);
     procedure SaveAsActExecute(Sender: TObject);
     procedure Add1Click(Sender: TObject);
@@ -1468,7 +1468,7 @@ begin
 
     DBGRunAct.Enabled := capRun in Capabilities;
     DBGCompileAct.Visible := capCompile in Capabilities;
-    DBGResumeAct.Enabled := capRun in Capabilities;
+    DBGExecuteAct.Enabled := capRun in Capabilities;
     DBGResetAct.Enabled := capRun in Capabilities;
 
     DBGStartServerAct.Enabled := capDebugServer in Capabilities;
@@ -2023,10 +2023,9 @@ begin
     Engine.Tendency.Debug.Action(dbaReset);
 end;
 
-procedure TMainForm.DBGResumeActExecute(Sender: TObject);
+procedure TMainForm.DBGExecuteActExecute(Sender: TObject);
 begin
-  if Engine.Tendency.Debug <> nil then
-    Engine.Tendency.Debug.Action(dbaResume);
+  Engine.Tendency.Run([rnaExecute]);
 end;
 
 procedure TMainForm.DBGStepOutActExecute(Sender: TObject);
@@ -2309,7 +2308,7 @@ end;
 procedure TMainForm.RunFile;
 begin
   SaveAllAct.Execute;
-  Engine.Tendency.Run([rnaCompile, rnaExecute]);
+  Engine.Tendency.Run([rnaCompile, rnaExecute, rnaDebug]);
 end;
 
 procedure TMainForm.CompileFile;

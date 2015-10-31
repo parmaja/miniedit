@@ -15,7 +15,7 @@ uses
   Classes, SysUtils, Contnrs;
 
 type
-  TmneRunAction = (rnaCompile, rnaExecute, rnaLink);
+  TmneRunAction = (rnaCompile, rnaExecute, rnaDebug, rnaLink);
   TmneRunActions = set of TmneRunAction;
   TmneRunMode = (runShell, runConsole, runTerminal, runProcess, runURL);
 

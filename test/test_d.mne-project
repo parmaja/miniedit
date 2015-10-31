@@ -6,24 +6,19 @@
     <TendencyName>D</TendencyName>
     <Desktop Class="TEditorDesktop">
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>CMD</CurrentFile>
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.d</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.d</FileName>
-            <CaretY>6</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>CMD</FileName>
-            <CaretX>0</CaretX>
-            <CaretY>0</CaretY>
-            <TopLine>0</TopLine>
+            <CaretX>15</CaretX>
+            <CaretY>7</CaretY>
           </Object>
         </Items>
       </Files>
     </Desktop>
     <Options Class="TDProjectOptions">
-      <RunMode>runTerminal</RunMode>
+      <RunMode>runConsole</RunMode>
       <PauseConsole>True</PauseConsole>
       <Paths Class="TStringList">
       </Paths>

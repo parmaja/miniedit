@@ -1785,7 +1785,12 @@ begin
   s := Name;
   p.Actions := RunActions;
   if (Engine.Tendency.Debug <> nil) and (Engine.Tendency.Debug.Running) then
-    Engine.Tendency.Debug.Action(dbaRun)
+  begin
+    if rnaDebug in RunActions then
+      Engine.Tendency.Debug.Action(dbaRun)
+    else
+      Engine.Tendency.Debug.Action(dbaResume);
+  end
   else
   begin
     p.Root := Engine.Session.GetRoot;

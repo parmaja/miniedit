@@ -1268,6 +1268,11 @@ object MainForm: TMainForm
       object MenuItem25: TMenuItem
         Action = DBGCompileAct
       end
+      object ResumeMnu: TMenuItem
+        Action = DBGExecuteAct
+        Hint = 'Run and without debug'
+        OnClick = DBGExecuteActExecute
+      end
       object Check1: TMenuItem
         Action = DBGCheckAct
         OnClick = DBGCheckActExecute
@@ -1290,11 +1295,6 @@ object MainForm: TMainForm
       object Reset2: TMenuItem
         Action = DBGResetAct
         OnClick = DBGResetActExecute
-      end
-      object ResumeMnu: TMenuItem
-        Action = DBGResumeAct
-        Hint = 'Run and without debug'
-        OnClick = DBGResumeActExecute
       end
       object N14: TMenuItem
         Caption = '-'
@@ -1525,20 +1525,6 @@ object MainForm: TMainForm
       ImageIndex = 42
       OnExecute = DBGCompileActExecute
       ShortCut = 16504
-    end
-    object DBGCheckAct: TAction
-      Category = 'Debug'
-      Caption = 'Check'
-      OnExecute = DBGCheckActExecute
-      ShortCut = 16504
-    end
-    object DBGStartServerAct: TAction
-      Category = 'Debug'
-      Caption = 'Start Server'
-      Hint = 'Start XDebug server'
-      OnExecute = DBGStartServerActExecute
-      OnUpdate = DBGStartServerActUpdate
-      ShortCut = 49220
     end
     object FolderOpenAllAct: TAction
       Category = 'Folder'
@@ -1825,6 +1811,27 @@ object MainForm: TMainForm
       Hint = 'Source control managment type'
       OnExecute = SCMTypeActExecute
     end
+    object DBGExecuteAct: TAction
+      Category = 'Debug'
+      Caption = 'Execute'
+      Hint = 'Run without debug'
+      OnExecute = DBGExecuteActExecute
+      ShortCut = 8312
+    end
+    object DBGCheckAct: TAction
+      Category = 'Debug'
+      Caption = 'Check'
+      OnExecute = DBGCheckActExecute
+      ShortCut = 16504
+    end
+    object DBGStartServerAct: TAction
+      Category = 'Debug'
+      Caption = 'Start Server'
+      Hint = 'Start XDebug server'
+      OnExecute = DBGStartServerActExecute
+      OnUpdate = DBGStartServerActUpdate
+      ShortCut = 49220
+    end
     object DBGStopServerAct: TAction
       Category = 'Debug'
       Caption = 'Stop Server'
@@ -1891,13 +1898,6 @@ object MainForm: TMainForm
       ImageIndex = 29
       OnExecute = DBGResetActExecute
       ShortCut = 16497
-    end
-    object DBGResumeAct: TAction
-      Category = 'Debug'
-      Caption = 'Resume'
-      Hint = 'Run without debug'
-      OnExecute = DBGResumeActExecute
-      ShortCut = 8305
     end
     object DBGAddWatchAct: TAction
       Category = 'Debug'
