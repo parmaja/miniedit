@@ -12,7 +12,7 @@ interface
 
 uses
   windows, Forms, SysUtils, StrUtils, Classes, SyncObjs, contnrs,
-  process,
+  process, mnUtils,
   ConsoleProcess,
   mnStreams, mneConsoleForms, uTerminal, DebugClasses, mnXMLUtils;
 
@@ -35,41 +35,44 @@ type
   end;
 
   TmneRun = class;
-  TmneCapsule = class;
+  TmneRunItem = class;
 
   { TmneConsoleThread }
 
   TmneConsoleThread = class(TmnConsoleThread)
   protected
-    procedure Finished(Status: integer); override;
+    procedure DoTerminate; override;
   public
-    Capsule: TmneCapsule;
-    constructor Create(ACapsule: TmneCapsule);
+    Capsule: TmneRunItem;
+    constructor Create(ACapsule: TmneRunItem);
     destructor Destroy; override;
   end;
 
-  { TmneCapsule }
+  { TmneRunItem }
 
-  TmneCapsule = class(TObject)
+  TmneRunItem = class(TObject)
   private
     FNextOnFail: Boolean;
   protected
+    aControl: TConsoleForm;
+    FThread: TmneConsoleThread;
     Run: TmneRun;
-    function CreateConsole(AInfo: TmneRunInfo; NewTab: Boolean): TConsoleForm;
+    procedure CreateConsole(AInfo: TmneCommandInfo; NewTab: Boolean);
   public
-    Info: TmneRunInfo;
-    function Execute: Boolean; virtual;
+    Info: TmneCommandInfo;
+    procedure Execute; virtual;
+    procedure Stop; virtual;
     constructor Create(ARun: TmneRun);
     property NextOnFail: Boolean read FNextOnFail write FNextOnFail;
   end;
 
-  { TmneCapsules }
+  { TmneRunItems }
 
-  TmneCapsules = class(TObjectList)
+  TmneRunItems = class(TObjectList)
   private
-    function GetItem(Index: integer): TmneCapsule;
+    function GetItem(Index: integer): TmneRunItem;
   public
-    property Items[Index: integer]: TmneCapsule read GetItem; default;
+    property Items[Index: integer]: TmneRunItem read GetItem; default;
   end;
 
   { TmneRunProject }
@@ -77,15 +80,16 @@ type
   TmneRun = class(TObject)
   private
     FActive: Boolean;
-    FCapsules: TmneCapsules;
+    FItems: TmneRunItems;
   protected
   public
+    Current: TmneRunItem;
     constructor Create;
     destructor Destroy; override;
     procedure Start;
     procedure Next;
     procedure Stop;
-    property Capsules: TmneCapsules read FCapsules;
+    property Items: TmneRunItems read FItems;
     property Active: Boolean read FActive;
   end;
 
@@ -96,14 +100,13 @@ uses
 
 { TmneConsoleThread }
 
-procedure TmneConsoleThread.Finished(Status: integer);
+procedure TmneConsoleThread.DoTerminate;
 begin
+  Process.Terminate(2);
   inherited;
-  if (Status = 0) or (Capsule.NextOnFail) then
-    Capsule.Run.Next;
 end;
 
-constructor TmneConsoleThread.Create(ACapsule: TmneCapsule);
+constructor TmneConsoleThread.Create(ACapsule: TmneRunItem);
 begin
   inherited Create;
   Capsule := ACapsule;
@@ -111,33 +114,28 @@ end;
 
 destructor TmneConsoleThread.Destroy;
 begin
-  FreeAndNil(Capsule);
+//  FreeAndNil(Capsule);
   inherited Destroy;
 end;
 
-{ TmneCapsule }
+{ TmneRunItems }
 
-{ TmneCapsules }
-
-function TmneCapsules.GetItem(Index: integer): TmneCapsule;
+function TmneRunItems.GetItem(Index: integer): TmneRunItem;
 begin
-  Result := inherited Items[Index] as TmneCapsule;
+  Result := inherited Items[Index] as TmneRunItem;
 end;
-
-{ TmneCapsule }
-
 
 { TmneRun }
 
 constructor TmneRun.Create;
 begin
   inherited Create;
-  FCapsules := TmneCapsules.Create(True);
+  FItems := TmneRunItems.Create(True);
 end;
 
 destructor TmneRun.Destroy;
 begin
-  FreeAndNil(FCapsules);
+  FreeAndNil(FItems);
   inherited Destroy;
 end;
 
@@ -147,30 +145,31 @@ begin
 end;
 
 procedure TmneRun.Next;
-var
-  aCapsule: TmneCapsule;
 begin
-  if Capsules.Count > 0 then
+  Application.ProcessMessages;
+  if Current <> nil then
+  begin
+    Current.Stop;
+    Current.Free;
+  end;
+  if Items.Count > 0 then
   begin
     FActive := True;
-    aCapsule := Capsules[0];
-    Capsules.Extract(aCapsule);
-    aCapsule.Execute; //the thread will free it, or it self
+    Current := Items[0];
+    Items.Extract(Current);
+    Current.Execute; //the thread will free it, or it self
   end
   else
     FActive := False;
 end;
 
-function TmneCapsule.CreateConsole(AInfo: TmneRunInfo; NewTab: Boolean): TConsoleForm;
-var
-  aControl: TConsoleForm;
-  thread: TmnConsoleThread;
-  //thread: TConsoleThread;
+procedure TmneRunItem.CreateConsole(AInfo: TmneCommandInfo; NewTab: Boolean);
 begin
-  thread := TmnConsoleThread.Create;
-  thread.Executable := AInfo.Command;
-  thread.Parameters.Text := AInfo.Params;
-  thread.CurrentDirectory := AInfo.Root;
+  FThread := TmneConsoleThread.Create(Self);
+  FThread.FreeOnTerminate := False;
+  FThread.Executable := AInfo.Command;
+  FThread.Parameters.Text := AInfo.Params;
+  FThread.CurrentDirectory := AInfo.CurrentDirectory;
 
   if NewTab then
   begin
@@ -188,40 +187,26 @@ begin
     aControl.CMDBox.TextColor(Engine.Options.Profile.Attributes.Whitespace.Foreground);
     aControl.CMDBox.TextBackground(Engine.Options.Profile.Attributes.Whitespace.Background);
     //aControl.CMDBox.Write(Info.GetCommandLine+#13#10);
-    thread.OnWrite := @aControl.WriteText;
+    FThread.OnWrite := @aControl.WriteText;
     Engine.UpdateState([ecsRefresh]);
   end
   else
-    thread.OnWrite := Engine.OnLog;
+    FThread.OnWrite := Engine.OnLog;
 
-  thread.Start;
-
-{  //aControl.CMDBox.InputSelColor
-  thread := CreateConsoleThread;
-  thread.CmdBox := aControl.CmdBox;
-  thread.Shell := AInfo.GetCommandLine;
-  thread.Start;}
-
-  Result := aControl;
+  FThread.Start;
 end;
 
-function TmneCapsule.Execute: Boolean;
+procedure TmneRunItem.Execute;
 var
   s: string;
   p: TProcess;
   Status: integer;
+  aRun: TmneRun;
 begin
-  SetCurrentDir(Info.Root);
   case Info.Mode of
     runShell:
     begin
-      s := Info.GetCommandLine;
-      p := TProcess.create(nil);
-      p.CommandLine:= s;
-      p.Execute;
-      p.Free;
-      Free; //Free myself
-      Run.Next;
+      CreateConsole(Info, false);
     end;
     runTerminal:
     begin
@@ -230,22 +215,25 @@ begin
     end;
     runConsole:
     begin
-      s := '/c "'+ Info.GetCommandLine;
+      SetCurrentDir(Info.CurrentDirectory);
+      s := '/c "'+ Info.GetCommandLine + '"';
       if Info.Pause then
-        s := s + '" & pause';
+        s := s + ' & pause';
       Status := ExecuteProcess('cmd ', s, [ExecInheritsHandles]);
+
+      aRun := Run;
       Free; //Free myself
       if Status = 0 then
-        Run.Next;
+        aRun.Next;
     end;
     runUrl:
     begin
       if Engine.Session.IsOpened then
       begin
-        if SameText((MidStr(Info.RunFile, 1, Length(Info.Root))), Info.Root) then
+        if SameText((MidStr(Info.Command, 1, Length(Info.CurrentDirectory))), Info.CurrentDirectory) then
         begin
-          Info.RunFile := MidStr(Info.RunFile, Length(Info.Root) + 1, MaxInt);
-          Info.RunFile := IncludeSlash(Info.Url) + Info.RunFile;
+          //Info.RunFile := MidStr(Info.Command, Length(Info.CurrentDirectory) + 1, MaxInt);
+          //Info.RunFile := IncludeSlash(Info.Url) + Info.RunFile;
         end;
       end;
       Free; //Free myself
@@ -254,7 +242,14 @@ begin
   end;
 end;
 
-constructor TmneCapsule.Create(ARun: TmneRun);
+procedure TmneRunItem.Stop;
+begin
+  FThread.Terminate;
+  FThread.WaitFor;
+  FThread.Free;
+end;
+
+constructor TmneRunItem.Create(ARun: TmneRun);
 begin
   inherited Create;
   Run := ARun;
@@ -262,10 +257,13 @@ end;
 
 procedure TmneRun.Stop;
 begin
+  if Current <> nil then
+  begin
+    Current.Stop;
+    Current.Free;
+  end;
   FActive := False; //TODO
 end;
 
-initialization
-finalization
 end.
 

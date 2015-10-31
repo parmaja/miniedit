@@ -57,12 +57,12 @@ end;
 
 procedure TDConfigForm.Apply;
 begin
-  FTendency.Launcher := CompilerEdit.Text;
+  FTendency.Command := CompilerEdit.Text;
 end;
 
 procedure TDConfigForm.Retrieve;
 begin
-  CompilerEdit.Text := FTendency.Launcher;
+  CompilerEdit.Text := FTendency.Command;
 end;
 
 end.

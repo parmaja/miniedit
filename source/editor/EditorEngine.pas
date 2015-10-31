@@ -137,7 +137,7 @@ type
   private
     FGroups: TFileGroups;
     FDebug: TEditorDebugger;
-    FLauncher: string;
+    FCommand: string;
   protected
     FCapabilities: TEditorCapabilities;
     procedure AddGroup(vName, vCategory: string);
@@ -161,7 +161,7 @@ type
     property Groups: TFileGroups read GetGroups;
     property Debug: TEditorDebugger read FDebug;//todo
   published
-    property Launcher: string read FLauncher write FLauncher; //like php.exe or rdmd.exe
+    property Command: string read FCommand write FCommand; //like php.exe or rdmd.exe
   end;
 
   TEditorTendencyClass = class of TEditorTendency;
@@ -1791,7 +1791,7 @@ begin
     if (Engine.Session.IsOpened) then
     begin
       p.Mode := Engine.Session.Project.Options.RunMode;
-      p.RunFile := ExpandToPath(Engine.Session.Project.Options.MainFile, p.Root);
+      p.MainFile := Engine.Session.Project.Options.MainFile;//ExpandToPath(Engine.Session.Project.Options.MainFile, p.Root);
       p.Pause := Engine.Session.Project.Options.PauseConsole;
     end
     else
@@ -1799,13 +1799,13 @@ begin
       p.Mode := runConsole;
       p.Pause := True;
     end;
-    if (p.RunFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
-      p.RunFile := Engine.Files.Current.Name;
+    if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
+      p.MainFile := Engine.Files.Current.Name;
 
-    if (p.RunFile <> '') then
+    if (p.MainFile <> '') then
     begin
       if (p.Root = '') then
-        p.Root := ExtractFileDir(p.RunFile);
+        p.Root := ExtractFileDir(p.MainFile);
       DoRun(p);
     end;
   end;

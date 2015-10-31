@@ -2711,6 +2711,7 @@ end;
 procedure TMainForm.DoOutput(S: string);
 begin
   OutputEdit.Text := OutputEdit.Text + S;
+  OutputEdit.CaretY := OutputEdit.Lines.Count;
 end;
 
 procedure TMainForm.CatchErr(Sender: TObject; e: exception);

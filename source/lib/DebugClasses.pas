@@ -21,13 +21,20 @@ type
   { TmneRunInfo }
 
   TmneRunInfo = record
-    Root: string; //cur dir for the project
     Mode: TmneRunMode;
+    Root: string; //cur dir for the project
     Pause: Boolean;
     URL: string;
-    Command: string; //file to run
-    Params: string; //file to run
-    RunFile: string; //file to run
+    Command: string;
+    MainFile: string; //file to run
+  end;
+
+  TmneCommandInfo = record
+    Mode: TmneRunMode;
+    Command: string;
+    Params: string;
+    CurrentDirectory: string;
+    Pause: Boolean;
     function GetCommandLine: string;
   end;
 
@@ -72,13 +79,11 @@ implementation
 
 { TmneRunInfo }
 
-function TmneRunInfo.GetCommandLine: string;
+function TmneCommandInfo.GetCommandLine: string;
 begin
   Result := Command;
   if Params <> '' then
-    Result := Result + ' ' + Params;
-  if RunFile <> '' then
-    Result := Result + ' ' + RunFile;
+    Result := Result + ' ' + StringReplace(Params, #13, ' ', [rfReplaceAll]);
 end;
 
 { TCallStackItems }

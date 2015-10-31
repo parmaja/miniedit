@@ -253,7 +253,7 @@ begin
   if (Engine.Session.IsOpened) then
     Options := (Engine.Session.Project.Options as TPHPProjectOptions);
 
-  Info.Command := Launcher;
+  Info.Command := Command;
   if Info.Command = '' then
     Info.Command := 'php.exe';
 

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rtti version="1.0" author="MiniXML">
+  <Object Type="TEditorProject">
+    <Name>test</Name>
+    <Title>PHP Test</Title>
+    <TendencyName>PHP</TendencyName>
+    <Desktop Class="TEditorDesktop">
+      <Files Class="TEditorDesktopFiles">
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.php</CurrentFile>
+        <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
+        <Items>
+          <Object Type="TEditorDesktopFile">
+            <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
+            <CaretY>2</CaretY>
+          </Object>
+        </Items>
+      </Files>
+    </Desktop>
+    <Options Class="TPHPProjectOptions">
+      <RunMode>runTerminal</RunMode>
+      <MainFile>test.php</MainFile>
+      <PauseConsole>True</PauseConsole>
+    </Options>
+  </Object>
+</rtti>

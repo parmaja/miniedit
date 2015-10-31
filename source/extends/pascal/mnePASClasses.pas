@@ -209,18 +209,21 @@ var
   i: Integer;
   aPath: string;
   Options: TPasProjectOptions;
-  aRun: TmneRun;
+  aRunItem: TmneRunItem;
 begin
   if (Engine.Session.IsOpened) then
     Options := (Engine.Session.Project.Options as TPasProjectOptions)
   else
     Options := nil;
 
+  aRunItem := TmneRunItem.Create(Engine.Session.Run);
+  Engine.Session.Run.Items.Add(aRunItem);
+
   Info.Command := Compiler;
   if Info.Command = '' then
     Info.Command := 'fpc.exe';
 
-  if Options <> nil then
+  {if Options <> nil then
   begin
     Info.Params := '';
     for i := 0 to Options.Paths.Count - 1 do
@@ -233,7 +236,7 @@ begin
         Info.Params := Info.Params + '-I' +aPath + ' ';
       end;
     end;
-  end;
+  end;}
 
   Engine.Session.Run.Start;
 end;

@@ -186,36 +186,49 @@ var
   i: Integer;
   aPath: string;
   Options: TDProjectOptions;
-  aRun: TmneRun;
+  aRunItem: TmneRunItem;
 begin
   if (Engine.Session.IsOpened) then
     Options := (Engine.Session.Project.Options as TDProjectOptions)
   else
-    Options := nil;
+    Options := TDProjectOptions.Create;//Default options
 
-  Info.Command := Launcher;
-  if Info.Command = '' then
-    Info.Command := 'rdmd.exe';
+  aRunItem := TmneRunItem.Create(Engine.Session.Run);
+  Engine.Session.Run.Items.Add(aRunItem);
 
-  if Options <> nil then
+  aRunItem.Info.Command := Info.Command;
+  if aRunItem.Info.Command = '' then
+    aRunItem.Info.Command := 'dmd.exe';
+
+  aRunItem.Info.Mode := runTerminal;
+  aRunItem.Info.Pause := true;
+  aRunItem.Info.CurrentDirectory := Info.Root;
+
+  aRunItem.Info.Params := Info.MainFile + #13;
+
+  for i := 0 to Options.Paths.Count - 1 do
   begin
-    Info.Params := '';
-    for i := 0 to Options.Paths.Count - 1 do
+    aPath := Trim(Options.Paths[i]);
+    if aPath <>'' then
     begin
-      aPath := Trim(Options.Paths[i]);
-      if aPath <>'' then
-      begin
-        if Options.ExpandPaths then
-          aPath := Engine.ExpandFile(aPath);
-        Info.Params := Info.Params + '-I' +aPath + ' ';
-      end;
+      if Options.ExpandPaths then
+        aPath := Engine.ExpandFile(aPath);
+      aRunItem.Info.Params := aRunItem.Info.Params + '-I' +aPath + #13;
     end;
-
-    Info.Params := Info.Params + ' -run';
-
-    if Options.ConfigFile <> '' then
-      Info.Params := Info.Params + ' @' + Engine.EnvReplace(Options.ConfigFile);
   end;
+
+  aRunItem.Info.Params := aRunItem.Info.Params + '-v'#13;
+
+  if Options.ConfigFile <> '' then
+    aRunItem.Info.Params := aRunItem.Info.Params + '@' + Engine.EnvReplace(Options.ConfigFile) + #13;
+
+  aRunItem := TmneRunItem.Create(Engine.Session.Run);
+  Engine.Session.Run.Items.Add(aRunItem);
+
+  aRunItem.Info.Mode := Options.RunMode;
+  aRunItem.Info.CurrentDirectory := Info.Root;
+  aRunItem.Info.Pause := true;
+  aRunItem.Info.Command := ChangeFileExt(Info.MainFile, '.exe');
 
   Engine.Session.Run.Start;
 end;
