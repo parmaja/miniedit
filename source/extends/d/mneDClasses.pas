@@ -15,7 +15,7 @@ uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics,
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
-  SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
+  SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles, LazFileUtils,
   SynHighlighterD, EditorDebugger, EditorClasses, mneClasses, EditorRun,
   DebugClasses, mneConsoleClasses, mneConsoleForms, uTerminal;
 
@@ -193,6 +193,8 @@ begin
   else
     Options := TDProjectOptions.Create;//Default options
 
+  Engine.Session.Run.Clear;
+
   if rnaCompile in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
@@ -203,6 +205,7 @@ begin
 
     aRunItem.Info.Mode := runLog;
     aRunItem.Info.Pause := true;
+    aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);;
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aRunItem.Info.Params := Info.MainFile + #13;
@@ -218,7 +221,7 @@ begin
       end;
     end;
 
-    aRunItem.Info.Params := aRunItem.Info.Params + '-v'#13;
+    //aRunItem.Info.Params := aRunItem.Info.Params + '-v'#13;
 
     if Options.ConfigFile <> '' then
       aRunItem.Info.Params := aRunItem.Info.Params + '@' + Engine.EnvReplace(Options.ConfigFile) + #13;
@@ -231,6 +234,7 @@ begin
     aRunItem.Info.Mode := Options.RunMode;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Pause := true;
+    aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);;
     aRunItem.Info.Command := ChangeFileExt(Info.MainFile, '.exe');
   end;
 

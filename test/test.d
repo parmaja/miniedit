@@ -6,6 +6,6 @@ void main()
   writeln();
   write("---------------------------------");
   writeln();
-/*  auto s = readln();
-  writeln("Your name is " ~ s);*/
+  auto s = readln();
+  writeln("Your name is " ~ s);
 }

@@ -6,13 +6,17 @@
     <TendencyName>D</TendencyName>
     <Desktop Class="TEditorDesktop">
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.d</CurrentFile>
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\print.d</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.d</FileName>
-            <CaretX>63</CaretX>
             <CaretY>6</CaretY>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>M:\home\pascal\projects\miniEdit\test\print.d</FileName>
+            <CaretX>84</CaretX>
+            <CaretY>8</CaretY>
           </Object>
         </Items>
       </Files>

@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 200
+  Left = 401
   Height = 614
-  Top = 101
+  Top = 95
   Width = 713
   AllowDropFiles = True
   Caption = 'Mini Edit'
@@ -227,7 +227,6 @@ object MainForm: TMainForm
         OnTabSelected = BrowseTabsTabSelected
         Align = alClient
         Caption = 'Files'
-        ParentColor = False
         TabOrder = 0
       end
     end
@@ -245,6 +244,7 @@ object MainForm: TMainForm
           Width = 190
         end>
       HideSelection = False
+      ParentColor = True
       PopupMenu = FolderMenu
       ReadOnly = True
       RowSelect = True
@@ -396,7 +396,6 @@ object MainForm: TMainForm
         OnTabSelected = FileTabsTabSelected
         Align = alTop
         Caption = 'Files'
-        ParentColor = False
         TabOrder = 1
       end
     end
@@ -906,6 +905,7 @@ object MainForm: TMainForm
       Font.Height = -13
       Font.Name = 'Courier New'
       HideSelection = False
+      ParentColor = True
       ParentFont = False
       PopupMenu = MessagesPopup
       ReadOnly = True

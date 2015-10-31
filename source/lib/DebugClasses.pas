@@ -32,6 +32,7 @@ type
   end;
 
   TmneCommandInfo = record
+    Title: string;
     Mode: TmneRunMode;
     Command: string;
     Params: string;

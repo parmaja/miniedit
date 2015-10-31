@@ -98,6 +98,7 @@ type
     constructor Create;
     destructor Destroy; override;
     function Add(AItemClass: TmneRunItemClass = nil): TmneRunItem; //Return same as parameter
+    procedure Clear;
     procedure Start;
     procedure Stop;
     property Active: Boolean read GetActive;
@@ -200,6 +201,12 @@ begin
   FPool.Items.Add(Result);
 end;
 
+procedure TmneRun.Clear;
+begin
+  Stop;
+  FreeAndNil(FPool);
+end;
+
 procedure TmneRunItem.CreateControl;
 begin
   if Info.Mode = runTerminal then
@@ -229,16 +236,17 @@ procedure TmneRunItem.CreateConsole(AInfo: TmneCommandInfo);
 var
   ProcessObject: TmnProcessObject;
 begin
+  if Assigned(FOnWrite) then
+    FOnWrite('Starting ' + Info.Title);
   FProcess := TProcess.Create(nil);
-  FProcess.Options :=  [poUsePipes];
-  FProcess.ShowWindow := swoHIDE;
-
-  //FProcess.PipeBufferSize := 10;
-  //FProcess.ConsoleTitle := Info.RunFile;
+  FProcess.ConsoleTitle := Info.Title;
   FProcess.Executable := AInfo.Command;
   FProcess.Parameters.Text := AInfo.Params;
   FProcess.CurrentDirectory := AInfo.CurrentDirectory;
   FProcess.InheritHandles := True;
+  FProcess.Options :=  [poUsePipes, poStderrToOutPut];
+  FProcess.ShowWindow := swoHIDE;
+  FProcess.PipeBufferSize := 80; //80 char in line
 
   ProcessObject := TmnProcessObject.Create(FProcess, FPool, FOnWrite);
   try
@@ -247,6 +255,8 @@ begin
     FreeAndNil(FProcess);
     FreeAndNil(ProcessObject);
   end;
+  if Assigned(FOnWrite) then
+    FOnWrite('Finished ' + Info.Title + ' with status: ' + IntToStr(Status));
 end;
 
 procedure TmneRunItem.Execute;
@@ -308,7 +318,6 @@ begin
   if FPool <> nil then
   begin
     FPool.Stop;
-    //FreeAndNil(FPool);
   end;
 end;
 

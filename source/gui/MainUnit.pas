@@ -1076,8 +1076,8 @@ end;
 
 procedure TMainForm.SaveAllActExecute(Sender: TObject);
 begin
-  Engine.Files.SaveAll;
   Engine.Session.Save;
+  Engine.Files.SaveAll;
 end;
 
 procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -1411,7 +1411,7 @@ begin
 
   if Engine.Options.WindowMaxmized then
     WindowState := wsMaximized;
-
+  Color := clSkyBlue;
 end;
 
 procedure TMainForm.DBGCheckActExecute(Sender: TObject);
