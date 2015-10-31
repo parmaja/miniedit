@@ -11,14 +11,14 @@
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.d</FileName>
-            <CaretX>24</CaretX>
-            <CaretY>8</CaretY>
+            <CaretX>63</CaretX>
+            <CaretY>6</CaretY>
           </Object>
         </Items>
       </Files>
     </Desktop>
     <Options Class="TDProjectOptions">
-      <RunMode>runLog</RunMode>
+      <RunMode>runConsole</RunMode>
       <PauseConsole>True</PauseConsole>
       <Paths Class="TStringList">
       </Paths>

@@ -2020,7 +2020,9 @@ end;
 procedure TMainForm.DBGResetActExecute(Sender: TObject);
 begin
   if Engine.Tendency.Debug <> nil then
-    Engine.Tendency.Debug.Action(dbaReset);
+    Engine.Tendency.Debug.Action(dbaReset)
+  else
+    Engine.Session.Run.Stop;
 end;
 
 procedure TMainForm.DBGExecuteActExecute(Sender: TObject);

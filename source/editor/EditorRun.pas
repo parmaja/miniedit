@@ -42,7 +42,7 @@ type
 
   TmneRunItem = class(TObject)
   private
-    FNextOnFail: Boolean;
+    FBreakOnFail: Boolean;
   protected
     FProcess: TProcess;
     FControl: TConsoleForm;
@@ -52,10 +52,11 @@ type
     procedure CreateConsole(AInfo: TmneCommandInfo);
   public
     Info: TmneCommandInfo;
+    Status: integer;
     procedure Execute; virtual;
     procedure Stop; virtual;
     constructor Create(APool: TmneRunPool);
-    property NextOnFail: Boolean read FNextOnFail write FNextOnFail;
+    property BreakOnFail: Boolean read FBreakOnFail write FBreakOnFail;
   end;
 
   TmneRunItemClass = class of TmneRunItem;
@@ -117,7 +118,9 @@ begin
     FCurrent := Items[0];
     Items.Extract(Current);
     Current.Execute;
-    Current.Free;
+    if Current.BreakOnFail and (Current.Status > 0) then
+      Items.Clear;
+    FreeAndNil(FCurrent);
   end
 end;
 
@@ -186,7 +189,8 @@ begin
   if FPool = nil then
   begin
     FPool := TmneRunPool.Create(Self);
-    FPool.FreeOnTerminate := False;
+    FPool.FreeOnTerminate := True;
+    FPool.OnTerminate := @PoolTerminated;
   end;
 
   if AItemClass = nil then
@@ -238,7 +242,7 @@ begin
 
   ProcessObject := TmnProcessObject.Create(FProcess, FPool, FOnWrite);
   try
-    ProcessObject.Read;
+    Status := ProcessObject.Read;
   finally
     FreeAndNil(FProcess);
     FreeAndNil(ProcessObject);
@@ -249,7 +253,6 @@ procedure TmneRunItem.Execute;
 var
   s: string;
   p: TProcess;
-  Status: integer;
 begin
   case Info.Mode of
     runLog:
@@ -265,14 +268,12 @@ begin
     end;
     runConsole:
     begin
+      //Sync this function to make it modal
       SetCurrentDir(Info.CurrentDirectory);
       s := '/c "'+ Info.GetCommandLine + '"';
       if Info.Pause then
         s := s + ' & pause';
       Status := ExecuteProcess('cmd ', s, [ExecInheritsHandles]);
-
-{      if Status = 0 then
-        aRun.Next;}
     end;
     runUrl:
     begin
@@ -298,6 +299,7 @@ end;
 constructor TmneRunItem.Create(APool: TmneRunPool);
 begin
   inherited Create;
+  BreakOnFail := True;
   FPool := APool;
 end;
 
