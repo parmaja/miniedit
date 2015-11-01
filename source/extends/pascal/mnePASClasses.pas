@@ -14,7 +14,8 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  EditorDebugger, EditorRun, DebugClasses, SynHighlighterPas, SynHighlighterLFM;
+  EditorDebugger, EditorRun, DebugClasses, mneCompileProjectOptions, LazFileUtils,
+  SynHighlighterPas, SynHighlighterLFM;
 
 type
 
@@ -59,26 +60,17 @@ type
   public
   end;
 
-  { TDProjectOptions }
-
   { TPasProjectOptions }
 
-  TPasProjectOptions = class(TEditorProjectOptions)
+  TPasProjectOptions = class(TCompilerProjectOptions)
   private
-    FExeName: string;
-    FExpandPaths: Boolean;
-    FPaths: TStrings;
     FUseCFG: Boolean;
-    procedure SetPaths(AValue: TStrings);
   public
     constructor Create; override;
     destructor Destroy; override;
-    function CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame; override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddProjectCallBack); override;
   published
     property UseCFG: Boolean read FUseCFG write FUseCFG default True;
-    property Paths: TStrings read FPaths write SetPaths;
-    property ExpandPaths: Boolean read FExpandPaths write FExpandPaths;
-    property ExeName: string read FExeName write FExeName;
   end;
 
   { TPasTendency }
@@ -103,28 +95,29 @@ uses
 
 { TPasProjectOptions }
 
-procedure TPasProjectOptions.SetPaths(AValue: TStrings);
-begin
-  FPaths.Assign(AValue);
-end;
-
 constructor TPasProjectOptions.Create;
 begin
   inherited Create;
-  FPaths := TStringList.Create;
   FUseCFG := True;
 end;
 
 destructor TPasProjectOptions.Destroy;
 begin
-  FreeAndNil(FPaths);
   inherited Destroy;
 end;
 
-function TPasProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame;
+procedure TPasProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddProjectCallBack);
+var
+  aFrame: TFrame;
 begin
-  Result := TPasProjectFrame.Create(AOwner);
-  TPasProjectFrame(Result).Project := AProject;
+  aFrame := TCompilerProjectOptionsForm.Create(AOwner);
+  (aFrame as TCompilerProjectOptionsForm).Project := AProject;
+  aFrame.Caption := 'Compiler';
+  AddFrame(aFrame);
+  aFrame := TPasProjectFrame.Create(AOwner);
+  (aFrame as TPasProjectFrame).Project := AProject;
+  aFrame.Caption := 'Options';
+  AddFrame(aFrame);
 end;
 
 { TmneSynPASSyn }
@@ -210,21 +203,31 @@ var
   aPath: string;
   Options: TPasProjectOptions;
   aRunItem: TmneRunItem;
+  p: string;
 begin
   if (Engine.Session.IsOpened) then
     Options := (Engine.Session.Project.Options as TPasProjectOptions)
   else
-    Options := nil;
+    Options := TPasProjectOptions.Create;
 
-  aRunItem := Engine.Session.Run.Add;
-
-  Info.Command := Compiler;
-  if Info.Command = '' then
-    Info.Command := 'fpc.exe';
-
-  {if Options <> nil then
+  if rnaCompile in Info.Actions then
   begin
-    Info.Params := '';
+    aRunItem := Engine.Session.Run.Add;
+
+    aRunItem.Info.Command := Info.Command;
+    if aRunItem.Info.Command = '' then
+      aRunItem.Info.Command := 'fpc.exe';
+
+    aRunItem.Info.Mode := runOutput;
+    aRunItem.Info.Pause := true;
+    aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);
+    aRunItem.Info.CurrentDirectory := Info.Root;
+
+    aRunItem.Info.Params := Info.MainFile + #13;
+    if Options.OutputFile <> '' then
+      aRunItem.Info.Params := aRunItem.Info.Params + '-o' + Options.OutputFile + #13;
+
+    p := '-Fu';
     for i := 0 to Options.Paths.Count - 1 do
     begin
       aPath := Trim(Options.Paths[i]);
@@ -232,10 +235,27 @@ begin
       begin
         if Options.ExpandPaths then
           aPath := Engine.ExpandFile(aPath);
-        Info.Params := Info.Params + '-I' +aPath + ' ';
+        if p <> '' then
+          p := p + ';';
+        p := p + aPath;
       end;
     end;
-  end;}
+    if p <> '' then
+      aRunItem.Info.Params := aRunItem.Info.Params + p + #13;
+  end;
+
+  if rnaExecute in Info.Actions then
+  begin
+    aRunItem := Engine.Session.Run.Add;
+
+    aRunItem.Info.Mode := Options.RunMode;
+    aRunItem.Info.CurrentDirectory := Info.Root;
+    aRunItem.Info.Pause := true;
+    aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);;
+    aRunItem.Info.Command := ChangeFileExt(Info.MainFile, '.exe');
+    if Options.RunParams <> '' then
+      aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;
+  end;
 
   Engine.Session.Run.Start;
 end;

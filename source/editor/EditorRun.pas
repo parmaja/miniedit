@@ -209,7 +209,7 @@ end;
 
 procedure TmneRunItem.CreateControl;
 begin
-  if Info.Mode = runTerminal then
+  if Info.Mode = runEmbedded then
   begin
     FControl := TConsoleForm.Create(Application);
     FControl.Parent := Engine.Container;
@@ -245,16 +245,25 @@ begin
   FProcess.Parameters.Text := AInfo.Params;
   FProcess.CurrentDirectory := AInfo.CurrentDirectory;
   FProcess.InheritHandles := True;
-  FProcess.Options :=  [poUsePipes, poStderrToOutPut];
-  FProcess.ShowWindow := swoHIDE;
-  FProcess.PipeBufferSize := 80; //80 char in line
 
-  ProcessObject := TmnProcessObject.Create(FProcess, FPool, FOnWrite);
-  try
-    Status := ProcessObject.Read;
-  finally
-    FreeAndNil(FProcess);
-    FreeAndNil(ProcessObject);
+  if Assigned(FOnWrite) then
+  begin
+    FProcess.Options :=  [poUsePipes, poStderrToOutPut];
+    FProcess.ShowWindow := swoHIDE;
+    FProcess.PipeBufferSize := 80; //80 char in line
+    ProcessObject := TmnProcessObject.Create(FProcess, FPool, FOnWrite);
+    try
+      Status := ProcessObject.Read;
+    finally
+      FreeAndNil(FProcess);
+      FreeAndNil(ProcessObject);
+    end;
+  end
+  else
+  begin
+    FProcess.Options :=  [poWaitOnExit];
+    FProcess.ShowWindow := swoShow;
+    FProcess.Execute;
   end;
   if Assigned(FOnWrite) then
     FOnWrite('Finished "' + Info.Title + '" with status: ' + IntToStr(Status)+#13#10);
@@ -266,25 +275,28 @@ var
   p: TProcess;
 begin
   case Info.Mode of
-    runLog:
+    runConsole:
+    begin
+      s := '/c "'+ Info.GetCommandLine + '"';
+      if Info.Pause then
+        s := s + ' & pause';
+      Info.Command := 'cmd';
+      Info.Params := s;
+      CreateConsole(Info);
+      //Sync this function to make it modal
+      {
+      Status := ExecuteProcess('cmd ', s, [ExecInheritsHandles]);}
+    end;
+    runOutput:
     begin
       FPool.Synchronize(FPool, @CreateControl);
       CreateConsole(Info);
     end;
-    runTerminal:
+    runEmbedded:
     begin
       FPool.Synchronize(FPool, @CreateControl);
       CreateConsole(Info);
       //not free myself the thread will do
-    end;
-    runConsole:
-    begin
-      //Sync this function to make it modal
-      SetCurrentDir(Info.CurrentDirectory);
-      s := '/c "'+ Info.GetCommandLine + '"';
-      if Info.Pause then
-        s := s + ' & pause';
-      Status := ExecuteProcess('cmd ', s, [ExecInheritsHandles]);
     end;
     runUrl:
     begin

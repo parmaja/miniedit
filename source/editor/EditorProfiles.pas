@@ -42,7 +42,7 @@ type
    );
 
 const
-  cDefaultOptions = [eoAltSetsColumnMode, eoAutoIndent, eoDragDropEditing, eoDropFiles, eoScrollPastEol,
+  cDefaultOptions = [eoAltSetsColumnMode, eoAutoIndent, eoDragDropEditing, eoDropFiles, eoScrollPastEol, eoBracketHighlight,
     eoShowScrollHint, eoHideRightMargin, eoRightMouseMovesCursor, eoTabsToSpaces, eoTabIndent, eoTrimTrailingSpaces, eoKeepCaretX];
 
 type
@@ -188,6 +188,7 @@ type
   TEditorProfile = class(TmnXMLProfile)
   private
     FCodeFolding: Boolean;
+    FDrawDivider: Boolean;
     FExtOptions: TSynEditorOptions2;
     FMaxUndo: Integer;
     FExtraLineSpacing: Integer;
@@ -228,6 +229,7 @@ type
     property MaxUndo: Integer read FMaxUndo write FMaxUndo default 1024;
     property TabWidth: Integer read FTabWidth write FTabWidth default 2;
     property CodeFolding: Boolean read FCodeFolding write FCodeFolding default False;
+    property DrawDivider: Boolean read FDrawDivider write FDrawDivider default False;
   end;
 
 implementation
@@ -244,6 +246,7 @@ begin
   FGutterOptions := TGutterOptions.Create;//TODO check the Create params
   FAttributes := TGlobalAttributes.Create(nil);
   CodeFolding := False;
+  DrawDivider := False;
   Reset;
 end;
 

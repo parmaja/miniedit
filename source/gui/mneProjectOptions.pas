@@ -50,9 +50,10 @@ type
     procedure PageControlChanging(Sender: TObject; var AllowChange: Boolean);
   private
     FProject: TEditorProject;
-    FFrame: TFrame;
+    FFrames: array of TFrame;
   protected
   public
+    procedure AddFrame(AFrame: TFrame);
     procedure SelectPathFolder;
     procedure Apply(GeneralOnly: Boolean = False);
     procedure Retrieve;
@@ -108,6 +109,8 @@ begin
 end;
 
 procedure TProjectForm.Apply(GeneralOnly: Boolean);
+var
+  i: Integer;
 begin
   FProject.Title := TitleEdit.Text;
   FProject.Name := NameEdit.Text;
@@ -115,26 +118,32 @@ begin
   FProject.RootDir := RootDirEdit.Text;
   FProject.SaveDesktop := SaveDesktopChk.Checked;
   FProject.SetSCMClass(TEditorSCM(SCMCbo.Items.Objects[SCMCbo.ItemIndex]));
-  if not GeneralOnly and Supports(FFrame, IEditorOptions) then
-    (FFrame as IEditorOptions).Apply;
+  if not GeneralOnly then
+  begin
+    for i :=0 to Length(FFrames) - 1 do
+      if Supports(FFrames[i], IEditorOptions) then
+        (FFrames[i] as IEditorOptions).Apply;
+  end;
 end;
 
 procedure TProjectForm.Retrieve;
 var
   TabSheet: TTabSheet;
+  i: Integer;
 begin
   Caption := Caption + ' [' + FProject.Tendency.Name + ']';
-  FFrame := FProject.Options.CreateOptionsFrame(Self, FProject);
-  if FFrame <> nil then
+  FProject.Options.CreateOptionsFrame(Self, FProject, @AddFrame);
+
+  for i := 0 to Length(FFrames) - 1 do
   begin
     TabSheet := PageControl.AddTabSheet;
-    TabSheet.Caption := FProject.Tendency.Title;
+    TabSheet.Caption := FFrames[i].Caption;
 
-    FFrame.Parent := TabSheet;
-    FFrame.Align := alClient;
-    FFrame.Visible := True;
-    if Supports(FFrame, IEditorOptions) then
-      (FFrame as IEditorOptions).Retrieve;
+    FFrames[i].Parent := TabSheet;
+    FFrames[i].Align := alClient;
+    FFrames[i].Visible := True;
+    if Supports(FFrames[i], IEditorOptions) then
+      (FFrames[i] as IEditorOptions).Retrieve;
   end;
 
   TitleEdit.Text := FProject.Title;
@@ -192,6 +201,12 @@ procedure TProjectForm.PageControlChanging(Sender: TObject; var AllowChange: Boo
 begin
   if PageControl.ActivePage = GeneralSheet then
     Apply(True);
+end;
+
+procedure TProjectForm.AddFrame(AFrame: TFrame);
+begin
+  SetLength(FFrames, Length(FFrames) + 1);
+  FFrames[Length(FFrames)- 1] := AFrame;
 end;
 
 end.

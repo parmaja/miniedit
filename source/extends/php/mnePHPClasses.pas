@@ -98,7 +98,7 @@ type
   private
   public
     constructor Create; override;
-    function CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame; override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddProjectCallBack); override;
   published
   end;
 {
@@ -138,10 +138,14 @@ begin
   inherited;
 end;
 
-function TPHPProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame;
+procedure TPHPProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddProjectCallBack);
+var
+  aFrame: TPHPProjectFrame;
 begin
-  Result := TPHPProjectFrame.Create(AOwner);
-  TPHPProjectFrame(Result).Project := AProject;
+  aFrame := TPHPProjectFrame.Create(AOwner);
+  aFrame.Project := AProject;
+  aFrame.Caption := 'Options';
+  AddFrame(aFrame);
 end;
 
 { TXHTMLFile }

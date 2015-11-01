@@ -15,9 +15,10 @@ uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics,
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
-  SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles, LazFileUtils,
-  SynHighlighterD, EditorDebugger, EditorClasses, mneClasses, EditorRun,
-  DebugClasses, mneConsoleClasses, mneConsoleForms, uTerminal;
+  SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
+  LazFileUtils, SynHighlighterD, EditorDebugger, EditorClasses, mneClasses,
+  mneCompileProjectOptions, EditorRun, DebugClasses, mneConsoleClasses,
+  mneConsoleForms, uTerminal;
 
 type
 
@@ -44,20 +45,11 @@ type
 
   { TDProjectOptions }
 
-  TDProjectOptions = class(TEditorProjectOptions)
+  TDProjectOptions = class(TCompilerProjectOptions)
   private
-    FConfigFile: string;
-    FExpandPaths: Boolean;
-    FPaths: TStrings;
-    procedure SetPaths(AValue: TStrings);
   public
-    constructor Create; override;
-    destructor Destroy; override;
-    function CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame; override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddProjectCallBack); override;
   published
-    property Paths: TStrings read FPaths write SetPaths;
-    property ExpandPaths: Boolean read FExpandPaths write FExpandPaths;
-    property ConfigFile: string read FConfigFile write FConfigFile;
   end;
 
   { TDTendency }
@@ -84,27 +76,18 @@ uses
 
 { TDProject }
 
-procedure TDProjectOptions.SetPaths(AValue: TStrings);
+procedure TDProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddProjectCallBack);
+var
+  aFrame: TFrame;
 begin
-  FPaths.Assign(AValue);
-end;
-
-constructor TDProjectOptions.Create;
-begin
-  inherited;
-  FPaths := TStringList.Create;
-end;
-
-destructor TDProjectOptions.Destroy;
-begin
-  FreeAndNil(FPaths);
-  inherited Destroy;
-end;
-
-function TDProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame;
-begin
-  Result := TDProjectFrame.Create(AOwner);
-  TDProjectFrame(Result).Project := AProject;
+  aFrame := TCompilerProjectOptionsForm.Create(AOwner);
+  (aFrame as TCompilerProjectOptionsForm).Project := AProject;
+  aFrame.Caption := 'Compiler';
+  AddFrame(aFrame);
+  aFrame := TDProjectFrame.Create(AOwner);
+  (aFrame as TDProjectFrame).Project := AProject;
+  aFrame.Caption := 'Options';
+  AddFrame(aFrame);
 end;
 
 { TDFile }
@@ -203,7 +186,7 @@ begin
     if aRunItem.Info.Command = '' then
       aRunItem.Info.Command := 'dmd.exe';
 
-    aRunItem.Info.Mode := runLog;
+    aRunItem.Info.Mode := runOutput;
     aRunItem.Info.Pause := true;
     aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;

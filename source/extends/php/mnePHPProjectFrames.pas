@@ -14,13 +14,11 @@ type
 
   TPHPProjectFrame = class(TFrame, IEditorOptions)
     Button4: TButton;
-    CancelBtn: TButton;
     Label4: TLabel;
-    PauseChk: TCheckBox;
-    RunModeCbo: TComboBox;
     MainEdit: TEdit;
     Label2: TLabel;
-    OkBtn: TButton;
+    PauseChk: TCheckBox;
+    RunModeCbo: TComboBox;
     procedure Button4Click(Sender: TObject);
   private
   protected

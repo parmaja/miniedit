@@ -34,7 +34,8 @@ uses
   TSVN_SCM, TGIT_SCM,
   {$endif}
   ntvTabSets, EditorRun, Registry, SynEditPlugins,
-  synhighlighterunixshellscript, mnStreams,
+  synhighlighterunixshellscript, SynHighlighterPas, SynHighlighterMulti,
+  mnStreams,
   //Addons
   {$ifdef Windows}
   mneAssociateForm,

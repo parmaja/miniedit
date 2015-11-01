@@ -50,7 +50,8 @@ uses
   mneDClasses, mneDProjectFrames, mneDConfigForms, MsgBox, mnStreams,
   CSVOptionsForms, mncCSV, GUIMsgBox, Classes, PHPUtils, SynHighlighterD,
   SynHighlighterMultiProc, mneSetups, mneSettings, mneSARDClasses,
-  EditorClasses, DebugClasses, mneViewClasses, mneCSVForms, ConsoleProcess;
+  EditorClasses, DebugClasses, mneViewClasses, mneCompileProjectOptions,
+  mneCSVForms, ConsoleProcess;
 
 {$R *.res}
 

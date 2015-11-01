@@ -34,6 +34,14 @@ object PHPProjectFrame: TPHPProjectFrame
     OnClick = Button4Click
     TabOrder = 1
   end
+  object Label4: TLabel
+    Left = 9
+    Height = 15
+    Top = 14
+    Width = 55
+    Caption = 'Run Mode'
+    ParentColor = False
+  end
   object RunModeCbo: TComboBox
     Left = 68
     Height = 23
@@ -43,14 +51,6 @@ object PHPProjectFrame: TPHPProjectFrame
     ItemHeight = 15
     Style = csDropDownList
     TabOrder = 2
-  end
-  object Label4: TLabel
-    Left = 9
-    Height = 15
-    Top = 14
-    Width = 55
-    Caption = 'Run Mode'
-    ParentColor = False
   end
   object PauseChk: TCheckBox
     Left = 261

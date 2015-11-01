@@ -199,6 +199,8 @@ type
 
   TEditorSCMClass = class of TEditorSCM;
 
+  TAddProjectCallBack = procedure(AFrame: TFrame) of object;
+
   { TEditorProjectOptions }
 
   TEditorProjectOptions = class(TPersistent)
@@ -212,7 +214,7 @@ type
     FOutputFile: string;
   public
     constructor Create; virtual;
-    function CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame; virtual;
+    procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddProjectCallBack); virtual;
   published
     property RunMode: TmneRunMode read FRunMode write FRunMode;
     property RootUrl: string read FRootUrl write FRootUrl;
@@ -221,6 +223,21 @@ type
     property RunParams: string read FRunParams write FRunParams;
     //PauseConsole do not end until use press any key or enter
     property PauseConsole: Boolean read FPauseConsole write FPauseConsole;
+  end;
+
+  TCompilerProjectOptions = class(TEditorProjectOptions)
+  private
+    FConfigFile: string;
+    FExpandPaths: Boolean;
+    FPaths: TStrings;
+    procedure SetPaths(AValue: TStrings);
+  public
+    constructor Create; override;
+    destructor Destroy; override;
+  published
+    property Paths: TStrings read FPaths write SetPaths;
+    property ExpandPaths: Boolean read FExpandPaths write FExpandPaths;
+    property ConfigFile: string read FConfigFile write FConfigFile;
   end;
 
   { TEditorProject }
@@ -1147,10 +1164,27 @@ begin
   inherited;
 end;
 
-function TEditorProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame;
+procedure TEditorProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddProjectCallBack);
 begin
-  Result := nil;
 end;
+
+procedure TCompilerProjectOptions.SetPaths(AValue: TStrings);
+begin
+  FPaths.Assign(AValue);
+end;
+
+constructor TCompilerProjectOptions.Create;
+begin
+  inherited;
+  FPaths := TStringList.Create;
+end;
+
+destructor TCompilerProjectOptions.Destroy;
+begin
+  FreeAndNil(FPaths);
+  inherited Destroy;
+end;
+
 
 { TTextFileCategory }
 
@@ -3917,12 +3951,17 @@ begin
 end;
 
 procedure TFileCategory.InitHighlighter;
+var
+  i: integer;
 begin
   if FHighlighter = nil then
   begin
     FHighlighter := CreateHighlighter; //CreateHighlighter maybe return nil so check it again
     if FHighlighter <> nil then
     begin
+      for i := 0 to FHighlighter.DividerDrawConfigCount - 1 do
+        FHighlighter.DividerDrawConfig[i].MaxDrawDepth := 0;
+
       if FMapper = nil then
       begin
         FMapper := TMapper.Create;

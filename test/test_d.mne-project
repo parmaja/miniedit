@@ -6,20 +6,7 @@
     <TendencyName>D</TendencyName>
     <Desktop Class="TEditorDesktop">
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\home\pascal\projects\miniEdit\test\print.d</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
-        <Items>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\test.d</FileName>
-            <CaretX>22</CaretX>
-            <CaretY>7</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\print.d</FileName>
-            <CaretX>11</CaretX>
-            <CaretY>7</CaretY>
-          </Object>
-        </Items>
       </Files>
     </Desktop>
     <Options Class="TDProjectOptions">
