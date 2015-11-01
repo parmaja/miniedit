@@ -69,7 +69,7 @@ object ConsoleForm: TConsoleForm
       InputSelColor = clBlue
       InputSelBackGround = clWhite
       CaretInterval = 500
-      EscapeCodeType = esctCmdBox
+      EscapeCodeType = esctAnsi
       GraphicalCharacterWidth = 10
     end
   end

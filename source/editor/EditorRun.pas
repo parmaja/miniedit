@@ -213,7 +213,7 @@ begin
   begin
     FControl := TConsoleForm.Create(Application);
     FControl.Parent := Engine.Container;
-    Engine.Files.New('CMD', FControl);
+    Engine.Files.New('CMD: ' + Info.Title, FControl);
 
     FControl.CMDBox.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
     FControl.CMDBox.BackGroundColor := Engine.Options.Profile.Attributes.Whitespace.Background;
@@ -221,6 +221,7 @@ begin
 
     FControl.CMDBox.Font.Name := Engine.Options.Profile.FontName;
     FControl.CMDBox.Font.Size := Engine.Options.Profile.FontSize;
+    //FControl.CMDBox.GraphicalCharacterWidth := 14;
 
     FControl.CMDBox.TextColor(Engine.Options.Profile.Attributes.Whitespace.Foreground);
     FControl.CMDBox.TextBackground(Engine.Options.Profile.Attributes.Whitespace.Background);
@@ -237,7 +238,7 @@ var
   ProcessObject: TmnProcessObject;
 begin
   if Assigned(FOnWrite) then
-    FOnWrite('Starting ' + Info.Title);
+    FOnWrite('Starting "' + Info.Title + '"'#13#10);
   FProcess := TProcess.Create(nil);
   FProcess.ConsoleTitle := Info.Title;
   FProcess.Executable := AInfo.Command;
@@ -256,7 +257,7 @@ begin
     FreeAndNil(ProcessObject);
   end;
   if Assigned(FOnWrite) then
-    FOnWrite('Finished ' + Info.Title + ' with status: ' + IntToStr(Status));
+    FOnWrite('Finished "' + Info.Title + '" with status: ' + IntToStr(Status)+#13#10);
 end;
 
 procedure TmneRunItem.Execute;

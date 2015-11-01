@@ -33,7 +33,8 @@ uses
   {$ifdef WINDOWS}
   TSVN_SCM, TGIT_SCM,
   {$endif}
-  ntvTabSets, EditorRun, Registry, SynEditPlugins, mnStreams,
+  ntvTabSets, EditorRun, Registry, SynEditPlugins,
+  synhighlighterunixshellscript, mnStreams,
   //Addons
   {$ifdef Windows}
   mneAssociateForm,
@@ -524,12 +525,14 @@ type
     procedure MoveListIndex(vForward: boolean);
     procedure OnReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
   protected
+    FOutputBuffer: string; //TODO stupid idea
     procedure RunFile;
     procedure CompileFile;
     //
     procedure Log(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
     procedure Log(ACaption, AMsg: string); overload;
     procedure Log(AMsg: string);
+
     procedure DoOutput(S: string);
     procedure FollowFolder(vFolder: string; FocusIt: Boolean);
     procedure ShowMessagesList;
@@ -1411,7 +1414,7 @@ begin
 
   if Engine.Options.WindowMaxmized then
     WindowState := wsMaximized;
-  Color := clSkyBlue;
+  //Color := clSkyBlue; for test propose
 end;
 
 procedure TMainForm.DBGCheckActExecute(Sender: TObject);
@@ -2577,6 +2580,7 @@ end;
 
 procedure TMainForm.MenuItem1Click(Sender: TObject);
 begin
+  FOutputBuffer := '';//TODO bad bad bad
   OutputEdit.Lines.Clear;
 end;
 
@@ -2725,7 +2729,8 @@ end;
 
 procedure TMainForm.DoOutput(S: string);
 begin
-  OutputEdit.Text := OutputEdit.Text + S;
+  FOutputBuffer := FOutputBuffer + S;//TODO baaad
+  OutputEdit.Text := FOutputBuffer;
   OutputEdit.CaretY := OutputEdit.Lines.Count;
 end;
 

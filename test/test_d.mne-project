@@ -11,12 +11,13 @@
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.d</FileName>
-            <CaretY>6</CaretY>
+            <CaretX>22</CaretX>
+            <CaretY>7</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\print.d</FileName>
-            <CaretX>84</CaretX>
-            <CaretY>8</CaretY>
+            <CaretX>11</CaretX>
+            <CaretY>7</CaretY>
           </Object>
         </Items>
       </Files>

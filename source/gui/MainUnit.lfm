@@ -512,6 +512,7 @@ object MainForm: TMainForm
       Options = [eoAutoIndent, eoBracketHighlight, eoGroupUndo, eoHideRightMargin, eoScrollPastEol, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces]
       VisibleSpecialChars = [vscSpace, vscTabAtLast]
       ReadOnly = True
+      RightEdge = 360
       SelectedColor.BackPriority = 50
       SelectedColor.ForePriority = 50
       SelectedColor.FramePriority = 50
@@ -531,6 +532,7 @@ object MainForm: TMainForm
       LineHighlightColor.Background = clNone
       LineHighlightColor.Foreground = clNone
       TabWidth = 2
+      WantTabs = False
       inline SynGutterPartList1: TSynGutterPartList
         object SynGutterLineNumber1: TSynGutterLineNumber
           Width = 17

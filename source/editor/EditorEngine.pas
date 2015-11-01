@@ -203,10 +203,13 @@ type
 
   TEditorProjectOptions = class(TPersistent)
   private
+    FFRunParams: string;
     FMainFile: string;
     FPauseConsole: Boolean;
     FRootUrl: string;
     FRunMode: TmneRunMode;
+    FRunParams: string;
+    FOutputFile: string;
   public
     constructor Create; virtual;
     function CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject): TFrame; virtual;
@@ -214,6 +217,8 @@ type
     property RunMode: TmneRunMode read FRunMode write FRunMode;
     property RootUrl: string read FRootUrl write FRootUrl;
     property MainFile: string read FMainFile write FMainFile;
+    property OutputFile: string read FOutputFile write FOutputFile;
+    property RunParams: string read FRunParams write FRunParams;
     //PauseConsole do not end until use press any key or enter
     property PauseConsole: Boolean read FPauseConsole write FPauseConsole;
   end;

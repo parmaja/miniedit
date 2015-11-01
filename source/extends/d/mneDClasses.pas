@@ -205,10 +205,13 @@ begin
 
     aRunItem.Info.Mode := runLog;
     aRunItem.Info.Pause := true;
-    aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);;
+    aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aRunItem.Info.Params := Info.MainFile + #13;
+    if Options.OutputFile <> '' then
+      aRunItem.Info.Params := aRunItem.Info.Params + '-of' + Options.OutputFile + #13;
+    //aRunItem.Info.Params := aRunItem.Info.Params + '-color=on' + #13; //not work :(
 
     for i := 0 to Options.Paths.Count - 1 do
     begin
@@ -236,6 +239,8 @@ begin
     aRunItem.Info.Pause := true;
     aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);;
     aRunItem.Info.Command := ChangeFileExt(Info.MainFile, '.exe');
+    if Options.RunParams <> '' then
+      aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;
   end;
 
   Engine.Session.Run.Start;
