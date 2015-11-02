@@ -676,7 +676,8 @@ type
     fgkMain,//this can be the main file for project
     fgkMember,//a member of project, inc are member, c, h, cpp members, pas,pp, p , inc also members, ini,txt not member of any project
     fgkBrowsable,//When open file show it in the extension list
-    fgkAssociated //Editor can be the editor of this files, like .php, .inc, but .txt is not
+    fgkAssociated, //Editor can be the editor of this files, like .php, .inc, but .txt is not
+    fgkVirtual //Not a real file, like output console
   );
 
   TFileGroupKinds = set of TFileGroupKind;
