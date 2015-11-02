@@ -230,7 +230,7 @@ begin
     Engine.UpdateState([ecsRefresh]);
   end
   else
-    FOnWrite := Engine.OnLog;
+    FOnWrite := @Engine.SendOutout;
 end;
 
 procedure TmneRunItem.CreateConsole(AInfo: TmneCommandInfo);

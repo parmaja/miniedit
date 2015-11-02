@@ -344,7 +344,7 @@ procedure TXHTMLFileCategory.DoExecuteCompletion(Sender: TObject);
 var
   aVariables: THashedStringList;
   aIdentifiers: THashedStringList;
-  s: string;
+  Current, Token: string;
   i, r: integer;
   aSynEdit: TCustomSynEdit;
   aProcessor: byte;
@@ -357,6 +357,7 @@ var
 begin
   inherited;
   Screen.Cursor := crHourGlass;
+  Completion.ItemList.BeginUpdate;
   try
     Completion.ItemList.Clear;
     aSynEdit := (Sender as TSynCompletion).TheForm.CurrentEditor as TCustomSynEdit;
@@ -365,7 +366,10 @@ begin
       aPHPProcessor := (Highlighter as TSynXHTMLSyn).Processors.IndexOf('php');
       aHTMLProcessor := (Highlighter as TSynXHTMLSyn).Processors.IndexOf('html');
       P := aSynEdit.CaretXY;
-      GetHighlighterAttriAtRowColEx2(aSynEdit, P, S, aTokenType, aStart, Attri, aRange);
+      GetHighlighterAttriAtRowColExtend(aSynEdit, P, Current, aTokenType, aStart, Attri, aRange);
+      Completion.TheForm.Font.Size := aSynEdit.Font.Size;
+      Completion.TheForm.Font.Color := aSynEdit.Font.Color;
+      Completion.TheForm.Color := aSynEdit.Color;
       aProcessor := RangeToProcessor(aRange);
       if aTokenType = Ord(tkProcessor) then
         Abort
@@ -401,31 +405,28 @@ begin
             aVariables[i] := '$' + aVariables[i];
 
           //extract keywords from external files
-          if (Engine.Session.IsOpened) and (Engine.Session.Project.RootDir <> '') then
+          if Engine.Options.CollectAutoComplete and (Engine.Session.GetRoot <> '') then
           begin
-            if Engine.Options.CollectAutoComplete then
+            if ((GetTickCount - Engine.Session.CachedAge) > (Engine.Options.CollectTimeout * 1000)) then
             begin
-              if ((GetTickCount - Engine.Session.Project.CachedAge) > (Engine.Options.CollectTimeout * 1000)) then
-              begin
-                Engine.Session.Project.CachedVariables.Clear;
-                Engine.Session.Project.CachedIdentifiers.Clear;
-                aFiles := TStringList.Create;
-                try
-                  EnumFileList(Engine.Session.Project.RootDir, '*.php', Engine.Options.IgnoreNames, aFiles, 1000, 3, True, Engine.Session.IsOpened);//TODO check the root dir if no project opened
-                  r := aFiles.IndexOf(Engine.Files.Current.Name);
-                  if r >= 0 then
-                    aFiles.Delete(r);
-                  ExtractKeywords(aFiles, Engine.Session.Project.CachedVariables, Engine.Session.Project.CachedIdentifiers);
-                finally
-                  aFiles.Free;
-                end;
+              Engine.Session.CachedVariables.Clear;
+              Engine.Session.CachedIdentifiers.Clear;
+              aFiles := TStringList.Create;
+              try
+                EnumFileList(Engine.Session.GetRoot, '*.php', Engine.Options.IgnoreNames, aFiles, 1000, 3, True, Engine.Session.IsOpened);//TODO check the root dir if no project opened
+                r := aFiles.IndexOf(Engine.Files.Current.Name);
+                if r >= 0 then
+                  aFiles.Delete(r);
+                ExtractKeywords(aFiles, Engine.Session.CachedVariables, Engine.Session.CachedIdentifiers);
+              finally
+                aFiles.Free;
               end;
-              aVariables.AddStrings(Engine.Session.Project.CachedVariables);
-              aIdentifiers.AddStrings(Engine.Session.Project.CachedIdentifiers);
-              Engine.Session.Project.CachedAge := GetTickCount;
             end;
+            aVariables.AddStrings(Engine.Session.CachedVariables);
+            aIdentifiers.AddStrings(Engine.Session.CachedIdentifiers);
+            Engine.Session.CachedAge := GetTickCount;
           end;
-          //add current file variables
+          //add current file Identifiers and Variables
           try
             Highlighter.ResetRange;
             for i := 0 to aSynEdit.Lines.Count - 1 do
@@ -437,19 +438,15 @@ begin
                 begin
                   if (Highlighter.GetTokenKind = Ord(tkVariable)) then
                   begin
-                    s := Highlighter.GetToken;
-                    if (s <> '$') and (aVariables.IndexOf(s) < 0) then
-                    begin
-                      aVariables.Add(s);
-                    end;
+                    Token := Highlighter.GetToken;
+                    if (Token <> '$') and (aVariables.IndexOf(Token) < 0) then
+                      aVariables.Add(Token);
                   end
                   else if (Highlighter.GetTokenKind = Ord(tkIdentifier)) then
                   begin
-                    s := Highlighter.GetToken;
-                    if aIdentifiers.IndexOf(s) < 0 then
-                    begin
-                      aIdentifiers.Add(s);
-                    end;
+                    Token := Highlighter.GetToken;
+                    if aIdentifiers.IndexOf(Token) < 0 then
+                      aIdentifiers.Add(Token);
                   end;
                 end;
                 Highlighter.Next;
@@ -467,8 +464,10 @@ begin
           end;
         end;
       end;
+      Completion.CurrentString := Current;
     end;
   finally
+    Completion.ItemList.EndUpdate;
     Screen.Cursor := crDefault;
   end;
 end;

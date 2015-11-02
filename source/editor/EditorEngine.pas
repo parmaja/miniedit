@@ -253,9 +253,6 @@ type
     FName: string;
     FSaveDesktop: Boolean;
     FDesktop: TEditorDesktop;
-    FCachedIdentifiers: THashedStringList;
-    FCachedVariables: THashedStringList;
-    FCachedAge: DWORD;
     FTendency: TEditorTendency;
     FSCM: TEditorSCM;
     FTitle: string;
@@ -273,9 +270,6 @@ type
     procedure LoadFromFile(FileName: string); override;
     property FileName: string read FFileName write FFileName;
     procedure SetSCMClass(SCMClass: TEditorSCM);
-    property CachedVariables: THashedStringList read FCachedVariables;
-    property CachedIdentifiers: THashedStringList read FCachedIdentifiers;
-    property CachedAge: Cardinal read FCachedAge write FCachedAge;
     //Tendency here point to one of Engine.Tendencies so it is not owned by project
     property Tendency: TEditorTendency read FTendency write SetTendency;
   published
@@ -534,11 +528,10 @@ type
     FBoundRect: TRect;
     FCompilerFolder: string;
     FShowMessages: Boolean;
+    FShowOutput: Boolean;
     FCollectAutoComplete: Boolean;
     FCollectTimeout: DWORD;
     FReplaceHistory: TStringList;
-    FSendOutputToNewFile: Boolean;
-    FShowOutput: Boolean;
     FAutoStartDebugServer: Boolean;
     FOutputHeight: integer;
     FMessagesHeight: integer;
@@ -588,7 +581,6 @@ type
     property OutputHeight: integer read FOutputHeight write FOutputHeight default 100;
     property MessagesHeight: integer read FMessagesHeight write FMessagesHeight default 100;
     property FoldersWidth: integer read FFoldersWidth write FFoldersWidth default 180;
-    property SendOutputToNewFile: Boolean read FSendOutputToNewFile write FSendOutputToNewFile default False;
     property AutoStartDebugServer: Boolean read FAutoStartDebugServer write FAutoStartDebugServer default False;
     property WindowMaxmized: Boolean read FWindowMaxmized write FWindowMaxmized default False;
     property WindowTop: Integer read FBoundRect.Top write FBoundRect.Top;
@@ -809,6 +801,9 @@ type
     FProcess: TObject;
     FProject: TEditorProject;
     FRun: TmneRun;
+    FCachedIdentifiers: THashedStringList;
+    FCachedVariables: THashedStringList;
+    FCachedAge: DWORD;
     procedure SetProcess(AValue: TObject);
     procedure SetProject(const Value: TEditorProject);
     function GetIsOpened: Boolean;
@@ -837,6 +832,10 @@ type
     //Process the project running if it is null, process should nil it after finish
     property Process: TObject read FProcess write SetProcess;
     property Run: TmneRun read FRun write SetRun;
+
+    property CachedVariables: THashedStringList read FCachedVariables;
+    property CachedIdentifiers: THashedStringList read FCachedIdentifiers;
+    property CachedAge: Cardinal read FCachedAge write FCachedAge;
   end;
 
   TEditorMessagesList = class;
@@ -869,8 +868,17 @@ type
     property Items[Index: integer]: TEditorMessages read GetItem write SetItem; default;
   end;
 
+  TEditorAction = (eaClearOutput);
+
   TOnFoundEvent = procedure(FileName: string; const Line: string; LineNo, Column, FoundLength: integer) of object;
   TOnEditorChangeState = procedure(State: TEditorChangeStates) of object;
+
+  INotifyEngine = interface(IInterface)
+    procedure EditorChangeState(State: TEditorChangeStates);
+    procedure EngineAction(EngineAction: TEditorAction);
+    procedure EngineOutput(S: string);
+    procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
+  end;
 
   { TEditorEngine }
 
@@ -881,7 +889,6 @@ type
     FDefaultSCM: TEditorSCM;
     //FInternalTendency used only there is no any default Tendency defined, it is mean simple editor without any project type
     FInternalTendency: TDefaultTendency;
-    FOnLog: TmnOnWrite;
 //    FForms: TEditorFormList;
     FTendencies: TTendencies;
     FSourceManagements: TSourceManagements;
@@ -894,13 +901,11 @@ type
     FCategories: TFileCategories;
     FGroups: TFileGroups;
     FExtenstion: string;
-    FOnChangedState: TOnEditorChangeState;
     FSession: TEditorSession;
     FMessagesList: TEditorMessagesList;
     FBrowseFolder: string;
     //FMacroRecorder: TSynMacroRecorder;
     FWorkSpace: string;
-    FOnReplaceText: TReplaceTextEvent;
     //Extenstion Cache
     //FExtenstionCache: TExtenstionCache; //TODO
     FEnvironment: TStringList;
@@ -913,6 +918,7 @@ type
     procedure SetDefaultSCM(AValue: TEditorSCM);
   protected
     FInUpdateState: Integer;
+    FNotifyObject: INotifyEngine; //TODO should be list
     property SearchEngine: TSynEditSearch read FSearchEngine;
     procedure InternalChangedState(State: TEditorChangeStates);
     procedure DoChangedState(State: TEditorChangeStates); virtual;
@@ -973,11 +979,10 @@ type
     property Tendency: TEditorTendency read GetTendency;
     property SCM: TEditorSCM read GetSCM;
     function GetIsChanged: Boolean;
+    procedure SetNotifyEngine(ANotifyObject: INotifyEngine);
+    procedure RemoveNotifyEngine(ANotifyObject: INotifyEngine);
     //property MacroRecorder: TSynMacroRecorder read FMacroRecorder;
-    property OnLog: TmnOnWrite read FOnLog write FOnLog;
-    property OnChangedState: TOnEditorChangeState read FOnChangedState write FOnChangedState;
-    property OnReplaceText: TReplaceTextEvent read FOnReplaceText write FOnReplaceText;
-    //debugger
+    procedure SendOutout(S: string);
 
     property Environment: TStringList read FEnvironment write FEnvironment;
   published
@@ -2109,6 +2114,9 @@ procedure TEditorSession.Close;
 begin
   Engine.Files.CloseAll;
   FreeAndNil(FProject);
+  FCachedIdentifiers.Clear;
+  FCachedVariables.Clear;
+  FCachedAge := 0;
   Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
 end;
 
@@ -2139,6 +2147,7 @@ end;
 
 destructor TEditorEngine.Destroy;
 begin
+  SetNotifyEngine(nil);
   if not FIsEngineShutdown then
     Shutdown;
   FreeAndNil(FFiles);
@@ -2151,7 +2160,6 @@ begin
   FreeAndNil(FSourceManagements);
   //FreeAndNil(FMacroRecorder);
   FreeAndNil(FMessagesList);
-  FOnChangedState := nil;
   FInternalTendency := nil;
   //FreeAndNil(FForms);
   FreeAndNil(FEnvironment);
@@ -2337,8 +2345,8 @@ end;
 
 procedure TEditorEngine.DoReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
 begin
-  if Assigned(FOnReplaceText) then
-    FOnReplaceText(Sender, ASearch, AReplace, Line, Column, ReplaceAction);
+  if FNotifyObject <> nil then
+    FNotifyObject.EngineReplaceText(Sender, ASearch, AReplace, Line, Column, ReplaceAction);
 end;
 
 procedure TEditorEngine.UpdateExtensionsCache;
@@ -3029,10 +3037,30 @@ begin
   Result := (Files.GetEditedCount > 0) or Session.IsChanged;
 end;
 
+procedure TEditorEngine.SetNotifyEngine(ANotifyObject: INotifyEngine);
+begin
+  if (FNotifyObject <> nil) and (ANotifyObject <> nil) then
+    raise Exception.Create('There is already NotifyObject');
+  FNotifyObject := ANotifyObject;
+end;
+
+procedure TEditorEngine.RemoveNotifyEngine(ANotifyObject: INotifyEngine);
+begin
+  if FNotifyObject <> ANotifyObject then
+    raise Exception.Create('NotifyObject not exists');
+  FNotifyObject := nil; //TODO if list we should remove it
+end;
+
+procedure TEditorEngine.SendOutout(S: string);
+begin
+  if FNotifyObject <> nil then
+    FNotifyObject.EngineOutput(S);
+end;
+
 procedure TEditorEngine.DoChangedState(State: TEditorChangeStates);
 begin
-  if Assigned(FOnChangedState) then
-    FOnChangedState(State);
+  if FNotifyObject <> nil then
+    FNotifyObject.EditorChangeState(State);
 end;
 
 procedure TEditorEngine.UpdateState(State: TEditorChangeStates);
@@ -4012,16 +4040,12 @@ constructor TEditorProject.Create;
 begin
   inherited Create;
   FDesktop := TEditorDesktop.Create;
-  FCachedVariables := THashedStringList.Create;
-  FCachedIdentifiers := THashedStringList.Create;
   FSaveDesktop := True;
 end;
 
 destructor TEditorProject.Destroy;
 begin
   FDesktop.Free;
-  FCachedVariables.Free;
-  FCachedIdentifiers.Free;
   FreeAndNil(FOptions);
   inherited;
 end;
@@ -4256,6 +4280,8 @@ begin
     Save;
   FProject := nil;
   FreeAndNil(FOptions);
+  FCachedVariables.Free;
+  FCachedIdentifiers.Free;
   inherited;
 end;
 
@@ -4281,6 +4307,8 @@ begin
   inherited;
   FOptions := TEditorSessionOptions.Create;
   FRun := TmneRun.Create;
+  FCachedVariables := THashedStringList.Create;
+  FCachedIdentifiers := THashedStringList.Create;
 end;
 
 procedure TFileGroups.EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds);

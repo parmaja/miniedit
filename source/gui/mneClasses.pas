@@ -96,7 +96,7 @@ const
 
 function GetFileImageIndex(const FileName: string): integer;
 
-function GetHighlighterAttriAtRowColEx2(SynEdit: TCustomSynEdit; const XY: TPoint; var Token: string; var TokenType, Start: integer; var Attri: TSynHighlighterAttributes; var Range: Pointer): boolean;
+function GetHighlighterAttriAtRowColExtend(SynEdit: TCustomSynEdit; const XY: TPoint; out Token: string; out TokenType, Start: integer; out Attri: TSynHighlighterAttributes; out Range: Pointer): boolean;
 
 implementation
 
@@ -141,7 +141,7 @@ end;
 type
   TSynCustomHighlighterHack = class(TSynCustomHighlighter);
 
-function GetHighlighterAttriAtRowColEx2(SynEdit: TCustomSynEdit; const XY: TPoint; var Token: string; var TokenType, Start: integer; var Attri: TSynHighlighterAttributes; var Range: Pointer): boolean;
+function GetHighlighterAttriAtRowColExtend(SynEdit: TCustomSynEdit; const XY: TPoint; out Token: string; out TokenType, Start: integer; out Attri: TSynHighlighterAttributes; out Range: Pointer): boolean;
 var
   PosX, PosY: integer;
   Line: string;
@@ -170,10 +170,11 @@ begin
           Start := Highlighter.GetTokenPos + 1;
           aToken := Highlighter.GetToken;
           Range := Highlighter.GetRange;
-          if (PosX >= Start) and (PosX < Start + Length(aToken)) then
+          if (PosX >= Start) and (PosX <= Start + Length(aToken)) then
           begin
             Attri := Highlighter.GetTokenAttribute;
             TokenType := Highlighter.GetTokenKind;
+            //Token := MidStr(aToken, 1, PosX - Start);
             Token := aToken;
             Result := True;
             exit;
@@ -186,7 +187,7 @@ end;
 
 { TmneEngine }
 
-function GetFileImageIndex(const FileName: string): Integer;
+function GetFileImageIndex(const FileName: string): integer;
 var
   AExtensions: TStringList;
   s: string;

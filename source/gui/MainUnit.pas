@@ -55,7 +55,7 @@ type
 
   { TMainForm }
 
-  TMainForm = class(TForm)
+  TMainForm = class(TForm, INotifyEngine)
     DBGCompileAct: TAction;
     BrowseTabs: TntvTabSet;
     MenuItem22: TMenuItem;
@@ -500,7 +500,6 @@ type
     procedure UpdateFileHeaderPanel;
     procedure UpdateCallStack;
     procedure OptionsChanged;
-    procedure EditorChangeState(State: TEditorChangeStates);
     function ChooseTendency(var vTendency: TEditorTendency): Boolean;
     function ChooseSCM(var vSCM: TEditorSCM): Boolean;
 
@@ -524,7 +523,6 @@ type
     function GetFolder: string;
     procedure DeleteCurrentWatch;
     procedure MoveListIndex(vForward: boolean);
-    procedure OnReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
   protected
     FOutputBuffer: string; //TODO stupid idea
     procedure RunFile;
@@ -534,7 +532,11 @@ type
     procedure Log(ACaption, AMsg: string); overload;
     procedure Log(AMsg: string);
 
-    procedure DoOutput(S: string);
+    procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
+    procedure EditorChangeState(State: TEditorChangeStates);
+    procedure EngineOutput(S: string);
+    procedure EngineAction(EngineAction: TEditorAction);
+
     procedure FollowFolder(vFolder: string; FocusIt: Boolean);
     procedure ShowMessagesList;
     procedure ShowWatchesList;
@@ -573,6 +575,8 @@ end;
 
 {$R *.lfm}
 
+{ TMainNotifyEngine }
+
 constructor TMainForm.Create(AOwner: TComponent);
 var
   aIniFile: TIniFile;
@@ -593,9 +597,7 @@ begin
 
   Engine.Container := EditorsPnl;
 
-  Engine.OnChangedState := @EditorChangeState;
-  Engine.OnReplaceText:= @OnReplaceText;
-  Engine.OnLog := @DoOutput;
+  Engine.SetNotifyEngine(Self);
 
   if (aWorkspace <> '') then
   begin
@@ -1103,7 +1105,7 @@ begin
   Engine.Options.FoldersWidth := FoldersPnl.Width;
 
   Engine.Session.Close;
-  Engine.OnChangedState := nil;
+  Engine.RemoveNotifyEngine(Self);
   Engine.Shutdown;
   //HtmlHelp(Application.Handle, nil, HH_CLOSE_ALL, 0);
 end;
@@ -1924,6 +1926,13 @@ procedure TMainForm.StartServer;
 begin
 end;
 
+procedure TMainForm.EngineAction(EngineAction: TEditorAction);
+begin
+  case EngineAction of
+    eaClearOutput : OutputEdit.Clear;
+  end;
+end;
+
 procedure TMainForm.FolderBtnClick(Sender: TObject);
 var
   Pt: TPoint;
@@ -2707,7 +2716,7 @@ begin
   end;
 end;
 
-procedure TMainForm.OnReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
+procedure TMainForm.EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
 begin
   case MsgBox.Msg.Ask(Format('Replace this ocurrence of "%s" with "%s"?', [ASearch, AReplace]), [msgcYes, msgcNo, msgcAll, msgcCancel], msgcYes, msgcCancel, msgkConfirmation) of
     msgcYes: ReplaceAction := raReplace;
@@ -2728,7 +2737,7 @@ begin
   Log('', AMsg);
 end;
 
-procedure TMainForm.DoOutput(S: string);
+procedure TMainForm.EngineOutput(S: string);
 begin
   FOutputBuffer := FOutputBuffer + S;//TODO baaad
   OutputEdit.Text := FOutputBuffer;

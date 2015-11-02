@@ -32,7 +32,6 @@ type
     CollectTimeoutEdit: TEdit;
     CollectTimeoutSpn: TUpDown;
     CollectAutoCompleteChk: TCheckBox;
-    SendOutputToNewFileChk: TCheckBox;
     AutoStartDebugServerChk: TCheckBox;
     PHPManualEdit: TEdit;
     Label2: TLabel;
@@ -84,7 +83,6 @@ begin
   FEngine.Options.AutoOpenProject := AutoOpenProjectChk.Checked;
   FEngine.Options.CollectAutoComplete := CollectAutoCompleteChk.Checked;
   FEngine.Options.CollectTimeout := CollectTimeoutSpn.Position;
-  FEngine.Options.SendOutputToNewFile := SendOutputToNewFileChk.Checked;
   FEngine.Options.AutoStartDebugServer := AutoStartDebugServerChk.Checked;
   c := 1;
   for i := 0 to FEngine.Groups.Count - 1 do
@@ -105,7 +103,6 @@ begin
   AutoOpenProjectChk.Checked := FEngine.Options.AutoOpenProject;
   CollectAutoCompleteChk.Checked := FEngine.Options.CollectAutoComplete;
   CollectTimeoutSpn.Position := FEngine.Options.CollectTimeout;
-  SendOutputToNewFileChk.Checked := FEngine.Options.SendOutputToNewFile;
   AutoStartDebugServerChk.Checked := FEngine.Options.AutoStartDebugServer;
   ExtensionsGrid.Cells[0, 0] := 'Group';
   ExtensionsGrid.Cells[1, 0] := 'Extensions';
