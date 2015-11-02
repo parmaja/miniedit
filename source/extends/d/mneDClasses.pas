@@ -390,6 +390,7 @@ begin
         end;
       end;
     end;
+    (Completion.ItemList as TStringList).Sort;
   finally
     Completion.ItemList.EndUpdate;
     Screen.Cursor := crDefault;

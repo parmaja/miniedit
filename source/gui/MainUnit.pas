@@ -1929,7 +1929,11 @@ end;
 procedure TMainForm.EngineAction(EngineAction: TEditorAction);
 begin
   case EngineAction of
-    eaClearOutput : OutputEdit.Clear;
+    eaClearOutput :
+    begin
+      FOutputBuffer := '';
+      OutputEdit.Clear;
+    end;
   end;
 end;
 

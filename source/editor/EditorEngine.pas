@@ -983,6 +983,7 @@ type
     procedure RemoveNotifyEngine(ANotifyObject: INotifyEngine);
     //property MacroRecorder: TSynMacroRecorder read FMacroRecorder;
     procedure SendOutout(S: string);
+    procedure SendAction(EditorAction: TEditorAction);
 
     property Environment: TStringList read FEnvironment write FEnvironment;
   published
@@ -1837,6 +1838,8 @@ begin
   end
   else
   begin
+    if rnaCompile in RunActions then
+      Engine.SendAction(eaClearOutput);
     p.Root := Engine.Session.GetRoot;
     if (Engine.Session.IsOpened) then
     begin
@@ -3055,6 +3058,12 @@ procedure TEditorEngine.SendOutout(S: string);
 begin
   if FNotifyObject <> nil then
     FNotifyObject.EngineOutput(S);
+end;
+
+procedure TEditorEngine.SendAction(EditorAction: TEditorAction);
+begin
+  if FNotifyObject <> nil then
+    FNotifyObject.EngineAction(EditorAction);
 end;
 
 procedure TEditorEngine.DoChangedState(State: TEditorChangeStates);
