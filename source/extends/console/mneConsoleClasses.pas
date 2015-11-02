@@ -86,17 +86,15 @@ end;
 
 function TConsoleFile.GetIsReadonly: Boolean;
 begin
-  Result := False;
+  Result := True;
 end;
 
 procedure TConsoleFile.DoLoad(FileName: string);
 begin
-  //Contents.Load(FileName);
 end;
 
 procedure TConsoleFile.DoSave(FileName: string);
 begin
-  //Contents.Save(FileName);
 end;
 
 destructor TConsoleFile.Destroy;
@@ -109,9 +107,7 @@ end;
 
 function TSynConsoleSyn.GetSampleSource: string;
 begin
-  Result := 'ID;Name;Company;Phone'#13#10 +
-             '1;"John Smith";"No Where";0963157529'#13#10 +
-             '2;"Jenna Smith";"No Where";0668157529'#13#10;
+  Result := 'echo %temp%'#13#10;
 end;
 
 class function TSynConsoleSyn.GetLanguageName: string;
@@ -161,7 +157,7 @@ initialization
   with Engine do
   begin
     Categories.Add(TConsoleFileCategory.Create('Console'));
-    Groups.Add(TConsoleFile, 'Console', 'Console Files', 'Console', ['Console'], [fgkMember], []);
+    Groups.Add(TConsoleFile, 'Console', 'Console Files', 'Console', ['Console'], [fgkVirtual, fgkText], []);
     Tendencies.Add(TConsoleTendency);
   end;
 end.
