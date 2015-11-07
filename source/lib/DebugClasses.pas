@@ -28,11 +28,13 @@ type
     Pause: Boolean;
     URL: string;
     Command: string;
-    MainFile: string; //file to run
+    MainFile: string; //file to compile
+    OutputFile: string; //file to run
   end;
 
   TmneCommandInfo = record
-    Title: string;
+    Title: string; //Console title
+    Message: string; //Message send to output before execute it
     Mode: TmneRunMode;
     Command: string;
     Params: string;

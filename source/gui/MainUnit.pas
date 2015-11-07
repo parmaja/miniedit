@@ -1248,14 +1248,8 @@ end;
 procedure TMainForm.SelectFileActExecute(Sender: TObject);
 var
   aFileName: string;
-  r: boolean;
 begin
-  if Engine.Session.IsOpened then
-    r := ShowSelectFile(Engine.Session.Project.RootDir, aFileName)
-  else
-    r := ShowSelectFile(Folder, aFileName);
-
-  if r then
+  if ShowSelectFile(Engine.Session.GetRoot, aFileName) then
     Engine.Files.OpenFile(aFileName);
 end;
 

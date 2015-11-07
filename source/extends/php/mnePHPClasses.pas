@@ -19,7 +19,7 @@ uses
   SynHighlighterHashEntries, EditorProfiles, SynHighlighterCSS,
   SynHighlighterSQL, SynHighlighterXML, SynHighlighterJScript,
   SynHighlighterXHTML, SynHighlighterMultiProc, HTMLProcessor, EditorDebugger,
-  EditorClasses, PHP_xDebug, mneClasses, EditorRun, DebugClasses, uTerminal,
+  EditorClasses, PHP_xDebug, mneClasses, EditorRun, DebugClasses,
   mnePHPProjectFrames;
 
 type

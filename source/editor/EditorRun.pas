@@ -14,7 +14,7 @@ uses
   windows, Forms, SysUtils, StrUtils, Classes, SyncObjs, contnrs,
   process, mnUtils,
   ConsoleProcess,
-  mnStreams, mneConsoleForms, uTerminal, DebugClasses, mnXMLUtils;
+  mnStreams, mneConsoleForms, DebugClasses, mnXMLUtils;
 
 {$i '..\lib\mne.inc'}
 
@@ -237,8 +237,8 @@ procedure TmneRunItem.CreateConsole(AInfo: TmneCommandInfo);
 var
   ProcessObject: TmnProcessObject;
 begin
-  if Assigned(FOnWrite) then
-    FOnWrite('Starting "' + Info.Title + '"'#13#10);
+  if Assigned(FOnWrite) and (AInfo.Message <> '') then
+    FOnWrite(AInfo.Message + #13#10);
   FProcess := TProcess.Create(nil);
   FProcess.ConsoleTitle := Info.Title;
   FProcess.Executable := AInfo.Command;
@@ -266,7 +266,7 @@ begin
     FProcess.Execute;
   end;
   if Assigned(FOnWrite) then
-    FOnWrite('Finished "' + Info.Title + '" with status: ' + IntToStr(Status)+#13#10);
+    FOnWrite('Finished with status: ' + IntToStr(Status)+#13#10);
 end;
 
 procedure TmneRunItem.Execute;

@@ -949,7 +949,7 @@ type
     property Updating: Boolean read GetUpdating;
     procedure EndUpdate;
 
-    function EnvReplace(S: string; ForVar: string = ''): string;
+    function EnvReplace(S: string; ForRoot: Boolean = False): string;
     function ExpandFile(FileName: string): string;
     function GetRoot: string;
     property Extenstion: string read FExtenstion write FExtenstion;
@@ -1451,7 +1451,7 @@ begin
     SynEdit.RightEdgeColor := aProfile.RightEdgeColor;
     SynEdit.TabWidth := aProfile.TabWidth;
 
-    if Group.Category.Highlighter <> nil then
+    if (Group <> nil) and (Group.Category.Highlighter <> nil) then
       Group.Category.Apply(Group.Category.Highlighter, aProfile.Attributes);
   end
   else if (Source is TEditorDesktopFile) then
@@ -1846,6 +1846,7 @@ begin
     begin
       p.Mode := Engine.Session.Project.Options.RunMode;
       p.MainFile := Engine.Session.Project.Options.MainFile;//ExpandToPath(Engine.Session.Project.Options.MainFile, p.Root);
+      p.OutputFile := Engine.Session.Project.Options.OutputFile;//ExpandToPath(Engine.Session.Project.Options.MainFile, p.Root);
       p.Pause := Engine.Session.Project.Options.PauseConsole;
     end
     else
@@ -1855,6 +1856,9 @@ begin
     end;
     if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
       p.MainFile := Engine.Files.Current.Name;
+
+    if p.OutputFile = '' then
+      p.OutputFile := p.MainFile;
 
     if (p.MainFile <> '') then
     begin
@@ -2131,9 +2135,9 @@ begin
   FMessagesList := TEditorMessagesList.Create;
   //FMacroRecorder := TSynMacroRecorder.Create(nil);
   //FMacroRecorder.OnStateChange := DoMacroStateChange;
-  FEnvironment.Add('HOME=' + SysUtils.GetEnvironmentVariable('HOME'));
+  FEnvironment.Add('Home=' + SysUtils.GetEnvironmentVariable('HOME'));
   FEnvironment.Add('EXE=' + Application.ExeName);
-  FEnvironment.Add('MINIEDIT=' + Application.Location);
+  FEnvironment.Add('MiniEdit=' + Application.Location);
 
   FInternalTendency := TDefaultTendency.Create;
   //FForms := TEditorFormList.Create(True);
@@ -2405,15 +2409,9 @@ end;
 function TEditorEngine.GetRoot: string;
 begin
   if Session.IsOpened then
-  begin
-    if (Session.Project.RootDir <> '') then
-      Result := EnvReplace(Session.Project.RootDir, 'root')
-    else
-      Result := ExtractFilePath(Session.Project.FileName);
-  end
+    Result := Session.GetRoot
   else
     Result := Application.Location;
-  Result := ExpandFileName(IncludePathSeparator(Result));
 end;
 
 function TEditorEngine.GetSCM: TEditorSCM;
@@ -2693,7 +2691,7 @@ begin
   if IsOpened then
   begin
     if (Project.RootDir <> '') then
-      Result := Engine.EnvReplace(Project.RootDir, 'root')
+      Result := Engine.EnvReplace(Project.RootDir, true)
     else
       Result := ExtractFilePath(Project.FileName);
   end
@@ -2975,26 +2973,30 @@ begin
   Result := FUpdateCount > 0;
 end;
 
-function TEditorEngine.EnvReplace(S: string; ForVar: string): string;
+function TEditorEngine.EnvReplace(S: string; ForRoot: Boolean): string;
 var
   List: TStringList;
 begin
   List := TStringList.Create;
   try
     List.Assign(Environment);
-    if not SameText(ForVar, 'ROOT') then
-      List.Add('ROOT=' + GetRoot)
-    else
+    if ForRoot then
     begin
       if Session.IsOpened then
-        List.Add('ROOT=' + ExtractFilePath(Session.Project.FileName))
+        List.Add('Root=' + ExtractFilePath(Session.Project.FileName))
       else
-        List.Add('ROOT=' + Application.Location)
-    end;
+        List.Add('Root=' + Application.Location)
+    end
+    else
+      List.Add('Root=' + GetRoot);
 
     if Session.IsOpened then
     begin
-      List.Add('MAIN=' + Session.Project.Options.MainFile);
+      List.Add('Main=' + Session.Project.Options.MainFile);
+      List.Add('Output=' + Session.Project.Options.OutputFile);
+      List.Add('Project=' + Session.Project.FileName);
+      List.Add('ProjectName=' + Session.Project.FileName);
+      List.Add('ProjectDir=' + ExtractFilePath(Session.Project.FileName));
     end;
 
     if Files.Current <> nil then

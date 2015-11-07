@@ -224,8 +224,10 @@ begin
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aRunItem.Info.Params := Info.MainFile + #13;
-    if Options.OutputFile <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + '-o' + Options.OutputFile + #13;
+    if Info.OutputFile <> '' then
+      aRunItem.Info.Params := aRunItem.Info.Params + '-o' + Info.OutputFile + #13;
+
+    aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
 
     p := '-Fu';
     for i := 0 to Options.Paths.Count - 1 do
@@ -247,12 +249,12 @@ begin
   if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
-
+    aRunItem.Info.Message := 'Running ' + Info.OutputFile;
     aRunItem.Info.Mode := Options.RunMode;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Pause := true;
-    aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);;
-    aRunItem.Info.Command := ChangeFileExt(Info.MainFile, '.exe');
+    aRunItem.Info.Title := ExtractFileNameOnly(Info.OutputFile);;
+    aRunItem.Info.Command := ChangeFileExt(Info.OutputFile, '.exe');
     if Options.RunParams <> '' then
       aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;
   end;

@@ -6,18 +6,31 @@
     <TendencyName>D</TendencyName>
     <Desktop Class="TEditorDesktop">
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\home\pascal\projects\miniEdit\test\print.d</CurrentFile>
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.d</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.d</FileName>
-            <CaretX>35</CaretX>
             <CaretY>10</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\print.d</FileName>
-            <CaretX>23</CaretX>
+            <CaretX>28</CaretX>
             <CaretY>9</CaretY>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>M:\home\d\lib\sard\src\main.d</FileName>
+            <CaretY>31</CaretY>
+            <TopLine>19</TopLine>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>M:\home\d\lib\sard\src\sard\utils.d</FileName>
+            <CaretY>2</CaretY>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>M:\home\d\lib\sard\src\sard\package.d</FileName>
+            <CaretX>25</CaretX>
+            <CaretY>16</CaretY>
           </Object>
         </Items>
       </Files>

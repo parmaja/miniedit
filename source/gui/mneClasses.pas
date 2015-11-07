@@ -32,6 +32,10 @@ type
   public
   end;
 
+  TCFGFile = class(TTextEditorFile)
+  public
+  end;
+
   TTXTFile = class(TTextEditorFile)
   public
   end;
@@ -62,6 +66,15 @@ type
   { TINIFileCategory }
 
   TINIFileCategory = class(TTextFileCategory)
+  protected
+    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    procedure InitMappers; override;
+  public
+  end;
+
+  { TCFGFileCategory }
+
+  TCFGFileCategory = class(TTextFileCategory)
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
@@ -208,6 +221,28 @@ begin
   end;
 end;
 
+{ TCFGFileCategory }
+
+function TCFGFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+begin
+  Result := TSynINISyn.Create(nil);
+end;
+
+procedure TCFGFileCategory.InitMappers;
+begin
+  with Highlighter as TSynINISyn do
+  begin
+    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(TextAttri, attComment);
+    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(KeyAttri, attKeyword);
+    Mapper.Add(NumberAttri, attNumber);
+    Mapper.Add(StringAttri, attString);
+    Mapper.Add(SymbolAttri, attSymbol);
+    Mapper.Add(SectionAttri, attDirective);
+  end;
+end;
+
 { TSQLFileCategory }
 
 function TSQLFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
@@ -337,12 +372,14 @@ initialization
     Categories.Add(TApacheFileCategory.Create('apache', []));
     Categories.Add(TINIFileCategory.Create('ini'));
     Categories.Add(TXMLFileCategory.Create('xml'));
+    Categories.Add(TCFGFileCategory.Create('CFG'));
 
     Groups.Add(TTXTFile, 'txt', 'TXT files', 'txt', ['txt'], []);
     Groups.Add(TSQLFile, 'sql', 'SQL files', 'SQL', ['sql'], [fgkAssociated, fgkMember, fgkBrowsable]);
     Groups.Add(TApacheFile, 'htaccess', 'htaccess files', 'apache', ['htaccess', 'conf'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TINIFile, 'xml', 'XML files', 'xml', ['xml'], [fgkMember, fgkBrowsable]);
-    Groups.Add(TXMLFile, 'ini', 'INI files', 'ini', ['ini'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TXMLFile, 'xml', 'XML files', 'xml', ['xml'], [fgkMember, fgkBrowsable]);
+    Groups.Add(TINIFile, 'ini', 'INI files', 'ini', ['ini'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TCFGFile, 'cfg', 'CFG files', 'CFG', ['cfg'], [fgkAssociated, fgkBrowsable]);
   end;
   //Engine.AddInstant('Python', ['py'], TSynPythonSyn, []);
 end.

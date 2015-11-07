@@ -18,7 +18,7 @@ uses
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   LazFileUtils, SynHighlighterD, EditorDebugger, EditorClasses, mneClasses,
   mneCompileProjectOptions, EditorRun, DebugClasses, mneConsoleClasses,
-  mneConsoleForms, uTerminal;
+  mneConsoleForms;
 
 type
 
@@ -59,7 +59,6 @@ type
 
   TDTendency = class(TEditorTendency)
   private
-//    FCompiler: string;
   protected
     function CreateDebugger: TEditorDebugger; override;
     function CreateOptions: TEditorProjectOptions; override;
@@ -69,7 +68,6 @@ type
     constructor Create; override;
     procedure Show; override;
   published
-//    property Compiler: string read FCompiler write FCompiler;
   end;
 
 implementation
@@ -195,8 +193,10 @@ begin
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aRunItem.Info.Params := Info.MainFile + #13;
-    if Options.OutputFile <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + '-of' + Options.OutputFile + #13;
+    if Info.OutputFile <> '' then
+      aRunItem.Info.Params := aRunItem.Info.Params + '-of' + Info.OutputFile + #13;
+
+    aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
     //aRunItem.Info.Params := aRunItem.Info.Params + '-color=on' + #13; //not work :(
 
     for i := 0 to Options.Paths.Count - 1 do
@@ -219,12 +219,12 @@ begin
   if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
-
+    aRunItem.Info.Message := 'Running ' + Info.OutputFile;
     aRunItem.Info.Mode := Options.RunMode;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Pause := true;
-    aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);;
-    aRunItem.Info.Command := ChangeFileExt(Info.MainFile, '.exe');
+    aRunItem.Info.Title := ExtractFileNameOnly(Info.OutputFile);;
+    aRunItem.Info.Command := ChangeFileExt(Info.OutputFile, '.exe');
     if Options.RunParams <> '' then
       aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;
   end;
@@ -267,10 +267,11 @@ begin
   FDescription := 'D Files, *.D, *.inc';
   FName := 'D';
   FImageIndex := -1;
-  AddGroup('D', 'html');
-  AddGroup('html', 'html');
-  AddGroup('css', 'css');
-  AddGroup('js', 'js');
+  AddGroup('D', 'd');
+  AddGroup('cfg', 'cfg');
+  AddGroup('ini', 'ini');
+  AddGroup('txt', 'txt');
+  //AddGroup('json', 'json');
 end;
 
 { TDFileCategory }
@@ -457,9 +458,7 @@ initialization
   with Engine do
   begin
     Categories.Add(TDFileCategory.Create('D', [fckPublish]));
-
     Groups.Add(TDFile, 'D', 'D Files', 'D', ['d', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
-
     Tendencies.Add(TDTendency);
   end;
 end.
