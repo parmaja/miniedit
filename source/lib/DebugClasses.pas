@@ -17,7 +17,7 @@ uses
 type
   TmneRunAction = (rnaCompile, rnaExecute, rnaDebug, rnaLink);
   TmneRunActions = set of TmneRunAction;
-  TmneRunMode = (runConsole, runProcess, runEmbedded, runOutput, runURL);
+  TmneRunMode = (runConsole, runProcess, runEmbedded, runOutput, runBrowser);
 
   { TmneRunInfo }
 
@@ -26,7 +26,7 @@ type
     Mode: TmneRunMode;
     Root: string; //cur dir for the project
     Pause: Boolean;
-    URL: string;
+    Link: string; //URL to show in browser
     Command: string;
     MainFile: string; //file to compile
     OutputFile: string; //file to run
@@ -40,6 +40,7 @@ type
     Params: string;
     CurrentDirectory: string;
     Pause: Boolean;
+    Link: string; //URL to show in browser
     function GetCommandLine: string;
   end;
 

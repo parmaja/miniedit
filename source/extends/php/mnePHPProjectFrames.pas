@@ -57,11 +57,11 @@ end;
 
 procedure TPHPProjectFrame.Retrieve;
 begin
-  RunModeCbo.Items.Add('Shell');
   RunModeCbo.Items.Add('Console');
-  RunModeCbo.Items.Add('Terminal');
   RunModeCbo.Items.Add('Process');
-  RunModeCbo.Items.Add('URL');
+  RunModeCbo.Items.Add('Embedded');
+  RunModeCbo.Items.Add('Output');
+  RunModeCbo.Items.Add('Browser');
 
   with (Project.Options as TPHPProjectOptions) do
   begin

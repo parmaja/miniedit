@@ -20,6 +20,8 @@ type
   TProjectForm = class(TForm)
     Button3: TButton;
     DescriptionEdit: TEdit;
+    SpecialExtEdit: TEdit;
+    Label6: TLabel;
     TabSpaceEdit: TEdit;
     Label1: TLabel;
     Label2: TLabel;
@@ -212,4 +214,3 @@ begin
 end;
 
 end.
-

@@ -64,7 +64,7 @@ begin
         if FilesList.Selected <> nil then
         begin
           LastFilter := FilterEdit.Text;
-          FileName := vRoot + FilesList.Selected.SubItems[0] + DirectorySeparator + FilesList.Selected.Caption;
+          FileName := IncludeTrailingPathDelimiter((IncludeTrailingPathDelimiter(vRoot)) + FilesList.Selected.SubItems[0]) + FilesList.Selected.Caption;
         end
         else
           Result := False;

@@ -11,7 +11,7 @@ unit EditorRun;
 interface
 
 uses
-  windows, Forms, SysUtils, StrUtils, Classes, SyncObjs, contnrs,
+  Forms, SysUtils, StrUtils, Classes, SyncObjs, contnrs,
   process, mnUtils,
   ConsoleProcess,
   mnStreams, mneConsoleForms, DebugClasses, mnXMLUtils;
@@ -108,7 +108,7 @@ type
 implementation
 
 uses
-  EditorEngine;
+  EditorEngine, lclintf;
 
 { TmneRunPool }
 
@@ -181,7 +181,7 @@ end;
 procedure TmneRun.Start;
 begin
   if FPool = nil then
-    Exception.Create('There is no thread Pool');
+    raise Exception.Create('There is no thread Pool');
   FPool.Start;
 end;
 
@@ -266,7 +266,7 @@ begin
     FProcess.Execute;
   end;
   if Assigned(FOnWrite) then
-    FOnWrite('Finished with status: ' + IntToStr(Status)+#13#10);
+    FOnWrite(#13#10'End Status: ' + IntToStr(Status)+#13#10);
 end;
 
 procedure TmneRunItem.Execute;
@@ -298,17 +298,9 @@ begin
       CreateConsole(Info);
       //not free myself the thread will do
     end;
-    runUrl:
+    runBrowser:
     begin
-      if Engine.Session.IsOpened then
-      begin
-        if SameText((MidStr(Info.Command, 1, Length(Info.CurrentDirectory))), Info.CurrentDirectory) then
-        begin
-          //Info.RunFile := MidStr(Info.Command, Length(Info.CurrentDirectory) + 1, MaxInt);
-          //Info.RunFile := IncludeSlash(Info.Url) + Info.RunFile;
-        end;
-      end;
-//      Run.Next;
+      OpenURL(Info.Link);
     end;
   end;
 end;

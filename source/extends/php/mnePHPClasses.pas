@@ -244,24 +244,50 @@ end;
 
 procedure TPHPTendency.DoRun(Info: TmneRunInfo);
 var
-  aFile: string;
-  aRoot: string;
   Options: TPHPProjectOptions;
-  s, outstr : string;
   aRun: TmneRun;
+  aRunItem: TmneRunItem;
 begin
-  Options := nil;
-
-  //if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
-
   if (Engine.Session.IsOpened) then
-    Options := (Engine.Session.Project.Options as TPHPProjectOptions);
+    Options := (Engine.Session.Project.Options as TPHPProjectOptions)
+  else
+    Options := TPHPProjectOptions.Create;
 
-  Info.Command := Command;
-  if Info.Command = '' then
-    Info.Command := 'php.exe';
+  {if rnaCompile in Info.Actions then
+  begin
+    aRunItem := Engine.Session.Run.Add;
 
-  Engine.Session.Run.Start;
+    aRunItem.Info.Command := Info.Command;
+    if aRunItem.Info.Command = '' then
+      aRunItem.Info.Command := 'php.exe';
+
+    Engine.Session.Run.Start;
+  end;}
+
+  if rnaExecute in Info.Actions then
+  begin
+    aRunItem := Engine.Session.Run.Add;
+    aRunItem.Info.Message := 'Running';
+    aRunItem.Info.Mode := Options.RunMode;
+
+    aRunItem.Info.Command := Info.Command;
+    if aRunItem.Info.Command = '' then
+      aRunItem.Info.Command := 'php.exe';
+
+    if Info.MainFile <> '' then
+      aRunItem.Info.Params := aRunItem.Info.Params + Info.MainFile + #13;
+
+    aRunItem.Info.Link := Info.Link;
+    if aRunItem.Info.Link = '' then
+      aRunItem.Info.Link := Info.MainFile;
+
+    aRunItem.Info.Link := Engine.EnvReplace(aRunItem.Info.Link);
+
+    if Options.RunParams <> '' then
+      aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;
+
+    Engine.Session.Run.Start;
+  end;
 end;
 
 constructor TPHPTendency.Create;

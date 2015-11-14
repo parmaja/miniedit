@@ -82,7 +82,7 @@ begin
   RunModeCbo.Items.Add('Process');
   RunModeCbo.Items.Add('Embedded');
   RunModeCbo.Items.Add('Output');
-  RunModeCbo.Items.Add('URL');
+  RunModeCbo.Items.Add('Browser');
 
   RunModeCbo.ItemIndex := ord(Options.RunMode);
   PauseChk.Checked := Options.PauseConsole;

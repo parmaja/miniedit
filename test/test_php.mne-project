@@ -17,8 +17,8 @@
       </Files>
     </Desktop>
     <Options Class="TPHPProjectOptions">
-      <RunMode>runTerminal</RunMode>
-      <MainFile>test.php</MainFile>
+      <RunMode>runBrowser</RunMode>
+      <MainFile>http://localhost/?FileName</MainFile>
       <PauseConsole>True</PauseConsole>
     </Options>
   </Object>

@@ -76,8 +76,8 @@ object ProjectForm: TProjectForm
         Left = 6
         Height = 13
         Top = 192
-        Width = 270
-        Caption = 'Roo&t path of your project usefull when enumrate your files'
+        Width = 274
+        Caption = 'Roo&t path of your project useful when enumerate your files'
         ParentColor = False
       end
       object NameEdit: TEdit
@@ -156,17 +156,33 @@ object ProjectForm: TProjectForm
       object TabSpaceEdit: TEdit
         Left = 89
         Height = 21
-        Top = 124
+        Top = 123
         Width = 80
         TabOrder = 7
       end
       object Label2: TLabel
-        Left = 16
+        Left = 12
         Height = 13
         Top = 127
         Width = 51
         Caption = 'Tab space'
         ParentColor = False
+      end
+      object Label6: TLabel
+        Left = 12
+        Height = 13
+        Top = 151
+        Width = 71
+        Caption = 'Special file ext.'
+        FocusControl = SpecialExtEdit
+        ParentColor = False
+      end
+      object SpecialExtEdit: TEdit
+        Left = 89
+        Height = 21
+        Top = 148
+        Width = 303
+        TabOrder = 8
       end
     end
   end

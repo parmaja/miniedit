@@ -2289,9 +2289,9 @@ begin
     Len := Length(Line);
     if Len <> 0 then
     begin
-      if (XY.X > 1) and (XY.X <= Len + 1) and (Line[XY.X] in BreakChars) then
+      if (XY.X > 1) and (XY.X <= Len) and (Line[XY.X] in BreakChars) then
         XY.X := XY.X - 1;
-      if (XY.X >= 1) and (XY.X <= Len + 1) and not (Line[XY.X] in BreakChars) then
+      if (XY.X >= 1) and (XY.X <= Len) and not (Line[XY.X] in BreakChars) then
       begin
         Stop := XY.X;
         while (Stop <= Len) and not (Line[Stop] in BreakChars) do
@@ -2977,33 +2977,42 @@ function TEditorEngine.EnvReplace(S: string; ForRoot: Boolean): string;
 var
   List: TStringList;
 begin
-  List := TStringList.Create;
-  try
-    List.Assign(Environment);
-    if ForRoot then
-    begin
-      if Session.IsOpened then
-        List.Add('Root=' + ExtractFilePath(Session.Project.FileName))
+  if s <> '' then
+  begin
+    List := TStringList.Create;
+    try
+      List.Assign(Environment);
+      if ForRoot then
+      begin
+        if Session.IsOpened then
+          List.Add('Root=' + ExtractFilePath(Session.Project.FileName))
+        else
+          List.Add('Root=' + Application.Location)
+      end
       else
-        List.Add('Root=' + Application.Location)
-    end
-    else
-      List.Add('Root=' + GetRoot);
+        List.Add('Root=' + GetRoot);
 
-    if Session.IsOpened then
-    begin
-      List.Add('Main=' + Session.Project.Options.MainFile);
-      List.Add('Output=' + Session.Project.Options.OutputFile);
-      List.Add('Project=' + Session.Project.FileName);
-      List.Add('ProjectName=' + Session.Project.FileName);
-      List.Add('ProjectDir=' + ExtractFilePath(Session.Project.FileName));
+      if Session.IsOpened then
+      begin
+        List.Add('Main=' + Session.Project.Options.MainFile);
+        List.Add('MainFile=' + Session.Project.Options.MainFile);
+        List.Add('Output=' + Session.Project.Options.OutputFile);
+        List.Add('Project=' + Session.Project.FileName);
+        List.Add('ProjectName=' + Session.Project.FileName);
+        List.Add('ProjectDir=' + ExtractFilePath(Session.Project.FileName));
+      end;
+
+      if Files.Current <> nil then
+      begin
+        List.Add('CurFile=' + Files.Current.Name);
+        List.Add('File=' + Files.Current.Name);
+        List.Add('FileName=' + ExtractFileName(Files.Current.Name));
+        List.Add('FileDir=' + Files.Current.Path);
+      end;
+      Result := VarReplace(S, List, '?');
+    finally
+      List.Free;
     end;
-
-    if Files.Current <> nil then
-      List.Add('FileDir=' + Files.Current.Path);
-    Result := VarReplace(S, List, '?');
-  finally
-    List.Free;
   end;
 end;
 

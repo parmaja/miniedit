@@ -119,48 +119,51 @@
         <Display Value=":1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="12">
+    <RequiredPackages Count="13">
       <Item1>
-        <PackageName Value="cmdbox"/>
+        <PackageName Value="LazDebuggerGdbmi"/>
       </Item1>
       <Item2>
-        <PackageName Value="MiniDB"/>
+        <PackageName Value="cmdbox"/>
       </Item2>
       <Item3>
-        <PackageName Value="MiniConnections"/>
+        <PackageName Value="MiniDB"/>
       </Item3>
       <Item4>
-        <PackageName Value="MiniCommons"/>
+        <PackageName Value="MiniConnections"/>
       </Item4>
       <Item5>
-        <PackageName Value="MiniLib"/>
+        <PackageName Value="MiniCommons"/>
       </Item5>
       <Item6>
-        <PackageName Value="MiniSockets"/>
+        <PackageName Value="MiniLib"/>
       </Item6>
       <Item7>
-        <PackageName Value="MiniXML"/>
-        <MinVersion Valid="True"/>
+        <PackageName Value="MiniSockets"/>
       </Item7>
       <Item8>
-        <PackageName Value="NativeLib"/>
+        <PackageName Value="MiniXML"/>
         <MinVersion Valid="True"/>
       </Item8>
       <Item9>
-        <PackageName Value="SynEdit"/>
-        <MinVersion Major="1" Valid="True"/>
+        <PackageName Value="NativeLib"/>
+        <MinVersion Valid="True"/>
       </Item9>
       <Item10>
-        <PackageName Value="LCL"/>
+        <PackageName Value="SynEdit"/>
+        <MinVersion Major="1" Valid="True"/>
       </Item10>
       <Item11>
-        <PackageName Value="LCLBase"/>
-        <MinVersion Major="1" Release="1" Valid="True"/>
+        <PackageName Value="LCL"/>
       </Item11>
       <Item12>
-        <PackageName Value="FCL"/>
+        <PackageName Value="LCLBase"/>
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item12>
+      <Item13>
+        <PackageName Value="FCL"/>
+        <MinVersion Major="1" Release="1" Valid="True"/>
+      </Item13>
     </RequiredPackages>
     <Units Count="48">
       <Unit0>
