@@ -1406,8 +1406,8 @@ begin
   IPCServer.StartServer;
   LoadAddons;
 
-
-  BoundsRect := Engine.Options.BoundRect;
+  if Engine.Options.BoundRect.Right - Engine.Options.BoundRect.Left > 10 then   //Safe width
+    BoundsRect := Engine.Options.BoundRect;
 
   if Engine.Options.WindowMaxmized then
     WindowState := wsMaximized;
