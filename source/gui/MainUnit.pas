@@ -58,6 +58,9 @@ type
   TMainForm = class(TForm, INotifyEngine)
     DBGCompileAct: TAction;
     BrowseTabs: TntvTabSet;
+    FileList: TListView;
+    FolderBtn: TSpeedButton;
+    FolderPathLbl: TLabel;
     MenuItem22: TMenuItem;
     MenuItem23: TMenuItem;
     MenuItem24: TMenuItem;
@@ -212,7 +215,6 @@ type
     FoldersPnl: TPanel;
     FolderPanel: TPanel;
     FolderCloseBtn: TSpeedButton;
-    FileList: TListView;
     Extractkeywords: TMenuItem;
     ManageAct: TAction;
     Manage1: TMenuItem;
@@ -336,7 +338,6 @@ type
     SwitchFocusAct: TAction;
     SwitchFocus1: TMenuItem;
     N16: TMenuItem;
-    FolderBtn: TSpeedButton;
     QuickFindPnl: TPanel;
     Label2: TLabel;
     CloseQuickSearchBtn: TSpeedButton;
@@ -838,21 +839,17 @@ end;
 
 procedure TMainForm.NewAsActExecute(Sender: TObject);
 var
-  //AExtensions: TEditorElements;
   G: TFileGroups;
   E: string;
 begin
-  //AExtensions := TEditorElements.Create;
   try
     if Engine.Tendency is TDefaultTendency then
       G := Engine.Groups
     else
       G := Engine.Tendency.Groups;
-    //Engine.Tendency.EnumExtensions(AExtensions);
     if ShowSelectList('Select file type', G, [slfUseNameTitle], E) then
       Engine.Files.New(E);
   finally
-    //AExtensions.Free;
   end;
 end;
 
@@ -1629,6 +1626,8 @@ var
   i:Integer;
   aFiles: TStringList;
 begin
+  FolderPathLbl.Caption := Folder;
+  FolderPathLbl.Hint := Folder;
   FileList.Items.BeginUpdate;
   try
     FileList.Clear;

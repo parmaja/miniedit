@@ -6,7 +6,13 @@
     <TendencyName>D</TendencyName>
     <Desktop Class="TEditorDesktop">
       <Files Class="TEditorDesktopFiles">
-        <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
+        <CurrentFolder>M:\home\pascal\projects\miniEdit\test\DebugServer\..\</CurrentFolder>
+        <Items>
+          <Object Type="TEditorDesktopFile">
+            <CaretX>19</CaretX>
+            <CaretY>8</CaretY>
+          </Object>
+        </Items>
       </Files>
     </Desktop>
     <Options Class="TDProjectOptions">
