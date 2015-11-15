@@ -966,13 +966,11 @@ begin
   if Engine.BrowseFolder <> Value then
   begin
     if Value = '..' then
-      Engine.BrowseFolder := ExtractFilePath(IncludeTrailingPathDelimiter(Value))
+      Engine.BrowseFolder := ExtractFilePath(IncludeTrailingPathDelimiter(ExpandFileName(Value)))
     else
-      Engine.BrowseFolder := IncludeTrailingPathDelimiter(Value);
+      Engine.BrowseFolder := IncludeTrailingPathDelimiter(ExpandFileName(Value));
     if FoldersAct.Checked then
       UpdateFolder;
-    FolderPanel.Hint := Engine.BrowseFolder;
-    FolderBtn.Hint := FolderPanel.Hint;
   end;
 end;
 
