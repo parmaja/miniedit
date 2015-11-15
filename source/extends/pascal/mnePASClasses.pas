@@ -42,11 +42,12 @@ type
 
   { TPASFileCategory }
 
-  TPASFileCategory = class(TTextFileCategory)
+  TPASFileCategory = class(TCodeFileCategory)
   private
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
+    procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
   public
   end;
 
@@ -298,6 +299,15 @@ begin
     Mapper.Add(CaseLabelAttri, attSymbol);
     Mapper.Add(DirectiveAttri, attDirective);
   end;
+end;
+
+procedure TPASFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
+begin
+  inherited;
+  Completion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
+  //EnumerateKeywords(Ord(tkKeyword), sPasKeywords, Highlighter.IdentChars, @DoAddCompletion);
+  //EnumerateKeywords(Ord(tkFunction), sDFunctions, Highlighter.IdentChars, @DoAddCompletion);
+  IdentifierID := ord(tkIdentifier);
 end;
 
 { TPASFile }

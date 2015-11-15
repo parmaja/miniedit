@@ -34,15 +34,12 @@ type
 
   { TDFileCategory }
 
-  TDFileCategory = class(TTextFileCategory)
+  TDFileCategory = class(TCodeFileCategory)
   private
-    procedure ExtractKeywords(Files, Identifiers: TStringList);
   protected
     procedure InitMappers; override;
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
-    procedure DoAddCompletion(AKeyword: string; AKind: integer);
-    procedure DoExecuteCompletion(Sender: TObject); override;
   public
   end;
 
@@ -283,154 +280,11 @@ end;
 
 procedure TDFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
-  if FCompletion = nil then
-  begin
-    FCompletion := TmneSynCompletion.Create(nil);
-    FCompletion.Width := 340;
-    FCompletion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
-    FCompletion.OnExecute := @DoExecuteCompletion;
-    FCompletion.ShortCut := scCtrl + VK_SPACE;
-    FCompletion.CaseSensitive := False;
-    //FCompletion.OnPaintItem
-  end;
-  FCompletion.AddEditor(vSynEdit);
-end;
-
-procedure TDFileCategory.DoAddCompletion(AKeyword: string; AKind: integer);
-begin
-  Completion.ItemList.Add(AKeyword);
-end;
-
-procedure TDFileCategory.DoExecuteCompletion(Sender: TObject);
-var
-  aIdentifiers: THashedStringList;
-  Current, Token: string;
-  i, r: integer;
-  aSynEdit: TCustomSynEdit;
-  aTokenType, aStart: integer;
-  aRange: pointer;
-  P: TPoint;
-  Attri: TSynHighlighterAttributes;
-  aFiles: TStringList;
-begin
   inherited;
-  Screen.Cursor := crHourGlass;
-  Completion.ItemList.BeginUpdate;
-  try
-    Completion.ItemList.Clear;
-    aSynEdit := (Sender as TSynCompletion).TheForm.CurrentEditor as TCustomSynEdit;
-    if (aSynEdit <> nil) and (Highlighter is TSynDSyn) then
-    begin
-      P := aSynEdit.CaretXY;
-      GetHighlighterAttriAtRowColExtend(aSynEdit, P, Current, aTokenType, aStart, Attri, aRange);
-      Completion.TheForm.Font.Size := aSynEdit.Font.Size;
-      Completion.TheForm.Font.Color := aSynEdit.Font.Color;
-      Completion.TheForm.Color := aSynEdit.Color;
-      Completion.TheForm.Caption := 'D';
-      //Completion.AutoUseSingleIdent := True;
-      //CanExecute := False
-      if aTokenType = Ord(tkComment) then
-        //Abort
-      else if aTokenType = Ord(tkString) then
-      begin
-        //EnumerateKeywords(Ord(tkSQL), sSQLKeywords, Highlighter.IdentChars, @DoAddCompletion);
-      end
-      else
-      begin
-        //load keyowrds
-        EnumerateKeywords(Ord(tkKeyword), sDKeywords, Highlighter.IdentChars, @DoAddCompletion);
-        EnumerateKeywords(Ord(tkFunction), sDFunctions, Highlighter.IdentChars, @DoAddCompletion);
-        aIdentifiers := THashedStringList.Create;
-
-        //extract keywords from external files
-        if Engine.Options.CollectAutoComplete and (Engine.Session.GetRoot <> '') then
-        begin
-          if ((GetTickCount - Engine.Session.CachedAge) > (Engine.Options.CollectTimeout * 1000)) then
-          begin
-            Engine.Session.CachedVariables.Clear;
-            Engine.Session.CachedIdentifiers.Clear;
-            aFiles := TStringList.Create;
-            try
-              EnumFileList(Engine.Session.GetRoot, '*.d', Engine.Options.IgnoreNames, aFiles, 1000, 3, True, Engine.Session.IsOpened);//TODO check the root dir if no project opened
-              r := aFiles.IndexOf(Engine.Files.Current.Name);
-              if r >= 0 then
-                aFiles.Delete(r);
-              ExtractKeywords(aFiles, Engine.Session.CachedIdentifiers);
-            finally
-              aFiles.Free;
-            end;
-          end;
-          aIdentifiers.AddStrings(Engine.Session.CachedIdentifiers);
-          Engine.Session.CachedAge := GetTickCount;
-        end;
-        //add current file Identifiers
-        try
-          Highlighter.ResetRange;
-          for i := 0 to aSynEdit.Lines.Count - 1 do
-          begin
-            Highlighter.SetLine(aSynEdit.Lines[i], 1);
-            while not Highlighter.GetEol do
-            begin
-              if (Highlighter.GetTokenPos <> (aStart - 1)) then
-              begin
-                if (Highlighter.GetTokenKind = Ord(tkIdentifier)) then
-                begin
-                  Token := Highlighter.GetToken;
-                  if aIdentifiers.IndexOf(Token) < 0 then
-                    aIdentifiers.Add(Token);
-                end;
-              end;
-              Highlighter.Next;
-            end;
-          end;
-
-          for i := 0 to aIdentifiers.Count - 1 do
-            DoAddCompletion(aIdentifiers[i], Ord(tkIdentifier));
-        finally
-          aIdentifiers.Free;
-        end;
-      end;
-    end;
-    (Completion.ItemList as TStringList).Sort;
-  finally
-    Completion.ItemList.EndUpdate;
-    Screen.Cursor := crDefault;
-  end;
-end;
-
-procedure TDFileCategory.ExtractKeywords(Files, Identifiers: TStringList);
-var
-  aFile: TStringList;
-  s: string;
-  i, f: integer;
-  aHighlighter: TSynDSyn;
-begin
-  aHighlighter := TSynDSyn.Create(nil);
-  aFile := TStringList.Create;
-  try
-    for f := 0 to Files.Count - 1 do
-    begin
-      aFile.LoadFromFile(Files[f]);
-      aHighlighter.ResetRange;
-      for i := 0 to aFile.Count - 1 do
-      begin
-        aHighlighter.SetLine(aFile[i], 1);
-        while not aHighlighter.GetEol do
-        begin
-          if (aHighlighter.GetTokenKind = Ord(tkIdentifier)) then
-          begin
-            s := aHighlighter.GetToken;
-            if Identifiers.IndexOf(s) < 0 then
-              Identifiers.Add(s);
-          end;
-          aHighlighter.Next;
-        end;
-      end;
-    end;
-  finally
-    aHighlighter.Free;
-    aFile.Free;
-  end;
+  FCompletion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
+  EnumerateKeywords(Ord(tkKeyword), sDKeywords, Highlighter.IdentChars, @DoAddCompletion);
+  EnumerateKeywords(Ord(tkFunction), sDFunctions, Highlighter.IdentChars, @DoAddCompletion);
+  IdentifierID := ord(tkIdentifier);
 end;
 
 procedure TDFileCategory.InitMappers;

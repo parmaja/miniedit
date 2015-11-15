@@ -69,14 +69,13 @@ type
     procedure InitMappers; override;
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
-    procedure DoAddCompletion(AKeyword: string; AKind: integer);
     procedure DoExecuteCompletion(Sender: TObject); override;
   public
   end;
 
   { TCSSFileCategory }
 
-  TCSSFileCategory = class(TTextFileCategory)
+  TCSSFileCategory = class(TCodeFileCategory)
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
@@ -361,11 +360,6 @@ begin
   Result := TSynXHTMLSyn.Create(nil);
 end;
 
-procedure TXHTMLFileCategory.DoAddCompletion(AKeyword: string; AKind: integer);
-begin
-  Completion.ItemList.Add(AKeyword);
-end;
-
 procedure TXHTMLFileCategory.DoExecuteCompletion(Sender: TObject);
 var
   aVariables: THashedStringList;
@@ -567,17 +561,8 @@ end;
 
 procedure TXHTMLFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
-  if FCompletion = nil then
-  begin
-    FCompletion := TmneSynCompletion.Create(nil);
-    FCompletion.Width := 340;
-    FCompletion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;';//do not add $
-    FCompletion.OnExecute := @DoExecuteCompletion;
-    FCompletion.ShortCut := scCtrl + VK_SPACE;
-    FCompletion.CaseSensitive := False;
-    //FCompletion.OnPaintItem
-  end;
-  FCompletion.AddEditor(vSynEdit);
+  inherited;
+  Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;';//do not add $
 end;
 
 { TJSFileCategory }
