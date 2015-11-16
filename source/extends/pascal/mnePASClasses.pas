@@ -220,7 +220,6 @@ begin
       aRunItem.Info.Command := 'fpc.exe';
 
     aRunItem.Info.Mode := runOutput;
-    aRunItem.Info.Pause := true;
     aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
@@ -253,7 +252,7 @@ begin
     aRunItem.Info.Message := 'Running ' + Info.OutputFile;
     aRunItem.Info.Mode := Options.RunMode;
     aRunItem.Info.CurrentDirectory := Info.Root;
-    aRunItem.Info.Pause := true;
+    aRunItem.Info.Pause := Options.PauseConsole;
     aRunItem.Info.Title := ExtractFileNameOnly(Info.OutputFile);
     aRunItem.Info.Command := ChangeFileExt(Info.OutputFile, '.exe');
     if Options.RunParams <> '' then
@@ -334,10 +333,10 @@ initialization
   begin
     Categories.Add(TPASFileCategory.Create('pas'));
     Categories.Add(TLFMFileCategory.Create('lfm'));
+    Groups.Add(TPASFile, 'pas', 'Pascal Files', 'pas', ['pas', 'pp', 'p', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
     Groups.Add(TPASFile, 'ppr', 'Pascal Project Files', 'pas', ['ppr'], [fgkAssociated, fgkMain, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);//PPR meant Pascal project
     Groups.Add(TPASFile, 'lpr', 'Lazarus Project Files', 'pas', ['lpr'], [fgkAssociated, fgkMain,fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
     Groups.Add(TPASFile, 'dpr', 'Delphi Project Files', 'pas', ['dpr'], [fgkAssociated, fgkMain, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
-    Groups.Add(TPASFile, 'pas', 'Pascal Files', 'pas', ['pas', 'pp', 'p', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
     Groups.Add(TLFMFile, 'lfm', 'Lazarus Form Files', 'lfm', ['lfm'], [fgkAssociated, fgkMember, fgkBrowsable], [fgsFolding]);
 
     Tendencies.Add(TPasTendency);

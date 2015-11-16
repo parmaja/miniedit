@@ -8,6 +8,17 @@ unit EditorEngine;
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author    Zaher Dirkey <zaher at parmaja dot com>
  *}
+
+{**
+
+
+  Categories: list
+    Category: object have have highlighter, autocomplete ...
+      Groups: list
+        Group: object Have externsions
+          Extensions
+
+}
 interface
 
 uses

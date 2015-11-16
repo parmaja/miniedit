@@ -268,6 +268,7 @@ begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Message := 'Running';
     aRunItem.Info.Mode := Options.RunMode;
+    aRunItem.Info.Pause := Options.PauseConsole;
 
     aRunItem.Info.Command := Info.Command;
     if aRunItem.Info.Command = '' then

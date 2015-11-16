@@ -17,8 +17,7 @@
       </Files>
     </Desktop>
     <Options Class="TPHPProjectOptions">
-      <RunMode>runBrowser</RunMode>
-      <MainFile>http://localhost/?FileName</MainFile>
+      <RunMode>runConsole</RunMode>
       <PauseConsole>True</PauseConsole>
     </Options>
   </Object>
