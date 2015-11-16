@@ -551,7 +551,7 @@ type
     procedure UpdateFoldersPnl;
     procedure UpdateMessagesPnl;
     procedure UpdateOutputPnl;
-    procedure StartServer;
+    procedure StopServer; deprecated;
   end;
 
 var
@@ -1101,6 +1101,8 @@ begin
 
   Engine.Session.Close;
   Engine.RemoveNotifyEngine(Self);
+
+  StopServer;
   Engine.Shutdown;
   //HtmlHelp(Application.Handle, nil, HH_CLOSE_ALL, 0);
 end;
@@ -1913,8 +1915,9 @@ begin
   end;
 end;
 
-procedure TMainForm.StartServer;
+procedure TMainForm.StopServer;
 begin
+  DBGStopServerAct.Execute;
 end;
 
 procedure TMainForm.EngineAction(EngineAction: TEditorAction);

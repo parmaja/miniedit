@@ -261,8 +261,8 @@ end;
 
 destructor TPHP_xDebug.Destroy;
 begin
-  FreeAndNil(FServer);
   DBGP.OnShowFile := nil;
+  FreeAndNil(FServer);
   inherited;
 end;
 
