@@ -4,7 +4,7 @@
     <Name>test</Name>
     <Title>PHP Test</Title>
     <TendencyName>PHP</TendencyName>
-    <SCM Class="TTGIT_SCM">
+    <SCM Class="TTSVN_SCM">
     </SCM>
     <Desktop Class="TEditorDesktop">
       <Files Class="TEditorDesktopFiles">
@@ -13,7 +13,8 @@
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
-            <CaretY>6</CaretY>
+            <CaretX>21</CaretX>
+            <CaretY>5</CaretY>
           </Object>
         </Items>
       </Files>

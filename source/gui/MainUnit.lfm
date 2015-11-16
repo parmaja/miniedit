@@ -1,12 +1,12 @@
 object MainForm: TMainForm
-  Left = 401
+  Left = 123
   Height = 591
-  Top = 118
-  Width = 713
+  Top = 108
+  Width = 881
   AllowDropFiles = True
   Caption = 'Mini Edit'
   ClientHeight = 571
-  ClientWidth = 713
+  ClientWidth = 881
   Font.CharSet = ANSI_CHARSET
   Font.Height = -13
   Font.Name = 'Tahoma'
@@ -27,7 +27,7 @@ object MainForm: TMainForm
     Left = 0
     Height = 29
     Top = 0
-    Width = 713
+    Width = 881
     AutoSize = True
     EdgeBorders = [ebTop, ebBottom]
     Images = EditorResource.ToolbarImageList
@@ -37,7 +37,7 @@ object MainForm: TMainForm
       Left = 1
       Height = 23
       Top = 2
-      Width = 712
+      Width = 880
       AutoSize = True
       ButtonHeight = 23
       ButtonWidth = 75
@@ -231,19 +231,20 @@ object MainForm: TMainForm
       end
     end
     object FolderPathLbl: TLabel
-      Left = 0
+      Left = 2
       Height = 16
-      Top = 21
-      Width = 200
+      Top = 23
+      Width = 196
       Align = alTop
       AutoSize = False
+      BorderSpacing.Around = 2
       Caption = 'Path:'
       ParentColor = False
     end
     object FileList: TListView
       Left = 3
-      Height = 342
-      Top = 40
+      Height = 340
+      Top = 42
       Width = 194
       Align = alClient
       BorderSpacing.Around = 3
@@ -271,21 +272,21 @@ object MainForm: TMainForm
     Left = 207
     Height = 385
     Top = 29
-    Width = 506
+    Width = 674
     Align = alClient
     BevelOuter = bvNone
     ClientHeight = 385
-    ClientWidth = 506
+    ClientWidth = 674
     TabOrder = 1
     object EditorsPnl: TPanel
       Left = 0
       Height = 205
       Top = 25
-      Width = 506
+      Width = 674
       Align = alClient
       BevelOuter = bvNone
       ClientHeight = 205
-      ClientWidth = 506
+      ClientWidth = 674
       FullRepaint = False
       TabOrder = 0
       OnClick = EditorsPnlClick
@@ -293,12 +294,12 @@ object MainForm: TMainForm
         Left = 0
         Height = 29
         Top = 176
-        Width = 506
+        Width = 674
         Align = alBottom
         BevelInner = bvSpace
         BevelOuter = bvLowered
         ClientHeight = 29
-        ClientWidth = 506
+        ClientWidth = 674
         TabOrder = 0
         Visible = False
         object Label2: TLabel
@@ -397,7 +398,7 @@ object MainForm: TMainForm
         Left = 0
         Height = 23
         Top = 0
-        Width = 506
+        Width = 674
         StoreIndex = False
         ShowButtons = False
         ShowBorder = False
@@ -413,7 +414,7 @@ object MainForm: TMainForm
       Left = 0
       Height = 149
       Top = 236
-      Width = 506
+      Width = 674
       Align = alBottom
       Constraints.MinHeight = 60
       Font.Height = -13
@@ -567,7 +568,7 @@ object MainForm: TMainForm
       Left = 0
       Height = 6
       Top = 230
-      Width = 506
+      Width = 674
       ResizeControl = OutputEdit
       Visible = False
     end
@@ -575,13 +576,13 @@ object MainForm: TMainForm
       Left = 0
       Height = 25
       Top = 0
-      Width = 506
+      Width = 674
       Align = alTop
       Alignment = taLeftJustify
       BevelOuter = bvNone
       BorderWidth = 2
       ClientHeight = 25
-      ClientWidth = 506
+      ClientWidth = 674
       PopupMenu = FilePopupMenu
       TabOrder = 2
       Visible = False
@@ -590,7 +591,7 @@ object MainForm: TMainForm
         Height = 21
         Hint = 'File name'
         Top = 2
-        Width = 396
+        Width = 564
         Align = alClient
         Caption = 'File name'
         Layout = tlCenter
@@ -598,7 +599,7 @@ object MainForm: TMainForm
         PopupMenu = FilePopupMenu
       end
       object FileCloseBtn: TSpeedButton
-        Left = 487
+        Left = 655
         Height = 21
         Hint = 'Close file'
         Top = 2
@@ -672,7 +673,7 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object FileModeBtn: TBitBtn
-        Left = 415
+        Left = 583
         Height = 21
         Top = 2
         Width = 72
@@ -689,18 +690,18 @@ object MainForm: TMainForm
     Left = 0
     Height = 21
     Top = 550
-    Width = 713
+    Width = 881
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 21
-    ClientWidth = 713
+    ClientWidth = 881
     TabOrder = 2
     object MessagePnl: TPanel
       Left = 80
       Height = 19
       Hint = 'Message'
       Top = 1
-      Width = 425
+      Width = 593
       Alignment = taLeftJustify
       Anchors = [akLeft, akRight, akBottom]
       BevelOuter = bvLowered
@@ -708,7 +709,7 @@ object MainForm: TMainForm
       TabOrder = 0
     end
     object DebugPnl: TPanel
-      Left = 611
+      Left = 779
       Height = 19
       Hint = 'Debug Session'
       Top = 1
@@ -720,7 +721,7 @@ object MainForm: TMainForm
       TabOrder = 1
     end
     object CursorPnl: TPanel
-      Left = 529
+      Left = 697
       Height = 19
       Hint = 'Caret Position'
       Top = 1
@@ -731,7 +732,7 @@ object MainForm: TMainForm
       TabOrder = 2
     end
     object StatePnl: TPanel
-      Left = 507
+      Left = 675
       Height = 19
       Hint = 'State'
       Top = 1
@@ -757,7 +758,7 @@ object MainForm: TMainForm
     Left = 0
     Height = 127
     Top = 423
-    Width = 713
+    Width = 881
     StoreIndex = False
     ShowButtons = False
     ShowBorder = False
@@ -797,7 +798,7 @@ object MainForm: TMainForm
       Left = 3
       Height = 101
       Top = 23
-      Width = 707
+      Width = 875
       Align = alClient
       Columns = <      
         item
@@ -825,7 +826,7 @@ object MainForm: TMainForm
       Left = 3
       Height = 101
       Top = 23
-      Width = 707
+      Width = 875
       Align = alClient
       Columns = <      
         item
@@ -858,7 +859,7 @@ object MainForm: TMainForm
       Left = 3
       Height = 101
       Top = 23
-      Width = 707
+      Width = 875
       Align = alClient
       Columns = <      
         item
@@ -896,7 +897,7 @@ object MainForm: TMainForm
       Left = 3
       Height = 101
       Top = 23
-      Width = 707
+      Width = 875
       Align = alClient
       Columns = <      
         item
@@ -934,7 +935,7 @@ object MainForm: TMainForm
     Left = 0
     Height = 9
     Top = 414
-    Width = 713
+    Width = 881
     ResizeControl = MessagesTabs
   end
   object FoldersSpl: TntvSplitter
@@ -1197,42 +1198,6 @@ object MainForm: TMainForm
       Visible = False
       object CommitMnu: TMenuItem
         Action = SCMCommitAct
-        Bitmap.Data = {
-          36040000424D3604000000000000360000002800000010000000100000000100
-          2000000000000004000064000000640000000000000000000000FF00FF00FF00
-          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-          FF00C6C6C6FF7B7B7BFFFF00FF00FF00FF004A4A4AFF292929FF181818FFFF00
-          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF006363
-          63FF393939FFDEDEDEFFFF00FF00212121FFCE9C84FFCE9C84FF313131FF4A4A
-          4AFF525252FFDEDEDEFFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF008484
-          84FFCE9C84FFCEAD94FF8C8C8CFF212121FF101010FF313131FF101010FF1818
-          18FF393939FF212121FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-          FF00393939FF181818FF313131FF737373FF5A5A5AFF181818FF181818FF1010
-          10FF101010FF9C9C9CFFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF003131
-          31FF212121FF313131FFCEA58CFFCE9C84FFCE9C84FFCE9C84FFCE9C84FFCE9C
-          84FF212121FFCE9C84FF7B7B7BFFEFEFEFFFFF00FF00FF00FF00181818FFBDBD
-          BDFFFF00FF00CE9C84FFCE9C84FFCE9C84FFCE9C84FFCE9C84FFCE9C84FFCE9C
-          84FF181818FFCE9C84FFCE9C84FF4A4A4AFF6B6B6BFF424242FFFF00FF00FF00
-          FF00FF00FF00FF00FF00CEA58CFFCE9C84FFCE9C84FFCE9C84FFCE9C84FFCE9C
-          84FF393939FFE7E7E7FF292929FFCE9C84FF313131FF525252FFFF00FF00FF00
-          FF00FF00FF00FF00FF00FF00FF00E7CEBDFFCE9C84FFCE9C84FFCE9C84FFE7CE
-          BDFFFF00FF00FF00FF00CECECEFF737373FFFFFFFFFFA5A5A5FFFF00FF00FF00
-          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-          FF00FF00FF00FF00FF00FF00FF007B7B7BFF4A4A4AFFB5B5B5FFFF00FF00FF00
-          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-          FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        }
         OnClick = SCMCommitActExecute
       end
       object CommitFileMnu: TMenuItem
@@ -1368,7 +1333,7 @@ object MainForm: TMainForm
     object PasteAct: TAction
       Category = 'Edit'
       Caption = 'Paste'
-      ImageIndex = 12
+      ImageIndex = 9
       OnExecute = PasteActExecute
       OnUpdate = PasteActUpdate
       ShortCut = 16470
@@ -1376,7 +1341,7 @@ object MainForm: TMainForm
     object CopyAct: TAction
       Category = 'Edit'
       Caption = 'Copy'
-      ImageIndex = 11
+      ImageIndex = 7
       OnExecute = CopyActExecute
       OnUpdate = CopyActUpdate
       ShortCut = 16451
@@ -1411,7 +1376,7 @@ object MainForm: TMainForm
       AutoCheck = True
       Caption = 'Output'
       Checked = True
-      ImageIndex = 17
+      ImageIndex = 15
       OnExecute = OutputActExecute
       ShortCut = 16469
     end
@@ -1424,14 +1389,14 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'Save all'
       Hint = 'Save all changed files'
-      ImageIndex = 3
+      ImageIndex = 5
       OnExecute = SaveAllActExecute
       ShortCut = 24659
     end
     object CutAct: TAction
       Category = 'Edit'
       Caption = 'Cut'
-      ImageIndex = 10
+      ImageIndex = 8
       OnExecute = CutActExecute
       OnUpdate = CutActUpdate
       ShortCut = 16472
@@ -1453,7 +1418,7 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = '&Open'
       Hint = 'Open exist file'
-      ImageIndex = 1
+      ImageIndex = 3
       OnExecute = OpenActExecute
       ShortCut = 16463
     end
@@ -1461,7 +1426,7 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'Save'
       Hint = 'Save current file'
-      ImageIndex = 2
+      ImageIndex = 4
       OnExecute = SaveActExecute
       ShortCut = 16467
     end
@@ -1474,7 +1439,7 @@ object MainForm: TMainForm
     object SettingAct: TAction
       Category = 'View'
       Caption = 'Setting'
-      ImageIndex = 13
+      ImageIndex = 12
       OnExecute = SettingActExecute
     end
     object FoldersAct: TAction
@@ -1482,7 +1447,7 @@ object MainForm: TMainForm
       AutoCheck = True
       Caption = 'Browse'
       Checked = True
-      ImageIndex = 28
+      ImageIndex = 2
       OnExecute = FoldersActExecute
       ShortCut = 16452
     end
@@ -1517,7 +1482,7 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'E&xit'
       Hint = 'Exit|Quits the application'
-      ImageIndex = 32
+      ImageIndex = 28
     end
     object AboutAct: TAction
       Category = 'Help'
@@ -1527,26 +1492,27 @@ object MainForm: TMainForm
     object DBGRunAct: TAction
       Category = 'Debug'
       Caption = 'Run'
-      ImageIndex = 36
+      ImageIndex = 17
       OnExecute = DBGRunActExecute
       ShortCut = 120
     end
     object DBGCompileAct: TAction
       Category = 'Debug'
       Caption = 'Compile'
-      ImageIndex = 42
+      ImageIndex = 16
       OnExecute = DBGCompileActExecute
       ShortCut = 16504
     end
     object FolderOpenAllAct: TAction
       Category = 'Folder'
       Caption = 'Open All'
+      ImageIndex = 2
       OnExecute = FolderOpenAllActExecute
     end
     object FindAct: TAction
       Category = 'Edit'
       Caption = 'Find'
-      ImageIndex = 4
+      ImageIndex = 10
       OnExecute = FindActExecute
       SecondaryShortCuts.Strings = (
         'Ctrl+F'
@@ -1562,12 +1528,13 @@ object MainForm: TMainForm
     object EditorOptionsAct: TAction
       Category = 'Edit'
       Caption = 'Editor Options'
-      ImageIndex = 13
+      ImageIndex = 14
       OnExecute = EditorOptionsActExecute
     end
     object ProjectOptionsAct: TAction
       Category = 'Project'
       Caption = 'Project Options'
+      ImageIndex = 12
       OnExecute = ProjectOptionsActExecute
       ShortCut = 24698
     end
@@ -1580,13 +1547,13 @@ object MainForm: TMainForm
     object OpenProjectAct: TAction
       Category = 'Project'
       Caption = 'Open'
-      ImageIndex = 1
+      ImageIndex = 3
       OnExecute = OpenProjectActExecute
     end
     object SaveProjectAct: TAction
       Category = 'Project'
       Caption = 'Save'
-      ImageIndex = 2
+      ImageIndex = 4
       OnExecute = SaveProjectActExecute
     end
     object SaveAsProjectAct: TAction
@@ -1597,7 +1564,7 @@ object MainForm: TMainForm
     object SelectFileAct: TAction
       Category = 'Project'
       Caption = 'Select File'
-      ImageIndex = 11
+      ImageIndex = 7
       OnExecute = SelectFileActExecute
       ShortCut = 16507
     end
@@ -1622,7 +1589,7 @@ object MainForm: TMainForm
       AutoCheck = True
       Caption = 'Messages'
       Checked = True
-      ImageIndex = 34
+      ImageIndex = 14
       OnExecute = MessagesActExecute
       ShortCut = 16461
     end
@@ -1630,7 +1597,7 @@ object MainForm: TMainForm
       Category = 'Project'
       Caption = 'Manage'
       Hint = 'Open manage projects and recent files dialog'
-      ImageIndex = 16
+      ImageIndex = 13
       OnExecute = ManageActExecute
       ShortCut = 49274
     end
@@ -1674,7 +1641,7 @@ object MainForm: TMainForm
     object SCMCommitAct: TAction
       Category = 'SCM'
       Caption = 'Commit'
-      ImageIndex = 35
+      ImageIndex = 27
       OnExecute = SCMCommitActExecute
     end
     object SCMDiffFileAct: TAction
@@ -1855,7 +1822,7 @@ object MainForm: TMainForm
       Category = 'Debug'
       Caption = 'Step Into'
       Hint = 'Step into'
-      ImageIndex = 39
+      ImageIndex = 21
       OnExecute = DBGStepIntoActExecute
       ShortCut = 118
     end
@@ -1863,7 +1830,7 @@ object MainForm: TMainForm
       Category = 'Debug'
       Caption = 'Step Over'
       Hint = 'Step over'
-      ImageIndex = 37
+      ImageIndex = 23
       OnExecute = DBGStepOverActExecute
       ShortCut = 119
     end
@@ -1871,7 +1838,7 @@ object MainForm: TMainForm
       Category = 'Debug'
       Caption = 'Step Out'
       Hint = 'Step out'
-      ImageIndex = 38
+      ImageIndex = 22
       OnExecute = DBGStepOutActExecute
       ShortCut = 8310
     end
@@ -1884,7 +1851,7 @@ object MainForm: TMainForm
       Category = 'Debug'
       Caption = 'Debug'
       Hint = 'XDebug Server Run'
-      ImageIndex = 33
+      ImageIndex = 20
       OnExecute = DBGActiveServerActExecute
       OnUpdate = DBGActiveServerActUpdate
       ShortCut = 32888
@@ -1893,7 +1860,7 @@ object MainForm: TMainForm
       Category = 'Debug'
       Caption = 'Toggle Breakpoint'
       Hint = 'Toggle point at line and currrent file'
-      ImageIndex = 40
+      ImageIndex = 24
       OnExecute = DBGToggleBreakpointActExecute
       ShortCut = 116
     end
@@ -1907,14 +1874,14 @@ object MainForm: TMainForm
       Category = 'Debug'
       Caption = 'Reset'
       Hint = 'Reset or break executing'
-      ImageIndex = 29
+      ImageIndex = 26
       OnExecute = DBGResetActExecute
       ShortCut = 16497
     end
     object DBGAddWatchAct: TAction
       Category = 'Debug'
       Caption = 'Add Watch'
-      ImageIndex = 41
+      ImageIndex = 25
       OnExecute = DBGAddWatchActExecute
       ShortCut = 16500
     end
