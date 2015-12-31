@@ -25,3 +25,25 @@ MiniEdit is an open source desktop application for edit files like PHP, HTML and
  * FreePascal FPC 2.6.4 or later
  * Lazarus last update from svn repo
  * MiniLib from http://sourceforge.net/projects/minilib
+ * CMDBox http://wiki.freepascal.org/CmdLine
+
+ ###Build
+
+ You need to install all packages that needed for minilib project
+
+CMDBox package
+
+    CMDLine\cmdbox.dpk
+
+minilib pachages
+
+    minilib\lib\MiniCommons.lpk
+    minilib\xml\source\MiniXML.lpk
+    minilib\socket\source\MiniSockets.lpk
+    minilib\connection\source\MiniConnections.lpk
+    minilib\comm\source\MiniComm.lpk
+    minilib\connection\db\MiniDB.lpk
+    minilib\lazarus\lib\MiniLib.lpk
+    minilib\lazarus\components\native\NativeLib.lpk
+
+Build minilib project

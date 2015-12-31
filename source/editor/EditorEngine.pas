@@ -2017,7 +2017,7 @@ begin
       p.MainFile := Engine.Files.Current.Name;
 
     if p.OutputFile = '' then
-      p.OutputFile := p.MainFile;
+      p.OutputFile := ExtractFileNameOnly(p.MainFile);
 
     if (p.MainFile <> '') then
     begin

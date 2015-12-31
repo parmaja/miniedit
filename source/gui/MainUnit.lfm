@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 123
+  Left = 352
   Height = 591
-  Top = 108
+  Top = 165
   Width = 881
   AllowDropFiles = True
   Caption = 'Mini Edit'
@@ -22,7 +22,7 @@ object MainForm: TMainForm
   OnWindowStateChange = FormWindowStateChange
   Position = poDefaultPosOnly
   ShowHint = True
-  LCLVersion = '1.5'
+  LCLVersion = '1.7'
   object TopCoolBar: TToolBar
     Left = 0
     Height = 29
