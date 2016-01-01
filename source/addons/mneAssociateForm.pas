@@ -153,6 +153,10 @@ begin
     aReg.Free;
   end;
 end;
+{$else}
+begin
+end;
+{$endif}
 
 procedure TAssociateForm.AddEdit;
 {$ifdef Windows}
@@ -177,11 +181,6 @@ begin
     aReg.Free;
   end;
 end;
-{$else}
-begin
-end;
-{$endif}
-
 {$else}
 begin
 end;
