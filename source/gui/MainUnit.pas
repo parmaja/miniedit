@@ -1926,7 +1926,7 @@ begin
     eaClearOutput :
     begin
       FOutputBuffer := '';
-      OutputEdit.Clear;
+      OutputEdit.Lines.Clear;
     end;
   end;
 end;
