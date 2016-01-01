@@ -122,48 +122,45 @@
         <Display Value=":1"/>
       </local>
     </RunParams>
-    <RequiredPackages Count="12">
+    <RequiredPackages Count="11">
       <Item1>
         <PackageName Value="cmdbox"/>
       </Item1>
       <Item2>
-        <PackageName Value="MiniDB"/>
+        <PackageName Value="MiniConnections"/>
       </Item2>
       <Item3>
-        <PackageName Value="MiniConnections"/>
+        <PackageName Value="MiniCommons"/>
       </Item3>
       <Item4>
-        <PackageName Value="MiniCommons"/>
+        <PackageName Value="MiniLib"/>
       </Item4>
       <Item5>
-        <PackageName Value="MiniLib"/>
+        <PackageName Value="MiniSockets"/>
       </Item5>
       <Item6>
-        <PackageName Value="MiniSockets"/>
+        <PackageName Value="MiniXML"/>
+        <MinVersion Valid="True"/>
       </Item6>
       <Item7>
-        <PackageName Value="MiniXML"/>
+        <PackageName Value="NativeLib"/>
         <MinVersion Valid="True"/>
       </Item7>
       <Item8>
-        <PackageName Value="NativeLib"/>
-        <MinVersion Valid="True"/>
-      </Item8>
-      <Item9>
         <PackageName Value="SynEdit"/>
         <MinVersion Major="1" Valid="True"/>
+      </Item8>
+      <Item9>
+        <PackageName Value="LCL"/>
       </Item9>
       <Item10>
-        <PackageName Value="LCL"/>
-      </Item10>
-      <Item11>
         <PackageName Value="LCLBase"/>
         <MinVersion Major="1" Release="1" Valid="True"/>
-      </Item11>
-      <Item12>
+      </Item10>
+      <Item11>
         <PackageName Value="FCL"/>
         <MinVersion Major="1" Release="1" Valid="True"/>
-      </Item12>
+      </Item11>
     </RequiredPackages>
     <Units Count="48">
       <Unit0>

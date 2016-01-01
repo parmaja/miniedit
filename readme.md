@@ -41,8 +41,7 @@ minilib packages
     minilib\xml\source\MiniXML.lpk
     minilib\socket\source\MiniSockets.lpk
     minilib\connection\source\MiniConnections.lpk
-    minilib\comm\source\MiniComm.lpk
-    minilib\connection\db\MiniDB.lpk
+    minilib\comm\source\MiniComm.lpk    
     minilib\lazarus\lib\MiniLib.lpk
     minilib\lazarus\components\native\NativeLib.lpk
 

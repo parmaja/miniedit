@@ -11,6 +11,8 @@ program mne;
  *}
 
 {
+  rev: 50962
+
   good fonts
   http://www.lowing.org/fonts/
 }
