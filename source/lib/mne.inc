@@ -1,2 +1,2 @@
-{$define OLD_PHP4DELPHI}
+{.$define trunk} //To compile the project with lazarus trunk
 

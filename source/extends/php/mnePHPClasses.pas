@@ -9,6 +9,8 @@ unit mnePHPClasses;
  *
  *}
 
+{$i '..\lib\mne.inc'}
+
 interface
 
 uses
@@ -346,11 +348,13 @@ begin
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(IdentifierAttri, attIdentifier);
-    Mapper.Add(SelectorAttri, attName);
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(StringAttri, attString);
     Mapper.Add(SymbolAttri, attSymbol);
+    {$ifdef trunk}
+    Mapper.Add(SelectorAttri, attName);
     Mapper.Add(MeasurementUnitAttri, attVariable);
+    {$endif trunk}
   end;
 end;
 
