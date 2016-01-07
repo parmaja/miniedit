@@ -32,22 +32,15 @@ type
   { TEditorOptionsForm }
 
   TEditorOptionsForm = class(TForm)
-    AltSetsColumnModeChk: TCheckBox;
     AutoIndentChk: TCheckBox;
-    AutoSizeMaxWidthChk: TCheckBox;
     BracketHighlightChk: TCheckBox;
     CodeFoldingChk: TCheckBox;
-    DisableScrollArrowsChk: TCheckBox;
-    DragAndDropEditingChk: TCheckBox;
-    EnhanceEndKeyChk: TCheckBox;
     EnhanceHomeKeyChk: TCheckBox;
     GroupUndoChk: TCheckBox;
     GutterAutosizeChk: TCheckBox;
     GutterGrp: TGroupBox;
     GutterShowLeaderZerosChk: TCheckBox;
     HalfPageScrollChk: TCheckBox;
-    HideShowScrollbarsChk: TCheckBox;
-    KeepCaretXChk: TCheckBox;
     Label8: TLabel;
     Label9: TLabel;
     LineSpacingEdit: TEdit;
@@ -65,8 +58,6 @@ type
     SaveDialog: TSaveDialog;
     ScrollByOneLessChk: TCheckBox;
     ScrollHintFollowsChk: TCheckBox;
-    ScrollPastEOFChk: TCheckBox;
-    ScrollPastEOLChk: TCheckBox;
     ShowModifiedLinesChk: TCheckBox;
     ShowScrollHintChk: TCheckBox;
     ShowSeparatorChk: TCheckBox;
@@ -234,24 +225,15 @@ begin
   //Options
   AutoIndentChk.Checked := eoAutoIndent in FProfile.Options;
   TabIndentChk.Checked := eoTabIndent in FProfile.Options;
-  AutoSizeMaxWidthChk.Checked := eoAutoSizeMaxScrollWidth in FProfile.Options;
-  DragAndDropEditingChk.Checked := eoDragDropEditing in FProfile.Options;
   SmartTabsChk.Checked := eoSmartTabs in FProfile.Options;
-  AltSetsColumnModeChk.Checked := eoAltSetsColumnMode in FProfile.Options;
   HalfPageScrollChk.Checked := eoHalfPageScroll in FProfile.Options;
   ScrollByOneLessChk.Checked := eoScrollByOneLess in FProfile.Options;
-  ScrollPastEOFChk.Checked := eoScrollPastEof in FProfile.Options;
-  ScrollPastEOLChk.Checked := eoScrollPastEol in FProfile.Options;
   ShowScrollHintChk.Checked := eoShowScrollHint in FProfile.Options;
   TabsToSpacesChk.Checked := eoTabsToSpaces in FProfile.Options;
   TrimTrailingSpacesChk.Checked := eoTrimTrailingSpaces in FProfile.Options;
-  KeepCaretXChk.Checked := eoKeepCaretX in FProfile.Options;
   SmartTabDeleteChk.Checked := eoSmartTabDelete in FProfile.Options;
   EnhanceHomeKeyChk.Checked := eoEnhanceHomeKey in FProfile.Options;
-  EnhanceEndKeyChk.Checked := eoEnhanceEndKey in FProfile.ExtOptions;
   GroupUndoChk.Checked := eoGroupUndo in FProfile.Options;
-  DisableScrollArrowsChk.Checked := eoDisableScrollArrows in FProfile.Options;
-  HideShowScrollbarsChk.Checked := eoHideShowScrollbars in FProfile.Options;
   ShowSpecialCharsChk.Checked := eoShowSpecialChars in FProfile.Options;
   BracketHighlightChk.Checked := eoBracketHighlight in FProfile.Options;
   CodeFoldingChk.Checked := FProfile.CodeFolding;
@@ -299,24 +281,15 @@ begin
   vExtOptions := FProfile.ExtOptions;
   SetFlag(eoAutoIndent, AutoIndentChk.Checked);
   SetFlag(eoTabIndent, TabIndentChk.Checked);
-  SetFlag(eoAutoSizeMaxScrollWidth, AutoSizeMaxWidthChk.Checked);
-  SetFlag(eoDragDropEditing, DragAndDropEditingChk.Checked);
   SetFlag(eoSmartTabs, SmartTabsChk.Checked);
-  SetFlag(eoAltSetsColumnMode, AltSetsColumnModeChk.Checked);
   SetFlag(eoHalfPageScroll, HalfPageScrollChk.Checked);
   SetFlag(eoScrollByOneLess, ScrollByOneLessChk.Checked);
-  SetFlag(eoScrollPastEof, ScrollPastEOFChk.Checked);
-  SetFlag(eoScrollPastEol, ScrollPastEOLChk.Checked);
   SetFlag(eoShowScrollHint, ShowScrollHintChk.Checked);
   SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
   SetFlag(eoTrimTrailingSpaces, TrimTrailingSpacesChk.Checked);
-  SetFlag(eoKeepCaretX, KeepCaretXChk.Checked);
   SetFlag(eoSmartTabDelete, SmartTabDeleteChk.Checked);
   SetFlag(eoEnhanceHomeKey, EnhanceHomeKeyChk.Checked);
-  SetExtFlag(eoEnhanceEndKey, EnhanceEndKeyChk.Checked);
   SetFlag(eoGroupUndo, GroupUndoChk.Checked);
-  SetFlag(eoDisableScrollArrows, DisableScrollArrowsChk.Checked);
-  SetFlag(eoHideShowScrollbars, HideShowScrollbarsChk.Checked);
   SetFlag(eoShowSpecialChars, ShowSpecialCharsChk.Checked);
   SetFlag(eoBracketHighlight, BracketHighlightChk.Checked);
 

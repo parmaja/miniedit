@@ -1438,9 +1438,7 @@ begin
       Stream.Read(Pointer(Contents)^, Size);
       Mode := DetectFileMode(Contents);
       if eoTabsToSpaces in SynEdit.Options then
-      begin
         Contents := ChangeTabsToSpace(Contents, SynEdit.TabWidth);
-      end;
       SynEdit.Lines.Text := Contents;
     finally
       SynEdit.EndUpdate;
@@ -1589,7 +1587,6 @@ begin
     SynEdit.BracketMatchColor.Foreground := aProfile.Attributes.Selected.Foreground;
     SynEdit.BracketMatchColor.Background := aProfile.Attributes.Selected.Background;
 
-    SynEdit.Options := SynEdit.Options - [eoDropFiles]; //make main window accept the files
     SynEdit.Gutter.Assign(aProfile.Gutter);
 
     cf := SynEdit.Gutter.Parts.ByClass[TSynGutterCodeFolding, 0] as TSynGutterCodeFolding;
@@ -1601,7 +1598,7 @@ begin
         SynEdit.UnfoldAll;
     end;
 
-    SynEdit.Options := aProfile.Options;
+    SynEdit.Options := aProfile.Options + cSynRequiredOptions - cSynRemoveOptions;
     SynEdit.ExtraLineSpacing := aProfile.ExtraLineSpacing;
     SynEdit.InsertCaret := ctVerticalLine;
     SynEdit.OverwriteCaret := ctBlock;

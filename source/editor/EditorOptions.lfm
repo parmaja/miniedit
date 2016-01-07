@@ -36,181 +36,99 @@ object EditorOptionsForm: TEditorOptionsForm
         Caption = 'Auto indent'
         TabOrder = 0
       end
-      object DragAndDropEditingChk: TCheckBox
-        Left = 21
-        Height = 19
-        Hint = 'Allows you to select a block of text and drag it within the document to another location'
-        Top = 35
-        Width = 122
-        Caption = 'Drag and drop editing'
-        TabOrder = 1
-      end
-      object AutoSizeMaxWidthChk: TCheckBox
-        Left = 225
-        Height = 19
-        Hint = 'Allows the editor accept OLE file drops'
-        Top = 35
-        Width = 118
-        Caption = 'Auto size scroll width'
-        TabOrder = 2
-      end
       object HalfPageScrollChk: TCheckBox
         Left = 225
         Height = 19
         Hint = 'When scrolling with page-up and page-down commands, only scroll a half page at a time'
-        Top = 72
+        Top = 34
         Width = 93
         Caption = 'Half page scroll'
-        TabOrder = 3
-      end
-      object EnhanceEndKeyChk: TCheckBox
-        Left = 21
-        Height = 19
-        Hint = 'Makes it so the caret is never visible'
-        Top = 131
-        Width = 106
-        Caption = 'Enhance End Key'
-        TabOrder = 4
+        TabOrder = 1
       end
       object ScrollByOneLessChk: TCheckBox
         Left = 225
         Height = 19
         Hint = 'Forces scrolling to be one less'
-        Top = 91
+        Top = 53
         Width = 102
         Caption = 'Scroll by one less'
-        TabOrder = 5
-      end
-      object ScrollPastEOFChk: TCheckBox
-        Left = 225
-        Height = 19
-        Hint = 'Allows the cursor to go past the end of file marker'
-        Top = 110
-        Width = 118
-        Caption = 'Scroll past end of file'
-        TabOrder = 6
-      end
-      object ScrollPastEOLChk: TCheckBox
-        Left = 225
-        Height = 19
-        Hint = 'Allows the cursor to go past the last character into the white space at the end of a line'
-        Top = 129
-        Width = 121
-        Caption = 'Scroll past end of line'
-        TabOrder = 7
+        TabOrder = 2
       end
       object ShowScrollHintChk: TCheckBox
         Left = 225
         Height = 19
         Hint = 'Shows a hint of the visible line numbers when scrolling vertically'
-        Top = 148
+        Top = 16
         Width = 94
         Caption = 'Show scroll hint'
-        TabOrder = 8
-      end
-      object AltSetsColumnModeChk: TCheckBox
-        Left = 21
-        Height = 19
-        Hint = 'Holding down the Alt Key will put the selection mode into columnar format'
-        Top = 54
-        Width = 120
-        Caption = 'Alt sets column mode'
-        TabOrder = 9
-      end
-      object KeepCaretXChk: TCheckBox
-        Left = 21
-        Height = 19
-        Hint = 'When moving through lines the X position will always stay the same'
-        Top = 73
-        Width = 124
-        Caption = 'Maintain caret column'
-        TabOrder = 10
+        TabOrder = 3
       end
       object ScrollHintFollowsChk: TCheckBox
         Left = 225
         Height = 19
         Hint = 'The scroll hint follows the mouse when scrolling vertically'
-        Top = 167
+        Top = 73
         Width = 135
         Caption = 'Scroll hint follows mouse'
-        TabOrder = 11
+        TabOrder = 4
       end
       object GroupUndoChk: TCheckBox
         Left = 21
         Height = 19
         Hint = 'When undoing/redoing actions, handle all continous changes of the same kind in one call instead undoing/redoing each command separately'
-        Top = 92
+        Top = 35
         Width = 76
         Caption = 'Group undo'
-        TabOrder = 12
+        TabOrder = 5
       end
       object EnhanceHomeKeyChk: TCheckBox
         Left = 21
         Height = 19
         Hint = 'enhances home key positioning, similar to visual studio'
-        Top = 112
-        Width = 115
-        Caption = 'Enhance Home Key'
-        TabOrder = 13
-      end
-      object HideShowScrollbarsChk: TCheckBox
-        Left = 225
-        Height = 19
-        Hint = 'if enabled, then the scrollbars will only show when necessary.  If you have ScrollPastEOL, then it the horizontal bar will always be there (it uses MaxLength instead)'
-        Top = 16
-        Width = 154
-        Caption = 'Hide scrollbars as necessary'
-        OnChange = HideShowScrollbarsChkChange
-        TabOrder = 14
-      end
-      object DisableScrollArrowsChk: TCheckBox
-        Left = 225
-        Height = 19
-        Hint = 'Disables the scroll bar arrow buttons when you can''t scroll in that direction any more'
-        Top = 53
-        Width = 116
-        Caption = 'Disable scroll arrows'
-        TabOrder = 15
+        Top = 55
+        Width = 153
+        Caption = 'Home key jumps to first char'
+        TabOrder = 6
       end
       object ShowSpecialCharsChk: TCheckBox
         Left = 21
         Height = 19
         Hint = 'Shows linebreaks, spaces and tabs using special symbols'
-        Top = 167
+        Top = 110
         Width = 112
         Caption = 'Show special chars'
-        TabOrder = 16
+        TabOrder = 7
       end
       object WordWrapChk: TCheckBox
         Left = 21
         Height = 19
         Hint = 'if enabled, then the scrollbars will only show when necessary.  If you have ScrollPastEOL, then it the horizontal bar will always be there (it uses MaxLength instead)'
-        Top = 149
+        Top = 92
         Width = 75
         Caption = 'Word Wrap'
-        TabOrder = 17
+        TabOrder = 8
       end
       object BracketHighlightChk: TCheckBox
         Left = 21
         Height = 19
         Hint = 'Shows linebreaks, spaces and tabs using special symbols'
-        Top = 186
+        Top = 129
         Width = 99
         Caption = 'Bracket highlight'
-        TabOrder = 18
+        TabOrder = 9
       end
       object LineSpacingEdit: TEdit
-        Left = 92
+        Left = 296
         Height = 21
-        Top = 302
+        Top = 233
         Width = 52
-        TabOrder = 19
+        TabOrder = 10
         Text = '0'
       end
       object Label8: TLabel
-        Left = 21
+        Left = 225
         Height = 13
-        Top = 304
+        Top = 235
         Width = 55
         Caption = 'Extra Lines:'
         ParentColor = False
@@ -218,7 +136,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object Label9: TLabel
         Left = 21
         Height = 13
-        Top = 328
+        Top = 257
         Width = 53
         Caption = 'Tab Width:'
         ParentColor = False
@@ -226,21 +144,21 @@ object EditorOptionsForm: TEditorOptionsForm
       object TabWidthEdit: TEdit
         Left = 92
         Height = 21
-        Top = 325
+        Top = 254
         Width = 52
-        TabOrder = 20
+        TabOrder = 11
         Text = '8'
       end
       object GutterGrp: TGroupBox
-        Left = 218
+        Left = 214
         Height = 124
-        Top = 212
+        Top = 102
         Width = 208
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Gutter'
         ClientHeight = 106
         ClientWidth = 204
-        TabOrder = 21
+        TabOrder = 12
         object GutterAutosizeChk: TCheckBox
           Left = 9
           Height = 19
@@ -286,46 +204,46 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 21
         Height = 19
         Hint = 'When tabbing, the cursor will go to the next non-white space character of the previous line'
-        Top = 206
+        Top = 159
         Width = 70
         Caption = 'Smart tabs'
-        TabOrder = 22
+        TabOrder = 13
       end
       object SmartTabDeleteChk: TCheckBox
         Left = 21
         Height = 19
         Hint = 'similar to Smart Tabs, but when you delete characters'
-        Top = 225
+        Top = 178
         Width = 97
         Caption = 'Smart tab delete'
-        TabOrder = 23
+        TabOrder = 14
       end
       object TabIndentChk: TCheckBox
         Left = 21
         Height = 19
         Hint = 'When active <Tab> and <Shift><Tab> act as block indent, unindent when text is selected'
-        Top = 243
+        Top = 196
         Width = 72
         Caption = 'Tab Indent'
-        TabOrder = 24
+        TabOrder = 15
       end
       object TabsToSpacesChk: TCheckBox
         Left = 21
         Height = 19
         Hint = 'Converts a tab character to the number of spaces in Tab Width'
-        Top = 260
+        Top = 213
         Width = 93
         Caption = 'Tabs to spaces'
-        TabOrder = 25
+        TabOrder = 16
       end
       object TrimTrailingSpacesChk: TCheckBox
         Left = 21
         Height = 19
         Hint = 'Spaces at the end of lines will be trimmed and not saved'
-        Top = 278
+        Top = 231
         Width = 110
         Caption = 'Trim trailing spaces'
-        TabOrder = 26
+        TabOrder = 17
       end
     end
     object ColorTab: TTabSheet
@@ -1146,7 +1064,7 @@ object EditorOptionsForm: TEditorOptionsForm
     end
   end
   object OkBtn: TButton
-    Left = 367
+    Left = 363
     Height = 26
     Top = 383
     Width = 75
@@ -1158,7 +1076,7 @@ object EditorOptionsForm: TEditorOptionsForm
     TabOrder = 1
   end
   object CancelBtn: TButton
-    Left = 292
+    Left = 287
     Height = 26
     Top = 383
     Width = 75
@@ -1187,8 +1105,8 @@ object EditorOptionsForm: TEditorOptionsForm
     MaxFontSize = 0
     Options = [fdEffects, fdFixedPitchOnly, fdNoStyleSel]
     PreviewText = 'Hello World'
-    left = 187
-    top = 357
+    left = 213
+    top = 310
   end
   object OpenDialog: TOpenDialog
     Width = 28
@@ -1197,15 +1115,15 @@ object EditorOptionsForm: TEditorOptionsForm
     FileName = '*.mne-theme'
     Filter = 'theme|*.mne-theme'
     Options = [ofFileMustExist, ofEnableSizing, ofViewDetail]
-    left = 108
-    top = 378
+    left = 159
+    top = 330
   end
   object SaveDialog: TSaveDialog
     DefaultExt = '.mne-theme'
     FileName = '*.mne-theme'
     Filter = 'theme|*.mne-theme'
     Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
-    left = 170
-    top = 361
+    left = 316
+    top = 324
   end
 end

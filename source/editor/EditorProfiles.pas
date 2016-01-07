@@ -45,10 +45,12 @@ type
    );
 
 const
-  cDefaultOptions = [eoAltSetsColumnMode, eoAutoIndent, eoDragDropEditing, eoDropFiles, eoScrollPastEol, eoBracketHighlight,
-    eoShowScrollHint, eoHideRightMargin, eoRightMouseMovesCursor, eoTabsToSpaces, eoTabIndent, eoTrimTrailingSpaces, eoKeepCaretX];
+  cSynRequiredOptions = [eoDragDropEditing, eoDropFiles, eoShowCtrlMouseLinks, eoAltSetsColumnMode, eoScrollPastEol, eoRightMouseMovesCursor, eoHideRightMargin];
 
-  //no: eoRightMouseMovesCursor
+  cSynRemoveOptions = [eoRightMouseMovesCursor, eoScrollPastEof];
+
+  cSynDefaultOptions = cSynRequiredOptions + cSynRemoveOptions + [eoAutoIndent, eoBracketHighlight,
+    eoShowScrollHint, eoTabsToSpaces, eoTabIndent, eoTrimTrailingSpaces, eoKeepCaretX];
 
 type
   TGlobalAttributes = class;
@@ -204,7 +206,7 @@ type
     procedure Reset;
   published
     property Attributes: TGlobalAttributes read FAttributes;
-    property Options: TSynEditorOptions read FOptions write SetOptions default cDefaultOptions;
+    property Options: TSynEditorOptions read FOptions write SetOptions default cSynDefaultOptions;
     property ExtOptions: TSynEditorOptions2 read FExtOptions write SetExtOptions default [];
     property FontName: String read FFontName write FFontName;
     property FontSize: Integer read FFontSize write FFontSize;
@@ -250,7 +252,7 @@ begin
   FFontName := 'Courier New';
   FFontSize := 10;
   FFontNoAntialiasing := False;
-  Options := cDefaultOptions;
+  Options := cSynDefaultOptions;
   //ExtOptions :=
   ExtraLineSpacing := 0;
   MaxUndo := 1024;
