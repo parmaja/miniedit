@@ -32,93 +32,66 @@ type
   { TEditorOptionsForm }
 
   TEditorOptionsForm = class(TForm)
-    EdgeVisibleChk: TCheckBox;
+    AltSetsColumnModeChk: TCheckBox;
+    AutoIndentChk: TCheckBox;
+    AutoSizeMaxWidthChk: TCheckBox;
+    BracketHighlightChk: TCheckBox;
+    CodeFoldingChk: TCheckBox;
+    DisableScrollArrowsChk: TCheckBox;
+    DragAndDropEditingChk: TCheckBox;
+    EnhanceEndKeyChk: TCheckBox;
+    EnhanceHomeKeyChk: TCheckBox;
+    GroupUndoChk: TCheckBox;
+    GutterAutosizeChk: TCheckBox;
+    GutterGrp: TGroupBox;
+    GutterShowLeaderZerosChk: TCheckBox;
+    HalfPageScrollChk: TCheckBox;
+    HideShowScrollbarsChk: TCheckBox;
+    KeepCaretXChk: TCheckBox;
+    Label8: TLabel;
+    Label9: TLabel;
+    LineSpacingEdit: TEdit;
     NoAntialiasingChk: TCheckBox;
     Bevel1: TBevel;
-    BracketHighlightChk: TCheckBox;
     BoldChk: TCheckBox;
     FontBtn: TButton;
     FontLbl: TLabel;
-    CodeFoldingChk: TCheckBox;
-    Label15: TLabel;
-    Label7: TLabel;
     OpenDialog: TOpenDialog;
     ResetBtn: TButton;
     RevertBtn: TButton;
     SampleEdit: TSynEdit;
     SaveBtn: TButton;
     LoadBtn: TButton;
-    SavedColorCbo: TColorBox;
     SaveDialog: TSaveDialog;
-    UnsavedColorCbo: TColorBox;
+    ScrollByOneLessChk: TCheckBox;
+    ScrollHintFollowsChk: TCheckBox;
+    ScrollPastEOFChk: TCheckBox;
+    ScrollPastEOLChk: TCheckBox;
+    ShowModifiedLinesChk: TCheckBox;
+    ShowScrollHintChk: TCheckBox;
     ShowSeparatorChk: TCheckBox;
-    GutterForecolorCbo: TColorBox;
+    ShowSpecialCharsChk: TCheckBox;
+    SmartTabDeleteChk: TCheckBox;
+    SmartTabsChk: TCheckBox;
+    TabIndentChk: TCheckBox;
+    TabsToSpacesChk: TCheckBox;
+    TabWidthEdit: TEdit;
     ItalicChk: TCheckBox;
-    Label5: TLabel;
     PageControl: TPageControl;
     OkBtn: TButton;
     CancelBtn: TButton;
-    GutterTab: TTabSheet;
     OptionsTab: TTabSheet;
-    LineSpacingGrp: TGroupBox;
-    LineSpacingEdit: TEdit;
-    GutterGrp: TGroupBox;
-    Label1: TLabel;
-    GutterAutosizeChk: TCheckBox;
-    GutterShowLineNumbersChk: TCheckBox;
-    GutterShowLeaderZerosChk: TCheckBox;
-    GutterStartAtZeroChk: TCheckBox;
-    GutterVisibleChk: TCheckBox;
-    RightEdgeGrp: TGroupBox;
-    Label3: TLabel;
-    RightEdgeEdit: TEdit;
-    OptionsGrp: TGroupBox;
-    AutoIndentChk: TCheckBox;
-    DragAndDropEditingChk: TCheckBox;
-    AutoSizeMaxWidthChk: TCheckBox;
-    HalfPageScrollChk: TCheckBox;
-    EnhanceEndKeyChk: TCheckBox;
-    ScrollByOneLessChk: TCheckBox;
-    ScrollPastEOFChk: TCheckBox;
-    ScrollPastEOLChk: TCheckBox;
-    ShowScrollHintChk: TCheckBox;
-    ShowModifiedLinesChk: TCheckBox;
-    SmartTabsChk: TCheckBox;
-    TabsToSpacesChk: TCheckBox;
-    TrimTrailingSpacesChk: TCheckBox;
-    CaretGrp: TGroupBox;
-    InsertCaretCbo: TComboBox;
-    Label2: TLabel;
-    Label4: TLabel;
-    OverwriteCaretCbo: TComboBox;
     FontDialog: TFontDialog;
-    AltSetsColumnModeChk: TCheckBox;
-    KeepCaretXChk: TCheckBox;
-    TabWidthEdit: TEdit;
-    Label8: TLabel;
-    Label9: TLabel;
-    Label10: TLabel;
-    ScrollHintFollowsChk: TCheckBox;
-    GroupUndoChk: TCheckBox;
-    SmartTabDeleteChk: TCheckBox;
-    EnhanceHomeKeyChk: TCheckBox;
-    HideShowScrollbarsChk: TCheckBox;
-    DisableScrollArrowsChk: TCheckBox;
-    ShowSpecialCharsChk: TCheckBox;
     ColorTab: TTabSheet;
     Label11: TLabel;
     BackgroundCbo: TColorBox;
     ForegroundCbo: TColorBox;
     AttributeCbo: TComboBox;
-    GutterBackcolorCbo: TColorBox;
-    RightEdgeColorCbo: TColorBox;
     BackgroundChk: TCheckBox;
     ForegroundChk: TCheckBox;
-    RightMouseMovesChk: TCheckBox;
-    InsertModeChk: TCheckBox;
-    TabIndentChk: TCheckBox;
     Label12: TLabel;
     CategoryCbo: TComboBox;
+    TrimTrailingSpacesChk: TCheckBox;
     UnderlineChk: TCheckBox;
     WordWrapChk: TCheckBox;
     procedure BackgroundCboChange(Sender: TObject);
@@ -126,6 +99,7 @@ type
     procedure ForegroundCboChange(Sender: TObject);
     procedure ForegroundCboCloseUp(Sender: TObject);
     procedure ForegroundCboEditingDone(Sender: TObject);
+    procedure HideShowScrollbarsChkChange(Sender: TObject);
     procedure LoadBtnClick(Sender: TObject);
     procedure NoAntialiasingChkChange(Sender: TObject);
     procedure BackgroundCboSelect(Sender: TObject);
@@ -236,23 +210,13 @@ begin
   FAttributes.Assign(FProfile.Attributes);
 
   //Gutter
-  GutterVisibleChk.Checked := FProfile.Gutter.Visible;
   GutterAutosizeChk.Checked := FProfile.Gutter.AutoSize;
-  GutterForecolorCbo.Selected := FProfile.Gutter.Forecolor;
-  GutterBackcolorCbo.Selected := FProfile.Gutter.Backcolor;
   ShowSeparatorChk.Checked := FProfile.Gutter.ShowSeparator;
 
-  SavedColorCbo.Selected := FProfile.Gutter.Savedcolor;
-  UnsavedColorCbo.Selected := FProfile.Gutter.Unsavedcolor;
   ShowModifiedLinesChk.Checked := FProfile.Gutter.ShowModifiedLines;
 
-  GutterShowLineNumbersChk.Checked := FProfile.Gutter.ShowLineNumbers;
   GutterShowLeaderZerosChk.Checked := FProfile.Gutter.LeadingZeros;
-  GutterStartAtZeroChk.Checked := FProfile.Gutter.ZeroStart;
 
-  //Right Edge
-  RightEdgeEdit.Text := IntToStr(FProfile.RightEdge);
-  RightEdgeColorCbo.Selected := FProfile.RightEdgeColor;
   //Line Spacing
   LineSpacingEdit.Text := IntToStr(FProfile.ExtraLineSpacing);
   TabWidthEdit.Text := IntToStr(FProfile.TabWidth);
@@ -283,7 +247,6 @@ begin
   TrimTrailingSpacesChk.Checked := eoTrimTrailingSpaces in FProfile.Options;
   KeepCaretXChk.Checked := eoKeepCaretX in FProfile.Options;
   SmartTabDeleteChk.Checked := eoSmartTabDelete in FProfile.Options;
-  RightMouseMovesChk.Checked := eoRightMouseMovesCursor in FProfile.Options;
   EnhanceHomeKeyChk.Checked := eoEnhanceHomeKey in FProfile.Options;
   EnhanceEndKeyChk.Checked := eoEnhanceEndKey in FProfile.ExtOptions;
   GroupUndoChk.Checked := eoGroupUndo in FProfile.Options;
@@ -291,13 +254,7 @@ begin
   HideShowScrollbarsChk.Checked := eoHideShowScrollbars in FProfile.Options;
   ShowSpecialCharsChk.Checked := eoShowSpecialChars in FProfile.Options;
   BracketHighlightChk.Checked := eoBracketHighlight in FProfile.Options;
-  EdgeVisibleChk.Checked := not (eoHideRightMargin in FProfile.Options);
-  //Caret
-  InsertModeChk.Checked := FProfile.InsertMode;
   CodeFoldingChk.Checked := FProfile.CodeFolding;
-  InsertCaretCbo.ItemIndex := Ord(FProfile.InsertCaret);
-  OverwriteCaretCbo.ItemIndex := Ord(FProfile.OverwriteCaret);
-
   ApplyCategory;
 end;
 
@@ -324,22 +281,12 @@ var
 
 begin
   //Gutter
-  FProfile.Gutter.Visible := GutterVisibleChk.Checked;
   FProfile.Gutter.AutoSize := GutterAutosizeChk.Checked;
-  FProfile.Gutter.Forecolor := GutterForecolorCbo.Selected;
-  FProfile.Gutter.Backcolor := GutterBackcolorCbo.Selected;
   FProfile.Gutter.ShowSeparator := ShowSeparatorChk.Checked;
-  FProfile.Gutter.ShowLineNumbers := GutterShowLineNumbersChk.Checked;
 
-  FProfile.Gutter.Savedcolor := SavedColorCbo.Selected;
-  FProfile.Gutter.Unsavedcolor := UnsavedColorCbo.Selected;
   FProfile.Gutter.ShowModifiedLines := ShowModifiedLinesChk.Checked;
-
   FProfile.Gutter.LeadingZeros := GutterShowLeaderZerosChk.Checked;
-  FProfile.Gutter.ZeroStart := GutterStartAtZeroChk.Checked;
-  //Right Edge
-  FProfile.RightEdge := StrToIntDef(RightEdgeEdit.Text, 80);
-  FProfile.RightEdgeColor := RightEdgeColorCbo.Selected;
+
   //Line Spacing
   FProfile.ExtraLineSpacing := StrToIntDef(LineSpacingEdit.Text, 0);
   FProfile.TabWidth := StrToIntDef(TabWidthEdit.Text, 8);
@@ -365,7 +312,6 @@ begin
   SetFlag(eoTrimTrailingSpaces, TrimTrailingSpacesChk.Checked);
   SetFlag(eoKeepCaretX, KeepCaretXChk.Checked);
   SetFlag(eoSmartTabDelete, SmartTabDeleteChk.Checked);
-  SetFlag(eoRightMouseMovesCursor, RightMouseMovesChk.Checked);
   SetFlag(eoEnhanceHomeKey, EnhanceHomeKeyChk.Checked);
   SetExtFlag(eoEnhanceEndKey, EnhanceEndKeyChk.Checked);
   SetFlag(eoGroupUndo, GroupUndoChk.Checked);
@@ -373,15 +319,11 @@ begin
   SetFlag(eoHideShowScrollbars, HideShowScrollbarsChk.Checked);
   SetFlag(eoShowSpecialChars, ShowSpecialCharsChk.Checked);
   SetFlag(eoBracketHighlight, BracketHighlightChk.Checked);
-  SetFlag(eoHideRightMargin, not EdgeVisibleChk.Checked);
+
   FProfile.Options := vOptions;
   FProfile.ExtOptions := vExtOptions;
   //Caret
-  FProfile.InsertMode := InsertModeChk.Checked;
   FProfile.CodeFolding := CodeFoldingChk.Checked;
-  FProfile.InsertCaret := TSynEditCaretType(InsertCaretCbo.ItemIndex);
-  FProfile.OverwriteCaret := TSynEditCaretType(OverwriteCaretCbo.ItemIndex);
-
   FProfile.Attributes.Assign(FAttributes);
 end;
 
@@ -409,6 +351,11 @@ end;
 
 procedure TEditorOptionsForm.ForegroundCboEditingDone(Sender: TObject);
 begin
+end;
+
+procedure TEditorOptionsForm.HideShowScrollbarsChkChange(Sender: TObject);
+begin
+
 end;
 
 procedure TEditorOptionsForm.LoadBtnClick(Sender: TObject);

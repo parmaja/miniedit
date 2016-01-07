@@ -26,7 +26,7 @@ uses
   Graphics, Contnrs, Types, IniFiles, EditorOptions, EditorProfiles,
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch,
-  SynEdit, SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase,
+  SynEdit, SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase, SynEditPointClasses,
   dbgpServers, DebugClasses, Masks, mnXMLRttiProfile, mnXMLUtils, FileUtil,
   LazFileUtils, mnUtils, ConsoleProcess, LCLType, EditorClasses, EditorRun;
 
@@ -1603,13 +1603,13 @@ begin
 
     SynEdit.Options := aProfile.Options;
     SynEdit.ExtraLineSpacing := aProfile.ExtraLineSpacing;
-    SynEdit.InsertCaret := aProfile.InsertCaret;
-    SynEdit.OverwriteCaret := aProfile.OverwriteCaret;
+    SynEdit.InsertCaret := ctVerticalLine;
+    SynEdit.OverwriteCaret := ctBlock;
     SynEdit.MaxUndo := aProfile.MaxUndo;
-    SynEdit.RightEdge := aProfile.RightEdge;
-    SynEdit.RightEdgeColor := aProfile.RightEdgeColor;
     SynEdit.TabWidth := aProfile.TabWidth;
 
+    SynEdit.RightEdge := 80;
+    SynEdit.RightEdgeColor := clSilver;
     if (Group <> nil) and (Group.Category.Highlighter <> nil) then
       Group.Category.Apply(Group.Category.Highlighter, aProfile.Attributes);
   end

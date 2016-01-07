@@ -20,8 +20,11 @@ uses
 type
   TAttributeType = (
     attUI,
+    attPanel,
     attURL,
+    attGutter,
     attSelected,
+    attModified,
     attWhitespace,
     attKeyword,
     attString,
@@ -44,6 +47,8 @@ type
 const
   cDefaultOptions = [eoAltSetsColumnMode, eoAutoIndent, eoDragDropEditing, eoDropFiles, eoScrollPastEol, eoBracketHighlight,
     eoShowScrollHint, eoHideRightMargin, eoRightMouseMovesCursor, eoTabsToSpaces, eoTabIndent, eoTrimTrailingSpaces, eoKeepCaretX];
+
+  //no: eoRightMouseMovesCursor
 
 type
   TGlobalAttributes = class;
@@ -91,10 +96,13 @@ type
 
     FNumber: TGlobalAttribute;
     FSelected: TGlobalAttribute;
+    FModified: TGlobalAttribute;
+    FGutter: TGlobalAttribute;
     FComment: TGlobalAttribute;
     FSymbol: TGlobalAttribute;
     FText: TGlobalAttribute;
     FUI: TGlobalAttribute;
+    FPanel: TGlobalAttribute;
     FURL: TGlobalAttribute;
     FValue: TGlobalAttribute;
     FVariable: TGlobalAttribute;
@@ -105,7 +113,6 @@ type
     function GetCount: Integer;
     function GetItem(Index: Integer): TGlobalAttribute;
   protected
-
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -115,11 +122,12 @@ type
     property Count: Integer read GetCount;
     procedure Assign(Source: TPersistent); override;
   published
-    property Whitespace: TGlobalAttribute read FWhitespace;
     property UI: TGlobalAttribute read FUI;
-    property Selected: TGlobalAttribute read FSelected;
     property URL: TGlobalAttribute read FURL;
-
+    property Selected: TGlobalAttribute read FSelected;
+    property Gutter: TGlobalAttribute read FGutter;
+    property Modified: TGlobalAttribute read FModified;
+    property Whitespace: TGlobalAttribute read FWhitespace;
     property Keyword: TGlobalAttribute read FKeyword;
     property Symbol: TGlobalAttribute read FSymbol;
     property Number: TGlobalAttribute read FNumber;
@@ -138,47 +146,34 @@ type
     property QuotedString: TGlobalAttribute read FQuotedString;
   end;
 
+  TEditorProfile = class;
   { TGutterOptions }
 
   TGutterOptions = class(TPersistent)
   private
+    FProfile: TEditorProfile;
+
     FAutoSize: boolean;
-    FBackcolor: TColor;
-    FForecolor: TColor;
-    FSavedColor: TColor;
     FLeftOffset: integer;
     FRightOffset: integer;
-    FShowLineNumbers: Boolean;
     FShowModifiedLines: Boolean;
-    FUnsavedColor: TColor;
-    FVisible: Boolean;
     FLeadingZeros: Boolean;
-    FZeroStart: Boolean;
     FShowSeparator: Boolean;
     FWidth: Integer;
   public
-    constructor Create;
+    constructor Create(AProfile: TEditorProfile);
     procedure Assign(Source: TPersistent); override;
     procedure AssignTo(Dest: TPersistent); override;
     constructor AssignFrom(SynGutter: TSynGutter);
     procedure Reset; virtual;
   published
     property AutoSize: boolean read FAutoSize write FAutoSize default True;
-    property Backcolor: TColor read FBackcolor write FBackcolor default $4b4b4b;
-    property Forecolor: TColor read FForecolor write FForecolor default clWhite;
     property ShowSeparator: Boolean read FShowSeparator write FShowSeparator default True;
-
-    property SavedColor: TColor read FSavedColor write FSavedColor default clGreen;
-    property UnsavedColor: TColor read FUnsavedColor write FUnsavedColor default clYellow;
     property ShowModifiedLines: Boolean read FShowModifiedLines write FShowModifiedLines default True;
-
+    property Width: integer read FWidth write FWidth default 30;
+    property LeadingZeros: Boolean read FLeadingZeros write FLeadingZeros default False;
     property LeftOffset: integer read FLeftOffset write FLeftOffset default 0;
     property RightOffset: integer read FRightOffset write FRightOffset default 0;
-    property Visible: boolean read FVisible write FVisible default True;
-    property Width: integer read FWidth write FWidth default 30;
-    property ShowLineNumbers: Boolean read FShowLineNumbers write FShowLineNumbers default True;
-    property LeadingZeros: Boolean read FLeadingZeros write FLeadingZeros default False;
-    property ZeroStart: Boolean read FZeroStart write FZeroStart default False;
   end;
 
   //This class is assignable to a SynEdit without modifying key properties that affect function
@@ -193,17 +188,12 @@ type
     FMaxUndo: Integer;
     FExtraLineSpacing: Integer;
     FTabWidth: Integer;
-    FRightEdge: Integer;
-    FRightEdgeColor: TColor;
     FFontName: String;
     FFontSize: Integer;
     FFontNoAntialiasing: Boolean;
     FBookmarks: TSynBookMarkOpt;
-    FOverwriteCaret: TSynEditCaretType;
-    FInsertCaret: TSynEditCaretType;
     FOptions: TSynEditorOptions;
     FGutterOptions: TGutterOptions;
-    FInsertMode: Boolean;
     FAttributes: TGlobalAttributes;
     procedure SetExtOptions(const AValue: TSynEditorOptions2);
     procedure SetOptions(const Value: TSynEditorOptions);
@@ -221,11 +211,6 @@ type
     property FontNoAntialiasing: Boolean read FFontNoAntialiasing write FFontNoAntialiasing default False;
     property Gutter: TGutterOptions read FGutterOptions write FGutterOptions;
     property ExtraLineSpacing: Integer read FExtraLineSpacing write FExtraLineSpacing default 0;
-    property RightEdge: Integer read FRightEdge write FRightEdge default 80;
-    property RightEdgeColor: TColor read FRightEdgeColor write FRightEdgeColor default clSilver;
-    property InsertMode: Boolean read FInsertMode write FInsertMode default True;
-    property InsertCaret: TSynEditCaretType read FInsertCaret write FInsertCaret default ctVerticalLine;
-    property OverwriteCaret: TSynEditCaretType read FOverwriteCaret write FOverwriteCaret default ctBlock;
     property MaxUndo: Integer read FMaxUndo write FMaxUndo default 1024;
     property TabWidth: Integer read FTabWidth write FTabWidth default 2;
     property CodeFolding: Boolean read FCodeFolding write FCodeFolding default False;
@@ -243,7 +228,7 @@ constructor TEditorProfile.Create;
 begin
   inherited;
   FBookmarks := TSynBookMarkOpt.Create(nil);
-  FGutterOptions := TGutterOptions.Create;//TODO check the Create params
+  FGutterOptions := TGutterOptions.Create(Self);//TODO check the Create params
   FAttributes := TGlobalAttributes.Create(nil);
   CodeFolding := False;
   DrawDivider := False;
@@ -268,12 +253,7 @@ begin
   Options := cDefaultOptions;
   //ExtOptions :=
   ExtraLineSpacing := 0;
-  InsertCaret := ctVerticalLine;
-  OverwriteCaret := ctBlock;
   MaxUndo := 1024;
-  RightEdge := 80;
-  RightEdgeColor := clSilver;
-  FInsertMode := True;
   TabWidth := 2;
 end;
 
@@ -291,7 +271,6 @@ end;
 { TGlobalAttributes }
 
 constructor TGlobalAttributes.Create(AOwner: TComponent);
-
 begin
   inherited Create(AOwner);
   FComponentStyle := FComponentStyle + [csSubComponent];
@@ -321,9 +300,14 @@ procedure TGlobalAttributes.Reset;
 begin
   FList.Clear;
   Add(FUI, attUI, 'User Interface', clNone, clNone, []);
+  Add(FPanel, attUI, 'Panel', clNone, clNone, []);
+  Add(FURL, attURL, 'URL', clWhite, TColor($2A190F), []);
+
   Add(FWhitespace, attWhitespace, 'Whitespace', clWhite, TColor($2A190F), []);
   Add(FSelected, attSelected, 'Selected', clBlack, TColor($DD8B42), []);
-  Add(FURL, attURL, 'URL', clWhite, TColor($2A190F), []);
+  Add(FModified, attModified, 'Modified', clYellow, clGreen, []);
+  Add(FGutter, attGutter, 'Gutter', clWhite, $4b4b4b, []);
+
   Add(FKeyword, attKeyword, 'Keyword', TColor($3737E8), clNone, []);
   Add(FQuotedString, attString, 'String', TColor($16C11D), clNone, []);
   Add(FDocument, attDocument, 'Document', TColor($DD8B42), clNone, []);
@@ -388,13 +372,13 @@ begin
   begin
     Background := TSynHighlighterAttributes(Source).Background;
     Foreground := TSynHighlighterAttributes(Source).Foreground;
-    Style := TSynHighlighterAttributes(Source).Style;
+    Style := TSynHighlighterAttributes(Source).Style - [fsItalic]; //removed old font style from old version of miniedit
   end
   else if Source is TGlobalAttribute then
   begin
     Background := (Source as TGlobalAttribute).Background;
     Foreground := (Source as TGlobalAttribute).Foreground;
-    Style := (Source as TGlobalAttribute).Style;
+    Style := (Source as TGlobalAttribute).Style - [fsItalic]; //removed old font style from old version of miniedit
   end
   else
     inherited;
@@ -406,7 +390,7 @@ begin
   begin
     TSynHighlighterAttributes(Dest).Background := Background;
     TSynHighlighterAttributes(Dest).Foreground := Foreground;
-    TSynHighlighterAttributes(Dest).Style := Style;
+    TSynHighlighterAttributes(Dest).Style := Style - [fsItalic]; //removed old font style from old version of miniedit
   end
   else
     inherited;
@@ -421,9 +405,12 @@ end;
 
 { TGutterOptions }
 
-constructor TGutterOptions.Create;
+constructor TGutterOptions.Create(AProfile: TEditorProfile);
 begin
-  inherited;
+  inherited Create;
+  if AProfile = nil then
+    raise Exception.Create('TGutterOptions should have parent profile.');
+  FProfile := AProfile;
   Reset;
 end;
 
@@ -448,37 +435,37 @@ begin
     SynGutter := Dest as TSynGutter;
 
     SynGutter.AutoSize := FAutoSize;
-    SynGutter.Color := FBackcolor;
+    SynGutter.Color := FProfile.Attributes.Gutter.Background;
     for i := 0 to SynGutter.Parts.Count -1 do
     begin
-      SynGutter.Parts[i].MarkupInfo.Foreground := FForecolor;
-      SynGutter.Parts[i].MarkupInfo.Background := FBackcolor;
+      SynGutter.Parts[i].MarkupInfo.Foreground := FProfile.Attributes.Gutter.Foreground;
+      SynGutter.Parts[i].MarkupInfo.Background := FProfile.Attributes.Gutter.Background;
     end;
     gp := SynGutter.Parts.ByClass[TSynGutterLineNumber, 0] as TSynGutterLineNumber;
     if gp <> nil then
     begin
-      gp.Visible := FShowLineNumbers;
+      gp.Visible := True;
+      gp.ZeroStart := False;
       gp.LeadingZeros := FLeadingZeros;
-      gp.ZeroStart := FZeroStart;
     end;
     sp := SynGutter.Parts.ByClass[TSynGutterSeparator, 0] as TSynGutterSeparator;
     if sp <> nil then
     begin
       sp.Visible := FShowSeparator;
-      sp.MarkupInfo.Foreground := Backcolor;
-      sp.MarkupInfo.Background := Forecolor;
+      sp.MarkupInfo.Foreground := FProfile.Attributes.Gutter.Background;
+      sp.MarkupInfo.Background := FProfile.Attributes.Gutter.Foreground;
     end;
     ch := SynGutter.Parts.ByClass[TSynGutterChanges, 0] as TSynGutterChanges;
     if ch <> nil then
     begin
       ch.Visible := FShowModifiedLines;
-      ch.SavedColor := FSavedColor;
-      ch.ModifiedColor := FUnsavedColor;
+      ch.SavedColor := FProfile.Attributes.Modified.Background;
+      ch.ModifiedColor := FProfile.Attributes.Modified.Foreground;
     end;
     SynGutter.LeftOffset := FLeftOffset;
     SynGutter.RightOffset := FRightOffset;
-    SynGutter.Visible := FVisible;
     SynGutter.Width := FWidth;
+    SynGutter.Visible := True;
   end
   else
     inherited AssignTo(Dest);
@@ -491,17 +478,13 @@ var
   ch: TSynGutterChanges;
 begin
   FAutoSize := SynGutter.AutoSize;
-  FBackcolor := SynGutter.Color;
   FLeftOffset := SynGutter.LeftOffset;
   FRightOffset := SynGutter.RightOffset;
-  FVisible := SynGutter.Visible;
   FWidth := SynGutter.Width;
   gp := SynGutter.Parts.ByClass[TSynGutterLineNumber, 0] as TSynGutterLineNumber;
   if gp <> nil then
   begin
-    FShowLineNumbers := gp.Visible;
     FLeadingZeros := gp.LeadingZeros;
-    FZeroStart := gp.ZeroStart;
   end;
   sp := SynGutter.Parts.ByClass[TSynGutterSeparator, 0] as TSynGutterSeparator;
   if sp <> nil then
@@ -512,27 +495,18 @@ begin
   if ch <> nil then
   begin
     FShowModifiedLines := ch.Visible;
-    FSavedColor := ch.SavedColor;
-    FUnsavedColor := ch.ModifiedColor;
   end;
 end;
 
 procedure TGutterOptions.Reset;
 begin
   FAutoSize := True;
-  FBackcolor := $4b4b4b;
-  FForecolor := clWhite;
   FShowSeparator := True;
   FLeftOffset := 0;
   FRightOffset := 0;
-  FVisible := True;
   FWidth := 30;
-  FShowLineNumbers := True;
   FLeadingZeros := False;
-  FZeroStart := False;
   FShowModifiedLines := True;
-  FSavedColor := clGreen;
-  FUnsavedColor := clYellow;
 end;
 
 end.
