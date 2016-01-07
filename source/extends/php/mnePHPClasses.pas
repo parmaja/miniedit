@@ -9,12 +9,11 @@ unit mnePHPClasses;
  *
  *}
 
-{$i '..\lib\mne.inc'}
-
 interface
 
 uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics,
+  LCLVersion,
   Process, Contnrs, LCLintf, LCLType, Dialogs, EditorOptions,
   SynEditHighlighter, SynEditSearch, SynEdit, Registry, EditorEngine,
   mnXMLRttiProfile, mnXMLUtils, SynEditTypes, SynCompletion,
@@ -351,10 +350,12 @@ begin
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(StringAttri, attString);
     Mapper.Add(SymbolAttri, attSymbol);
-    {$ifdef trunk}
+    {.$if declared(LCL_FULLVERSION) and (LCL_FULLVERSION > 1060000) }
+    {.$if (LCLVersion > 1060000) }
+    {$if (LCL_FULLVERSION > 1060000) }
     Mapper.Add(SelectorAttri, attName);
     Mapper.Add(MeasurementUnitAttri, attVariable);
-    {$endif trunk}
+    {$endif}
   end;
 end;
 

@@ -20,8 +20,8 @@ SynEdit:
 interface
 
 uses
-  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, MsgBox,
-  LMessages, lCLType, LCLIntf, LCLProc, EditorDebugger, FileUtil, LazFileUtils,
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  MsgBox, LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorDebugger, FileUtil, LazFileUtils,
   Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus, ToolWin,
   Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses, StdActns,
   SynEditHighlighter, SynEdit, IAddons, ntvSplitters, SynHighlighterSQL,
@@ -44,8 +44,6 @@ uses
   //end of addons
   mneAddons, DebugClasses, IniFiles, mnFields, simpleipc, mnUtils, ntvTabs,
   ntvPageControls;
-
-{$i '..\lib\mne.inc'}
 
 type
   TTabSetDragObject = class(TDragObject)

@@ -27,6 +27,7 @@ uses
   Forms,
   Registry,
   SysUtils,
+  LCLVersion,
   simpleipc,
   Themes, cmdbox, SynEditHighlighter, Interfaces,
   MainUnit in 'MainUnit.pas' {MainForm},
@@ -56,6 +57,8 @@ uses
   mneCSVForms, ConsoleProcess;
 
 {$R *.res}
+
+{$i '..\lib\mne.inc'}
 
 function CheckSetup: Boolean;
 var

@@ -10,7 +10,7 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  lclproc, lclintf,
+  lclproc, lclintf, lclversion,
   Dialogs, StdCtrls, ExtCtrls, ComCtrls;
 
 type
@@ -57,7 +57,7 @@ end;
 
 procedure TAboutForm.FormCreate(Sender: TObject);
 begin
-  VersionLbl.Caption := VersionInfo.GetFileVersion;
+  VersionLbl.Caption := VersionInfo.GetFileVersion + ' Lazarus: '  + IntToStr(lcl_fullversion);// + ' FPC: ' + IntToStr(%FPC_FULLVERSION%);
 end;
 
 procedure TAboutForm.SiteLblClick(Sender: TObject);
