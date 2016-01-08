@@ -341,7 +341,7 @@ begin
     Mapper.Add(TextAttri, attText);
     Mapper.Add(EntityRefAttri, attIdentifier);
     Mapper.Add(ProcessingInstructionAttri, attDirective);
-    Mapper.Add(CDATAAttri, attOutter);
+    Mapper.Add(CDATAAttri, attInner);
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(DocTypeAttri, attComment);
     Mapper.Add(AttributeAttri, attName);

@@ -203,6 +203,9 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+    procedure Assign(Source: TPersistent); override;
+    procedure AssignTo(Dest: TPersistent); override;
+    constructor AssignFrom(SynEdit: TSynEdit);
     procedure Reset;
   published
     property Attributes: TGlobalAttributes read FAttributes;
@@ -243,6 +246,56 @@ begin
   FGutterOptions.Free;
   FAttributes.Free;
   inherited;
+end;
+
+procedure TEditorProfile.Assign(Source: TPersistent);
+begin
+  if Source is TSynEdit then
+    AssignFrom(Source as TSynEdit)
+  else
+    inherited Assign(Source);
+end;
+
+procedure TEditorProfile.AssignTo(Dest: TPersistent);
+var
+  SynEdit: TSynEdit;
+begin
+  if Dest is TSynEdit then
+  begin
+    SynEdit := Dest as TSynEdit;
+
+    SynEdit.Font.Name := FontName;
+    SynEdit.Font.Size := FontSize;
+    if FontNoAntialiasing then
+      SynEdit.Font.Quality := fqNonAntialiased
+    else
+      SynEdit.Font.Quality := fqDefault;
+
+    SynEdit.Font.Color := Attributes.Whitespace.Foreground;
+    SynEdit.Color := Attributes.Whitespace.Background;
+    SynEdit.SelectedColor.Foreground := Attributes.Selected.Foreground;
+    SynEdit.SelectedColor.Background := Attributes.Selected.Background;
+    SynEdit.BracketMatchColor.Foreground := Attributes.Selected.Foreground;
+    SynEdit.BracketMatchColor.Background := Attributes.Selected.Background;
+
+    SynEdit.Options := Options + cSynRequiredOptions - cSynRemoveOptions;
+    SynEdit.ExtraLineSpacing := ExtraLineSpacing;
+    SynEdit.InsertCaret := ctVerticalLine;
+    SynEdit.OverwriteCaret := ctBlock;
+    SynEdit.MaxUndo := MaxUndo;
+    SynEdit.TabWidth := TabWidth;
+
+    SynEdit.RightEdge := 80;
+    SynEdit.RightEdgeColor := clSilver;
+
+    SynEdit.Gutter.Assign(Gutter);
+  end
+  else
+    inherited AssignTo(Dest);
+end;
+
+constructor TEditorProfile.AssignFrom(SynEdit: TSynEdit);
+begin
 end;
 
 procedure TEditorProfile.Reset;
@@ -302,7 +355,7 @@ procedure TGlobalAttributes.Reset;
 begin
   FList.Clear;
   Add(FUI, attUI, 'User Interface', clNone, clNone, []);
-  Add(FPanel, attUI, 'Panel', clNone, clNone, []);
+  Add(FPanel, attPanel, 'Panel', clNone, clNone, []);
   Add(FURL, attURL, 'URL', clWhite, TColor($2A190F), []);
 
   Add(FWhitespace, attWhitespace, 'Whitespace', clWhite, TColor($2A190F), []);
@@ -431,6 +484,8 @@ var
   gp: TSynGutterLineNumber;
   sp: TSynGutterSeparator;
   ch: TSynGutterChanges;
+  cf: TSynGutterCodeFolding;
+  OldCF: Boolean;
 begin
   if Dest is TSynGutter then
   begin
@@ -464,6 +519,16 @@ begin
       ch.SavedColor := FProfile.Attributes.Modified.Background;
       ch.ModifiedColor := FProfile.Attributes.Modified.Foreground;
     end;
+
+    cf := SynGutter.Parts.ByClass[TSynGutterCodeFolding, 0] as TSynGutterCodeFolding;
+    if cf <> nil then
+    begin
+      OldCF := cf.Visible;
+      cf.Visible := FProfile.CodeFolding and ((SynGutter.SynEdit as TSynEdit).Highlighter <> nil) and (hcCodeFolding in (SynGutter.SynEdit as TSynEdit).Highlighter.Capabilities);
+      if (cf.Visible) and (cf.Visible <> OldCF) then
+        (SynGutter.SynEdit as TSynEdit).UnfoldAll;
+    end;
+
     SynGutter.LeftOffset := FLeftOffset;
     SynGutter.RightOffset := FRightOffset;
     SynGutter.Width := FWidth;

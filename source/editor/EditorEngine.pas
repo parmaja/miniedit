@@ -1387,7 +1387,7 @@ begin
   Result := TMap.Create;
   Result.Name := Attribute.StoredName;
   Result.AttType := AttType;
-  inherited Add(Result);
+  inherited Add(Result); //if there is a bug inside add, you need to fix it by code, so no need to catch it
 end;
 
 function TMapper.IndexOf(vName: string): Integer;
@@ -1469,7 +1469,7 @@ begin
         Width := EditorResource.DebugImages.Width + DEBUG_IMAGE_MARGINES;
       end;
 
-    FSynEdit.Gutter.SeparatorPart(0).Index := FSynEdit.Gutter.Parts.Count - 1;
+    FSynEdit.Gutter.SeparatorPart(0).Index := FSynEdit.Gutter.Parts.Count - 1;//TODO, what is this?
 
     FGroup.Category.InitEdit(FSynEdit);
     //Engine.MacroRecorder.AddEditor(FSynEdit);
@@ -1566,47 +1566,13 @@ end;
 procedure TTextEditorFile.Assign(Source: TPersistent);
 var
   aProfile: TEditorProfile;
-  cf: TSynGutterCodeFolding;
-  OldCF: Boolean;
 begin
   if Source is TEditorProfile then
   begin
     aProfile := Source as TEditorProfile;
 
-    SynEdit.Font.Name := aProfile.FontName;
-    SynEdit.Font.Size := aProfile.FontSize;
-    if aProfile.FontNoAntialiasing then
-      SynEdit.Font.Quality := fqNonAntialiased
-    else
-      SynEdit.Font.Quality := fqDefault;
+    aProfile.AssignTo(SynEdit);
 
-    SynEdit.Font.Color := aProfile.Attributes.Whitespace.Foreground;
-    SynEdit.Color := aProfile.Attributes.Whitespace.Background;
-    SynEdit.SelectedColor.Foreground := aProfile.Attributes.Selected.Foreground;
-    SynEdit.SelectedColor.Background := aProfile.Attributes.Selected.Background;
-    SynEdit.BracketMatchColor.Foreground := aProfile.Attributes.Selected.Foreground;
-    SynEdit.BracketMatchColor.Background := aProfile.Attributes.Selected.Background;
-
-    SynEdit.Gutter.Assign(aProfile.Gutter);
-
-    cf := SynEdit.Gutter.Parts.ByClass[TSynGutterCodeFolding, 0] as TSynGutterCodeFolding;
-    if cf <> nil then
-    begin
-      OldCF := cf.Visible;
-      cf.Visible := aProfile.CodeFolding and (SynEdit.Highlighter <> nil) and (hcCodeFolding in SynEdit.Highlighter.Capabilities);
-      if (cf.Visible) and (cf.Visible <> OldCF) then
-        SynEdit.UnfoldAll;
-    end;
-
-    SynEdit.Options := aProfile.Options + cSynRequiredOptions - cSynRemoveOptions;
-    SynEdit.ExtraLineSpacing := aProfile.ExtraLineSpacing;
-    SynEdit.InsertCaret := ctVerticalLine;
-    SynEdit.OverwriteCaret := ctBlock;
-    SynEdit.MaxUndo := aProfile.MaxUndo;
-    SynEdit.TabWidth := aProfile.TabWidth;
-
-    SynEdit.RightEdge := 80;
-    SynEdit.RightEdgeColor := clSilver;
     if (Group <> nil) and (Group.Category.Highlighter <> nil) then
       Group.Category.Apply(Group.Category.Highlighter, aProfile.Attributes);
   end

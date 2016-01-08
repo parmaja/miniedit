@@ -87,6 +87,7 @@ type
     WordWrapChk: TCheckBox;
     procedure BackgroundCboChange(Sender: TObject);
     procedure BackgroundCboClick(Sender: TObject);
+    procedure BackgroundChkChange(Sender: TObject);
     procedure ForegroundCboChange(Sender: TObject);
     procedure ForegroundCboCloseUp(Sender: TObject);
     procedure ForegroundCboEditingDone(Sender: TObject);
@@ -358,6 +359,11 @@ procedure TEditorOptionsForm.BackgroundCboClick(Sender: TObject);
 begin
 end;
 
+procedure TEditorOptionsForm.BackgroundChkChange(Sender: TObject);
+begin
+
+end;
+
 procedure TEditorOptionsForm.BackgroundCboChange(Sender: TObject);
 begin
   if not InChanging then
@@ -598,6 +604,8 @@ begin
     SampleEdit.Text := SampleEdit.Highlighter.SampleSource;
   end;
   aFileCategory.Apply(SampleEdit.Highlighter, FAttributes);
+  FProfile.AssignTo(SampleEdit);
+
   SampleEdit.Font.Color := FAttributes.Whitespace.Foreground;
   SampleEdit.Color := FAttributes.Whitespace.Background;
   RetrieveElement;

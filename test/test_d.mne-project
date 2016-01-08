@@ -23,12 +23,13 @@
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test-pas.pas</FileName>
-            <CaretY>5</CaretY>
+            <CaretY>9</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>P:\sahlisoft\delphi\jobs\sahlisoft_2\source\gadgets\lib\mposDBAgents.pas</FileName>
-            <CaretX>43</CaretX>
-            <CaretY>14</CaretY>
+            <CaretX>27</CaretX>
+            <CaretY>23</CaretY>
+            <TopLine>4</TopLine>
           </Object>
         </Items>
       </Files>

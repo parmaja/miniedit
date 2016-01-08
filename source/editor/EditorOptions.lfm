@@ -261,7 +261,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object Label11: TLabel
         Left = 5
         Height = 13
-        Top = 67
+        Top = 43
         Width = 42
         Caption = '&Attribute:'
         ParentColor = False
@@ -269,7 +269,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object Label12: TLabel
         Left = 8
         Height = 13
-        Top = 155
+        Top = 126
         Width = 51
         Caption = '&Language:'
         ParentColor = False
@@ -277,7 +277,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object BackgroundCbo: TColorBox
         Left = 89
         Height = 22
-        Top = 118
+        Top = 94
         Width = 254
         DefaultColorColor = clWhite
         NoneColorColor = clWhite
@@ -293,7 +293,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object ForegroundCbo: TColorBox
         Left = 89
         Height = 22
-        Top = 91
+        Top = 67
         Width = 254
         Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbCustomColor, cbPrettyNames]
         Anchors = [akTop, akLeft, akRight]
@@ -307,7 +307,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object AttributeCbo: TComboBox
         Left = 71
         Height = 21
-        Top = 62
+        Top = 38
         Width = 170
         Anchors = [akTop, akLeft, akRight]
         ItemHeight = 13
@@ -318,26 +318,27 @@ object EditorOptionsForm: TEditorOptionsForm
       object BackgroundChk: TCheckBox
         Left = 3
         Height = 19
-        Top = 119
+        Top = 95
         Width = 78
         Caption = 'Background'
+        OnChange = BackgroundChkChange
         OnClick = BoldChkClick
         TabOrder = 4
       end
       object ForegroundChk: TCheckBox
         Left = 3
         Height = 19
-        Top = 93
+        Top = 69
         Width = 74
         Caption = 'Foreground'
         OnClick = BoldChkClick
         TabOrder = 2
       end
       object CategoryCbo: TComboBox
-        Left = 73
+        Left = 71
         Height = 21
-        Top = 153
-        Width = 168
+        Top = 124
+        Width = 170
         Anchors = [akTop, akLeft, akRight]
         ItemHeight = 13
         OnSelect = CategoryCboSelect
@@ -367,7 +368,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object BoldChk: TCheckBox
         Left = 361
         Height = 19
-        Top = 109
+        Top = 90
         Width = 41
         Anchors = [akTop, akRight]
         Caption = '&Bold'
@@ -377,7 +378,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object ItalicChk: TCheckBox
         Left = 361
         Height = 19
-        Top = 130
+        Top = 113
         Width = 42
         Anchors = [akTop, akRight]
         Caption = '&Italic'
@@ -388,7 +389,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object UnderlineChk: TCheckBox
         Left = 361
         Height = 19
-        Top = 88
+        Top = 69
         Width = 65
         Anchors = [akTop, akRight]
         Caption = '&Underline'
@@ -396,9 +397,9 @@ object EditorOptionsForm: TEditorOptionsForm
         TabOrder = 9
       end
       object NoAntialiasingChk: TCheckBox
-        Left = 8
+        Left = 329
         Height = 19
-        Top = 42
+        Top = 34
         Width = 90
         Caption = 'No &Antialiasing'
         OnChange = NoAntialiasingChkChange
@@ -436,8 +437,8 @@ object EditorOptionsForm: TEditorOptionsForm
       end
       inline SampleEdit: TSynEdit
         Left = 3
-        Height = 139
-        Top = 181
+        Height = 171
+        Top = 149
         Width = 425
         Anchors = [akTop, akLeft, akRight, akBottom]
         Font.Height = -13
@@ -448,7 +449,7 @@ object EditorOptionsForm: TEditorOptionsForm
         ParentFont = False
         TabOrder = 14
         OnMouseUp = SampleEditMouseUp
-        Gutter.Visible = False
+        Gutter.AutoSize = False
         Gutter.Width = 57
         Gutter.MouseActions = <        
           item
@@ -1105,8 +1106,8 @@ object EditorOptionsForm: TEditorOptionsForm
     MaxFontSize = 0
     Options = [fdEffects, fdFixedPitchOnly, fdNoStyleSel]
     PreviewText = 'Hello World'
-    left = 213
-    top = 310
+    left = 344
+    top = 316
   end
   object OpenDialog: TOpenDialog
     Width = 28
@@ -1115,15 +1116,15 @@ object EditorOptionsForm: TEditorOptionsForm
     FileName = '*.mne-theme'
     Filter = 'theme|*.mne-theme'
     Options = [ofFileMustExist, ofEnableSizing, ofViewDetail]
-    left = 159
-    top = 330
+    left = 215
+    top = 326
   end
   object SaveDialog: TSaveDialog
     DefaultExt = '.mne-theme'
     FileName = '*.mne-theme'
     Filter = 'theme|*.mne-theme'
     Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
-    left = 316
-    top = 324
+    left = 282
+    top = 315
   end
 end
