@@ -11,9 +11,9 @@ interface
 
 uses
   Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
-  Registry, ExtCtrls, Buttons, ImgList, Menus, ColorBox, SynEdit,
+  Registry, ExtCtrls, Buttons, ImgList, Menus, ColorBox, SynEdit, SynGutter, SynEditMarkupWordGroup,
   SynEditHighlighter, SynEditMiscClasses, SynEditKeyCmds, Classes, SysUtils,
-  EditorProfiles;
+  EditorProfiles, SynGutterBase, SynEditMarks;
 
 type
   TSynEditorOptionsUserCommand = procedure(AUserCommand: integer; var ADescription: string) of object;
@@ -86,19 +86,12 @@ type
     UnderlineChk: TCheckBox;
     WordWrapChk: TCheckBox;
     procedure BackgroundCboChange(Sender: TObject);
-    procedure BackgroundCboClick(Sender: TObject);
-    procedure BackgroundChkChange(Sender: TObject);
     procedure ForegroundCboChange(Sender: TObject);
-    procedure ForegroundCboCloseUp(Sender: TObject);
-    procedure ForegroundCboEditingDone(Sender: TObject);
-    procedure HideShowScrollbarsChkChange(Sender: TObject);
     procedure LoadBtnClick(Sender: TObject);
     procedure NoAntialiasingChkChange(Sender: TObject);
-    procedure BackgroundCboSelect(Sender: TObject);
     procedure DefaultBackgroundCboSelect(Sender: TObject);
     procedure DefaultForegroundCboSelect(Sender: TObject);
     procedure AttributeCboSelect(Sender: TObject);
-    procedure ForegroundCboSelect(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FontBtnClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -111,8 +104,9 @@ type
     procedure PageControlChange(Sender: TObject);
     procedure ResetBtnClick(Sender: TObject);
     procedure RevertBtnClick(Sender: TObject);
+
+      procedure SampleEditGutterClick(Sender: TObject; X, Y, Line: integer; mark: TSynEditMark);
     procedure SampleEditMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
-    procedure GroupCboClick(Sender: TObject);
     procedure BoldChkClick(Sender: TObject);
     procedure BackgroundChkClick(Sender: TObject);
     procedure SaveBtnClick(Sender: TObject);
@@ -311,25 +305,12 @@ begin
   RetrieveElement;
 end;
 
-procedure TEditorOptionsForm.BackgroundCboSelect(Sender: TObject);
-begin
-end;
-
 procedure TEditorOptionsForm.NoAntialiasingChkChange(Sender: TObject);
 begin
   if NoAntialiasingChk.Checked then
   SampleEdit.Font.Quality := fqNonAntialiased
   else
     SampleEdit.Font.Quality := fqDefault;
-end;
-
-procedure TEditorOptionsForm.ForegroundCboEditingDone(Sender: TObject);
-begin
-end;
-
-procedure TEditorOptionsForm.HideShowScrollbarsChkChange(Sender: TObject);
-begin
-
 end;
 
 procedure TEditorOptionsForm.LoadBtnClick(Sender: TObject);
@@ -341,11 +322,6 @@ begin
   end;
 end;
 
-procedure TEditorOptionsForm.ForegroundCboCloseUp(Sender: TObject);
-begin
-
-end;
-
 procedure TEditorOptionsForm.ForegroundCboChange(Sender: TObject);
 begin
   if not InChanging then
@@ -353,15 +329,6 @@ begin
     ForegroundChk.Checked := True;
     ApplyElement;
   end;
-end;
-
-procedure TEditorOptionsForm.BackgroundCboClick(Sender: TObject);
-begin
-end;
-
-procedure TEditorOptionsForm.BackgroundChkChange(Sender: TObject);
-begin
-
 end;
 
 procedure TEditorOptionsForm.BackgroundCboChange(Sender: TObject);
@@ -381,10 +348,6 @@ end;
 procedure TEditorOptionsForm.DefaultForegroundCboSelect(Sender: TObject);
 begin
   ApplyElement;
-end;
-
-procedure TEditorOptionsForm.ForegroundCboSelect(Sender: TObject);
-begin
 end;
 
 procedure TEditorOptionsForm.FontBtnClick(Sender: TObject);
@@ -460,6 +423,23 @@ begin
   end;
 end;
 
+procedure TEditorOptionsForm.SampleEditGutterClick(Sender: TObject; X, Y, Line: integer; mark: TSynEditMark);
+var
+  M: TMap;
+  G: TGlobalAttribute;
+  aFileCategory: TFileCategory;
+  s:string;
+begin
+  aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
+
+  G := FAttributes.Find(attGutter);
+
+  if G = nil then
+    G := FAttributes.Whitespace;
+
+  AttributeCbo.ItemIndex := G.Index;
+end;
+
 procedure TEditorOptionsForm.SampleEditMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 var
   Attributes: TSynHighlighterAttributes;
@@ -470,27 +450,30 @@ var
   aFileCategory: TFileCategory;
 begin
   p := SampleEdit.PixelsToRowColumn(Point(X, Y));
-  Attributes := nil;
-  if not SampleEdit.GetHighlighterAttriAtRowCol(Point(p.x, p.y), s, Attributes) then
-    Attributes := nil;
-  if Attributes = nil then
-    Attributes := SampleEdit.Highlighter.WhitespaceAttribute;
-  if Attributes <> nil then
+  if p.x > 0 then //not in the gutter
   begin
-    aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
-    s := Attributes.Name;
-    M := aFileCategory.Mapper.Find(s);
-    if M <> nil then
-      G := FAttributes.Find(M.AttType);
+    Attributes := nil;
+    if not SampleEdit.GetHighlighterAttriAtRowCol(Point(p.x, p.y), s, Attributes) then
+      Attributes := nil;
+    if Attributes = nil then
+      Attributes := SampleEdit.Highlighter.WhitespaceAttribute;
+    if Attributes <> nil then
+    begin
+      aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
+      s := Attributes.Name;
+      M := aFileCategory.Mapper.Find(s);
+      if M <> nil then
+        G := FAttributes.Find(M.AttType);
 
-    if G = nil then
-      G := FAttributes.Whitespace;
+      if G = nil then
+        G := FAttributes.Whitespace;
 
-    AttributeCbo.ItemIndex := G.Index;
-  end
-  else
-    AttributeCbo.ItemIndex := -1;
-  RetrieveElement;
+      AttributeCbo.ItemIndex := G.Index;
+    end
+    else
+      AttributeCbo.ItemIndex := -1;
+    RetrieveElement;
+  end;
 end;
 
 procedure TEditorOptionsForm.RetrieveElement;
@@ -540,9 +523,11 @@ end;
 
 procedure TEditorOptionsForm.ApplyElement;
 var
+  i: Integer;
   aFontStyle: TFontStyles;
   aFileCategory: TFileCategory;
   aGlobalAttribute: TGlobalAttribute;
+  sp: TSynGutterSeparator;
 begin
   if not InChanging and (AttributeCbo.ItemIndex >= 0) then
   begin
@@ -550,6 +535,8 @@ begin
     try
       aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
       aGlobalAttribute := (AttributeCbo.Items.Objects[AttributeCbo.ItemIndex] as TGlobalAttribute);
+
+      //Copy some from TGutterOptions.AssignTo(Dest: TPersistent);
 
       if ForegroundChk.Checked then
         aGlobalAttribute.Foreground := ForegroundCbo.Selected
@@ -562,8 +549,8 @@ begin
         aGlobalAttribute.Background := clNone;
 
       aFontStyle := [];
-      if BoldChk.Checked then
-        aFontStyle := aFontStyle + [fsBold];
+{      if BoldChk.Checked then
+        aFontStyle := aFontStyle + [fsBold];}
       if ItalicChk.Checked then
         aFontStyle := aFontStyle + [fsItalic];
       if UnderlineChk.Checked then
@@ -573,6 +560,21 @@ begin
 
       aFileCategory.Apply(SampleEdit.Highlighter, FAttributes);
 
+      SampleEdit.Gutter.Color := FAttributes.Gutter.Background;
+      for i := 0 to SampleEdit.Gutter.Parts.Count -1 do
+      begin
+        SampleEdit.Gutter.Parts[i].MarkupInfo.Foreground := FAttributes.Gutter.Foreground;
+        SampleEdit.Gutter.Parts[i].MarkupInfo.Background := FAttributes.Gutter.Background;
+      end;
+
+      sp := SampleEdit.Gutter.Parts.ByClass[TSynGutterSeparator, 0] as TSynGutterSeparator;
+      if sp <> nil then
+      begin
+        sp.Visible := ShowSeparatorChk.Checked;
+        sp.MarkupInfo.Foreground := FAttributes.Separator.Background;
+        sp.MarkupInfo.Background := FAttributes.Separator.Foreground;
+      end;
+
       SampleEdit.Font.Color := FAttributes.Whitespace.Foreground;
       SampleEdit.Color := FAttributes.Whitespace.Background;
       SampleEdit.SelectedColor.Foreground := FAttributes.Selected.Foreground;
@@ -580,15 +582,16 @@ begin
       SampleEdit.BracketMatchColor.Foreground := FAttributes.Selected.Foreground;
       SampleEdit.BracketMatchColor.Background := FAttributes.Selected.Background;
 
+      SampleEdit.MarkupManager.MarkupByClass[TSynEditMarkupWordGroup].MarkupInfo.FrameColor := FAttributes.Selected.Background;
+
+
+      if SampleEdit.Highlighter <> nil then //remove Divider
+        for i := 0 to SampleEdit.Highlighter.DividerDrawConfigCount - 1 do
+          SampleEdit.Highlighter.DividerDrawConfig[i].MaxDrawDepth := 0;
     finally
       InChanging := False;
     end;
   end;
-end;
-
-procedure TEditorOptionsForm.GroupCboClick(Sender: TObject);
-begin
-
 end;
 
 procedure TEditorOptionsForm.ApplyCategory;
@@ -604,10 +607,13 @@ begin
     SampleEdit.Text := SampleEdit.Highlighter.SampleSource;
   end;
   aFileCategory.Apply(SampleEdit.Highlighter, FAttributes);
+
   FProfile.AssignTo(SampleEdit);
 
-  SampleEdit.Font.Color := FAttributes.Whitespace.Foreground;
-  SampleEdit.Color := FAttributes.Whitespace.Background;
+  if SampleEdit.Highlighter <> nil then //remove Divider
+    for i := 0 to SampleEdit.Highlighter.DividerDrawConfigCount - 1 do
+      SampleEdit.Highlighter.DividerDrawConfig[i].MaxDrawDepth := 0;
+
   RetrieveElement;
 end;
 

@@ -13,7 +13,7 @@ interface
 
 uses
   Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, Registry, ExtCtrls, Buttons, ImgList,
-  mnXMLRttiProfile,
+  mnXMLRttiProfile, SynEditMarkupWordGroup,
   Contnrs, Menus, SynEdit, SynEditHighlighter, SynEditMiscClasses, SynEditPointClasses, SynGutterCodeFolding,
   SynGutter, SynEditKeyCmds, Classes, SysUtils;
 
@@ -23,6 +23,7 @@ type
     attPanel,
     attURL,
     attGutter,
+    attSeparator,
     attSelected,
     attModified,
     attWhitespace,
@@ -100,6 +101,7 @@ type
     FSelected: TGlobalAttribute;
     FModified: TGlobalAttribute;
     FGutter: TGlobalAttribute;
+    FSeparator: TGlobalAttribute;
     FComment: TGlobalAttribute;
     FSymbol: TGlobalAttribute;
     FText: TGlobalAttribute;
@@ -128,6 +130,7 @@ type
     property URL: TGlobalAttribute read FURL;
     property Selected: TGlobalAttribute read FSelected;
     property Gutter: TGlobalAttribute read FGutter;
+    property Separator: TGlobalAttribute read FSeparator;
     property Modified: TGlobalAttribute read FModified;
     property Whitespace: TGlobalAttribute read FWhitespace;
     property Keyword: TGlobalAttribute read FKeyword;
@@ -278,6 +281,9 @@ begin
     SynEdit.BracketMatchColor.Foreground := Attributes.Selected.Foreground;
     SynEdit.BracketMatchColor.Background := Attributes.Selected.Background;
 
+    SynEdit.MarkupManager.MarkupByClass[TSynEditMarkupWordGroup].MarkupInfo.FrameColor := Attributes.Selected.Background;
+
+
     SynEdit.Options := Options + cSynRequiredOptions - cSynRemoveOptions;
     SynEdit.ExtraLineSpacing := ExtraLineSpacing;
     SynEdit.InsertCaret := ctVerticalLine;
@@ -362,6 +368,7 @@ begin
   Add(FSelected, attSelected, 'Selected', clBlack, TColor($DD8B42), []);
   Add(FModified, attModified, 'Modified', clYellow, clGreen, []);
   Add(FGutter, attGutter, 'Gutter', clWhite, $4b4b4b, []);
+  Add(FSeparator, attSeparator, 'Separator', clWhite, $4b4b4b, []);
 
   Add(FKeyword, attKeyword, 'Keyword', TColor($3737E8), clNone, []);
   Add(FQuotedString, attString, 'String', TColor($16C11D), clNone, []);
@@ -477,6 +484,11 @@ begin
     inherited Assign(Source);
 end;
 
+procedure SetupGutter(SynGutter: TSynGutter; Attributes: TGlobalAttributes);
+begin
+  //TODO
+end;
+
 procedure TGutterOptions.AssignTo(Dest: TPersistent);
 var
   SynGutter: TSynGutter;
@@ -490,14 +502,17 @@ begin
   if Dest is TSynGutter then
   begin
     SynGutter := Dest as TSynGutter;
-
     SynGutter.AutoSize := FAutoSize;
+
+    SetupGutter(SynGutter, FProfile.Attributes);
+
     SynGutter.Color := FProfile.Attributes.Gutter.Background;
     for i := 0 to SynGutter.Parts.Count -1 do
     begin
       SynGutter.Parts[i].MarkupInfo.Foreground := FProfile.Attributes.Gutter.Foreground;
       SynGutter.Parts[i].MarkupInfo.Background := FProfile.Attributes.Gutter.Background;
     end;
+
     gp := SynGutter.Parts.ByClass[TSynGutterLineNumber, 0] as TSynGutterLineNumber;
     if gp <> nil then
     begin
@@ -505,13 +520,15 @@ begin
       gp.ZeroStart := False;
       gp.LeadingZeros := FLeadingZeros;
     end;
+
     sp := SynGutter.Parts.ByClass[TSynGutterSeparator, 0] as TSynGutterSeparator;
     if sp <> nil then
     begin
       sp.Visible := FShowSeparator;
-      sp.MarkupInfo.Foreground := FProfile.Attributes.Gutter.Background;
-      sp.MarkupInfo.Background := FProfile.Attributes.Gutter.Foreground;
+      sp.MarkupInfo.Foreground := FProfile.Attributes.Separator.Background;
+      sp.MarkupInfo.Background := FProfile.Attributes.Separator.Foreground;
     end;
+
     ch := SynGutter.Parts.ByClass[TSynGutterChanges, 0] as TSynGutterChanges;
     if ch <> nil then
     begin
@@ -532,7 +549,7 @@ begin
     SynGutter.LeftOffset := FLeftOffset;
     SynGutter.RightOffset := FRightOffset;
     SynGutter.Width := FWidth;
-    SynGutter.Visible := True;
+    SynGutter.Visible := True; //TODO
   end
   else
     inherited AssignTo(Dest);
