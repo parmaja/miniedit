@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rtti version="1.0" author="MiniXML">
+  <Object Type="TGlobalAttributes">
+    <UI Class="TGlobalAttribute">
+      <Title>User Interface</Title>
+      <AttType>attUI</AttType>
+      <Background>clPurple</Background>
+      <Foreground>clBlack</Foreground>
+    </UI>
+    <URL Class="TGlobalAttribute">
+      <Title>URL</Title>
+      <AttType>attURL</AttType>
+      <Background>2758927</Background>
+      <Foreground>clWhite</Foreground>
+    </URL>
+    <Selected Class="TGlobalAttribute">
+      <Title>Selected</Title>
+      <AttType>attSelected</AttType>
+      <Background>14519106</Background>
+      <Foreground>clBlack</Foreground>
+    </Selected>
+    <Gutter Class="TGlobalAttribute">
+      <Title>Gutter</Title>
+      <AttType>attGutter</AttType>
+      <Background>15454411</Background>
+      <Foreground>6959104</Foreground>
+    </Gutter>
+    <Separator Class="TGlobalAttribute">
+      <Title>Separator</Title>
+      <AttType>attSeparator</AttType>
+      <Background>15132390</Background>
+      <Foreground>14727337</Foreground>
+    </Separator>
+    <Modified Class="TGlobalAttribute">
+      <Title>Modified</Title>
+      <AttType>attModified</AttType>
+      <Background>clGreen</Background>
+      <Foreground>clYellow</Foreground>
+    </Modified>
+    <Whitespace Class="TGlobalAttribute">
+      <Title>Whitespace</Title>
+      <AttType>attWhitespace</AttType>
+      <Background>13361892</Background>
+      <Foreground>clBlack</Foreground>
+    </Whitespace>
+    <Keyword Class="TGlobalAttribute">
+      <Title>Keyword</Title>
+      <AttType>attKeyword</AttType>
+      <Foreground>14115072</Foreground>
+    </Keyword>
+    <Symbol Class="TGlobalAttribute">
+      <Title>Symbol</Title>
+      <AttType>attSymbol</AttType>
+      <Foreground>clMaroon</Foreground>
+    </Symbol>
+    <Number Class="TGlobalAttribute">
+      <Title>Number</Title>
+      <AttType>attNumber</AttType>
+      <Foreground>2185063</Foreground>
+    </Number>
+    <Directive Class="TGlobalAttribute">
+      <Title>Directive</Title>
+      <AttType>attDirective</AttType>
+      <Foreground>4276694</Foreground>
+    </Directive>
+    <Identifier Class="TGlobalAttribute">
+      <Title>Identifier</Title>
+      <AttType>attIdentifier</AttType>
+    </Identifier>
+    <Variable Class="TGlobalAttribute">
+      <Title>Variable</Title>
+      <AttType>attVariable</AttType>
+      <Foreground>clSkyBlue</Foreground>
+    </Variable>
+    <Standard Class="TGlobalAttribute">
+      <Title>Standard</Title>
+      <AttType>attStandard</AttType>
+      <Foreground>4107007</Foreground>
+    </Standard>
+    <Value Class="TGlobalAttribute">
+      <Title>Value</Title>
+      <AttType>attValue</AttType>
+      <Foreground>1491229</Foreground>
+    </Value>
+    <DataType Class="TGlobalAttribute">
+      <Title>Type</Title>
+      <AttType>attType</AttType>
+      <Foreground>3111647</Foreground>
+    </DataType>
+    <DataName Class="TGlobalAttribute">
+      <Title>Name</Title>
+      <AttType>attName</AttType>
+      <Foreground>1491229</Foreground>
+    </DataName>
+    <Document Class="TGlobalAttribute">
+      <Title>Document</Title>
+      <AttType>attDocument</AttType>
+      <Foreground>13417386</Foreground>
+    </Document>
+    <Text Class="TGlobalAttribute">
+      <Title>Text</Title>
+      <AttType>attText</AttType>
+    </Text>
+    <Outter Class="TGlobalAttribute">
+      <Title>Outter</Title>
+      <AttType>attOutter</AttType>
+      <Foreground>14519106</Foreground>
+    </Outter>
+    <Inner Class="TGlobalAttribute">
+      <Title>Inner</Title>
+      <AttType>attInner</AttType>
+      <Foreground>947731</Foreground>
+    </Inner>
+    <Comment Class="TGlobalAttribute">
+      <Title>Comment</Title>
+      <AttType>attComment</AttType>
+      <Foreground>12885388</Foreground>
+    </Comment>
+    <QuotedString Class="TGlobalAttribute">
+      <Title>String</Title>
+      <AttType>attString</AttType>
+      <Foreground>948755</Foreground>
+    </QuotedString>
+  </Object>
+</rtti>
