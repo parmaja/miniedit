@@ -48,6 +48,7 @@ type
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
+    procedure DoAddKeywords; override;
   public
   end;
 
@@ -304,9 +305,14 @@ procedure TPASFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   Completion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
+  IdentifierID := ord(tkIdentifier);
+end;
+
+procedure TPASFileCategory.DoAddKeywords;
+begin
+  inherited DoAddKeywords;
   //EnumerateKeywords(Ord(tkKeyword), sPasKeywords, Highlighter.IdentChars, @DoAddCompletion);
   //EnumerateKeywords(Ord(tkFunction), sDFunctions, Highlighter.IdentChars, @DoAddCompletion);
-  IdentifierID := ord(tkIdentifier);
 end;
 
 { TPASFile }

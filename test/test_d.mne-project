@@ -6,16 +6,17 @@
     <TendencyName>D</TendencyName>
     <Desktop Class="TEditorDesktop">
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.d</CurrentFile>
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.php</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
+            <CaretX>35</CaretX>
             <CaretY>9</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.d</FileName>
-            <CaretY>11</CaretY>
+            <CaretY>9</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>C:\temp\arduino_test.d</FileName>
@@ -27,6 +28,7 @@
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>P:\sahlisoft\delphi\jobs\sahlisoft_2\source\gadgets\lib\mposDBAgents.pas</FileName>
+            <CaretY>14</CaretY>
           </Object>
         </Items>
       </Files>

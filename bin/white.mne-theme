@@ -16,7 +16,7 @@
     <Selected Class="TGlobalAttribute">
       <Title>Selected</Title>
       <AttType>attSelected</AttType>
-      <Background>15448717</Background>
+      <Background>14470080</Background>
       <Foreground>clBlack</Foreground>
     </Selected>
     <Gutter Class="TGlobalAttribute">
@@ -40,7 +40,7 @@
     <Whitespace Class="TGlobalAttribute">
       <Title>Whitespace</Title>
       <AttType>attWhitespace</AttType>
-      <Background>13361892</Background>
+      <Background>15329769</Background>
       <Foreground>clBlack</Foreground>
     </Whitespace>
     <Keyword Class="TGlobalAttribute">
@@ -57,6 +57,7 @@
       <Title>Number</Title>
       <AttType>attNumber</AttType>
       <Foreground>2185063</Foreground>
+      <Style>fsBold</Style>
     </Number>
     <Directive Class="TGlobalAttribute">
       <Title>Directive</Title>
@@ -70,17 +71,18 @@
     <Variable Class="TGlobalAttribute">
       <Title>Variable</Title>
       <AttType>attVariable</AttType>
-      <Foreground>clSkyBlue</Foreground>
+      <Foreground>clBlack</Foreground>
     </Variable>
     <Standard Class="TGlobalAttribute">
       <Title>Standard</Title>
       <AttType>attStandard</AttType>
-      <Foreground>24750</Foreground>
+      <Foreground>3039612</Foreground>
     </Standard>
     <Value Class="TGlobalAttribute">
       <Title>Value</Title>
       <AttType>attValue</AttType>
-      <Foreground>1491229</Foreground>
+      <Foreground>3827011</Foreground>
+      <Style>fsBold</Style>
     </Value>
     <DataType Class="TGlobalAttribute">
       <Title>Type</Title>
@@ -95,7 +97,7 @@
     <Document Class="TGlobalAttribute">
       <Title>Document</Title>
       <AttType>attDocument</AttType>
-      <Foreground>13417386</Foreground>
+      <Foreground>3690</Foreground>
     </Document>
     <Text Class="TGlobalAttribute">
       <Title>Text</Title>
@@ -120,6 +122,7 @@
       <Title>String</Title>
       <AttType>attString</AttType>
       <Foreground>948755</Foreground>
+      <Style>fsBold</Style>
     </QuotedString>
     <FontName>Courier New</FontName>
     <FontSize>10</FontSize>

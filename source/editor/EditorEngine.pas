@@ -28,7 +28,7 @@ uses
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase, SynEditPointClasses,
   dbgpServers, DebugClasses, Masks, mnXMLRttiProfile, mnXMLUtils, FileUtil,
-  LazFileUtils, mnUtils, ConsoleProcess, LCLType, EditorClasses, EditorRun;
+  LazFileUtils, mnUtils, LCLType, EditorClasses, EditorRun;
 
 type
   TEditorChangeStates = set of (ecsChanged, ecsState, ecsRefresh, ecsOptions, ecsDebug, ecsShow, ecsEdit, ecsFolder, ecsProject, ecsProjectLoaded); //ecsShow bring to front
@@ -646,6 +646,7 @@ type
     procedure InitMappers; virtual; abstract;
 
     procedure InitCompletion(vSynEdit: TCustomSynEdit); virtual;
+    procedure DoAddKeywords; virtual;
     procedure DoAddCompletion(AKeyword: string; AKind: integer); virtual;
     procedure DoExecuteCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
 
@@ -1212,6 +1213,8 @@ begin
   Completion.ItemList.BeginUpdate;
   try
     Completion.ItemList.Clear;
+    DoAddKeywords; //TODO check timeout before refill it for speeding
+
     aSynEdit := (Sender as TSynCompletion).TheForm.CurrentEditor as TCustomSynEdit;
     if (aSynEdit <> nil) and (Highlighter <> nil) then
     begin
@@ -1221,6 +1224,7 @@ begin
       Completion.TheForm.Font.Color := aSynEdit.Font.Color;
       Completion.TheForm.Color := aSynEdit.Color;
       Completion.TheForm.Caption := Name;
+
       //Completion.AutoUseSingleIdent := True;
       //CanExecute := False
       {if aTokenType = Ord(CommentID) then
@@ -1232,7 +1236,6 @@ begin
       else}
       begin
         //load keyowrds
-        //AddKeywords;
         aIdentifiers := THashedStringList.Create;
 
         //extract keywords from external files
@@ -4148,6 +4151,10 @@ begin
     //FCompletion.OnPaintItem
   end;
   FCompletion.AddEditor(vSynEdit);
+end;
+
+procedure TFileCategory.DoAddKeywords;
+begin
 end;
 
 procedure TFileCategory.DoAddCompletion(AKeyword: string; AKind: integer);

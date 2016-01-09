@@ -115,7 +115,8 @@ type
     InChanging: boolean;
     procedure ApplyElement;
     procedure RetrieveElement;
-    procedure ApplyCategory;
+    procedure ChangeSetting;
+    procedure RetriveCategory;
     procedure GetData;
     procedure PutData;
   public
@@ -204,17 +205,7 @@ begin
 
   //Line Spacing
   LineSpacingEdit.Text := IntToStr(FProfile.ExtraLineSpacing);
-  //Font
-  SampleEdit.Font.Name := FProfile.Attributes.FontName;
-  SampleEdit.Font.Size := FProfile.Attributes.FontSize;
 
-  NoAntialiasingChk.Checked := FProfile.Attributes.FontNoAntialiasing;
-  if FProfile.Attributes.FontNoAntialiasing then
-    SampleEdit.Font.Quality := fqNonAntialiased
-  else
-    SampleEdit.Font.Quality := fqDefault;
-
-  FontLbl.Caption := SampleEdit.Font.Name + ' ' + IntToStr(SampleEdit.Font.Size) + ' pt';
   //Options
   AutoIndentChk.Checked := eoAutoIndent in FProfile.EditorOptions;
   TabIndentChk.Checked := eoTabIndent in FProfile.EditorOptions;
@@ -232,7 +223,7 @@ begin
   TabsToSpacesChk.Checked := eoTabsToSpaces in FProfile.EditorOptions;
 
   CodeFoldingChk.Checked := FProfile.CodeFolding;
-  ApplyCategory;
+  ChangeSetting;
 end;
 
 procedure TEditorOptionsForm.PutData;
@@ -266,10 +257,6 @@ begin
 
   //Line Spacing
   FProfile.ExtraLineSpacing := StrToIntDef(LineSpacingEdit.Text, 0);
-  //Font
-  FProfile.Attributes.FontName := SampleEdit.Font.Name;
-  FProfile.Attributes.FontSize := SampleEdit.Font.Size;
-  FProfile.Attributes.FontNoAntialiasing := SampleEdit.Font.Quality = fqNonAntialiased;
   //Options
   vOptions := FProfile.EditorOptions; //Keep old values for unsupported options
   vExtOptions := FProfile.ExtEditorOptions;
@@ -292,7 +279,7 @@ begin
   FProfile.ExtEditorOptions := vExtOptions;
   //Caret
   FProfile.CodeFolding := CodeFoldingChk.Checked;
-  FProfile.Attributes.Assign(FAttributes);
+  RetriveCategory;
 end;
 
 procedure TEditorOptionsForm.FormCreate(Sender: TObject);
@@ -318,7 +305,7 @@ begin
   if OpenDialog.Execute then
   begin
     XMLReadObjectFile(FAttributes, OpenDialog.FileName);
-    ApplyCategory;
+    ChangeSetting;
   end;
 end;
 
@@ -370,7 +357,7 @@ end;
 
 procedure TEditorOptionsForm.CategoryCboSelect(Sender: TObject);
 begin
-  ApplyCategory;
+  ChangeSetting;
 end;
 
 procedure TEditorOptionsForm.GutterFontChkChange(Sender: TObject);
@@ -410,7 +397,7 @@ begin
   finally
     InChanging := False;
   end;
-  ApplyCategory;
+  ChangeSetting;
 end;
 
 procedure TEditorOptionsForm.RevertBtnClick(Sender: TObject);
@@ -595,11 +582,22 @@ begin
   end;
 end;
 
-procedure TEditorOptionsForm.ApplyCategory;
+procedure TEditorOptionsForm.ChangeSetting;
 var
   i: integer;
   aFileCategory: TFileCategory;
 begin
+  FontLbl.Caption := SampleEdit.Font.Name + ' ' + IntToStr(SampleEdit.Font.Size) + ' pt';
+  //Font
+  SampleEdit.Font.Name := FProfile.Attributes.FontName;
+  SampleEdit.Font.Size := FProfile.Attributes.FontSize;
+
+  NoAntialiasingChk.Checked := FProfile.Attributes.FontNoAntialiasing;
+  if FProfile.Attributes.FontNoAntialiasing then
+    SampleEdit.Font.Quality := fqNonAntialiased
+  else
+    SampleEdit.Font.Quality := fqDefault;
+
   aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
   if (SampleEdit.Highlighter = nil) or (SampleEdit.Highlighter.ClassType <> aFileCategory.Highlighter.ClassType) then
   begin
@@ -618,6 +616,15 @@ begin
   RetrieveElement;
 end;
 
+procedure TEditorOptionsForm.RetriveCategory;
+begin
+  //Font
+  FProfile.Attributes.FontName := SampleEdit.Font.Name;
+  FProfile.Attributes.FontSize := SampleEdit.Font.Size;
+  FProfile.Attributes.FontNoAntialiasing := SampleEdit.Font.Quality = fqNonAntialiased;
+  FProfile.Attributes.Assign(FAttributes);
+end;
+
 procedure TEditorOptionsForm.BoldChkClick(Sender: TObject);
 begin
   ApplyElement;
@@ -634,6 +641,7 @@ procedure TEditorOptionsForm.SaveBtnClick(Sender: TObject);
 begin
   if SaveDialog.Execute then
   begin
+    RetriveCategory;
     XMLWriteObjectFile(FAttributes, SaveDialog.FileName);
   end;
 end;

@@ -70,6 +70,7 @@ type
     procedure InitMappers; override;
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
+    procedure DoAddKeywords; override;
     procedure DoExecuteCompletion(Sender: TObject); override;
   public
   end;
@@ -386,6 +387,8 @@ begin
   Completion.ItemList.BeginUpdate;
   try
     Completion.ItemList.Clear;
+    DoAddKeywords;
+
     aSynEdit := (Sender as TSynCompletion).TheForm.CurrentEditor as TCustomSynEdit;
     if (aSynEdit <> nil) and (Highlighter is TSynXHTMLSyn) then
     begin
@@ -416,11 +419,6 @@ begin
         else
         begin
           Completion.TheForm.Caption := 'PHP';
-          //load keyowrds
-          EnumerateKeywords(Ord(tkKeyword), sPHPControls, Highlighter.IdentChars, @DoAddCompletion);
-          EnumerateKeywords(Ord(tkKeyword), sPHPKeywords, Highlighter.IdentChars, @DoAddCompletion);
-          EnumerateKeywords(Ord(tkFunction), sPHPFunctions, Highlighter.IdentChars, @DoAddCompletion);
-          EnumerateKeywords(Ord(tkValue), sPHPConstants, Highlighter.IdentChars, @DoAddCompletion);
           // load a variable
           aVariables := THashedStringList.Create;
           aIdentifiers := THashedStringList.Create;
@@ -569,6 +567,16 @@ procedure TXHTMLFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;';//do not add $
+end;
+
+procedure TXHTMLFileCategory.DoAddKeywords;
+begin
+  inherited;
+  //load keyowrds
+  EnumerateKeywords(Ord(tkKeyword), sPHPControls, Highlighter.IdentChars, @DoAddCompletion);
+  EnumerateKeywords(Ord(tkKeyword), sPHPKeywords, Highlighter.IdentChars, @DoAddCompletion);
+  EnumerateKeywords(Ord(tkFunction), sPHPFunctions, Highlighter.IdentChars, @DoAddCompletion);
+  EnumerateKeywords(Ord(tkValue), sPHPConstants, Highlighter.IdentChars, @DoAddCompletion);
 end;
 
 { TJSFileCategory }

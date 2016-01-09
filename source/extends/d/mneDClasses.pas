@@ -40,6 +40,7 @@ type
     procedure InitMappers; override;
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
+    procedure DoAddKeywords; override;
   public
   end;
 
@@ -281,9 +282,13 @@ procedure TDFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   FCompletion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
+  IdentifierID := ord(tkIdentifier);
+end;
+
+procedure TDFileCategory.DoAddKeywords;
+begin
   EnumerateKeywords(Ord(tkKeyword), sDKeywords, Highlighter.IdentChars, @DoAddCompletion);
   EnumerateKeywords(Ord(tkFunction), sDFunctions, Highlighter.IdentChars, @DoAddCompletion);
-  IdentifierID := ord(tkIdentifier);
 end;
 
 procedure TDFileCategory.InitMappers;
