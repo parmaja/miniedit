@@ -285,7 +285,6 @@ begin
 
     SynEdit.MarkupManager.MarkupByClass[TSynEditMarkupWordGroup].MarkupInfo.FrameColor := Attributes.Selected.Background;
 
-
     SynEdit.Options := EditorOptions + cSynRequiredOptions - cSynRemoveOptions;
     SynEdit.ExtraLineSpacing := ExtraLineSpacing;
     SynEdit.InsertCaret := ctVerticalLine;

@@ -24,7 +24,7 @@ type
     DescriptionEdit: TEdit;
     SpecialExtEdit: TEdit;
     Label6: TLabel;
-    TabSheet1: TTabSheet;
+    OverrideOptionsSheet: TTabSheet;
     TabSpaceEdit: TEdit;
     Label1: TLabel;
     Label2: TLabel;
@@ -81,6 +81,7 @@ begin
   begin
     FProject := vProject;
     Retrieve;
+    PageControl.ActivePage := GeneralSheet;
     ActiveControl := NameEdit;
     Result := ShowModal = mrOk;
   end;
@@ -218,8 +219,9 @@ end;
 
 procedure TProjectForm.PageControlChanging(Sender: TObject; var AllowChange: Boolean);
 begin
-  if PageControl.ActivePage = GeneralSheet then
-    Apply(True);
+  if not (csLoading in ComponentState) then //When createing the form when do not need to trigger
+    if (PageControl.ActivePage = GeneralSheet) or (PageControl.ActivePage = OverrideOptionsSheet) then
+      Apply(True);
 end;
 
 procedure TProjectForm.AddFrame(AFrame: TFrame);

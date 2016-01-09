@@ -41,7 +41,7 @@ object ProjectForm: TProjectForm
     Height = 294
     Top = 5
     Width = 463
-    ActivePage = TabSheet1
+    ActivePage = OverrideOptionsSheet
     Anchors = [akTop, akLeft, akRight, akBottom]
     TabIndex = 1
     TabOrder = 0
@@ -183,7 +183,7 @@ object ProjectForm: TProjectForm
         TabOrder = 8
       end
     end
-    object TabSheet1: TTabSheet
+    object OverrideOptionsSheet: TTabSheet
       Caption = 'Options'
       ClientHeight = 268
       ClientWidth = 455
