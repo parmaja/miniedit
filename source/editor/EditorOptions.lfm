@@ -148,7 +148,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Top = 254
         Width = 52
         TabOrder = 11
-        Text = '8'
+        Text = '4'
       end
       object GutterGrp: TGroupBox
         Left = 214

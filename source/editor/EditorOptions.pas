@@ -204,7 +204,6 @@ begin
 
   //Line Spacing
   LineSpacingEdit.Text := IntToStr(FProfile.ExtraLineSpacing);
-  TabWidthEdit.Text := IntToStr(FProfile.TabWidth);
   //Font
   SampleEdit.Font.Name := FProfile.FontName;
   SampleEdit.Font.Size := FProfile.FontSize;
@@ -217,18 +216,21 @@ begin
 
   FontLbl.Caption := SampleEdit.Font.Name + ' ' + IntToStr(SampleEdit.Font.Size) + ' pt';
   //Options
-  AutoIndentChk.Checked := eoAutoIndent in FProfile.Options;
-  TabIndentChk.Checked := eoTabIndent in FProfile.Options;
-  SmartTabsChk.Checked := eoSmartTabs in FProfile.Options;
-  HalfPageScrollChk.Checked := eoHalfPageScroll in FProfile.Options;
-  ScrollByOneLessChk.Checked := eoScrollByOneLess in FProfile.Options;
-  ShowScrollHintChk.Checked := eoShowScrollHint in FProfile.Options;
-  TabsToSpacesChk.Checked := eoTabsToSpaces in FProfile.Options;
-  SmartTabDeleteChk.Checked := eoSmartTabDelete in FProfile.Options;
-  EnhanceHomeKeyChk.Checked := eoEnhanceHomeKey in FProfile.Options;
-  GroupUndoChk.Checked := eoGroupUndo in FProfile.Options;
-  ShowSpecialCharsChk.Checked := eoShowSpecialChars in FProfile.Options;
-  BracketHighlightChk.Checked := eoBracketHighlight in FProfile.Options;
+  AutoIndentChk.Checked := eoAutoIndent in FProfile.EditorOptions;
+  TabIndentChk.Checked := eoTabIndent in FProfile.EditorOptions;
+  SmartTabsChk.Checked := eoSmartTabs in FProfile.EditorOptions;
+  HalfPageScrollChk.Checked := eoHalfPageScroll in FProfile.EditorOptions;
+  ScrollByOneLessChk.Checked := eoScrollByOneLess in FProfile.EditorOptions;
+  ShowScrollHintChk.Checked := eoShowScrollHint in FProfile.EditorOptions;
+  SmartTabDeleteChk.Checked := eoSmartTabDelete in FProfile.EditorOptions;
+  EnhanceHomeKeyChk.Checked := eoEnhanceHomeKey in FProfile.EditorOptions;
+  GroupUndoChk.Checked := eoGroupUndo in FProfile.EditorOptions;
+  ShowSpecialCharsChk.Checked := eoShowSpecialChars in FProfile.EditorOptions;
+  BracketHighlightChk.Checked := eoBracketHighlight in FProfile.EditorOptions;
+  //Can be override by project options
+  TabWidthEdit.Text := IntToStr(FProfile.TabWidth);
+  TabsToSpacesChk.Checked := eoTabsToSpaces in FProfile.EditorOptions;
+
   CodeFoldingChk.Checked := FProfile.CodeFolding;
   ApplyCategory;
 end;
@@ -264,29 +266,30 @@ begin
 
   //Line Spacing
   FProfile.ExtraLineSpacing := StrToIntDef(LineSpacingEdit.Text, 0);
-  FProfile.TabWidth := StrToIntDef(TabWidthEdit.Text, 8);
   //Font
   FProfile.FontName := SampleEdit.Font.Name;
   FProfile.FontSize := SampleEdit.Font.Size;
   FProfile.FontNoAntialiasing := SampleEdit.Font.Quality = fqNonAntialiased;
   //Options
-  vOptions := FProfile.Options; //Keep old values for unsupported options
-  vExtOptions := FProfile.ExtOptions;
+  vOptions := FProfile.EditorOptions; //Keep old values for unsupported options
+  vExtOptions := FProfile.ExtEditorOptions;
   SetFlag(eoAutoIndent, AutoIndentChk.Checked);
   SetFlag(eoTabIndent, TabIndentChk.Checked);
   SetFlag(eoSmartTabs, SmartTabsChk.Checked);
   SetFlag(eoHalfPageScroll, HalfPageScrollChk.Checked);
   SetFlag(eoScrollByOneLess, ScrollByOneLessChk.Checked);
   SetFlag(eoShowScrollHint, ShowScrollHintChk.Checked);
-  SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
   SetFlag(eoSmartTabDelete, SmartTabDeleteChk.Checked);
   SetFlag(eoEnhanceHomeKey, EnhanceHomeKeyChk.Checked);
   SetFlag(eoGroupUndo, GroupUndoChk.Checked);
   SetFlag(eoShowSpecialChars, ShowSpecialCharsChk.Checked);
   SetFlag(eoBracketHighlight, BracketHighlightChk.Checked);
 
-  FProfile.Options := vOptions;
-  FProfile.ExtOptions := vExtOptions;
+  FProfile.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
+  SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
+
+  FProfile.EditorOptions := vOptions;
+  FProfile.ExtEditorOptions := vExtOptions;
   //Caret
   FProfile.CodeFolding := CodeFoldingChk.Checked;
   FProfile.Attributes.Assign(FAttributes);

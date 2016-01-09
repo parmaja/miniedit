@@ -50,6 +50,8 @@ const
 
   cSynRemoveOptions = [eoRightMouseMovesCursor, eoScrollPastEof];
 
+  cSynOverridedOptions = [eoTabsToSpaces];
+
   cSynDefaultOptions = cSynRequiredOptions + cSynRemoveOptions + [eoAutoIndent, eoBracketHighlight,
     eoShowScrollHint, eoTabsToSpaces, eoTabIndent, eoTrimTrailingSpaces, eoKeepCaretX];
 
@@ -189,19 +191,18 @@ type
   private
     FCodeFolding: Boolean;
     FDrawDivider: Boolean;
-    FExtOptions: TSynEditorOptions2;
+    FExtEditorOptions: TSynEditorOptions2;
     FMaxUndo: Integer;
     FExtraLineSpacing: Integer;
+    FTabsToSpaces: Boolean;
     FTabWidth: Integer;
     FFontName: String;
     FFontSize: Integer;
     FFontNoAntialiasing: Boolean;
     FBookmarks: TSynBookMarkOpt;
-    FOptions: TSynEditorOptions;
+    FEditorOptions: TSynEditorOptions;
     FGutterOptions: TGutterOptions;
     FAttributes: TGlobalAttributes;
-    procedure SetExtOptions(const AValue: TSynEditorOptions2);
-    procedure SetOptions(const Value: TSynEditorOptions);
   protected
   public
     constructor Create;
@@ -212,17 +213,18 @@ type
     procedure Reset;
   published
     property Attributes: TGlobalAttributes read FAttributes;
-    property Options: TSynEditorOptions read FOptions write SetOptions default cSynDefaultOptions;
-    property ExtOptions: TSynEditorOptions2 read FExtOptions write SetExtOptions default [];
+    property EditorOptions: TSynEditorOptions read FEditorOptions write FEditorOptions default cSynDefaultOptions;
+    property ExtEditorOptions: TSynEditorOptions2 read FExtEditorOptions write FExtEditorOptions default [];
     property FontName: String read FFontName write FFontName;
     property FontSize: Integer read FFontSize write FFontSize;
     property FontNoAntialiasing: Boolean read FFontNoAntialiasing write FFontNoAntialiasing default False;
     property Gutter: TGutterOptions read FGutterOptions write FGutterOptions;
     property ExtraLineSpacing: Integer read FExtraLineSpacing write FExtraLineSpacing default 0;
     property MaxUndo: Integer read FMaxUndo write FMaxUndo default 1024;
-    property TabWidth: Integer read FTabWidth write FTabWidth default 2;
     property CodeFolding: Boolean read FCodeFolding write FCodeFolding default False;
-    property DrawDivider: Boolean read FDrawDivider write FDrawDivider default False;
+    property DrawDivider: Boolean read FDrawDivider write FDrawDivider default False; //TODO not yet
+    //Can be overriden by project options
+    property TabWidth: Integer read FTabWidth write FTabWidth default 4;
   end;
 
 implementation
@@ -284,17 +286,17 @@ begin
     SynEdit.MarkupManager.MarkupByClass[TSynEditMarkupWordGroup].MarkupInfo.FrameColor := Attributes.Selected.Background;
 
 
-    SynEdit.Options := Options + cSynRequiredOptions - cSynRemoveOptions;
+    SynEdit.Options := EditorOptions + cSynRequiredOptions - cSynRemoveOptions;
     SynEdit.ExtraLineSpacing := ExtraLineSpacing;
     SynEdit.InsertCaret := ctVerticalLine;
     SynEdit.OverwriteCaret := ctBlock;
     SynEdit.MaxUndo := MaxUndo;
-    SynEdit.TabWidth := TabWidth;
-
     SynEdit.RightEdge := 80;
     SynEdit.RightEdgeColor := clSilver;
 
     SynEdit.Gutter.Assign(Gutter);
+
+    SynEdit.TabWidth := TabWidth;
   end
   else
     inherited AssignTo(Dest);
@@ -311,22 +313,11 @@ begin
   FFontName := 'Courier New';
   FFontSize := 10;
   FFontNoAntialiasing := False;
-  Options := cSynDefaultOptions;
-  //ExtOptions :=
+  EditorOptions := cSynDefaultOptions;
+  //ExtEditorOptions :=
   ExtraLineSpacing := 0;
   MaxUndo := 1024;
-  TabWidth := 2;
-end;
-
-procedure TEditorProfile.SetExtOptions(const AValue: TSynEditorOptions2);
-begin
-  if FExtOptions =AValue then exit;
-  FExtOptions :=AValue;
-end;
-
-procedure TEditorProfile.SetOptions(const Value: TSynEditorOptions);
-begin
-  FOptions := Value;
+  TabWidth := 4;
 end;
 
 { TGlobalAttributes }

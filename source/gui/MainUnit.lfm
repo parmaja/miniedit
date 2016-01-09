@@ -48,11 +48,6 @@ object MainForm: TMainForm
       TabOrder = 0
       Transparent = True
       Wrapable = False
-      object ToolButton3: TToolButton
-        Left = 151
-        Top = 0
-        Action = ManageAct
-      end
       object BackBtn: TToolButton
         Left = 1
         Top = 0
@@ -64,22 +59,22 @@ object MainForm: TMainForm
         Action = OpenAct
       end
       object StopBtn: TToolButton
-        Left = 226
+        Left = 151
         Top = 0
         Action = SaveAct
       end
       object ToolButton1: TToolButton
-        Left = 301
+        Left = 226
         Top = 0
         Action = SaveAllAct
       end
       object ToolButton6: TToolButton
-        Left = 376
+        Left = 301
         Top = 0
         Action = DBGRunAct
       end
       object ToolButton7: TToolButton
-        Left = 451
+        Left = 376
         Height = 23
         Top = 0
         Width = 10
@@ -88,19 +83,19 @@ object MainForm: TMainForm
         Style = tbsSeparator
       end
       object FoldersBtn: TToolButton
-        Left = 461
+        Left = 386
         Top = 0
         Action = FoldersAct
         Style = tbsCheck
       end
       object ToolButton2: TToolButton
-        Left = 536
+        Left = 461
         Top = 0
         Action = MessagesAct
         Style = tbsCheck
       end
       object ToolButton8: TToolButton
-        Left = 618
+        Left = 543
         Top = 0
         Action = OutputAct
         Style = tbsCheck

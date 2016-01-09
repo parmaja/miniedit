@@ -27,9 +27,8 @@
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>P:\sahlisoft\delphi\jobs\sahlisoft_2\source\gadgets\lib\mposDBAgents.pas</FileName>
-            <CaretX>6</CaretX>
-            <CaretY>82</CaretY>
-            <TopLine>67</TopLine>
+            <CaretX>28</CaretX>
+            <CaretY>11</CaretY>
           </Object>
         </Items>
       </Files>
@@ -41,5 +40,6 @@
       </Paths>
       <ExpandPaths>False</ExpandPaths>
     </Options>
+    <EditorOptions></EditorOptions>
   </Object>
 </rtti>

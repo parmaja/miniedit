@@ -1,4 +1,4 @@
-unit mneProjectForms;
+unit mneManageRecentsForms;
 
 {$mode objfpc}{$H+}
 {**

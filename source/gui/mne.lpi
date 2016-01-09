@@ -222,214 +222,213 @@
         <ResourceBaseClass Value="Form"/>
       </Unit9>
       <Unit10>
-        <Filename Value="mneProjectForms.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="ManageProjectsForm"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
-      </Unit10>
-      <Unit11>
         <Filename Value="mneProjectOptions.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ProjectForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit11>
-      <Unit12>
+      </Unit10>
+      <Unit11>
         <Filename Value="..\editor\EditorDebugger.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit12>
-      <Unit13>
+      </Unit11>
+      <Unit12>
         <Filename Value="..\addons\mneAssociateForm.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="AssociateForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit13>
-      <Unit14>
+      </Unit12>
+      <Unit13>
         <Filename Value="..\editor\PHP_xDebug.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit14>
-      <Unit15>
+      </Unit13>
+      <Unit14>
         <Filename Value="..\editor\SelectList.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SelectListForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit15>
-      <Unit16>
+      </Unit14>
+      <Unit15>
         <Filename Value="mneResources.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="EditorResource"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="DataModule"/>
-      </Unit16>
-      <Unit17>
+      </Unit15>
+      <Unit16>
         <Filename Value="..\editor\EditorEngine.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit17>
-      <Unit18>
+      </Unit16>
+      <Unit17>
         <Filename Value="MainUnit.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="MainForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit18>
-      <Unit19>
+      </Unit17>
+      <Unit18>
         <Filename Value="..\editor\EditorOptions.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="EditorOptionsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit19>
-      <Unit20>
+      </Unit18>
+      <Unit19>
         <Filename Value="mneSetups.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="EditorSetupForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit20>
-      <Unit21>
+      </Unit19>
+      <Unit20>
         <Filename Value="mneSettings.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="EditorSettingForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit20>
+      <Unit21>
+        <Filename Value="..\editor\EditorClasses.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit21>
       <Unit22>
-        <Filename Value="..\editor\EditorClasses.pas"/>
+        <Filename Value="mneSARDClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit22>
       <Unit23>
-        <Filename Value="mneSARDClasses.pas"/>
+        <Filename Value="mneClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit23>
       <Unit24>
-        <Filename Value="mneClasses.pas"/>
+        <Filename Value="..\lib\DebugClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit24>
       <Unit25>
-        <Filename Value="..\lib\DebugClasses.pas"/>
+        <Filename Value="mneViewClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit25>
       <Unit26>
-        <Filename Value="mneViewClasses.pas"/>
+        <Filename Value="..\extends\pascal\mnePasClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit26>
       <Unit27>
-        <Filename Value="..\extends\pascal\mnePasClasses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit27>
-      <Unit28>
         <Filename Value="..\extends\php\mnePHPConfigForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PHPConfigForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit28>
-      <Unit29>
+      </Unit27>
+      <Unit28>
         <Filename Value="..\extends\php\mnePHPIniForm.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PHPIniForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit28>
+      <Unit29>
+        <Filename Value="..\extends\php\mnePHPClasses.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit29>
       <Unit30>
-        <Filename Value="..\extends\php\mnePHPClasses.pas"/>
+        <Filename Value="..\extends\d\mneDClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit30>
       <Unit31>
-        <Filename Value="..\extends\d\mneDClasses.pas"/>
+        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\SynHighlighterD.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit31>
       <Unit32>
-        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\SynHighlighterD.pas"/>
+        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\SynHighlighterMultiProc.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit32>
       <Unit33>
-        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\SynHighlighterMultiProc.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit33>
-      <Unit34>
         <Filename Value="D:\dev\lazarus\components\synedit\synedithighlighter.pp"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="SynEditHighlighter"/>
-      </Unit34>
-      <Unit35>
+      </Unit33>
+      <Unit34>
         <Filename Value="..\extends\csv\mneCSVClasses.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit35>
-      <Unit36>
+      </Unit34>
+      <Unit35>
         <Filename Value="..\extends\csv\mneCSVForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CSVForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit36>
-      <Unit37>
+      </Unit35>
+      <Unit36>
         <Filename Value="..\..\..\..\lib\minilib\connection\source\ui\CSVOptionsForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CSVOptionsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit37>
-      <Unit38>
+      </Unit36>
+      <Unit37>
         <Filename Value="..\extends\d\mneDConfigForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="DConfigForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit38>
-      <Unit39>
+      </Unit37>
+      <Unit38>
         <Filename Value="..\extends\d\mneDProjectFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="DProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit39>
-      <Unit40>
+      </Unit38>
+      <Unit39>
         <Filename Value="..\extends\pascal\mnePasProjectFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PasProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit40>
-      <Unit41>
+      </Unit39>
+      <Unit40>
         <Filename Value="..\extends\pascal\mnePasConfigForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PasConfigForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit40>
+      <Unit41>
+        <Filename Value="..\..\..\..\lib\minilib\lib\mnStreams.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit41>
       <Unit42>
-        <Filename Value="..\..\..\..\lib\minilib\lib\mnStreams.pas"/>
+        <Filename Value="..\..\..\..\lib\minilib\connection\source\mncCSV.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit42>
       <Unit43>
-        <Filename Value="..\..\..\..\lib\minilib\connection\source\mncCSV.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit43>
-      <Unit44>
         <Filename Value="..\extends\php\mnePHPProjectFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PHPProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+      </Unit43>
+      <Unit44>
+        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\ConsoleProcess.pp"/>
+        <IsPartOfProject Value="True"/>
       </Unit44>
       <Unit45>
-        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\ConsoleProcess.pp"/>
+        <Filename Value="..\editor\EditorRun.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit45>
       <Unit46>
-        <Filename Value="..\editor\EditorRun.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit46>
-      <Unit47>
         <Filename Value="mneCompileProjectOptions.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CompilerProjectOptionsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+      </Unit46>
+      <Unit47>
+        <Filename Value="mneManageRecentsForms.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="ManageProjectsForm"/>
+        <ResourceBaseClass Value="Form"/>
       </Unit47>
     </Units>
   </ProjectOptions>

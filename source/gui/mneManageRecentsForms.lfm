@@ -11,7 +11,7 @@ object ManageProjectsForm: TManageProjectsForm
   Font.Name = 'MS Sans Serif'
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.7'
   object PageControl: TPageControl
     Left = 5
     Height = 298
@@ -23,25 +23,24 @@ object ManageProjectsForm: TManageProjectsForm
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Projects'
-      ClientHeight = 264
-      ClientWidth = 462
+      ClientHeight = 272
+      ClientWidth = 460
       object ProjectsList: TListBox
         Left = 1
-        Height = 228
+        Height = 236
         Top = 2
-        Width = 465
+        Width = 463
         Anchors = [akTop, akLeft, akRight, akBottom]
         ItemHeight = 18
         OnDblClick = ProjectsListDblClick
         ScrollWidth = 463
         Style = lbOwnerDrawFixed
         TabOrder = 0
-        TopIndex = -1
       end
       object Button1: TButton
         Left = 80
         Height = 25
-        Top = 234
+        Top = 242
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'Add'
@@ -51,7 +50,7 @@ object ManageProjectsForm: TManageProjectsForm
       object Button3: TButton
         Left = 3
         Height = 25
-        Top = 234
+        Top = 242
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'New'
@@ -61,7 +60,7 @@ object ManageProjectsForm: TManageProjectsForm
       object MoveDownBtn: TButton
         Left = 386
         Height = 25
-        Top = 234
+        Top = 242
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'Move Down'
@@ -71,7 +70,7 @@ object ManageProjectsForm: TManageProjectsForm
       object MoveUpBtn: TButton
         Left = 309
         Height = 25
-        Top = 234
+        Top = 242
         Width = 75
         Anchors = [akLeft, akBottom]
         Caption = 'Move Up'
@@ -96,7 +95,6 @@ object ManageProjectsForm: TManageProjectsForm
         ScrollWidth = 456
         Style = lbOwnerDrawFixed
         TabOrder = 0
-        TopIndex = -1
       end
     end
     object TabSheet3: TTabSheet
@@ -115,7 +113,6 @@ object ManageProjectsForm: TManageProjectsForm
         ScrollWidth = 456
         Style = lbOwnerDrawFixed
         TabOrder = 0
-        TopIndex = -1
       end
     end
   end
@@ -160,4 +157,4 @@ object ManageProjectsForm: TManageProjectsForm
       OnClick = AddtoProjects1Click
     end
   end
-end
+end

@@ -3,7 +3,6 @@ object ProjectForm: TProjectForm
   Height = 329
   Top = 184
   Width = 471
-  ActiveControl = NameEdit
   BorderStyle = bsDialog
   Caption = 'Project Options'
   ClientHeight = 329
@@ -13,7 +12,7 @@ object ProjectForm: TProjectForm
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '1.5'
+  LCLVersion = '1.7'
   object OkBtn: TButton
     Left = 392
     Height = 25
@@ -42,11 +41,10 @@ object ProjectForm: TProjectForm
     Height = 294
     Top = 5
     Width = 463
-    ActivePage = GeneralSheet
+    ActivePage = TabSheet1
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
-    OnChange = PageControlChange
     OnChanging = PageControlChanging
     Options = [nboKeyboardTabSwitch]
     object GeneralSheet: TTabSheet
@@ -183,6 +181,44 @@ object ProjectForm: TProjectForm
         Top = 148
         Width = 303
         TabOrder = 8
+      end
+    end
+    object TabSheet1: TTabSheet
+      Caption = 'Options'
+      ClientHeight = 268
+      ClientWidth = 455
+      object OverrideOptionsChk: TCheckBox
+        Left = 15
+        Height = 19
+        Top = 12
+        Width = 99
+        Caption = 'Override Options'
+        TabOrder = 0
+      end
+      object Label9: TLabel
+        Left = 34
+        Height = 13
+        Top = 66
+        Width = 53
+        Caption = 'Tab Width:'
+        ParentColor = False
+      end
+      object TabWidthEdit: TEdit
+        Left = 92
+        Height = 21
+        Top = 62
+        Width = 52
+        TabOrder = 1
+        Text = '4'
+      end
+      object TabsToSpacesChk: TCheckBox
+        Left = 31
+        Height = 19
+        Hint = 'Converts a tab character to the number of spaces in Tab Width'
+        Top = 38
+        Width = 93
+        Caption = 'Tabs to spaces'
+        TabOrder = 2
       end
     end
   end

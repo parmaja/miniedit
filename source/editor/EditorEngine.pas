@@ -255,7 +255,10 @@ type
 
   TEditorProject = class sealed(TmnXMLProfile)
   private
+    FEditorOptions: TSynEditorOptions;
     FOptions: TEditorProjectOptions;
+    FOverrideEditorOptions: Boolean;
+    FTabWidth: Integer;
     FTendencyName: string;
     FDescription: string;
     FRootUrl: string;
@@ -295,6 +298,10 @@ type
     property SaveDesktop: Boolean read FSaveDesktop write FSaveDesktop default True;
     property Desktop: TEditorDesktop read FDesktop stored FSaveDesktop;
     property Options: TEditorProjectOptions read FOptions write FOptions default nil;
+    //Override options
+    property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False;
+    property TabWidth: Integer read FTabWidth write FTabWidth default 4;
+    property EditorOptions: TSynEditorOptions read FEditorOptions write FEditorOptions;
   end;
 
   { TDebugMarksPart }
@@ -1572,6 +1579,12 @@ begin
     aProfile := Source as TEditorProfile;
 
     aProfile.AssignTo(SynEdit);
+
+    if Engine.Session.IsOpened and Engine.Session.Project.OverrideEditorOptions then
+    begin
+      SynEdit.Options := SynEdit.Options - cSynOverridedOptions + Engine.Session.Project.EditorOptions;
+      SynEdit.TabWidth := Engine.Session.Project.TabWidth;
+    end;
 
     if (Group <> nil) and (Group.Category.Highlighter <> nil) then
       Group.Category.Apply(Group.Category.Highlighter, aProfile.Attributes);
@@ -4222,6 +4235,7 @@ begin
   inherited Create;
   FDesktop := TEditorDesktop.Create;
   FSaveDesktop := True;
+  FTabWidth := 4;
 end;
 
 destructor TEditorProject.Destroy;

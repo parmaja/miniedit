@@ -216,7 +216,6 @@ type
     Extractkeywords: TMenuItem;
     ManageAct: TAction;
     Manage1: TMenuItem;
-    ToolButton3: TToolButton;
     OpenFolder2: TMenuItem;
     ProjectOpenFolderAct: TAction;
     OpenIncludeAct: TAction;
@@ -561,7 +560,7 @@ uses
   mnXMLUtils, StrUtils, SearchForms, mneProjectOptions, EditorOptions,
   EditorProfiles, mneResources, mneSetups, Clipbrd, ColorUtils,
   SelectFiles, mneSettings, mneConsts,
-  SynEditTypes, AboutForms, mneProjectForms, Types,
+  SynEditTypes, AboutForms, mneManageRecentsForms, Types,
   mneBreakpoints,
   SearchInFilesForms, SelectList;
 

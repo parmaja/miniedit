@@ -10,7 +10,7 @@ unit mneProjectOptions;
 interface
 
 uses
-  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, SynEdit,
   EditorEngine, mneClasses, Dialogs, StdCtrls, ExtCtrls, ComCtrls, Menus;
 
 type
@@ -19,9 +19,12 @@ type
 
   TProjectForm = class(TForm)
     Button3: TButton;
+    Label9: TLabel;
+    OverrideOptionsChk: TCheckBox;
     DescriptionEdit: TEdit;
     SpecialExtEdit: TEdit;
     Label6: TLabel;
+    TabSheet1: TTabSheet;
     TabSpaceEdit: TEdit;
     Label1: TLabel;
     Label2: TLabel;
@@ -33,6 +36,8 @@ type
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     NameEdit: TEdit;
+    TabsToSpacesChk: TCheckBox;
+    TabWidthEdit: TEdit;
     TitleEdit: TEdit;
     OkBtn: TButton;
     CancelBtn: TButton;
@@ -50,7 +55,6 @@ type
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure PageControlChange(Sender: TObject);
     procedure PageControlChanging(Sender: TObject; var AllowChange: Boolean);
   private
     FProject: TEditorProject;
@@ -115,6 +119,13 @@ end;
 procedure TProjectForm.Apply(GeneralOnly: Boolean);
 var
   i: Integer;
+  procedure SetFlag(aOption: TSynEditorOption; aValue: boolean);
+  begin
+    if aValue then
+      FProject.EditorOptions := FProject.EditorOptions + [aOption]
+    else
+      FProject.EditorOptions := FProject.EditorOptions - [aOption];
+  end;
 begin
   FProject.Title := TitleEdit.Text;
   FProject.Name := NameEdit.Text;
@@ -128,6 +139,10 @@ begin
       if Supports(FFrames[i], IEditorOptions) then
         (FFrames[i] as IEditorOptions).Apply;
   end;
+
+  FProject.OverrideEditorOptions := OverrideOptionsChk.Checked;
+  FProject.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
+  SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
 end;
 
 procedure TProjectForm.Retrieve;
@@ -159,6 +174,11 @@ begin
     SCMCbo.ItemIndex := Engine.SourceManagements.IndexOf(FProject.SCM.Name)
   else
     SCMCbo.ItemIndex := 0;
+
+  //Add any new overrided options to cSynOverridedOptions in EditorProfiles unit
+  OverrideOptionsChk.Checked := FProject.OverrideEditorOptions;
+  TabWidthEdit.Text := IntToStr(FProject.TabWidth);
+  TabsToSpacesChk.Checked := eoTabsToSpaces in FProject.EditorOptions;
 end;
 
 procedure TProjectForm.Button3Click(Sender: TObject);
@@ -194,11 +214,6 @@ begin
   finally
     SCMCbo.Items.EndUpdate;
   end;
-end;
-
-procedure TProjectForm.PageControlChange(Sender: TObject);
-begin
-
 end;
 
 procedure TProjectForm.PageControlChanging(Sender: TObject; var AllowChange: Boolean);
