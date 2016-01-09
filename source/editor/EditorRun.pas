@@ -219,8 +219,8 @@ begin
     FControl.CMDBox.BackGroundColor := Engine.Options.Profile.Attributes.Whitespace.Background;
     FControl.ContentPanel.Color := FControl.CMDBox.BackGroundColor;
 
-    FControl.CMDBox.Font.Name := Engine.Options.Profile.FontName;
-    FControl.CMDBox.Font.Size := Engine.Options.Profile.FontSize;
+    FControl.CMDBox.Font.Name := Engine.Options.Profile.Attributes.FontName;
+    FControl.CMDBox.Font.Size := Engine.Options.Profile.Attributes.FontSize;
     //FControl.CMDBox.GraphicalCharacterWidth := 14;
 
     FControl.CMDBox.TextColor(Engine.Options.Profile.Attributes.Whitespace.Foreground);

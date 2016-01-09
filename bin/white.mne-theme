@@ -16,7 +16,7 @@
     <Selected Class="TGlobalAttribute">
       <Title>Selected</Title>
       <AttType>attSelected</AttType>
-      <Background>14519106</Background>
+      <Background>15448717</Background>
       <Foreground>clBlack</Foreground>
     </Selected>
     <Gutter Class="TGlobalAttribute">
@@ -34,8 +34,8 @@
     <Modified Class="TGlobalAttribute">
       <Title>Modified</Title>
       <AttType>attModified</AttType>
-      <Background>clGreen</Background>
-      <Foreground>clYellow</Foreground>
+      <Background>14784597</Background>
+      <Foreground>3605096</Foreground>
     </Modified>
     <Whitespace Class="TGlobalAttribute">
       <Title>Whitespace</Title>
@@ -75,7 +75,7 @@
     <Standard Class="TGlobalAttribute">
       <Title>Standard</Title>
       <AttType>attStandard</AttType>
-      <Foreground>4107007</Foreground>
+      <Foreground>24750</Foreground>
     </Standard>
     <Value Class="TGlobalAttribute">
       <Title>Value</Title>
@@ -121,5 +121,7 @@
       <AttType>attString</AttType>
       <Foreground>948755</Foreground>
     </QuotedString>
+    <FontName>Courier New</FontName>
+    <FontSize>10</FontSize>
   </Object>
 </rtti>

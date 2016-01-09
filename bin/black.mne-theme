@@ -122,5 +122,7 @@
       <AttType>attString</AttType>
       <Foreground>1491229</Foreground>
     </QuotedString>
+    <FontName>Courier New</FontName>
+    <FontSize>10</FontSize>
   </Object>
 </rtti>

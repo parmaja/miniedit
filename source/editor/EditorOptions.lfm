@@ -393,8 +393,8 @@ object EditorOptionsForm: TEditorOptionsForm
       end
       object SaveBtn: TButton
         Left = 83
-        Height = 26
-        Top = 324
+        Height = 22
+        Top = 328
         Width = 78
         Anchors = [akLeft, akBottom]
         Caption = 'Save'
@@ -403,8 +403,8 @@ object EditorOptionsForm: TEditorOptionsForm
       end
       object LoadBtn: TButton
         Left = 5
-        Height = 26
-        Top = 324
+        Height = 22
+        Top = 328
         Width = 78
         Anchors = [akLeft, akBottom]
         Caption = 'Load'
@@ -413,8 +413,8 @@ object EditorOptionsForm: TEditorOptionsForm
       end
       object ResetBtn: TButton
         Left = 162
-        Height = 26
-        Top = 324
+        Height = 22
+        Top = 328
         Width = 78
         Anchors = [akLeft, akBottom]
         Caption = 'Reset'
@@ -423,7 +423,7 @@ object EditorOptionsForm: TEditorOptionsForm
       end
       inline SampleEdit: TSynEdit
         Left = 3
-        Height = 171
+        Height = 177
         Top = 149
         Width = 425
         Anchors = [akTop, akLeft, akRight, akBottom]

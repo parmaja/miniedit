@@ -205,11 +205,11 @@ begin
   //Line Spacing
   LineSpacingEdit.Text := IntToStr(FProfile.ExtraLineSpacing);
   //Font
-  SampleEdit.Font.Name := FProfile.FontName;
-  SampleEdit.Font.Size := FProfile.FontSize;
+  SampleEdit.Font.Name := FProfile.Attributes.FontName;
+  SampleEdit.Font.Size := FProfile.Attributes.FontSize;
 
-  NoAntialiasingChk.Checked := FProfile.FontNoAntialiasing;
-  if FProfile.FontNoAntialiasing then
+  NoAntialiasingChk.Checked := FProfile.Attributes.FontNoAntialiasing;
+  if FProfile.Attributes.FontNoAntialiasing then
     SampleEdit.Font.Quality := fqNonAntialiased
   else
     SampleEdit.Font.Quality := fqDefault;
@@ -267,9 +267,9 @@ begin
   //Line Spacing
   FProfile.ExtraLineSpacing := StrToIntDef(LineSpacingEdit.Text, 0);
   //Font
-  FProfile.FontName := SampleEdit.Font.Name;
-  FProfile.FontSize := SampleEdit.Font.Size;
-  FProfile.FontNoAntialiasing := SampleEdit.Font.Quality = fqNonAntialiased;
+  FProfile.Attributes.FontName := SampleEdit.Font.Name;
+  FProfile.Attributes.FontSize := SampleEdit.Font.Size;
+  FProfile.Attributes.FontNoAntialiasing := SampleEdit.Font.Quality = fqNonAntialiased;
   //Options
   vOptions := FProfile.EditorOptions; //Keep old values for unsupported options
   vExtOptions := FProfile.ExtEditorOptions;

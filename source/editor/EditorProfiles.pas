@@ -88,6 +88,9 @@ type
 
   TGlobalAttributes = class(TComponent)
   private
+    FFontName: String;
+    FFontNoAntialiasing: Boolean;
+    FFontSize: Integer;
     FInner: TGlobalAttribute;
     FOutter: TGlobalAttribute;
     FDataName: TGlobalAttribute;
@@ -151,6 +154,9 @@ type
     property Inner: TGlobalAttribute read FInner;
     property Comment: TGlobalAttribute read FComment;
     property QuotedString: TGlobalAttribute read FQuotedString;
+    property FontName: String read FFontName write FFontName;
+    property FontSize: Integer read FFontSize write FFontSize;
+    property FontNoAntialiasing: Boolean read FFontNoAntialiasing write FFontNoAntialiasing default False;
   end;
 
   TEditorProfile = class;
@@ -196,9 +202,6 @@ type
     FExtraLineSpacing: Integer;
     FTabsToSpaces: Boolean;
     FTabWidth: Integer;
-    FFontName: String;
-    FFontSize: Integer;
-    FFontNoAntialiasing: Boolean;
     FBookmarks: TSynBookMarkOpt;
     FEditorOptions: TSynEditorOptions;
     FGutterOptions: TGutterOptions;
@@ -215,9 +218,6 @@ type
     property Attributes: TGlobalAttributes read FAttributes;
     property EditorOptions: TSynEditorOptions read FEditorOptions write FEditorOptions default cSynDefaultOptions;
     property ExtEditorOptions: TSynEditorOptions2 read FExtEditorOptions write FExtEditorOptions default [];
-    property FontName: String read FFontName write FFontName;
-    property FontSize: Integer read FFontSize write FFontSize;
-    property FontNoAntialiasing: Boolean read FFontNoAntialiasing write FFontNoAntialiasing default False;
     property Gutter: TGutterOptions read FGutterOptions write FGutterOptions;
     property ExtraLineSpacing: Integer read FExtraLineSpacing write FExtraLineSpacing default 0;
     property MaxUndo: Integer read FMaxUndo write FMaxUndo default 1024;
@@ -269,9 +269,9 @@ begin
   begin
     SynEdit := Dest as TSynEdit;
 
-    SynEdit.Font.Name := FontName;
-    SynEdit.Font.Size := FontSize;
-    if FontNoAntialiasing then
+    SynEdit.Font.Name := Attributes.FontName;
+    SynEdit.Font.Size := Attributes.FontSize;
+    if Attributes.FontNoAntialiasing then
       SynEdit.Font.Quality := fqNonAntialiased
     else
       SynEdit.Font.Quality := fqDefault;
@@ -309,9 +309,6 @@ procedure TEditorProfile.Reset;
 begin
   Attributes.Reset;
   Gutter.Reset;
-  FFontName := 'Courier New';
-  FFontSize := 10;
-  FFontNoAntialiasing := False;
   EditorOptions := cSynDefaultOptions;
   //ExtEditorOptions :=
   ExtraLineSpacing := 0;
@@ -349,6 +346,10 @@ procedure TGlobalAttributes.Reset;
   end;
 
 begin
+  FFontName := 'Courier New';
+  FFontSize := 10;
+  FFontNoAntialiasing := False;
+
   FList.Clear;
   Add(FUI, attUI, 'User Interface', clNone, clNone, []);
   Add(FPanel, attPanel, 'Panel', clNone, clNone, []);
