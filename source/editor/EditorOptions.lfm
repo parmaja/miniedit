@@ -12,15 +12,16 @@ object EditorOptionsForm: TEditorOptionsForm
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
+  ShowHint = True
   LCLVersion = '1.7'
   object PageControl: TPageControl
     Left = 4
     Height = 377
     Top = 3
     Width = 440
-    ActivePage = ColorTab
+    ActivePage = OptionsTab
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     OnChange = PageControlChange
     object OptionsTab: TTabSheet
@@ -76,7 +77,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 21
         Height = 19
         Hint = 'When undoing/redoing actions, handle all continous changes of the same kind in one call instead undoing/redoing each command separately'
-        Top = 35
+        Top = 54
         Width = 76
         Caption = 'Group undo'
         TabOrder = 5
@@ -85,7 +86,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 21
         Height = 19
         Hint = 'enhances home key positioning, similar to visual studio'
-        Top = 55
+        Top = 74
         Width = 153
         Caption = 'Home key jumps to first char'
         TabOrder = 6
@@ -203,8 +204,8 @@ object EditorOptionsForm: TEditorOptionsForm
       object SmartTabsChk: TCheckBox
         Left = 21
         Height = 19
-        Hint = 'When tabbing, the cursor will go to the next non-white space character of the previous line'
-        Top = 159
+        Hint = 'When using <Tab> key, caret will go to the next non-space character of the previous line'
+        Top = 189
         Width = 70
         Caption = 'Smart tabs'
         TabOrder = 13
@@ -213,7 +214,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 21
         Height = 19
         Hint = 'similar to Smart Tabs, but when you delete characters'
-        Top = 178
+        Top = 208
         Width = 97
         Caption = 'Smart tab delete'
         TabOrder = 14
@@ -222,7 +223,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 21
         Height = 19
         Hint = 'When active <Tab> and <Shift><Tab> act as block indent, unindent when text is selected'
-        Top = 196
+        Top = 35
         Width = 72
         Caption = 'Tab Indent'
         TabOrder = 15
@@ -231,19 +232,10 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 21
         Height = 19
         Hint = 'Converts a tab character to the number of spaces in Tab Width'
-        Top = 213
+        Top = 227
         Width = 93
         Caption = 'Tabs to spaces'
         TabOrder = 16
-      end
-      object TrimTrailingSpacesChk: TCheckBox
-        Left = 21
-        Height = 19
-        Hint = 'Spaces at the end of lines will be trimmed and not saved'
-        Top = 231
-        Width = 110
-        Caption = 'Trim trailing spaces'
-        TabOrder = 17
       end
     end
     object ColorTab: TTabSheet

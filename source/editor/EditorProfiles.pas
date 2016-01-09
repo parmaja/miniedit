@@ -46,7 +46,7 @@ type
    );
 
 const
-  cSynRequiredOptions = [eoDragDropEditing, eoDropFiles, eoShowCtrlMouseLinks, eoAltSetsColumnMode, eoScrollPastEol, eoRightMouseMovesCursor, eoHideRightMargin];
+  cSynRequiredOptions = [eoDragDropEditing, eoTrimTrailingSpaces, eoDropFiles, eoShowCtrlMouseLinks, eoAltSetsColumnMode, eoScrollPastEol, eoRightMouseMovesCursor, eoHideRightMargin];
 
   cSynRemoveOptions = [eoRightMouseMovesCursor, eoScrollPastEof];
 

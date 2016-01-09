@@ -82,7 +82,6 @@ type
     ForegroundChk: TCheckBox;
     Label12: TLabel;
     CategoryCbo: TComboBox;
-    TrimTrailingSpacesChk: TCheckBox;
     UnderlineChk: TCheckBox;
     WordWrapChk: TCheckBox;
     procedure BackgroundCboChange(Sender: TObject);
@@ -225,7 +224,6 @@ begin
   ScrollByOneLessChk.Checked := eoScrollByOneLess in FProfile.Options;
   ShowScrollHintChk.Checked := eoShowScrollHint in FProfile.Options;
   TabsToSpacesChk.Checked := eoTabsToSpaces in FProfile.Options;
-  TrimTrailingSpacesChk.Checked := eoTrimTrailingSpaces in FProfile.Options;
   SmartTabDeleteChk.Checked := eoSmartTabDelete in FProfile.Options;
   EnhanceHomeKeyChk.Checked := eoEnhanceHomeKey in FProfile.Options;
   GroupUndoChk.Checked := eoGroupUndo in FProfile.Options;
@@ -281,7 +279,6 @@ begin
   SetFlag(eoScrollByOneLess, ScrollByOneLessChk.Checked);
   SetFlag(eoShowScrollHint, ShowScrollHintChk.Checked);
   SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
-  SetFlag(eoTrimTrailingSpaces, TrimTrailingSpacesChk.Checked);
   SetFlag(eoSmartTabDelete, SmartTabDeleteChk.Checked);
   SetFlag(eoEnhanceHomeKey, EnhanceHomeKeyChk.Checked);
   SetFlag(eoGroupUndo, GroupUndoChk.Checked);
