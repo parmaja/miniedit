@@ -7,5 +7,5 @@ var
 begin
   write('Enter your name: ');
   readln(s);
-  writeln('Your name is ' + s);  
+  writeln('Your name is ' + s);
 end.

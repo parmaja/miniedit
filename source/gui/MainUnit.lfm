@@ -587,7 +587,7 @@ object MainForm: TMainForm
         Height = 21
         Hint = 'File name'
         Top = 2
-        Width = 564
+        Width = 550
         Align = alClient
         Caption = 'File name'
         Layout = tlCenter
@@ -669,10 +669,10 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object FileModeBtn: TBitBtn
-        Left = 583
+        Left = 569
         Height = 21
         Top = 2
-        Width = 72
+        Width = 86
         Align = alRight
         Caption = 'Unix'
         Margin = 8

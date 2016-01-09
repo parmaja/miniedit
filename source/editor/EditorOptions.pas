@@ -104,7 +104,7 @@ type
     procedure ResetBtnClick(Sender: TObject);
     procedure RevertBtnClick(Sender: TObject);
 
-      procedure SampleEditGutterClick(Sender: TObject; X, Y, Line: integer; mark: TSynEditMark);
+    procedure SampleEditGutterClick(Sender: TObject; X, Y, Line: integer; mark: TSynEditMark);
     procedure SampleEditMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
     procedure BoldChkClick(Sender: TObject);
     procedure BackgroundChkClick(Sender: TObject);
@@ -438,6 +438,7 @@ begin
     G := FAttributes.Whitespace;
 
   AttributeCbo.ItemIndex := G.Index;
+  RetrieveElement;
 end;
 
 procedure TEditorOptionsForm.SampleEditMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
@@ -549,12 +550,12 @@ begin
         aGlobalAttribute.Background := clNone;
 
       aFontStyle := [];
-{      if BoldChk.Checked then
-        aFontStyle := aFontStyle + [fsBold];}
-      if ItalicChk.Checked then
-        aFontStyle := aFontStyle + [fsItalic];
+      if BoldChk.Checked then
+        aFontStyle := aFontStyle + [fsBold];
       if UnderlineChk.Checked then
         aFontStyle := aFontStyle + [fsUnderline];
+      {if ItalicChk.Checked then
+        aFontStyle := aFontStyle + [fsItalic];}
 
       aGlobalAttribute.Style := aFontStyle;
 
