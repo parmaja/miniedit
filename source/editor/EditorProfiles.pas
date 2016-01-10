@@ -85,12 +85,23 @@ type
   end;
 
   { TGlobalAttributes }
+  TGlobalAttributesInfo = record
+    FontName: String;
+    FontNoAntialiasing: Boolean;
+    FontSize: Integer;
+    GutterAutoSize: boolean;
+    GutterLeftOffset: integer;
+    GutterRightOffset: integer;
+    GutterShowModifiedLines: Boolean;
+    GutterLeadingZeros: Boolean;
+    GutterShowSeparator: Boolean;
+    GutterWidth: Integer;
+    CodeFolding: Boolean;
+  end;
 
   TGlobalAttributes = class(TComponent)
   private
-    FFontName: String;
-    FFontNoAntialiasing: Boolean;
-    FFontSize: Integer;
+    FInfo: TGlobalAttributesInfo;
     FInner: TGlobalAttribute;
     FOutter: TGlobalAttribute;
     FDataName: TGlobalAttribute;
@@ -128,8 +139,12 @@ type
     procedure Reset;
     function Find(AttType: TAttributeType): TGlobalAttribute;
     property Items[Index: Integer]: TGlobalAttribute read GetItem; default;
-    property Count: Integer read GetCount;
     procedure Assign(Source: TPersistent); override;
+    procedure AssignTo(Dest: TPersistent); override;
+    constructor AssignFrom(SynGutter: TSynGutter);
+    property Count: Integer read GetCount;
+  public
+    property Info: TGlobalAttributesInfo read FInfo write FInfo;
   published
     property UI: TGlobalAttribute read FUI;
     property URL: TGlobalAttribute read FURL;
@@ -154,60 +169,42 @@ type
     property Inner: TGlobalAttribute read FInner;
     property Comment: TGlobalAttribute read FComment;
     property QuotedString: TGlobalAttribute read FQuotedString;
-    property FontName: String read FFontName write FFontName;
-    property FontSize: Integer read FFontSize write FFontSize;
-    property FontNoAntialiasing: Boolean read FFontNoAntialiasing write FFontNoAntialiasing default False;
-  end;
+    property FontName: String read FInfo.FontName write FInfo.FontName;
+    property FontSize: Integer read FInfo.FontSize write FInfo.FontSize;
+    property FontNoAntialiasing: Boolean read FInfo.FontNoAntialiasing write FInfo.FontNoAntialiasing default False;
+    property CodeFolding: Boolean read FInfo.CodeFolding write FInfo.CodeFolding default False;
 
-  TEditorProfile = class;
-  { TGutterOptions }
-
-  TGutterOptions = class(TPersistent)
-  private
-    FProfile: TEditorProfile;
-
-    FAutoSize: boolean;
-    FLeftOffset: integer;
-    FRightOffset: integer;
-    FShowModifiedLines: Boolean;
-    FLeadingZeros: Boolean;
-    FShowSeparator: Boolean;
-    FWidth: Integer;
-  public
-    constructor Create(AProfile: TEditorProfile);
-    procedure Assign(Source: TPersistent); override;
-    procedure AssignTo(Dest: TPersistent); override;
-    constructor AssignFrom(SynGutter: TSynGutter);
-    procedure Reset; virtual;
-  published
-    property AutoSize: boolean read FAutoSize write FAutoSize default True;
-    property ShowSeparator: Boolean read FShowSeparator write FShowSeparator default True;
-    property ShowModifiedLines: Boolean read FShowModifiedLines write FShowModifiedLines default True;
-    property Width: integer read FWidth write FWidth default 30;
-    property LeadingZeros: Boolean read FLeadingZeros write FLeadingZeros default False;
-    property LeftOffset: integer read FLeftOffset write FLeftOffset default 0;
-    property RightOffset: integer read FRightOffset write FRightOffset default 0;
+    property GutterAutoSize: boolean read FInfo.GutterAutoSize write FInfo.GutterAutoSize default True;
+    property GutterShowSeparator: Boolean read FInfo.GutterShowSeparator write FInfo.GutterShowSeparator default True;
+    property GutterShowModifiedLines: Boolean read FInfo.GutterShowModifiedLines write FInfo.GutterShowModifiedLines default True;
+    property GutterWidth: integer read FInfo.GutterWidth write FInfo.GutterWidth default 30;
+    property GutterLeadingZeros: Boolean read FInfo.GutterLeadingZeros write FInfo.GutterLeadingZeros default False;
+    property GutterLeftOffset: integer read FInfo.GutterLeftOffset write FInfo.GutterLeftOffset default 0;
+    property GutterRightOffset: integer read FInfo.GutterRightOffset write FInfo.GutterRightOffset default 0;
   end;
 
   //This class is assignable to a SynEdit without modifying key properties that affect function
+
+  TEditorProfileInfo = record
+    DrawDivider: Boolean;
+    MaxUndo: Integer;
+    ExtraLineSpacing: Integer;
+    TabsToSpaces: Boolean;
+    TabWidth: Integer;
+    EditorOptions: TSynEditorOptions;
+    ExtEditorOptions: TSynEditorOptions2;
+  end;
 
   { TEditorProfile }
 
   TEditorProfile = class(TmnXMLProfile)
   private
-    FCodeFolding: Boolean;
-    FDrawDivider: Boolean;
-    FExtEditorOptions: TSynEditorOptions2;
-    FMaxUndo: Integer;
-    FExtraLineSpacing: Integer;
-    FTabsToSpaces: Boolean;
-    FTabWidth: Integer;
-    FBookmarks: TSynBookMarkOpt;
-    FEditorOptions: TSynEditorOptions;
-    FGutterOptions: TGutterOptions;
+    FInfo: TEditorProfileInfo;
     FAttributes: TGlobalAttributes;
+    FBookmarks: TSynBookMarkOpt;
   protected
   public
+    property Info: TEditorProfileInfo read FInfo write FInfo;
     constructor Create;
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
@@ -216,15 +213,14 @@ type
     procedure Reset;
   published
     property Attributes: TGlobalAttributes read FAttributes;
-    property EditorOptions: TSynEditorOptions read FEditorOptions write FEditorOptions default cSynDefaultOptions;
-    property ExtEditorOptions: TSynEditorOptions2 read FExtEditorOptions write FExtEditorOptions default [];
-    property Gutter: TGutterOptions read FGutterOptions write FGutterOptions;
-    property ExtraLineSpacing: Integer read FExtraLineSpacing write FExtraLineSpacing default 0;
-    property MaxUndo: Integer read FMaxUndo write FMaxUndo default 1024;
-    property CodeFolding: Boolean read FCodeFolding write FCodeFolding default False;
-    property DrawDivider: Boolean read FDrawDivider write FDrawDivider default False; //TODO not yet
+
+    property EditorOptions: TSynEditorOptions read FInfo.EditorOptions write FInfo.EditorOptions default cSynDefaultOptions;
+    property ExtEditorOptions: TSynEditorOptions2 read FInfo.ExtEditorOptions write FInfo.ExtEditorOptions default [];
+    property ExtraLineSpacing: Integer read FInfo.ExtraLineSpacing write FInfo.ExtraLineSpacing default 0;
+    property MaxUndo: Integer read FInfo.MaxUndo write FInfo.MaxUndo default 1024;
+    property DrawDivider: Boolean read FInfo.DrawDivider write FInfo.DrawDivider default False; //TODO not yet
     //Can be overriden by project options
-    property TabWidth: Integer read FTabWidth write FTabWidth default 4;
+    property TabWidth: Integer read FInfo.TabWidth write FInfo.TabWidth default 4;
   end;
 
 implementation
@@ -238,9 +234,7 @@ constructor TEditorProfile.Create;
 begin
   inherited;
   FBookmarks := TSynBookMarkOpt.Create(nil);
-  FGutterOptions := TGutterOptions.Create(Self);//TODO check the Create params
   FAttributes := TGlobalAttributes.Create(nil);
-  CodeFolding := False;
   DrawDivider := False;
   Reset;
 end;
@@ -248,7 +242,6 @@ end;
 destructor TEditorProfile.Destroy;
 begin
   FBookMarks.Free;
-  FGutterOptions.Free;
   FAttributes.Free;
   inherited;
 end;
@@ -257,6 +250,11 @@ procedure TEditorProfile.Assign(Source: TPersistent);
 begin
   if Source is TSynEdit then
     AssignFrom(Source as TSynEdit)
+  else if Source is TEditorProfile then
+  begin
+    Info := (Source as TEditorProfile).Info;
+    Attributes.Assign((Source as TEditorProfile).Attributes);
+  end
   else
     inherited Assign(Source);
 end;
@@ -293,7 +291,7 @@ begin
     SynEdit.RightEdge := 80;
     SynEdit.RightEdgeColor := clSilver;
 
-    SynEdit.Gutter.Assign(Gutter);
+    SynEdit.Gutter.Assign(Attributes);
 
     SynEdit.TabWidth := TabWidth;
   end
@@ -308,7 +306,6 @@ end;
 procedure TEditorProfile.Reset;
 begin
   Attributes.Reset;
-  Gutter.Reset;
   EditorOptions := cSynDefaultOptions;
   //ExtEditorOptions :=
   ExtraLineSpacing := 0;
@@ -346,9 +343,16 @@ procedure TGlobalAttributes.Reset;
   end;
 
 begin
-  FFontName := 'Courier New';
-  FFontSize := 10;
-  FFontNoAntialiasing := False;
+  FontName := 'Courier New';
+  FontSize := 10;
+  FontNoAntialiasing := False;
+  GutterAutoSize := True;
+  GutterShowSeparator := True;
+  GutterLeftOffset := 0;
+  GutterRightOffset := 0;
+  GutterWidth := 30;
+  GutterLeadingZeros := False;
+  GutterShowModifiedLines := True;
 
   FList.Clear;
   Add(FUI, attUI, 'User Interface', clNone, clNone, []);
@@ -398,8 +402,11 @@ procedure TGlobalAttributes.Assign(Source: TPersistent);
 var
   i: Integer;
 begin
-  if Source is TGlobalAttributes then
+  if Source is TSynGutter then
+    AssignFrom(Source as TSynGutter)
+  else if Source is TGlobalAttributes then
   begin
+    Info := (Source as TGlobalAttributes).Info;
     for i := 0 to Count -1 do
       Items[i].Assign((Source as TGlobalAttributes).Items[i]);
   end
@@ -456,31 +463,7 @@ begin
   FForeground := clNone;
 end;
 
-{ TGutterOptions }
-
-constructor TGutterOptions.Create(AProfile: TEditorProfile);
-begin
-  inherited Create;
-  if AProfile = nil then
-    raise Exception.Create('TGutterOptions should have parent profile.');
-  FProfile := AProfile;
-  Reset;
-end;
-
-procedure TGutterOptions.Assign(Source: TPersistent);
-begin
-  if Source is TSynGutter then
-    AssignFrom(Source as TSynGutter)
-  else
-    inherited Assign(Source);
-end;
-
-procedure SetupGutter(SynGutter: TSynGutter; Attributes: TGlobalAttributes);
-begin
-  //TODO
-end;
-
-procedure TGutterOptions.AssignTo(Dest: TPersistent);
+procedure TGlobalAttributes.AssignTo(Dest: TPersistent);
 var
   SynGutter: TSynGutter;
   i: Integer;
@@ -490,18 +473,15 @@ var
   cf: TSynGutterCodeFolding;
   OldCF: Boolean;
 begin
-  if Dest is TSynGutter then
+  if Dest is TSynGutterBase then
   begin
     SynGutter := Dest as TSynGutter;
-    SynGutter.AutoSize := FAutoSize;
-
-    SetupGutter(SynGutter, FProfile.Attributes);
-
-    SynGutter.Color := FProfile.Attributes.Gutter.Background;
+    SynGutter.AutoSize := GutterAutoSize;
+    SynGutter.Color := Gutter.Background;
     for i := 0 to SynGutter.Parts.Count -1 do
     begin
-      SynGutter.Parts[i].MarkupInfo.Foreground := FProfile.Attributes.Gutter.Foreground;
-      SynGutter.Parts[i].MarkupInfo.Background := FProfile.Attributes.Gutter.Background;
+      SynGutter.Parts[i].MarkupInfo.Foreground := Gutter.Foreground;
+      SynGutter.Parts[i].MarkupInfo.Background := Gutter.Background;
     end;
 
     gp := SynGutter.Parts.ByClass[TSynGutterLineNumber, 0] as TSynGutterLineNumber;
@@ -509,80 +489,73 @@ begin
     begin
       gp.Visible := True;
       gp.ZeroStart := False;
-      gp.LeadingZeros := FLeadingZeros;
+      gp.LeadingZeros := GutterLeadingZeros;
     end;
 
     sp := SynGutter.Parts.ByClass[TSynGutterSeparator, 0] as TSynGutterSeparator;
     if sp <> nil then
     begin
-      sp.Visible := FShowSeparator;
-      sp.MarkupInfo.Foreground := FProfile.Attributes.Separator.Background;
-      sp.MarkupInfo.Background := FProfile.Attributes.Separator.Foreground;
+      sp.Visible := GutterShowSeparator;
+      sp.MarkupInfo.Foreground := Separator.Background;
+      sp.MarkupInfo.Background := Separator.Foreground;
     end;
 
     ch := SynGutter.Parts.ByClass[TSynGutterChanges, 0] as TSynGutterChanges;
     if ch <> nil then
     begin
-      ch.Visible := FShowModifiedLines;
-      ch.SavedColor := FProfile.Attributes.Modified.Background;
-      ch.ModifiedColor := FProfile.Attributes.Modified.Foreground;
+      ch.Visible := GutterShowModifiedLines;
+      ch.SavedColor := Modified.Background;
+      ch.ModifiedColor := Modified.Foreground;
     end;
 
     cf := SynGutter.Parts.ByClass[TSynGutterCodeFolding, 0] as TSynGutterCodeFolding;
     if cf <> nil then
     begin
       OldCF := cf.Visible;
-      cf.Visible := FProfile.CodeFolding and ((SynGutter.SynEdit as TSynEdit).Highlighter <> nil) and (hcCodeFolding in (SynGutter.SynEdit as TSynEdit).Highlighter.Capabilities);
+      cf.Visible := CodeFolding and ((SynGutter.SynEdit as TSynEdit).Highlighter <> nil) and (hcCodeFolding in (SynGutter.SynEdit as TSynEdit).Highlighter.Capabilities);
       if (cf.Visible) and (cf.Visible <> OldCF) then
         (SynGutter.SynEdit as TSynEdit).UnfoldAll;
     end;
 
-    SynGutter.LeftOffset := FLeftOffset;
-    SynGutter.RightOffset := FRightOffset;
-    SynGutter.Width := FWidth;
+    SynGutter.LeftOffset := GutterLeftOffset;
+    SynGutter.RightOffset := GutterRightOffset;
+    SynGutter.Width := GutterWidth;
     SynGutter.Visible := True; //TODO
   end
+  else if Dest is TGlobalAttributes then
+    (Dest as TGlobalAttributes).Info := Info
   else
     inherited AssignTo(Dest);
 end;
 
-constructor TGutterOptions.AssignFrom(SynGutter: TSynGutter);
+constructor TGlobalAttributes.AssignFrom(SynGutter: TSynGutter);
 var
   gp: TSynGutterLineNumber;
   sp: TSynGutterSeparator;
   ch: TSynGutterChanges;
 begin
-  FAutoSize := SynGutter.AutoSize;
-  FLeftOffset := SynGutter.LeftOffset;
-  FRightOffset := SynGutter.RightOffset;
-  FWidth := SynGutter.Width;
+  GutterAutoSize := SynGutter.AutoSize;
+  GutterLeftOffset := SynGutter.LeftOffset;
+  GutterRightOffset := SynGutter.RightOffset;
+  GutterWidth := SynGutter.Width;
+
   gp := SynGutter.Parts.ByClass[TSynGutterLineNumber, 0] as TSynGutterLineNumber;
   if gp <> nil then
   begin
-    FLeadingZeros := gp.LeadingZeros;
+    GutterLeadingZeros := gp.LeadingZeros;
   end;
   sp := SynGutter.Parts.ByClass[TSynGutterSeparator, 0] as TSynGutterSeparator;
   if sp <> nil then
   begin
-    FShowSeparator := sp.Visible;
+    GutterShowSeparator := sp.Visible;
   end;
   ch := SynGutter.Parts.ByClass[TSynGutterChanges, 0] as TSynGutterChanges;
   if ch <> nil then
   begin
-    FShowModifiedLines := ch.Visible;
+    GutterShowModifiedLines := ch.Visible;
   end;
 end;
 
-procedure TGutterOptions.Reset;
-begin
-  FAutoSize := True;
-  FShowSeparator := True;
-  FLeftOffset := 0;
-  FRightOffset := 0;
-  FWidth := 30;
-  FLeadingZeros := False;
-  FShowModifiedLines := True;
-end;
 
 end.
 

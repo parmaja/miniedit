@@ -111,14 +111,13 @@ type
     procedure SaveBtnClick(Sender: TObject);
   private
     FProfile: TEditorProfile;
-    FAttributes: TGlobalAttributes;
     InChanging: boolean;
     procedure ApplyElement;
     procedure RetrieveElement;
-    procedure ChangeSetting;
-    procedure RetriveCategory;
-    procedure GetData;
-    procedure PutData;
+
+    procedure Retrieve;
+    procedure Apply;
+
   public
     function Execute(Profile: TEditorProfile; Select: string): boolean;
     destructor Destroy; override;
@@ -143,9 +142,10 @@ var
 begin
   if (Profile <> nil) then
   begin
-    FProfile := Profile;
-    FAttributes := TGlobalAttributes.Create(nil);
+    FProfile := TEditorProfile.Create;
     try
+      FProfile.Assign(Profile);
+
       n := 0;
       for i := 0 to Engine.Categories.Count - 1 do
       begin
@@ -160,21 +160,21 @@ begin
       end;
       CategoryCbo.ItemIndex := n;
 
-      for i := 0 to FAttributes.Count - 1 do
-      begin
-        AttributeCbo.Items.AddObject(FAttributes.Items[i].Title, FAttributes.Items[i]);
-      end;
+      for i := 0 to FProfile.Attributes.Count - 1 do
+        AttributeCbo.Items.AddObject(FProfile.Attributes.Items[i].Title, FProfile.Attributes.Items[i]);
       AttributeCbo.ItemIndex := 0;
 
-      //Get Data
-      GetData;
+      Retrieve;
       //Show the form
       Result := ShowModal = mrOk;
 
       if Result then
-        PutData;
+      begin
+        Apply;
+        Profile.Assign(FProfile);
+      end;
     finally
-      FAttributes.Free;
+      FProfile.Free;
     end;
   end
   else
@@ -189,97 +189,6 @@ begin
   SampleEdit.Highlighter := nil;
   aHighlighter.Free;
   inherited Destroy;
-end;
-
-procedure TEditorOptionsForm.GetData;
-begin
-  FAttributes.Assign(FProfile.Attributes);
-
-  //Gutter
-  GutterAutosizeChk.Checked := FProfile.Gutter.AutoSize;
-  ShowSeparatorChk.Checked := FProfile.Gutter.ShowSeparator;
-
-  ShowModifiedLinesChk.Checked := FProfile.Gutter.ShowModifiedLines;
-
-  GutterShowLeaderZerosChk.Checked := FProfile.Gutter.LeadingZeros;
-
-  //Line Spacing
-  LineSpacingEdit.Text := IntToStr(FProfile.ExtraLineSpacing);
-
-  //Options
-  AutoIndentChk.Checked := eoAutoIndent in FProfile.EditorOptions;
-  TabIndentChk.Checked := eoTabIndent in FProfile.EditorOptions;
-  SmartTabsChk.Checked := eoSmartTabs in FProfile.EditorOptions;
-  HalfPageScrollChk.Checked := eoHalfPageScroll in FProfile.EditorOptions;
-  ScrollByOneLessChk.Checked := eoScrollByOneLess in FProfile.EditorOptions;
-  ShowScrollHintChk.Checked := eoShowScrollHint in FProfile.EditorOptions;
-  SmartTabDeleteChk.Checked := eoSmartTabDelete in FProfile.EditorOptions;
-  EnhanceHomeKeyChk.Checked := eoEnhanceHomeKey in FProfile.EditorOptions;
-  GroupUndoChk.Checked := eoGroupUndo in FProfile.EditorOptions;
-  ShowSpecialCharsChk.Checked := eoShowSpecialChars in FProfile.EditorOptions;
-  BracketHighlightChk.Checked := eoBracketHighlight in FProfile.EditorOptions;
-  //Can be override by project options
-  TabWidthEdit.Text := IntToStr(FProfile.TabWidth);
-  TabsToSpacesChk.Checked := eoTabsToSpaces in FProfile.EditorOptions;
-
-  CodeFoldingChk.Checked := FProfile.CodeFolding;
-  ChangeSetting;
-end;
-
-procedure TEditorOptionsForm.PutData;
-var
-  vOptions: TSynEditorOptions;
-  vExtOptions: TSynEditorOptions2;
-
-  procedure SetFlag(aOption: TSynEditorOption; aValue: boolean);
-  begin
-    if aValue then
-      Include(vOptions, aOption)
-    else
-      Exclude(vOptions, aOption);
-  end;
-
-  procedure SetExtFlag(aOption: TSynEditorOption2; aValue: boolean);
-  begin
-    if aValue then
-      Include(vExtOptions, aOption)
-    else
-      Exclude(vExtOptions, aOption);
-  end;
-
-begin
-  //Gutter
-  FProfile.Gutter.AutoSize := GutterAutosizeChk.Checked;
-  FProfile.Gutter.ShowSeparator := ShowSeparatorChk.Checked;
-
-  FProfile.Gutter.ShowModifiedLines := ShowModifiedLinesChk.Checked;
-  FProfile.Gutter.LeadingZeros := GutterShowLeaderZerosChk.Checked;
-
-  //Line Spacing
-  FProfile.ExtraLineSpacing := StrToIntDef(LineSpacingEdit.Text, 0);
-  //Options
-  vOptions := FProfile.EditorOptions; //Keep old values for unsupported options
-  vExtOptions := FProfile.ExtEditorOptions;
-  SetFlag(eoAutoIndent, AutoIndentChk.Checked);
-  SetFlag(eoTabIndent, TabIndentChk.Checked);
-  SetFlag(eoSmartTabs, SmartTabsChk.Checked);
-  SetFlag(eoHalfPageScroll, HalfPageScrollChk.Checked);
-  SetFlag(eoScrollByOneLess, ScrollByOneLessChk.Checked);
-  SetFlag(eoShowScrollHint, ShowScrollHintChk.Checked);
-  SetFlag(eoSmartTabDelete, SmartTabDeleteChk.Checked);
-  SetFlag(eoEnhanceHomeKey, EnhanceHomeKeyChk.Checked);
-  SetFlag(eoGroupUndo, GroupUndoChk.Checked);
-  SetFlag(eoShowSpecialChars, ShowSpecialCharsChk.Checked);
-  SetFlag(eoBracketHighlight, BracketHighlightChk.Checked);
-
-  FProfile.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
-  SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
-
-  FProfile.EditorOptions := vOptions;
-  FProfile.ExtEditorOptions := vExtOptions;
-  //Caret
-  FProfile.CodeFolding := CodeFoldingChk.Checked;
-  RetriveCategory;
 end;
 
 procedure TEditorOptionsForm.FormCreate(Sender: TObject);
@@ -304,8 +213,8 @@ procedure TEditorOptionsForm.LoadBtnClick(Sender: TObject);
 begin
   if OpenDialog.Execute then
   begin
-    XMLReadObjectFile(FAttributes, OpenDialog.FileName);
-    ChangeSetting;
+    XMLReadObjectFile(FProfile.Attributes, OpenDialog.FileName);
+    Retrieve;
   end;
 end;
 
@@ -357,7 +266,7 @@ end;
 
 procedure TEditorOptionsForm.CategoryCboSelect(Sender: TObject);
 begin
-  ChangeSetting;
+  Retrieve;
 end;
 
 procedure TEditorOptionsForm.GutterFontChkChange(Sender: TObject);
@@ -393,18 +302,18 @@ procedure TEditorOptionsForm.ResetBtnClick(Sender: TObject);
 begin
   InChanging := True;
   try
-    FAttributes.Reset;
+    FProfile.Attributes.Reset;
   finally
     InChanging := False;
   end;
-  ChangeSetting;
+  Retrieve;
 end;
 
 procedure TEditorOptionsForm.RevertBtnClick(Sender: TObject);
 begin
   InChanging := True;
   try
-    GetData;
+    Retrieve;//TODO
   finally
     InChanging := False;
   end;
@@ -419,10 +328,10 @@ var
 begin
   aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
 
-  G := FAttributes.Find(attGutter);
+  G := FProfile.Attributes.Find(attGutter);
 
   if G = nil then
-    G := FAttributes.Whitespace;
+    G := FProfile.Attributes.Whitespace;
 
   AttributeCbo.ItemIndex := G.Index;
   RetrieveElement;
@@ -451,10 +360,10 @@ begin
       s := Attributes.Name;
       M := aFileCategory.Mapper.Find(s);
       if M <> nil then
-        G := FAttributes.Find(M.AttType);
+        G := FProfile.Attributes.Find(M.AttType);
 
       if G = nil then
-        G := FAttributes.Whitespace;
+        G := FProfile.Attributes.Whitespace;
 
       AttributeCbo.ItemIndex := G.Index;
     end
@@ -546,32 +455,45 @@ begin
 
       aGlobalAttribute.Style := aFontStyle;
 
-      aFileCategory.Apply(SampleEdit.Highlighter, FAttributes);
-
-      SampleEdit.Gutter.Color := FAttributes.Gutter.Background;
+      SampleEdit.Gutter.Color := FProfile.Attributes.Gutter.Background;
       for i := 0 to SampleEdit.Gutter.Parts.Count -1 do
       begin
-        SampleEdit.Gutter.Parts[i].MarkupInfo.Foreground := FAttributes.Gutter.Foreground;
-        SampleEdit.Gutter.Parts[i].MarkupInfo.Background := FAttributes.Gutter.Background;
+        SampleEdit.Gutter.Parts[i].MarkupInfo.Foreground := FProfile.Attributes.Gutter.Foreground;
+        SampleEdit.Gutter.Parts[i].MarkupInfo.Background := FProfile.Attributes.Gutter.Background;
       end;
 
       sp := SampleEdit.Gutter.Parts.ByClass[TSynGutterSeparator, 0] as TSynGutterSeparator;
       if sp <> nil then
       begin
         sp.Visible := ShowSeparatorChk.Checked;
-        sp.MarkupInfo.Foreground := FAttributes.Separator.Background;
-        sp.MarkupInfo.Background := FAttributes.Separator.Foreground;
+        sp.MarkupInfo.Foreground := FProfile.Attributes.Separator.Background;
+        sp.MarkupInfo.Background := FProfile.Attributes.Separator.Foreground;
       end;
 
-      SampleEdit.Font.Color := FAttributes.Whitespace.Foreground;
-      SampleEdit.Color := FAttributes.Whitespace.Background;
-      SampleEdit.SelectedColor.Foreground := FAttributes.Selected.Foreground;
-      SampleEdit.SelectedColor.Background := FAttributes.Selected.Background;
-      SampleEdit.BracketMatchColor.Foreground := FAttributes.Selected.Foreground;
-      SampleEdit.BracketMatchColor.Background := FAttributes.Selected.Background;
+      SampleEdit.Font.Color := FProfile.Attributes.Whitespace.Foreground;
+      SampleEdit.Color := FProfile.Attributes.Whitespace.Background;
+      SampleEdit.SelectedColor.Foreground := FProfile.Attributes.Selected.Foreground;
+      SampleEdit.SelectedColor.Background := FProfile.Attributes.Selected.Background;
+      SampleEdit.BracketMatchColor.Foreground := FProfile.Attributes.Selected.Foreground;
+      SampleEdit.BracketMatchColor.Background := FProfile.Attributes.Selected.Background;
 
-      SampleEdit.MarkupManager.MarkupByClass[TSynEditMarkupWordGroup].MarkupInfo.FrameColor := FAttributes.Selected.Background;
+      SampleEdit.MarkupManager.MarkupByClass[TSynEditMarkupWordGroup].MarkupInfo.FrameColor := FProfile.Attributes.Selected.Background;
 
+      if FProfile.Attributes.FontNoAntialiasing then
+        SampleEdit.Font.Quality := fqNonAntialiased
+      else
+        SampleEdit.Font.Quality := fqDefault;
+
+      aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
+      if (SampleEdit.Highlighter = nil) or (SampleEdit.Highlighter.ClassType <> aFileCategory.Highlighter.ClassType) then
+      begin
+        SampleEdit.Highlighter.Free;
+        SampleEdit.Highlighter := aFileCategory.CreateHighlighter;
+        SampleEdit.Text := SampleEdit.Highlighter.SampleSource;
+      end;
+      aFileCategory.Apply(SampleEdit.Highlighter, FProfile.Attributes);
+
+      FProfile.AssignTo(SampleEdit);
 
       if SampleEdit.Highlighter <> nil then //remove Divider
         for i := 0 to SampleEdit.Highlighter.DividerDrawConfigCount - 1 do
@@ -582,47 +504,106 @@ begin
   end;
 end;
 
-procedure TEditorOptionsForm.ChangeSetting;
+procedure TEditorOptionsForm.Retrieve;
 var
   i: integer;
   aFileCategory: TFileCategory;
 begin
+  TabsToSpacesChk.Checked := eoTabsToSpaces in FProfile.EditorOptions;
+  CodeFoldingChk.Checked := FProfile.Attributes.CodeFolding;
+
   FontLbl.Caption := SampleEdit.Font.Name + ' ' + IntToStr(SampleEdit.Font.Size) + ' pt';
   //Font
   SampleEdit.Font.Name := FProfile.Attributes.FontName;
   SampleEdit.Font.Size := FProfile.Attributes.FontSize;
 
   NoAntialiasingChk.Checked := FProfile.Attributes.FontNoAntialiasing;
-  if FProfile.Attributes.FontNoAntialiasing then
-    SampleEdit.Font.Quality := fqNonAntialiased
-  else
-    SampleEdit.Font.Quality := fqDefault;
 
-  aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
-  if (SampleEdit.Highlighter = nil) or (SampleEdit.Highlighter.ClassType <> aFileCategory.Highlighter.ClassType) then
-  begin
-    SampleEdit.Highlighter.Free;
-    SampleEdit.Highlighter := aFileCategory.CreateHighlighter;
-    SampleEdit.Text := SampleEdit.Highlighter.SampleSource;
-  end;
-  aFileCategory.Apply(SampleEdit.Highlighter, FAttributes);
+  //Gutter
+  GutterAutosizeChk.Checked := FProfile.Attributes.GutterAutoSize;
+  ShowSeparatorChk.Checked := FProfile.Attributes.GutterShowSeparator;
 
-  FProfile.AssignTo(SampleEdit);
+  ShowModifiedLinesChk.Checked := FProfile.Attributes.GutterShowModifiedLines;
 
-  if SampleEdit.Highlighter <> nil then //remove Divider
-    for i := 0 to SampleEdit.Highlighter.DividerDrawConfigCount - 1 do
-      SampleEdit.Highlighter.DividerDrawConfig[i].MaxDrawDepth := 0;
+  GutterShowLeaderZerosChk.Checked := FProfile.Attributes.GutterLeadingZeros;
+
+  //Line Spacing
+  LineSpacingEdit.Text := IntToStr(FProfile.ExtraLineSpacing);
+
+  //Options
+  AutoIndentChk.Checked := eoAutoIndent in FProfile.EditorOptions;
+  TabIndentChk.Checked := eoTabIndent in FProfile.EditorOptions;
+  SmartTabsChk.Checked := eoSmartTabs in FProfile.EditorOptions;
+  HalfPageScrollChk.Checked := eoHalfPageScroll in FProfile.EditorOptions;
+  ScrollByOneLessChk.Checked := eoScrollByOneLess in FProfile.EditorOptions;
+  ShowScrollHintChk.Checked := eoShowScrollHint in FProfile.EditorOptions;
+  SmartTabDeleteChk.Checked := eoSmartTabDelete in FProfile.EditorOptions;
+  EnhanceHomeKeyChk.Checked := eoEnhanceHomeKey in FProfile.EditorOptions;
+  GroupUndoChk.Checked := eoGroupUndo in FProfile.EditorOptions;
+  ShowSpecialCharsChk.Checked := eoShowSpecialChars in FProfile.EditorOptions;
+  BracketHighlightChk.Checked := eoBracketHighlight in FProfile.EditorOptions;
+  //Can be override by project options
+  TabWidthEdit.Text := IntToStr(FProfile.TabWidth);
 
   RetrieveElement;
 end;
 
-procedure TEditorOptionsForm.RetriveCategory;
+procedure TEditorOptionsForm.Apply;
+var
+  aOptions: TSynEditorOptions;
+  aExtOptions: TSynEditorOptions2;
+
+  procedure SetFlag(aOption: TSynEditorOption; aValue: boolean);
+  begin
+    if aValue then
+      Include(aOptions, aOption)
+    else
+      Exclude(aOptions, aOption);
+  end;
+
+  procedure SetExtFlag(aOption: TSynEditorOption2; aValue: boolean);
+  begin
+    if aValue then
+      Include(aExtOptions, aOption)
+    else
+      Exclude(aExtOptions, aOption);
+  end;
 begin
+  //Options
+  aOptions := FProfile.EditorOptions; //Keep old values for unsupported options
+  aExtOptions := FProfile.ExtEditorOptions;
+  SetFlag(eoAutoIndent, AutoIndentChk.Checked);
+  SetFlag(eoTabIndent, TabIndentChk.Checked);
+  SetFlag(eoSmartTabs, SmartTabsChk.Checked);
+  SetFlag(eoHalfPageScroll, HalfPageScrollChk.Checked);
+  SetFlag(eoScrollByOneLess, ScrollByOneLessChk.Checked);
+  SetFlag(eoShowScrollHint, ShowScrollHintChk.Checked);
+  SetFlag(eoSmartTabDelete, SmartTabDeleteChk.Checked);
+  SetFlag(eoEnhanceHomeKey, EnhanceHomeKeyChk.Checked);
+  SetFlag(eoGroupUndo, GroupUndoChk.Checked);
+  SetFlag(eoShowSpecialChars, ShowSpecialCharsChk.Checked);
+  SetFlag(eoBracketHighlight, BracketHighlightChk.Checked);
+  SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
+
+  FProfile.EditorOptions := aOptions;
+  FProfile.ExtEditorOptions := aExtOptions;
+
+  //Gutter
+  FProfile.Attributes.GutterAutoSize := GutterAutosizeChk.Checked;
+  FProfile.Attributes.GutterShowSeparator := ShowSeparatorChk.Checked;
+  FProfile.Attributes.GutterShowModifiedLines := ShowModifiedLinesChk.Checked;
+  FProfile.Attributes.GutterLeadingZeros := GutterShowLeaderZerosChk.Checked;
+  FProfile.Attributes.CodeFolding := CodeFoldingChk.Checked;
+
+  //Spacing
+  FProfile.ExtraLineSpacing := StrToIntDef(LineSpacingEdit.Text, 0);
+  FProfile.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
+
   //Font
   FProfile.Attributes.FontName := SampleEdit.Font.Name;
   FProfile.Attributes.FontSize := SampleEdit.Font.Size;
   FProfile.Attributes.FontNoAntialiasing := SampleEdit.Font.Quality = fqNonAntialiased;
-  FProfile.Attributes.Assign(FAttributes);
+  FProfile.Attributes.Assign(FProfile.Attributes);
 end;
 
 procedure TEditorOptionsForm.BoldChkClick(Sender: TObject);
@@ -641,8 +622,8 @@ procedure TEditorOptionsForm.SaveBtnClick(Sender: TObject);
 begin
   if SaveDialog.Execute then
   begin
-    RetriveCategory;
-    XMLWriteObjectFile(FAttributes, SaveDialog.FileName);
+    Apply;
+    XMLWriteObjectFile(FProfile.Attributes, SaveDialog.FileName);
   end;
 end;
 
