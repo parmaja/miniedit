@@ -9,7 +9,6 @@ object EditorOptionsForm: TEditorOptionsForm
   ClientWidth = 448
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
-  OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
   ShowHint = True

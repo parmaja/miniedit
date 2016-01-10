@@ -6,16 +6,16 @@
     <TendencyName>D</TendencyName>
     <Desktop Class="TEditorDesktop">
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.php</CurrentFile>
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.d</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
-            <CaretY>8</CaretY>
+            <CaretY>6</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.d</FileName>
-            <CaretY>9</CaretY>
+            <CaretY>7</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>C:\temp\arduino_test.d</FileName>

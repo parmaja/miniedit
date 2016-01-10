@@ -91,7 +91,6 @@ type
     procedure DefaultBackgroundCboSelect(Sender: TObject);
     procedure DefaultForegroundCboSelect(Sender: TObject);
     procedure AttributeCboSelect(Sender: TObject);
-    procedure FormCreate(Sender: TObject);
     procedure FontBtnClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure CategoryCboSelect(Sender: TObject);
@@ -112,12 +111,12 @@ type
   private
     FProfile: TEditorProfile;
     InChanging: boolean;
-    procedure ApplyElement;
-    procedure RetrieveElement;
+    procedure ChangeEdit;
+    procedure ApplyAttribute;
+    procedure RetrieveAttribute;
 
-    procedure Retrieve;
     procedure Apply;
-
+    procedure Retrieve;
   public
     function Execute(Profile: TEditorProfile; Select: string): boolean;
     destructor Destroy; override;
@@ -191,28 +190,25 @@ begin
   inherited Destroy;
 end;
 
-procedure TEditorOptionsForm.FormCreate(Sender: TObject);
-begin
-  InChanging := False;
-end;
-
 procedure TEditorOptionsForm.AttributeCboSelect(Sender: TObject);
 begin
-  RetrieveElement;
+  RetrieveAttribute;
 end;
 
 procedure TEditorOptionsForm.NoAntialiasingChkChange(Sender: TObject);
 begin
-  if NoAntialiasingChk.Checked then
-  SampleEdit.Font.Quality := fqNonAntialiased
-  else
-    SampleEdit.Font.Quality := fqDefault;
+  if not InChanging then
+  begin
+    FProfile.Attributes.FontNoAntialiasing := NoAntialiasingChk.Checked;
+    ChangeEdit;
+  end;
 end;
 
 procedure TEditorOptionsForm.LoadBtnClick(Sender: TObject);
 begin
   if OpenDialog.Execute then
   begin
+    FProfile.Reset;
     XMLReadObjectFile(FProfile.Attributes, OpenDialog.FileName);
     Retrieve;
   end;
@@ -223,7 +219,7 @@ begin
   if not InChanging then
   begin
     ForegroundChk.Checked := True;
-    ApplyElement;
+    ApplyAttribute;
   end;
 end;
 
@@ -232,30 +228,30 @@ begin
   if not InChanging then
   begin
     BackgroundChk.Checked := True;
-    ApplyElement;
+    ApplyAttribute;
   end;
 end;
 
 procedure TEditorOptionsForm.DefaultBackgroundCboSelect(Sender: TObject);
 begin
-  ApplyElement;
+  ApplyAttribute;
 end;
 
 procedure TEditorOptionsForm.DefaultForegroundCboSelect(Sender: TObject);
 begin
-  ApplyElement;
+  ApplyAttribute;
 end;
 
 procedure TEditorOptionsForm.FontBtnClick(Sender: TObject);
 begin
-  FontDialog.Font.Assign(SampleEdit.Font);
+  FontDialog.Font.Name := FProfile.Attributes.FontName;
+  FontDialog.Font.Size := FProfile.Attributes.FontSize;
   FontDialog.Options := FontDialog.Options - [fdNoStyleSel];
   if FontDialog.Execute then
   begin
-    SampleEdit.Font.Name := FontDialog.Font.Name;
-    SampleEdit.Font.Size := FontDialog.Font.Size;
-    FontLbl.Caption := FontDialog.Font.Name + ' ' + IntToStr(FontDialog.Font.Size) + ' pt';
-    ApplyElement;
+    FProfile.Attributes.FontName := FontDialog.Font.Name;
+    FProfile.Attributes.FontSize := FontDialog.Font.Size;
+    ChangeEdit;
   end;
 end;
 
@@ -334,7 +330,7 @@ begin
     G := FProfile.Attributes.Whitespace;
 
   AttributeCbo.ItemIndex := G.Index;
-  RetrieveElement;
+  RetrieveAttribute;
 end;
 
 procedure TEditorOptionsForm.SampleEditMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
@@ -369,11 +365,11 @@ begin
     end
     else
       AttributeCbo.ItemIndex := -1;
-    RetrieveElement;
+    RetrieveAttribute;
   end;
 end;
 
-procedure TEditorOptionsForm.RetrieveElement;
+procedure TEditorOptionsForm.RetrieveAttribute;
 var
   aColor: TColor;
   aGlobalAttribute: TGlobalAttribute;
@@ -418,89 +414,38 @@ begin
   end;
 end;
 
-procedure TEditorOptionsForm.ApplyElement;
+procedure TEditorOptionsForm.ApplyAttribute;
 var
   i: Integer;
   aFontStyle: TFontStyles;
-  aFileCategory: TFileCategory;
   aGlobalAttribute: TGlobalAttribute;
-  sp: TSynGutterSeparator;
 begin
   if not InChanging and (AttributeCbo.ItemIndex >= 0) then
   begin
-    InChanging := True;
-    try
-      aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
-      aGlobalAttribute := (AttributeCbo.Items.Objects[AttributeCbo.ItemIndex] as TGlobalAttribute);
+    aGlobalAttribute := (AttributeCbo.Items.Objects[AttributeCbo.ItemIndex] as TGlobalAttribute);
 
-      //Copy some from TGutterOptions.AssignTo(Dest: TPersistent);
+    //Copy some from TGutterOptions.AssignTo(Dest: TPersistent);
 
-      if ForegroundChk.Checked then
-        aGlobalAttribute.Foreground := ForegroundCbo.Selected
-      else
-        aGlobalAttribute.Foreground := clNone;
+    if ForegroundChk.Checked then
+      aGlobalAttribute.Foreground := ForegroundCbo.Selected
+    else
+      aGlobalAttribute.Foreground := clNone;
 
-      if BackgroundChk.Checked then
-        aGlobalAttribute.Background := BackgroundCbo.Selected
-      else
-        aGlobalAttribute.Background := clNone;
+    if BackgroundChk.Checked then
+      aGlobalAttribute.Background := BackgroundCbo.Selected
+    else
+      aGlobalAttribute.Background := clNone;
 
-      aFontStyle := [];
-      if BoldChk.Checked then
-        aFontStyle := aFontStyle + [fsBold];
-      if UnderlineChk.Checked then
-        aFontStyle := aFontStyle + [fsUnderline];
-      {if ItalicChk.Checked then
-        aFontStyle := aFontStyle + [fsItalic];}
+    aFontStyle := [];
+    if BoldChk.Checked then
+      aFontStyle := aFontStyle + [fsBold];
+    if UnderlineChk.Checked then
+      aFontStyle := aFontStyle + [fsUnderline];
+    {if ItalicChk.Checked then
+      aFontStyle := aFontStyle + [fsItalic];}
 
-      aGlobalAttribute.Style := aFontStyle;
-
-      SampleEdit.Gutter.Color := FProfile.Attributes.Gutter.Background;
-      for i := 0 to SampleEdit.Gutter.Parts.Count -1 do
-      begin
-        SampleEdit.Gutter.Parts[i].MarkupInfo.Foreground := FProfile.Attributes.Gutter.Foreground;
-        SampleEdit.Gutter.Parts[i].MarkupInfo.Background := FProfile.Attributes.Gutter.Background;
-      end;
-
-      sp := SampleEdit.Gutter.Parts.ByClass[TSynGutterSeparator, 0] as TSynGutterSeparator;
-      if sp <> nil then
-      begin
-        sp.Visible := ShowSeparatorChk.Checked;
-        sp.MarkupInfo.Foreground := FProfile.Attributes.Separator.Background;
-        sp.MarkupInfo.Background := FProfile.Attributes.Separator.Foreground;
-      end;
-
-      SampleEdit.Font.Color := FProfile.Attributes.Whitespace.Foreground;
-      SampleEdit.Color := FProfile.Attributes.Whitespace.Background;
-      SampleEdit.SelectedColor.Foreground := FProfile.Attributes.Selected.Foreground;
-      SampleEdit.SelectedColor.Background := FProfile.Attributes.Selected.Background;
-      SampleEdit.BracketMatchColor.Foreground := FProfile.Attributes.Selected.Foreground;
-      SampleEdit.BracketMatchColor.Background := FProfile.Attributes.Selected.Background;
-
-      SampleEdit.MarkupManager.MarkupByClass[TSynEditMarkupWordGroup].MarkupInfo.FrameColor := FProfile.Attributes.Selected.Background;
-
-      if FProfile.Attributes.FontNoAntialiasing then
-        SampleEdit.Font.Quality := fqNonAntialiased
-      else
-        SampleEdit.Font.Quality := fqDefault;
-
-      aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
-      if (SampleEdit.Highlighter = nil) or (SampleEdit.Highlighter.ClassType <> aFileCategory.Highlighter.ClassType) then
-      begin
-        SampleEdit.Highlighter.Free;
-        SampleEdit.Highlighter := aFileCategory.CreateHighlighter;
-        SampleEdit.Text := SampleEdit.Highlighter.SampleSource;
-      end;
-      aFileCategory.Apply(SampleEdit.Highlighter, FProfile.Attributes);
-
-      FProfile.AssignTo(SampleEdit);
-
-      if SampleEdit.Highlighter <> nil then //remove Divider
-        for i := 0 to SampleEdit.Highlighter.DividerDrawConfigCount - 1 do
-          SampleEdit.Highlighter.DividerDrawConfig[i].MaxDrawDepth := 0;
-    finally
-      InChanging := False;
-    end;
+    aGlobalAttribute.Style := aFontStyle;
+    ChangeEdit;
   end;
 end;
 
@@ -509,43 +454,43 @@ var
   i: integer;
   aFileCategory: TFileCategory;
 begin
-  TabsToSpacesChk.Checked := eoTabsToSpaces in FProfile.EditorOptions;
-  CodeFoldingChk.Checked := FProfile.Attributes.CodeFolding;
+  InChanging := True;
+  try
+    TabsToSpacesChk.Checked := eoTabsToSpaces in FProfile.EditorOptions;
+    CodeFoldingChk.Checked := FProfile.Attributes.CodeFolding;
 
-  FontLbl.Caption := SampleEdit.Font.Name + ' ' + IntToStr(SampleEdit.Font.Size) + ' pt';
-  //Font
-  SampleEdit.Font.Name := FProfile.Attributes.FontName;
-  SampleEdit.Font.Size := FProfile.Attributes.FontSize;
+    NoAntialiasingChk.Checked := FProfile.Attributes.FontNoAntialiasing;
 
-  NoAntialiasingChk.Checked := FProfile.Attributes.FontNoAntialiasing;
+    //Gutter
+    GutterAutosizeChk.Checked := FProfile.Attributes.GutterAutoSize;
+    ShowSeparatorChk.Checked := FProfile.Attributes.GutterShowSeparator;
 
-  //Gutter
-  GutterAutosizeChk.Checked := FProfile.Attributes.GutterAutoSize;
-  ShowSeparatorChk.Checked := FProfile.Attributes.GutterShowSeparator;
+    ShowModifiedLinesChk.Checked := FProfile.Attributes.GutterShowModifiedLines;
 
-  ShowModifiedLinesChk.Checked := FProfile.Attributes.GutterShowModifiedLines;
+    GutterShowLeaderZerosChk.Checked := FProfile.Attributes.GutterLeadingZeros;
 
-  GutterShowLeaderZerosChk.Checked := FProfile.Attributes.GutterLeadingZeros;
+    //Line Spacing
+    LineSpacingEdit.Text := IntToStr(FProfile.ExtraLineSpacing);
 
-  //Line Spacing
-  LineSpacingEdit.Text := IntToStr(FProfile.ExtraLineSpacing);
-
-  //Options
-  AutoIndentChk.Checked := eoAutoIndent in FProfile.EditorOptions;
-  TabIndentChk.Checked := eoTabIndent in FProfile.EditorOptions;
-  SmartTabsChk.Checked := eoSmartTabs in FProfile.EditorOptions;
-  HalfPageScrollChk.Checked := eoHalfPageScroll in FProfile.EditorOptions;
-  ScrollByOneLessChk.Checked := eoScrollByOneLess in FProfile.EditorOptions;
-  ShowScrollHintChk.Checked := eoShowScrollHint in FProfile.EditorOptions;
-  SmartTabDeleteChk.Checked := eoSmartTabDelete in FProfile.EditorOptions;
-  EnhanceHomeKeyChk.Checked := eoEnhanceHomeKey in FProfile.EditorOptions;
-  GroupUndoChk.Checked := eoGroupUndo in FProfile.EditorOptions;
-  ShowSpecialCharsChk.Checked := eoShowSpecialChars in FProfile.EditorOptions;
-  BracketHighlightChk.Checked := eoBracketHighlight in FProfile.EditorOptions;
-  //Can be override by project options
-  TabWidthEdit.Text := IntToStr(FProfile.TabWidth);
-
-  RetrieveElement;
+    //Options
+    AutoIndentChk.Checked := eoAutoIndent in FProfile.EditorOptions;
+    TabIndentChk.Checked := eoTabIndent in FProfile.EditorOptions;
+    SmartTabsChk.Checked := eoSmartTabs in FProfile.EditorOptions;
+    HalfPageScrollChk.Checked := eoHalfPageScroll in FProfile.EditorOptions;
+    ScrollByOneLessChk.Checked := eoScrollByOneLess in FProfile.EditorOptions;
+    ShowScrollHintChk.Checked := eoShowScrollHint in FProfile.EditorOptions;
+    SmartTabDeleteChk.Checked := eoSmartTabDelete in FProfile.EditorOptions;
+    EnhanceHomeKeyChk.Checked := eoEnhanceHomeKey in FProfile.EditorOptions;
+    GroupUndoChk.Checked := eoGroupUndo in FProfile.EditorOptions;
+    ShowSpecialCharsChk.Checked := eoShowSpecialChars in FProfile.EditorOptions;
+    BracketHighlightChk.Checked := eoBracketHighlight in FProfile.EditorOptions;
+    //Can be override by project options
+    TabWidthEdit.Text := IntToStr(FProfile.TabWidth);
+  finally
+    InChanging := False;
+  end;
+  RetrieveAttribute;
+  ChangeEdit;
 end;
 
 procedure TEditorOptionsForm.Apply;
@@ -600,22 +545,21 @@ begin
   FProfile.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
 
   //Font
-  FProfile.Attributes.FontName := SampleEdit.Font.Name;
-  FProfile.Attributes.FontSize := SampleEdit.Font.Size;
-  FProfile.Attributes.FontNoAntialiasing := SampleEdit.Font.Quality = fqNonAntialiased;
+  FProfile.Attributes.FontNoAntialiasing := NoAntialiasingChk.Checked;
   FProfile.Attributes.Assign(FProfile.Attributes);
+  ApplyAttribute;
 end;
 
 procedure TEditorOptionsForm.BoldChkClick(Sender: TObject);
 begin
-  ApplyElement;
+  ApplyAttribute;
 end;
 
 procedure TEditorOptionsForm.BackgroundChkClick(Sender: TObject);
 begin
   if not InChanging then
     BackgroundChk.Checked := True;
-  ApplyElement;
+  ApplyAttribute;
 end;
 
 procedure TEditorOptionsForm.SaveBtnClick(Sender: TObject);
@@ -625,6 +569,62 @@ begin
     Apply;
     XMLWriteObjectFile(FProfile.Attributes, SaveDialog.FileName);
   end;
+end;
+
+procedure TEditorOptionsForm.ChangeEdit;
+var
+  i: integer;
+  aFileCategory: TFileCategory;
+  sp: TSynGutterSeparator;
+begin
+  aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
+
+  if (SampleEdit.Highlighter = nil) or (SampleEdit.Highlighter.ClassType <> aFileCategory.Highlighter.ClassType) then
+  begin
+    SampleEdit.Highlighter.Free;
+    SampleEdit.Highlighter := aFileCategory.CreateHighlighter;
+    SampleEdit.Text := SampleEdit.Highlighter.SampleSource;
+  end;
+
+  aFileCategory.Apply(SampleEdit.Highlighter, FProfile.Attributes);
+
+  if SampleEdit.Highlighter <> nil then //remove Divider
+    for i := 0 to SampleEdit.Highlighter.DividerDrawConfigCount - 1 do
+      SampleEdit.Highlighter.DividerDrawConfig[i].MaxDrawDepth := 0;
+
+  SampleEdit.Gutter.Color := FProfile.Attributes.Gutter.Background;
+  for i := 0 to SampleEdit.Gutter.Parts.Count -1 do
+  begin
+    SampleEdit.Gutter.Parts[i].MarkupInfo.Foreground := FProfile.Attributes.Gutter.Foreground;
+    SampleEdit.Gutter.Parts[i].MarkupInfo.Background := FProfile.Attributes.Gutter.Background;
+  end;
+
+  sp := SampleEdit.Gutter.Parts.ByClass[TSynGutterSeparator, 0] as TSynGutterSeparator;
+  if sp <> nil then
+  begin
+    sp.Visible := ShowSeparatorChk.Checked;
+    sp.MarkupInfo.Foreground := FProfile.Attributes.Separator.Background;
+    sp.MarkupInfo.Background := FProfile.Attributes.Separator.Foreground;
+  end;
+
+  FontLbl.Caption := FProfile.Attributes.FontName + ' ' + IntToStr(FProfile.Attributes.FontSize) + ' pt';
+  SampleEdit.Font.Name := FProfile.Attributes.FontName;
+  SampleEdit.Font.Size := FProfile.Attributes.FontSize;
+  SampleEdit.Font.Color := FProfile.Attributes.Whitespace.Foreground;
+  SampleEdit.Color := FProfile.Attributes.Whitespace.Background;
+  SampleEdit.SelectedColor.Foreground := FProfile.Attributes.Selected.Foreground;
+  SampleEdit.SelectedColor.Background := FProfile.Attributes.Selected.Background;
+  SampleEdit.BracketMatchColor.Foreground := FProfile.Attributes.Selected.Foreground;
+  SampleEdit.BracketMatchColor.Background := FProfile.Attributes.Selected.Background;
+
+  SampleEdit.MarkupManager.MarkupByClass[TSynEditMarkupWordGroup].MarkupInfo.FrameColor := FProfile.Attributes.Selected.Background;
+
+  if FProfile.Attributes.FontNoAntialiasing then
+    SampleEdit.Font.Quality := fqNonAntialiased
+  else
+    SampleEdit.Font.Quality := fqDefault;
+
+  FProfile.AssignTo(SampleEdit);
 end;
 
 end.

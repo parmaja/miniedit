@@ -40,7 +40,7 @@
     <Whitespace Class="TGlobalAttribute">
       <Title>Whitespace</Title>
       <AttType>attWhitespace</AttType>
-      <Background>15329769</Background>
+      <Background>13884894</Background>
       <Foreground>clBlack</Foreground>
     </Whitespace>
     <Keyword Class="TGlobalAttribute">
@@ -67,6 +67,7 @@
     <Identifier Class="TGlobalAttribute">
       <Title>Identifier</Title>
       <AttType>attIdentifier</AttType>
+      <Foreground>clBackground</Foreground>
     </Identifier>
     <Variable Class="TGlobalAttribute">
       <Title>Variable</Title>
@@ -76,7 +77,7 @@
     <Standard Class="TGlobalAttribute">
       <Title>Standard</Title>
       <AttType>attStandard</AttType>
-      <Foreground>3039612</Foreground>
+      <Foreground>1325648</Foreground>
     </Standard>
     <Value Class="TGlobalAttribute">
       <Title>Value</Title>
@@ -92,7 +93,7 @@
     <DataName Class="TGlobalAttribute">
       <Title>Name</Title>
       <AttType>attName</AttType>
-      <Foreground>1491229</Foreground>
+      <Foreground>743695</Foreground>
     </DataName>
     <Document Class="TGlobalAttribute">
       <Title>Document</Title>
@@ -126,5 +127,6 @@
     </QuotedString>
     <FontName>Courier New</FontName>
     <FontSize>10</FontSize>
+    <FontNoAntialiasing>True</FontNoAntialiasing>
   </Object>
 </rtti>

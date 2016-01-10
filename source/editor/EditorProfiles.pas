@@ -201,7 +201,6 @@ type
   private
     FInfo: TEditorProfileInfo;
     FAttributes: TGlobalAttributes;
-    FBookmarks: TSynBookMarkOpt;
   protected
   public
     property Info: TEditorProfileInfo read FInfo write FInfo;
@@ -233,7 +232,6 @@ uses
 constructor TEditorProfile.Create;
 begin
   inherited;
-  FBookmarks := TSynBookMarkOpt.Create(nil);
   FAttributes := TGlobalAttributes.Create(nil);
   DrawDivider := False;
   Reset;
@@ -241,7 +239,6 @@ end;
 
 destructor TEditorProfile.Destroy;
 begin
-  FBookMarks.Free;
   FAttributes.Free;
   inherited;
 end;
@@ -290,10 +287,8 @@ begin
     SynEdit.MaxUndo := MaxUndo;
     SynEdit.RightEdge := 80;
     SynEdit.RightEdgeColor := clSilver;
-
-    SynEdit.Gutter.Assign(Attributes);
-
     SynEdit.TabWidth := TabWidth;
+    SynEdit.Gutter.Assign(Attributes);
   end
   else
     inherited AssignTo(Dest);
