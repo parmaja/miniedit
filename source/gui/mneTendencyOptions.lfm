@@ -1,0 +1,86 @@
+object TendencyForm: TTendencyForm
+  Left = 461
+  Height = 329
+  Top = 184
+  Width = 471
+  BorderStyle = bsDialog
+  Caption = 'Project Options'
+  ClientHeight = 329
+  ClientWidth = 471
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Position = poMainFormCenter
+  LCLVersion = '1.7'
+  object OkBtn: TButton
+    Left = 392
+    Height = 25
+    Top = 302
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = '&Ok'
+    Default = True
+    ModalResult = 1
+    TabOrder = 1
+  end
+  object CancelBtn: TButton
+    Left = 316
+    Height = 25
+    Top = 302
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Cancel = True
+    Caption = '&Cancel'
+    ModalResult = 2
+    TabOrder = 2
+  end
+  object PageControl: TPageControl
+    Left = 4
+    Height = 294
+    Top = 5
+    Width = 463
+    ActivePage = GeneralSheet
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    TabIndex = 0
+    TabOrder = 0
+    OnChanging = PageControlChanging
+    Options = [nboKeyboardTabSwitch]
+    object GeneralSheet: TTabSheet
+      Caption = 'General'
+      ClientHeight = 268
+      ClientWidth = 455
+      object OverrideOptionsChk: TCheckBox
+        Left = 15
+        Height = 19
+        Top = 15
+        Width = 99
+        Caption = 'Override Options'
+        TabOrder = 0
+      end
+      object Label9: TLabel
+        Left = 34
+        Height = 13
+        Top = 65
+        Width = 53
+        Caption = 'Tab Width:'
+        ParentColor = False
+      end
+      object TabWidthEdit: TEdit
+        Left = 92
+        Height = 21
+        Top = 61
+        Width = 52
+        TabOrder = 1
+        Text = '4'
+      end
+      object TabsToSpacesChk: TCheckBox
+        Left = 31
+        Height = 19
+        Hint = 'Converts a tab character to the number of spaces in Tab Width'
+        Top = 37
+        Width = 93
+        Caption = 'Tabs to spaces'
+        TabOrder = 2
+      end
+    end
+  end
+end

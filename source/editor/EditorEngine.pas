@@ -299,7 +299,7 @@ type
     property Desktop: TEditorDesktop read FDesktop stored FSaveDesktop;
     property Options: TEditorProjectOptions read FOptions write FOptions default nil;
     //Override options
-    property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False;
+    property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False; //TODO move it to Tendency
     property TabWidth: Integer read FTabWidth write FTabWidth default 4;
     property EditorOptions: TSynEditorOptions read FEditorOptions write FEditorOptions;
   end;

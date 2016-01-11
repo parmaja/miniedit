@@ -52,7 +52,8 @@ uses
   mnStreams, CSVOptionsForms, mncCSV, GUIMsgBox, Classes, PHPUtils,
   SynHighlighterD, SynHighlighterMultiProc, mneSetups, mneSettings,
   mneSARDClasses, EditorClasses, DebugClasses, mneViewClasses,
-  mneCompileProjectOptions, mneManageRecentsForms, mneCSVForms, ConsoleProcess;
+  mneCompileProjectOptions, mneManageRecentsForms, mneTendencyOptions,
+  mneCSVForms, ConsoleProcess;
 
 {$R *.res}
 

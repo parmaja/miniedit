@@ -159,7 +159,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="48">
+    <Units Count="49">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -430,6 +430,13 @@
         <ComponentName Value="ManageProjectsForm"/>
         <ResourceBaseClass Value="Form"/>
       </Unit47>
+      <Unit48>
+        <Filename Value="mneTendencyOptions.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="TendencyForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit48>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

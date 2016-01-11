@@ -19,15 +19,12 @@ type
 
   TProjectForm = class(TForm)
     Button3: TButton;
+    Label6: TLabel;
     Label9: TLabel;
     OverrideOptionsChk: TCheckBox;
     DescriptionEdit: TEdit;
-    SpecialExtEdit: TEdit;
-    Label6: TLabel;
     OverrideOptionsSheet: TTabSheet;
-    TabSpaceEdit: TEdit;
     Label1: TLabel;
-    Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
@@ -36,6 +33,8 @@ type
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     NameEdit: TEdit;
+    SaveDesktopChk: TCheckBox;
+    SpecialExtEdit: TEdit;
     TabsToSpacesChk: TCheckBox;
     TabWidthEdit: TEdit;
     TitleEdit: TEdit;
@@ -44,15 +43,10 @@ type
     PageControl: TPageControl;
     PathPopupMenu: TPopupMenu;
     RootDirEdit: TEdit;
-    SaveDesktopChk: TCheckBox;
     SCMCbo: TComboBox;
     GeneralSheet: TTabSheet;
-    procedure Label3Click(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
-    procedure OkBtnClick(Sender: TObject);
-    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
-    procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure PageControlChanging(Sender: TObject; var AllowChange: Boolean);
@@ -63,7 +57,9 @@ type
   public
     procedure AddFrame(AFrame: TFrame);
     procedure SelectPathFolder;
-    procedure Apply(GeneralOnly: Boolean = False);
+    procedure ApplyFrames;
+    procedure Apply;
+    procedure RetrieveFrames;
     procedure Retrieve;
   end;
 
@@ -81,20 +77,17 @@ begin
   begin
     FProject := vProject;
     Retrieve;
+    RetrieveFrames;
     PageControl.ActivePage := GeneralSheet;
     ActiveControl := NameEdit;
     Result := ShowModal = mrOk;
+    if Result then
+    begin
+      Apply;
+      ApplyFrames;
+    end;
+    Free;
   end;
-end;
-
-procedure TProjectForm.OkBtnClick(Sender: TObject);
-begin
-  Apply;
-end;
-
-procedure TProjectForm.Label3Click(Sender: TObject);
-begin
-
 end;
 
 procedure TProjectForm.MenuItem1Click(Sender: TObject);
@@ -107,19 +100,7 @@ begin
   SelectPathFolder;
 end;
 
-procedure TProjectForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-begin
-  CloseAction := caFree;
-end;
-
-procedure TProjectForm.Button2Click(Sender: TObject);
-begin
-
-end;
-
-procedure TProjectForm.Apply(GeneralOnly: Boolean);
-var
-  i: Integer;
+procedure TProjectForm.Apply;
   procedure SetFlag(aOption: TSynEditorOption; aValue: boolean);
   begin
     if aValue then
@@ -134,26 +115,17 @@ begin
   FProject.RootDir := RootDirEdit.Text;
   FProject.SaveDesktop := SaveDesktopChk.Checked;
   FProject.SetSCMClass(TEditorSCM(SCMCbo.Items.Objects[SCMCbo.ItemIndex]));
-  if not GeneralOnly then
-  begin
-    for i :=0 to Length(FFrames) - 1 do
-      if Supports(FFrames[i], IEditorOptions) then
-        (FFrames[i] as IEditorOptions).Apply;
-  end;
-
   FProject.OverrideEditorOptions := OverrideOptionsChk.Checked;
   FProject.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
   SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
 end;
 
-procedure TProjectForm.Retrieve;
+procedure TProjectForm.RetrieveFrames;
 var
   TabSheet: TTabSheet;
   i: Integer;
 begin
-  Caption := Caption + ' [' + FProject.Tendency.Name + ']';
   FProject.Options.CreateOptionsFrame(Self, FProject, @AddFrame);
-
   for i := 0 to Length(FFrames) - 1 do
   begin
     TabSheet := PageControl.AddTabSheet;
@@ -165,7 +137,11 @@ begin
     if Supports(FFrames[i], IEditorOptions) then
       (FFrames[i] as IEditorOptions).Retrieve;
   end;
+end;
 
+procedure TProjectForm.Retrieve;
+begin
+  Caption := Caption + ' [' + FProject.Tendency.Name + ']';
   TitleEdit.Text := FProject.Title;
   NameEdit.Text := FProject.Name;
   DescriptionEdit.Text := FProject.Description;
@@ -175,7 +151,6 @@ begin
     SCMCbo.ItemIndex := Engine.SourceManagements.IndexOf(FProject.SCM.Name)
   else
     SCMCbo.ItemIndex := 0;
-
   //Add any new overrided options to cSynOverridedOptions in EditorProfiles unit
   OverrideOptionsChk.Checked := FProject.OverrideEditorOptions;
   TabWidthEdit.Text := IntToStr(FProject.TabWidth);
@@ -200,6 +175,15 @@ begin
   end;
 end;
 
+procedure TProjectForm.ApplyFrames;
+var
+  i: Integer;
+begin
+  for i :=0 to Length(FFrames) - 1 do
+    if Supports(FFrames[i], IEditorOptions) then
+      (FFrames[i] as IEditorOptions).Apply;
+end;
+
 procedure TProjectForm.FormCreate(Sender: TObject);
 var
   i:Integer;
@@ -221,7 +205,7 @@ procedure TProjectForm.PageControlChanging(Sender: TObject; var AllowChange: Boo
 begin
   if not (csLoading in ComponentState) then //When createing the form when do not need to trigger
     if (PageControl.ActivePage = GeneralSheet) or (PageControl.ActivePage = OverrideOptionsSheet) then
-      Apply(True);
+      Apply;
 end;
 
 procedure TProjectForm.AddFrame(AFrame: TFrame);

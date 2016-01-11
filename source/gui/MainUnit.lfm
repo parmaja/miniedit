@@ -1048,14 +1048,17 @@ object MainForm: TMainForm
       object N7: TMenuItem
         Caption = '-'
       end
+      object MenuItem13: TMenuItem
+        Action = SelectSCMTypeAct
+      end
       object ProjectTypeMnu: TMenuItem
         Action = SelectProjectTypeAct
       end
-      object MenuItem13: TMenuItem
-        Action = SCMTypeAct
-      end
       object TypeOptionsMnu: TMenuItem
         Action = TypeOptionsAct
+      end
+      object TypeOptionsForMnu: TMenuItem
+        Action = TypeOptionsForAct
       end
       object ProjectOptionsMnu: TMenuItem
         Action = ProjectOptionsAct
@@ -1563,13 +1566,6 @@ object MainForm: TMainForm
       ImageIndex = 14
       OnExecute = EditorOptionsActExecute
     end
-    object ProjectOptionsAct: TAction
-      Category = 'Project'
-      Caption = 'Project Options'
-      ImageIndex = 12
-      OnExecute = ProjectOptionsActExecute
-      ShortCut = 24698
-    end
     object NewProjectAct: TAction
       Category = 'Project'
       Caption = 'New'
@@ -1587,6 +1583,11 @@ object MainForm: TMainForm
       Caption = 'Save'
       ImageIndex = 4
       OnExecute = SaveProjectActExecute
+    end
+    object ProjectOpenFolderAct: TAction
+      Category = 'Project'
+      Caption = 'Open Folder'
+      OnExecute = ProjectOpenFolderActExecute
     end
     object SaveAsProjectAct: TAction
       Category = 'Project'
@@ -1610,6 +1611,30 @@ object MainForm: TMainForm
       Caption = 'Close Project'
       OnExecute = CloseProjectActExecute
     end
+    object ManageAct: TAction
+      Category = 'Project'
+      Caption = 'Manage'
+      Hint = 'Open manage projects and recent files dialog'
+      ImageIndex = 13
+      OnExecute = ManageActExecute
+      ShortCut = 49274
+    end
+    object SelectSCMTypeAct: TAction
+      Category = 'Project'
+      Caption = 'SCM Type'
+      Hint = 'Source control managment type'
+      OnExecute = SelectSCMTypeActExecute
+    end
+    object SelectProjectTypeAct: TAction
+      Category = 'Project'
+      Caption = 'Select Type'
+      OnExecute = SelectProjectTypeActExecute
+    end
+    object TypeOptionsAct: TAction
+      Category = 'Project'
+      Caption = 'Type Options'
+      OnExecute = TypeOptionsActExecute
+    end
     object OpenFolderAct: TAction
       Category = 'File'
       Caption = 'Open Folder'
@@ -1624,19 +1649,6 @@ object MainForm: TMainForm
       ImageIndex = 14
       OnExecute = MessagesActExecute
       ShortCut = 16461
-    end
-    object ManageAct: TAction
-      Category = 'Project'
-      Caption = 'Manage'
-      Hint = 'Open manage projects and recent files dialog'
-      ImageIndex = 13
-      OnExecute = ManageActExecute
-      ShortCut = 49274
-    end
-    object ProjectOpenFolderAct: TAction
-      Category = 'Project'
-      Caption = 'Open Folder'
-      OnExecute = ProjectOpenFolderActExecute
     end
     object GotoLineAct: TAction
       Category = 'Edit'
@@ -1772,11 +1784,6 @@ object MainForm: TMainForm
       Caption = 'Refresh'
       OnExecute = RefreshFilesActExecute
     end
-    object SelectProjectTypeAct: TAction
-      Category = 'Project'
-      Caption = 'Select Type'
-      OnExecute = SelectProjectTypeActExecute
-    end
     object NewAsAct: TAction
       Category = 'File'
       Caption = 'New as'
@@ -1810,17 +1817,6 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'Delete File'
       OnExecute = DeleteActExecute
-    end
-    object TypeOptionsAct: TAction
-      Category = 'Project'
-      Caption = 'General Options'
-      OnExecute = TypeOptionsActExecute
-    end
-    object SCMTypeAct: TAction
-      Category = 'Project'
-      Caption = 'SCM Type'
-      Hint = 'Source control managment type'
-      OnExecute = SCMTypeActExecute
     end
     object DBGExecuteAct: TAction
       Category = 'Debug'
@@ -1917,6 +1913,18 @@ object MainForm: TMainForm
       ImageIndex = 25
       OnExecute = DBGAddWatchActExecute
       ShortCut = 16500
+    end
+    object TypeOptionsForAct: TAction
+      Category = 'Project'
+      Caption = 'Type Options For'
+      OnExecute = TypeOptionsForActExecute
+    end
+    object ProjectOptionsAct: TAction
+      Category = 'Project'
+      Caption = 'Project Options'
+      ImageIndex = 12
+      OnExecute = ProjectOptionsActExecute
+      ShortCut = 24698
     end
   end
   object FolderMenu: TPopupMenu

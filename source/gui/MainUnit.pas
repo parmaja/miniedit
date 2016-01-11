@@ -54,6 +54,8 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    TypeOptionsForMnu: TMenuItem;
+    TypeOptionsForAct: TAction;
     DBGCompileAct: TAction;
     BrowseTabs: TntvTabSet;
     FileList: TListView;
@@ -92,7 +94,7 @@ type
     MenuItem13: TMenuItem;
     MessagesSpl: TntvSplitter;
     OutputSpl: TntvSplitter;
-    SCMTypeAct: TAction;
+    SelectSCMTypeAct: TAction;
     TypePnl: TPanel;
     ProjectTypeMnu: TMenuItem;
     SelectProjectTypeAct: TAction;
@@ -389,7 +391,7 @@ type
     procedure KeywordActExecute(Sender: TObject);
     procedure HelpIndexActExecute(Sender: TObject);
     procedure EditorOptionsActExecute(Sender: TObject);
-    procedure SCMTypeActExecute(Sender: TObject);
+    procedure SelectSCMTypeActExecute(Sender: TObject);
     procedure SettingActExecute(Sender: TObject);
     procedure DBGRunActExecute(Sender: TObject);
     procedure ProjectOptionsActExecute(Sender: TObject);
@@ -407,6 +409,7 @@ type
     procedure SortByNamesActExecute(Sender: TObject);
     procedure ToolButton4Click(Sender: TObject);
     procedure TypeOptionsActExecute(Sender: TObject);
+    procedure TypeOptionsForActExecute(Sender: TObject);
     procedure UnixMnuClick(Sender: TObject);
     procedure WindowsMnuClick(Sender: TObject);
     procedure MacMnuClick(Sender: TObject);
@@ -1166,7 +1169,7 @@ begin
   Engine.Options.Show;
 end;
 
-procedure TMainForm.SCMTypeActExecute(Sender: TObject);
+procedure TMainForm.SelectSCMTypeActExecute(Sender: TObject);
 var
   lSCM: TEditorSCM;
 begin
@@ -1367,6 +1370,15 @@ end;
 procedure TMainForm.TypeOptionsActExecute(Sender: TObject);
 begin
   Engine.Tendency.Show;
+end;
+
+procedure TMainForm.TypeOptionsForActExecute(Sender: TObject);
+var
+  lTendency: TEditorTendency;
+begin
+  lTendency := nil;
+  if ChooseTendency(lTendency) and (lTendency <> nil) then
+    lTendency.Show;
 end;
 
 procedure TMainForm.UnixMnuClick(Sender: TObject);
