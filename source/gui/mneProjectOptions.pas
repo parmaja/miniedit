@@ -54,8 +54,8 @@ type
     FProject: TEditorProject;
     FFrames: array of TFrame;
   protected
-  public
     procedure AddFrame(AFrame: TFrame);
+  public
     procedure SelectPathFolder;
     procedure ApplyFrames;
     procedure Apply;
@@ -101,13 +101,6 @@ begin
 end;
 
 procedure TProjectForm.Apply;
-  procedure SetFlag(aOption: TSynEditorOption; aValue: boolean);
-  begin
-    if aValue then
-      FProject.EditorOptions := FProject.EditorOptions + [aOption]
-    else
-      FProject.EditorOptions := FProject.EditorOptions - [aOption];
-  end;
 begin
   FProject.Title := TitleEdit.Text;
   FProject.Name := NameEdit.Text;
@@ -115,9 +108,6 @@ begin
   FProject.RootDir := RootDirEdit.Text;
   FProject.SaveDesktop := SaveDesktopChk.Checked;
   FProject.SetSCMClass(TEditorSCM(SCMCbo.Items.Objects[SCMCbo.ItemIndex]));
-  FProject.OverrideEditorOptions := OverrideOptionsChk.Checked;
-  FProject.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
-  SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
 end;
 
 procedure TProjectForm.RetrieveFrames;
@@ -151,10 +141,6 @@ begin
     SCMCbo.ItemIndex := Engine.SourceManagements.IndexOf(FProject.SCM.Name)
   else
     SCMCbo.ItemIndex := 0;
-  //Add any new overrided options to cSynOverridedOptions in EditorProfiles unit
-  OverrideOptionsChk.Checked := FProject.OverrideEditorOptions;
-  TabWidthEdit.Text := IntToStr(FProject.TabWidth);
-  TabsToSpacesChk.Checked := eoTabsToSpaces in FProject.EditorOptions;
 end;
 
 procedure TProjectForm.Button3Click(Sender: TObject);

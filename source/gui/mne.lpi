@@ -318,7 +318,7 @@
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PHPConfigForm"/>
         <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit27>
       <Unit28>
         <Filename Value="..\extends\php\mnePHPIniForm.pas"/>
@@ -371,7 +371,7 @@
         <IsPartOfProject Value="True"/>
         <ComponentName Value="DConfigForm"/>
         <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit37>
       <Unit38>
         <Filename Value="..\extends\d\mneDProjectFrames.pas"/>
@@ -392,7 +392,7 @@
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PasConfigForm"/>
         <HasResources Value="True"/>
-        <ResourceBaseClass Value="Form"/>
+        <ResourceBaseClass Value="Frame"/>
       </Unit40>
       <Unit41>
         <Filename Value="..\..\..\..\lib\minilib\lib\mnStreams.pas"/>

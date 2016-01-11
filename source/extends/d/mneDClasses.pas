@@ -49,7 +49,7 @@ type
   TDProjectOptions = class(TCompilerProjectOptions)
   private
   public
-    procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddProjectCallBack); override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); override;
   published
   end;
 
@@ -64,7 +64,7 @@ type
     procedure DoRun(Info: TmneRunInfo); override;
   public
     constructor Create; override;
-    procedure Show; override;
+    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
   published
   end;
 
@@ -75,7 +75,7 @@ uses
 
 { TDProject }
 
-procedure TDProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddProjectCallBack);
+procedure TDProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack);
 var
   aFrame: TFrame;
 begin
@@ -234,17 +234,14 @@ begin
   inherited Create;
 end;
 
-procedure TDTendency.Show;
+procedure TDTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+var
+  aFrame: TDConfigForm;
 begin
-  with TDConfigForm.Create(Application) do
-  begin
-    FTendency := Self;
-    Retrieve;
-    if ShowModal = mrOK then
-    begin
-      Apply;
-    end;
-  end;
+  aFrame := TDConfigForm.Create(AOwner);
+  aFrame.FTendency := ATendency;
+  aFrame.Caption := 'Options';
+  AddFrame(aFrame);
 end;
 
 function TDTendency.CreateDebugger: TEditorDebugger;

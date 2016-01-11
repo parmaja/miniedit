@@ -42,8 +42,8 @@ uses
   {$endif}
   mnePHPIniForm, mneConsoleForms,
   //end of addons
-  mneAddons, DebugClasses, IniFiles, mnFields, simpleipc, mnUtils, ntvTabs,
-  ntvPageControls;
+  mneAddons, mneTendencyOptions, DebugClasses, IniFiles, mnFields, simpleipc,
+  mnUtils, ntvTabs, ntvPageControls;
 
 type
   TTabSetDragObject = class(TDragObject)
@@ -1369,7 +1369,7 @@ end;
 
 procedure TMainForm.TypeOptionsActExecute(Sender: TObject);
 begin
-  Engine.Tendency.Show;
+  ShowTendencyForm(Engine.Tendency);
 end;
 
 procedure TMainForm.TypeOptionsForActExecute(Sender: TObject);
@@ -1378,7 +1378,8 @@ var
 begin
   lTendency := nil;
   if ChooseTendency(lTendency) and (lTendency <> nil) then
-    lTendency.Show;
+    ShowTendencyForm(lTendency);
+    //lTendency.Show;
 end;
 
 procedure TMainForm.UnixMnuClick(Sender: TObject);

@@ -5,41 +5,36 @@ unit mnePHPConfigForms;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls, mnePHPClasses;
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  EditorEngine, mnePHPClasses;
 
 type
 
   { TPHPConfigForm }
 
-  TPHPConfigForm = class(TForm)
+  TPHPConfigForm = class(TFrame, IEditorOptions)
     Button1: TButton;
     Button3: TButton;
     Button5: TButton;
-    CancelBtn: TButton;
     HTMLManualEdit: TEdit;
     Label1: TLabel;
     Label2: TLabel;
     Label8: TLabel;
-    OkBtn: TButton;
     OpenDialog: TOpenDialog;
     PHPPathEdit: TEdit;
     PHPManualEdit: TEdit;
     procedure Button1Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
-    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
   protected
   public
-    FTendency: TPHPTendency;
+    FTendency: TEditorTendency;
     procedure Apply;
     procedure Retrieve;
   end;
 
 implementation
-
-uses
-  EditorEngine;
 
 {$R *.lfm}
 
@@ -81,25 +76,24 @@ begin
 end;
 
 
-procedure TPHPConfigForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-begin
-  if ModalResult = mrOk then
-  begin
-  end;
-end;
-
 procedure TPHPConfigForm.Apply;
 begin
-  FTendency.PHPPath := PHPPathEdit.Text;
-  FTendency.PHPHelpFile := PHPManualEdit.Text;
-  FTendency.HTMLHelpFile := HTMLManualEdit.Text;
+  with (FTendency as TPHPTendency) do
+  begin
+    PHPPath := PHPPathEdit.Text;
+    PHPHelpFile := PHPManualEdit.Text;
+    HTMLHelpFile := HTMLManualEdit.Text;
+  end;
 end;
 
 procedure TPHPConfigForm.Retrieve;
 begin
-  PHPPathEdit.Text := FTendency.PHPPath;
-  PHPManualEdit.Text := FTendency.PHPHelpFile;
-  HTMLManualEdit.Text := FTendency.HTMLHelpFile;
+  with (FTendency as TPHPTendency) do
+  begin
+    PHPPathEdit.Text := PHPPath;
+    PHPManualEdit.Text := PHPHelpFile;
+    HTMLManualEdit.Text := HTMLHelpFile;
+  end;
 end;
 
 end.

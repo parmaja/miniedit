@@ -5,33 +5,28 @@ unit mneDConfigForms;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls, mneDClasses;
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  EditorEngine, mneDClasses;
 
 type
 
   { TDConfigForm }
 
-  TDConfigForm = class(TForm)
+  TDConfigForm = class(TFrame, IEditorOptions)
     Button3: TButton;
-    CancelBtn: TButton;
     Label1: TLabel;
-    OkBtn: TButton;
     CompilerEdit: TEdit;
     OpenDialog: TOpenDialog;
     procedure Button3Click(Sender: TObject);
-    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
   protected
   public
-    FTendency: TDTendency;
+    FTendency: TEditorTendency;
     procedure Apply;
     procedure Retrieve;
   end;
 
 implementation
-
-uses
-  EditorEngine;
 
 {$R *.lfm}
 
@@ -48,21 +43,14 @@ begin
   end;
 end;
 
-procedure TDConfigForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-begin
-  if ModalResult = mrOk then
-  begin
-  end;
-end;
-
 procedure TDConfigForm.Apply;
 begin
-  FTendency.Command := CompilerEdit.Text;
+  (FTendency as TDTendency).Command := CompilerEdit.Text;
 end;
 
 procedure TDConfigForm.Retrieve;
 begin
-  CompilerEdit.Text := FTendency.Command;
+  CompilerEdit.Text := (FTendency as TDTendency).Command;
 end;
 
 end.

@@ -31,8 +31,8 @@ type
     FTendency: TEditorTendency;
     FFrames: array of TFrame;
   protected
-  public
     procedure AddFrame(AFrame: TFrame);
+  public
     procedure ApplyFrames;
     procedure Apply;
     procedure RetrieveFrames;
@@ -67,18 +67,17 @@ begin
 end;
 
 procedure TTendencyForm.Apply;
-{  procedure SetFlag(aOption: TSynEditorOption; aValue: boolean);
+  procedure SetFlag(aOption: TSynEditorOption; aValue: boolean);
   begin
     if aValue then
-      FTendency.EditorOptions := FProject.EditorOptions + [aOption]
+      FTendency.EditorOptions := FTendency.EditorOptions + [aOption]
     else
       FTendency.EditorOptions := FTendency.EditorOptions - [aOption];
-  end;}
+  end;
 begin
-
-{  FTendency.OverrideEditorOptions := OverrideOptionsChk.Checked;
+  FTendency.OverrideEditorOptions := OverrideOptionsChk.Checked;
   FTendency.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
-  SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);}
+  SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
 end;
 
 procedure TTendencyForm.RetrieveFrames;
@@ -87,7 +86,7 @@ var
   i: Integer;
 begin
   Caption := Caption + ' [' + FTendency.Name + ']';
-  //FTendency.Options.CreateOptionsFrame(Self, FTendency, @AddFrame); //TODO
+  FTendency.CreateOptionsFrame(Self, FTendency, @AddFrame);
 
   for i := 0 to Length(FFrames) - 1 do
   begin
@@ -105,9 +104,9 @@ end;
 procedure TTendencyForm.Retrieve;
 begin
   //Add any new overrided options to cSynOverridedOptions in EditorProfiles unit
-{  OverrideOptionsChk.Checked := FTendency.OverrideEditorOptions;
+  OverrideOptionsChk.Checked := FTendency.OverrideEditorOptions;
   TabWidthEdit.Text := IntToStr(FTendency.TabWidth);
-  TabsToSpacesChk.Checked := eoTabsToSpaces in FTendency.EditorOptions;}
+  TabsToSpacesChk.Checked := eoTabsToSpaces in FTendency.EditorOptions;
 end;
 
 procedure TTendencyForm.PageControlChanging(Sender: TObject; var AllowChange: Boolean);

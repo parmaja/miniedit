@@ -1,15 +1,13 @@
 object PasConfigForm: TPasConfigForm
-  Left = 287
+  Left = 0
   Height = 180
-  Top = 170
+  Top = 0
   Width = 398
-  BorderStyle = bsSingle
-  Caption = 'Pascal Config'
   ClientHeight = 180
   ClientWidth = 398
-  OnClose = FormClose
-  Position = poMainFormCenter
-  LCLVersion = '1.5'
+  TabOrder = 0
+  DesignLeft = 468
+  DesignTop = 288
   object CompilerEdit: TEdit
     Left = 11
     Height = 23
@@ -36,30 +34,8 @@ object PasConfigForm: TPasConfigForm
     Caption = 'Pascal compiler'
     ParentColor = False
   end
-  object OkBtn: TButton
-    Left = 319
-    Height = 25
-    Top = 152
-    Width = 75
-    Anchors = [akLeft, akBottom]
-    Caption = '&Ok'
-    Default = True
-    ModalResult = 1
-    TabOrder = 2
-  end
-  object CancelBtn: TButton
-    Left = 242
-    Height = 25
-    Top = 152
-    Width = 75
-    Anchors = [akLeft, akBottom]
-    Cancel = True
-    Caption = '&Cancel'
-    ModalResult = 2
-    TabOrder = 3
-  end
   object OpenDialog: TOpenDialog
-    left = 118
-    top = 66
+    left = 132
+    top = 59
   end
 end

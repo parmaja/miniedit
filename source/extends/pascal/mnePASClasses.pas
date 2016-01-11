@@ -70,7 +70,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
-    procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddProjectCallBack); override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); override;
   published
     property UseCFG: Boolean read FUseCFG write FUseCFG default True;
   end;
@@ -86,7 +86,7 @@ type
     procedure Init; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
-    procedure Show; override;
+    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
     property Compiler: string read FCompiler write FCompiler;
   end;
 
@@ -108,7 +108,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TPasProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddProjectCallBack);
+procedure TPasProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack);
 var
   aFrame: TFrame;
 begin
@@ -263,17 +263,14 @@ begin
   Engine.Session.Run.Start;
 end;
 
-procedure TPasTendency.Show;
+procedure TPasTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+var
+  aFrame: TPasConfigForm;
 begin
-  with TPasConfigForm.Create(Application) do
-  begin
-    FTendency := Self;
-    Retrieve;
-    if ShowModal = mrOK then
-    begin
-      Apply;
-    end;
-  end;
+  aFrame := TPasConfigForm.Create(AOwner);
+  aFrame.FTendency := ATendency;
+  aFrame.Caption := 'Options';
+  AddFrame(aFrame);
 end;
 
 { TPASFileCategory }

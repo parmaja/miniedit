@@ -1,25 +1,23 @@
 object DConfigForm: TDConfigForm
-  Left = 287
+  Left = 0
   Height = 180
-  Top = 170
-  Width = 398
-  BorderStyle = bsSingle
-  Caption = 'D Config'
+  Top = 0
+  Width = 403
   ClientHeight = 180
-  ClientWidth = 398
-  OnClose = FormClose
-  Position = poMainFormCenter
-  LCLVersion = '1.5'
+  ClientWidth = 403
+  TabOrder = 0
+  DesignLeft = 409
+  DesignTop = 283
   object CompilerEdit: TEdit
     Left = 11
     Height = 23
     Top = 28
-    Width = 360
+    Width = 365
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 0
   end
   object Button3: TButton
-    Left = 371
+    Left = 376
     Height = 21
     Top = 29
     Width = 22
@@ -35,28 +33,6 @@ object DConfigForm: TDConfigForm
     Width = 58
     Caption = 'D compiler'
     ParentColor = False
-  end
-  object OkBtn: TButton
-    Left = 319
-    Height = 25
-    Top = 152
-    Width = 75
-    Anchors = [akLeft, akBottom]
-    Caption = '&Ok'
-    Default = True
-    ModalResult = 1
-    TabOrder = 2
-  end
-  object CancelBtn: TButton
-    Left = 242
-    Height = 25
-    Top = 152
-    Width = 75
-    Anchors = [akLeft, akBottom]
-    Cancel = True
-    Caption = '&Cancel'
-    ModalResult = 2
-    TabOrder = 3
   end
   object OpenDialog: TOpenDialog
     left = 90

@@ -1,27 +1,27 @@
 object PHPConfigForm: TPHPConfigForm
-  Left = 287
-  Height = 180
-  Top = 170
-  Width = 398
-  BorderStyle = bsSingle
-  Caption = 'PHP Config'
-  ClientHeight = 180
-  ClientWidth = 398
-  OnClose = FormClose
-  Position = poMainFormCenter
-  LCLVersion = '1.5'
+  Left = 0
+  Height = 156
+  Top = 0
+  Width = 383
+  ClientHeight = 156
+  ClientWidth = 383
+  TabOrder = 0
+  DesignLeft = 430
+  DesignTop = 287
   object PHPPathEdit: TEdit
     Left = 11
     Height = 23
     Top = 28
-    Width = 360
+    Width = 345
+    Anchors = [akTop, akLeft, akRight]
     TabOrder = 0
   end
   object Button3: TButton
-    Left = 371
+    Left = 356
     Height = 21
     Top = 28
     Width = 22
+    Anchors = [akTop, akRight]
     Caption = '...'
     OnClick = Button3Click
     TabOrder = 1
@@ -33,28 +33,6 @@ object PHPConfigForm: TPHPConfigForm
     Width = 50
     Caption = 'PHP path'
     ParentColor = False
-  end
-  object OkBtn: TButton
-    Left = 319
-    Height = 25
-    Top = 152
-    Width = 75
-    Anchors = [akLeft, akBottom]
-    Caption = '&Ok'
-    Default = True
-    ModalResult = 1
-    TabOrder = 2
-  end
-  object CancelBtn: TButton
-    Left = 242
-    Height = 25
-    Top = 152
-    Width = 75
-    Anchors = [akLeft, akBottom]
-    Cancel = True
-    Caption = '&Cancel'
-    ModalResult = 2
-    TabOrder = 3
   end
   object Label2: TLabel
     Left = 12
@@ -68,17 +46,19 @@ object PHPConfigForm: TPHPConfigForm
     Left = 11
     Height = 23
     Top = 73
-    Width = 360
-    TabOrder = 4
+    Width = 345
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 2
   end
   object Button1: TButton
-    Left = 371
+    Left = 356
     Height = 22
     Top = 72
     Width = 22
+    Anchors = [akTop, akRight]
     Caption = '...'
     OnClick = Button1Click
-    TabOrder = 5
+    TabOrder = 3
   end
   object Label8: TLabel
     Left = 11
@@ -92,20 +72,22 @@ object PHPConfigForm: TPHPConfigForm
     Left = 11
     Height = 23
     Top = 117
-    Width = 360
-    TabOrder = 6
+    Width = 345
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 4
   end
   object Button5: TButton
-    Left = 371
+    Left = 356
     Height = 22
     Top = 116
     Width = 22
+    Anchors = [akTop, akRight]
     Caption = '...'
     OnClick = Button5Click
-    TabOrder = 7
+    TabOrder = 5
   end
   object OpenDialog: TOpenDialog
-    left = 239
-    top = 112
+    left = 185
+    top = 69
   end
 end

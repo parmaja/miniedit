@@ -57,7 +57,6 @@
       <Title>Number</Title>
       <AttType>attNumber</AttType>
       <Foreground>1040362</Foreground>
-      <Style>fsBold</Style>
     </Number>
     <Directive Class="TGlobalAttribute">
       <Title>Directive</Title>
@@ -83,7 +82,6 @@
       <Title>Value</Title>
       <AttType>attValue</AttType>
       <Foreground>1491229</Foreground>
-      <Style>fsBold</Style>
     </Value>
     <DataType Class="TGlobalAttribute">
       <Title>Type</Title>
@@ -123,7 +121,6 @@
       <Title>String</Title>
       <AttType>attString</AttType>
       <Foreground>1491229</Foreground>
-      <Style>fsBold</Style>
     </QuotedString>
     <FontName>Consolas</FontName>
     <FontSize>12</FontSize>

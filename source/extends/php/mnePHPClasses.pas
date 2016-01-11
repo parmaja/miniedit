@@ -99,7 +99,7 @@ type
   private
   public
     constructor Create; override;
-    procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddProjectCallBack); override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); override;
   published
   end;
 {
@@ -120,7 +120,7 @@ type
     procedure DoRun(Info: TmneRunInfo); override;
   public
     constructor Create; override;
-    procedure Show; override;
+    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
   published
     property PHPPath: string read FPHPPath write FPHPPath;
     property PHPHelpFile: string read FPHPHelpFile write FPHPHelpFile;
@@ -139,7 +139,7 @@ begin
   inherited;
 end;
 
-procedure TPHPProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddProjectCallBack);
+procedure TPHPProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack);
 var
   aFrame: TPHPProjectFrame;
 begin
@@ -297,17 +297,14 @@ begin
   inherited Create;
 end;
 
-procedure TPHPTendency.Show;
+procedure TPHPTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+var
+  aFrame: TPHPConfigForm;
 begin
-  with TPHPConfigForm.Create(Application) do
-  begin
-    FTendency := Self;
-    Retrieve;
-    if ShowModal = mrOK then
-    begin
-      Apply;
-    end;
-  end;
+  aFrame := TPHPConfigForm.Create(AOwner);
+  aFrame.FTendency := ATendency;
+  aFrame.Caption := 'Options';
+  AddFrame(aFrame);
 end;
 
 function TPHPTendency.CreateDebugger: TEditorDebugger;

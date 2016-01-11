@@ -6,7 +6,7 @@
     <TendencyName>D</TendencyName>
     <Desktop Class="TEditorDesktop">
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.d</CurrentFile>
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\print.d</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
@@ -15,19 +15,16 @@
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.d</FileName>
-            <CaretY>7</CaretY>
+            <CaretY>2</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>C:\temp\arduino_test.d</FileName>
-            <CaretY>10</CaretY>
+            <CaretY>5</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\test-pas.pas</FileName>
-            <CaretY>11</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>P:\sahlisoft\delphi\jobs\sahlisoft_2\source\gadgets\lib\mposDBAgents.pas</FileName>
-            <CaretY>14</CaretY>
+            <FileName>M:\home\pascal\projects\miniEdit\test\print.d</FileName>
+            <CaretX>50</CaretX>
+            <CaretY>8</CaretY>
           </Object>
         </Items>
       </Files>
@@ -39,6 +36,5 @@
       </Paths>
       <ExpandPaths>False</ExpandPaths>
     </Options>
-    <EditorOptions></EditorOptions>
   </Object>
 </rtti>

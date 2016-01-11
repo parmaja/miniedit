@@ -5,33 +5,28 @@ unit mnePasConfigForms;
 interface
 
 uses
-  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls, mnePasClasses;
+  Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
+  EditorEngine, mnePasClasses;
 
 type
 
   { TPasConfigForm }
 
-  TPasConfigForm = class(TForm)
+  TPasConfigForm = class(TFrame, IEditorOptions)
     Button3: TButton;
-    CancelBtn: TButton;
     Label1: TLabel;
-    OkBtn: TButton;
     CompilerEdit: TEdit;
     OpenDialog: TOpenDialog;
     procedure Button3Click(Sender: TObject);
-    procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
   private
   protected
   public
-    FTendency: TPasTendency;
+    FTendency: TEditorTendency;
     procedure Apply;
     procedure Retrieve;
   end;
 
 implementation
-
-uses
-  EditorEngine;
 
 {$R *.lfm}
 
@@ -48,21 +43,14 @@ begin
   end;
 end;
 
-procedure TPasConfigForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-begin
-  if ModalResult = mrOk then
-  begin
-  end;
-end;
-
 procedure TPasConfigForm.Apply;
 begin
-  FTendency.Compiler := CompilerEdit.Text;
+  (FTendency as TPasTendency).Compiler := CompilerEdit.Text;
 end;
 
 procedure TPasConfigForm.Retrieve;
 begin
-  CompilerEdit.Text := FTendency.Compiler;
+  CompilerEdit.Text := (FTendency as TPasTendency).Compiler;
 end;
 
 end.

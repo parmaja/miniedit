@@ -133,6 +133,9 @@ type
     function IndexOf(vName: string): Integer;
     property Items[Index: integer]: TEditorElement read GetItem; default;
   end;
+
+  TAddFrameCallBack = procedure(AFrame: TFrame) of object;
+
   {
     Tendency
     Run, Compile, Collect file groups and have special properties
@@ -146,9 +149,12 @@ type
 
   TEditorTendency = class(TEditorElement)
   private
+    FEditorOptions: TSynEditorOptions;
     FGroups: TFileGroups;
     FDebug: TEditorDebugger;
     FCommand: string;
+    FOverrideEditorOptions: Boolean;
+    FTabWidth: Integer;
   protected
     FCapabilities: TEditorCapabilities;
     procedure AddGroup(vName, vCategory: string);
@@ -160,7 +166,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     procedure Run(RunActions: TmneRunActions);
-    procedure Show; virtual;
+    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); virtual;
     function FindExtension(vExtension: string): TFileGroup;
     function CreateEditorFile(vGroup: string): TEditorFile; virtual;
     function CreateEditorFile(vGroup: TFileGroup): TEditorFile; virtual;
@@ -173,6 +179,10 @@ type
     property Debug: TEditorDebugger read FDebug;//todo
   published
     property Command: string read FCommand write FCommand; //like php.exe or rdmd.exe
+    //Override options
+    property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False; //TODO move it to Tendency
+    property TabWidth: Integer read FTabWidth write FTabWidth default 4;
+    property EditorOptions: TSynEditorOptions read FEditorOptions write FEditorOptions;
   end;
 
   TEditorTendencyClass = class of TEditorTendency;
@@ -210,8 +220,6 @@ type
 
   TEditorSCMClass = class of TEditorSCM;
 
-  TAddProjectCallBack = procedure(AFrame: TFrame) of object;
-
   { TEditorProjectOptions }
 
   TEditorProjectOptions = class(TPersistent)
@@ -225,7 +233,7 @@ type
     FOutputFile: string;
   public
     constructor Create; virtual;
-    procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddProjectCallBack); virtual;
+    procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); virtual;
   published
     property RunMode: TmneRunMode read FRunMode write FRunMode;
     property RootUrl: string read FRootUrl write FRootUrl;
@@ -255,10 +263,7 @@ type
 
   TEditorProject = class sealed(TmnXMLProfile)
   private
-    FEditorOptions: TSynEditorOptions;
     FOptions: TEditorProjectOptions;
-    FOverrideEditorOptions: Boolean;
-    FTabWidth: Integer;
     FTendencyName: string;
     FDescription: string;
     FRootUrl: string;
@@ -298,10 +303,6 @@ type
     property SaveDesktop: Boolean read FSaveDesktop write FSaveDesktop default True;
     property Desktop: TEditorDesktop read FDesktop stored FSaveDesktop;
     property Options: TEditorProjectOptions read FOptions write FOptions default nil;
-    //Override options
-    property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False; //TODO move it to Tendency
-    property TabWidth: Integer read FTabWidth write FTabWidth default 4;
-    property EditorOptions: TSynEditorOptions read FEditorOptions write FEditorOptions;
   end;
 
   { TDebugMarksPart }
@@ -1340,7 +1341,7 @@ begin
   inherited;
 end;
 
-procedure TEditorProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddProjectCallBack);
+procedure TEditorProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack);
 begin
 end;
 
@@ -1583,10 +1584,10 @@ begin
 
     aProfile.AssignTo(SynEdit);
 
-    if Engine.Session.IsOpened and Engine.Session.Project.OverrideEditorOptions then
+    if Engine.Session.IsOpened and Engine.Tendency.OverrideEditorOptions then
     begin
-      SynEdit.Options := SynEdit.Options - cSynOverridedOptions + Engine.Session.Project.EditorOptions;
-      SynEdit.TabWidth := Engine.Session.Project.TabWidth;
+      SynEdit.Options := SynEdit.Options - cSynOverridedOptions + Engine.Tendency.EditorOptions;
+      SynEdit.TabWidth := Engine.Tendency.TabWidth;
     end;
 
     if (Group <> nil) and (Group.Category.Highlighter <> nil) then
@@ -2007,9 +2008,8 @@ begin
   end;
 end;
 
-procedure TEditorTendency.Show;
+procedure TEditorTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 begin
-  MsgBox.Msg.Show('No Options');
 end;
 
 function TEditorTendency.FindExtension(vExtension: string): TFileGroup;
@@ -4242,7 +4242,6 @@ begin
   inherited Create;
   FDesktop := TEditorDesktop.Create;
   FSaveDesktop := True;
-  FTabWidth := 4;
 end;
 
 destructor TEditorProject.Destroy;
