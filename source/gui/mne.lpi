@@ -36,7 +36,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\..\..\..\lib\minilib\lib;..\..\..\..\lib\minilib\connection\source"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\..\..\..\lib\minilib\lib;..\..\..\..\lib\minilib\connection\source;..\extends\custom"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Linking>
@@ -67,7 +67,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\extends\custom"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Parsing>
@@ -159,7 +159,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="49">
+    <Units Count="52">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -437,6 +437,25 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit48>
+      <Unit49>
+        <Filename Value="..\extends\custom\mneCustomClasses.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit49>
+      <Unit50>
+        <Filename Value="..\extends\custom\mneCustomConfigFrames.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CustomConfigFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+        <UnitName Value="mneCustomConfigForms"/>
+      </Unit50>
+      <Unit51>
+        <Filename Value="..\extends\custom\mneCustomProjectFrames.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CustomProjectFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit51>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -447,7 +466,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);D:\dev\lazarus\ide\include\"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\..\..\..\lib\minilib\lib;..\..\..\..\lib\minilib\connection\source;..\..\..\..\lib\minilib\lazarus\lib"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\..\..\..\lib\minilib\lib;..\..\..\..\lib\minilib\connection\source;..\..\..\..\lib\minilib\lazarus\lib;..\extends\custom"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <Linking>
