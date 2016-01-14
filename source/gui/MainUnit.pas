@@ -473,7 +473,6 @@ type
     procedure StatusTimerTimer(Sender: TObject);
     procedure Clear1Click(Sender: TObject);
     procedure MessageListDblClick(Sender: TObject);
-    procedure SearchListCustomDrawSubItem(Sender: TCustomListView; Item: TListItem; SubItem: integer; State: TCustomDrawState; var DefaultDraw: boolean);
     procedure FindInFilesActExecute(Sender: TObject);
     procedure NextMessageActExecute(Sender: TObject);
     procedure PriorMessageActExecute(Sender: TObject);
@@ -1052,51 +1051,46 @@ end;
 procedure TMainForm.SearchGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
 var
   c, l: integer;
-  w: integer;
+  h, w: integer;
   s, bf, md, af: string;
   aCanvas: TCanvas;
 begin
   if (aRow > 0) and (aCol = 3) then
   begin
     aCanvas := SearchGrid.Canvas;
-    aCanvas.Lock;
-    try
-      l := Integer(SearchGrid.Rows[SearchGrid.Row].Objects[0]);
-      c := Integer(SearchGrid.Rows[SearchGrid.Row].Objects[1]);
-      s := SearchGrid.Cells[aCol, aRow];
-      bf := Copy(s, 1, c - 1);
-      md := Copy(s, c, l);
-      af := Copy(s, c + l, MaxInt);
-      if gdFocused in aState then
-      begin
-        aCanvas.Font.Color := clHighlightText;
-        aCanvas.Brush.Color := clHighlight;
-      end
-      else
-      begin
-        aCanvas.Font.Color := clWindowText;
-        aCanvas.Brush.Color := clWindow;
-      end;
-      w := aRect.Left + 2;
-      //aRect.Bottom := aRect.Bottom - 1;
-      //aRect.Left := aRect.Left + 1;
-      aCanvas.Refresh;
-      aCanvas.FillRect(aRect);
-      aCanvas.Font.Style := [];
-      aCanvas.TextOut(w, aRect.Top, bf);
-      w := w + aCanvas.TextWidth(bf);
-      aCanvas.Refresh; //need to change color because canvas not change the font when style changed
-      aCanvas.Font.Style := [fsBold];
-      aCanvas.TextOut(w, aRect.Top, md);
-      w := w + aCanvas.TextWidth(md);
-      aCanvas.Font.Style := [];
-      aCanvas.Refresh; //need to change color because canvas not change the font when style changed
-      aCanvas.TextOut(w, aRect.Top, af);
-      aCanvas.Refresh;
-    finally
-      aCanvas.Unlock;
+
+    l := Integer(SearchGrid.Rows[SearchGrid.Row].Objects[0]);
+    c := Integer(SearchGrid.Rows[SearchGrid.Row].Objects[1]);
+    s := SearchGrid.Cells[aCol, aRow];
+    bf := Copy(s, 1, c - 1);
+    md := Copy(s, c, l);
+    af := Copy(s, c + l, MaxInt);
+    if gdSelected in aState then
+    begin
+      aCanvas.Font.Color := clHighlightText;
+      aCanvas.Brush.Color := clHighlight;
+    end
+    else
+    begin
+      aCanvas.Font.Color := clWindowText;
+      aCanvas.Brush.Color := clWindow;
     end;
-    //DefaultDraw := False;
+    w := aRect.Left + 2;
+    h := aCanvas.TextHeight(s);
+    aRect.Top := aRect.Top + ((aRect.Bottom - aRect.Top - h) div 2);
+    //aRect.Bottom := aRect.Bottom - 1;
+    //aRect.Left := aRect.Left + 1;
+    aCanvas.Refresh;
+    aCanvas.FillRect(aRect);
+    aCanvas.Font.Style := [];
+    aCanvas.TextOut(w, aRect.Top, bf);
+    w := w + aCanvas.TextWidth(bf);
+    aCanvas.Font.Style := [fsBold];
+    aCanvas.TextOut(w, aRect.Top, md);
+    w := w + aCanvas.TextWidth(md);
+    aCanvas.Font.Style := [];
+    aCanvas.TextOut(w, aRect.Top, af);
+    aCanvas.Refresh;
   end;
 end;
 
@@ -2498,7 +2492,9 @@ end;
 procedure TMainForm.Clear1Click(Sender: TObject);
 begin
   if MessagesPopup.PopupComponent is TListView then
-    (MessagesPopup.PopupComponent as TListView).Clear;
+    (MessagesPopup.PopupComponent as TListView).Clear
+  else if MessagesPopup.PopupComponent is TStringGrid then
+    (MessagesPopup.PopupComponent as TStringGrid).RowCount := 1;
 end;
 
 type
@@ -2539,59 +2535,6 @@ begin
       end;
     end;
   end;
-end;
-
-procedure TMainForm.SearchListCustomDrawSubItem(Sender: TCustomListView; Item: TListItem; SubItem: integer; State: TCustomDrawState; var DefaultDraw: boolean);
-var
-  c, l: integer;
-  w: integer;
-  aRect: TRect;
-  s, bf, md, af: string;
-begin
-  if (Sender.Items.Count > 0) and (SubItem = 2) and (Item.SubItems.Count > 0) then
-  begin
-    Sender.Canvas.Lock;
-    try
-      aRect := Item.DisplayRectSubItem(SubItem, drSelectBounds);
-      c := (Item as TSearchListItem).Column;
-      l := (Item as TSearchListItem).Length;
-      s := Item.SubItems[1];
-      bf := Copy(s, 1, c - 1);
-      md := Copy(Item.SubItems[1], c, l);
-      af := Copy(Item.SubItems[1], c + l, MaxInt);
-      if cdsFocused in State then
-      begin
-        Sender.Canvas.Font.Color := clHighlightText;
-        Sender.Canvas.Brush.Color := clHighlight;
-      end
-      else
-      begin
-        Sender.Canvas.Font.Color := clWindowText;
-        Sender.Canvas.Brush.Color := clWindow;
-      end;
-      w := aRect.Left + 2;
-      //aRect.Bottom := aRect.Bottom - 1;
-      //aRect.Left := aRect.Left + 1;
-      Sender.Canvas.Refresh;
-      Sender.Canvas.FillRect(aRect);
-      Sender.Canvas.Font.Style := [];
-      Sender.Canvas.TextOut(w, aRect.Top, bf);
-      w := w + Sender.Canvas.TextWidth(bf);
-      Sender.Canvas.Refresh; //need to change color because canvas not change the font when style changed
-      Sender.Canvas.Font.Style := [fsBold];
-      Sender.Canvas.TextOut(w, aRect.Top, md);
-      w := w + Sender.Canvas.TextWidth(md);
-      Sender.Canvas.Font.Style := [];
-      Sender.Canvas.Refresh; //need to change color because canvas not change the font when style changed
-      Sender.Canvas.TextOut(w, aRect.Top, af);
-      Sender.Canvas.Refresh;
-    finally
-      Sender.Canvas.Unlock;
-    end;
-    DefaultDraw := False;
-  end
-  else
-    DefaultDraw := True;
 end;
 
 procedure TMainForm.SearchFoundEvent(Index: Integer; FileName: string; const Line: string; LineNo, Column, FoundLength: Integer);

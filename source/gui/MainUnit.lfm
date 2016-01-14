@@ -896,7 +896,8 @@ object MainForm: TMainForm
       Align = alClient
       ColCount = 4
       MouseWheelOption = mwGrid
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goSmoothScroll, goFixedRowNumbering]
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goSmoothScroll, goFixedRowNumbering, goRowHighlight]
+      PopupMenu = MessagesPopup
       RowCount = 2
       TabOrder = 3
       TitleFont.CharSet = ANSI_CHARSET
@@ -908,7 +909,7 @@ object MainForm: TMainForm
       OnDrawCell = SearchGridDrawCell
       ColWidths = (
         27
-        88
+        184
         53
         548
       )

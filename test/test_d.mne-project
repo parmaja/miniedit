@@ -15,7 +15,8 @@
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.d</FileName>
-            <CaretY>5</CaretY>
+            <CaretX>6</CaretX>
+            <CaretY>3</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>C:\temp\arduino_test.d</FileName>
@@ -23,6 +24,7 @@
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\print.d</FileName>
+            <CaretX>6</CaretX>
             <CaretY>3</CaretY>
           </Object>
         </Items>
