@@ -14,14 +14,7 @@ uses
   SynEditSearch, SearchProgressForms, ComCtrls;
 
 type
-  TSearchListItem = class(TListItem)
-  private
-    FColumn: Integer;
-    FLength: Integer;
-  public
-    property Column: Integer read FColumn write FColumn;
-    property Length: Integer read FLength write FLength;
-  end;
+  TSearchFoundEvent = procedure(Index: Integer; FileName: string; const Line: string; LineNo, Column, FoundLength: Integer) of object;
 
   TSearchInFilesForm = class(TForm)
     Label1: TLabel;
@@ -45,15 +38,15 @@ type
     procedure SearchInFile(FileName: string);
   protected
     FSearchCount: Integer;
+    FSearchFoundEvent: TSearchFoundEvent;
     FProgressForm: TSearchProgressForm;
     FSearchText: string;
     FReplaceText: string;
     FSearchOptions: TSynSearchOptions;
-    FSearchList: TListView;
   public
   end;
 
-procedure ShowSearchInFilesForm(ASearchList: TListView; SearchText, SearchFolder: string; SearchFolderHistory, SearchHistory, ReplaceHistory: TStringList);
+procedure ShowSearchInFilesForm(SearchFoundEvent: TSearchFoundEvent; SearchText, SearchFolder: string; SearchFolderHistory, SearchHistory, ReplaceHistory: TStringList);
 
 implementation
 
@@ -111,7 +104,7 @@ begin
   end;
 end;
 
-procedure ShowSearchInFilesForm(ASearchList: TListView; SearchText, SearchFolder: string; SearchFolderHistory, SearchHistory, ReplaceHistory: TStringList);
+procedure ShowSearchInFilesForm(SearchFoundEvent: TSearchFoundEvent; SearchText, SearchFolder: string; SearchFolderHistory, SearchHistory, ReplaceHistory: TStringList);
 var
   aForm: TSearchInFilesForm;
   i: Integer;
@@ -121,7 +114,7 @@ begin
   try
     // assign search FSearchOptions
     // start with last search text
-    FSearchList := ASearchList;
+    FSearchFoundEvent := SearchFoundEvent;
     if SearchHistory <> nil then
       SearchTextEdit.Items.Assign(SearchHistory);
     if ReplaceHistory <> nil then
@@ -138,7 +131,7 @@ begin
     begin
       if SearchTextEdit.Text <> '' then
       begin
-        FSearchList.Clear;
+        //FSearchList.Clear;
         SearchReplaceText;
 
         if SearchHistory <> nil then
@@ -207,18 +200,9 @@ begin
 end;
 
 procedure TSearchInFilesForm.FoundEvent(FileName: string; const Line: string; LineNo, Column, FoundLength: Integer);
-var
-  aItem: TSearchListItem;
 begin
+  FSearchFoundEvent(FSearchCount, FileName,Line, LineNo, Column, FoundLength);
   Inc(FSearchCount);
-  aItem := TSearchListItem.Create(FSearchList.Items);
-  FSearchList.Items.AddItem(aItem);
-  aItem.Caption := FileName;
-  aItem.ImageIndex := 34;
-  aItem.Column := Column;
-  aItem.Length := FoundLength;
-  aItem.SubItems.Add(IntToStr(LineNo));
-  aItem.SubItems.Add(Line);
 end;
 
 procedure TSearchInFilesForm.SearchInFile(FileName: string);

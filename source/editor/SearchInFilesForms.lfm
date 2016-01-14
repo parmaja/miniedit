@@ -10,7 +10,7 @@ object SearchInFilesForm: TSearchInFilesForm
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Position = poMainFormCenter
-  LCLVersion = '1.1'
+  LCLVersion = '1.7'
   object Label1: TLabel
     Left = 8
     Height = 13
@@ -47,17 +47,17 @@ object SearchInFilesForm: TSearchInFilesForm
     TabOrder = 3
     object SearchCaseSensitiveChk: TCheckBox
       Left = 8
-      Height = 17
+      Height = 19
       Top = 1
-      Width = 90
+      Width = 92
       Caption = 'C&ase sensitivity'
       TabOrder = 0
     end
     object SearchWholeWordsChk: TCheckBox
       Left = 8
-      Height = 17
+      Height = 19
       Top = 20
-      Width = 102
+      Width = 104
       Caption = '&Whole words only'
       TabOrder = 1
     end
@@ -96,9 +96,9 @@ object SearchInFilesForm: TSearchInFilesForm
   end
   object ReplaceWithChk: TCheckBox
     Left = 7
-    Height = 17
+    Height = 19
     Top = 36
-    Width = 86
+    Width = 88
     Caption = '&Replace With:'
     OnClick = ReplaceWithChkClick
     TabOrder = 1

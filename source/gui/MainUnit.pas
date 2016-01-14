@@ -20,12 +20,12 @@ SynEdit:
 interface
 
 uses
-  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  MsgBox, LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorDebugger, FileUtil, LazFileUtils,
-  Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus, ToolWin,
-  Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses, StdActns,
-  SynEditHighlighter, SynEdit, IAddons, ntvSplitters, SynHighlighterSQL,
-  EditorClasses,
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, MsgBox,
+  LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorDebugger, FileUtil,
+  LazFileUtils, Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus,
+  ToolWin, Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses,
+  StdActns, Grids, SynEditHighlighter, SynEdit, IAddons, ntvSplitters,
+  SynHighlighterSQL, EditorClasses,
   {$ifdef WINDOWS}
   Windows, //TODO, i hate include it
   {$endif}
@@ -54,6 +54,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    SearchGrid: TStringGrid;
     TypeOptionsForMnu: TMenuItem;
     TypeOptionsForAct: TAction;
     DBGCompileAct: TAction;
@@ -118,7 +119,6 @@ type
     MenuItem5: TMenuItem;
     MessageList: TListView;
     MessagesTabs: TntvPageControl;
-    SearchList: TListView;
     IPCServer: TSimpleIPCServer;
     veiw1: TMenuItem;
     Help1: TMenuItem;
@@ -375,6 +375,9 @@ type
     procedure CloseActExecute(Sender: TObject);
     procedure FileListDblClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
+    procedure SearchGridDblClick(Sender: TObject);
+
+      procedure SearchGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
     procedure SelectProjectTypeActExecute(Sender: TObject);
     procedure FileModeBtnClick(Sender: TObject);
     procedure RefreshFilesActExecute(Sender: TObject);
@@ -469,7 +472,6 @@ type
     procedure FolderHomeActExecute(Sender: TObject);
     procedure StatusTimerTimer(Sender: TObject);
     procedure Clear1Click(Sender: TObject);
-    procedure SearchListDblClick(Sender: TObject);
     procedure MessageListDblClick(Sender: TObject);
     procedure SearchListCustomDrawSubItem(Sender: TCustomListView; Item: TListItem; SubItem: integer; State: TCustomDrawState; var DefaultDraw: boolean);
     procedure FindInFilesActExecute(Sender: TObject);
@@ -496,6 +498,8 @@ type
     function CanOpenInclude: boolean;
     procedure CatchErr(Sender: TObject; e: exception);
     procedure ForceForegroundWindow;
+
+    procedure SearchFoundEvent(Index: Integer; FileName: string; const Line: string; LineNo, Column, FoundLength: Integer);
     procedure SetShowFolderFiles(AValue: TShowFolderFiles);
     procedure SetSortFolderFiles(AValue: TSortFolderFiles);
     procedure UpdateFileHeaderPanel;
@@ -1004,6 +1008,95 @@ begin
     end
     else
       Engine.Session.Save;
+  end;
+end;
+
+procedure TMainForm.SearchGridDblClick(Sender: TObject);
+var
+  s: string;
+  aLine, c, l: integer;
+begin
+  if SearchGrid.Row > 0 then
+  begin
+    Engine.Files.OpenFile(SearchGrid.Cells[1, SearchGrid.Row]);
+    s := SearchGrid.Cells[2, SearchGrid.Row];
+    if s <> '' then
+    begin
+      aLine := StrToIntDef(s, 0);
+      if aLine > 0 then
+      begin
+        with Engine.Files.Current do
+        if Control is TCustomSynEdit then
+        begin
+          l := Integer(SearchGrid.Rows[SearchGrid.Row].Objects[0]);
+          c := Integer(SearchGrid.Rows[SearchGrid.Row].Objects[1]);
+          (Control as TCustomSynEdit).CaretY := aLine;
+          if l > 0 then
+          begin
+            with (Control as TCustomSynEdit) do
+            begin
+              CaretX := c;
+              BlockBegin := Point(c, aLine);
+              BlockEnd := Point(c + l, aLine);
+            end;
+          end
+          else
+            (Control as TCustomSynEdit).CaretX := 0;
+          (Control as TCustomSynEdit).SetFocus;
+        end;
+      end;
+    end;
+  end;
+end;
+
+procedure TMainForm.SearchGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
+var
+  c, l: integer;
+  w: integer;
+  s, bf, md, af: string;
+  aCanvas: TCanvas;
+begin
+  if (aRow > 0) and (aCol = 3) then
+  begin
+    aCanvas := SearchGrid.Canvas;
+    aCanvas.Lock;
+    try
+      l := Integer(SearchGrid.Rows[SearchGrid.Row].Objects[0]);
+      c := Integer(SearchGrid.Rows[SearchGrid.Row].Objects[1]);
+      s := SearchGrid.Cells[aCol, aRow];
+      bf := Copy(s, 1, c - 1);
+      md := Copy(s, c, l);
+      af := Copy(s, c + l, MaxInt);
+      if gdFocused in aState then
+      begin
+        aCanvas.Font.Color := clHighlightText;
+        aCanvas.Brush.Color := clHighlight;
+      end
+      else
+      begin
+        aCanvas.Font.Color := clWindowText;
+        aCanvas.Brush.Color := clWindow;
+      end;
+      w := aRect.Left + 2;
+      //aRect.Bottom := aRect.Bottom - 1;
+      //aRect.Left := aRect.Left + 1;
+      aCanvas.Refresh;
+      aCanvas.FillRect(aRect);
+      aCanvas.Font.Style := [];
+      aCanvas.TextOut(w, aRect.Top, bf);
+      w := w + aCanvas.TextWidth(bf);
+      aCanvas.Refresh; //need to change color because canvas not change the font when style changed
+      aCanvas.Font.Style := [fsBold];
+      aCanvas.TextOut(w, aRect.Top, md);
+      w := w + aCanvas.TextWidth(md);
+      aCanvas.Font.Style := [];
+      aCanvas.Refresh; //need to change color because canvas not change the font when style changed
+      aCanvas.TextOut(w, aRect.Top, af);
+      aCanvas.Refresh;
+    finally
+      aCanvas.Unlock;
+    end;
+    //DefaultDraw := False;
   end;
 end;
 
@@ -2144,6 +2237,12 @@ begin
   FileList.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
   FileList.Color := Engine.Options.Profile.Attributes.Whitespace.Background;
 
+  SearchGrid.Color := clBtnFace;//Engine.Options.Profile.Attributes.UI.Background;
+
+  SearchGrid.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
+  SearchGrid.Font.Name := Engine.Options.Profile.Attributes.FontName;
+  SearchGrid.Font.Size := Engine.Options.Profile.Attributes.FontSize;
+
   OutputEdit.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
   OutputEdit.Color := Engine.Options.Profile.Attributes.Whitespace.Background;
 
@@ -2402,51 +2501,15 @@ begin
     (MessagesPopup.PopupComponent as TListView).Clear;
 end;
 
-procedure TMainForm.SearchListDblClick(Sender: TObject);
-var
-  s: string;
-  aLine, c, l: integer;
-begin
-  if SearchList.Selected <> nil then
-  begin
-    Engine.Files.OpenFile(SearchList.Selected.Caption);
-    s := SearchList.Selected.SubItems[0];
-    if s <> '' then
-    begin
-      aLine := StrToIntDef(s, 0);
-      if aLine > 0 then
-      begin
-        if SearchList.Selected is TSearchListItem then
-        begin
-          c := (SearchList.Selected as TSearchListItem).Column;
-          l := (SearchList.Selected as TSearchListItem).Length;
-        end
-        else
-        begin
-          c := 0;
-          l := 0;
-        end;
-        with Engine.Files.Current do
-        if Control is TCustomSynEdit then
-        begin
-          (Control as TCustomSynEdit).CaretY := aLine;
-          if l > 0 then
-          begin
-            with (Control as TCustomSynEdit) do
-            begin
-              CaretX := c;
-              BlockBegin := Point(c, aLine);
-              BlockEnd := Point(c + l, aLine);
-            end;
-          end
-          else
-            (Control as TCustomSynEdit).CaretX := 0;
-          (Control as TCustomSynEdit).SetFocus;
-        end;
-      end;
-    end;
+type
+  TSearchListItem = class(TListItem)
+  private
+    FColumn: Integer;
+    FLength: Integer;
+  public
+    property Column: Integer read FColumn write FColumn;
+    property Length: Integer read FLength write FLength;
   end;
-end;
 
 procedure TMainForm.MessageListDblClick(Sender: TObject);
 var
@@ -2531,6 +2594,22 @@ begin
     DefaultDraw := True;
 end;
 
+procedure TMainForm.SearchFoundEvent(Index: Integer; FileName: string; const Line: string; LineNo, Column, FoundLength: Integer);
+begin
+  if Index = 0 then
+  begin
+    SearchGrid.RowCount := 2;
+  end
+  else
+    SearchGrid.RowCount := SearchGrid.RowCount + 1;
+  SearchGrid.Cells[1, SearchGrid.RowCount - 1] := FileName;
+  SearchGrid.Cells[2, SearchGrid.RowCount - 1] := IntToStr(LineNo);
+
+  SearchGrid.Cells[3, SearchGrid.RowCount - 1] := Line;
+  SearchGrid.Rows[SearchGrid.RowCount - 1].Objects[0] := TObject(FoundLength);
+  SearchGrid.Rows[SearchGrid.RowCount - 1].Objects[1] := TObject(Column);
+end;
+
 procedure TMainForm.FindInFilesActExecute(Sender: TObject);
 var
   aText, aFolder: string;
@@ -2550,8 +2629,8 @@ begin
     aFolder := Folder;
   MessagesAct.Checked := True;
   UpdateMessagesPnl;
-  MessagesTabs.ActiveControl := SearchList;
-  ShowSearchInFilesForm(SearchList, aText, ExpandFileName(aFolder), Engine.Options.SearchFolderHistory, Engine.Options.SearchHistory, Engine.Options.ReplaceHistory);
+  MessagesTabs.ActiveControl := SearchGrid;
+  ShowSearchInFilesForm(@SearchFoundEvent, aText, ExpandFileName(aFolder), Engine.Options.SearchFolderHistory, Engine.Options.SearchHistory, Engine.Options.ReplaceHistory);
 end;
 
 procedure TMainForm.NextMessageActExecute(Sender: TObject);
@@ -2586,7 +2665,7 @@ begin
   case MessagesTabs.ItemIndex of
     0: DblClick(MessageList);
     1: DblClick(WatchList);
-    2: DblClick(SearchList);
+    //2: DblClick(SearchGrid);
     3: DblClick(CallStackList);
   end;
 end;

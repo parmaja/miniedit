@@ -761,10 +761,9 @@ object MainForm: TMainForm
     Items = <    
       item
         Caption = 'Search'
-        Name = 'SearchTab'
-        Enabled = False
+        Name = 'StringGrid1'
         AutoWidth = True
-        Control = SearchList
+        Control = SearchGrid
       end    
       item
         Caption = 'Messages'
@@ -790,34 +789,6 @@ object MainForm: TMainForm
     Caption = 'Call Stack'
     Constraints.MinHeight = 60
     TabOrder = 4
-    object CallStackList: TListView
-      Left = 3
-      Height = 101
-      Top = 23
-      Width = 875
-      Align = alClient
-      Columns = <      
-        item
-          Caption = 'File'
-          Width = 500
-        end      
-        item
-          Caption = 'Line'
-          Width = 80
-        end>
-      ColumnClick = False
-      Font.CharSet = ARABIC_CHARSET
-      Font.Height = -13
-      Font.Name = 'Courier New'
-      HideSelection = False
-      ParentFont = False
-      ReadOnly = True
-      RowSelect = True
-      TabStop = False
-      TabOrder = 3
-      ViewStyle = vsReport
-      OnDblClick = CallStackListDblClick
-    end
     object WatchList: TListView
       Left = 3
       Height = 101
@@ -847,9 +818,37 @@ object MainForm: TMainForm
       ReadOnly = True
       RowSelect = True
       TabStop = False
-      TabOrder = 2
+      TabOrder = 1
       ViewStyle = vsReport
       OnKeyDown = WatchListKeyDown
+    end
+    object CallStackList: TListView
+      Left = 3
+      Height = 101
+      Top = 23
+      Width = 875
+      Align = alClient
+      Columns = <      
+        item
+          Caption = 'File'
+          Width = 500
+        end      
+        item
+          Caption = 'Line'
+          Width = 80
+        end>
+      ColumnClick = False
+      Font.CharSet = ARABIC_CHARSET
+      Font.Height = -13
+      Font.Name = 'Courier New'
+      HideSelection = False
+      ParentFont = False
+      ReadOnly = True
+      RowSelect = True
+      TabStop = False
+      TabOrder = 2
+      ViewStyle = vsReport
+      OnDblClick = CallStackListDblClick
     end
     object MessageList: TListView
       Left = 3
@@ -884,46 +883,47 @@ object MainForm: TMainForm
       ReadOnly = True
       RowSelect = True
       TabStop = False
-      TabOrder = 1
+      TabOrder = 0
       ViewStyle = vsReport
       OnDblClick = MessageListDblClick
       OnKeyDown = WatchListKeyDown
     end
-    object SearchList: TListView
+    object SearchGrid: TStringGrid
       Left = 3
       Height = 101
       Top = 23
       Width = 875
       Align = alClient
-      Columns = <      
-        item
-          Caption = 'File'
-          Width = 400
-        end      
-        item
-          Caption = 'Line'
-          Width = 80
-        end      
-        item
-          AutoSize = True
-          Caption = 'Result'
-          Width = 391
-        end>
-      ColumnClick = False
-      Font.CharSet = ARABIC_CHARSET
-      Font.Height = -13
-      Font.Name = 'Courier New'
-      HideSelection = False
-      ParentColor = True
-      ParentFont = False
-      PopupMenu = MessagesPopup
-      ReadOnly = True
-      RowSelect = True
-      TabStop = False
-      TabOrder = 0
-      ViewStyle = vsReport
-      OnCustomDrawSubItem = SearchListCustomDrawSubItem
-      OnDblClick = SearchListDblClick
+      ColCount = 4
+      MouseWheelOption = mwGrid
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goSmoothScroll, goFixedRowNumbering]
+      RowCount = 2
+      TabOrder = 3
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnDblClick = SearchGridDblClick
+      OnDrawCell = SearchGridDrawCell
+      ColWidths = (
+        27
+        88
+        53
+        548
+      )
+      Cells = (
+        3
+        1
+        0
+        'File'
+        2
+        0
+        'Line'
+        3
+        0
+        'Result'
+      )
     end
   end
   object MessagesSpl: TntvSplitter
