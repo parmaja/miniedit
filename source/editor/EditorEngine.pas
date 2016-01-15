@@ -851,8 +851,8 @@ type
     procedure Load(FileName: string);
     function New: TEditorProject;
     function New(Tendency: TEditorTendency): TEditorProject;
-    procedure Close;
     procedure Open;
+    procedure Close;
     function Save(AProject: TEditorProject): Boolean;
     function SaveAs(AProject: TEditorProject): Boolean;
     function Save: Boolean;

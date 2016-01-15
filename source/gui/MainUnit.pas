@@ -1606,6 +1606,9 @@ begin
     DBGBreakpointsAct.Enabled := capTrace in Capabilities;
     DBGToggleBreakpointAct.Enabled := capTrace in Capabilities;
 
+    MessagesTabs.PageItem[WatchesGrid].Visible := capDebug in Capabilities;
+    MessagesTabs.PageItem[CallStackGrid].Visible := capTrace in Capabilities;
+
     DBGStepOverAct.Enabled := capTrace in Capabilities;
     DBGStepIntoAct.Enabled := capTrace in Capabilities;
     DBGStepOutAct.Enabled := capTrace in Capabilities;
