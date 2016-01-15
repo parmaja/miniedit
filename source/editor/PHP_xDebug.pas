@@ -269,8 +269,8 @@ end;
 procedure TPHP_xDebug.Action(AAction: TDebugAction);
 begin
   case AAction of
-    dbaStart: Start;
-    dbaStop: Stop;
+    dbaStartServer: Start;
+    dbaStopServer: Stop;
     dbaReset: Reset;
     dbaResume: Resume;
     dbaStepInto: StepInto;

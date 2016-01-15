@@ -859,44 +859,6 @@ object MainForm: TMainForm
         'Variable'
       )
     end
-    object SearchGrid: TStringGrid
-      Left = 3
-      Height = 101
-      Top = 23
-      Width = 875
-      Align = alClient
-      ColCount = 4
-      MouseWheelOption = mwGrid
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goSmoothScroll, goFixedRowNumbering, goRowHighlight]
-      PopupMenu = MessagesPopup
-      RowCount = 2
-      TabOrder = 0
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnDblClick = SearchGridDblClick
-      OnDrawCell = SearchGridDrawCell
-      ColWidths = (
-        21
-        184
-        53
-        548
-      )
-      Cells = (
-        3
-        1
-        0
-        'File'
-        2
-        0
-        'Line'
-        3
-        0
-        'Result'
-      )
-    end
     object WatchesGrid: TStringGrid
       Left = 3
       Height = 101
@@ -935,6 +897,44 @@ object MainForm: TMainForm
         1
         0
         'Variable'
+      )
+    end
+    object SearchGrid: TStringGrid
+      Left = 3
+      Height = 101
+      Top = 23
+      Width = 875
+      Align = alClient
+      ColCount = 4
+      MouseWheelOption = mwGrid
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goSmoothScroll, goFixedRowNumbering, goRowHighlight]
+      PopupMenu = MessagesPopup
+      RowCount = 2
+      TabOrder = 0
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnDblClick = SearchGridDblClick
+      OnDrawCell = SearchGridDrawCell
+      ColWidths = (
+        21
+        184
+        53
+        548
+      )
+      Cells = (
+        3
+        1
+        0
+        'File'
+        2
+        0
+        'Line'
+        3
+        0
+        'Result'
       )
     end
   end

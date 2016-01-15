@@ -16,8 +16,8 @@ uses
 
 type
   TDebugAction = (
-    dbaStart,
-    dbaStop,
+    dbaStartServer,
+    dbaStopServer,
     dbaReset, //stop debug and stop the run
     dbaResume, //run and do not stop at breakpoints, or run without debug
     dbaStepInto,
@@ -153,9 +153,9 @@ end;
 procedure TEditorDebugger.SetActive(AValue: boolean);
 begin
   if not Active and AValue then
-    Action(dbaStart)
+    Action(dbaStartServer)
   else if Active and not AValue then
-    Action(dbaStop);
+    Action(dbaStopServer);
 end;
 
 procedure TEditorDebugger.SetExecutedControl(const AValue: TCustomSynEdit);

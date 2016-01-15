@@ -1,6 +1,6 @@
 import std.stdio;
 
-dvoid main()
+void main()
 {
   write("Enter your name: ");
   writeln();

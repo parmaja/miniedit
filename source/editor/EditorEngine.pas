@@ -2268,7 +2268,7 @@ end;
 procedure TEditorSession.Prepare;
 begin
   Debug := Engine.Tendency.CreateDebugger;
-  if Engine.Options.AutoStartDebugServer then
+  if (Debug <> nil) and Engine.Options.AutoStartDebugServer then
     Debug.Active := True;
 end;
 
@@ -3109,7 +3109,7 @@ begin
     SaveOptions;
   end;
   if Session.Debug <> nil then
-    Session.Debug.Action(dbaStop);
+    Session.Debug.Action(dbaStopServer);
   Files.Clear;
   FIsEngineShutdown := True;
 end;

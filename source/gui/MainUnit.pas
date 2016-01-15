@@ -1213,7 +1213,7 @@ begin
   Engine.Session.Close;
   Engine.RemoveNotifyEngine(Self);
 
-  StopServer;
+  //StopServer; TODO: delete it
   Engine.Shutdown;
   //HtmlHelp(Application.Handle, nil, HH_CLOSE_ALL, 0);
 end;
@@ -2129,7 +2129,7 @@ end;
 procedure TMainForm.DBGStopServerActExecute(Sender: TObject);
 begin
   if Engine.Session.Debug <> nil then
-    Engine.Session.Debug.Action(dbaStop);
+    Engine.Session.Debug.Action(dbaStopServer);
 end;
 
 procedure TMainForm.DBGStepOverActExecute(Sender: TObject);
