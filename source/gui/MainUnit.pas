@@ -1081,16 +1081,9 @@ var
   s, bf, md, af: string;
   aCanvas: TCanvas;
 begin
-  if (aRow > 0) and (aCol = 3) then
+  if (aRow > 0) then
   begin
     aCanvas := SearchGrid.Canvas;
-
-    l := Integer(SearchGrid.Rows[SearchGrid.Row].Objects[0]);
-    c := Integer(SearchGrid.Rows[SearchGrid.Row].Objects[1]);
-    s := SearchGrid.Cells[aCol, aRow];
-    bf := Copy(s, 1, c - 1);
-    md := Copy(s, c, l);
-    af := Copy(s, c + l, MaxInt);
     if gdSelected in aState then
     begin
       aCanvas.Font.Color := clHighlightText;
@@ -1101,20 +1094,33 @@ begin
       aCanvas.Font.Color := clWindowText;
       aCanvas.Brush.Color := clWindow;
     end;
+    s := SearchGrid.Cells[aCol, aRow];
     w := aRect.Left + 2;
     h := aCanvas.TextHeight(s);
-    aRect.Top := aRect.Top + ((aRect.Bottom - aRect.Top - h) div 2);
-    aCanvas.Refresh;
-    aCanvas.FillRect(aRect);
-    aCanvas.Font.Style := [];
-    aCanvas.TextOut(w, aRect.Top, bf);
-    w := w + aCanvas.TextWidth(bf);
-    aCanvas.Font.Style := [fsBold];
-    aCanvas.TextOut(w, aRect.Top, md);
-    w := w + aCanvas.TextWidth(md);
-    aCanvas.Font.Style := [];
-    aCanvas.TextOut(w, aRect.Top, af);
-    aCanvas.Refresh;
+
+    if (aCol < 3) then
+    begin
+      aCanvas.TextOut(w, aRect.Top, s);
+    end
+    else
+    begin
+      l := Integer(SearchGrid.Rows[SearchGrid.Row].Objects[0]);
+      c := Integer(SearchGrid.Rows[SearchGrid.Row].Objects[1]);
+      bf := Copy(s, 1, c - 1);
+      md := Copy(s, c, l);
+      af := Copy(s, c + l, MaxInt);
+      aRect.Top := aRect.Top + ((aRect.Bottom - aRect.Top - h) div 2);
+      //aCanvas.FillRect(aRect);
+      aCanvas.Font.Style := [];
+      aCanvas.TextOut(w, aRect.Top, bf);
+      w := w + aCanvas.TextWidth(bf);
+      aCanvas.Font.Style := [fsBold];
+      aCanvas.TextOut(w, aRect.Top, md);
+      w := w + aCanvas.TextWidth(md);
+      aCanvas.Font.Style := [];
+      aCanvas.TextOut(w, aRect.Top, af);
+      aCanvas.Refresh;
+    end;
   end;
 end;
 

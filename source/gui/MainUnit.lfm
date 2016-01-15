@@ -760,16 +760,16 @@ object MainForm: TMainForm
     ShowBorder = False
     Items = <    
       item
-        Caption = 'Search'
-        Name = 'StringGrid1'
-        AutoWidth = True
-        Control = SearchGrid
-      end    
-      item
         Caption = 'Messages'
         Name = 'MesssageTab'
         AutoWidth = True
         Control = MessagesGrid
+      end    
+      item
+        Caption = 'Search'
+        Name = 'SearchTab'
+        AutoWidth = True
+        Control = SearchGrid
       end    
       item
         Caption = 'Watches'
@@ -787,43 +787,6 @@ object MainForm: TMainForm
     Caption = 'Call Stack'
     Constraints.MinHeight = 60
     TabOrder = 4
-    object MessagesGrid: TStringGrid
-      Left = 3
-      Height = 101
-      Top = 23
-      Width = 875
-      Align = alClient
-      PopupMenu = MessagesPopup
-      TabOrder = 1
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnDblClick = MessagesGridDblClick
-      ColWidths = (
-        18
-        64
-        378
-        164
-        64
-      )
-      Cells = (
-        4
-        1
-        0
-        'Type'
-        2
-        0
-        'Message'
-        3
-        0
-        'File'
-        4
-        0
-        'Line'
-      )
-    end
     object CallStackGrid: TStringGrid
       Left = 3
       Height = 101
@@ -840,6 +803,7 @@ object MainForm: TMainForm
           Title.Caption = 'Line'
           Width = 60
         end>
+      RowCount = 1
       TabOrder = 3
       TitleFont.CharSet = ANSI_CHARSET
       TitleFont.Height = -13
@@ -879,6 +843,7 @@ object MainForm: TMainForm
           Title.Caption = 'Value'
           Width = 300
         end>
+      RowCount = 1
       TabOrder = 2
       TitleFont.CharSet = ANSI_CHARSET
       TitleFont.Height = -13
@@ -899,6 +864,44 @@ object MainForm: TMainForm
         'Variable'
       )
     end
+    object MessagesGrid: TStringGrid
+      Left = 3
+      Height = 101
+      Top = 23
+      Width = 875
+      Align = alClient
+      PopupMenu = MessagesPopup
+      RowCount = 1
+      TabOrder = 1
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnDblClick = MessagesGridDblClick
+      ColWidths = (
+        18
+        64
+        378
+        164
+        64
+      )
+      Cells = (
+        4
+        1
+        0
+        'Type'
+        2
+        0
+        'Message'
+        3
+        0
+        'File'
+        4
+        0
+        'Line'
+      )
+    end
     object SearchGrid: TStringGrid
       Left = 3
       Height = 101
@@ -909,7 +912,7 @@ object MainForm: TMainForm
       MouseWheelOption = mwGrid
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goSmoothScroll, goFixedRowNumbering, goRowHighlight]
       PopupMenu = MessagesPopup
-      RowCount = 2
+      RowCount = 1
       TabOrder = 0
       TitleFont.CharSet = ANSI_CHARSET
       TitleFont.Height = -13

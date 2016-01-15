@@ -6,7 +6,7 @@
     <TendencyName>D</TendencyName>
     <Desktop Class="TEditorDesktop">
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.d</CurrentFile>
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\print.d</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
@@ -15,8 +15,7 @@
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.d</FileName>
-            <CaretX>23</CaretX>
-            <CaretY>11</CaretY>
+            <CaretY>3</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>C:\temp\arduino_test.d</FileName>
@@ -24,7 +23,8 @@
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\print.d</FileName>
-            <CaretY>3</CaretY>
+            <CaretX>15</CaretX>
+            <CaretY>9</CaretY>
           </Object>
         </Items>
       </Files>
