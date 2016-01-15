@@ -54,7 +54,9 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    WatchesGrid: TStringGrid;
     SearchGrid: TStringGrid;
+    MessagesGrid: TStringGrid;
     TypeOptionsForMnu: TMenuItem;
     TypeOptionsForAct: TAction;
     DBGCompileAct: TAction;
@@ -69,7 +71,6 @@ type
     TypeOptionsMnu: TMenuItem;
     TypeOptionsAct: TAction;
     BugSignBtn: TSpeedButton;
-    CallStackList: TListView;
     DeleteAct: TAction;
     FileCloseBtn: TSpeedButton;
     FileHeaderPanel: TPanel;
@@ -80,6 +81,7 @@ type
     MenuItem19: TMenuItem;
     MenuItem20: TMenuItem;
     MenuItem21: TMenuItem;
+    CallStackGrid: TStringGrid;
     WorkspaceMnu: TMenuItem;
     RenameAct: TAction;
     FindPreviousAct: TAction;
@@ -117,7 +119,6 @@ type
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
     MenuItem5: TMenuItem;
-    MessageList: TListView;
     MessagesTabs: TntvPageControl;
     IPCServer: TSimpleIPCServer;
     veiw1: TMenuItem;
@@ -209,7 +210,6 @@ type
     Messages1: TMenuItem;
     FileModeMenu: TPopupMenu;
     UnixMnu: TMenuItem;
-    WatchList: TListView;
     WindowsMnu: TMenuItem;
     MacMnu: TMenuItem;
     FoldersPnl: TPanel;
@@ -365,6 +365,7 @@ type
     procedure MenuItem22Click(Sender: TObject);
     procedure MenuItem23Click(Sender: TObject);
     procedure MenuItem24Click(Sender: TObject);
+    procedure MessagesGridDblClick(Sender: TObject);
     procedure NewAsActExecute(Sender: TObject);
     procedure OpenActExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -414,6 +415,8 @@ type
     procedure TypeOptionsActExecute(Sender: TObject);
     procedure TypeOptionsForActExecute(Sender: TObject);
     procedure UnixMnuClick(Sender: TObject);
+
+      procedure WatchesGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure WindowsMnuClick(Sender: TObject);
     procedure MacMnuClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -472,7 +475,6 @@ type
     procedure FolderHomeActExecute(Sender: TObject);
     procedure StatusTimerTimer(Sender: TObject);
     procedure Clear1Click(Sender: TObject);
-    procedure MessageListDblClick(Sender: TObject);
     procedure FindInFilesActExecute(Sender: TObject);
     procedure NextMessageActExecute(Sender: TObject);
     procedure PriorMessageActExecute(Sender: TObject);
@@ -675,10 +677,10 @@ var
   s: string;
   aLine, c, l: integer;
 begin
-  if CallStackList.Selected <> nil then
+  if CallStackGrid.Row > 0 then
   begin
-    Engine.Files.OpenFile(CallStackList.Selected.Caption);
-    s := CallStackList.Selected.SubItems[0];
+    Engine.Files.OpenFile(CallStackGrid.Cells[1, CallStackGrid.Row]);
+    s := CallStackGrid.Cells[2, CallStackGrid.Row];
     if s <> '' then
     begin
       aLine := StrToIntDef(s, 0);
@@ -838,6 +840,33 @@ procedure TMainForm.MenuItem24Click(Sender: TObject);
 begin
   if FileList.Selected <> nil then
     Clipbrd.Clipboard.AsText := Folder + FileList.Selected.Caption;
+end;
+
+procedure TMainForm.MessagesGridDblClick(Sender: TObject);
+var
+  s: string;
+  aLine: integer;
+begin
+  if MessagesGrid.Row > 0 then
+  begin
+    Engine.Files.OpenFile(MessagesGrid.Cells[2, MessagesGrid.Row]);
+    s := MessagesGrid.Cells[3, MessagesGrid.Row];
+    if s <> '' then
+    begin
+      aLine := StrToIntDef(s, 0);
+      if aLine > 0 then
+      with Engine.Files do
+      begin
+        if (Current <> nil) and (Current.Control is TCustomSynEdit) then
+        begin
+          (Current.Control as TCustomSynEdit).CaretY := aLine;
+          (Current.Control as TCustomSynEdit).CaretX := 0;
+          (Current.Control as TCustomSynEdit).SelectLine;
+          (Current.Control as TCustomSynEdit).SetFocus;
+        end;
+      end;
+    end;
+  end;
 end;
 
 procedure TMainForm.NewAsActExecute(Sender: TObject);
@@ -1078,8 +1107,6 @@ begin
     w := aRect.Left + 2;
     h := aCanvas.TextHeight(s);
     aRect.Top := aRect.Top + ((aRect.Bottom - aRect.Top - h) div 2);
-    //aRect.Bottom := aRect.Bottom - 1;
-    //aRect.Left := aRect.Left + 1;
     aCanvas.Refresh;
     aCanvas.FillRect(aRect);
     aCanvas.Font.Style := [];
@@ -1474,6 +1501,16 @@ begin
   Engine.Files.Current.Mode := efmUnix;
 end;
 
+procedure TMainForm.WatchesGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Shift = [] then
+  begin
+    case Key of
+      VK_DELETE: DeleteCurrentWatch;
+    end;
+  end;
+end;
+
 procedure TMainForm.WindowsMnuClick(Sender: TObject);
 begin
   Engine.Files.Current.Mode := efmWindows;
@@ -1518,16 +1555,12 @@ begin
 end;
 
 procedure TMainForm.Log(Error: integer; ACaption, Msg, FileName: string; LineNo: integer);
-var
-  aItem: TListItem;
 begin
-  aItem := MessageList.Items.Add;
-  aItem.Caption := ACaption;
-  aItem.ImageIndex := 34;
-  aItem.SubItems.Add(Msg);
-  aItem.SubItems.Add(FileName);
-  if LineNo > 0 then
-    aItem.SubItems.Add(IntToStr(LineNo));
+  MessagesGrid.RowCount := MessagesGrid.RowCount + 1;
+  MessagesGrid.Cells[1, MessagesGrid.RowCount - 1] := IntToStr(Error);
+  MessagesGrid.Cells[2, MessagesGrid.RowCount - 1] := msg;
+  MessagesGrid.Cells[3, MessagesGrid.RowCount - 1] := FileName;
+  MessagesGrid.Cells[4, MessagesGrid.RowCount - 1] := IntToStr(LineNo);
 end;
 
 procedure TMainForm.AboutActExecute(Sender: TObject);
@@ -2187,25 +2220,23 @@ var
 begin
   if Engine.Tendency.Debug <> nil then
   begin
-    aIndex := CallStackList.ItemIndex;
-    CallStackList.BeginUpdate;
+    aIndex := CallStackGrid.Row;
+    CallStackGrid.BeginUpdate;
     try
-      CallStackList.Clear;
+      CallStackGrid.RowCount := Engine.Tendency.Debug.CallStack.Count + 1;
       with Engine.Tendency.Debug do
       try
         for i := 0 to CallStack.Count - 1 do
         begin
-          aItem := CallStackList.Items.Add;
-          aItem.ImageIndex := 41;
-          aItem.Caption := CallStack[i].FileName;
-          aItem.SubItems.Add(IntToStr(CallStack[i].Line));
+          CallStackGrid.Cells[1, i + 1] := Engine.Tendency.Debug.CallStack[i].FileName;
+          CallStackGrid.Cells[2, i + 1] := IntToStr(Engine.Tendency.Debug.CallStack[i].Line);
         end;
       finally
       end;
     finally
-      if (aIndex >= 0) and (aIndex < CallStackList.Items.Count) then
-        CallStackList.ItemIndex := aIndex;
-      CallStackList.EndUpdate;
+      if (aIndex > 0) and (aIndex <= CallStackGrid.RowCount) then
+        CallStackGrid.Row := aIndex;
+      CallStackGrid.EndUpdate;
     end;
   end;
 end;
@@ -2248,44 +2279,42 @@ end;
 procedure TMainForm.UpdateWatches;
 var
   i: integer;
-  aItem: TListItem;
   aIndex: integer;
 begin
+  //todo not good idea, we should refresh without clear the grid
   if Engine.Tendency.Debug <> nil then
   begin
-    aIndex := WatchList.ItemIndex;
-    WatchList.BeginUpdate;
+    aIndex := WatchesGrid.Row;
+    WatchesGrid.BeginUpdate;
     try
-      WatchList.Clear;
+      WatchesGrid.RowCount := Engine.Tendency.Debug.Watches.Count + 1;
       Engine.Tendency.Debug.Lock;
       try
         for i := 0 to Engine.Tendency.Debug.Watches.Count - 1 do
         begin
-          aItem := WatchList.Items.Add;
-          aItem.ImageIndex := 41;
-          aItem.Caption := Engine.Tendency.Debug.Watches[i].VarName;
-          aItem.SubItems.Add(Engine.Tendency.Debug.Watches[i].VarType);
-          aItem.SubItems.Add(Engine.Tendency.Debug.Watches[i].Value);
+          WatchesGrid.Cells[1, i + 1] := Engine.Tendency.Debug.Watches[i].VarName;
+          WatchesGrid.Cells[2, i + 1] := Engine.Tendency.Debug.Watches[i].VarType;
+          WatchesGrid.Cells[3, i + 1] := Engine.Tendency.Debug.Watches[i].Value;
         end;
       finally
         Engine.Tendency.Debug.Unlock;
       end;
     finally
-      if (aIndex >= 0) and (aIndex < WatchList.Items.Count) then
-        WatchList.ItemIndex := aIndex;
-      WatchList.EndUpdate;
+      if (aIndex > 0) and (aIndex <= WatchesGrid.RowCount) then
+        WatchesGrid.Row := aIndex;
+      WatchesGrid.EndUpdate;
     end;
   end;
 end;
 
 procedure TMainForm.ShowMessagesList;
 begin
-  MessagesTabs.ActiveControl := MessageList;
+  MessagesTabs.ActiveControl := MessagesGrid;
 end;
 
 procedure TMainForm.ShowWatchesList;
 begin
-  MessagesTabs.ActiveControl := WatchList;
+  MessagesTabs.ActiveControl := WatchesGrid;
 end;
 
 procedure TMainForm.LoadAddons;
@@ -2362,7 +2391,7 @@ begin
     if s <> '' then
     begin
       Engine.Tendency.Debug.Watches.Add(s);
-      //UpdateWatches;
+      UpdateWatches;
     end;
   end;
 end;
@@ -2456,26 +2485,20 @@ begin
       else
         s := (Current.Control as TCustomSynEdit).SelText;
       AddWatch(s);
-      MessagesTabs.ActiveControl := WatchList;
+      MessagesTabs.ActiveControl := WatchesGrid;
     end;
 end;
 
 procedure TMainForm.DeleteCurrentWatch;
 begin
-  if WatchList.Selected <> nil then
+  if WatchesGrid.Row > 0 then
   begin
-    DeleteWatch(WatchList.Selected.Caption);
+    DeleteWatch(WatchesGrid.Cells[1, WatchesGrid.Row]);
   end;
 end;
 
 procedure TMainForm.WatchListKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
 begin
-  if Shift = [] then
-  begin
-    case Key of
-      VK_DELETE: DeleteCurrentWatch;
-    end;
-  end;
 end;
 
 procedure TMainForm.FolderHomeActExecute(Sender: TObject);
@@ -2506,36 +2529,6 @@ type
     property Column: Integer read FColumn write FColumn;
     property Length: Integer read FLength write FLength;
   end;
-
-procedure TMainForm.MessageListDblClick(Sender: TObject);
-var
-  s: string;
-  aLine: integer;
-begin
-  if MessageList.Selected <> nil then
-  begin
-    Engine.Files.OpenFile(MessageList.Selected.SubItems[1]);
-    if MessageList.Selected.SubItems.Count > 2 then
-    begin
-      s := MessageList.Selected.SubItems[2];
-      if s <> '' then
-      begin
-        aLine := StrToIntDef(s, 0);
-        if aLine > 0 then
-        with Engine.Files do
-        begin
-          if (Current <> nil) and (Current.Control is TCustomSynEdit) then
-          begin
-            (Current.Control as TCustomSynEdit).CaretY := aLine;
-            (Current.Control as TCustomSynEdit).CaretX := 0;
-            (Current.Control as TCustomSynEdit).SelectLine;
-            (Current.Control as TCustomSynEdit).SetFocus;
-          end;
-        end;
-      end;
-    end;
-  end;
-end;
 
 procedure TMainForm.SearchFoundEvent(Index: Integer; FileName: string; const Line: string; LineNo, Column, FoundLength: Integer);
 begin
@@ -2583,33 +2576,32 @@ end;
 
 procedure TMainForm.MoveListIndex(vForward: boolean);
 
-  procedure DblClick(List: TListView);
+  procedure DblClick(Grid: TStringGrid);
   begin
     if vForward then
     begin
-      if List.ItemIndex < List.Items.Count - 1 then
-        List.ItemIndex := List.ItemIndex + 1;
+      if Grid.Row < Grid.RowCount - 1 then
+        Grid.Row := Grid.Row + 1;
     end
     else
     begin
-      if List.ItemIndex > 0 then
-        List.ItemIndex := List.ItemIndex - 1;
+      if Grid.Row > 0 then
+        Grid.Row := Grid.Row - 1;
     end;
-    if List.Selected <> nil then
+    if Grid.Row > 0 then
     begin
-      List.Selected.Focused := True;
-      List.Selected.MakeVisible(False);
+      //Grid.MakeVisible(False); TODO
     end;
-    if Assigned(List.OnDblClick) then
-      List.OnDblClick(MessageList);
+    if Assigned(Grid.OnDblClick) then
+      Grid.OnDblClick(Grid);
   end;
 
 begin
   case MessagesTabs.ItemIndex of
-    0: DblClick(MessageList);
-    1: DblClick(WatchList);
-    //2: DblClick(SearchGrid);
-    3: DblClick(CallStackList);
+    0: DblClick(MessagesGrid);
+    1: DblClick(WatchesGrid);
+    2: DblClick(SearchGrid);
+    3: DblClick(CallStackGrid);
   end;
 end;
 

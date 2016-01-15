@@ -767,127 +767,26 @@ object MainForm: TMainForm
       end    
       item
         Caption = 'Messages'
-        Name = 'MessagesTab'
-        Enabled = False
+        Name = 'MesssageTab'
         AutoWidth = True
-        Control = MessageList
+        Control = MessagesGrid
       end    
       item
         Caption = 'Watches'
         Name = 'WatchesTab'
-        Enabled = False
         AutoWidth = True
-        Control = WatchList
+        Control = WatchesGrid
       end    
       item
         Caption = 'Call Stack'
         Name = 'CallStackTab'
         AutoWidth = True
-        Control = CallStackList
+        Control = CallStackGrid
       end>
     Align = alBottom
     Caption = 'Call Stack'
     Constraints.MinHeight = 60
     TabOrder = 4
-    object WatchList: TListView
-      Left = 3
-      Height = 101
-      Top = 23
-      Width = 875
-      Align = alClient
-      Columns = <      
-        item
-          Caption = 'Variable'
-          Width = 200
-        end      
-        item
-          Caption = 'Type'
-          Width = 100
-        end      
-        item
-          AutoSize = True
-          Caption = 'Value'
-          Width = 571
-        end>
-      ColumnClick = False
-      Font.CharSet = ARABIC_CHARSET
-      Font.Height = -12
-      Font.Name = 'Courier New'
-      ParentFont = False
-      PopupMenu = WatchesPopupMenu
-      ReadOnly = True
-      RowSelect = True
-      TabStop = False
-      TabOrder = 1
-      ViewStyle = vsReport
-      OnKeyDown = WatchListKeyDown
-    end
-    object CallStackList: TListView
-      Left = 3
-      Height = 101
-      Top = 23
-      Width = 875
-      Align = alClient
-      Columns = <      
-        item
-          Caption = 'File'
-          Width = 500
-        end      
-        item
-          Caption = 'Line'
-          Width = 80
-        end>
-      ColumnClick = False
-      Font.CharSet = ARABIC_CHARSET
-      Font.Height = -13
-      Font.Name = 'Courier New'
-      HideSelection = False
-      ParentFont = False
-      ReadOnly = True
-      RowSelect = True
-      TabStop = False
-      TabOrder = 2
-      ViewStyle = vsReport
-      OnDblClick = CallStackListDblClick
-    end
-    object MessageList: TListView
-      Left = 3
-      Height = 101
-      Top = 23
-      Width = 875
-      Align = alClient
-      Columns = <      
-        item
-          Caption = 'Type'
-          Width = 100
-        end      
-        item
-          AutoSize = True
-          Caption = 'Message'
-          Width = 771
-        end      
-        item
-          Caption = 'File'
-          Width = 300
-        end      
-        item
-          Caption = 'Line'
-          Width = 433
-        end>
-      ColumnClick = False
-      Font.CharSet = ARABIC_CHARSET
-      Font.Height = -12
-      Font.Name = 'Courier New'
-      ParentFont = False
-      PopupMenu = MessagesPopup
-      ReadOnly = True
-      RowSelect = True
-      TabStop = False
-      TabOrder = 0
-      ViewStyle = vsReport
-      OnDblClick = MessageListDblClick
-      OnKeyDown = WatchListKeyDown
-    end
     object SearchGrid: TStringGrid
       Left = 3
       Height = 101
@@ -899,7 +798,7 @@ object MainForm: TMainForm
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goSmoothScroll, goFixedRowNumbering, goRowHighlight]
       PopupMenu = MessagesPopup
       RowCount = 2
-      TabOrder = 3
+      TabOrder = 0
       TitleFont.CharSet = ANSI_CHARSET
       TitleFont.Height = -13
       TitleFont.Name = 'Tahoma'
@@ -908,7 +807,7 @@ object MainForm: TMainForm
       OnDblClick = SearchGridDblClick
       OnDrawCell = SearchGridDrawCell
       ColWidths = (
-        27
+        21
         184
         53
         548
@@ -924,6 +823,118 @@ object MainForm: TMainForm
         3
         0
         'Result'
+      )
+    end
+    object MessagesGrid: TStringGrid
+      Left = 3
+      Height = 101
+      Top = 23
+      Width = 875
+      Align = alClient
+      PopupMenu = MessagesPopup
+      TabOrder = 1
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnDblClick = MessagesGridDblClick
+      ColWidths = (
+        18
+        64
+        378
+        164
+        64
+      )
+      Cells = (
+        4
+        1
+        0
+        'Type'
+        2
+        0
+        'Message'
+        3
+        0
+        'File'
+        4
+        0
+        'Line'
+      )
+    end
+    object WatchesGrid: TStringGrid
+      Left = 3
+      Height = 101
+      Top = 23
+      Width = 875
+      Align = alClient
+      ColCount = 4
+      Columns = <      
+        item
+          Title.Caption = 'Variable'
+          Width = 140
+        end      
+        item
+          Title.Caption = 'Type'
+          Width = 60
+        end      
+        item
+          Title.Caption = 'Value'
+          Width = 300
+        end>
+      TabOrder = 2
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnKeyDown = WatchesGridKeyDown
+      ColWidths = (
+        18
+        140
+        60
+        300
+      )
+      Cells = (
+        1
+        1
+        0
+        'Variable'
+      )
+    end
+    object CallStackGrid: TStringGrid
+      Left = 3
+      Height = 101
+      Top = 23
+      Width = 875
+      Align = alClient
+      ColCount = 3
+      Columns = <      
+        item
+          Title.Caption = 'File'
+          Width = 300
+        end      
+        item
+          Title.Caption = 'Line'
+          Width = 60
+        end>
+      TabOrder = 3
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnKeyDown = WatchesGridKeyDown
+      ColWidths = (
+        18
+        300
+        60
+      )
+      Cells = (
+        1
+        1
+        0
+        'Variable'
       )
     end
   end

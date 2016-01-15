@@ -176,7 +176,7 @@ type
     //OSDepended: When save to file, the filename changed depend on the os system name
     property Capabilities: TEditorCapabilities read FCapabilities;
     property Groups: TFileGroups read GetGroups;
-    property Debug: TEditorDebugger read FDebug;//todo
+    property Debug: TEditorDebugger read FDebug;//todo move to Session
   published
     property Command: string read FCommand write FCommand; //like php.exe or rdmd.exe
     //Override options
@@ -2997,7 +2997,10 @@ begin
       else
         aSelect := '';
       if Execute(Profile, aSelect) then
+      begin
         Apply;
+        Engine.SaveOptions;
+      end;
       Engine.UpdateState([ecsOptions]);
     finally
       Free;

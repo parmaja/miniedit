@@ -6,14 +6,13 @@
     <TendencyName>PHP</TendencyName>
     <Desktop Class="TEditorDesktop">
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>P:\sahlisoft\delphi\jobs\sahlisoft_2\source\gadgets\lib\mposDBAgents.pas</CurrentFile>
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.php</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
-            <FileName>P:\sahlisoft\delphi\jobs\sahlisoft_2\source\gadgets\lib\mposDBAgents.pas</FileName>
-            <CaretX>75</CaretX>
-            <CaretY>27</CaretY>
-            <TopLine>19</TopLine>
+            <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
+            <CaretX>22</CaretX>
+            <CaretY>7</CaretY>
           </Object>
         </Items>
       </Files>

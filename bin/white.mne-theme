@@ -73,6 +73,7 @@
       <Title>Variable</Title>
       <AttType>attVariable</AttType>
       <Foreground>clBlack</Foreground>
+      <Style>fsBold</Style>
     </Variable>
     <Standard Class="TGlobalAttribute">
       <Title>Standard</Title>
