@@ -151,7 +151,6 @@ type
   private
     FEditorOptions: TSynEditorOptions;
     FGroups: TFileGroups;
-    FDebug: TEditorDebugger;
     FCommand: string;
     FOverrideEditorOptions: Boolean;
     FTabWidth: Integer;
@@ -176,7 +175,6 @@ type
     //OSDepended: When save to file, the filename changed depend on the os system name
     property Capabilities: TEditorCapabilities read FCapabilities;
     property Groups: TFileGroups read GetGroups;
-    property Debug: TEditorDebugger read FDebug;//todo move to Session
   published
     property Command: string read FCommand write FCommand; //like php.exe or rdmd.exe
     //Override options
@@ -832,6 +830,7 @@ type
 
   TEditorSession = class(TObject)
   private
+    FDebug: TEditorDebugger;
     FIsChanged: Boolean;
     FOptions: TEditorSessionOptions;
     FProcess: TObject;
@@ -840,6 +839,7 @@ type
     FCachedIdentifiers: THashedStringList;
     FCachedVariables: THashedStringList;
     FCachedAge: DWORD;
+    procedure SetDebug(AValue: TEditorDebugger);
     procedure SetProcess(AValue: TObject);
     procedure SetProject(const Value: TEditorProject);
     function GetIsOpened: Boolean;
@@ -853,6 +853,8 @@ type
     function New(Tendency: TEditorTendency): TEditorProject;
     procedure Open;
     procedure Close;
+    procedure Prepare; //After load or new project, create a debugger
+    procedure Unprepare;
     function Save(AProject: TEditorProject): Boolean;
     function SaveAs(AProject: TEditorProject): Boolean;
     function Save: Boolean;
@@ -868,6 +870,7 @@ type
     //Process the project running if it is null, process should nil it after finish
     property Process: TObject read FProcess write SetProcess;
     property Run: TmneRun read FRun write SetRun;
+    property Debug: TEditorDebugger read FDebug write SetDebug;
 
     property CachedVariables: THashedStringList read FCachedVariables;
     property CachedIdentifiers: THashedStringList read FCachedIdentifiers;
@@ -1491,14 +1494,14 @@ procedure TTextEditorFile.DoGutterClickEvent(Sender: TObject; X, Y, Line: intege
 var
   aLine: integer;
 begin
-  if (Engine.Tendency.Debug <> nil) and (fgkExecutable in Group.Kind) then
+  if (Engine.Session.Debug <> nil) and (fgkExecutable in Group.Kind) then
   begin
     aLine := SynEdit.PixelsToRowColumn(Point(X, Y)).y;
-    Engine.Tendency.Debug.Lock;
+    Engine.Session.Debug.Lock;
     try
-      Engine.Tendency.Debug.Breakpoints.Toggle(Name, aLine);
+      Engine.Session.Debug.Breakpoints.Toggle(Name, aLine);
     finally
-      Engine.Tendency.Debug.Unlock;
+      Engine.Session.Debug.Unlock;
     end;
     SynEdit.InvalidateLine(aLine);
   end;
@@ -1506,9 +1509,9 @@ end;
 
 procedure TTextEditorFile.DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
 begin
-  if (Engine.Tendency.Debug <> nil) and (Engine.Tendency.Debug.ExecutedControl = Sender) then
+  if (Engine.Session.Debug <> nil) and (Engine.Session.Debug.ExecutedControl = Sender) then
   begin
-    if Engine.Tendency.Debug.ExecutedLine = Line then
+    if Engine.Session.Debug.ExecutedLine = Line then
     begin
       Special := True;
       Markup.Background := clNavy;
@@ -1681,13 +1684,13 @@ function TTextEditorFile.EvalByMouse(p: TPoint; out v, s, t: string): boolean;
 var
   l: variant;
 begin
-  if Engine.Tendency.Debug <> nil then
+  if Engine.Session.Debug <> nil then
   begin
     if not SynEdit.SelAvail then
       v := Trim(GetWordAtRowColEx(SynEdit, SynEdit.PixelsToRowColumn(p), TSynWordBreakChars + [' ', #13, #10, #9] - ['.', '"', '''', '-', '>', '[', ']'], False))//todo get it from the synedit
     else
       v := SynEdit.SelText;
-    Result := (v <> '') and Engine.Tendency.Debug.Watches.GetValue(v, l, t, False);
+    Result := (v <> '') and Engine.Session.Debug.Watches.GetValue(v, l, t, False);
     s := l;
   end
   else
@@ -1698,13 +1701,13 @@ function TTextEditorFile.EvalByCursor(out v, s, t: string): boolean;
 var
   l: variant;
 begin
-  if Engine.Tendency.Debug <> nil then
+  if Engine.Session.Debug <> nil then
   begin
     if not SynEdit.SelAvail then
       v := Trim(SynEdit.GetWordAtRowCol(SynEdit.CaretXY))
     else
       v := SynEdit.SelText;
-    Result := (v <> '') and Engine.Tendency.Debug.Watches.GetValue(v, l, t, False);
+    Result := (v <> '') and Engine.Session.Debug.Watches.GetValue(v, l, t, False);
     s := l;
   end
   else
@@ -1949,7 +1952,6 @@ constructor TEditorTendency.Create;
 begin
   inherited;
   FGroups := TFileGroups.Create(False);//it already owned by Engine.Groups
-  FDebug := CreateDebugger;
   Init;
 {  if Groups.Count = 0 then
     raise Exception.Create('You must add groups in Init method');}//removed DefaultTendency has no groups
@@ -1957,7 +1959,6 @@ end;
 
 destructor TEditorTendency.Destroy;
 begin
-  FreeAndNil(FDebug);
   FreeAndNil(FGroups);
   inherited;
 end;
@@ -1969,12 +1970,12 @@ var
 begin
   s := Name;
   p.Actions := RunActions;
-  if (Engine.Tendency.Debug <> nil) and (Engine.Tendency.Debug.Running) then
+  if (Engine.Session.Debug <> nil) and (Engine.Session.Debug.Running) then
   begin
     if rnaDebug in RunActions then
-      Engine.Tendency.Debug.Action(dbaRun)
+      Engine.Session.Debug.Action(dbaRun)
     else
-      Engine.Tendency.Debug.Action(dbaResume);
+      Engine.Session.Debug.Action(dbaResume);
   end
   else
   begin
@@ -2258,12 +2259,25 @@ end;
 
 procedure TEditorSession.Close;
 begin
+  Unprepare;
   Engine.Files.CloseAll;
   FreeAndNil(FProject);
+  Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
+end;
+
+procedure TEditorSession.Prepare;
+begin
+  Debug := Engine.Tendency.CreateDebugger;
+  if Engine.Options.AutoStartDebugServer then
+    Debug.Active := True;
+end;
+
+procedure TEditorSession.Unprepare;
+begin
+  FreeAndNil(FDebug);
   FCachedIdentifiers.Clear;
   FCachedVariables.Clear;
   FCachedAge := 0;
-  Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
 end;
 
 constructor TEditorEngine.Create;
@@ -2969,6 +2983,8 @@ begin
       if IsOpened then
         Close;
       FProject := Value;
+      if FProject <> nil then
+        Prepare;
       Changed;
       Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject, ecsProjectLoaded]);
     finally
@@ -2981,6 +2997,12 @@ procedure TEditorSession.SetProcess(AValue: TObject);
 begin
   if FProcess =AValue then Exit;
   FProcess :=AValue;
+end;
+
+procedure TEditorSession.SetDebug(AValue: TEditorDebugger);
+begin
+  if FDebug =AValue then Exit;
+  FDebug :=AValue;
 end;
 
 procedure TEditorOptions.Show;
@@ -3086,8 +3108,8 @@ begin
   begin
     SaveOptions;
   end;
-  if Tendency.Debug <> nil then
-    Tendency.Debug.Action(dbaStop);
+  if Session.Debug <> nil then
+    Session.Debug.Action(dbaStop);
   Files.Clear;
   FIsEngineShutdown := True;
 end;
@@ -4606,24 +4628,24 @@ var
 
 begin
   //inherited;
-  if Engine.Tendency.Debug <> nil then
+  if Engine.Session.Debug <> nil then
   begin
     lh := TSynEdit(SynEdit).LineHeight;
     iw := EditorResource.DebugImages.Width;
 
-    Engine.Tendency.Debug.Lock;
+    Engine.Session.Debug.Lock;
     try
-      for i := 0 to Engine.Tendency.Debug.Breakpoints.Count - 1 do
+      for i := 0 to Engine.Session.Debug.Breakpoints.Count - 1 do
       begin
-        if SameText(Engine.Tendency.Debug.Breakpoints[i].FileName, FEditorFile.Name) then//need improve
-          DrawIndicator(Engine.Tendency.Debug.Breakpoints[i].Line, DEBUG_IMAGE_BREAKPOINT);
+        if SameText(Engine.Session.Debug.Breakpoints[i].FileName, FEditorFile.Name) then//need improve
+          DrawIndicator(Engine.Session.Debug.Breakpoints[i].Line, DEBUG_IMAGE_BREAKPOINT);
       end;
     finally
-      Engine.Tendency.Debug.Unlock;
+      Engine.Session.Debug.Unlock;
     end;
 
-    if (Engine.Tendency.Debug.ExecutedControl = SynEdit) and (Engine.Tendency.Debug.ExecutedLine >= 0) then
-      DrawIndicator(Engine.Tendency.Debug.ExecutedLine, DEBUG_IMAGE_EXECUTE);
+    if (Engine.Session.Debug.ExecutedControl = SynEdit) and (Engine.Session.Debug.ExecutedLine >= 0) then
+      DrawIndicator(Engine.Session.Debug.ExecutedLine, DEBUG_IMAGE_EXECUTE);
   end;
 end;
 
@@ -4649,23 +4671,23 @@ var
 begin
   Engine.BeginUpdate;
   try
-    if Engine.Tendency.Debug <> nil then
+    if Engine.Session.Debug <> nil then
     begin
-      Engine.Tendency.Debug.Lock;
+      Engine.Session.Debug.Lock;
       try
-  {      Engine.Tendency.Debug.BreakpointsClear;
+  {      Engine.Session.Debug.BreakpointsClear;
         for i := 0 to Breakpoints.Count - 1 do
         begin
-          Engine.Tendency.Debug.Breakpoints.Add(Breakpoints[i].FileName, Breakpoints[i].Line);
+          Engine.Session.Debug.Breakpoints.Add(Breakpoints[i].FileName, Breakpoints[i].Line);
         end;
 
-        Engine.Tendency.Debug.Watches.Clear;
+        Engine.Session.Debug.Watches.Clear;
         for i := 0 to Watches.Count - 1 do
         begin
-          Engine.Tendency.Debug.Watches.Add(Watches[i].VariableName, Watches[i].Value);
+          Engine.Session.Debug.Watches.Add(Watches[i].VariableName, Watches[i].Value);
         end;}
       finally
-        Engine.Tendency.Debug.Unlock;
+        Engine.Session.Debug.Unlock;
       end;
       Engine.UpdateState([ecsDebug]);
     end;
@@ -4699,19 +4721,19 @@ var
 begin
 {  Breakpoints.Clear;
   Watches.Clear;
-  Engine.Tendency.Debug.Lock;
+  Engine.Session.Debug.Lock;
   try
-    for i := 0 to Engine.Tendency.Debug.Breakpoints.Count - 1 do
+    for i := 0 to Engine.Session.Debug.Breakpoints.Count - 1 do
     begin
-      Breakpoints.Add(Engine.Tendency.Debug.Breakpoints[i].FileName, Engine.Tendency.Debug.Breakpoints[i].Line);
+      Breakpoints.Add(Engine.Session.Debug.Breakpoints[i].FileName, Engine.Session.Debug.Breakpoints[i].Line);
     end;
 
-    for i := 0 to Engine.Tendency.Debug.Watches.Count - 1 do
+    for i := 0 to Engine.Session.Debug.Watches.Count - 1 do
     begin
-      Watches.Add(Engine.Tendency.Debug.Watches[i].VariableName, Engine.Tendency.Debug.Watches[i].Value);
+      Watches.Add(Engine.Session.Debug.Watches[i].VariableName, Engine.Session.Debug.Watches[i].Value);
     end;
   finally
-    Engine.Tendency.Debug.Unlock;
+    Engine.Session.Debug.Unlock;
   end;}
 
   Files.CurrentFolder := Engine.BrowseFolder;
