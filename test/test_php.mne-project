@@ -11,8 +11,7 @@
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
-            <CaretX>40</CaretX>
-            <CaretY>9</CaretY>
+            <CaretY>7</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.csv</FileName>

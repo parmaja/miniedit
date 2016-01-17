@@ -2263,7 +2263,7 @@ begin
 
   FileTabs.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
   FileTabs.ActiveColor := Engine.Options.Profile.Attributes.Whitespace.Background;
-  FileTabs.NormalColor := MixColors(clBtnFace, FileTabs.ActiveColor, 100);
+  FileTabs.NormalColor := MixColors(FileTabs.ActiveColor, OppositeColor(FileTabs.ActiveColor), 200);
 
   FileList.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
   FileList.Color := Engine.Options.Profile.Attributes.Whitespace.Background;

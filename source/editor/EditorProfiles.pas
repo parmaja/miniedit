@@ -359,7 +359,7 @@ begin
   Add(FWhitespace, attWhitespace, 'Whitespace', clBlack, $00E0E8E9, []);
   Add(FSelected, attSelected, 'Selected', clBlack, $00DCCBC0, []);
   Add(FModified, attModified, 'Modified', $00370268, $00E19855, []);
-  Add(FGutter, attGutter, 'Gutter', $006A3000, $00EBD0CB, []);
+  Add(FGutter, attGutter, 'Gutter', $006A3000, $00E4D8D1, []);
   Add(FSeparator, attSeparator, 'Separator', $00E0B8A9, $00E6E6E6, []);
   Add(FKeyword, attKeyword, 'Keyword', $00D76100, clNone, []);
   Add(FQuotedString, attQuotedString, 'String', clGreen, clNone, [fsBold]);

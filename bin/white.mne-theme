@@ -26,7 +26,7 @@
     <Gutter Class="TGlobalAttribute">
       <Title>Gutter</Title>
       <AttType>attGutter</AttType>
-      <Background>15454411</Background>
+      <Background>14997713</Background>
       <Foreground>6959104</Foreground>
     </Gutter>
     <Separator Class="TGlobalAttribute">
