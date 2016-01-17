@@ -91,10 +91,10 @@ begin
   begin
     Mapper.Add(SpaceAttri, attWhitespace);
     Mapper.Add(CommentAttri, attComment);
-    Mapper.Add(ObjectAttri, attName);
+    Mapper.Add(ObjectAttri, attDataName);
     Mapper.Add(IdentifierAttri, attIdentifier);
     Mapper.Add(NumberAttri, attNumber);
-    Mapper.Add(StringAttri, attString);
+    Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
   end
 end;

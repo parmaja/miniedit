@@ -265,24 +265,24 @@ object MainForm: TMainForm
     end
   end
   object ClientPnl: TPanel
-    Left = 207
+    Left = 212
     Height = 385
     Top = 29
-    Width = 674
+    Width = 669
     Align = alClient
     BevelOuter = bvNone
     ClientHeight = 385
-    ClientWidth = 674
+    ClientWidth = 669
     TabOrder = 1
     object EditorsPnl: TPanel
       Left = 0
       Height = 205
       Top = 25
-      Width = 674
+      Width = 669
       Align = alClient
       BevelOuter = bvNone
       ClientHeight = 205
-      ClientWidth = 674
+      ClientWidth = 669
       FullRepaint = False
       TabOrder = 0
       OnClick = EditorsPnlClick
@@ -290,12 +290,12 @@ object MainForm: TMainForm
         Left = 0
         Height = 29
         Top = 176
-        Width = 674
+        Width = 669
         Align = alBottom
         BevelInner = bvSpace
         BevelOuter = bvLowered
         ClientHeight = 29
-        ClientWidth = 674
+        ClientWidth = 669
         TabOrder = 0
         Visible = False
         object Label2: TLabel
@@ -394,7 +394,7 @@ object MainForm: TMainForm
         Left = 0
         Height = 23
         Top = 0
-        Width = 674
+        Width = 669
         StoreIndex = False
         ShowButtons = False
         ShowBorder = False
@@ -410,7 +410,7 @@ object MainForm: TMainForm
       Left = 0
       Height = 149
       Top = 236
-      Width = 674
+      Width = 669
       Align = alBottom
       Constraints.MinHeight = 60
       Font.Height = -13
@@ -564,7 +564,7 @@ object MainForm: TMainForm
       Left = 0
       Height = 6
       Top = 230
-      Width = 674
+      Width = 669
       ResizeControl = OutputEdit
       Visible = False
     end
@@ -572,13 +572,13 @@ object MainForm: TMainForm
       Left = 0
       Height = 25
       Top = 0
-      Width = 674
+      Width = 669
       Align = alTop
       Alignment = taLeftJustify
       BevelOuter = bvNone
       BorderWidth = 2
       ClientHeight = 25
-      ClientWidth = 674
+      ClientWidth = 669
       PopupMenu = FilePopupMenu
       TabOrder = 2
       Visible = False
@@ -587,7 +587,7 @@ object MainForm: TMainForm
         Height = 21
         Hint = 'File name'
         Top = 2
-        Width = 550
+        Width = 545
         Align = alClient
         Caption = 'File name'
         Layout = tlCenter
@@ -595,7 +595,7 @@ object MainForm: TMainForm
         PopupMenu = FilePopupMenu
       end
       object FileCloseBtn: TSpeedButton
-        Left = 655
+        Left = 650
         Height = 21
         Hint = 'Close file'
         Top = 2
@@ -669,7 +669,7 @@ object MainForm: TMainForm
         ParentFont = False
       end
       object FileModeBtn: TBitBtn
-        Left = 569
+        Left = 564
         Height = 21
         Top = 2
         Width = 86
@@ -803,6 +803,7 @@ object MainForm: TMainForm
           Title.Caption = 'Line'
           Width = 60
         end>
+      ParentColor = True
       RowCount = 1
       TabOrder = 3
       TitleFont.CharSet = ANSI_CHARSET
@@ -843,6 +844,7 @@ object MainForm: TMainForm
           Title.Caption = 'Value'
           Width = 300
         end>
+      ParentColor = True
       RowCount = 1
       TabOrder = 2
       TitleFont.CharSet = ANSI_CHARSET
@@ -864,12 +866,52 @@ object MainForm: TMainForm
         'Variable'
       )
     end
+    object SearchGrid: TStringGrid
+      Left = 3
+      Height = 101
+      Top = 23
+      Width = 875
+      Align = alClient
+      ColCount = 4
+      MouseWheelOption = mwGrid
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goSmoothScroll, goFixedRowNumbering, goRowHighlight]
+      ParentColor = True
+      PopupMenu = MessagesPopup
+      RowCount = 1
+      TabOrder = 0
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnDblClick = SearchGridDblClick
+      OnDrawCell = SearchGridDrawCell
+      ColWidths = (
+        21
+        184
+        53
+        548
+      )
+      Cells = (
+        3
+        1
+        0
+        'File'
+        2
+        0
+        'Line'
+        3
+        0
+        'Result'
+      )
+    end
     object MessagesGrid: TStringGrid
       Left = 3
       Height = 101
       Top = 23
       Width = 875
       Align = alClient
+      ParentColor = True
       PopupMenu = MessagesPopup
       RowCount = 1
       TabOrder = 1
@@ -902,44 +944,6 @@ object MainForm: TMainForm
         'Line'
       )
     end
-    object SearchGrid: TStringGrid
-      Left = 3
-      Height = 101
-      Top = 23
-      Width = 875
-      Align = alClient
-      ColCount = 4
-      MouseWheelOption = mwGrid
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goSmoothScroll, goFixedRowNumbering, goRowHighlight]
-      PopupMenu = MessagesPopup
-      RowCount = 1
-      TabOrder = 0
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnDblClick = SearchGridDblClick
-      OnDrawCell = SearchGridDrawCell
-      ColWidths = (
-        21
-        184
-        53
-        548
-      )
-      Cells = (
-        3
-        1
-        0
-        'File'
-        2
-        0
-        'Line'
-        3
-        0
-        'Result'
-      )
-    end
   end
   object MessagesSpl: TntvSplitter
     Cursor = crVSplit
@@ -954,7 +958,7 @@ object MainForm: TMainForm
     Left = 200
     Height = 385
     Top = 29
-    Width = 7
+    Width = 12
     ResizeControl = FoldersPnl
   end
   object MainMenu: TMainMenu
@@ -1378,8 +1382,8 @@ object MainForm: TMainForm
   end
   object ActionList: TActionList
     Images = EditorResource.ToolbarImageList
-    left = 25
-    top = 71
+    left = 19
+    top = 128
     object PasteAct: TAction
       Category = 'Edit'
       Caption = 'Paste'

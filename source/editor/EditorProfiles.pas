@@ -28,7 +28,7 @@ type
     attModified,
     attWhitespace,
     attKeyword,
-    attString,
+    attQuotedString,
     attDocument,
     attComment,
     attSymbol,
@@ -40,8 +40,8 @@ type
     attOutter,
     attInner,
     attVariable,
-    attType,
-    attName,
+    attDataType,
+    attDataName,
     attValue
    );
 
@@ -148,6 +148,7 @@ type
   published
     property UI: TGlobalAttribute read FUI;
     property URL: TGlobalAttribute read FURL;
+    property Panel: TGlobalAttribute read FPanel;
     property Selected: TGlobalAttribute read FSelected;
     property Gutter: TGlobalAttribute read FGutter;
     property Separator: TGlobalAttribute read FSeparator;
@@ -171,7 +172,7 @@ type
     property QuotedString: TGlobalAttribute read FQuotedString;
     property FontName: String read FInfo.FontName write FInfo.FontName;
     property FontSize: Integer read FInfo.FontSize write FInfo.FontSize;
-    property FontNoAntialiasing: Boolean read FInfo.FontNoAntialiasing write FInfo.FontNoAntialiasing default False;
+    property FontNoAntialiasing: Boolean read FInfo.FontNoAntialiasing write FInfo.FontNoAntialiasing default True;
     property CodeFolding: Boolean read FInfo.CodeFolding write FInfo.CodeFolding default False;
 
     property GutterAutoSize: boolean read FInfo.GutterAutoSize write FInfo.GutterAutoSize default True;
@@ -325,7 +326,7 @@ begin
 end;
 
 procedure TGlobalAttributes.Reset;
-  procedure Add(var Item: TGlobalAttribute; AttType: TAttributeType; Title: string; Foreground, Background: TColor; Style: TFontStyles);
+  procedure Add(var Item: TGlobalAttribute; AttType: TAttributeType; Title: string; Foreground, Background: TColor; Style: TFontStyles = []);
   begin
     Item := TGlobalAttribute.Create;
     Item.AttType := AttType;
@@ -338,9 +339,12 @@ procedure TGlobalAttributes.Reset;
   end;
 
 begin
+  FList.Clear;
+
   FontName := 'Courier New';
   FontSize := 10;
-  FontNoAntialiasing := False;
+  FontNoAntialiasing := True;
+
   GutterAutoSize := True;
   GutterShowSeparator := True;
   GutterLeftOffset := 0;
@@ -349,33 +353,30 @@ begin
   GutterLeadingZeros := False;
   GutterShowModifiedLines := True;
 
-  FList.Clear;
-  Add(FUI, attUI, 'User Interface', clNone, clNone, []);
+  Add(FUI, attUI, 'User Interface', clBlack, clPurple, []);
   Add(FPanel, attPanel, 'Panel', clNone, clNone, []);
-  Add(FURL, attURL, 'URL', clWhite, TColor($2A190F), []);
-
-  Add(FWhitespace, attWhitespace, 'Whitespace', clWhite, TColor($2A190F), []);
-  Add(FSelected, attSelected, 'Selected', clBlack, TColor($DD8B42), []);
-  Add(FModified, attModified, 'Modified', clYellow, clGreen, []);
-  Add(FGutter, attGutter, 'Gutter', clWhite, $4b4b4b, []);
-  Add(FSeparator, attSeparator, 'Separator', clWhite, $4b4b4b, []);
-
-  Add(FKeyword, attKeyword, 'Keyword', TColor($3737E8), clNone, []);
-  Add(FQuotedString, attString, 'String', TColor($16C11D), clNone, []);
-  Add(FDocument, attDocument, 'Document', TColor($DD8B42), clNone, []);
-  Add(FComment, attComment, 'Comment', TColor($94541B), clNone, []);
-  Add(FSymbol, attSymbol, 'Symbol', TColor($FFEDD1), clNone, []);
-  Add(FStandard, attStandard, 'Standard', TColor($3EAAFF), clNone, []);
-  Add(FNumber, attNumber, 'Number', TColor($0FDFEA), clNone, []);
-  Add(FDirective, attDirective, 'Directive', TColor($3737E8), clNone, []);
-  Add(FIdentifier, attIdentifier, 'Identifier', clNone, clNone, []);
+  Add(FURL, attURL, 'URL', clWhite, $002A190F, []);
+  Add(FWhitespace, attWhitespace, 'Whitespace', clBlack, $00E0E8E9, []);
+  Add(FSelected, attSelected, 'Selected', clBlack, $00DCCBC0, []);
+  Add(FModified, attModified, 'Modified', $00370268, $00E19855, []);
+  Add(FGutter, attGutter, 'Gutter', $006A3000, $00EBD0CB, []);
+  Add(FSeparator, attSeparator, 'Separator', $00E0B8A9, $00E6E6E6, []);
+  Add(FKeyword, attKeyword, 'Keyword', $00D76100, clNone, []);
+  Add(FQuotedString, attQuotedString, 'String', clGreen, clNone, [fsBold]);
+  Add(FDocument, attDocument, 'Document', $00000E6A, clNone, []);
+  Add(FComment, attComment, 'Comment', $00C49D8C, clNone, []);
+  Add(FSymbol, attSymbol, 'Symbol', clMaroon, clNone, []);
+  Add(FStandard, attStandard, 'Standard', $00143A50, clNone, []);
+  Add(FNumber, attNumber, 'Number', $00215767, clNone, []);
+  Add(FDirective, attDirective, 'Directive', clMaroon, clNone, [fsBold]);
+  Add(FIdentifier, attIdentifier, 'Identifier', clBackground, clNone, []);
   Add(FText, attText, 'Text', clNone, clNone, []);
-  Add(FOutter, attOutter, 'Outter', TColor($DD8B42), clNone, []);
-  Add(FInner, attInner, 'Inner', TColor($16C11D), clNone, []);
-  Add(FVariable, attVariable, 'Variable', clSkyBlue, clNone, []);
-  Add(FDataType, attType, 'Type', TColor($2f7adf), clNone, []);
-  Add(FDataName, attName, 'Name', TColor($16C11D), clNone, []);
-  Add(FValue, attValue, 'Value',  TColor($16C11D), clNone, []);
+  Add(FOutter, attOutter, 'Outter', $00DD8B42, clNone, []);
+  Add(FInner, attInner, 'Inner', $000E7613, clNone, []);
+  Add(FVariable, attVariable, 'Variable', clBlack, clNone, [fsBold]);
+  Add(FDataType, attDataType, 'Type', $002F7ADF, clNone, []);
+  Add(FDataName, attDataName, 'Name', $000B590F, clNone, []);
+  Add(FValue, attValue, 'Value', clGreen, clNone, []);
 end;
 
 function TGlobalAttributes.Find(AttType: TAttributeType): TGlobalAttribute;

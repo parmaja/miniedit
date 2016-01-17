@@ -144,7 +144,7 @@ begin
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(IdentifierAttri, attIdentifier);
     Mapper.Add(KeyAttri, attKeyword);
-    Mapper.Add(ConstantAttri, attName);
+    Mapper.Add(ConstantAttri, attDataName);
     Mapper.Add(ObjectAttri, attIdentifier);
     Mapper.Add(EntityAttri, attValue);
     Mapper.Add(DotAttri, attIdentifier);
@@ -152,7 +152,7 @@ begin
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(PreprocessorAttri, attDirective);
     Mapper.Add(SpaceAttri, attWhitespace);
-    Mapper.Add(StringAttri, attString);
+    Mapper.Add(StringAttri, attDataType);
     Mapper.Add(SymbolAttri, attSymbol);
   end;
 end;

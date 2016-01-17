@@ -2321,7 +2321,7 @@ begin
   //FreeAndNil(FMacroRecorder);
   FreeAndNil(FMessagesList);
   FInternalTendency := nil;
-  //FreeAndNil(FForms);
+  //profFreeAndNil(FForms);
   FreeAndNil(FEnvironment);
   inherited;
 end;

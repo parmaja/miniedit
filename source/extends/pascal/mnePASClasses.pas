@@ -165,7 +165,7 @@ begin
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(SpaceAttri, attWhitespace);
-    Mapper.Add(StringAttri, attString);
+    Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttribute, attSymbol);
   end;
 end;
@@ -284,7 +284,7 @@ procedure TPASFileCategory.InitMappers;
 begin
   with Highlighter as TSynPasSyn do
   begin
-    Mapper.Add(StringAttri, attString);
+    Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(SymbolAttri, attSymbol);

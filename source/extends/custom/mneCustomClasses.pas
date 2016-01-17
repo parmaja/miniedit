@@ -354,7 +354,7 @@ begin
     Mapper.Add(HtmlAttri, attOutter);
     Mapper.Add(TextAttri, attText);
     Mapper.Add(NumberAttri, attNumber);
-    Mapper.Add(StringAttri, attString);
+    Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
     Mapper.Add(VariableAttri, attVariable);
     Mapper.Add(ProcessorAttri, attDirective);

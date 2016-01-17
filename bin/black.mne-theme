@@ -13,6 +13,10 @@
       <Background>2758927</Background>
       <Foreground>clWhite</Foreground>
     </URL>
+    <Panel Class="TGlobalAttribute">
+      <Title>Panel</Title>
+      <AttType>attPanel</AttType>
+    </Panel>
     <Selected Class="TGlobalAttribute">
       <Title>Selected</Title>
       <AttType>attSelected</AttType>
@@ -62,6 +66,7 @@
       <Title>Directive</Title>
       <AttType>attDirective</AttType>
       <Foreground>4276694</Foreground>
+      <Style>fsBold</Style>
     </Directive>
     <Identifier Class="TGlobalAttribute">
       <Title>Identifier</Title>
@@ -72,6 +77,7 @@
       <Title>Variable</Title>
       <AttType>attVariable</AttType>
       <Foreground>clSkyBlue</Foreground>
+      <Style>fsBold</Style>
     </Variable>
     <Standard Class="TGlobalAttribute">
       <Title>Standard</Title>
@@ -85,12 +91,12 @@
     </Value>
     <DataType Class="TGlobalAttribute">
       <Title>Type</Title>
-      <AttType>attType</AttType>
+      <AttType>attDataType</AttType>
       <Foreground>3111647</Foreground>
     </DataType>
     <DataName Class="TGlobalAttribute">
       <Title>Name</Title>
-      <AttType>attName</AttType>
+      <AttType>attDataName</AttType>
       <Foreground>1491229</Foreground>
     </DataName>
     <Document Class="TGlobalAttribute">
@@ -119,10 +125,12 @@
     </Comment>
     <QuotedString Class="TGlobalAttribute">
       <Title>String</Title>
-      <AttType>attString</AttType>
+      <AttType>attQuotedString</AttType>
       <Foreground>1491229</Foreground>
+      <Style>fsBold</Style>
     </QuotedString>
     <FontName>Consolas</FontName>
     <FontSize>12</FontSize>
+    <FontNoAntialiasing>False</FontNoAntialiasing>
   </Object>
 </rtti>

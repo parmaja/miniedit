@@ -12,8 +12,8 @@ interface
 uses
   Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
   Registry, ExtCtrls, Buttons, ImgList, Menus, ColorBox, SynEdit, SynGutter, SynEditMarkupWordGroup,
-  SynEditHighlighter, SynEditMiscClasses, SynEditKeyCmds, Classes, SysUtils,
-  EditorProfiles, SynGutterBase, SynEditMarks;
+  SynEditHighlighter, SynEditMiscClasses, SynEditKeyCmds, Classes, SysUtils, typinfo,
+  EditorProfiles, SynGutterBase, SynEditMarks, mnStreams;
 
 type
   TSynEditorOptionsUserCommand = procedure(AUserCommand: integer; var ADescription: string) of object;
@@ -563,11 +563,55 @@ begin
 end;
 
 procedure TEditorOptionsForm.SaveBtnClick(Sender: TObject);
+{$ifdef debug}
+var
+  i: Integer;
+  v: Integer;
+  s: string;
+  aName: string;
+  Stream: TFileStream;
+  function GetStyle(fs: TFontStyles): string;
+    procedure Add(ss: string);
+    begin
+      if Result <> '' then
+        Result := Result + ',';
+      Result := Result + ss;
+    end;
+  begin
+    Result := '';
+    if fsBold in fs then
+      Add('fsBold');
+    if fsStrikeOut in fs then
+      Add('fsStrikeOut');
+    if fsUnderline in fs then
+      Add('fsUnderline');
+  end;
+  {$endif}
 begin
   if SaveDialog.Execute then
   begin
     Apply;
     XMLWriteObjectFile(FProfile.Attributes, SaveDialog.FileName);
+    {$ifdef debug}
+    Stream := TFileStream.Create(SaveDialog.FileName+'.pas', fmCreate);
+    try
+      for i := 0 to FProfile.Attributes.Count -1 do
+      begin
+        aName := GetEnumName(typeinfo(TAttributeType), ord(FProfile.Attributes[i].AttType));
+        //v := Integer(FProfile.Attributes[i].Style);
+        s := '  Add(F'+Copy(aName, 4, MaxInt) + ', ' +
+          aName + ', '''+FProfile.Attributes[i].Title+''', ' +
+          ColorToString(FProfile.Attributes[i].Foreground)+', '+ColorToString(FProfile.Attributes[i].Background)+', '+
+          //'['+SetToString(TypeInfo(TFontStyles), v)+']'+
+
+          '['+GetStyle(FProfile.Attributes[i].Style)+']'+
+          ');'+#13#10;
+         Stream.WriteBuffer(Pointer(s)^, length(s));
+      end;
+    finally
+      Stream.Free;
+    end;
+    {$endif}
   end;
 end;
 

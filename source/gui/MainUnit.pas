@@ -2250,25 +2250,23 @@ end;
 procedure TMainForm.OptionsChanged;
 begin
   {if Engine.Options.Profile.Attributes.UI.Foreground = clNone then
-    ClientPnl.Font.Color := clBtnText
-  else
-    ClientPnl.Font.Color := Engine.Options.Profile.Attributes.UI.Foreground;}
-
-  {if Engine.Options.Profile.Attributes.UI.Foreground = clNone then
     Color := clBtnFace
   else
     Color := Engine.Options.Profile.Attributes.UI.Background;}
 
-  FileTabs.Color := clBtnFace;//Engine.Options.Profile.Attributes.UI.Background;
-//  FileTabs.Color := Engine.Options.Profile.Gutter.Backcolor;
+  {if Engine.Options.Profile.Attributes.UI.Foreground = clNone then
+    ClientPnl.Font.Color := clBtnText
+  else
+    ClientPnl.Font.Color := Engine.Options.Profile.Attributes.UI.Foreground;}
+  {FoldersSpl.RaisedColor := Engine.Options.Profile.Attributes.Separator.Foreground;
+  FoldersSpl.LoweredColor := Engine.Options.Profile.Attributes.Separator.Background;}
+
   FileTabs.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
   FileTabs.ActiveColor := Engine.Options.Profile.Attributes.Whitespace.Background;
-  FileTabs.NormalColor := MixColors(FileTabs.Color, FileTabs.ActiveColor, 75);
+  FileTabs.NormalColor := MixColors(clBtnFace, FileTabs.ActiveColor, 100);
 
   FileList.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
   FileList.Color := Engine.Options.Profile.Attributes.Whitespace.Background;
-
-  SearchGrid.Color := clBtnFace;//Engine.Options.Profile.Attributes.UI.Background;
 
   SearchGrid.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
   SearchGrid.Font.Name := Engine.Options.Profile.Attributes.FontName;
@@ -2276,10 +2274,6 @@ begin
 
   OutputEdit.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
   OutputEdit.Color := Engine.Options.Profile.Attributes.Whitespace.Background;
-
-  EditorsPnl.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
-  EditorsPnl.Color := Engine.Options.Profile.Attributes.Whitespace.Background;
-
 end;
 
 procedure TMainForm.UpdateWatches;

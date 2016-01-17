@@ -237,7 +237,7 @@ begin
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(NumberAttri, attNumber);
-    Mapper.Add(StringAttri, attString);
+    Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
     Mapper.Add(SectionAttri, attDirective);
   end;
@@ -257,14 +257,14 @@ begin
   with Highlighter as TSynStdSQLSyn do
   begin
     Mapper.Add(CommentAttri, attComment);
-    Mapper.Add(DataTypeAttri, attType);
-    Mapper.Add(ObjectAttri, attName);
+    Mapper.Add(DataTypeAttri, attDataType);
+    Mapper.Add(ObjectAttri, attDataName);
     Mapper.Add(FunctionAttri, attStandard);
     Mapper.Add(IdentifierAttri, attIdentifier);
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(SpaceAttri, attWhitespace);
-    Mapper.Add(StringAttri, attString);
+    Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
     Mapper.Add(VariableAttri, attVariable);
   end;
@@ -287,7 +287,7 @@ begin
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(SpaceAttri, attWhitespace);
-    Mapper.Add(StringAttri, attString);
+    Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
   end;
 end;
@@ -308,7 +308,7 @@ begin
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(NumberAttri, attNumber);
-    Mapper.Add(StringAttri, attString);
+    Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
     Mapper.Add(SectionAttri, attDirective);
   end;
@@ -336,7 +336,7 @@ procedure TXMLFileCategory.InitMappers;
 begin
   with Highlighter as TSynXMLSyn do
   begin
-    Mapper.Add(ElementAttri, attName);
+    Mapper.Add(ElementAttri, attDataName);
     Mapper.Add(SpaceAttri, attWhitespace);
     Mapper.Add(TextAttri, attText);
     Mapper.Add(EntityRefAttri, attIdentifier);
@@ -344,10 +344,10 @@ begin
     Mapper.Add(CDATAAttri, attInner);
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(DocTypeAttri, attComment);
-    Mapper.Add(AttributeAttri, attName);
-    Mapper.Add(NamespaceAttributeAttri, attName);
-    Mapper.Add(AttributeValueAttri, attString);
-    Mapper.Add(NamespaceAttributeAttri, attString);
+    Mapper.Add(AttributeAttri, attDataName);
+    Mapper.Add(NamespaceAttributeAttri, attDataName);
+    Mapper.Add(AttributeValueAttri, attQuotedString);
+    Mapper.Add(NamespaceAttributeAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
   end;
 end;

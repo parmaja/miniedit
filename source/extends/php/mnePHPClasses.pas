@@ -346,12 +346,12 @@ begin
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(IdentifierAttri, attIdentifier);
     Mapper.Add(NumberAttri, attNumber);
-    Mapper.Add(StringAttri, attString);
+    Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
     {.$if declared(LCL_FULLVERSION) and (LCL_FULLVERSION > 1060000) }
     {.$if (LCLVersion > 1060000) }
     {$if (LCL_FULLVERSION > 1060000) }
-    Mapper.Add(SelectorAttri, attName);
+    Mapper.Add(SelectorAttri, attDataName);
     Mapper.Add(MeasurementUnitAttri, attVariable);
     {$endif}
   end;
@@ -553,7 +553,7 @@ begin
     Mapper.Add(HtmlAttri, attOutter);
     Mapper.Add(TextAttri, attText);
     Mapper.Add(NumberAttri, attNumber);
-    Mapper.Add(StringAttri, attString);
+    Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
     Mapper.Add(VariableAttri, attVariable);
     Mapper.Add(ProcessorAttri, attDirective);
@@ -591,9 +591,9 @@ begin
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(IdentifierAttri, attIdentifier);
-    Mapper.Add(NonReservedKeyAttri, attName);
+    Mapper.Add(NonReservedKeyAttri, attDataName);
     Mapper.Add(NumberAttri, attNumber);
-    Mapper.Add(StringAttri, attString);
+    Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
     Mapper.Add(EventAttri, attVariable);
   end;
