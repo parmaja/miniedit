@@ -164,7 +164,7 @@ begin
     Mapper.Add(IdentifierAttri, attIdentifier);
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(NumberAttri, attNumber);
-    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(SpaceAttri, attDefault);
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttribute, attSymbol);
   end;
@@ -288,11 +288,11 @@ begin
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(SymbolAttri, attSymbol);
-    Mapper.Add(ASMAttri, attInner);
+    Mapper.Add(ASMAttri, attEmbedText);
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(IDEDirectiveAttri, attDirective);
     Mapper.Add(IdentifierAttri, attIdentifier);
-    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(SpaceAttri, attDefault);
     Mapper.Add(CaseLabelAttri, attSymbol);
     Mapper.Add(DirectiveAttri, attDirective);
   end;

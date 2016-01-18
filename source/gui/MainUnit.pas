@@ -2261,19 +2261,19 @@ begin
   {FoldersSpl.RaisedColor := Engine.Options.Profile.Attributes.Separator.Foreground;
   FoldersSpl.LoweredColor := Engine.Options.Profile.Attributes.Separator.Background;}
 
-  FileTabs.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
-  FileTabs.ActiveColor := Engine.Options.Profile.Attributes.Whitespace.Background;
+  FileTabs.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
+  FileTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
   FileTabs.NormalColor := MixColors(FileTabs.ActiveColor, OppositeColor(FileTabs.ActiveColor), 200);
 
-  FileList.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
-  FileList.Color := Engine.Options.Profile.Attributes.Whitespace.Background;
+  FileList.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
+  FileList.Color := Engine.Options.Profile.Attributes.Default.Background;
 
-  SearchGrid.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
+  SearchGrid.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   SearchGrid.Font.Name := Engine.Options.Profile.Attributes.FontName;
   SearchGrid.Font.Size := Engine.Options.Profile.Attributes.FontSize;
 
-  OutputEdit.Font.Color := Engine.Options.Profile.Attributes.Whitespace.Foreground;
-  OutputEdit.Color := Engine.Options.Profile.Attributes.Whitespace.Background;
+  OutputEdit.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
+  OutputEdit.Color := Engine.Options.Profile.Attributes.Default.Background;
 end;
 
 procedure TMainForm.UpdateWatches;

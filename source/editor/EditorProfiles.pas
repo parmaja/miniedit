@@ -19,14 +19,16 @@ uses
 
 type
   TAttributeType = (
-    attUI,
+    attDefault,
     attPanel,
-    attURL,
+    attLink,
     attGutter,
     attSeparator,
     attSelected,
+    attActive,
     attModified,
-    attWhitespace,
+    attText,
+    attEmbedText,
     attKeyword,
     attQuotedString,
     attDocument,
@@ -36,9 +38,6 @@ type
     attNumber,
     attDirective,
     attIdentifier,
-    attText,
-    attOutter,
-    attInner,
     attVariable,
     attDataType,
     attDataName,
@@ -76,8 +75,8 @@ type
     procedure AssignTo(Dest: TPersistent); override;
     procedure Assign(Source: TPersistent); override;
     property Index: Integer read FIndex;
-  published
     property Title: string read FTitle write FTitle;
+  published
     property AttType: TAttributeType read FAttType write FAttType;
     property Background: TColor read FBackground write FBackground default clNone;
     property Foreground: TColor read FForeground write FForeground default clNone;
@@ -102,8 +101,6 @@ type
   TGlobalAttributes = class(TComponent)
   private
     FInfo: TGlobalAttributesInfo;
-    FInner: TGlobalAttribute;
-    FOutter: TGlobalAttribute;
     FDataName: TGlobalAttribute;
     FDataType: TGlobalAttribute;
     FDirective: TGlobalAttribute;
@@ -115,19 +112,22 @@ type
 
     FNumber: TGlobalAttribute;
     FSelected: TGlobalAttribute;
+    FActive: TGlobalAttribute;
     FModified: TGlobalAttribute;
     FGutter: TGlobalAttribute;
     FSeparator: TGlobalAttribute;
     FComment: TGlobalAttribute;
     FSymbol: TGlobalAttribute;
-    FText: TGlobalAttribute;
     FUI: TGlobalAttribute;
     FPanel: TGlobalAttribute;
-    FURL: TGlobalAttribute;
+    FLink: TGlobalAttribute;
     FValue: TGlobalAttribute;
     FVariable: TGlobalAttribute;
     FStandard: TGlobalAttribute;
-    FWhitespace: TGlobalAttribute;
+
+    FDefault: TGlobalAttribute;
+    FText: TGlobalAttribute;
+    FEmbedText: TGlobalAttribute;
 
     FList: TObjectList;
     function GetCount: Integer;
@@ -136,7 +136,9 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+    procedure Empty;
     procedure Reset;
+    procedure Refresh; //reset the default colors based on whitespace
     function Find(AttType: TAttributeType): TGlobalAttribute;
     property Items[Index: Integer]: TGlobalAttribute read GetItem; default;
     procedure Assign(Source: TPersistent); override;
@@ -146,14 +148,14 @@ type
   public
     property Info: TGlobalAttributesInfo read FInfo write FInfo;
   published
-    property UI: TGlobalAttribute read FUI;
-    property URL: TGlobalAttribute read FURL;
+    property Default: TGlobalAttribute read FDefault;
+    property Link: TGlobalAttribute read FLink;
     property Panel: TGlobalAttribute read FPanel;
     property Selected: TGlobalAttribute read FSelected;
+    property Active: TGlobalAttribute read FActive;
     property Gutter: TGlobalAttribute read FGutter;
     property Separator: TGlobalAttribute read FSeparator;
     property Modified: TGlobalAttribute read FModified;
-    property Whitespace: TGlobalAttribute read FWhitespace;
     property Keyword: TGlobalAttribute read FKeyword;
     property Symbol: TGlobalAttribute read FSymbol;
     property Number: TGlobalAttribute read FNumber;
@@ -166,8 +168,7 @@ type
     property DataName: TGlobalAttribute read FDataName;
     property Document: TGlobalAttribute read FDocument;
     property Text: TGlobalAttribute read FText;
-    property Outter: TGlobalAttribute read FOutter;
-    property Inner: TGlobalAttribute read FInner;
+    property EmbedText: TGlobalAttribute read FEmbedText;
     property Comment: TGlobalAttribute read FComment;
     property QuotedString: TGlobalAttribute read FQuotedString;
     property FontName: String read FInfo.FontName write FInfo.FontName;
@@ -211,6 +212,9 @@ type
     procedure AssignTo(Dest: TPersistent); override;
     constructor AssignFrom(SynEdit: TSynEdit);
     procedure Reset;
+    procedure Loading; override;
+    procedure Loaded(Failed: Boolean); override;
+    procedure Saved(Failed: Boolean); override;
   published
     property Attributes: TGlobalAttributes read FAttributes;
 
@@ -272,8 +276,8 @@ begin
     else
       SynEdit.Font.Quality := fqDefault;
 
-    SynEdit.Font.Color := Attributes.Whitespace.Foreground;
-    SynEdit.Color := Attributes.Whitespace.Background;
+    SynEdit.Font.Color := Attributes.Default.Foreground;
+    SynEdit.Color := Attributes.Default.Background;
     SynEdit.SelectedColor.Foreground := Attributes.Selected.Foreground;
     SynEdit.SelectedColor.Background := Attributes.Selected.Background;
     SynEdit.BracketMatchColor.Foreground := Attributes.Selected.Foreground;
@@ -309,6 +313,24 @@ begin
   TabWidth := 4;
 end;
 
+procedure TEditorProfile.Loading;
+begin
+  Attributes.Empty;
+  inherited;
+end;
+
+procedure TEditorProfile.Loaded(Failed: Boolean);
+begin
+  inherited;
+  Attributes.Refresh;
+end;
+
+procedure TEditorProfile.Saved(Failed: Boolean);
+begin
+  Attributes.Refresh;
+  inherited Saved(Failed);
+end;
+
 { TGlobalAttributes }
 
 constructor TGlobalAttributes.Create(AOwner: TComponent);
@@ -323,6 +345,18 @@ destructor TGlobalAttributes.Destroy;
 begin
   FreeAndNil(FList);
   inherited Destroy;
+end;
+
+procedure TGlobalAttributes.Empty;
+var
+  i: Integer;
+begin
+  for i := 0 to FList.Count - 1 do
+  begin
+    (FList[i] as TGlobalAttribute).Foreground := clNone;
+    (FList[i] as TGlobalAttribute).Background := clNone;
+    (FList[i] as TGlobalAttribute).Style := [];
+  end;
 end;
 
 procedure TGlobalAttributes.Reset;
@@ -353,11 +387,13 @@ begin
   GutterLeadingZeros := False;
   GutterShowModifiedLines := True;
 
-  Add(FUI, attUI, 'User Interface', clBlack, clPurple, []);
+  Add(FDefault, attDefault, 'Default', clBlack, $00E0E8E9, []);
+
   Add(FPanel, attPanel, 'Panel', clNone, clNone, []);
-  Add(FURL, attURL, 'URL', clWhite, $002A190F, []);
-  Add(FWhitespace, attWhitespace, 'Whitespace', clBlack, $00E0E8E9, []);
+  Add(FLink, attLink, 'Link', clWhite, $002A190F, []);
+
   Add(FSelected, attSelected, 'Selected', clBlack, $00DCCBC0, []);
+  Add(FActive, attActive, 'Active', clBlack, $00DCCBC0, []);
   Add(FModified, attModified, 'Modified', $00370268, $00E19855, []);
   Add(FGutter, attGutter, 'Gutter', $006A3000, $00E4D8D1, []);
   Add(FSeparator, attSeparator, 'Separator', $00E0B8A9, $00E6E6E6, []);
@@ -371,12 +407,29 @@ begin
   Add(FDirective, attDirective, 'Directive', clMaroon, clNone, [fsBold]);
   Add(FIdentifier, attIdentifier, 'Identifier', clBackground, clNone, []);
   Add(FText, attText, 'Text', clNone, clNone, []);
-  Add(FOutter, attOutter, 'Outter', $00DD8B42, clNone, []);
-  Add(FInner, attInner, 'Inner', $000E7613, clNone, []);
+  Add(FEmbedText, attEmbedText, 'Embed Text', $000E7613, clNone, []);
   Add(FVariable, attVariable, 'Variable', clBlack, clNone, [fsBold]);
   Add(FDataType, attDataType, 'Type', $002F7ADF, clNone, []);
   Add(FDataName, attDataName, 'Name', $000B590F, clNone, []);
   Add(FValue, attValue, 'Value', clGreen, clNone, []);
+  Refresh;
+end;
+
+procedure TGlobalAttributes.Refresh;
+var
+  i: Integer;
+begin
+  for i := 0 to FList.Count - 1 do
+  begin
+    if FList[i] <> FDefault then
+    begin
+      if (FList[i] as TGlobalAttribute).Foreground = clDefault then
+        (FList[i] as TGlobalAttribute).Foreground := Default.Foreground;
+
+      if (FList[i] as TGlobalAttribute).Background = clDefault then
+        (FList[i] as TGlobalAttribute).Background := Default.Background;
+    end;
+  end;
 end;
 
 function TGlobalAttributes.Find(AttType: TAttributeType): TGlobalAttribute;

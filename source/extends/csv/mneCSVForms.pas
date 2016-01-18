@@ -146,9 +146,11 @@ end;
 
 procedure TCSVForm.DataGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
 begin
+  DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   if (aRow < DataGrid.FixedRows) or (aCol < DataGrid.FixedCols) then
   begin
-    DataGrid.Canvas.Brush.Color := DataGrid.FixedColor;
+    DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Gutter.Background;
+    DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Gutter.Foreground;
     DataGrid.Canvas.FillRect(aRect);
   end
   else if ((aRow = DataGrid.Row) and (aCol = DataGrid.Col)) or
@@ -156,16 +158,26 @@ begin
     then
   begin
     if DataGrid.Focused then
-      DataGrid.Canvas.Brush.Color := clBlack
+    begin
+      DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Selected.Background;
+      DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Selected.Foreground;
+    end
     else
-      DataGrid.Canvas.Brush.Color := clGray;
+    begin
+      DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Text.Background;
+      DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Text.Foreground;
+    end;
     DataGrid.Canvas.FillRect(aRect);
-    DataGrid.Canvas.Font.Color := clWhite;
   end
   else if (aRow = DataGrid.Row) then
   begin
-    DataGrid.Canvas.Brush.Color := DataGrid.AlternateColor;
+    DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Active.Background;
+    DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Active.Foreground;
     DataGrid.Canvas.FillRect(aRect);
+  end
+  else
+  begin
+    DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Default.Background;
   end;
   DataGrid.DefaultDrawCell(aCol, aRow, aRect, aState);
 end;
@@ -524,7 +536,6 @@ var
 var
   Steps: Integer;
 begin
-  DataGrid.FocusColor := clBlack;
   StopBtn.Enabled := True;
   Steps := 100;
   if not FInteractive then
@@ -640,6 +651,14 @@ begin
   CSVOptions.HeaderLine := hdrNormal;
   CSVOptions.DelimiterChar := ',';
   CSVOptions.EndOfLine := sUnixEndOfLine;
+  DataGrid.Color := Engine.Options.Profile.Attributes.Default.Background;
+  DataGrid.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
+  DataGrid.FixedColor := Engine.Options.Profile.Attributes.Gutter.Background;
+
+  DataGrid.FocusColor := Engine.Options.Profile.Attributes.Selected.Background;
+  DataGrid.AlternateColor := Engine.Options.Profile.Attributes.Comment.Background
+  //Color := Engine.Options.Profile.Attributes.Default.Background;
+  //Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
 end;
 
 function TCSVForm.GetMainControl: TWinControl;

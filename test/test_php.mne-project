@@ -11,10 +11,23 @@
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
-            <CaretY>7</CaretY>
+            <CaretX>27</CaretX>
+            <CaretY>9</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.csv</FileName>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>M:\home\pascal\projects\miniEdit\test\test-pas.pas</FileName>
+            <CaretY>7</CaretY>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>M:\home\pascal\projects\miniEdit\test\DebugServer\MainForm.pas</FileName>
+            <CaretY>117</CaretY>
+            <TopLine>106</TopLine>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>M:\home\pascal\projects\miniEdit\test\test.html</FileName>
           </Object>
         </Items>
       </Files>

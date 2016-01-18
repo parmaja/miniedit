@@ -4156,7 +4156,7 @@ begin
       G := Attributes.Find(M.AttType);
 
     if G = nil then
-      G := Attributes.Whitespace;
+      G := Attributes.Default;
 
     Att.Background := G.Background;
     Att.Foreground := G.Foreground;

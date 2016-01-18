@@ -208,7 +208,7 @@ procedure TEditorOptionsForm.LoadBtnClick(Sender: TObject);
 begin
   if OpenDialog.Execute then
   begin
-    FProfile.Reset;
+    FProfile.Attributes.Empty;;
     XMLReadObjectFile(FProfile.Attributes, OpenDialog.FileName);
     Retrieve;
   end;
@@ -327,7 +327,7 @@ begin
   G := FProfile.Attributes.Find(attGutter);
 
   if G = nil then
-    G := FProfile.Attributes.Whitespace;
+    G := FProfile.Attributes.Default;
 
   AttributeCbo.ItemIndex := G.Index;
   RetrieveAttribute;
@@ -359,7 +359,7 @@ begin
         G := FProfile.Attributes.Find(M.AttType);
 
       if G = nil then
-        G := FProfile.Attributes.Whitespace;
+        G := FProfile.Attributes.Default;
 
       AttributeCbo.ItemIndex := G.Index;
     end
@@ -654,8 +654,8 @@ begin
   FontLbl.Caption := FProfile.Attributes.FontName + ' ' + IntToStr(FProfile.Attributes.FontSize) + ' pt';
   SampleEdit.Font.Name := FProfile.Attributes.FontName;
   SampleEdit.Font.Size := FProfile.Attributes.FontSize;
-  SampleEdit.Font.Color := FProfile.Attributes.Whitespace.Foreground;
-  SampleEdit.Color := FProfile.Attributes.Whitespace.Background;
+  SampleEdit.Font.Color := FProfile.Attributes.Default.Foreground;
+  SampleEdit.Color := FProfile.Attributes.Default.Background;
   SampleEdit.SelectedColor.Foreground := FProfile.Attributes.Selected.Foreground;
   SampleEdit.SelectedColor.Background := FProfile.Attributes.Selected.Background;
   SampleEdit.BracketMatchColor.Foreground := FProfile.Attributes.Selected.Foreground;

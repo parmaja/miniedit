@@ -151,7 +151,7 @@ begin
     Mapper.Add(VariableAttri, attVariable);
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(PreprocessorAttri, attDirective);
-    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(SpaceAttri, attDefault);
     Mapper.Add(StringAttri, attDataType);
     Mapper.Add(SymbolAttri, attSymbol);
   end;

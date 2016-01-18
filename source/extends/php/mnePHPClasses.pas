@@ -341,7 +341,7 @@ procedure TCSSFileCategory.InitMappers;
 begin
   with Highlighter as TSynCssSyn do
   begin
-    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(SpaceAttri, attDefault);
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(IdentifierAttri, attIdentifier);
@@ -543,14 +543,13 @@ procedure TXHTMLFileCategory.InitMappers;
 begin
   with Highlighter as TSynXHTMLSyn do
   begin
-    Mapper.Add(WhitespaceAttri, attWhitespace);
+    Mapper.Add(WhitespaceAttri, attDefault);
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(KeywordAttri, attKeyword);
     Mapper.Add(DocumentAttri, attDocument);
     Mapper.Add(ValueAttri, attValue);
     Mapper.Add(FunctionAttri, attStandard);
     Mapper.Add(IdentifierAttri, attIdentifier);
-    Mapper.Add(HtmlAttri, attOutter);
     Mapper.Add(TextAttri, attText);
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(StringAttri, attQuotedString);
@@ -587,7 +586,7 @@ procedure TJSFileCategory.InitMappers;
 begin
   with Highlighter as TSynJScriptSyn do
   begin
-    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(SpaceAttri, attDefault);
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(IdentifierAttri, attIdentifier);

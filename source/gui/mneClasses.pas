@@ -232,7 +232,7 @@ procedure TCFGFileCategory.InitMappers;
 begin
   with Highlighter as TSynINISyn do
   begin
-    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(SpaceAttri, attDefault);
     Mapper.Add(TextAttri, attComment);
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(KeyAttri, attKeyword);
@@ -263,7 +263,7 @@ begin
     Mapper.Add(IdentifierAttri, attIdentifier);
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(NumberAttri, attNumber);
-    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(SpaceAttri, attDefault);
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
     Mapper.Add(VariableAttri, attVariable);
@@ -286,7 +286,7 @@ begin
     Mapper.Add(SectionAttri, attDirective);
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(NumberAttri, attNumber);
-    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(SpaceAttri, attDefault);
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
   end;
@@ -303,7 +303,7 @@ procedure TINIFileCategory.InitMappers;
 begin
   with Highlighter as TSynINISyn do
   begin
-    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(SpaceAttri, attDefault);
     Mapper.Add(TextAttri, attComment);
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(KeyAttri, attKeyword);
@@ -337,11 +337,11 @@ begin
   with Highlighter as TSynXMLSyn do
   begin
     Mapper.Add(ElementAttri, attDataName);
-    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(SpaceAttri, attDefault);
     Mapper.Add(TextAttri, attText);
     Mapper.Add(EntityRefAttri, attIdentifier);
     Mapper.Add(ProcessingInstructionAttri, attDirective);
-    Mapper.Add(CDATAAttri, attInner);
+    Mapper.Add(CDATAAttri, attEmbedText);
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(DocTypeAttri, attComment);
     Mapper.Add(AttributeAttri, attDataName);

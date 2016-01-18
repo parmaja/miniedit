@@ -292,14 +292,13 @@ procedure TDFileCategory.InitMappers;
 begin
   with Highlighter as TSynDSyn do
   begin
-    Mapper.Add(WhitespaceAttri, attWhitespace);
+    Mapper.Add(WhitespaceAttri, attDefault);
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(KeywordAttri, attKeyword);
     Mapper.Add(DocumentAttri, attDocument);
     Mapper.Add(ValueAttri, attValue);
     Mapper.Add(FunctionAttri, attStandard);
     Mapper.Add(IdentifierAttri, attIdentifier);
-    Mapper.Add(HtmlAttri, attOutter);
     Mapper.Add(TextAttri, attText);
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(StringAttri, attQuotedString);

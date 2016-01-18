@@ -89,7 +89,7 @@ procedure TSARDFileCategory.InitMappers;
 begin
   with Highlighter as TSynSARDSyn do
   begin
-    Mapper.Add(SpaceAttri, attWhitespace);
+    Mapper.Add(SpaceAttri, attDefault);
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(ObjectAttri, attDataName);
     Mapper.Add(IdentifierAttri, attIdentifier);
