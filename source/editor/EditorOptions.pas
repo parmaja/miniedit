@@ -380,28 +380,28 @@ begin
     InChanging := True;
     try
       aColor := aGlobalAttribute.Foreground;
+      //ForegroundCbo.CustomColor := aColor;
+      ForegroundCbo.Selected := aColor;
       if aColor = clNone then
       begin
         ForegroundChk.Checked := False;
-        ForegroundCbo.Selected := clBlack;
       end
       else
       begin
         ForegroundChk.Checked := True;
-        ForegroundCbo.Selected := aColor;
         ForegroundCbo.Refresh;//bug when custom and then custom colors
       end;
 
       aColor := aGlobalAttribute.Background;
+      //BackgroundCbo.CustomColor := aColor;
+      BackgroundCbo.Selected := aColor;
       if aColor = clNone then
       begin
         BackgroundChk.Checked := False;
-        BackgroundCbo.Selected := clWindow;
       end
       else
       begin
         BackgroundChk.Checked := True;
-        BackgroundCbo.Selected := aColor;
         BackgroundCbo.Refresh;//bug when custom and then custom colors
       end;
 

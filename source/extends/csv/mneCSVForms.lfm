@@ -70,6 +70,7 @@ object CSVForm: TCSVForm
       Width = 50
       Align = alLeft
       Caption = 'Options'
+      Color = clBtnFace
       OnClick = OptionsBtnClick
       TabOrder = 4
     end
@@ -103,7 +104,6 @@ object CSVForm: TCSVForm
     Align = alClient
     AlternateColor = 14408667
     AutoEdit = False
-    BorderStyle = bsNone
     ColCount = 3
     DefaultDrawing = False
     DefaultRowHeight = 18

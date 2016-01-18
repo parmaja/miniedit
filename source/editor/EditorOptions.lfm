@@ -273,7 +273,7 @@ object EditorOptionsForm: TEditorOptionsForm
         DefaultColorColor = clWhite
         NoneColorColor = clWhite
         Selected = clWhite
-        Style = [cbStandardColors, cbExtendedColors, cbCustomColor, cbPrettyNames]
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor, cbPrettyNames, cbCustomColors]
         Anchors = [akTop, akLeft, akRight]
         ItemHeight = 16
         OnChange = BackgroundCboChange
@@ -284,7 +284,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Height = 22
         Top = 67
         Width = 250
-        Style = [cbStandardColors, cbExtendedColors, cbCustomColor, cbPrettyNames]
+        Style = [cbStandardColors, cbExtendedColors, cbCustomColor, cbPrettyNames, cbCustomColors]
         Anchors = [akTop, akLeft, akRight]
         ItemHeight = 16
         OnChange = ForegroundCboChange

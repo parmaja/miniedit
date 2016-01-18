@@ -11,20 +11,21 @@
     </Link>
     <Panel Class="TGlobalAttribute">
       <AttType>attPanel</AttType>
+      <Background>6636581</Background>
     </Panel>
     <Selected Class="TGlobalAttribute">
       <AttType>attSelected</AttType>
-      <Background>14519106</Background>
+      <Background>13280646</Background>
       <Foreground>clBlack</Foreground>
     </Selected>
     <Active Class="TGlobalAttribute">
       <AttType>attActive</AttType>
-      <Background>8750469</Background>
+      <Background>7691082</Background>
       <Foreground>clBlack</Foreground>
     </Active>
     <Gutter Class="TGlobalAttribute">
       <AttType>attGutter</AttType>
-      <Background>6570812</Background>
+      <Background>3548703</Background>
       <Foreground>clWhite</Foreground>
     </Gutter>
     <Separator Class="TGlobalAttribute">
