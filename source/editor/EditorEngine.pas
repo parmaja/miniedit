@@ -60,6 +60,18 @@ type
     function GetMainControl: TWinControl; //Like datagrid in csv form
   end;
 
+  { GXMLItems }
+
+  generic GXMLItems<_Object_> = class(TmnXMLItems) //TODO move it to mnXMLRttiProfile
+  private
+    function GetItem(Index: Integer): _Object_;
+    procedure SetItem(Index: Integer; const Value: _Object_);
+  public
+    function DoCreateItem(AClass: TmnXMLItemClass):TmnXMLItem; override;
+    property Items[Index: Integer]: _Object_ read GetItem write SetItem; default;
+  published
+  end;
+
   TEditorDesktopFile = class(TCollectionItem)
   private
     FFileName: string;
@@ -92,15 +104,58 @@ type
     property CurrentFolder: string read FCurrentFolder write FCurrentFolder;
   end;
 
+  { TmneBreakpoint }
+
+  TmneBreakpoint = class(TmnXMLItem)
+  private
+    FFileName: string;
+    FLineNo: Integer;
+  public
+  published
+    property FileName: string read FFileName write FFileName;
+    property LineNo: Integer read FLineNo write FLineNo;
+  end;
+
+  { TmneBreakpoints }
+
+  TmneBreakpoints = class(specialize GXMLItems<TmneBreakpoint>)
+  private
+  public
+  published
+    procedure Add(AFileName:string; ALineNo: Integer);
+  end;
+
+  { TmneWatch }
+
+  TmneWatch = class(TmnXMLItem)
+  private
+    FName: string;
+  public
+  published
+    property Name: string read FName write FName;
+  end;
+
+  { TmneWatches }
+
+  TmneWatches = class(specialize GXMLItems<TmneWatch>)
+  private
+  public
+    procedure Add(AName:string);
+  end;
+
   TEditorDesktop = class(TPersistent)
   private
+    FBreakpoints: TmneBreakpoints;
     FFiles: TEditorDesktopFiles;
+    FWatches: TmneWatches;
   public
     constructor Create;
     destructor Destroy; override;
     procedure Load;
     procedure Save;
   published
+    property Breakpoints: TmneBreakpoints read FBreakpoints;
+    property Watches: TmneWatches read FWatches;
     property Files: TEditorDesktopFiles read FFiles;
   end;
 
@@ -1158,6 +1213,46 @@ begin
       S := S + #$D;
     Stream.WriteBuffer(Pointer(S)^, Length(S));
   end;
+end;
+
+{ GXMLItems }
+
+function GXMLItems.GetItem(Index: Integer): _Object_;
+begin
+  Result := _Object_(inherited Items[Index]);
+end;
+
+procedure GXMLItems.SetItem(Index: Integer; const Value: _Object_);
+begin
+  Items[Index] := Value;
+end;
+
+function GXMLItems.DoCreateItem(AClass: TmnXMLItemClass): TmnXMLItem;
+begin
+  Result := _Object_.Create;
+end;
+
+{ TmneWatches }
+
+procedure TmneWatches.Add(AName: string);
+var
+  Item: TmneWatch;
+begin
+  Item := TmneWatch.Create;
+  Item.Name := AName;
+  inherited Add(Item);
+end;
+
+{ TmneBreakpoints }
+
+procedure TmneBreakpoints.Add(AFileName: string; ALineNo: Integer);
+var
+  Item: TmneBreakpoint;
+begin
+  Item := TmneBreakpoint.Create;
+  Item.FileName := AFileName;
+  Item.LineNo := ALineNo;
+  inherited Add(Item);
 end;
 
 { TCodeFileCategory }
@@ -2994,7 +3089,11 @@ begin
         Close;
       FProject := Value;
       if FProject <> nil then
+      begin
         Prepare;
+        if FProject.SaveDesktop then
+          FProject.Desktop.Load;
+      end;
       Changed;
       Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject, ecsProjectLoaded]);
     finally
@@ -4335,8 +4434,8 @@ end;
 procedure TEditorProject.Loaded(Failed: Boolean);
 begin
   inherited;
-  if not Failed and FSaveDesktop then
-    Desktop.Load;
+{  if not Failed and FSaveDesktop then
+    Desktop.Load;}
 end;
 
 procedure TEditorProject.SetSCMClass(SCMClass: TEditorSCM);
@@ -4658,12 +4757,16 @@ end;
 constructor TEditorDesktop.Create;
 begin
   FFiles := TEditorDesktopFiles.Create(TEditorDesktopFile);
+  FBreakpoints := TmneBreakpoints.create;
+  FWatches := TmneWatches.create;
   inherited;
 end;
 
 destructor TEditorDesktop.Destroy;
 begin
   FFiles.Free;
+  FBreakpoints.Free;
+  FWatches.Free;
   inherited;
 end;
 
@@ -4675,27 +4778,6 @@ var
 begin
   Engine.BeginUpdate;
   try
-    if Engine.Session.Debug <> nil then
-    begin
-      Engine.Session.Debug.Lock;
-      try
-  {      Engine.Session.Debug.BreakpointsClear;
-        for i := 0 to Breakpoints.Count - 1 do
-        begin
-          Engine.Session.Debug.Breakpoints.Add(Breakpoints[i].FileName, Breakpoints[i].Line);
-        end;
-
-        Engine.Session.Debug.Watches.Clear;
-        for i := 0 to Watches.Count - 1 do
-        begin
-          Engine.Session.Debug.Watches.Add(Watches[i].VariableName, Watches[i].Value);
-        end;}
-      finally
-        Engine.Session.Debug.Unlock;
-      end;
-      Engine.UpdateState([ecsDebug]);
-    end;
-
     Engine.Files.CloseAll;
     for i := 0 to Files.Count - 1 do
     begin
@@ -4711,6 +4793,27 @@ begin
     end;
     Engine.Files.SetActiveFile(Files.CurrentFile);
     Engine.BrowseFolder := Files.CurrentFolder;
+
+    if Engine.Session.Debug <> nil then
+    begin
+      Engine.Session.Debug.Lock;
+      try
+       Engine.Session.Debug.Breakpoints.Clear;
+        for i := 0 to Breakpoints.Count - 1 do
+        begin
+          Engine.Session.Debug.Breakpoints.Add(Breakpoints[i].FileName, Breakpoints[i].LineNo);
+        end;
+
+        Engine.Session.Debug.Watches.Clear;
+        for i := 0 to Watches.Count - 1 do
+        begin
+          Engine.Session.Debug.Watches.Add(Watches[i].Name);
+        end;
+      finally
+        Engine.Session.Debug.Unlock;
+      end;
+      Engine.UpdateState([ecsDebug]);
+    end;
   finally
     Engine.EndUpdate;
     Files.Clear;
@@ -4723,7 +4826,7 @@ var
   aItem: TEditorDesktopFile;
   aFile: TEditorFile;
 begin
-{  Breakpoints.Clear;
+  Breakpoints.Clear;
   Watches.Clear;
   Engine.Session.Debug.Lock;
   try
@@ -4734,11 +4837,11 @@ begin
 
     for i := 0 to Engine.Session.Debug.Watches.Count - 1 do
     begin
-      Watches.Add(Engine.Session.Debug.Watches[i].VariableName, Engine.Session.Debug.Watches[i].Value);
+      Watches.Add(Engine.Session.Debug.Watches[i].VarName);
     end;
   finally
     Engine.Session.Debug.Unlock;
-  end;}
+  end;
 
   Files.CurrentFolder := Engine.BrowseFolder;
   Files.Clear;

@@ -5,20 +5,30 @@
     <Title>PHP Test</Title>
     <TendencyName>PHP</TendencyName>
     <Desktop Class="TEditorDesktop">
+      <Breakpoints Class="TmneBreakpoints">
+        <Objects>
+          <Object Type="TmneBreakpoint">
+            <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
+            <LineNo>5</LineNo>
+          </Object>
+        </Objects>
+      </Breakpoints>
+      <Watches Class="TmneWatches">
+      </Watches>
       <Files Class="TEditorDesktopFiles">
         <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.php</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
-            <CaretY>4</CaretY>
+            <CaretY>5</CaretY>
           </Object>
         </Items>
       </Files>
     </Desktop>
     <Options Class="TPHPProjectOptions">
       <RunMode>runConsole</RunMode>
-      <PauseConsole>True</PauseConsole>
+      <PauseConsole>False</PauseConsole>
     </Options>
   </Object>
 </rtti>
