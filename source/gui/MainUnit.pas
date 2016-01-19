@@ -54,6 +54,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    RunSignBtn: TSpeedButton;
     WatchesGrid: TStringGrid;
     SearchGrid: TStringGrid;
     MessagesGrid: TStringGrid;
@@ -2208,10 +2209,13 @@ end;
 procedure TMainForm.UpdateFileHeaderPanel;
 begin
   if (Engine.Files.Current <> nil) and (Engine.Session.Debug <> nil) and (Engine.Files.Current.Control = Engine.Session.Debug.ExecutedControl) then
-//    FileHeaderPanel.Color := $00C6C6EC
     BugSignBtn.Visible := True
   else
     BugSignBtn.Visible := False;
+  if Engine.Session.Run.Active then
+    RunSignBtn.Visible := True
+  else
+    RunSignBtn.Visible := False;
     //FileHeaderPanel.Color := $00EEE0D7;
   FileHeaderPanel.Visible := Engine.Files.Count > 0;
   if FileHeaderPanel.Visible then

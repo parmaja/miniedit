@@ -833,14 +833,12 @@ type
     FDebug: TEditorDebugger;
     FIsChanged: Boolean;
     FOptions: TEditorSessionOptions;
-    FProcess: TObject;
     FProject: TEditorProject;
     FRun: TmneRun;
     FCachedIdentifiers: THashedStringList;
     FCachedVariables: THashedStringList;
     FCachedAge: DWORD;
     procedure SetDebug(AValue: TEditorDebugger);
-    procedure SetProcess(AValue: TObject);
     procedure SetProject(const Value: TEditorProject);
     function GetIsOpened: Boolean;
     procedure SetRun(AValue: TmneRun);
@@ -868,7 +866,6 @@ type
     property Options: TEditorSessionOptions read FOptions;
     property IsChanged: Boolean read FIsChanged;
     //Process the project running if it is null, process should nil it after finish
-    property Process: TObject read FProcess write SetProcess;
     property Run: TmneRun read FRun write SetRun;
     property Debug: TEditorDebugger read FDebug write SetDebug;
 
@@ -1972,39 +1969,52 @@ begin
   p.Actions := RunActions;
   if (Engine.Session.Debug <> nil) and (Engine.Session.Debug.Running) then
   begin
+    if Engine.Session.Run.Active then
+      Engine.Session.Run.Show;
     if rnaDebug in RunActions then
       Engine.Session.Debug.Action(dbaRun)
     else
+    begin
       Engine.Session.Debug.Action(dbaResume);
+    end;
   end
   else
   begin
-    if rnaCompile in RunActions then
-      Engine.SendAction(eaClearOutput);
-    p.Root := Engine.Session.GetRoot;
-    if (Engine.Session.IsOpened) then
+    if Engine.Session.Run.Active then
     begin
-      p.Mode := Engine.Session.Project.Options.RunMode;
-      p.MainFile := Engine.Session.Project.Options.MainFile;//ExpandToPath(Engine.Session.Project.Options.MainFile, p.Root);
-      p.OutputFile := Engine.Session.Project.Options.OutputFile;//ExpandToPath(Engine.Session.Project.Options.MainFile, p.Root);
-      p.Pause := Engine.Session.Project.Options.PauseConsole;
+      //Engine.Log('Already run'); //TODO
+      Engine.Session.Run.Show;
     end
     else
     begin
-      p.Mode := runConsole;
-      p.Pause := True;
-    end;
-    if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
-      p.MainFile := Engine.Files.Current.Name;
+      if rnaCompile in RunActions then
+        Engine.SendAction(eaClearOutput);
+      p.Root := Engine.Session.GetRoot;
+      if (Engine.Session.IsOpened) then
+      begin
+        p.Mode := Engine.Session.Project.Options.RunMode;
+        p.MainFile := Engine.Session.Project.Options.MainFile;//ExpandToPath(Engine.Session.Project.Options.MainFile, p.Root);
+        p.OutputFile := Engine.Session.Project.Options.OutputFile;//ExpandToPath(Engine.Session.Project.Options.MainFile, p.Root);
+        p.Pause := Engine.Session.Project.Options.PauseConsole;
+      end
+      else
+      begin
+        p.Mode := runConsole;
+        p.Pause := True;
+      end;
+      if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
+        p.MainFile := Engine.Files.Current.Name;
 
-    if p.OutputFile = '' then
-      p.OutputFile := ExtractFileNameOnly(p.MainFile);
+      if p.OutputFile = '' then
+        p.OutputFile := ExtractFileNameOnly(p.MainFile);
 
-    if (p.MainFile <> '') then
-    begin
-      if (p.Root = '') then
-        p.Root := ExtractFileDir(p.MainFile);
-      DoRun(p);
+      if (p.MainFile <> '') then
+      begin
+        if (p.Root = '') then
+          p.Root := ExtractFileDir(p.MainFile);
+        DoRun(p);
+        Engine.UpdateState([ecsDebug]);
+      end;
     end;
   end;
 end;
@@ -2991,12 +3001,6 @@ begin
       Engine.EndUpdate;
     end;
   end;
-end;
-
-procedure TEditorSession.SetProcess(AValue: TObject);
-begin
-  if FProcess =AValue then Exit;
-  FProcess :=AValue;
 end;
 
 procedure TEditorSession.SetDebug(AValue: TEditorDebugger);

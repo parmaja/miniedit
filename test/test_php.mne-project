@@ -6,29 +6,12 @@
     <TendencyName>PHP</TendencyName>
     <Desktop Class="TEditorDesktop">
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\home\pascal\projects\miniEdit\test\DebugServer\MainForm.pas</CurrentFile>
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.php</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
-            <CaretY>7</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\test-pas.pas</FileName>
-            <CaretY>3</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\DebugServer\MainForm.pas</FileName>
-            <CaretX>5</CaretX>
-            <CaretY>167</CaretY>
-            <TopLine>143</TopLine>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\test.html</FileName>
-            <CaretY>7</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\test.csv</FileName>
+            <CaretY>4</CaretY>
           </Object>
         </Items>
       </Files>

@@ -57,6 +57,7 @@ type
     procedure Stop; virtual;
     constructor Create(APool: TmneRunPool);
     property BreakOnFail: Boolean read FBreakOnFail write FBreakOnFail;
+    property Process: TProcess read FProcess;
   end;
 
   TmneRunItemClass = class of TmneRunItem;
@@ -82,11 +83,12 @@ type
     destructor Destroy; override;
     procedure Execute; override;
     procedure Stop;
+    procedure Show;
     property Items: TmneRunItems read FItems;
     property Current: TmneRunItem read FCurrent;
   end;
 
-  { TmneRunProject }
+  { TmneRun }
 
   TmneRun = class(TObject)
   private
@@ -100,6 +102,7 @@ type
     function Add(AItemClass: TmneRunItemClass = nil): TmneRunItem; //Return same as parameter
     procedure Clear;
     procedure Start;
+    procedure Show;
     procedure Stop;
     property Active: Boolean read GetActive;
     property Pool: TmneRunPool read FPool;
@@ -108,6 +111,9 @@ type
 implementation
 
 uses
+  {$ifdef windows}
+  Windows,
+  {$endif}
   EditorEngine, lclintf;
 
 { TmneRunPool }
@@ -131,6 +137,37 @@ begin
     FCurrent.Stop;
   Terminate;
   WaitFor;
+end;
+
+function WindowsProc(windowHandle: HWND; lParam: LPARAM): Bool; stdcall;
+var
+  aProcessID: DWORD;
+begin
+  aProcessID := 0;
+  GetWindowThreadProcessId(windowHandle, aProcessID);
+  if (THANDLE(lParam) = aProcessID) then
+  begin
+    SetForegroundWindow(windowHandle);
+    Result := False;
+    exit;
+  end;
+  Result := True;
+end;
+
+procedure ShowProcess(ID: THandle);
+begin
+  EnumWindows(@WindowsProc, LPARAM(ID));
+end;
+
+procedure TmneRunPool.Show;
+begin
+  //TODO lock.Enter and Leave
+  {$ifdef windows}
+  if (Current.Process <> nil) and Current.Process.Active then
+  begin
+    ShowProcess(Current.Process.ProcessID);
+  end;
+  {$endif}
 end;
 
 constructor TmneRunPool.Create(ARun: TmneRun);
@@ -165,6 +202,7 @@ end;
 procedure TmneRun.PoolTerminated(Sender: TObject);
 begin
   FPool := nil;
+  Engine.UpdateState([ecsDebug]);
 end;
 
 constructor TmneRun.Create;
@@ -183,6 +221,12 @@ begin
   if FPool = nil then
     raise Exception.Create('There is no thread Pool');
   FPool.Start;
+end;
+
+procedure TmneRun.Show;
+begin
+  if FPool <> nil then
+    FPool.Show;
 end;
 
 function TmneRun.Add(AItemClass: TmneRunItemClass): TmneRunItem;

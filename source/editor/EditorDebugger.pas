@@ -229,7 +229,10 @@ begin
       ExecutedControl.CaretX := 1;
       ExecutedControl.InvalidateLine(FLink.ExecutedLine);
     end;
-    Engine.UpdateState([ecsDebug, ecsShow]);
+    if Line >= 0 then
+      Engine.UpdateState([ecsDebug, ecsShow])
+    else
+      Engine.UpdateState([ecsDebug]); //Do not show mainform if there is no line to set
   end
   else
     Engine.UpdateState([ecsDebug]);//needed for update watches
