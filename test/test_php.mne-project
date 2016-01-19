@@ -9,11 +9,16 @@
         <Objects>
           <Object Type="TmneBreakpoint">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
-            <LineNo>5</LineNo>
+            <LineNo>6</LineNo>
           </Object>
         </Objects>
       </Breakpoints>
       <Watches Class="TmneWatches">
+        <Objects>
+          <Object Type="TmneWatch">
+            <Name>$name</Name>
+          </Object>
+        </Objects>
       </Watches>
       <Files Class="TEditorDesktopFiles">
         <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.php</CurrentFile>
@@ -21,14 +26,14 @@
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
-            <CaretY>5</CaretY>
+            <CaretY>6</CaretY>
           </Object>
         </Items>
       </Files>
     </Desktop>
     <Options Class="TPHPProjectOptions">
       <RunMode>runConsole</RunMode>
-      <PauseConsole>False</PauseConsole>
+      <PauseConsole>True</PauseConsole>
     </Options>
   </Object>
 </rtti>

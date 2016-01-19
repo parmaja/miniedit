@@ -4828,19 +4828,22 @@ var
 begin
   Breakpoints.Clear;
   Watches.Clear;
-  Engine.Session.Debug.Lock;
-  try
-    for i := 0 to Engine.Session.Debug.Breakpoints.Count - 1 do
-    begin
-      Breakpoints.Add(Engine.Session.Debug.Breakpoints[i].FileName, Engine.Session.Debug.Breakpoints[i].Line);
-    end;
+  if Engine.Session.Debug <> nil then
+  begin
+    Engine.Session.Debug.Lock;
+    try
+      for i := 0 to Engine.Session.Debug.Breakpoints.Count - 1 do
+      begin
+        Breakpoints.Add(Engine.Session.Debug.Breakpoints[i].FileName, Engine.Session.Debug.Breakpoints[i].Line);
+      end;
 
-    for i := 0 to Engine.Session.Debug.Watches.Count - 1 do
-    begin
-      Watches.Add(Engine.Session.Debug.Watches[i].VarName);
+      for i := 0 to Engine.Session.Debug.Watches.Count - 1 do
+      begin
+        Watches.Add(Engine.Session.Debug.Watches[i].VarName);
+      end;
+    finally
+      Engine.Session.Debug.Unlock;
     end;
-  finally
-    Engine.Session.Debug.Unlock;
   end;
 
   Files.CurrentFolder := Engine.BrowseFolder;
