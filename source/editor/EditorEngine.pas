@@ -666,14 +666,10 @@ type
 
   { TMapper }
 
-  TMapper = class(TObjectList)
+  TMapper = class(specialize GNamedItems<TMap>)
   private
-    function GetItem(Index: integer): TMap;
   public
-    function Find(vName: string): TMap;
     function Add(Attribute: TSynHighlighterAttributes; AttType: TAttributeType): TMap;
-    function IndexOf(vName: string): Integer;
-    property Items[Index: integer]: TMap read GetItem; default;
   end;
 
   TFileCategoryKind = (fckPublish);
@@ -743,15 +739,7 @@ type
 
   { TFileCategories }
 
-  TFileCategories = class(TObjectList)
-  private
-    function GetItem(Index: integer): TFileCategory;
-    procedure SetItem(Index: integer; AObject: TFileCategory);
-  public
-    function Find(vName: string): TFileCategory;
-    function Add(vFileCategory: TFileCategory): Integer;
-    property Items[Index: integer]: TFileCategory read GetItem write SetItem; default;
-  end;
+  TFileCategories = class(specialize GNamedItems<TFileCategory>);
 
   TFileGroupKind = (
     fgkExecutable,//You can guess what is it :P
@@ -854,13 +842,11 @@ type
 
   { TEditorFormList }
 
-  TEditorFormList = class(TObjectList)
+  TEditorFormList = class(specialize GItems<TEditorFormItem>)
   private
-    function GetItem(Index: integer): TEditorFormItem;
   public
     function Find(ObjectClass: TClass): TEditorFormItem;
     procedure Add(vObjectClass: TClass; vFormClass: TCustomFormClass);
-    property Items[Index: integer]: TEditorFormItem read GetItem; default;
   end;
 
   TEditorSessionOptions = class(TmnXMLProfile)
@@ -934,25 +920,18 @@ type
     property Text: string read FText write FText;
   end;
 
-  TEditorMessages = class(TObjectList)
+  TEditorMessages = class(specialize GItems<TEditorMessage>)
   private
     FName: string;
-    function GetItem(Index: integer): TEditorMessage;
-    procedure SetItem(Index: integer; const Value: TEditorMessage);
   public
     function GetText(Index: integer): string;
     property Name: string read FName write FName;
-    property Items[Index: integer]: TEditorMessage read GetItem write SetItem; default;
   end;
 
-  TEditorMessagesList = class(TObjectList)
+  TEditorMessagesList = class(specialize GNamedItems<TEditorMessages>)
   private
-    function GetItem(Index: integer): TEditorMessages;
-    procedure SetItem(Index: integer; const Value: TEditorMessages);
   public
-    function Find(Name: string): TEditorMessages;
     function GetMessages(Name: string): TEditorMessages;
-    property Items[Index: integer]: TEditorMessages read GetItem write SetItem; default;
   end;
 
   TEditorAction = (eaClearOutput);
@@ -1464,49 +1443,12 @@ end;
 
 { TMapper }
 
-function TMapper.GetItem(Index: integer): TMap;
-begin
-  Result := inherited Items[Index] as TMap;
-end;
-
-function TMapper.Find(vName: string): TMap;
-var
-  i: integer;
-begin
-  Result := nil;
-  if vName <> '' then
-    for i := 0 to Count - 1 do
-    begin
-      if SameText(Items[i].Name, vName) then
-      begin
-        Result := Items[i];
-        break;
-      end;
-    end;
-end;
-
 function TMapper.Add(Attribute: TSynHighlighterAttributes; AttType: TAttributeType): TMap;
 begin
   Result := TMap.Create;
   Result.Name := Attribute.StoredName;
   Result.AttType := AttType;
   inherited Add(Result); //if there is a bug inside add, you need to fix it by code, so no need to catch it
-end;
-
-function TMapper.IndexOf(vName: string): Integer;
-var
-  i: integer;
-begin
-  Result := -1;
-  if vName <> '' then
-    for i := 0 to Count - 1 do
-    begin
-      if SameText(Items[i].Name, vName) then
-      begin
-        Result := i;
-        break;
-      end;
-    end;
 end;
 
 { TTextEditorFile }
@@ -1950,11 +1892,6 @@ begin
 end;
 
 { TEditorFormList }
-
-function TEditorFormList.GetItem(Index: integer): TEditorFormItem;
-begin
-  Result := inherited Items[Index] as TEditorFormItem;
-end;
 
 function TEditorFormList.Find(ObjectClass: TClass): TEditorFormItem;
 var
@@ -4113,27 +4050,6 @@ begin
   inherited Add(vGroup);
 end;
 
-function TFileCategories.Find(vName: string): TFileCategory;
-var
-  i: integer;
-begin
-  Result := nil;
-  if vName <> '' then
-    for i := 0 to Count - 1 do
-    begin
-      if SameText(Items[i].Name, vName) then
-      begin
-        Result := Items[i];
-        break;
-      end;
-    end;
-end;
-
-function TFileCategories.Add(vFileCategory: TFileCategory): Integer;
-begin
-  Result := inherited Add(vFileCategory);
-end;
-
 function TFileGroups.FindExtension(vExtension: string): TFileGroup;
 var
   i, j: integer;
@@ -4163,16 +4079,6 @@ begin
       AExtensions.Free;
     end;
   end;
-end;
-
-function TFileCategories.GetItem(Index: integer): TFileCategory;
-begin
-  Result := inherited Items[Index] as TFileCategory;
-end;
-
-procedure TFileCategories.SetItem(Index: integer; AObject: TFileCategory);
-begin
-  inherited Items[Index] := AObject;
 end;
 
 { TFileCategory }
@@ -4842,11 +4748,6 @@ end;
 
 { TEditorMessages }
 
-function TEditorMessages.GetItem(Index: integer): TEditorMessage;
-begin
-  Result := inherited Items[Index] as TEditorMessage;
-end;
-
 function TEditorMessages.GetText(Index: integer): string;
 begin
   if Index < Count then
@@ -4855,17 +4756,7 @@ begin
     Result := '';
 end;
 
-procedure TEditorMessages.SetItem(Index: integer; const Value: TEditorMessage);
-begin
-  inherited Items[Index] := Value;
-end;
-
 { TEditorMessagesList }
-
-function TEditorMessagesList.GetItem(Index: integer): TEditorMessages;
-begin
-  Result := inherited Items[Index] as TEditorMessages;
-end;
 
 function TEditorMessagesList.GetMessages(Name: string): TEditorMessages;
 begin
@@ -4876,27 +4767,6 @@ begin
     Result.Name := Name;
   end;
   Add(Result);
-end;
-
-procedure TEditorMessagesList.SetItem(Index: integer; const Value: TEditorMessages);
-begin
-  inherited Items[Index] := Value;
-end;
-
-function TEditorMessagesList.Find(Name: string): TEditorMessages;
-var
-  i: integer;
-begin
-  Result := nil;
-  if Name <> '' then
-    for i := 0 to Count - 1 do
-    begin
-      if SameText(Items[i].Name, Name) then
-      begin
-        Result := Items[i];
-        break;
-      end;
-    end;
 end;
 
 finalization

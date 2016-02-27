@@ -14,7 +14,7 @@ uses
   Forms, SysUtils, StrUtils, Classes, SyncObjs, contnrs,
   process, mnUtils,
   ConsoleProcess,
-  mnStreams, mneConsoleForms, DebugClasses, mnXMLUtils;
+  mnStreams, mneConsoleForms, DebugClasses, mnClasses, mnXMLUtils;
 
 {$i '..\lib\mne.inc'}
 
@@ -64,12 +64,7 @@ type
 
   { TmneRunItems }
 
-  TmneRunItems = class(TObjectList)
-  private
-    function GetItem(Index: integer): TmneRunItem;
-  public
-    property Items[Index: integer]: TmneRunItem read GetItem; default;
-  end;
+  TmneRunItems = class(specialize GItems<TmneRunItem>);
 
   { TmneRunPool }
 
@@ -181,15 +176,6 @@ destructor TmneRunPool.Destroy;
 begin
   FreeAndNil(FItems);
   inherited Destroy;
-end;
-
-{ TmneConsoleThread }
-
-{ TmneRunItems }
-
-function TmneRunItems.GetItem(Index: integer): TmneRunItem;
-begin
-  Result := inherited Items[Index] as TmneRunItem;
 end;
 
 { TmneRun }

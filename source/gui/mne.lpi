@@ -19,7 +19,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="4"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="62"/>
+      <BuildNr Value="64"/>
       <Language Value=""/>
       <CharSet Value=""/>
       <Attributes pvaPreRelease="True"/>
@@ -434,7 +434,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);D:\dev\lazarus\ide\include\"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\extends\custom"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\extends\custom"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <Linking>
