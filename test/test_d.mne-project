@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rtti version="1.0" author="MiniXML">
+  <Object Type="TEditorProject">
+    <Name>D Test project</Name>
+    <TendencyName>D</TendencyName>
+    <Desktop Class="TEditorDesktop">
+      <Breakpoints Class="TmneBreakpoints">
+      </Breakpoints>
+      <Watches Class="TmneWatches">
+      </Watches>
+      <Files Class="TEditorDesktopFiles">
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\print.d</CurrentFile>
+        <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
+        <Items>
+          <Object Type="TEditorDesktopFile">
+            <FileName>M:\home\pascal\projects\miniEdit\test\print.d</FileName>
+            <CaretY>14</CaretY>
+          </Object>
+        </Items>
+      </Files>
+    </Desktop>
+    <Options Class="TDProjectOptions">
+      <RunMode>runConsole</RunMode>
+      <PauseConsole>True</PauseConsole>
+      <Paths Class="TStringList">
+      </Paths>
+      <ExpandPaths>False</ExpandPaths>
+    </Options>
+  </Object>
+</rtti>

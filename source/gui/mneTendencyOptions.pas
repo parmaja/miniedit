@@ -18,10 +18,14 @@ type
   { TTendencyForm }
 
   TTendencyForm = class(TForm)
+    Label11: TLabel;
+    TabsSpecialEdit: TEdit;
+    GroupBox1: TGroupBox;
+    Label10: TLabel;
     Label9: TLabel;
-    OverrideOptionsChk: TCheckBox;
     OkBtn: TButton;
     CancelBtn: TButton;
+    OverrideOptionsChk: TCheckBox;
     PageControl: TPageControl;
     GeneralSheet: TTabSheet;
     TabsToSpacesChk: TCheckBox;
@@ -61,6 +65,8 @@ begin
     begin
       Apply;
       ApplyFrames;
+      Engine.Options.Apply;
+      Engine.UpdateState([ecsOptions]);
     end;
     Free;
   end;
@@ -75,8 +81,10 @@ procedure TTendencyForm.Apply;
       FTendency.EditorOptions := FTendency.EditorOptions - [aOption];
   end;
 begin
+  FTendency.EditorOptions := [];
   FTendency.OverrideEditorOptions := OverrideOptionsChk.Checked;
   FTendency.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
+  FTendency.TabsSpecialFiles := TabsSpecialEdit.Text;
   SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
 end;
 
@@ -107,6 +115,7 @@ begin
   OverrideOptionsChk.Checked := FTendency.OverrideEditorOptions;
   TabWidthEdit.Text := IntToStr(FTendency.TabWidth);
   TabsToSpacesChk.Checked := eoTabsToSpaces in FTendency.EditorOptions;
+  TabsSpecialEdit.Text := FTendency.TabsSpecialFiles;
 end;
 
 procedure TTendencyForm.PageControlChanging(Sender: TObject; var AllowChange: Boolean);

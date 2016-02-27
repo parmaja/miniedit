@@ -18,15 +18,15 @@ object EditorOptionsForm: TEditorOptionsForm
     Height = 377
     Top = 3
     Width = 436
-    ActivePage = ColorTab
+    ActivePage = OptionsTab
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     OnChange = PageControlChange
     object OptionsTab: TTabSheet
       Caption = 'Options'
       ClientHeight = 351
-      ClientWidth = 432
+      ClientWidth = 428
       object AutoIndentChk: TCheckBox
         Left = 21
         Height = 19
@@ -76,7 +76,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 21
         Height = 19
         Hint = 'When undoing/redoing actions, handle all continous changes of the same kind in one call instead undoing/redoing each command separately'
-        Top = 54
+        Top = 110
         Width = 76
         Caption = 'Group undo'
         TabOrder = 5
@@ -85,7 +85,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 21
         Height = 19
         Hint = 'enhances home key positioning, similar to visual studio'
-        Top = 74
+        Top = 53
         Width = 153
         Caption = 'Home key jumps to first char'
         TabOrder = 6
@@ -94,7 +94,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 21
         Height = 19
         Hint = 'Shows linebreaks, spaces and tabs using special symbols'
-        Top = 110
+        Top = 146
         Width = 112
         Caption = 'Show special chars'
         TabOrder = 7
@@ -103,7 +103,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 21
         Height = 19
         Hint = 'if enabled, then the scrollbars will only show when necessary.  If you have ScrollPastEOL, then it the horizontal bar will always be there (it uses MaxLength instead)'
-        Top = 92
+        Top = 128
         Width = 75
         Caption = 'Word Wrap'
         TabOrder = 8
@@ -112,7 +112,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 21
         Height = 19
         Hint = 'Shows linebreaks, spaces and tabs using special symbols'
-        Top = 129
+        Top = 165
         Width = 99
         Caption = 'Bracket highlight'
         TabOrder = 9
@@ -129,22 +129,22 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 225
         Height = 13
         Top = 235
-        Width = 55
-        Caption = 'Extra Lines:'
+        Width = 50
+        Caption = 'Extra Line:'
         ParentColor = False
       end
       object Label9: TLabel
         Left = 21
         Height = 13
-        Top = 257
+        Top = 313
         Width = 53
         Caption = 'Tab Width:'
         ParentColor = False
       end
       object TabWidthEdit: TEdit
-        Left = 92
+        Left = 84
         Height = 21
-        Top = 254
+        Top = 309
         Width = 52
         TabOrder = 11
         Text = '4'
@@ -153,11 +153,11 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 214
         Height = 124
         Top = 102
-        Width = 208
+        Width = 204
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Gutter'
         ClientHeight = 106
-        ClientWidth = 204
+        ClientWidth = 200
         TabOrder = 12
         object GutterAutosizeChk: TCheckBox
           Left = 9
@@ -204,7 +204,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 21
         Height = 19
         Hint = 'When using <Tab> key, caret will go to the next non-space character of the previous line'
-        Top = 189
+        Top = 73
         Width = 70
         Caption = 'Smart tabs'
         TabOrder = 13
@@ -213,7 +213,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 21
         Height = 19
         Hint = 'similar to Smart Tabs, but when you delete characters'
-        Top = 208
+        Top = 92
         Width = 97
         Caption = 'Smart tab delete'
         TabOrder = 14
@@ -231,10 +231,18 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 21
         Height = 19
         Hint = 'Converts a tab character to the number of spaces in Tab Width'
-        Top = 227
+        Top = 288
         Width = 93
         Caption = 'Tabs to spaces'
         TabOrder = 16
+      end
+      object Label10: TLabel
+        Left = 20
+        Height = 13
+        Top = 271
+        Width = 228
+        Caption = 'Tabs in editors, Can be overriden by project type'
+        ParentColor = False
       end
     end
     object ColorTab: TTabSheet
@@ -1093,8 +1101,8 @@ object EditorOptionsForm: TEditorOptionsForm
     MaxFontSize = 0
     Options = [fdEffects, fdFixedPitchOnly, fdNoStyleSel]
     PreviewText = 'Hello World'
-    left = 334
-    top = 243
+    left = 260
+    top = 317
   end
   object OpenDialog: TOpenDialog
     Width = 28
@@ -1103,15 +1111,15 @@ object EditorOptionsForm: TEditorOptionsForm
     FileName = '*.mne-theme'
     Filter = 'theme|*.mne-theme'
     Options = [ofFileMustExist, ofEnableSizing, ofViewDetail]
-    left = 177
-    top = 243
+    left = 335
+    top = 327
   end
   object SaveDialog: TSaveDialog
     DefaultExt = '.mne-theme'
     FileName = '*.mne-theme'
     Filter = 'theme|*.mne-theme'
     Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
-    left = 259
-    top = 238
+    left = 202
+    top = 323
   end
 end

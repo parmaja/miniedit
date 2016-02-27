@@ -109,15 +109,8 @@ object CSVForm: TCSVForm
     DefaultRowHeight = 18
     FixedColor = cl3DLight
     Flat = True
-    Font.CharSet = ANSI_CHARSET
-    Font.Color = clBlack
-    Font.Height = -13
-    Font.Name = 'Tahoma'
-    Font.Pitch = fpVariable
-    Font.Quality = fqDraft
     MouseWheelOption = mwGrid
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected, goColSizing, goRowMoving, goColMoving, goEditing, goRelaxedRowSelect, goDblClickAutoSize, goSmoothScroll, goHeaderHotTracking, goHeaderPushedLook, goCellHints, goRowHighlight]
-    ParentFont = False
     PopupMenu = GridPopupMenu
     TabOrder = 0
     TitleFont.CharSet = ANSI_CHARSET

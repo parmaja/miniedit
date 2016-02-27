@@ -27,7 +27,7 @@ uses
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase, SynEditPointClasses,
-  dbgpServers, DebugClasses, Masks, mnXMLRttiProfile, mnXMLUtils, FileUtil,
+  dbgpServers, DebugClasses, Masks, mnXMLRttiProfile, mnXMLUtils, FileUtil, mnClasses,
   LazFileUtils, mnUtils, LCLType, EditorClasses, EditorRun;
 
 type
@@ -121,7 +121,6 @@ type
   TmneBreakpoints = class(specialize GXMLItems<TmneBreakpoint>)
   private
   public
-  published
     procedure Add(AFileName:string; ALineNo: Integer);
   end;
 
@@ -180,13 +179,10 @@ type
 
   { TEditorElements }
 
-  TEditorElements = class(TObjectList)
+  TEditorElements = class(specialize GNamedItems<TEditorElement>)
   private
-    function GetItem(Index: integer): TEditorElement;
   public
-    function Find(vName: string): TEditorElement;
     function IndexOf(vName: string): Integer;
-    property Items[Index: integer]: TEditorElement read GetItem; default;
   end;
 
   TAddFrameCallBack = procedure(AFrame: TFrame) of object;
@@ -196,7 +192,7 @@ type
     Run, Compile, Collect file groups and have special properties
   }
 
-  TEditorCapability = (capRun, capCompile, capLink, capLint, capDebug, capTrace, capDebugServer, capOSDepended, capBrowser, capOptions, capProjectOptions);
+  TEditorCapability = (capErrors, capBrowser, capOptions, capRun, capCompile, capLink, capLint, capDebug, capTrace, capDebugServer, capOSDepended, capProjectOptions);
 
   TEditorCapabilities = set of TEditorCapability;
 
@@ -208,6 +204,7 @@ type
     FGroups: TFileGroups;
     FCommand: string;
     FOverrideEditorOptions: Boolean;
+    FTabsSpecialFiles: string;
     FTabWidth: Integer;
   protected
     FCapabilities: TEditorCapabilities;
@@ -236,6 +233,8 @@ type
     property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False; //TODO move it to Tendency
     property TabWidth: Integer read FTabWidth write FTabWidth default 4;
     property EditorOptions: TSynEditorOptions read FEditorOptions write FEditorOptions;
+    property TabsSpecialFiles: string read FTabsSpecialFiles write FTabsSpecialFiles;
+
   end;
 
   TEditorTendencyClass = class of TEditorTendency;
@@ -600,12 +599,11 @@ type
     FBoundRect: TRect;
     FCompilerFolder: string;
     FShowMessages: Boolean;
-    FShowOutput: Boolean;
     FCollectAutoComplete: Boolean;
     FCollectTimeout: DWORD;
     FReplaceHistory: TStringList;
     FAutoStartDebugServer: Boolean;
-    FOutputHeight: integer;
+
     FMessagesHeight: integer;
     FFoldersWidth: integer;
 
@@ -649,8 +647,6 @@ type
     property ShowFolderFiles: TShowFolderFiles read FShowFolderFiles write FShowFolderFiles default sffRelated;
     property SortFolderFiles: TSortFolderFiles read FSortFolderFiles write FSortFolderFiles default srtfByNames;
     property ShowMessages: Boolean read FShowMessages write FShowMessages default False;
-    property ShowOutput: Boolean read FShowOutput write FShowOutput default False;
-    property OutputHeight: integer read FOutputHeight write FOutputHeight default 100;
     property MessagesHeight: integer read FMessagesHeight write FMessagesHeight default 100;
     property FoldersWidth: integer read FFoldersWidth write FFoldersWidth default 180;
     property AutoStartDebugServer: Boolean read FAutoStartDebugServer write FAutoStartDebugServer default False;
@@ -969,6 +965,7 @@ type
     procedure EngineAction(EngineAction: TEditorAction);
     procedure EngineOutput(S: string);
     procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
+    procedure EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
   end;
 
   { TEditorEngine }
@@ -1883,27 +1880,6 @@ end;
 
 { TEditorElements }
 
-function TEditorElements.GetItem(Index: integer): TEditorElement;
-begin
-  Result := inherited Items[Index] as TEditorElement;
-end;
-
-function TEditorElements.Find(vName: string): TEditorElement;
-var
-  i: integer;
-begin
-  Result := nil;
-  if vName <> '' then
-    for i := 0 to Count - 1 do
-    begin
-      if SameText(Items[i].Name, vName) then
-      begin
-        Result := Items[i];
-        break;
-      end;
-    end;
-end;
-
 function TEditorElements.IndexOf(vName: string): Integer;
 var
   i: integer;
@@ -2044,6 +2020,7 @@ constructor TEditorTendency.Create;
 begin
   inherited;
   FGroups := TFileGroups.Create(False);//it already owned by Engine.Groups
+  FTabWidth := 4;
   Init;
 {  if Groups.Count = 0 then
     raise Exception.Create('You must add groups in Init method');}//removed DefaultTendency has no groups
@@ -3116,6 +3093,7 @@ var
 begin
   with TEditorOptionsForm.Create(Application) do
   begin
+    Engine.BeginUpdate;
     try
       if (Engine.Files.Current <> nil) then
         aSelect := Engine.Files.Current.GetLanguageName //just to select a language in the combobox
@@ -3128,6 +3106,7 @@ begin
       end;
       Engine.UpdateState([ecsOptions]);
     finally
+      Engine.EndUpdate;
       Free;
     end;
   end;
@@ -4015,7 +3994,6 @@ begin
   FSortFolderFiles := srtfByNames;
   FShowMessages := False;
   FCollectTimeout := 60;
-  FOutputHeight := 100;
   FMessagesHeight := 100;
   FFoldersWidth := 180;
 end;

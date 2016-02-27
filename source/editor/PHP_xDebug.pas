@@ -3,7 +3,7 @@ unit PHP_xDebug;
 {**
  * Mini Edit
  *
- * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+ * @license   GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author    Zaher Dirkey <zaher at parmaja dot com>
  *}
 
@@ -73,7 +73,7 @@ type
     procedure Clear; override;
     procedure Add(vName: string); override;
     procedure Remove(vName: string); override;
-    function GetValue(vName: string; var vValue: variant; var vType: string; EvalIt: Boolean): boolean; override;
+    function GetValue(vName: string; var vValue: Variant; var vType: string; EvalIt: Boolean): boolean; override;
   end;
 
   { TPHP_xDebug }
@@ -141,7 +141,7 @@ begin
     Watches.RemoveWatch(vName);
 end;
 
-function TPHP_xDebugWatches.GetValue(vName: string; var vValue: variant; var vType: string; EvalIt: Boolean): boolean;
+function TPHP_xDebugWatches.GetValue(vName: string; var vValue: Variant; var vType: string; EvalIt: Boolean): boolean;
 var
   aAction: TdbgpCustomGet;
 begin
@@ -254,7 +254,7 @@ end;
 constructor TPHP_xDebug.Create;
 begin
   inherited Create;
-  FServer := TPHP_xDebugServer.Create(nil);
+  FServer := TPHP_xDebugServer.Create;
   FServer.FDebug := Self;
   DBGP.OnShowFile := @DoShowFile;
 end;

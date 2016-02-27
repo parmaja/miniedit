@@ -232,10 +232,16 @@ begin
     if Line >= 0 then
       Engine.UpdateState([ecsDebug, ecsShow])
     else
+    begin
       Engine.UpdateState([ecsDebug]); //Do not show mainform if there is no line to set
+      Engine.Session.Run.Show;
+    end;
   end
   else
+  begin
     Engine.UpdateState([ecsDebug]);//needed for update watches
+    Engine.Session.Run.Show;
+  end;
 end;
 
 procedure TEditorDebugger.SetExecutedLine(Key: string; FileName: string; const Line: Integer; vCallStack: TCallStackItems);

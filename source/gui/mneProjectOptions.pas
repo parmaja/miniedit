@@ -20,8 +20,6 @@ type
   TProjectForm = class(TForm)
     Button3: TButton;
     Label6: TLabel;
-    Label9: TLabel;
-    OverrideOptionsChk: TCheckBox;
     DescriptionEdit: TEdit;
     OverrideOptionsSheet: TTabSheet;
     Label1: TLabel;
@@ -35,8 +33,6 @@ type
     NameEdit: TEdit;
     SaveDesktopChk: TCheckBox;
     SpecialExtEdit: TEdit;
-    TabsToSpacesChk: TCheckBox;
-    TabWidthEdit: TEdit;
     TitleEdit: TEdit;
     OkBtn: TButton;
     CancelBtn: TButton;
@@ -75,16 +71,23 @@ function ShowProjectForm(vProject: TEditorProject): Boolean;
 begin
   with TProjectForm.Create(Application) do
   begin
-    FProject := vProject;
-    Retrieve;
-    RetrieveFrames;
-    PageControl.ActivePage := GeneralSheet;
-    ActiveControl := NameEdit;
-    Result := ShowModal = mrOk;
-    if Result then
-    begin
-      Apply;
-      ApplyFrames;
+    Engine.BeginUpdate;
+    try
+      FProject := vProject;
+      Retrieve;
+      RetrieveFrames;
+      PageControl.ActivePage := GeneralSheet;
+      ActiveControl := NameEdit;
+      Result := ShowModal = mrOk;
+      if Result then
+      begin
+        Apply;
+        ApplyFrames;
+        Engine.Options.Apply;
+        Engine.UpdateState([ecsOptions]);
+      end;
+    finally
+      Engine.EndUpdate;
     end;
     Free;
   end;
@@ -172,7 +175,7 @@ end;
 
 procedure TProjectForm.FormCreate(Sender: TObject);
 var
-  i:Integer;
+  i: Integer;
 begin
   SCMCbo.Items.BeginUpdate;
   try

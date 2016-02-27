@@ -14,7 +14,7 @@ unit IAddons;
 interface
 
 uses
-  SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs;
+  SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs, mnClasses;
 
 type
   TAddonStatus = (adnsNone, adnsActive);
@@ -63,13 +63,11 @@ type
 
   { TAddons }
 
-  TAddons = class(TObjectList)
+  TAddons = class(specialize GItems<TAddonItem>)
   private
-    function GetItem(Index: integer): TAddonItem;
   public
     function Add(Category, Name: string; vAddon: IAddon): TAddonItem; overload;
     function Add(Category, Name: string; vAddon: TAddonClass): TAddonItem; overload;
-    property Items[Index: integer]: TAddonItem read GetItem; default;
   end;
 
 {
@@ -169,11 +167,6 @@ begin
 end;
 
 { TAddons }
-
-function TAddons.GetItem(Index: integer): TAddonItem;
-begin
-  Result := inherited Items[Index] as TAddonItem;
-end;
 
 function TAddons.Add(Category, Name: string; vAddon: IAddon): TAddonItem;
 begin

@@ -54,6 +54,8 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    MenuItem26: TMenuItem;
+    OutputEdit: TSynEdit;
     RunSignBtn: TSpeedButton;
     WatchesGrid: TStringGrid;
     SearchGrid: TStringGrid;
@@ -97,7 +99,6 @@ type
     NewAsAct: TAction;
     MenuItem13: TMenuItem;
     MessagesSpl: TntvSplitter;
-    OutputSpl: TntvSplitter;
     SelectSCMTypeAct: TAction;
     TypePnl: TPanel;
     ProjectTypeMnu: TMenuItem;
@@ -298,12 +299,8 @@ type
     N14: TMenuItem;
     DBGToggleBreakpoint1: TMenuItem;
     oggleBreakpoint1: TMenuItem;
-    ToolButton8: TToolButton;
-    OutputAct: TAction;
     ClientPnl: TPanel;
     EditorsPnl: TPanel;
-    OutputEdit: TSynEdit;
-    Output1: TMenuItem;
     DBGRunToCursorAct: TAction;
     RunToCursor1: TMenuItem;
     DBGBreakpointsAct: TAction;
@@ -315,7 +312,7 @@ type
     DBGAddWatchAct: TAction;
     AddWatch2: TMenuItem;
     StatusPanel: TPanel;
-    MessagePnl: TPanel;
+    MessageLabel: TPanel;
     DebugPnl: TPanel;
     CursorPnl: TPanel;
     FolderHomeAct: TAction;
@@ -468,7 +465,6 @@ type
     procedure Add1Click(Sender: TObject);
     procedure Delete1Click(Sender: TObject);
     procedure DBGToggleBreakpointActExecute(Sender: TObject);
-    procedure OutputActExecute(Sender: TObject);
     procedure DBGBreakpointsActExecute(Sender: TObject);
     procedure CopyFileNameActExecute(Sender: TObject);
     procedure DBGAddWatchActExecute(Sender: TObject);
@@ -491,12 +487,9 @@ type
     procedure QuickFindActUpdate(Sender: TObject);
     procedure WorkspaceMnuClick(Sender: TObject);
   private
-    //ApplicationEvents: TApplicationEvents;
     FMessages: TEditorMessages;
     FShowFolderFiles: TShowFolderFiles;
     FSortFolderFiles: TSortFolderFiles;
-    //    OnActivate = ApplicationEventsActivate
-    //    OnHint = ApplicationEventsHint
     function CanOpenInclude: boolean;
     procedure CatchErr(Sender: TObject; e: exception);
     procedure ForceForegroundWindow;
@@ -535,7 +528,6 @@ type
     procedure RunFile;
     procedure CompileFile;
     //
-    procedure Log(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
     procedure Log(ACaption, AMsg: string); overload;
     procedure Log(AMsg: string);
 
@@ -543,6 +535,7 @@ type
     procedure EditorChangeState(State: TEditorChangeStates);
     procedure EngineOutput(S: string);
     procedure EngineAction(EngineAction: TEditorAction);
+    procedure EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
 
     procedure FollowFolder(vFolder: string; FocusIt: Boolean);
     procedure ShowMessagesList;
@@ -556,7 +549,6 @@ type
     property Folder: string read GetFolder write SetFolder;
     procedure UpdateFoldersPnl;
     procedure UpdateMessagesPnl;
-    procedure UpdateOutputPnl;
     procedure StopServer; deprecated;
   end;
 
@@ -614,8 +606,6 @@ begin
   SortFolderFiles := Engine.Options.SortFolderFiles;
   FoldersAct.Checked := Engine.Options.ShowFolder;
   MessagesAct.Checked := Engine.Options.ShowMessages;
-  OutputAct.Checked := Engine.Options.ShowOutput;
-  OutputEdit.Height := Engine.Options.OutputHeight;
   FoldersPnl.Width := Engine.Options.FoldersWidth;
   //MessagesTabs.Height := Engine.Options.MessagesHeight;
   with MessagesTabs, BoundsRect do
@@ -624,7 +614,6 @@ begin
   MessagesSpl.Visible := False;
   UpdateFoldersPnl;
   UpdateMessagesPnl;
-  UpdateOutputPnl;
   // Open any files passed in the command line
   if (ParamCount > 0) and not (SameText(ParamStr(1), '/dde')) then
   begin
@@ -1211,9 +1200,6 @@ begin
   Engine.Options.ShowFolderFiles := ShowFolderFiles;
   Engine.Options.SortFolderFiles := SortFolderFiles;
   Engine.Options.ShowMessages := MessagesAct.Checked;
-  Engine.Options.ShowOutput := OutputAct.Checked;
-
-  Engine.Options.OutputHeight := OutputEdit.Height;
   Engine.Options.MessagesHeight := MessagesTabs.Height;
   Engine.Options.FoldersWidth := FoldersPnl.Width;
 
@@ -1558,7 +1544,7 @@ begin
   end;
 end;
 
-procedure TMainForm.Log(Error: integer; ACaption, Msg, FileName: string; LineNo: integer);
+procedure TMainForm.EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer);
 begin
   MessagesGrid.RowCount := MessagesGrid.RowCount + 1;
   MessagesGrid.Cells[1, MessagesGrid.RowCount - 1] := IntToStr(Error);
@@ -1612,6 +1598,7 @@ begin
 
     MessagesTabs.PageItem[WatchesGrid].Visible := capDebug in Capabilities;
     MessagesTabs.PageItem[CallStackGrid].Visible := capTrace in Capabilities;
+    MessagesTabs.PageItem[MessagesGrid].Visible := capErrors in Capabilities;
 
     DBGStepOverAct.Enabled := capTrace in Capabilities;
     DBGStepIntoAct.Enabled := capTrace in Capabilities;
@@ -1890,7 +1877,8 @@ begin
   else
     aName := '';
   Result := ShowSelectList('Select project type', Engine.Tendencies, [], aName);
-  vTendency := Engine.Tendencies.Find(aName);
+  if Result then
+    vTendency := Engine.Tendencies.Find(aName);
 end;
 
 function TMainForm.ChooseSCM(var vSCM: TEditorSCM): Boolean;
@@ -2253,16 +2241,10 @@ end;
 
 procedure TMainForm.OptionsChanged;
 begin
-  {if Engine.Options.Profile.Attributes.UI.Foreground = clNone then
-    Color := clBtnFace
-  else
-    Color := Engine.Options.Profile.Attributes.UI.Background;}
+  {Color := Engine.Options.Profile.Attributes.Panel.Background;
+  Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
 
-  {if Engine.Options.Profile.Attributes.UI.Foreground = clNone then
-    ClientPnl.Font.Color := clBtnText
-  else
-    ClientPnl.Font.Color := Engine.Options.Profile.Attributes.UI.Foreground;}
-  {FoldersSpl.RaisedColor := Engine.Options.Profile.Attributes.Separator.Foreground;
+  FoldersSpl.RaisedColor := Engine.Options.Profile.Attributes.Separator.Foreground;
   FoldersSpl.LoweredColor := Engine.Options.Profile.Attributes.Separator.Background;}
 
   FileTabs.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
@@ -2435,25 +2417,6 @@ begin
   end;
 end;
 
-procedure TMainForm.OutputActExecute(Sender: TObject);
-begin
-  UpdateOutputPnl;
-end;
-
-procedure TMainForm.UpdateOutputPnl;
-begin
-  if OutputAct.Checked then
-  begin
-    OutputEdit.Visible := True;
-    OutputSpl.Visible := True;
-  end
-  else
-  begin
-    OutputEdit.Visible := False;
-    OutputSpl.Visible := False;
-  end;
-end;
-
 procedure TMainForm.RunFile;
 begin
   SaveAllAct.Execute;
@@ -2513,7 +2476,7 @@ end;
 procedure TMainForm.StatusTimerTimer(Sender: TObject);
 begin
   StatusTimer.Enabled := False;
-  MessagePnl.Caption := '';
+  MessageLabel.Caption := '';
 end;
 
 procedure TMainForm.Clear1Click(Sender: TObject);
@@ -2755,7 +2718,7 @@ end;
 
 procedure TMainForm.Log(ACaption, AMsg: string);
 begin
-  Log(0, ACaption, AMsg, '', 0);
+  EngineError(0, ACaption, AMsg, '', 0);
 end;
 
 procedure TMainForm.Log(AMsg: string);

@@ -12,7 +12,7 @@ unit DebugClasses;
 interface
 
 uses
-  Classes, SysUtils, Contnrs;
+  Classes, SysUtils, Contnrs, mnClasses;
 
 type
   TmneRunAction = (rnaCompile, rnaExecute, rnaDebug, rnaLink);
@@ -70,15 +70,12 @@ type
 
   { TCallStackItems }
 
-  TCallStackItems = class(TObjectList)
+  TCallStackItems = class(specialize GItems<TCallStackItem>)
   private
-    function GetItem(Index: integer): TCallStackItem;
   protected
   public
-    function Add(vItem: TCallStackItem): integer; overload;
     function Add(FileName: string; Line: integer): integer; overload;
     procedure AssignFrom(vItems: TCallStackItems);
-    property Items[Index: integer]: TCallStackItem read GetItem; default;
   end;
 
 implementation
@@ -93,16 +90,6 @@ begin
 end;
 
 { TCallStackItems }
-
-function TCallStackItems.GetItem(Index: integer): TCallStackItem;
-begin
-  Result := inherited Items[Index] as TCallStackItem;
-end;
-
-function TCallStackItems.Add(vItem: TCallStackItem): integer;
-begin
-  Result := inherited Add(vItem);
-end;
 
 function TCallStackItems.Add(FileName: string; Line: integer): integer;
 var

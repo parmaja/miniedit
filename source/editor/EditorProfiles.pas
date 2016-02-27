@@ -14,7 +14,7 @@ interface
 uses
   Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, Registry, ExtCtrls, Buttons, ImgList,
   mnXMLRttiProfile, SynEditMarkupWordGroup,
-  Contnrs, Menus, SynEdit, SynEditHighlighter, SynEditMiscClasses, SynEditPointClasses, SynGutterCodeFolding,
+  Contnrs, Menus, SynEdit, SynEditHighlighter, SynEditMiscClasses, SynEditPointClasses, SynGutterCodeFolding, mnClasses,
   SynGutter, SynEditKeyCmds, Classes, SysUtils;
 
 type
@@ -98,6 +98,8 @@ type
     CodeFolding: Boolean;
   end;
 
+  TGlobalAttributeList = specialize GItems<TGlobalAttribute>;
+
   TGlobalAttributes = class(TComponent)
   private
     FInfo: TGlobalAttributesInfo;
@@ -129,7 +131,7 @@ type
     FText: TGlobalAttribute;
     FEmbedText: TGlobalAttribute;
 
-    FList: TObjectList;
+    FList: TGlobalAttributeList;
     function GetCount: Integer;
     function GetItem(Index: Integer): TGlobalAttribute;
   protected
@@ -337,7 +339,7 @@ constructor TGlobalAttributes.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   FComponentStyle := FComponentStyle + [csSubComponent];
-  FList := TObjectList.Create(True);
+  FList := TGlobalAttributeList.Create(True);
   Reset;
 end;
 
@@ -353,9 +355,9 @@ var
 begin
   for i := 0 to FList.Count - 1 do
   begin
-    (FList[i] as TGlobalAttribute).Foreground := clNone;
-    (FList[i] as TGlobalAttribute).Background := clNone;
-    (FList[i] as TGlobalAttribute).Style := [];
+    FList[i].Foreground := clNone;
+    FList[i].Background := clNone;
+    FList[i].Style := [];
   end;
 end;
 
@@ -423,11 +425,11 @@ begin
   begin
     if FList[i] <> FDefault then
     begin
-      if (FList[i] as TGlobalAttribute).Foreground = clDefault then
-        (FList[i] as TGlobalAttribute).Foreground := Default.Foreground;
+      if FList[i].Foreground = clDefault then
+        FList[i].Foreground := Default.Foreground;
 
-      if (FList[i] as TGlobalAttribute).Background = clDefault then
-        (FList[i] as TGlobalAttribute).Background := Default.Background;
+      if FList[i].Background = clDefault then
+        FList[i].Background := Default.Background;
     end;
   end;
 end;
@@ -465,7 +467,7 @@ end;
 
 function TGlobalAttributes.GetItem(Index: Integer): TGlobalAttribute;
 begin
-  Result := FList[Index] as TGlobalAttribute;
+  Result := FList[Index];
 end;
 
 function TGlobalAttributes.GetCount: Integer;

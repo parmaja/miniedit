@@ -302,7 +302,9 @@ procedure TCSVForm.RenameHeader(Index: Integer);
 var
   s: string;
 begin
-  s := 'Header' + IntToStr(Index);
+  s := DataGrid.Cells[Index, 0];
+  if s = '' then
+    s := 'Header' + IntToStr(Index);
   if MsgBox.Msg.Input(s, 'Rename column header') then
   begin
     DataGrid.Cells[Index, 0] := s;
@@ -459,7 +461,6 @@ procedure TCSVForm.FillGrid(SQLCMD: TmncCommand; Title: String; Append: Boolean)
 
   function GetTextWidth(Text: String): Integer;
   begin
-    DataGrid.Canvas.Font := DataGrid.Font;
     Result := DataGrid.Canvas.TextWidth(Text);
   end;
 
@@ -620,14 +621,15 @@ begin
   FillByte(CSVOptions, Sizeof(CSVOptions), 0);
   with DataGrid do
   begin
+    {Font.Name := 'Tahoma';
+    Font.Size := 10;
     Font.Name := Engine.Options.Profile.Attributes.FontName;
     Font.Size := Engine.Options.Profile.Attributes.FontSize;
     if Engine.Options.Profile.Attributes.FontNoAntialiasing then
       Font.Quality := fqNonAntialiased
     else
-      Font.Quality := fqDefault;
+      Font.Quality := fqDefault;}
     DefaultRowHeight := GetDefaultRowHeight;
-
   end;
   CSVOptions.HeaderLine := hdrNormal;
   CSVOptions.DelimiterChar := ',';
@@ -658,7 +660,6 @@ begin
   begin
     DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Panel.Background;
     DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
-    DataGrid.Canvas.FillRect(aRect);
   end
   else if ((aRow = DataGrid.Row) and (aCol = DataGrid.Col)) or
           ((aRow >= DataGrid.Selection.Top) and (aRow <= DataGrid.Selection.Bottom) and (aCol >= DataGrid.Selection.Left) and (aCol <= DataGrid.Selection.Right))
@@ -674,18 +675,17 @@ begin
       DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Text.Background;
       DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Text.Foreground;
     end;
-    DataGrid.Canvas.FillRect(aRect);
   end
   else if (aRow = DataGrid.Row) then
   begin
     DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Active.Background;
     DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Active.Foreground;
-    DataGrid.Canvas.FillRect(aRect);
   end
   else
   begin
     DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Default.Background;
   end;
+  DataGrid.Canvas.FillRect(aRect);
   DataGrid.DefaultDrawCell(aCol, aRow, aRect, aState);
 end;
 

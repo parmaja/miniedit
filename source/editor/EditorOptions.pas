@@ -41,6 +41,7 @@ type
     GutterGrp: TGroupBox;
     GutterShowLeaderZerosChk: TCheckBox;
     HalfPageScrollChk: TCheckBox;
+    Label10: TLabel;
     Label8: TLabel;
     Label9: TLabel;
     LineSpacingEdit: TEdit;

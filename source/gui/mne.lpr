@@ -29,7 +29,7 @@ uses
   SysUtils,
   LCLVersion,
   simpleipc,
-  Themes, cmdbox, SynEditHighlighter, Interfaces,
+  Themes, cmdbox, Interfaces,
   MainUnit in 'MainUnit.pas' {MainForm},
   mneProjectOptions in 'mneProjectOptions.pas' {ProjectForm},
   SearchForms in '..\editor\SearchForms.pas' {SearchForm},
@@ -50,11 +50,11 @@ uses
   mneCustomProjectFrames, mneCustomConfigFrames, mneCustomClasses,
   mnePHPProjectFrames, mnePasProjectFrames, mnePasConfigForms, mnePasClasses,
   mneCSVClasses, mneDClasses, mneDProjectFrames, mneDConfigForms, MsgBox,
-  mnStreams, CSVOptionsForms, mncCSV, GUIMsgBox, Classes, PHPUtils,
-  SynHighlighterD, SynHighlighterMultiProc, mneSetups, mneSettings,
+  GUIMsgBox, Classes, PHPUtils,
+  mneSetups, mneSettings,
   mneSARDClasses, EditorClasses, DebugClasses, mneViewClasses,
   mneCompileProjectOptions, mneManageRecentsForms, mneTendencyOptions,
-  mneCSVForms, ConsoleProcess;
+  mneCSVForms;
 
 {$R *.res}
 

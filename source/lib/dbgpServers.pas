@@ -20,7 +20,7 @@ interface
 uses
   SysUtils, StrUtils, Classes, Contnrs, Dialogs, Variants,
   mnSockets, mnStreams, mnConnections, mnServers, mnXMLUtils, Base64,
-  mnXMLRttiProfile, mnXMLNodes, SyncObjs, IniFiles, DebugClasses;
+  mnXMLRttiProfile, mnXMLNodes, SyncObjs, IniFiles, DebugClasses, mnClasses;
 
 type
   EdbgpException = class(Exception);
@@ -70,20 +70,18 @@ type
 
   TdbgpActionClass = class of TdbgpAction;
 
-  TdbgpSpool = class(TObjectList)
+  TdbgpSpool = class(specialize GItems<TdbgpAction>)
   private
-    function GetItem(Index: integer): TdbgpAction;
-    procedure SetItem(Index: integer; const Value: TdbgpAction);
   public
-    function Add(Action: TdbgpAction): integer; virtual;
-    property Items[Index: integer]: TdbgpAction read GetItem write SetItem; default;
   end;
+
+  { TdbgpConnectionSpool }
 
   TdbgpConnectionSpool = class(TdbgpSpool)
   private
     FConnection: TdbgpConnection;
   public
-    function Add(Action: TdbgpAction): integer; override;
+    procedure Added(Action: TdbgpAction); override;
   end;
 
   TdbgpInit = class(TdbgpAction)
@@ -265,7 +263,7 @@ type
     procedure Process; override;
     procedure Unprepare; override;
   public
-    constructor Create(Socket: TmnCustomSocket); override;
+    constructor Create(vConnector: TmnConnector; Socket: TmnCustomSocket); override;
     destructor Destroy; override;
     procedure Stop; override;
     property Key: string read FKey;
@@ -280,7 +278,7 @@ type
   protected
     function CreateConnection(vSocket: TmnCustomSocket): TmnServerConnection; override;
   public
-    constructor Create; override;
+    constructor Create;
     destructor Destroy; override;
     property Port: integer read FPort write FPort;
     property Address: string read FAddress write FAddress;
@@ -295,25 +293,21 @@ type
   published
   end;
 
-  TdbgpWatches = class(TObjectList)
+  TdbgpWatches = class(specialize GItems<TdbgpWatch>)
   private
     FServer: TdbgpServer;
     CurrentHandle: integer;
-    function GetItem(Index: integer): TdbgpWatch;
-    procedure SetItem(Index: integer; const Value: TdbgpWatch);
     function GetValues(Name: string): variant;
     procedure SetValues(Name: string; const Value: variant);
   protected
     property Server: TdbgpServer read FServer;
   public
     function Find(Name: string): TdbgpWatch;
-    function Add(Watch: TdbgpWatch): integer; overload;
     function Add(VarName: string; Value: variant): integer; overload;
     procedure AddWatch(Name: string);
     procedure RemoveWatch(Name: string);
     procedure Clean;
     property Values[Name: string]: variant read GetValues write SetValues;
-    property Items[Index: integer]: TdbgpWatch read GetItem write SetItem; default;
   end;
 
   TdbgpBreakpoint = class(TObject)
@@ -330,21 +324,18 @@ type
     property Line: integer read FLine write FLine;
   end;
 
-  TdbgpBreakpoints = class(TObjectList)
+  TdbgpBreakpoints = class(specialize GItems<TdbgpBreakpoint>)
   private
     CurrentHandle: integer;
     FServer: TdbgpServer;
-    function GetItem(Index: integer): TdbgpBreakpoint;
   protected
     property Server: TdbgpServer read FServer;
   public
-    function Add(Breakpoint: TdbgpBreakpoint): integer; overload;
     function Remove(Breakpoint: TdbgpBreakpoint): integer; overload;
     procedure Remove(Handle: integer); overload;
     function Add(FileName: string; Line: integer): integer; overload;
     function Find(Name: string; Line: integer): TdbgpBreakpoint;
     procedure Toggle(FileName: string; Line: integer);
-    property Items[Index: integer]: TdbgpBreakpoint read GetItem; default;
   end;
 
   TdbgpOnServerEvent = procedure(Sender: TObject; Socket: TdbgpConnection) of object;
@@ -362,14 +353,13 @@ type
     FRunCount: Integer;
     function GetIsRuning: Boolean;
   protected
-    procedure Notification(AComponent: TComponent; operation: TOperation); override;
     function CreateListener: TmnListener; override;
     procedure DoChanged(vListener: TmnListener); override;
     procedure DoStart; override;
     procedure DoStop; override;
     property Spool: TdbgpSpool read FSpool;
   public
-    constructor Create(AOwner: TComponent); override;
+    constructor Create;
     destructor Destroy; override;
     procedure Resume;
     procedure AddAction(Action: TdbgpAction); overload;
@@ -482,7 +472,7 @@ begin
     FOnShowFile(Key, FileName, Line, CallStack);
 end;
 
-constructor TdbgpServer.Create(AOwner: TComponent);
+constructor TdbgpServer.Create;
 begin
   inherited;
   FSpool := TdbgpSpool.Create(True);
@@ -509,17 +499,12 @@ begin
   Result := RunCount > 0;
 end;
 
-procedure TdbgpServer.Notification(AComponent: TComponent; operation: TOperation);
-begin
-  inherited;
-end;
-
-constructor TdbgpConnection.Create(Socket: TmnCustomSocket);
+constructor TdbgpConnection.Create(vConnector: TmnConnector; Socket: TmnCustomSocket);
 begin
   inherited;
   FLocalSpool := TdbgpConnectionSpool.Create;
   FLocalSpool.FConnection := Self;
-  KeepAlive := True;
+  //KeepAlive := True;
   Stream.Timeout := 5000;
 end;
 
@@ -794,7 +779,7 @@ end;
 
 function TmnDBGListener.CreateConnection(vSocket: TmnCustomSocket): TmnServerConnection;
 begin
-  Result := TdbgpConnection.Create(vSocket);
+  Result := TdbgpConnection.Create(Self, vSocket);
 end;
 
 constructor TmnDBGListener.Create;
@@ -900,23 +885,6 @@ begin
   Flags := [dbgpafSend];
 end;
 
-{ TdbgpSpool }
-
-function TdbgpSpool.Add(Action: TdbgpAction): integer;
-begin
-  Result := inherited Add(Action);
-end;
-
-function TdbgpSpool.GetItem(Index: integer): TdbgpAction;
-begin
-  Result := inherited Items[Index] as TdbgpAction;
-end;
-
-procedure TdbgpSpool.SetItem(Index: integer; const Value: TdbgpAction);
-begin
-  inherited Items[Index] := Value;
-end;
-
 { TdbgpStepOver }
 
 function TdbgpStepOver.GetCommand: string;
@@ -927,7 +895,6 @@ end;
 procedure TdbgpStepOver.Process(Respond: TdbgpRespond);
 begin
   inherited;
-
 end;
 
 { TdbgpStepInto }
@@ -1091,11 +1058,6 @@ end;
 
 { TdbgpWatches }
 
-function TdbgpWatches.Add(Watch: TdbgpWatch): integer;
-begin
-  Result := inherited Add(Watch);
-end;
-
 function TdbgpWatches.Add(VarName: string; Value: variant): integer;
 var
   aWatch: TdbgpWatch;
@@ -1157,11 +1119,6 @@ begin
   end;
 end;
 
-function TdbgpWatches.GetItem(Index: integer): TdbgpWatch;
-begin
-  Result := inherited Items[Index] as TdbgpWatch;
-end;
-
 function TdbgpWatches.GetValues(Name: string): variant;
 var
   aWatch: TdbgpWatch;
@@ -1201,14 +1158,8 @@ begin
   end;
 end;
 
-procedure TdbgpWatches.SetItem(Index: integer; const Value: TdbgpWatch);
-begin
-  inherited Items[Index] := Value;
-end;
-
 procedure TdbgpWatches.SetValues(Name: string; const Value: variant);
 begin
-
 end;
 
 { TdbgpGetWatch }
@@ -1226,11 +1177,6 @@ begin
 end;
 
 { TdbgpBreakpoints }
-
-function TdbgpBreakpoints.Add(Breakpoint: TdbgpBreakpoint): integer;
-begin
-  Result := inherited Add(Breakpoint);
-end;
 
 function TdbgpBreakpoints.Add(FileName: string; Line: integer): integer;
 var
@@ -1257,11 +1203,6 @@ begin
       break;
     end;
   end;
-end;
-
-function TdbgpBreakpoints.GetItem(Index: integer): TdbgpBreakpoint;
-begin
-  Result := inherited Items[Index] as TdbgpBreakpoint;
 end;
 
 function TdbgpBreakpoints.Remove(Breakpoint: TdbgpBreakpoint): integer;
@@ -1405,9 +1346,9 @@ end;
 
 { TdbgpConnectionSpool }
 
-function TdbgpConnectionSpool.Add(Action: TdbgpAction): integer;
+procedure TdbgpConnectionSpool.Added(Action: TdbgpAction);
 begin
-  Result := inherited Add(Action);
+  inherited Added(Action);
   Action.FConnection := FConnection;
 end;
 
