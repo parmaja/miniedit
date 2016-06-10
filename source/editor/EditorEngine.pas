@@ -187,6 +187,29 @@ type
 
   TAddFrameCallBack = procedure(AFrame: TFrame) of object;
 
+  { TFileCategories }
+
+  TFileCategories = class(specialize GNamedItems<TFileCategory>);
+
+  TFileGroupKind = (
+    fgkExecutable,//You can guess what is it :P
+    fgkText, //Is it an Text Editor like SQL or PHP
+    fgkEditor, // Can be editable
+    fgkMain,//this can be the main file for project
+    fgkMember,//a member of project, inc are member, c, h, cpp members, pas,pp, p , inc also members, ini,txt not member of any project
+    fgkBrowsable,//When open file show it in the extension list
+    fgkAssociated, //Editor can be the editor of this files, like .php, .inc, but .txt is not
+    fgkVirtual //Not a real file, like output console
+  );
+
+  TFileGroupKinds = set of TFileGroupKind;
+
+  TFileGroupStyle = (
+    fgsFolding
+  );
+
+  TFileGroupStyles = set of TFileGroupStyle;
+
   {
     Tendency
     Run, Compile, Collect file groups and have special properties
@@ -218,9 +241,9 @@ type
     destructor Destroy; override;
     procedure Run(RunActions: TmneRunActions);
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); virtual;
-    function FindExtension(vExtension: string): TFileGroup;
-    function CreateEditorFile(vGroup: string): TEditorFile; virtual;
-    function CreateEditorFile(vGroup: TFileGroup): TEditorFile; virtual;
+    function FindExtension(vExtension: string; vKind: TFileGroupKinds = []): TFileGroup;
+    function CreateEditorFile(vGroup: string): TEditorFile;
+    function CreateEditorFile(vGroup: TFileGroup): TEditorFile;
     function CreateEditorProject: TEditorProject;
     function CreateOptions: TEditorProjectOptions; virtual;
     function GetDefaultGroup: TFileGroup; virtual;
@@ -386,9 +409,11 @@ type
     FGroup: TFileGroup;
     FRelated: string;
     FMode: TEditorFileMode;
+    FTendency: TEditorTendency;
     function GetCapability: TEditCapability;
     function GetIsText: Boolean;
     function GetNakeName: string;
+    function GetExtension: string;
     function GetPath: string;
     procedure SetGroup(const Value: TFileGroup);
     procedure SetIsEdited(const Value: Boolean);
@@ -455,7 +480,9 @@ type
     property IsText: Boolean read GetIsText;
     property Name: string read FName write FName;
     property NakeName: string read GetNakeName;
+    property Extension: string read GetExtension;
     property Path: string read GetPath;
+    property Tendency: TEditorTendency read FTendency write FTendency;
     property Related: string read FRelated write FRelated;
     property IsEdited: Boolean read FIsEdited write SetIsEdited; //TODO rename to IsChanged
     property IsNew: Boolean read FIsNew write SetIsNew default False;
@@ -592,6 +619,8 @@ type
   private
     FAutoOpenProject: Boolean;
     FIgnoreNames: string;
+    FLastFolder: string;
+    FLastProject: string;
     FShowFolder: Boolean;
     FShowFolderFiles: TShowFolderFiles;
     FSortFolderFiles: TSortFolderFiles;
@@ -628,7 +657,6 @@ type
     procedure Show;
 
     property BoundRect: TRect read FBoundRect write FBoundRect; //not saved yet
-
     property RecentFiles: TStringList read FRecentFiles write SetRecentFiles;
     property RecentProjects: TStringList read FRecentProjects write SetRecentProjects;
     property Projects: TStringList read FProjects write SetProjects;
@@ -639,6 +667,8 @@ type
     property SearchFolderHistory: TStringList read FSearchFolderHistory;
   published
     property AutoOpenProject: Boolean read FAutoOpenProject write FAutoOpenProject;
+    property LastProject: string read FLastProject write FLastProject;
+    property LastFolder: string read FLastFolder write FLastFolder;
     property ExtraExtensions: TStringList read FExtraExtensions write FExtraExtensions;
     property IgnoreNames: string read FIgnoreNames write FIgnoreNames;
     property CollectAutoComplete: Boolean read FCollectAutoComplete write FCollectAutoComplete default False;
@@ -737,29 +767,6 @@ type
     procedure DoExecuteCompletion(Sender: TObject); override;
   end;
 
-  { TFileCategories }
-
-  TFileCategories = class(specialize GNamedItems<TFileCategory>);
-
-  TFileGroupKind = (
-    fgkExecutable,//You can guess what is it :P
-    fgkText, //Is it an Text Editor like SQL or PHP
-    fgkEditor, // Can be editable
-    fgkMain,//this can be the main file for project
-    fgkMember,//a member of project, inc are member, c, h, cpp members, pas,pp, p , inc also members, ini,txt not member of any project
-    fgkBrowsable,//When open file show it in the extension list
-    fgkAssociated, //Editor can be the editor of this files, like .php, .inc, but .txt is not
-    fgkVirtual //Not a real file, like output console
-  );
-
-  TFileGroupKinds = set of TFileGroupKind;
-
-  TFileGroupStyle = (
-    fgsFolding
-  );
-
-  TFileGroupStyles = set of TFileGroupStyle;
-
   { TFileGroup }
 
   TFileGroup = class(TEditorElement)
@@ -774,7 +781,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
-    function CreateEditorFile(vFiles: TEditorFiles): TEditorFile; virtual;
+    function CreateEditorFile(vFiles: TEditorFiles): TEditorFile;
     procedure EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds = []);
     procedure EnumExtensions(vExtensions: TEditorElements);
     property Category: TFileCategory read FCategory write SetCategory;
@@ -796,7 +803,7 @@ type
     function Find(vName, vCategory: string): TFileGroup;
     procedure EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds = []);
     procedure EnumExtensions(vExtensions: TEditorElements);
-    function FindExtension(vExtension: string): TFileGroup;
+    function FindExtension(vExtension: string; vKind: TFileGroupKinds = []): TFileGroup;
     //FullFilter return title of that filter for open/save dialog boxes
     function CreateFilter(FullFilter:Boolean = True; FirstExtension: string = ''; vGroup: TFileGroup = nil; OnlyThisGroup: Boolean = true): string;
     procedure Add(vGroup: TFileGroup);
@@ -812,6 +819,7 @@ type
     function GetItem(Index: integer): TEditorTendency;
   public
     function Find(vName: string): TEditorTendency;
+    function FindByExtension(vExt: string; vKind: TFileGroupKinds = []): TEditorTendency; deprecated;
     procedure Add(vEditorTendency: TEditorTendencyClass);
     procedure Add(vEditorTendency: TEditorTendency);
     property Items[Index: integer]: TEditorTendency read GetItem; default;
@@ -976,13 +984,13 @@ type
     //Extenstion Cache
     //FExtenstionCache: TExtenstionCache; //TODO
     FEnvironment: TStringList;
-    function GetTendency: TEditorTendency;
     function GetSCM: TEditorSCM;
     function GetUpdating: Boolean;
     procedure SetBrowseFolder(const Value: string);
     function GetWorkSpace: string;
     procedure SetDefaultTendency(AValue: TEditorTendency);
     procedure SetDefaultSCM(AValue: TEditorSCM);
+    function GetTendency: TEditorTendency;
   protected
     FInUpdateState: Integer;
     FNotifyObject: INotifyEngine; //TODO should be list
@@ -1029,6 +1037,7 @@ type
     property Groups: TFileGroups read FGroups;
     property Tendencies: TTendencies read FTendencies;
     property SourceManagements: TSourceManagements read FSourceManagements;
+    function FindExtension(vExtension: string): TFileGroup;
     //property Forms: TEditorFormList read FForms;
     //
     property Files: TEditorFiles read FFiles;
@@ -1041,9 +1050,9 @@ type
     property BrowseFolder: string read FBrowseFolder write SetBrowseFolder;
     procedure SetDefaultTendency(vName: string);
     procedure SetDefaultSCM(vName: string);
+    property Tendency: TEditorTendency read GetTendency;
     property DefaultTendency: TEditorTendency read FDefaultTendency write SetDefaultTendency;
     property DefaultSCM: TEditorSCM read FDefaultSCM write SetDefaultSCM;
-    property Tendency: TEditorTendency read GetTendency;
     property SCM: TEditorSCM read GetSCM;
     function GetIsChanged: Boolean;
     procedure SetNotifyEngine(ANotifyObject: INotifyEngine);
@@ -1093,6 +1102,9 @@ function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCal
 procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean);
 
 function GetWordAtRowColEx(SynEdit: TCustomSynEdit; XY: TPoint; BreakChars: TSynIdentChars; Select: boolean): string;
+
+const
+  cFallbackGroup = 'txt';
 
 function Engine: TEditorEngine;
 
@@ -2032,13 +2044,11 @@ procedure TEditorTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEdi
 begin
 end;
 
-function TEditorTendency.FindExtension(vExtension: string): TFileGroup;
+function TEditorTendency.FindExtension(vExtension: string; vKind: TFileGroupKinds): TFileGroup;
 begin
   if LeftStr(vExtension, 1) = '.' then
     vExtension := Copy(vExtension, 2, MaxInt);
-  Result := Groups.FindExtension(vExtension);
-  if Result = nil then
-    Result := Engine.Groups.FindExtension(vExtension)
+  Result := Groups.FindExtension(vExtension, vKind);
 end;
 
 function TEditorTendency.CreateEditorFile(vGroup: string): TEditorFile;
@@ -2048,6 +2058,8 @@ begin
   G := Groups.Find(vGroup);
   if G = nil then
     G := Engine.Groups.Find(vGroup);
+  if G = nil then
+    G := Engine.Groups.Find(cFallbackGroup); //Fallback group
   Result := CreateEditorFile(G);
 end;
 
@@ -2056,9 +2068,8 @@ begin
   if vGroup <> nil then
     Result := vGroup.CreateEditorFile(Engine.Files)
   else
-    Result := TTextEditorFile.Create(Engine.Files);
-  Result.Group := vGroup;
-  Result.Assign(Engine.Options.Profile);
+    raise EEditorException.Create('Cannot create file editor without group');
+    //Result := TTextEditorFile.Create(Engine.Files);
 end;
 
 function TEditorTendency.CreateEditorProject: TEditorProject;
@@ -2090,6 +2101,21 @@ end;
 function TTendencies.Find(vName: string): TEditorTendency;
 begin
   Result := inherited Find(vName) as TEditorTendency;
+end;
+
+function TTendencies.FindByExtension(vExt: string; vKind: TFileGroupKinds): TEditorTendency;
+var
+  i: Integer;
+begin
+  Result := nil;
+  for i := 0 to Count - 1 do
+  begin
+    if Items[i].FindExtension(vExt, vKind) <> nil then
+    begin
+      Result := Items[i];
+      break;
+    end;
+  end;
 end;
 
 procedure TTendencies.Add(vEditorTendency: TEditorTendencyClass);
@@ -2286,7 +2312,7 @@ end;
 
 procedure TEditorSession.Prepare;
 begin
-  Debug := Engine.Tendency.CreateDebugger;
+  Debug := Project.Tendency.CreateDebugger;
   if (Debug <> nil) and Engine.Options.AutoStartDebugServer then
     Debug.Active := True;
 end;
@@ -2321,7 +2347,7 @@ begin
   FFiles := TEditorFiles.Create(TEditorFile);
   FSession := TEditorSession.Create;
   Extenstion := 'mne-project';
-  Tendencies.Add(FInternalTendency);
+  //Tendencies.Add(FInternalTendency); //removed problem when finding tendency depend on extension
 end;
 
 destructor TEditorEngine.Destroy;
@@ -2585,6 +2611,20 @@ begin
     Result := Application.Location;
 end;
 
+function TEditorEngine.FindExtension(vExtension: string): TFileGroup;
+begin
+  if LeftStr(vExtension, 1) = '.' then
+    vExtension := Copy(vExtension, 2, MaxInt);
+
+  Result := nil;
+
+  if Session.IsOpened then
+    Result := Session.Project.Tendency.Groups.FindExtension(vExtension);
+
+  if Result = nil then
+    Result := Groups.FindExtension(vExtension)
+end;
+
 function TEditorEngine.GetSCM: TEditorSCM;
 begin
   if (Session <> nil) and (Session.Project <> nil) and (Session.Project.SCM <> nil) then
@@ -2619,7 +2659,7 @@ begin
   Result := FindFile(lFileName);
   if Result = nil then
   begin
-    Result := Engine.Tendency.CreateEditorFile(Engine.Tendency.FindExtension(ExtractFileExt(lFileName)));
+    Result := Engine.Tendency.CreateEditorFile(Engine.FindExtension(ExtractFileExt(lFileName))); //TODO backhere
     Result.Load(lFileName);
   end;
   if AppendToRecent then
@@ -2979,18 +3019,23 @@ procedure TEditorFiles.SetCurrentIndex(Index: integer; vRefresh: Boolean);
 var
   aCurrent: TEditorFile;
 begin
-  if Count <> 0 then
-  begin
-    if Index >= Count then
-      Index := Count - 1;
-    aCurrent := Items[Index];
-    if aCurrent <> nil then
+  Engine.BeginUpdate;
+  try
+    if Count <> 0 then
     begin
-      Current := aCurrent;
+      if Index >= Count then
+        Index := Count - 1;
+      aCurrent := Items[Index];
+      if aCurrent <> nil then
+      begin
+        Current := aCurrent;
+      end;
     end;
+    if vRefresh then
+      Engine.UpdateState([ecsState, ecsRefresh]);
+  finally
+    Engine.EndUpdate;
   end;
-  if vRefresh then
-    Engine.UpdateState([ecsState, ecsRefresh]);
 end;
 
 procedure TEditorSession.SetProject(const Value: TEditorProject);
@@ -3776,6 +3821,11 @@ begin
   Result := ExtractFileName(Name);
 end;
 
+function TEditorFile.GetExtension: string;
+begin
+  Result := ExtractFileExt(Name);
+end;
+
 function TEditorFile.GetPath: string;
 begin
   Result := ExtractFilePath(Name);
@@ -4050,7 +4100,7 @@ begin
   inherited Add(vGroup);
 end;
 
-function TFileGroups.FindExtension(vExtension: string): TFileGroup;
+function TFileGroups.FindExtension(vExtension: string; vKind: TFileGroupKinds): TFileGroup;
 var
   i, j: integer;
   AExtensions: TStringList;
@@ -4064,16 +4114,21 @@ begin
     try
       for i := 0 to Count - 1 do
       begin
-        AExtensions.Clear;
-        Items[i].EnumExtensions(AExtensions);
-        for j := 0 to AExtensions.Count - 1 do
+        if (vKind = []) or (vKind <= Items[i].Kind) then
         begin
-          if SameText(AExtensions[j], vExtension) then
+          AExtensions.Clear;
+          Items[i].EnumExtensions(AExtensions);
+          for j := 0 to AExtensions.Count - 1 do
           begin
-            Result := Items[i];
-            break;
+            if SameText(AExtensions[j], vExtension) then
+            begin
+              Result := Items[i];
+              break;
+            end;
           end;
         end;
+        if Result <> nil then
+          break;
       end;
     finally
       AExtensions.Free;
@@ -4426,6 +4481,8 @@ end;
 function TFileGroup.CreateEditorFile(vFiles: TEditorFiles): TEditorFile;
 begin
   Result := FFileClass.Create(vFiles);
+  Result.Group := Self;
+  Result.Assign(Engine.Options.Profile);
 end;
 
 { TFileGroups }

@@ -84,7 +84,7 @@ type
   protected
     function CreateBreakPoints: TEditorBreakPoints; override;
     function CreateWatches: TEditorWatches; override;
-    procedure DoShowFile(const Key, FileName: string; Line: integer; vCallStack: TCallStackItems);
+    procedure DoShowFile(const Key, FileName: string; Line: integer; vCallStack: TCallStackItems); deprecated;
 
     procedure Start;
     procedure Stop;

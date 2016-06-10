@@ -23,7 +23,7 @@ object MainForm: TMainForm
   OnWindowStateChange = FormWindowStateChange
   Position = poDefaultPosOnly
   ShowHint = True
-  LCLVersion = '1.7'
+  LCLVersion = '1.6.0.4'
   object TopCoolBar: TToolBar
     Left = 0
     Height = 29

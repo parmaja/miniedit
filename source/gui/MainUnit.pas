@@ -512,6 +512,7 @@ type
     procedure ProjectLoaded;
     procedure UpdateFolder;
     procedure ProjectChanged;
+    procedure UpdateMenu;
     procedure SetFolder(const Value: string);
     procedure ReopenClick(Sender: TObject);
     procedure ReopenProjectClick(Sender: TObject);
@@ -759,10 +760,17 @@ end;
 
 procedure TMainForm.FormShow(Sender: TObject);
 begin
-  if (ParamCount =0) and Engine.Options.AutoOpenProject then
+  if (ParamCount = 0) then
   begin
-    if Engine.Options.RecentProjects.Count > 0 then
-      Engine.Session.Load(Engine.Options.RecentProjects[0]);
+    if Engine.Options.AutoOpenProject then
+    begin
+      if FileExistsUTF8(Engine.Options.LastProject) then
+        Engine.Session.Load(Engine.Options.LastProject)
+      else
+        Folder := Engine.Options.LastFolder;
+    end
+    else
+        Folder := Engine.Options.LastFolder;
   end;
 end;
 
@@ -917,7 +925,6 @@ begin
   Application.Title := Caption;
   EnumRecentFile;
   EnumRecentProjects;
-  ProjectChanged;
 end;
 
 procedure TMainForm.EngineRefresh;
@@ -946,6 +953,7 @@ begin
     SaveAllAct.Enabled := Engine.GetIsChanged;
   end;
   //  DebugPnl.Visible := DebugPnl.Caption <> '';
+  UpdateMenu;
   UpdateFileHeaderPanel;
 end;
 
@@ -1202,7 +1210,11 @@ begin
   Engine.Options.ShowMessages := MessagesAct.Checked;
   Engine.Options.MessagesHeight := MessagesTabs.Height;
   Engine.Options.FoldersWidth := FoldersPnl.Width;
-
+  if Engine.Session.IsOpened then
+    Engine.Options.LastProject := Engine.Session.Project.FileName
+  else
+      Engine.Options.LastProject := '';
+  Engine.Options.LastFolder := Engine.BrowseFolder;
   Engine.Session.Close;
   Engine.RemoveNotifyEngine(Self);
 
@@ -1579,9 +1591,24 @@ begin
   TypePnl.Caption := Engine.Tendency.Name;
   BrowseTabs.Items[1].Visible := False;//capBrowser in Engine.Tendency.Capabilities;
 
-  with Engine.Tendency do
+  UpdateMenu;
+end;
+
+procedure TMainForm.UpdateMenu;
+var
+  aTendency: TEditorTendency;
+begin
+  aTendency := nil;
+
+  if Engine.Files.Current <> nil then
+    aTendency := Engine.Files.Current.Tendency;
+
+  if aTendency = nil then
+    aTendency := Engine.Tendency;
+
+  with aTendency do
   begin
-    ExecuteMnu.Visible := capRun in Engine.Tendency.Capabilities;
+    //ExecuteMnu.Visible := capRun in Engine.Tendency.Capabilities;
 
     DBGRunAct.Enabled := capRun in Capabilities;
     DBGCompileAct.Visible := capCompile in Capabilities;
@@ -1605,7 +1632,6 @@ begin
     DBGStepOutAct.Enabled := capTrace in Capabilities;
     DBGRunToCursorAct.Enabled := capTrace in Capabilities;
   end;
-
 end;
 
 procedure TMainForm.SaveAsProjectActExecute(Sender: TObject);
