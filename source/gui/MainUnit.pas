@@ -867,7 +867,7 @@ end;
 procedure TMainForm.NewAsActExecute(Sender: TObject);
 var
   G: TFileGroups;
-  E: string;
+  E: Integer;
 begin
   try
     if Engine.Tendency is TDefaultTendency then
@@ -875,11 +875,10 @@ begin
     else
       G := Engine.Tendency.Groups;
     if ShowSelectList('Select file type', G, [slfUseNameTitle], E) then
-      Engine.Files.New(E);
+      Engine.Files.New(G[E]);
   finally
   end;
 end;
-
 
 procedure TMainForm.OpenActExecute(Sender: TObject);
 begin
@@ -2448,14 +2447,20 @@ end;
 
 procedure TMainForm.RunFile;
 begin
-  SaveAllAct.Execute;
-  Engine.Tendency.Run([rnaCompile, rnaExecute, rnaDebug]);
+  if Engine.Files.Current <> nil then
+  begin
+    SaveAllAct.Execute;
+    Engine.Files.Current.Tendency.Run([rnaCompile, rnaExecute, rnaDebug]);
+  end;
 end;
 
 procedure TMainForm.CompileFile;
 begin
-  SaveAllAct.Execute;
-  Engine.Tendency.Run([rnaCompile]);
+  if Engine.Files.Current <> nil then
+  begin
+    SaveAllAct.Execute;
+    Engine.Files.Current.Tendency.Run([rnaCompile]);
+  end;
 end;
 
 procedure TMainForm.DBGBreakpointsActExecute(Sender: TObject);

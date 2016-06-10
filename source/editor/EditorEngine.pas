@@ -15,8 +15,8 @@ unit EditorEngine;
   Categories: list
     Category: object have have highlighter, autocomplete ...
       Groups: list
-        Group: object Have externsions
-          Extensions
+        Group: object Have multiple extension externsions that all same type, Group.Name is not an extension
+          Extensions (pas, pp, inc)
 
 }
 interface
@@ -242,7 +242,6 @@ type
     procedure Run(RunActions: TmneRunActions);
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); virtual;
     function FindExtension(vExtension: string; vKind: TFileGroupKinds = []): TFileGroup;
-    function CreateEditorFile(vGroup: string): TEditorFile;
     function CreateEditorFile(vGroup: TFileGroup): TEditorFile;
     function CreateEditorProject: TEditorProject;
     function CreateOptions: TEditorProjectOptions; virtual;
@@ -568,8 +567,7 @@ type
     procedure SetCurrent(const Value: TEditorFile);
     function InternalOpenFile(FileName: string; AppendToRecent: Boolean): TEditorFile;
   protected
-    function FindTendencyByExt(vGroupName: string): TEditorTendency;
-    function CreateEditorFile(vGroup: string): TEditorFile;
+    function CreateEditorFile(vExtension: string): TEditorFile;
 
     function SetActiveFile(FileName: string): TEditorFile;
   public
@@ -581,8 +579,7 @@ type
     function ShowFile(const FileName: string; Line: integer): TEditorFile; overload;
     function OpenFile(vFileName: string): TEditorFile;
     procedure SetCurrentIndex(Index: integer; vRefresh: Boolean);
-    function New(vGroupName: string = ''): TEditorFile; overload;
-    function New(Category, Name, Related: string; ReadOnly, Executable: Boolean): TEditorFile; overload;
+    function New(vGroup: TFileGroup = nil): TEditorFile; overload;
     function New(Name: string; Control: TWinControl): TEditorFile; overload;
     procedure Open;
     procedure Save;
@@ -822,7 +819,7 @@ type
     function GetItem(Index: integer): TEditorTendency;
   public
     function Find(vName: string): TEditorTendency;
-    function FindByExtension(vExt: string; vKind: TFileGroupKinds = []): TEditorTendency; deprecated;
+    function FindByExtension(out vGroup:TFileGroup; vExt: string; vKind: TFileGroupKinds = []): TEditorTendency; deprecated;
     procedure Add(vEditorTendency: TEditorTendencyClass);
     procedure Add(vEditorTendency: TEditorTendency);
     property Items[Index: integer]: TEditorTendency read GetItem; default;
@@ -1988,6 +1985,7 @@ procedure TEditorTendency.Run(RunActions: TmneRunActions);
 var
   p: TmneRunInfo;
   s: string;
+  aGroup: TFileGroup;
 begin
   s := Name;
   p.Actions := RunActions;
@@ -2026,6 +2024,7 @@ begin
         p.Mode := runConsole;
         p.Pause := True;
       end;
+      aGroup := Engine.Files.Current.Group;
       if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
         p.MainFile := Engine.Files.Current.Name;
 
@@ -2052,18 +2051,6 @@ begin
   if LeftStr(vExtension, 1) = '.' then
     vExtension := Copy(vExtension, 2, MaxInt);
   Result := Groups.FindExtension(vExtension, vKind);
-end;
-
-function TEditorTendency.CreateEditorFile(vGroup: string): TEditorFile;
-var
-  G: TFileGroup;
-begin
-  G := Groups.Find(vGroup);
-  if G = nil then
-    G := Engine.Groups.Find(vGroup);
-  if G = nil then
-    G := Engine.Groups.Find(cFallbackGroup); //Fallback group
-  Result := CreateEditorFile(G);
 end;
 
 function TEditorTendency.CreateEditorFile(vGroup: TFileGroup): TEditorFile;
@@ -2106,16 +2093,19 @@ begin
   Result := inherited Find(vName) as TEditorTendency;
 end;
 
-function TTendencies.FindByExtension(vExt: string; vKind: TFileGroupKinds): TEditorTendency;
+function TTendencies.FindByExtension(out vGroup: TFileGroup; vExt: string; vKind: TFileGroupKinds): TEditorTendency;
 var
   i: Integer;
+  aGroup: TFileGroup;
 begin
   Result := nil;
   for i := 0 to Count - 1 do
   begin
-    if Items[i].FindExtension(vExt, vKind) <> nil then
+    aGroup := Items[i].FindExtension(vExt, vKind);
+    if aGroup <> nil then
     begin
       Result := Items[i];
+      vGroup := aGroup;
       break;
     end;
   end;
@@ -2673,23 +2663,16 @@ begin
     Engine.ProcessRecentFile(lFileName);
 end;
 
-function TEditorFiles.FindTendencyByExt(vGroupName: string): TEditorTendency;
-begin
-  if Engine.Session.IsOpened then
-    Result := Engine.Tendency
-  else
-    Result := Engine.Tendencies.FindByExtension(vGroupName);
-end;
-
-function TEditorFiles.CreateEditorFile(vGroup: string): TEditorFile;
+function TEditorFiles.CreateEditorFile(vExtension: string): TEditorFile;
 var
   aTendency: TEditorTendency;
+  aGroup: TFileGroup;
 begin
   if Engine.Session.IsOpened then
     aTendency := Engine.Tendency
   else
-    aTendency := Engine.Tendencies.FindByExtension(vGroup);
-  Result := aTendency.CreateEditorFile(vGroup);
+    aTendency := Engine.Tendencies.FindByExtension(aGroup, vExtension, [fgkExecutable]);
+  Result := aTendency.CreateEditorFile(aGroup);
 end;
 
 procedure TEditorOptions.Load(vWorkspace: string);
@@ -2736,13 +2719,13 @@ begin
   end;
 end;
 
-function TEditorFiles.New(vGroupName: string): TEditorFile;
+function TEditorFiles.New(vGroup: TFileGroup): TEditorFile;
 begin
   Engine.BeginUpdate;
   try
-    if (vGroupName = '') and (Engine.Tendency.GetDefaultGroup <> nil) then
-      vGroupName := Engine.Tendency.GetDefaultGroup.Name;
-    Result := CreateEditorFile(vGroupName);
+    if vGroup = nil then
+      vGroup := Engine.Tendency.Groups[0];
+    Result := CreateEditorFile(vGroup.Extensions[0]);
     Result.NewContent;
     Result.Edit;
     Current := Result;
@@ -2750,16 +2733,6 @@ begin
   finally
     Engine.EndUpdate;
   end;
-end;
-
-function TEditorFiles.New(Category, Name, Related: string; ReadOnly, Executable: Boolean): TEditorFile;
-begin
-  Result := Engine.Tendency.CreateEditorFile(Category);
-  Result.IsReadOnly := ReadOnly;
-  Result.Name := Name;
-  Result.Related := Related;
-  Current := Result;
-  Engine.UpdateState([ecsChanged, ecsState, ecsRefresh]);
 end;
 
 function TEditorFiles.New(Name: string; Control: TWinControl): TEditorFile;

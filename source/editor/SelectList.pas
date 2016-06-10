@@ -32,6 +32,7 @@ type
   end;
 
 function ShowSelectList(ACaption: string; vElements: TEditorElements; Style: TSelectListFormStyle; var vName: string): Boolean;
+function ShowSelectList(ACaption: string; vElements: TEditorElements; Style: TSelectListFormStyle; var vIndex: Integer): Boolean;
 
 implementation
 
@@ -52,6 +53,24 @@ begin
       Result := (ShowModal = mrOK) and (ItemsList.Selected <> nil);
       if Result then
         vName := Items[ItemsList.ItemIndex];
+      Free;
+    finally
+    end;
+  end;
+end;
+
+function ShowSelectList(ACaption: string; vElements: TEditorElements; Style: TSelectListFormStyle; var vIndex: Integer): Boolean;
+begin
+  with TSelectListForm.Create(Application) do
+  begin
+    try
+      Caption := ACaption;
+      FStyle := Style;
+      Elements := vElements;
+      ShowItems('');
+      Result := (ShowModal = mrOK) and (ItemsList.Selected <> nil);
+      if Result then
+        vIndex := ItemsList.ItemIndex;
       Free;
     finally
     end;
