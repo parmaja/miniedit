@@ -2,7 +2,7 @@ import std.stdio;
 
 void print_i(int i) {
 
-    if (i<9) {
+    if (i < 9) {
         write(i);
         print_i(i+1);
     }

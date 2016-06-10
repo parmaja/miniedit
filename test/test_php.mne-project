@@ -11,6 +11,10 @@
             <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
             <LineNo>2</LineNo>
           </Object>
+          <Object Type="TmneBreakpoint">
+            <FileName>M:\web\projects\wp_metallic\wp-content\themes\wp_metallic\header.php</FileName>
+            <LineNo>20</LineNo>
+          </Object>
         </Objects>
       </Breakpoints>
       <Watches Class="TmneWatches">
@@ -24,12 +28,14 @@
         </Objects>
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.php</CurrentFile>
+        <CurrentFile>M:\web\projects\wp_metallic\wp-content\themes\wp_metallic\css\screen.css</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
-            <CaretY>9</CaretY>
+            <FileName>M:\web\projects\wp_metallic\wp-content\themes\wp_metallic\css\screen.css</FileName>
+            <CaretX>33</CaretX>
+            <CaretY>23</CaretY>
+            <TopLine>4</TopLine>
           </Object>
         </Items>
       </Files>

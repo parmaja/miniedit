@@ -9,14 +9,7 @@
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\home\pascal\projects\miniEdit\test\print.d</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
-        <Items>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\print.d</FileName>
-            <CaretY>14</CaretY>
-          </Object>
-        </Items>
       </Files>
     </Desktop>
     <Options Class="TDProjectOptions">

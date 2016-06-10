@@ -4098,35 +4098,27 @@ end;
 function TFileGroups.FindExtension(vExtension: string; vKind: TFileGroupKinds): TFileGroup;
 var
   i, j: integer;
-  AExtensions: TStringList;
 begin
   Result := nil;
   if LeftStr(vExtension, 1) = '.' then
     vExtension := Copy(vExtension, 2, MaxInt);
   if vExtension <> '' then
   begin
-    AExtensions := TStringList.Create;
-    try
-      for i := 0 to Count - 1 do
+    for i := 0 to Count - 1 do
+    begin
+      if (vKind = []) or (vKind <= Items[i].Kind) then
       begin
-        if (vKind = []) or (vKind <= Items[i].Kind) then
+        for j := 0 to Items[i].Extensions.Count - 1 do
         begin
-          AExtensions.Clear;
-          Items[i].EnumExtensions(AExtensions);
-          for j := 0 to AExtensions.Count - 1 do
+          if SameText(Items[i].Extensions[j], vExtension) then
           begin
-            if SameText(AExtensions[j], vExtension) then
-            begin
-              Result := Items[i];
-              break;
-            end;
+            Result := Items[i];
+            break;
           end;
         end;
-        if Result <> nil then
-          break;
       end;
-    finally
-      AExtensions.Free;
+      if Result <> nil then
+        break;
     end;
   end;
 end;
