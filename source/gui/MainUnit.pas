@@ -2189,7 +2189,10 @@ end;
 
 procedure TMainForm.DBGExecuteActExecute(Sender: TObject);
 begin
-  Engine.Tendency.Run([rnaExecute]);
+  if Engine.Files.Current <> nil then
+    Engine.Files.Current.Tendency.Run([rnaExecute])
+  else
+    Engine.Tendency.Run([rnaExecute]);
 end;
 
 procedure TMainForm.DBGStepOutActExecute(Sender: TObject);

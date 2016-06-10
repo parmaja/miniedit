@@ -568,6 +568,9 @@ type
     procedure SetCurrent(const Value: TEditorFile);
     function InternalOpenFile(FileName: string; AppendToRecent: Boolean): TEditorFile;
   protected
+    function FindTendencyByExt(vGroupName: string): TEditorTendency;
+    function CreateEditorFile(vGroup: string): TEditorFile;
+
     function SetActiveFile(FileName: string): TEditorFile;
   public
     destructor Destroy; override;
@@ -781,7 +784,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
-    function CreateEditorFile(vFiles: TEditorFiles): TEditorFile;
+    function CreateEditorFile(vFiles: TEditorFiles; vTendency: TEditorTendency): TEditorFile;
     procedure EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds = []);
     procedure EnumExtensions(vExtensions: TEditorElements);
     property Category: TFileCategory read FCategory write SetCategory;
@@ -1037,7 +1040,7 @@ type
     property Groups: TFileGroups read FGroups;
     property Tendencies: TTendencies read FTendencies;
     property SourceManagements: TSourceManagements read FSourceManagements;
-    function FindExtension(vExtension: string): TFileGroup;
+    function FindExtension(vExtension: string): TFileGroup; deprecated;
     //property Forms: TEditorFormList read FForms;
     //
     property Files: TEditorFiles read FFiles;
@@ -2066,7 +2069,7 @@ end;
 function TEditorTendency.CreateEditorFile(vGroup: TFileGroup): TEditorFile;
 begin
   if vGroup <> nil then
-    Result := vGroup.CreateEditorFile(Engine.Files)
+    Result := vGroup.CreateEditorFile(Engine.Files, Self)
   else
     raise EEditorException.Create('Cannot create file editor without group');
     //Result := TTextEditorFile.Create(Engine.Files);
@@ -2647,7 +2650,7 @@ end;
 
 function TEditorFiles.InternalOpenFile(FileName: string; AppendToRecent: Boolean): TEditorFile;
 var
-  lFileName: string;
+  aExt, lFileName: string;
 begin
   {$ifdef windows}
   lFileName := ExpandFileName(FileName);
@@ -2659,11 +2662,34 @@ begin
   Result := FindFile(lFileName);
   if Result = nil then
   begin
-    Result := Engine.Tendency.CreateEditorFile(Engine.FindExtension(ExtractFileExt(lFileName))); //TODO backhere
+    aExt := ExtractFileExt(lFileName);
+    if LeftStr(aExt, 1) = '.' then
+      aExt := Copy(aExt, 2, MaxInt);
+
+    Result := CreateEditorFile(aExt);
     Result.Load(lFileName);
   end;
   if AppendToRecent then
     Engine.ProcessRecentFile(lFileName);
+end;
+
+function TEditorFiles.FindTendencyByExt(vGroupName: string): TEditorTendency;
+begin
+  if Engine.Session.IsOpened then
+    Result := Engine.Tendency
+  else
+    Result := Engine.Tendencies.FindByExtension(vGroupName);
+end;
+
+function TEditorFiles.CreateEditorFile(vGroup: string): TEditorFile;
+var
+  aTendency: TEditorTendency;
+begin
+  if Engine.Session.IsOpened then
+    aTendency := Engine.Tendency
+  else
+    aTendency := Engine.Tendencies.FindByExtension(vGroup);
+  Result := aTendency.CreateEditorFile(vGroup);
 end;
 
 procedure TEditorOptions.Load(vWorkspace: string);
@@ -2711,16 +2737,12 @@ begin
 end;
 
 function TEditorFiles.New(vGroupName: string): TEditorFile;
-var
-  aGroup: TFileGroup;
 begin
   Engine.BeginUpdate;
   try
-    if vGroupName = '' then
-      aGroup := Engine.Tendency.GetDefaultGroup
-    else
-      aGroup := Engine.Groups.Find(vGroupName);
-    Result := Engine.Tendency.CreateEditorFile(aGroup);
+    if (vGroupName = '') and (Engine.Tendency.GetDefaultGroup <> nil) then
+      vGroupName := Engine.Tendency.GetDefaultGroup.Name;
+    Result := CreateEditorFile(vGroupName);
     Result.NewContent;
     Result.Edit;
     Current := Result;
@@ -4478,10 +4500,11 @@ begin
   inherited;
 end;
 
-function TFileGroup.CreateEditorFile(vFiles: TEditorFiles): TEditorFile;
+function TFileGroup.CreateEditorFile(vFiles: TEditorFiles; vTendency: TEditorTendency): TEditorFile;
 begin
   Result := FFileClass.Create(vFiles);
   Result.Group := Self;
+  Result.Tendency := vTendency;
   Result.Assign(Engine.Options.Profile);
 end;
 
