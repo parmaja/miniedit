@@ -2067,16 +2067,27 @@ begin
         end;
       end;
       aGroup := Engine.Files.Current.Group;
+
       if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
         p.MainFile := Engine.Files.Current.Name;
 
+      if (p.Root = '') then
+        p.Root := ExtractFileDir(p.MainFile);
+
       if p.OutputFile = '' then
+      begin
         p.OutputFile := ExtractFileNameOnly(p.MainFile);
+        {$ifndef linux}
+        p.OutputFile := p.OutputFile + '.exe';
+        {$endif}
+      end;
+
+      p.RunFile := p.OutputFile;
+      if ExtractFilePath(p.RunFile) = '' then
+        p.RunFile := p.Root + p.RunFile;
 
       if (p.MainFile <> '') then
       begin
-        if (p.Root = '') then
-          p.Root := ExtractFileDir(p.MainFile);
         DoRun(p);
         Engine.UpdateState([ecsDebug]);
       end;

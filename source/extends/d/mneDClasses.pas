@@ -229,8 +229,8 @@ begin
     aRunItem.Info.Mode := Info.Mode;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Pause := Info.Pause;
-    aRunItem.Info.Title := ExtractFileNameOnly(Info.OutputFile);;
-    aRunItem.Info.Command := ChangeFileExt(Info.OutputFile, '.exe');
+    aRunItem.Info.Title := ExtractFileName(Info.OutputFile);;
+    aRunItem.Info.Command := Info.RunFile;
     if Options.RunParams <> '' then
       aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;
   end;

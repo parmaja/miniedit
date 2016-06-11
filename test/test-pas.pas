@@ -6,6 +6,6 @@ var
   s: string;
 begin
   write('Enter your name: ');
-  readln(s);
+  //readln(s);
   writeln('Your name is ' + s);
 end.

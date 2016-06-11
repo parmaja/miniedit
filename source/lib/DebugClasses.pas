@@ -29,7 +29,8 @@ type
     Link: string; //URL to show in browser
     Command: string;
     MainFile: string; //file to compile
-    OutputFile: string; //file to run
+    OutputFile: string; //file to generate
+    RunFile: string; //file to run
   end;
 
   TmneCommandInfo = record

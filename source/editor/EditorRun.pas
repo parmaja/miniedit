@@ -280,7 +280,7 @@ begin
   begin
     FProcess.Options :=  [poUsePipes, poStderrToOutPut];
     FProcess.ShowWindow := swoHIDE;
-    FProcess.PipeBufferSize := 80; //80 char in line
+    FProcess.PipeBufferSize := 40; //80 char in line
     ProcessObject := TmnProcessObject.Create(FProcess, FPool, FOnWrite);
     try
       Status := ProcessObject.Read;
