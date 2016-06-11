@@ -185,38 +185,19 @@ begin
     if aRunItem.Info.Command = '' then
       aRunItem.Info.Command := 'python.exe';
 
-    aRunItem.Info.Mode := runOutput;
+    aRunItem.Info.Mode := Info.Mode;
+    aRunItem.Info.Pause := Info.Pause;
     aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
-    aRunItem.Info.Params := Info.MainFile + #13;
-    if Info.OutputFile <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + '-of' + Info.OutputFile + #13;
-
     aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
-    //aRunItem.Info.Params := aRunItem.Info.Params + '-color=on' + #13; //not work :(
-
-    for i := 0 to Options.Paths.Count - 1 do
-    begin
-      aPath := Trim(Options.Paths[i]);
-      if aPath <>'' then
-      begin
-        if Options.ExpandPaths then
-          aPath := Engine.ExpandFile(aPath);
-        aRunItem.Info.Params := aRunItem.Info.Params + '-I' +aPath + #13;
-      end;
-    end;
-
-    //aRunItem.Info.Params := aRunItem.Info.Params + '-v'#13;
-
-    if Options.ConfigFile <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + '@' + Engine.EnvReplace(Options.ConfigFile) + #13;
+    aRunItem.Info.Params := Info.MainFile + #13;
   end
   else if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Message := 'Running ' + Info.OutputFile;
-    aRunItem.Info.Mode := Options.RunMode;
+    aRunItem.Info.Mode := Info.Mode;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Pause := Options.PauseConsole;
     aRunItem.Info.Title := ExtractFileNameOnly(Info.OutputFile);;

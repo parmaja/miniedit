@@ -11,7 +11,7 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, SynEdit,
-  EditorEngine, mneClasses, Dialogs, StdCtrls, ExtCtrls, ComCtrls, Menus;
+  EditorEngine, DebugClasses, mneClasses, Dialogs, StdCtrls, ExtCtrls, ComCtrls, Menus;
 
 type
 
@@ -19,6 +19,9 @@ type
 
   TTendencyForm = class(TForm)
     Label11: TLabel;
+    Label3: TLabel;
+    PauseChk: TCheckBox;
+    RunModeCbo: TComboBox;
     TabsSpecialEdit: TEdit;
     GroupBox1: TGroupBox;
     Label10: TLabel;
@@ -81,6 +84,9 @@ procedure TTendencyForm.Apply;
       FTendency.EditorOptions := FTendency.EditorOptions - [aOption];
   end;
 begin
+  FTendency.RunMode := TmneRunMode(RunModeCbo.ItemIndex);
+  FTendency.PauseConsole := PauseChk.Checked;
+
   FTendency.EditorOptions := [];
   FTendency.OverrideEditorOptions := OverrideOptionsChk.Checked;
   FTendency.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
@@ -111,6 +117,13 @@ end;
 
 procedure TTendencyForm.Retrieve;
 begin
+  RunModeCbo.Items.Add('Console');
+  RunModeCbo.Items.Add('Process');
+  RunModeCbo.Items.Add('Embedded');
+  RunModeCbo.Items.Add('Output');
+  RunModeCbo.Items.Add('Browser');
+  RunModeCbo.ItemIndex := ord(FTendency.RunMode);
+  PauseChk.Checked := FTendency.PauseConsole;
   //Add any new overrided options to cSynOverridedOptions in EditorProfiles unit
   OverrideOptionsChk.Checked := FTendency.OverrideEditorOptions;
   TabWidthEdit.Text := IntToStr(FTendency.TabWidth);

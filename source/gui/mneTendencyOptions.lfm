@@ -1,20 +1,20 @@
 object TendencyForm: TTendencyForm
   Left = 461
-  Height = 329
+  Height = 339
   Top = 184
   Width = 471
   BorderStyle = bsDialog
-  Caption = 'Project Options'
-  ClientHeight = 329
+  Caption = 'Type Options'
+  ClientHeight = 339
   ClientWidth = 471
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Position = poMainFormCenter
-  LCLVersion = '1.7'
+  LCLVersion = '1.6.0.4'
   object OkBtn: TButton
     Left = 392
     Height = 25
-    Top = 302
+    Top = 312
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&Ok'
@@ -25,7 +25,7 @@ object TendencyForm: TTendencyForm
   object CancelBtn: TButton
     Left = 316
     Height = 25
-    Top = 302
+    Top = 312
     Width = 75
     Anchors = [akRight, akBottom]
     Cancel = True
@@ -35,7 +35,7 @@ object TendencyForm: TTendencyForm
   end
   object PageControl: TPageControl
     Left = 4
-    Height = 294
+    Height = 304
     Top = 5
     Width = 463
     ActivePage = GeneralSheet
@@ -46,15 +46,15 @@ object TendencyForm: TTendencyForm
     Options = [nboKeyboardTabSwitch]
     object GeneralSheet: TTabSheet
       Caption = 'General'
-      ClientHeight = 268
+      ClientHeight = 278
       ClientWidth = 455
       object GroupBox1: TGroupBox
         Left = 11
         Height = 144
         Top = 10
-        Width = 316
+        Width = 323
         ClientHeight = 126
-        ClientWidth = 312
+        ClientWidth = 319
         TabOrder = 0
         object TabWidthEdit: TEdit
           Left = 86
@@ -112,6 +112,33 @@ object TendencyForm: TTendencyForm
         Width = 99
         Caption = 'Override Options'
         TabOrder = 1
+      end
+      object PauseChk: TCheckBox
+        Left = 259
+        Height = 19
+        Top = 167
+        Width = 92
+        Anchors = [akTop, akRight]
+        Caption = 'Pause after run'
+        TabOrder = 2
+      end
+      object RunModeCbo: TComboBox
+        Left = 79
+        Height = 21
+        Top = 165
+        Width = 165
+        Anchors = [akTop, akLeft, akRight]
+        ItemHeight = 13
+        Style = csDropDownList
+        TabOrder = 3
+      end
+      object Label3: TLabel
+        Left = 18
+        Height = 13
+        Top = 169
+        Width = 50
+        Caption = 'Run Mode'
+        ParentColor = False
       end
     end
   end

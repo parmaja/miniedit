@@ -227,6 +227,8 @@ type
     FGroups: TFileGroups;
     FCommand: string;
     FOverrideEditorOptions: Boolean;
+    FPauseConsole: Boolean;
+    FRunMode: TmneRunMode;
     FTabsSpecialFiles: string;
     FTabWidth: Integer;
   protected
@@ -251,6 +253,10 @@ type
     property Groups: TFileGroups read GetGroups;
   published
     property Command: string read FCommand write FCommand; //like php.exe or rdmd.exe
+    property RunMode: TmneRunMode read FRunMode write FRunMode;
+    //PauseConsole do not end until use press any key or enter
+    property PauseConsole: Boolean read FPauseConsole write FPauseConsole;
+
     //Override options
     property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False; //TODO move it to Tendency
     property TabWidth: Integer read FTabWidth write FTabWidth default 4;
@@ -298,7 +304,6 @@ type
 
   TEditorProjectOptions = class(TPersistent)
   private
-    FFRunParams: string;
     FMainFile: string;
     FPauseConsole: Boolean;
     FRootUrl: string;
@@ -310,12 +315,12 @@ type
     procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); virtual;
   published
     property RunMode: TmneRunMode read FRunMode write FRunMode;
+    //PauseConsole do not end until use press any key or enter
+    property PauseConsole: Boolean read FPauseConsole write FPauseConsole;
     property RootUrl: string read FRootUrl write FRootUrl;
     property MainFile: string read FMainFile write FMainFile;
     property OutputFile: string read FOutputFile write FOutputFile;
     property RunParams: string read FRunParams write FRunParams;
-    //PauseConsole do not end until use press any key or enter
-    property PauseConsole: Boolean read FPauseConsole write FPauseConsole;
   end;
 
   TCompilerProjectOptions = class(TEditorProjectOptions)
@@ -2015,14 +2020,22 @@ begin
       if (Engine.Session.IsOpened) then
       begin
         p.Mode := Engine.Session.Project.Options.RunMode;
+        p.Pause := Engine.Session.Project.Options.PauseConsole;
         p.MainFile := Engine.Session.Project.Options.MainFile;//ExpandToPath(Engine.Session.Project.Options.MainFile, p.Root);
         p.OutputFile := Engine.Session.Project.Options.OutputFile;//ExpandToPath(Engine.Session.Project.Options.MainFile, p.Root);
-        p.Pause := Engine.Session.Project.Options.PauseConsole;
       end
       else
       begin
-        p.Mode := runConsole;
-        p.Pause := True;
+        if (Engine.Files.Current <> nil) then
+        begin
+          p.Mode := Engine.Files.Current.Tendency.RunMode;
+          p.Pause := Engine.Files.Current.Tendency.PauseConsole;
+        end
+        else
+        begin
+          p.Mode := runConsole;
+          p.Pause := false;
+        end;
       end;
       aGroup := Engine.Files.Current.Group;
       if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then

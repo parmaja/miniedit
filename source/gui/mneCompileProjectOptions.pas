@@ -85,6 +85,7 @@ begin
   RunModeCbo.Items.Add('Browser');
 
   RunModeCbo.ItemIndex := ord(Options.RunMode);
+
   PauseChk.Checked := Options.PauseConsole;
   MainEdit.Text := Options.MainFile;
   OutputFileEdit.Text := Options.OutputFile;
