@@ -26,9 +26,9 @@ type
     destructor Destroy; override;
   end;
 
-  { TPNGFile }
+  { TImageFile }
 
-  TPNGFile = class(TEditorFile, IFileEditor)
+  TImageFile = class(TEditorFile, IFileEditor)
   private
     FContents: TImagePanel;
     function GetContents: TImagePanel;
@@ -42,9 +42,9 @@ type
     destructor Destroy; override;
   end;
 
-  { TPNGFileCategory }
+  { TImageFileCategory }
 
-  TPNGFileCategory = class(TFileCategory)
+  TImageFileCategory = class(TFileCategory)
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
@@ -72,9 +72,9 @@ begin
   inherited Destroy;
 end;
 
-{ TPNGFile }
+{ TImageFile }
 
-function TPNGFile.GetContents: TImagePanel;
+function TImageFile.GetContents: TImagePanel;
 begin
   if FContents = nil then
   begin
@@ -84,44 +84,44 @@ begin
   Result := FContents;
 end;
 
-function TPNGFile.GetControl: TWinControl;
+function TImageFile.GetControl: TWinControl;
 begin
   Result := Contents;
 end;
 
-function TPNGFile.GetIsReadonly: Boolean;
+function TImageFile.GetIsReadonly: Boolean;
 begin
   Result := True;
 end;
 
-procedure TPNGFile.DoLoad(FileName: string);
+procedure TImageFile.DoLoad(FileName: string);
 begin
   Contents.Image.Picture.LoadFromFile(FileName);
 end;
 
-procedure TPNGFile.DoSave(FileName: string);
+procedure TImageFile.DoSave(FileName: string);
 begin
   Contents.Image.Picture.SaveToFile(FileName);
 end;
 
-destructor TPNGFile.Destroy;
+destructor TImageFile.Destroy;
 begin
   FreeAndNil(FContents);
   inherited Destroy;
 end;
 
-{ TPNGFileCategory }
+{ TImageFileCategory }
 
-function TPNGFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TImageFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
   Result := nil;
 end;
 
-procedure TPNGFileCategory.InitMappers;
+procedure TImageFileCategory.InitMappers;
 begin
 end;
 
-function TPNGFileCategory.GetIsText: Boolean;
+function TImageFileCategory.GetIsText: Boolean;
 begin
   Result := False;
 end;
@@ -129,8 +129,10 @@ end;
 initialization
   with Engine do
   begin
-    Categories.Add(TPNGFileCategory.Create('png'));
-    Groups.Add(TPNGFile, 'png', 'PNG files', 'png', ['png'], [fgkBrowsable]);
+    Categories.Add(TImageFileCategory.Create('Image'));
+    Groups.Add(TImageFile, 'png', 'PNG files', 'Image', ['png'], [fgkBrowsable]);
+    Groups.Add(TImageFile, 'jpg', 'Jpg files', 'Image', ['jpg'], [fgkBrowsable]);
+    Groups.Add(TImageFile, 'bmp', 'BMP files', 'Image', ['bmp'], [fgkBrowsable]);
   end;
 end.
 

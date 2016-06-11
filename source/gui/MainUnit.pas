@@ -1844,7 +1844,7 @@ begin
             aItem := FileList.Items.Add;
             aItem.Caption := aFiles[r];
             aItem.Data := Pointer(1);
-            aItem.ImageIndex := GetFileImageIndex(aFiles[r]);
+            aItem.ImageIndex := EditorResource.GetFileImageIndex(aFiles[r]);
           end;
         end;
       finally

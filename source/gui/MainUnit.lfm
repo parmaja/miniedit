@@ -251,7 +251,7 @@ object MainForm: TMainForm
       ReadOnly = True
       RowSelect = True
       ShowColumnHeaders = False
-      SmallImages = EditorResource.SmallImages
+      SmallImages = EditorResource.FileImages
       TabOrder = 1
       ViewStyle = vsReport
       OnDblClick = FileListDblClick

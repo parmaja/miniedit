@@ -107,8 +107,6 @@ function RGBHexToColor(Value: string): TColor;
 const
   sSoftwareRegKey = 'Software\miniEdit\';
 
-function GetFileImageIndex(const FileName: string): integer;
-
 function GetHighlighterAttriAtRowColExtend(SynEdit: TCustomSynEdit; const XY: TPoint; out Token: string; out TokenType, Start: integer; out Attri: TSynHighlighterAttributes; out Range: Pointer): boolean;
 
 implementation
@@ -195,29 +193,6 @@ begin
           Highlighter.Next;
         end;
     end;
-  end;
-end;
-
-{ TmneEngine }
-
-function GetFileImageIndex(const FileName: string): integer;
-var
-  AExtensions: TStringList;
-  s: string;
-begin
-  s := ExtractFileExt(FileName);
-  if LeftStr(s, 1) = '.' then
-    s := Copy(s, 2, MaxInt);
-
-  AExtensions := TStringList.Create;
-  try
-    Engine.Tendency.Groups[0].EnumExtensions(AExtensions);//TODO bad bad
-    if AExtensions.IndexOf(s) >= 0 then
-      Result := 2
-    else
-      Result := 1;//any file
-  finally
-    AExtensions.Free;
   end;
 end;
 

@@ -72,6 +72,24 @@ type
   published
   end;
 
+
+  { TEditorExtension }
+
+  TEditorExtension = class(TObject)
+  public
+    Name: string;
+    ImageIndex: Integer;
+  end;
+
+  { TEditorExtensions }
+
+  TEditorExtensions = class(specialize GNamedItems<TEditorExtension>)
+  private
+  public
+    procedure Add(Name:string; ImageIndex: Integer = -1);
+  end;
+
+
   TEditorDesktopFile = class(TCollectionItem)
   private
     FFileName: string;
@@ -243,7 +261,6 @@ type
     destructor Destroy; override;
     procedure Run(RunActions: TmneRunActions);
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); virtual;
-    function FindExtension(vExtension: string; vKind: TFileGroupKinds = []): TFileGroup;
     function CreateEditorFile(vGroup: TFileGroup): TEditorFile;
     function CreateEditorProject: TEditorProject;
     function CreateOptions: TEditorProjectOptions; virtual;
@@ -777,7 +794,7 @@ type
   TFileGroup = class(TEditorElement)
   private
     FFileClass: TEditorFileClass;
-    FExtensions: TStringList;
+    FExtensions: TEditorExtensions;
     FKind: TFileGroupKinds;
     FCategory: TFileCategory;
     FStyle: TFileGroupStyles;
@@ -790,7 +807,7 @@ type
     procedure EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds = []);
     procedure EnumExtensions(vExtensions: TEditorElements);
     property Category: TFileCategory read FCategory write SetCategory;
-    property Extensions: TStringList read FExtensions;
+    property Extensions: TEditorExtensions read FExtensions;
     property Kind: TFileGroupKinds read FKind write FKind;
     property Style: TFileGroupStyles read FStyle write FStyle;
     property FileClass: TEditorFileClass read FFileClass;
@@ -1206,6 +1223,18 @@ begin
       S := S + #$D;
     Stream.WriteBuffer(Pointer(S)^, Length(S));
   end;
+end;
+
+{ TEditorExtensions }
+
+procedure TEditorExtensions.Add(Name: string; ImageIndex: Integer);
+var
+  aItem: TEditorExtension;
+begin
+  aItem := TEditorExtension.Create;
+  aItem.Name := Name;
+  aItem.ImageIndex := ImageIndex;
+  inherited Add(aItem);
 end;
 
 { GXMLItems }
@@ -2059,13 +2088,6 @@ procedure TEditorTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEdi
 begin
 end;
 
-function TEditorTendency.FindExtension(vExtension: string; vKind: TFileGroupKinds): TFileGroup;
-begin
-  if LeftStr(vExtension, 1) = '.' then
-    vExtension := Copy(vExtension, 2, MaxInt);
-  Result := Groups.FindExtension(vExtension, vKind);
-end;
-
 function TEditorTendency.CreateEditorFile(vGroup: TFileGroup): TEditorFile;
 begin
   if vGroup <> nil then
@@ -2114,7 +2136,7 @@ begin
   Result := nil;
   for i := 0 to Count - 1 do
   begin
-    aGroup := Items[i].FindExtension(vExt, vKind);
+    aGroup := Items[i].Groups.FindExtension(vExt, vKind);
     if aGroup <> nil then
     begin
       Result := Items[i];
@@ -2619,10 +2641,10 @@ end;
 
 function TEditorEngine.FindExtension(vExtension: string): TFileGroup;
 begin
+  Result := nil;
+
   if LeftStr(vExtension, 1) = '.' then
     vExtension := Copy(vExtension, 2, MaxInt);
-
-  Result := nil;
 
   if Session.IsOpened then
     Result := Session.Project.Tendency.Groups.FindExtension(vExtension);
@@ -2685,6 +2707,7 @@ begin
     aTendency := Engine.Tendency
   else
     aTendency := Engine.Tendencies.FindByExtension(aGroup, vExtension, [fgkExecutable]);
+  aGroup := Engine.FindExtension(vExtension);
   Result := aTendency.CreateEditorFile(aGroup);
 end;
 
@@ -2738,7 +2761,7 @@ begin
   try
     if vGroup = nil then
       vGroup := Engine.Tendency.Groups[0];
-    Result := CreateEditorFile(vGroup.Extensions[0]);
+    Result := CreateEditorFile(vGroup.Extensions[0].Name);
     Result.NewContent;
     Result.Edit;
     Current := Result;
@@ -2798,7 +2821,7 @@ begin
     aDialog.Filter := Engine.Groups.CreateFilter;
     aDialog.FilterIndex := 0;
     aDialog.InitialDir := Engine.BrowseFolder;
-    aDialog.DefaultExt := Engine.Tendency.GetDefaultGroup.Extensions[0];
+    aDialog.DefaultExt := Engine.Tendency.GetDefaultGroup.Extensions[0].Name;
     //aDialog.FileName := '*' + aDialog.DefaultExt;
     if aDialog.Execute then
     begin
@@ -2830,9 +2853,7 @@ begin
     Result := nil; //it is a project not a file.
   end
   else
-  begin
     Result := LoadFile(vFileName);
-  end;
 end;
 
 procedure TEditorSession.Open;
@@ -2906,11 +2927,17 @@ begin
 end;
 
 function TEditorSession.GetRoot: string;
+var
+  r: string;
 begin
   if IsOpened then
   begin
     if (Project.RootDir <> '') then
-      Result := Engine.EnvReplace(Project.RootDir, true)
+    begin
+      r := Project.RootDir;
+      r := ExpandToPath(r, ExtractFilePath(Project.FileName), '');
+      Result := Engine.EnvReplace(r, true);
+    end
     else
       Result := ExtractFilePath(Project.FileName);
   end
@@ -3329,11 +3356,14 @@ end;
 
 function TEditorFiles.LoadFile(vFileName: string; AppendToRecent: Boolean): TEditorFile;
 begin
-  Result := InternalOpenFile(vFileName, AppendToRecent);
-  Engine.UpdateState([ecsChanged]);
-  if Result <> nil then
-    Current := Result;
-  Engine.UpdateState([ecsState, ecsRefresh]);
+  try
+    Result := InternalOpenFile(vFileName, AppendToRecent);
+    Engine.UpdateState([ecsChanged]);
+    if Result <> nil then
+      Current := Result;
+  finally
+    Engine.UpdateState([ecsState, ecsRefresh]);
+  end;
 end;
 
 procedure TEditorFiles.Replace;
@@ -3635,9 +3665,9 @@ begin
     else
     begin
       if Group <> nil then
-        aDialog.DefaultExt := Group.Extensions[0]
+        aDialog.DefaultExt := Group.Extensions[0].Name
       else
-        aDialog.DefaultExt := Engine.Tendency.GetDefaultGroup.Extensions[0];
+        aDialog.DefaultExt := Engine.Tendency.GetDefaultGroup.Extensions[0].Name;
     end;
     aDialog.FileName := '*' + aDialog.DefaultExt;
 
@@ -4123,7 +4153,7 @@ begin
       begin
         for j := 0 to Items[i].Extensions.Count - 1 do
         begin
-          if SameText(Items[i].Extensions[j], vExtension) then
+          if SameText(Items[i].Extensions[j].Name, vExtension) then
           begin
             Result := Items[i];
             break;
@@ -4409,7 +4439,7 @@ end;
 constructor TFileGroup.Create;
 begin
   inherited;
-  FExtensions := TStringList.Create;
+  FExtensions := TEditorExtensions.Create;
   FKind := [fgkBrowsable];
 end;
 
@@ -4427,13 +4457,21 @@ procedure TFileGroup.EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKi
     for i := 0 to E.Count -1 do
       AddIt(E[i]);
   end;
+
+  procedure AddExtensions;
+  var
+    i: Integer;
+  begin
+    for i := 0 to Extensions.Count -1 do
+      AddIt(Extensions[i].Name);
+  end;
 var
   s: string;
   lStrings:TStringList;
 begin
   vExtensions.BeginUpdate;
   try
-    AddStrings(Extensions);
+    AddExtensions;
     s := Engine.Options.ExtraExtensions.Values[Name];
     if s <> '' then
     begin

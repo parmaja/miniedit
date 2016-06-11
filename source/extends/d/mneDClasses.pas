@@ -189,7 +189,13 @@ begin
     aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
-    aRunItem.Info.Params := Info.MainFile + #13;
+    aPath := Info.MainFile;
+    if Options.ExpandPaths then
+      aPath := Engine.ExpandFile(aPath);
+    if not FileExists(aPath) then
+      raise EEditorException.Create('File not exists: ' + aParams);
+
+    aRunItem.Info.Params := aPath + #13;
     if Info.OutputFile <> '' then
       aRunItem.Info.Params := aRunItem.Info.Params + '-of' + Info.OutputFile + #13;
 
@@ -203,6 +209,9 @@ begin
       begin
         if Options.ExpandPaths then
           aPath := Engine.ExpandFile(aPath);
+        if not DirectoryExists(aPath) then
+          raise EEditorException.Create('Path not exists: ' + aParams);
+
         aRunItem.Info.Params := aRunItem.Info.Params + '-I' +aPath + #13;
       end;
     end;

@@ -190,7 +190,7 @@ begin
     aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
-    aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
+    aRunItem.Info.Message := 'Runing ' + Info.MainFile;
     aRunItem.Info.Params := Info.MainFile + #13;
   end
   else if rnaExecute in Info.Actions then
