@@ -270,9 +270,6 @@ type
     property Groups: TFileGroups read GetGroups;
   published
     property Command: string read FCommand write FCommand; //like php.exe or rdmd.exe
-    property RunMode: TmneRunMode read FRunMode write FRunMode;
-    //PauseConsole do not end until use press any key or enter
-    property PauseConsole: Boolean read FPauseConsole write FPauseConsole;
 
     //Override options
     property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False; //TODO move it to Tendency
@@ -643,6 +640,8 @@ type
     FIgnoreNames: string;
     FLastFolder: string;
     FLastProject: string;
+    FPauseConsole: Boolean;
+    FRunMode: TmneRunMode;
     FShowFolder: Boolean;
     FShowFolderFiles: TShowFolderFiles;
     FSortFolderFiles: TSortFolderFiles;
@@ -707,6 +706,10 @@ type
     property WindowLeft: Integer read FBoundRect.Left write FBoundRect.Left;
     property WindowRight: Integer read FBoundRect.Right write FBoundRect.Right;
     property WindoBottom: Integer read FBoundRect.Bottom write FBoundRect.Bottom;
+    //Compile and Run
+    property RunMode: TmneRunMode read FRunMode write FRunMode;
+    //PauseConsole do not end until use press any key or enter
+    property PauseConsole: Boolean read FPauseConsole write FPauseConsole default True;
   end;
 
   TmneSynCompletion = class;
@@ -1123,7 +1126,10 @@ procedure EnumFiles(Folder, Filter: string; FileList: TStringList);
 function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount,vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean): Boolean;
 procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean);
 
+procedure EunmRunMode(vItems: TStrings);
+
 function GetWordAtRowColEx(SynEdit: TCustomSynEdit; XY: TPoint; BreakChars: TSynIdentChars; Select: boolean): string;
+
 
 const
   cFallbackGroup = 'txt';
@@ -2057,8 +2063,8 @@ begin
       begin
         if (Engine.Files.Current <> nil) then
         begin
-          p.Mode := Engine.Files.Current.Tendency.RunMode;
-          p.Pause := Engine.Files.Current.Tendency.PauseConsole;
+          p.Mode := Engine.Options.RunMode;
+          p.Pause := Engine.Options.PauseConsole;
         end
         else
         begin
@@ -2549,6 +2555,16 @@ begin
   end;
 end;
 
+
+procedure EunmRunMode(vItems: TStrings);
+begin
+  vItems.Clear;
+  vItems.Add('Console');
+  vItems.Add('Process');
+  vItems.Add('Embedded');
+  vItems.Add('Output');
+  vItems.Add('Browser');
+end;
 
 { TListFileSearcher }
 
@@ -4032,6 +4048,7 @@ begin
   FCollectTimeout := 60;
   FMessagesHeight := 100;
   FFoldersWidth := 180;
+  FPauseConsole := True;
 end;
 
 destructor TEditorOptions.Destroy;

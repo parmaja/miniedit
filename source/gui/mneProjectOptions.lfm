@@ -11,7 +11,7 @@ object ProjectForm: TProjectForm
   Font.Name = 'MS Sans Serif'
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '1.7'
+  LCLVersion = '1.6.0.4'
   object OkBtn: TButton
     Left = 392
     Height = 25

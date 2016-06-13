@@ -8,12 +8,12 @@
       <Breakpoints Class="TmneBreakpoints">
         <Objects>
           <Object Type="TmneBreakpoint">
-            <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
-            <LineNo>2</LineNo>
-          </Object>
-          <Object Type="TmneBreakpoint">
             <FileName>M:\web\projects\wp_metallic\wp-content\themes\wp_metallic\header.php</FileName>
             <LineNo>20</LineNo>
+          </Object>
+          <Object Type="TmneBreakpoint">
+            <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
+            <LineNo>4</LineNo>
           </Object>
         </Objects>
       </Breakpoints>
@@ -25,23 +25,33 @@
           <Object Type="TmneWatch">
             <Name>$int</Name>
           </Object>
+          <Object Type="TmneWatch">
+            <Name>$name</Name>
+          </Object>
         </Objects>
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\web\projects\wp_metallic\wp-content\themes\wp_metallic\css\screen.css</CurrentFile>
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.php</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\web\projects\wp_metallic\wp-content\themes\wp_metallic\css\screen.css</FileName>
-            <CaretX>33</CaretX>
             <CaretY>23</CaretY>
             <TopLine>4</TopLine>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
+            <CaretX>36</CaretX>
+            <CaretY>9</CaretY>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>M:\home\pascal\projects\miniEdit\test\test.py</FileName>
           </Object>
         </Items>
       </Files>
     </Desktop>
     <Options Class="TPHPProjectOptions">
-      <RunMode>runConsole</RunMode>
+      <RunMode>runOutput</RunMode>
       <PauseConsole>True</PauseConsole>
     </Options>
   </Object>

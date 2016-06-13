@@ -71,7 +71,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, SynHighlighterMultiProc, SynEditStrConst, mnePyConfigForms, mnePyProjectFrames;
+  IniFiles, mnStreams, PHP_xDebug, mnUtils, SynHighlighterMultiProc, SynEditStrConst, mnePyConfigForms, mnePyProjectFrames;
 
 { TDProject }
 
@@ -226,7 +226,7 @@ end;
 
 function TPyTendency.CreateDebugger: TEditorDebugger;
 begin
-  Result := nil;
+  Result := TPHP_xDebug.Create;
 end;
 
 function TPyTendency.CreateOptions: TEditorProjectOptions;
@@ -236,7 +236,7 @@ end;
 
 procedure TPyTendency.Init;
 begin
-  FCapabilities := [capRun, capCompile, capLink, capProjectOptions, capOptions];
+  FCapabilities := [capDebug, capTrace, capDebugServer, capRun, capCompile, capLink, capProjectOptions, capOptions];
   FTitle := 'Python Lang';
   FDescription := 'Python Files, *.py';
   FName := 'Python';
