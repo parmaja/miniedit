@@ -3080,23 +3080,25 @@ end;
 procedure TEditorFiles.SetCurrentIndex(Index: integer; vRefresh: Boolean);
 var
   aCurrent: TEditorFile;
+  OldCurrent: TEditorFile;
 begin
-  Engine.BeginUpdate;
-  try
-    if Count <> 0 then
-    begin
+  if Count <> 0 then
+  begin
+    Engine.BeginUpdate;
+    try
       if Index >= Count then
         Index := Count - 1;
       aCurrent := Items[Index];
       if aCurrent <> nil then
       begin
+        OldCurrent := Current;
         Current := aCurrent;
+        if vRefresh and (OldCurrent <> Current) then
+          Engine.UpdateState([ecsState, ecsRefresh]);
       end;
+    finally
+      Engine.EndUpdate;
     end;
-    if vRefresh then
-      Engine.UpdateState([ecsState, ecsRefresh]);
-  finally
-    Engine.EndUpdate;
   end;
 end;
 
