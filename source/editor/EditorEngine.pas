@@ -908,6 +908,7 @@ type
     FCachedIdentifiers: THashedStringList;
     FCachedVariables: THashedStringList;
     FCachedAge: DWORD;
+    function GetActive: Boolean;
     procedure SetDebug(AValue: TEditorDebugger);
     procedure SetProject(const Value: TEditorProject);
     function GetIsOpened: Boolean;
@@ -930,6 +931,7 @@ type
     function GetRoot: string;
     //Is project opened
     property IsOpened: Boolean read GetIsOpened;
+    property Active: Boolean read GetActive; //Alias for IsOpened
     //Current is the opened project, if it is a nil that mean there is no opened project.
     property Project: TEditorProject read FProject write SetProject;
     //Session Options is depend on the system used not shared between OSs
@@ -984,8 +986,6 @@ type
 
   TEditorEngine = class(TObject)
   private
-    //if the project not defined any Tendency this is the default one
-    FDefaultTendency: TEditorTendency;
     FDefaultSCM: TEditorSCM;
     //FInternalTendency used only there is no any default Tendency defined, it is mean simple editor without any project type
     FInternalTendency: TDefaultTendency;
@@ -1013,7 +1013,6 @@ type
     function GetUpdating: Boolean;
     procedure SetBrowseFolder(const Value: string);
     function GetWorkSpace: string;
-    procedure SetDefaultTendency(AValue: TEditorTendency);
     procedure SetDefaultSCM(AValue: TEditorSCM);
     function GetTendency: TEditorTendency;
   protected
@@ -1073,10 +1072,9 @@ type
     property Container: TWinControl read FContainer write FContainer;
     //BrowseFolder: Current folder
     property BrowseFolder: string read FBrowseFolder write SetBrowseFolder;
-    procedure SetDefaultTendency(vName: string);
     procedure SetDefaultSCM(vName: string);
     property Tendency: TEditorTendency read GetTendency;
-    property DefaultTendency: TEditorTendency read FDefaultTendency write SetDefaultTendency;
+    property InternalTendency: TDefaultTendency read FInternalTendency;
     property DefaultSCM: TEditorSCM read FDefaultSCM write SetDefaultSCM;
     property SCM: TEditorSCM read GetSCM;
     function GetIsChanged: Boolean;
@@ -2694,8 +2692,6 @@ function TEditorEngine.GetTendency: TEditorTendency;
 begin
   if (Session <> nil) and (Session.Project <> nil) and (Session.Project.Tendency <> nil) then
     Result := Session.Project.Tendency
-  else if DefaultTendency <> nil then
-    Result := FDefaultTendency
   else
     Result := FInternalTendency;
 end;
@@ -3131,6 +3127,11 @@ begin
   FDebug :=AValue;
 end;
 
+function TEditorSession.GetActive: Boolean;
+begin
+  Result := FProject <> nil;
+end;
+
 procedure TEditorOptions.Show;
 var
   i: integer;
@@ -3201,7 +3202,6 @@ begin
           XMLReadObjectFile(Tendencies[i], aFile);
       end;
     end;
-    SetDefaultTendency(Session.Options.DefaultTendency);
     SetDefaultSCM(Session.Options.DefaultSCM);
     Engine.UpdateState([ecsOptions]);
   finally
@@ -3311,27 +3311,6 @@ function TEditorEngine.ExpandFile(FileName: string): string;
 begin
   Result := ExpandFileName(ExpandToPath(FileName, Session.GetRoot));
 end;
-{
-procedure TEditorEngine.AddInstant(vName:string; vExtensions: array of string; vHighlighterClass: TSynCustomHighlighterClass; vKind: TFileCategoryKinds);
-var
-  aFC: TCustomFileCategory;
-begin
-  aFC := TCustomFileCategory.Create(vName);
-  aFC.FHighlighterClass := vHighlighterClass;
-  aFC.FKind := vKind;
-  Categories.Add(aFC);
-  Groups.Add(TFileGroup, TEditorFile, vExtensions[0], vName + ' files', vName, vExtensions, []);
-end;
-}
-procedure TEditorEngine.SetDefaultTendency(vName: string);
-var
-  P: TEditorTendency;
-begin
-  P := Tendencies.Find(vName);
-  if P = nil then
-    P := FInternalTendency;
-  DefaultTendency := P;
-end;
 
 procedure TEditorEngine.SetDefaultSCM(vName: string);
 begin
@@ -3426,16 +3405,6 @@ end;
 function TEditorEngine.GetWorkSpace: string;
 begin
   Result := IncludeTrailingPathDelimiter(FWorkSpace);
-end;
-
-procedure TEditorEngine.SetDefaultTendency(AValue: TEditorTendency);
-begin
-  if FDefaultTendency = AValue then
-    exit;
-  FDefaultTendency := AValue;
-  if FDefaultTendency <> nil then
-    Session.Options.DefaultTendency := FDefaultTendency.Name;
-  Engine.UpdateState([ecsChanged, ecsProject]);
 end;
 
 procedure TEditorEngine.SetDefaultSCM(AValue: TEditorSCM);
@@ -4391,8 +4360,8 @@ begin
   FTendencyName := AValue;
 
   aTendency := Engine.Tendencies.Find(TendencyName);
-  if aTendency = nil then
-    aTendency := Engine.DefaultTendency;
+  {if aTendency = nil then
+    aTendency := Engine.InternalTendency;} //TODO not sure
 
   Tendency := aTendency;
 

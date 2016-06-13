@@ -4,7 +4,7 @@ object EditorSettingForm: TEditorSettingForm
   Top = 215
   Width = 426
   BorderStyle = bsDialog
-  Caption = 'Setting'
+  Caption = 'General Options'
   ClientHeight = 276
   ClientWidth = 426
   Font.Height = -11

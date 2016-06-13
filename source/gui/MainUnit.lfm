@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 352
+  Left = 224
   Height = 591
-  Top = 165
+  Top = 150
   Width = 881
   AllowDropFiles = True
   Caption = 'Mini Edit'
@@ -1425,7 +1425,7 @@ object MainForm: TMainForm
   end
   object MainMenu: TMainMenu
     Images = EditorResource.ToolbarImageList
-    left = 80
+    left = 109
     top = 84
     object file1: TMenuItem
       Caption = '&File'
@@ -1532,14 +1532,11 @@ object MainForm: TMainForm
       object MenuItem13: TMenuItem
         Action = SelectSCMTypeAct
       end
-      object ProjectTypeMnu: TMenuItem
-        Action = SelectProjectTypeAct
-      end
-      object TypeOptionsForMnu: TMenuItem
-        Action = TypeOptionsForAct
-      end
       object MenuItem26: TMenuItem
         Caption = '-'
+      end
+      object ProjectTypeMnu: TMenuItem
+        Action = SelectProjectTypeAct
       end
       object TypeOptionsMnu: TMenuItem
         Action = TypeOptionsAct
@@ -1806,8 +1803,11 @@ object MainForm: TMainForm
     object ToolsMnu: TMenuItem
       Caption = 'Tools'
       object OptionsMnu: TMenuItem
-        Action = SettingAct
-        OnClick = SettingActExecute
+        Action = GeneralOptionsAct
+        OnClick = GeneralOptionsActExecute
+      end
+      object TypeOptionsForMnu: TMenuItem
+        Action = TypesOptionsAct
       end
       object WorkspaceMnu: TMenuItem
         Caption = 'Setup Workpsace'
@@ -1941,11 +1941,11 @@ object MainForm: TMainForm
       Hint = 'Close file'
       OnExecute = CloseAllActExecute
     end
-    object SettingAct: TAction
+    object GeneralOptionsAct: TAction
       Category = 'View'
-      Caption = 'Setting'
+      Caption = 'General Options'
       ImageIndex = 12
-      OnExecute = SettingActExecute
+      OnExecute = GeneralOptionsActExecute
     end
     object FoldersAct: TAction
       Category = 'View'
@@ -2102,7 +2102,7 @@ object MainForm: TMainForm
     end
     object TypeOptionsAct: TAction
       Category = 'Project'
-      Caption = 'Type Options'
+      Caption = 'Project Type Options'
       OnExecute = TypeOptionsActExecute
     end
     object OpenFolderAct: TAction
@@ -2384,10 +2384,10 @@ object MainForm: TMainForm
       OnExecute = DBGAddWatchActExecute
       ShortCut = 16500
     end
-    object TypeOptionsForAct: TAction
+    object TypesOptionsAct: TAction
       Category = 'Project'
-      Caption = 'Type Options For'
-      OnExecute = TypeOptionsForActExecute
+      Caption = 'Types Options'
+      OnExecute = TypesOptionsActExecute
     end
     object ProjectOptionsAct: TAction
       Category = 'Project'

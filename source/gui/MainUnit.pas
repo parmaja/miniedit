@@ -61,7 +61,7 @@ type
     SearchGrid: TStringGrid;
     MessagesGrid: TStringGrid;
     TypeOptionsForMnu: TMenuItem;
-    TypeOptionsForAct: TAction;
+    TypesOptionsAct: TAction;
     DBGCompileAct: TAction;
     BrowseTabs: TntvTabSet;
     FileList: TListView;
@@ -148,7 +148,7 @@ type
     SaveAsAct: TAction;
     NewAct: TAction;
     Saveas1: TMenuItem;
-    SettingAct: TAction;
+    GeneralOptionsAct: TAction;
     N6: TMenuItem;
     NextAct: TAction;
     PriorAct: TAction;
@@ -394,7 +394,7 @@ type
     procedure HelpIndexActExecute(Sender: TObject);
     procedure EditorOptionsActExecute(Sender: TObject);
     procedure SelectSCMTypeActExecute(Sender: TObject);
-    procedure SettingActExecute(Sender: TObject);
+    procedure GeneralOptionsActExecute(Sender: TObject);
     procedure DBGRunActExecute(Sender: TObject);
     procedure ProjectOptionsActExecute(Sender: TObject);
     procedure NewProjectActExecute(Sender: TObject);
@@ -411,7 +411,7 @@ type
     procedure SortByNamesActExecute(Sender: TObject);
     procedure ToolButton4Click(Sender: TObject);
     procedure TypeOptionsActExecute(Sender: TObject);
-    procedure TypeOptionsForActExecute(Sender: TObject);
+    procedure TypesOptionsActExecute(Sender: TObject);
     procedure UnixMnuClick(Sender: TObject);
 
       procedure WatchesGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -1134,12 +1134,6 @@ begin
         Engine.Session.Project.TendencyName := lTendency.Name;
     end;
   end
-  else
-  begin
-    lTendency := Engine.DefaultTendency;
-    if ChooseTendency(lTendency) then
-      Engine.DefaultTendency := lTendency;
-  end;
 end;
 
 procedure TMainForm.FileModeBtnClick(Sender: TObject);
@@ -1302,7 +1296,7 @@ begin
   end;
 end;
 
-procedure TMainForm.SettingActExecute(Sender: TObject);
+procedure TMainForm.GeneralOptionsActExecute(Sender: TObject);
 begin
   ShowSettingForm(Engine);
 end;
@@ -1487,7 +1481,7 @@ begin
   ShowTendencyForm(Engine.Tendency);
 end;
 
-procedure TMainForm.TypeOptionsForActExecute(Sender: TObject);
+procedure TMainForm.TypesOptionsActExecute(Sender: TObject);
 var
   lTendency: TEditorTendency;
 begin
