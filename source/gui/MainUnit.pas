@@ -164,7 +164,7 @@ type
     KeywordMnu: TMenuItem;
     About2: TMenuItem;
     DBGRunAct: TAction;
-    DBGCheckAct: TAction;
+    DBGLintAct: TAction;
     ProjectMnu: TMenuItem;
     Run2: TMenuItem;
     Check1: TMenuItem;
@@ -418,7 +418,7 @@ type
     procedure WindowsMnuClick(Sender: TObject);
     procedure MacMnuClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure DBGCheckActExecute(Sender: TObject);
+    procedure DBGLintActExecute(Sender: TObject);
     procedure AboutActExecute(Sender: TObject);
     procedure SaveAsProjectActExecute(Sender: TObject);
     procedure ProjectOpenFolderActExecute(Sender: TObject);
@@ -1050,8 +1050,8 @@ begin
         with Engine.Files.Current do
         if Control is TCustomSynEdit then
         begin
-          l := Integer(SearchGrid.Rows[SearchGrid.Row].Objects[0]);
-          c := Integer(SearchGrid.Rows[SearchGrid.Row].Objects[1]);
+          l := ptrint(SearchGrid.Rows[SearchGrid.Row].Objects[0]);
+          c := ptrint(SearchGrid.Rows[SearchGrid.Row].Objects[1]);
           (Control as TCustomSynEdit).CaretY := aLine;
           if l > 0 then
           begin
@@ -1101,8 +1101,8 @@ begin
     end
     else
     begin
-      l := Integer(SearchGrid.Rows[SearchGrid.Row].Objects[0]);
-      c := Integer(SearchGrid.Rows[SearchGrid.Row].Objects[1]);
+      l := ptrint(SearchGrid.Rows[SearchGrid.Row].Objects[0]);
+      c := ptrint(SearchGrid.Rows[SearchGrid.Row].Objects[1]);
       bf := Copy(s, 1, c - 1);
       md := Copy(s, c, l);
       af := Copy(s, c + l, MaxInt);
@@ -1540,7 +1540,7 @@ begin
   //Color := clSkyBlue; for test propose
 end;
 
-procedure TMainForm.DBGCheckActExecute(Sender: TObject);
+procedure TMainForm.DBGLintActExecute(Sender: TObject);
 begin
   if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
   begin
@@ -1607,6 +1607,7 @@ begin
     DBGCompileAct.Visible := capCompile in Capabilities;
     DBGExecuteAct.Enabled := capRun in Capabilities;
     DBGResetAct.Enabled := capRun in Capabilities;
+    DBGLintAct.Enabled := capLint in Capabilities;
 
     DBGStartServerAct.Enabled := capDebugServer in Capabilities;
     DBGStopServerAct.Enabled := capDebugServer in Capabilities;
@@ -2537,8 +2538,8 @@ begin
   SearchGrid.Cells[2, SearchGrid.RowCount - 1] := IntToStr(LineNo);
 
   SearchGrid.Cells[3, SearchGrid.RowCount - 1] := Line;
-  SearchGrid.Rows[SearchGrid.RowCount - 1].Objects[0] := TObject(FoundLength);
-  SearchGrid.Rows[SearchGrid.RowCount - 1].Objects[1] := TObject(Column);
+  SearchGrid.Rows[SearchGrid.RowCount - 1].Objects[0] := TObject(PtrInt(FoundLength));
+  SearchGrid.Rows[SearchGrid.RowCount - 1].Objects[1] := TObject(PtrInt(Column));
 end;
 
 procedure TMainForm.FindInFilesActExecute(Sender: TObject);

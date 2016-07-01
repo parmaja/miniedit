@@ -159,7 +159,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="49">
+    <Units Count="48">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -425,28 +425,20 @@
         <ResourceBaseClass Value="Frame"/>
       </Unit44>
       <Unit45>
-        <Filename Value="..\extends\python\mneDProjectFrames.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="PyProjectFrame"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Frame"/>
-        <UnitName Value="mnePyProjectFrames"/>
-      </Unit45>
-      <Unit46>
         <Filename Value="..\extends\python\mnePyClasses.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit46>
-      <Unit47>
+      </Unit45>
+      <Unit46>
         <Filename Value="..\extends\python\mnePyConfigForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PyConfigForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit47>
-      <Unit48>
+      </Unit46>
+      <Unit47>
         <Filename Value="..\extends\mneExtends.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit48>
+      </Unit47>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -460,6 +452,9 @@
       <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\custom;..\extends\python"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
+    <CodeGeneration>
+      <TargetCPU Value="x86_64"/>
+    </CodeGeneration>
     <Linking>
       <Debugging>
         <UseHeaptrc Value="True"/>

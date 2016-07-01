@@ -49,7 +49,7 @@ uses
   SynHighlighterApache, IniFiles, mneAddons, mneAssociateForm, mneExtends,
   mneCustomProjectFrames, mneCustomConfigFrames, mneCustomClasses,
   mnePHPProjectFrames, mnePasProjectFrames, mnePasConfigForms, mnePasClasses,
-  mneCSVClasses, mneDClasses, mneDProjectFrames, mneDConfigForms, MsgBox,
+  mneCSVClasses, mneDClasses, mneDConfigForms, MsgBox,
   GUIMsgBox, Classes, PHPUtils,
   mneSetups, mneSettings,
   mneSARDClasses, EditorClasses, DebugClasses, mneViewClasses,

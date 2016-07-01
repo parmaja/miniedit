@@ -2731,6 +2731,8 @@ begin
   else
     aTendency := Engine.Tendencies.FindByExtension(aGroup, vExtension, [fgkExecutable]);
   aGroup := Engine.FindExtension(vExtension);
+  if aGroup = nil then
+    raise EEditorException.Create('Cannot open this file type: ' + vExtension);
   Result := aTendency.CreateEditorFile(aGroup);
 end;
 

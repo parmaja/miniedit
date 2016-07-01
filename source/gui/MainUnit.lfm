@@ -1762,8 +1762,8 @@ object MainForm: TMainForm
         OnClick = DBGExecuteActExecute
       end
       object Check1: TMenuItem
-        Action = DBGCheckAct
-        OnClick = DBGCheckActExecute
+        Action = DBGLintAct
+        OnClick = DBGLintActExecute
       end
       object StepInto1: TMenuItem
         Action = DBGStepIntoAct
@@ -2295,10 +2295,10 @@ object MainForm: TMainForm
       OnExecute = DBGExecuteActExecute
       ShortCut = 8312
     end
-    object DBGCheckAct: TAction
+    object DBGLintAct: TAction
       Category = 'Debug'
-      Caption = 'Check'
-      OnExecute = DBGCheckActExecute
+      Caption = 'Lint'
+      OnExecute = DBGLintActExecute
       ShortCut = 16504
     end
     object DBGStartServerAct: TAction
