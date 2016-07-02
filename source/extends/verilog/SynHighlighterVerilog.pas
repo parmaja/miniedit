@@ -18,13 +18,8 @@ identifiers: start with a letter or underscore "_"
 
 comments: //  (slash slash) makes the remainder of the line a comment
 
-
 *}
-{*
-todo to ask
-example of escape identifire using \
 
-*}
 interface
 
 uses
@@ -262,10 +257,6 @@ const
     'delay_mode_unit'+
     'delay_mode_zero';
 
-
-  // types
-  //VerilogTypes = 'integer,float,string,boolean,color,datetime';
-
 type
 
   { TVerilogSyn }
@@ -378,7 +369,7 @@ begin
   FSymbolAttri := TSynHighlighterAttributes.Create(SYNS_AttrSymbol);
   AddAttribute(FSymbolAttri);
   SetAttributesOnChange(@DefHighlightChange);
-  FDefaultFilter := 'Verilog Files (*.v)|*.Verilog';
+  FDefaultFilter := 'Verilog Files (*.v)|*.v';
   FRange := rsUnknown;
   MakeProcTables;
 end;
