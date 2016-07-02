@@ -288,7 +288,7 @@ procedure TDFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   FCompletion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
-  IdentifierID := ord(tkIdentifier);
+  IdentifierID := ord(SynHighlighterMultiProc.tkIdentifier);
 end;
 
 procedure TDFileCategory.DoAddKeywords;

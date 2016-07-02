@@ -77,9 +77,9 @@ type
     function IsIdentifiers(C: Char): Boolean;
   protected
     function GetIdentChars: TSynIdentChars; override;
-    function GetSampleSource: string; override;
   public
     class function GetLanguageName: string; override;
+    function GetSampleSource: string; override;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -694,9 +694,29 @@ end;
 
 function TSynVerilogSyn.GetSampleSource: string;
 begin
-  Result := '';//TODO
+    Result := '`timescale 1ns / 10ps'+LineEnding+
+  '`include "mydefines.vh"'+LineEnding+
+  ''+LineEnding+
+  'module test #( parameter WIDTH = 10 )'+LineEnding+
+  '           (input clk,'+LineEnding+
+  '            input [WIDTH-1:0] a,'+LineEnding+
+  '            output reg [WIDTH-1:0] b);'+LineEnding+
+  ''+LineEnding+
+  '  localparam Shift = 8''b1010_1xz0,'+LineEnding+
+  '             Alu = -12''h0BC;'+LineEnding+
+  ''+LineEnding+
+  '  function [WIDTH-1:0] GetValue();'+LineEnding+
+  '  input [WIDTH-1:0] X;'+LineEnding+
+  '  begin'+LineEnding+
+  '    GetValue = {X[0], X[WIDTH-1:1]};'+LineEnding+
+  '  end'+LineEnding+
+  '  endfunction'+LineEnding+
+  ''+LineEnding+
+  '  always @(posedge clk)'+LineEnding+
+  '    b <= GetValue(a);'+LineEnding+
+  ''+LineEnding+
+  'endmodule';
 end;
-
 initialization
   RegisterPlaceableHighlighter(TSynVerilogSyn);
 finalization

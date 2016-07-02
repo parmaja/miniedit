@@ -302,7 +302,7 @@ procedure TPASFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   Completion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
-  IdentifierID := ord(tkIdentifier);
+  IdentifierID := ord(SynHighlighterPas.tkIdentifier);
 end;
 
 procedure TPASFileCategory.DoAddKeywords;

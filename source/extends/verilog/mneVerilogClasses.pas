@@ -16,7 +16,7 @@ uses
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   EditorDebugger, EditorRun, DebugClasses, mneCompileProjectOptions, LazFileUtils,
-  SynHighlighterVerilog, SynHighlighterLFM;
+  SynHighlighterVerilog;
 
 type
 
@@ -24,7 +24,6 @@ type
 
   TmneSynVerilogSyn = class(TSynVerilogSyn) //Only need for add sample source
   public
-    function GetSampleSource: string; override;
   end;
 
   { TVerilogFile }
@@ -83,11 +82,6 @@ uses
   IniFiles, mnStreams, mnUtils(*, mneVerilogProjectFrames, mneVerilogConfigForms*);
 
 { TmneSynVerilogSyn }
-
-function TmneSynVerilogSyn.GetSampleSource: string;
-begin
-  Result := ''; //TODO example special for highlighter
-end;
 
 (* not yet
 
@@ -248,7 +242,7 @@ procedure TVerilogFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   Completion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
-  IdentifierID := ord(tkIdentifier);
+  IdentifierID := ord(SynHighlighterVerilog.tkIdentifier);
 end;
 
 procedure TVerilogFileCategory.DoAddKeywords;
