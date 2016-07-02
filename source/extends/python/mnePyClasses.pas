@@ -236,7 +236,7 @@ end;
 
 procedure TPyTendency.Init;
 begin
-  FCapabilities := [capDebug, capTrace, capDebugServer, capRun, capCompile, capLink, capProjectOptions, capOptions];
+  FCapabilities := [capDebug, capTrace, capDebugServer, capRun, capCompile, capLink, capOptions];
   FTitle := 'Python Lang';
   FDescription := 'Python Files, *.py';
   FName := 'Python';

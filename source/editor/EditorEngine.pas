@@ -214,6 +214,7 @@ type
     fgkText, //Is it an Text Editor like SQL or PHP
     fgkEditor, // Can be editable
     fgkMain,//this can be the main file for project
+    fgkResult,//Result file, generated, like: exe or .o or .hex
     fgkMember,//a member of project, inc are member, c, h, cpp members, pas,pp, p , inc also members, ini,txt not member of any project
     fgkBrowsable,//When open file show it in the extension list
     fgkAssociated, //Editor can be the editor of this files, like .php, .inc, but .txt is not
@@ -233,7 +234,19 @@ type
     Run, Compile, Collect file groups and have special properties
   }
 
-  TEditorCapability = (capErrors, capBrowser, capOptions, capRun, capCompile, capLink, capLint, capDebug, capTrace, capDebugServer, capOSDepended, capProjectOptions);
+  TEditorCapability = (
+    capErrors,
+    capBrowser,
+    capOptions,
+    capRun, //Can run this file
+    capCompile, //Can compile this file
+    capLink, //Can need link before run
+    capLint, //Check error of file without compiling or run
+    capUpload, //Have upload, like avr projects need to upload to mcu
+    capDebug, //we can debug the project/file
+    capTrace, //Steps (Step Into, Step Over etc...)
+    capDebugServer //PHP style need to start debug server
+  );
 
   TEditorCapabilities = set of TEditorCapability;
 
@@ -3196,10 +3209,7 @@ begin
     begin
       if capOptions in Tendencies[i].Capabilities then
       begin
-        if capOSDepended in Tendencies[i].Capabilities then
-          aFile := LowerCase(Workspace + 'mne-tendency-' + SysPlatform + '-' + Tendencies[i].Name + '.xml')
-        else
-          aFile := LowerCase(Workspace + 'mne-tendency-' + Tendencies[i].Name + '.xml');
+        aFile := LowerCase(Workspace + 'mne-tendency-' + Tendencies[i].Name + '.xml');
         if FileExists(aFile) then
           XMLReadObjectFile(Tendencies[i], aFile);
       end;
@@ -3223,10 +3233,7 @@ begin
   begin
     if capOptions in Tendencies[i].Capabilities then
     begin
-      if capOSDepended in Tendencies[i].Capabilities then
-        aFile := LowerCase(Workspace + 'mne-tendency-' + SysPlatform + '-' + Tendencies[i].Name + '.xml')
-      else
-        aFile := LowerCase(Workspace + 'mne-tendency-' + Tendencies[i].Name + '.xml');
+      aFile := LowerCase(Workspace + 'mne-tendency-' + Tendencies[i].Name + '.xml');
       XMLWriteObjectFile(Tendencies[i], aFile);
     end;
   end;
