@@ -335,7 +335,7 @@ begin
         FProcTable[I] := @NumberProc;
       #1..#9, #11, #12, #14..#32:
         FProcTable[I] := @SpaceProc;
-      '+', '-', '^', '%', '*', '!', '}', ':', '.', ',', ';', '?', '(', ')', '[', ']', '~', '&':
+      '+', '-', '^', '%', '*', '!', ':', '.', ',', ';', '?', '(', ')', '[', ']', '{', '}', '~', '&', '#':
         FProcTable[I] := @SymbolProc;
     else
       FProcTable[I] := @IdentProc;
@@ -508,7 +508,7 @@ end;
 function TSynVerilogSyn.IsIdentifiers(C: Char): Boolean;
 begin
   Result := not (C in [' ', #13, #10, #0, '{', '}', ':', ',', ';', '?', '(', ')', '[', ']',
-          '~', '^', '%', '*', '!', '=', '>', '<', '-', '|', '+', '/', '&',  '''', '"']);
+          '~', '^', '%', '*', '!', '=', '>', '<', '-', '|', '+', '/', '&',  '''', '"', '#']);
 end;
 
 procedure TSynVerilogSyn.ScanTo(EndString: String; AKind: TtkTokenKind);
