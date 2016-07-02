@@ -1,4 +1,4 @@
-unit mnePasClasses;
+unit mnePASClasses;
 {$mode objfpc}{$H+}
 {**
  * Mini Edit

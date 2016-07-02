@@ -48,7 +48,7 @@ uses
   SearchProgressForms, EditorDebugger, PHP_xDebug, SelectList,
   SynHighlighterApache, IniFiles, mneAddons, mneAssociateForm, mneExtends,
   mneCustomProjectFrames, mneCustomConfigFrames, mneCustomClasses,
-  mnePHPProjectFrames, mnePasProjectFrames, mnePasConfigForms, mnePasClasses,
+  mnePHPProjectFrames, mnePasProjectFrames, mnePasConfigForms, mnePASClasses,
   mneCSVClasses, mneDClasses, mneDConfigForms, MsgBox,
   GUIMsgBox, Classes, PHPUtils,
   mneSetups, mneSettings,
