@@ -22,7 +22,6 @@ comments: //  (slash slash) makes the remainder of the line a comment
 *}
 {*
 todo to ask
-is it multiline string
 example of escape identifire using \
 
 *}
@@ -30,12 +29,13 @@ interface
 
 uses
   SysUtils, Classes, Graphics,
-  SynEditTypes, SynEditHighlighter, SynHighlighterHashEntries, SynUtils;
+  SynUtils, //exists in minilib at sourceforge
+  SynEditTypes, SynEditHighlighter, SynHighlighterHashEntries;
 
 type
   TtkTokenKind = (tkNull, tkComment, tkDirective, tkKeyword, tkIdentifier, tkNumber, tkSpace, tkString, tkSymbol, tkUnknown);
 
-  TRangeState = (rsUnknown, rsComment, rsDirective, rsSQString, rsDQString);
+  TRangeState = (rsUnknown, rsComment);
 
   { TSynVerilogSyn }
 
@@ -45,7 +45,6 @@ type
     FProcTable: array[#0..#255] of TProcTableProc;
     FRange: TRangeState;
     FLine: PChar;
-    FStringLen: Integer;
     FTokenPos: Integer;
     FTokenID: TtkTokenKind;
     FCommentAttri: TSynHighlighterAttributes;
@@ -57,7 +56,6 @@ type
     FStringAttri: TSynHighlighterAttributes;
     FSymbolAttri: TSynHighlighterAttributes;
     procedure ScanTo(EndString: String; AKind: TtkTokenKind);
-    procedure SQStringProc;
     procedure DQStringProc;
     procedure SingleCommentProc;
     procedure NormalCommentProc;
@@ -341,7 +339,6 @@ begin
       '/': FProcTable[I] := @SlashProc;
       '{': FProcTable[I] := @BlockOpenProc;
       '|': FProcTable[I] := @OrSymbolProc;
-      '''': FProcTable[I] := @SQStringProc;
       '"': FProcTable[I] := @DQStringProc;
       //'`': FProcTable[I] := @DirectiveProc;
 
@@ -383,7 +380,7 @@ begin
   FSymbolAttri := TSynHighlighterAttributes.Create(SYNS_AttrSymbol);
   AddAttribute(FSymbolAttri);
   SetAttributesOnChange(@DefHighlightChange);
-  FDefaultFilter := 'Verilog Files (*.Verilog)|*.Verilog';
+  FDefaultFilter := 'Verilog Files (*.v)|*.Verilog';
   FRange := rsUnknown;
   MakeProcTables;
 end;
@@ -406,16 +403,8 @@ begin
   Next;
 end;
 
-procedure TSynVerilogSyn.SQStringProc;
-begin
-  FRange := rsSQString;
-  Inc(Run);
-  ScanTo('''', tkString);
-end;
-
 procedure TSynVerilogSyn.DQStringProc;
 begin
-  FRange := rsDQString;
   Inc(Run);
   ScanTo('"', tkString);
 end;
@@ -447,7 +436,7 @@ end;
 procedure TSynVerilogSyn.IdentProc;
 begin
   FTokenID := VerilogSyn.IdentKind((FLine + Run));
-  inc(Run, FStringLen);
+  inc(Run);
   while not (FLine[Run] in [#0, #10, #13]) and IsIdentifiers(FLine[Run]) do
     Inc(Run);
 end;
@@ -482,7 +471,7 @@ procedure TSynVerilogSyn.NumberProc;
 begin
   inc(Run);
   FTokenID := tkNumber;
-  while FLine[Run] in ['0'..'9', '.'] do
+  while FLine[Run] in ['0'..'9', '.', '''',  'a'..'z', 'A'..'Z'] do
     inc(Run);
 end;
 
@@ -519,7 +508,6 @@ begin
   case FLine[Run] of
     '`':
       begin
-        FRange := rsDirective;
         FTokenID := tkDirective;
         Inc(Run);
         DirectiveProc;
@@ -583,9 +571,9 @@ end;
 procedure TSynVerilogSyn.DirectiveProc;
 begin
   FTokenID := tkDirective;
-  repeat
+  inc(Run);
+  while not (FLine[Run] in [#0, #10, #13]) and IsIdentifiers(FLine[Run]) do
     Inc(Run);
-  until FLine[Run] in [#0, #10, #13];
 end;
 
 function TSynVerilogSyn.IsKeyword(const AKeyword: string): boolean;
@@ -604,14 +592,8 @@ begin
   else
   begin
     case FRange of
-      rsDirective:
-          DirectiveProc;
       rsComment:
           NormalCommentProc;
-      rsSQString:
-          ScanTo('''', tkString);
-      rsDQString:
-          ScanTo('"', tkString);
     else
       FProcTable[FLine[Run]];
     end;
