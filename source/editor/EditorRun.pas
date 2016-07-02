@@ -133,7 +133,8 @@ begin
   Terminate;
   WaitFor;
 end;
-
+                            
+{$ifdef windows}
 function WindowsProc(windowHandle: HWND; lParam: LPARAM): Bool; stdcall;
 var
   aProcessID: DWORD;
@@ -148,10 +149,13 @@ begin
   end;
   Result := True;
 end;
+{$endif}
 
 procedure ShowProcess(ID: THandle);
-begin
-  EnumWindows(@WindowsProc, LPARAM(ID));
+begin  
+  {$ifdef windows}
+  EnumWindows(@WindowsProc, LPARAM(ID));       
+  {$endif}
 end;
 
 procedure TmneRunPool.Show;

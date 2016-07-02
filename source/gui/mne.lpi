@@ -11,7 +11,6 @@
       <XPManifest>
         <DpiAware Value="True"/>
       </XPManifest>
-      <Icon Value="0"/>
     </General>
     <VersionInfo>
       <UseVersionInfo Value="True"/>
@@ -310,7 +309,7 @@
         <IsPartOfProject Value="True"/>
       </Unit25>
       <Unit26>
-        <Filename Value="..\extends\pascal\mnePasClasses.pas"/>
+        <Filename Value="..\extends\pascal\mnePASClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit26>
       <Unit27>
@@ -448,7 +447,7 @@
       <Filename Value="..\..\bin\mne_win32"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir);D:\dev\lazarus\ide\include\"/>
+      <IncludeFiles Value="$(ProjOutDir);D:\dev\lazarus\ide\include"/>
       <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\custom;..\extends\python"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
