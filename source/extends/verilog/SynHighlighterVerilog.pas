@@ -70,7 +70,6 @@ type
     procedure NumberProc;
     procedure OrSymbolProc;
     procedure SlashProc;
-    procedure BlockOpenProc;
     procedure SpaceProc;
     procedure SymbolProc;
     procedure MakeProcTables;
@@ -337,10 +336,9 @@ begin
       '>': FProcTable[I] := @GreaterProc;
       '<': FProcTable[I] := @LowerProc;
       '/': FProcTable[I] := @SlashProc;
-      '{': FProcTable[I] := @BlockOpenProc;
       '|': FProcTable[I] := @OrSymbolProc;
       '"': FProcTable[I] := @DQStringProc;
-      //'`': FProcTable[I] := @DirectiveProc;
+      '`': FProcTable[I] := @DirectiveProc;
 
       '0'..'9':
         FProcTable[I] := @NumberProc;
@@ -471,7 +469,7 @@ procedure TSynVerilogSyn.NumberProc;
 begin
   inc(Run);
   FTokenID := tkNumber;
-  while FLine[Run] in ['0'..'9', '.', '''',  'a'..'z', 'A'..'Z'] do
+  while FLine[Run] in ['0'..'9', '.', '''', '_', 'a'..'z', 'A'..'Z'] do
     inc(Run);
 end;
 
@@ -496,21 +494,6 @@ begin
         FRange := rsComment;
         FTokenID := tkComment;
         NormalCommentProc;
-      end;
-  else
-    FTokenID := tkSymbol;
-  end;
-end;
-
-procedure TSynVerilogSyn.BlockOpenProc;
-begin
-  Inc(Run);
-  case FLine[Run] of
-    '`':
-      begin
-        FTokenID := tkDirective;
-        Inc(Run);
-        DirectiveProc;
       end;
   else
     FTokenID := tkSymbol;
