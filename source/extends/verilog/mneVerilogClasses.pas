@@ -133,9 +133,9 @@ end;
 procedure TVerilogTendency.Init;
 begin
   FCapabilities := [capRun, capCompile, capLink, capOptions];
-  FName := 'Verilogcal';
-  FTitle := 'Verilogcal project';
-  FDescription := 'Verilogcal/FPC/Lazarus Files, *.Verilog, *.pp *.inc';
+  FName := 'Verilog';
+  FTitle := 'Verilog project';
+  FDescription := 'Verilog/FPC/Lazarus Files, *.v, *.vh';
   FImageIndex := -1;
   AddGroup('Verilog', 'Verilog');
   AddGroup('dpr', 'Verilog');
@@ -278,7 +278,7 @@ initialization
   with Engine do
   begin
     Categories.Add(TVerilogFileCategory.Create('Verilog'));
-    Groups.Add(TVerilogFile, 'Verilog', 'Verilogcal Files', 'Verilog', ['v'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
+    Groups.Add(TVerilogFile, 'Verilog', 'Verilog Files', 'Verilog', ['v', 'vh'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
     //Tendencies.Add(TVerilogTendency);
   end;
 end.
