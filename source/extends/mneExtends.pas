@@ -15,7 +15,7 @@ interface
 
 uses
   SysUtils, StrUtils, Classes,
-  mnePHPClasses, mnePASClasses, mneCSVClasses, mnePyClasses;
+  mnePHPClasses, mnePASClasses, mneCSVClasses, mnePyClasses, mneVerilogClasses;
 
 implementation
 
