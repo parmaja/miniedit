@@ -45,7 +45,6 @@ type
     procedure DoAddKeywords; override;
   public
   end;
-(* We dont have Project/Tendency yet, TODO
 
   { TVerilogProjectOptions }
 
@@ -74,7 +73,6 @@ type
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
     property Compiler: string read FCompiler write FCompiler;
   end;
-*)
 
 implementation
 
@@ -82,8 +80,6 @@ uses
   IniFiles, mnStreams, mnUtils(*, mneVerilogProjectFrames, mneVerilogConfigForms*);
 
 { TmneSynVerilogSyn }
-
-(* not yet
 
 { TVerilogProjectOptions }
 
@@ -106,10 +102,10 @@ begin
   (aFrame as TCompilerProjectOptionsForm).Project := AProject;
   aFrame.Caption := 'Compiler';
   AddFrame(aFrame);
-  aFrame := TVerilogProjectFrame.Create(AOwner);
+  {aFrame := TVerilogProjectFrame.Create(AOwner);
   (aFrame as TVerilogProjectFrame).Project := AProject;
   aFrame.Caption := 'Options';
-  AddFrame(aFrame);
+  AddFrame(aFrame);}
 end;
 
 { TVerilogTendency }
@@ -129,14 +125,9 @@ begin
   FCapabilities := [capRun, capCompile, capLink, capOptions];
   FName := 'Verilog';
   FTitle := 'Verilog project';
-  FDescription := 'Verilog/FPC/Lazarus Files, *.v, *.vh';
+  FDescription := 'Verilog Files, *.v, *.vh';
   FImageIndex := -1;
-  AddGroup('Verilog', 'Verilog');
-  AddGroup('dpr', 'Verilog');
-  AddGroup('lpr', 'Verilog');
-  AddGroup('ppr', 'Verilog');
-  AddGroup('lfm', 'lfm');
-  //AddGroup('inc');
+  AddGroup('Verilog', 'v');
 end;
 
 procedure TVerilogTendency.DoRun(Info: TmneRunInfo);
@@ -160,19 +151,19 @@ begin
 
     aRunItem.Info.Command := Info.Command;
     if aRunItem.Info.Command = '' then
-      aRunItem.Info.Command := 'fpc.exe';
+      aRunItem.Info.Command := 'iverilog'{$ifdef windows}+'.exe'{$endif};
 
     aRunItem.Info.Mode := runOutput;
     aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
-    aRunItem.Info.Params := Info.MainFile + #13;
+    aRunItem.Info.Params := '-s' + Info.MainFile + #13;
     if Info.OutputFile <> '' then
       aRunItem.Info.Params := aRunItem.Info.Params + '-o' + Info.OutputFile + #13;
 
     aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
 
-    p := '-Fu';
+    p := '';
     for i := 0 to Options.Paths.Count - 1 do
     begin
       aPath := Trim(Options.Paths[i]);
@@ -181,12 +172,16 @@ begin
         if Options.ExpandPaths then
           aPath := Engine.ExpandFile(aPath);
         if p <> '' then
-          p := p + ';';
+          p := p + PathSeparator;
         p := p + aPath;
       end;
     end;
     if p <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + p + #13;
+      aRunItem.Info.Params := aRunItem.Info.Params + '-I ' + p + #13;
+
+    for i := 0 to Engine.Files.Count-1 do
+      if Engine.Files[i].Extension='.v' then
+        aRunItem.Info.Params := aRunItem.Info.Params + Engine.Files[i].Name + #13;
   end;
 
   if rnaExecute in Info.Actions then
@@ -206,15 +201,14 @@ begin
 end;
 
 procedure TVerilogTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
-var
-  aFrame: TVerilogConfigForm;
+{var
+  aFrame: TVerilogConfigForm;}
 begin
-  aFrame := TVerilogConfigForm.Create(AOwner);
+  {aFrame := TVerilogConfigForm.Create(AOwner);
   aFrame.FTendency := ATendency;
   aFrame.Caption := 'Options';
-  AddFrame(aFrame);
+  AddFrame(aFrame);}
 end;
-*)
 
 { TVerilogFileCategory }
 
@@ -235,6 +229,7 @@ begin
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(IdentifierAttri, attIdentifier);
     Mapper.Add(SpaceAttri, attDefault);
+    Mapper.Add(InbuiltFuncAttri, attStandard);
   end;
 end;
 
@@ -248,8 +243,8 @@ end;
 procedure TVerilogFileCategory.DoAddKeywords;
 begin
   inherited DoAddKeywords;
-  EnumerateKeywords(Ord(tkKeyword), sVerilogKeywords, Highlighter.IdentChars, @DoAddCompletion);
-  EnumerateKeywords(Ord(tkDirective), sVerilogDirectives, Highlighter.IdentChars, @DoAddCompletion);
+  //EnumerateKeywords(Ord(tkKeyword), sVerilogKeywords, Highlighter.IdentChars, @DoAddCompletion);
+  //EnumerateKeywords(Ord(tkDirective), sVerilogDirectives, Highlighter.IdentChars, @DoAddCompletion);
 end;
 
 { TVerilogFile }
@@ -272,7 +267,7 @@ initialization
   with Engine do
   begin
     Categories.Add(TVerilogFileCategory.Create('Verilog'));
-    Groups.Add(TVerilogFile, 'Verilog', 'Verilog Files', 'Verilog', ['v', 'vh'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
-    //Tendencies.Add(TVerilogTendency);
+    Groups.Add(TVerilogFile, 'Verilog', 'Verilog Files', 'Verilog', ['v', 'vh'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain], [fgsFolding]);
+    Tendencies.Add(TVerilogTendency);
   end;
 end.

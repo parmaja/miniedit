@@ -1,3 +1,7 @@
 .svn
+.git
+bin
+units
+*.bak
 /source/gui/*.lps
 /source/gui/mne.res
