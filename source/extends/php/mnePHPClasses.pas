@@ -594,7 +594,8 @@ begin
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
-    Mapper.Add(EventAttri, attVariable);
+    Mapper.Add(EventAttri, attVariable);   
+    Mapper.Add(BracketAttri, attSymbol);
   end;
 end;
 
