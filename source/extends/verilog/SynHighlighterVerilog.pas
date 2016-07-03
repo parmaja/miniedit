@@ -28,7 +28,7 @@ uses
   SynEditTypes, SynEditHighlighter, SynHighlighterHashEntries;
 
 type
-  TtkTokenKind = (tkNull, tkComment, tkDirective, tkKeyword, tkIdentifier, tkNumber, tkSpace, tkString, tkSymbol, tkUnknown);
+  TtkTokenKind = (tkNull, tkComment, tkDirective, tkKeyword, tkIdentifier, tkNumber, tkSpace, tkString, tkSymbol, tkUnknown, tkInbuiltFunc);
 
   TRangeState = (rsUnknown, rsComment);
 
@@ -50,6 +50,7 @@ type
     FSpaceAttri: TSynHighlighterAttributes;
     FStringAttri: TSynHighlighterAttributes;
     FSymbolAttri: TSynHighlighterAttributes;
+    FInbuiltFuncAttri: TSynHighlighterAttributes;
     procedure ScanTo(EndString: String; AKind: TtkTokenKind);
     procedure DQStringProc;
     procedure SingleCommentProc;
@@ -58,6 +59,7 @@ type
     procedure CRProc;
     procedure EqualProc;
     procedure GreaterProc;
+    procedure InbuiltProc;
     procedure IdentProc;
     procedure LFProc;
     procedure LowerProc;
@@ -101,6 +103,7 @@ type
     property SpaceAttri: TSynHighlighterAttributes read FSpaceAttri write FSpaceAttri;
     property StringAttri: TSynHighlighterAttributes read FStringAttri write FStringAttri;
     property SymbolAttri: TSynHighlighterAttributes read FSymbolAttri write FSymbolAttri;
+    property InbuiltFuncAttri: TSynHighlighterAttributes read FInbuiltFuncAttri write FInbuiltFuncAttri;
   end;
 
 const
@@ -232,29 +235,29 @@ const
     'xor';
 
   sVerilogDirectives =
-    'include'+
-    'define'+
-    'define'+
-    'undef'+
-    'ifdef'+
-    'elsif'+
-    'else'+
-    'endif'+
-    'ifndef macro_name'+
-    'timescale 1ns/1ns'+
-    'celldefine'+
-    'endcelldefine'+
-    'default_nettype net_type'+
-    'resetall'+
-    'line number "filename" level'+
-    'unconnected_drive pull0'+
-    'unconnected_drive pull1'+
-    'nounconnected_drive'+
-    'default_decay_time a_time'+
-    'default_trireg_strength val'+
-    'delay_mode_distributed'+
-    'delay_mode_path'+
-    'delay_mode_unit'+
+    'include,'+
+    'define,'+
+    'define,'+
+    'undef,'+
+    'ifdef,'+
+    'elsif,'+
+    'else,'+
+    'endif,'+
+    'ifndef,'+
+    'timescale,'+
+    'celldefine,'+
+    'endcelldefine,'+
+    'default_nettype,'+
+    'resetall,'+
+    'line number,'+
+    'unconnected_drive,'+
+    'unconnected_drive,'+
+    'nounconnected_drive,'+
+    'default_decay_time,'+
+    'default_trireg_strength,'+
+    'delay_mode_distributed,'+
+    'delay_mode_path,'+
+    'delay_mode_unit,'+
     'delay_mode_zero';
 
 type
@@ -330,6 +333,7 @@ begin
       '|': FProcTable[I] := @OrSymbolProc;
       '"': FProcTable[I] := @DQStringProc;
       '`': FProcTable[I] := @DirectiveProc;
+      '$': FProcTable[i] := @InbuiltProc;
 
       '0'..'9':
         FProcTable[I] := @NumberProc;
@@ -368,6 +372,8 @@ begin
   AddAttribute(FStringAttri);
   FSymbolAttri := TSynHighlighterAttributes.Create(SYNS_AttrSymbol);
   AddAttribute(FSymbolAttri);
+  FInbuiltFuncAttri := TSynHighlighterAttributes.Create(SYNS_AttrInternalFunction);
+  AddAttribute(FInbuiltFuncAttri);
   SetAttributesOnChange(@DefHighlightChange);
   FDefaultFilter := 'Verilog Files (*.v)|*.v';
   FRange := rsUnknown;
@@ -430,6 +436,14 @@ begin
     Inc(Run);
 end;
 
+procedure TSynVerilogSyn.InbuiltProc;
+begin
+  FTokenID := tkInbuiltFunc;
+  inc(Run);
+  while not (FLine[Run] in [#0, #10, #13]) and IsIdentifiers(FLine[Run]) do
+    Inc(Run);
+end;
+
 procedure TSynVerilogSyn.LFProc;
 begin
   FTokenID := tkSpace;
@@ -445,7 +459,7 @@ begin
     '<':
       begin
         Inc(Run);
-        if FLine[Run] = '=' then
+        if FLine[Run] in ['=','<'] then
           Inc(Run);
       end;
   end;
@@ -631,6 +645,7 @@ begin
     tkString: Result := FStringAttri;
     tkSymbol: Result := FSymbolAttri;
     tkUnknown: Result := FIdentifierAttri;
+    tkInbuiltFunc: Result := FInbuiltFuncAttri;
   else
     Result := nil;
   end;

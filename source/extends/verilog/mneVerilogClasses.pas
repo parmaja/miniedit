@@ -235,6 +235,7 @@ begin
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(IdentifierAttri, attIdentifier);
     Mapper.Add(SpaceAttri, attDefault);
+    Mapper.Add(InbuiltFuncAttri, attStandard);
   end;
 end;
 
@@ -248,8 +249,8 @@ end;
 procedure TVerilogFileCategory.DoAddKeywords;
 begin
   inherited DoAddKeywords;
-  EnumerateKeywords(Ord(tkKeyword), sVerilogKeywords, Highlighter.IdentChars, @DoAddCompletion);
-  EnumerateKeywords(Ord(tkDirective), sVerilogDirectives, Highlighter.IdentChars, @DoAddCompletion);
+  //EnumerateKeywords(Ord(tkKeyword), sVerilogKeywords, Highlighter.IdentChars, @DoAddCompletion);
+  //EnumerateKeywords(Ord(tkDirective), sVerilogDirectives, Highlighter.IdentChars, @DoAddCompletion);
 end;
 
 { TVerilogFile }
