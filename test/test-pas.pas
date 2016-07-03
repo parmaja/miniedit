@@ -9,3 +9,4 @@ begin
   //readln(s);
   writeln('Your name is ' + s);
 end.
+

@@ -110,13 +110,13 @@ object MainForm: TMainForm
     TabOrder = 0
     object FolderPanel: TPanel
       Left = 0
-      Height = 21
+      Height = 24
       Top = 0
       Width = 200
       Align = alTop
       Alignment = taLeftJustify
       BevelOuter = bvNone
-      ClientHeight = 21
+      ClientHeight = 24
       ClientWidth = 200
       Font.Height = -11
       Font.Name = 'MS Sans Serif'
@@ -124,7 +124,7 @@ object MainForm: TMainForm
       TabOrder = 0
       object FolderCloseBtn: TSpeedButton
         Left = 184
-        Height = 21
+        Height = 24
         Top = 0
         Width = 16
         Align = alRight
@@ -152,7 +152,7 @@ object MainForm: TMainForm
       end
       object BrowseTabs: TntvTabSet
         Left = 0
-        Height = 21
+        Height = 24
         Top = 0
         Width = 184
         StoreIndex = False
@@ -176,7 +176,7 @@ object MainForm: TMainForm
         TabOrder = 0
         object FolderBtn: TSpeedButton
           Left = 168
-          Height = 21
+          Height = 24
           Top = 0
           Width = 16
           Align = alRight
@@ -223,7 +223,7 @@ object MainForm: TMainForm
     object FolderPathLbl: TLabel
       Left = 2
       Height = 16
-      Top = 23
+      Top = 26
       Width = 196
       Align = alTop
       AutoSize = False
@@ -234,8 +234,8 @@ object MainForm: TMainForm
     end
     object FileList: TListView
       Left = 3
-      Height = 340
-      Top = 42
+      Height = 337
+      Top = 45
       Width = 194
       Align = alClient
       BorderSpacing.Around = 3
@@ -792,46 +792,6 @@ object MainForm: TMainForm
         4
         0
         'Line'
-      )
-    end
-    object SearchGrid: TStringGrid
-      Left = 3
-      Height = 101
-      Top = 23
-      Width = 875
-      Align = alClient
-      ColCount = 4
-      Flat = True
-      MouseWheelOption = mwGrid
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goSmoothScroll, goFixedRowNumbering, goRowHighlight]
-      ParentColor = True
-      PopupMenu = MessagesPopup
-      RowCount = 1
-      TabOrder = 0
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnDblClick = SearchGridDblClick
-      OnDrawCell = SearchGridDrawCell
-      ColWidths = (
-        21
-        184
-        53
-        548
-      )
-      Cells = (
-        3
-        1
-        0
-        'File'
-        2
-        0
-        'Line'
-        3
-        0
-        'Result'
       )
     end
     inline OutputEdit: TSynEdit
@@ -1405,6 +1365,46 @@ object MainForm: TMainForm
           MarkupInfo.Foreground = clGray
         end
       end
+    end
+    object SearchGrid: TStringGrid
+      Left = 3
+      Height = 101
+      Top = 23
+      Width = 875
+      Align = alClient
+      ColCount = 4
+      Flat = True
+      MouseWheelOption = mwGrid
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goSmoothScroll, goFixedRowNumbering, goRowHighlight]
+      ParentColor = True
+      PopupMenu = MessagesPopup
+      RowCount = 1
+      TabOrder = 0
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnDblClick = SearchGridDblClick
+      OnDrawCell = SearchGridDrawCell
+      ColWidths = (
+        21
+        184
+        53
+        548
+      )
+      Cells = (
+        3
+        1
+        0
+        'File'
+        2
+        0
+        'Line'
+        3
+        0
+        'Result'
+      )
     end
   end
   object MessagesSpl: TntvSplitter
