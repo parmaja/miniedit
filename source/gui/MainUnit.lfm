@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 224
+  Left = 390
   Height = 591
-  Top = 150
+  Top = 153
   Width = 881
   AllowDropFiles = True
   Caption = 'Mini Edit'
@@ -97,7 +97,7 @@ object MainForm: TMainForm
       end
     end
   end
-  object FoldersPnl: TPanel
+  object BrowserPnl: TPanel
     Left = 0
     Height = 385
     Top = 29
@@ -108,7 +108,7 @@ object MainForm: TMainForm
     ClientWidth = 200
     Constraints.MinHeight = 60
     TabOrder = 0
-    object FolderPanel: TPanel
+    object BrowserHeaderPanel: TPanel
       Left = 0
       Height = 24
       Top = 0
@@ -220,43 +220,55 @@ object MainForm: TMainForm
         end
       end
     end
-    object FolderPathLbl: TLabel
-      Left = 2
-      Height = 16
-      Top = 26
-      Width = 196
-      Align = alTop
-      AutoSize = False
-      BorderSpacing.Around = 2
-      Caption = 'Path:'
-      ParentColor = False
-      PopupMenu = FolderMenu
-    end
-    object FileList: TListView
-      Left = 3
-      Height = 337
-      Top = 45
-      Width = 194
+    object FolderPanel: TPanel
+      Left = 0
+      Height = 361
+      Top = 24
+      Width = 200
       Align = alClient
-      BorderSpacing.Around = 3
-      Columns = <      
-        item
-          AutoSize = True
-          Caption = 'File Name'
-          Width = 190
-        end>
-      HideSelection = False
-      ParentColor = True
-      PopupMenu = FolderMenu
-      ReadOnly = True
-      RowSelect = True
-      ShowColumnHeaders = False
-      SmallImages = EditorResource.FileImages
+      BevelOuter = bvNone
+      Caption = 'FolderPanel'
+      ClientHeight = 361
+      ClientWidth = 200
       TabOrder = 1
-      ViewStyle = vsReport
-      OnDblClick = FileListDblClick
-      OnKeyDown = FileListKeyDown
-      OnKeyPress = FileListKeyPress
+      object FileList: TListView
+        Left = 3
+        Height = 337
+        Top = 21
+        Width = 194
+        Align = alClient
+        BorderSpacing.Around = 3
+        Columns = <        
+          item
+            AutoSize = True
+            Caption = 'File Name'
+            Width = 190
+          end>
+        HideSelection = False
+        ParentColor = True
+        PopupMenu = FolderMenu
+        ReadOnly = True
+        RowSelect = True
+        ShowColumnHeaders = False
+        SmallImages = EditorResource.FileImages
+        TabOrder = 0
+        ViewStyle = vsReport
+        OnDblClick = FileListDblClick
+        OnKeyDown = FileListKeyDown
+        OnKeyPress = FileListKeyPress
+      end
+      object FolderPathLbl: TLabel
+        Left = 2
+        Height = 16
+        Top = 2
+        Width = 196
+        Align = alTop
+        AutoSize = False
+        BorderSpacing.Around = 2
+        Caption = 'Path:'
+        ParentColor = False
+        PopupMenu = FolderMenu
+      end
     end
   end
   object ClientPnl: TPanel
@@ -751,47 +763,6 @@ object MainForm: TMainForm
         1
         0
         'Variable'
-      )
-    end
-    object MessagesGrid: TStringGrid
-      Left = 3
-      Height = 101
-      Top = 23
-      Width = 875
-      Align = alClient
-      Flat = True
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
-      ParentColor = True
-      PopupMenu = MessagesPopup
-      RowCount = 1
-      TabOrder = 2
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnDblClick = MessagesGridDblClick
-      ColWidths = (
-        18
-        64
-        378
-        164
-        64
-      )
-      Cells = (
-        4
-        1
-        0
-        'Type'
-        2
-        0
-        'Message'
-        3
-        0
-        'File'
-        4
-        0
-        'Line'
       )
     end
     inline OutputEdit: TSynEdit
@@ -1366,6 +1337,47 @@ object MainForm: TMainForm
         end
       end
     end
+    object MessagesGrid: TStringGrid
+      Left = 3
+      Height = 101
+      Top = 23
+      Width = 875
+      Align = alClient
+      Flat = True
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
+      ParentColor = True
+      PopupMenu = MessagesPopup
+      RowCount = 1
+      TabOrder = 2
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnDblClick = MessagesGridDblClick
+      ColWidths = (
+        18
+        64
+        378
+        164
+        64
+      )
+      Cells = (
+        4
+        1
+        0
+        'Type'
+        2
+        0
+        'Message'
+        3
+        0
+        'File'
+        4
+        0
+        'Line'
+      )
+    end
     object SearchGrid: TStringGrid
       Left = 3
       Height = 101
@@ -1421,7 +1433,7 @@ object MainForm: TMainForm
     Height = 385
     Top = 29
     Width = 12
-    ResizeControl = FoldersPnl
+    ResizeControl = BrowserPnl
   end
   object MainMenu: TMainMenu
     Images = EditorResource.ToolbarImageList

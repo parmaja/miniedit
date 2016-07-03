@@ -1,14 +1,11 @@
 unit mnePyClasses;
-
 {$mode objfpc}{$H+}
 {**
  * Mini Edit
  *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author    Zaher Dirkey <zaher at parmaja dot com>
- *
  *}
-
 interface
 
 uses
@@ -80,11 +77,11 @@ var
   aFrame: TFrame;
 begin
   aFrame := TCompilerProjectOptionsForm.Create(AOwner);
-  (aFrame as TCompilerProjectOptionsForm).Project := AProject;
+  (aFrame as TCompilerProjectOptionsForm).FProject := AProject;
   aFrame.Caption := 'Compiler';
   AddFrame(aFrame);
   aFrame := TPyProjectFrame.Create(AOwner);
-  (aFrame as TPyProjectFrame).Project := AProject;
+  (aFrame as TPyProjectFrame).FProject := AProject;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 end;

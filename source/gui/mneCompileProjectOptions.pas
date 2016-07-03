@@ -1,6 +1,11 @@
 unit mneCompileProjectOptions;
-
 {$mode objfpc}{$H+}
+{**
+ * Mini Edit
+ *
+ * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+ * @author    Zaher Dirkey <zaher at parmaja dot com>
+ *}
 
 interface
 
@@ -12,7 +17,7 @@ type
 
   { TCompilerProjectOptionsForm }
 
-  TCompilerProjectOptionsForm = class(TFrame, IEditorOptions)
+  TCompilerProjectOptionsForm = class(TFrame, IEditorOptions, IEditorProjectFrame)
     Bevel1: TBevel;
     Button4: TButton;
     RunParamsEdit: TEdit;
@@ -37,8 +42,9 @@ type
   private
     Options: TCompilerProjectOptions;
   protected
+    function GetProject: TEditorProject;
   public
-    Project: TEditorProject;
+    FProject: TEditorProject;
     procedure Apply;
     procedure Retrieve;
   end;
@@ -53,8 +59,13 @@ procedure TCompilerProjectOptionsForm.Button4Click(Sender: TObject);
 var
   s: string;
 begin
-  ShowSelectFile(Project.RootDir, s);
+  ShowSelectFile(FProject.RootDir, s);
   MainEdit.Text := s;
+end;
+
+function TCompilerProjectOptionsForm.GetProject: TEditorProject;
+begin
+  Result := FProject;
 end;
 
 procedure TCompilerProjectOptionsForm.Bevel1ChangeBounds(Sender: TObject);
@@ -76,7 +87,7 @@ end;
 
 procedure TCompilerProjectOptionsForm.Retrieve;
 begin
-  Options := (Project.Options as TCompilerProjectOptions);
+  Options := (FProject.Options as TCompilerProjectOptions);
 
   RunModeCbo.Items.Add('Console');
   RunModeCbo.Items.Add('Process');

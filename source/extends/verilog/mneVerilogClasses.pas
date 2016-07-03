@@ -55,6 +55,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); override;
+    procedure CreateProjectPanel(AOwner: TComponent; AProject: TEditorProject; var AFrame: TFrame); override;
   published
     property UseCFG: Boolean read FUseCFG write FUseCFG default True;
   end;
@@ -77,7 +78,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils(*, mneVerilogProjectFrames, mneVerilogConfigForms*);
+  IniFiles, mnStreams, mnUtils, mneVerilogProjectPanel(*, mneVerilogProjectFrames, mneVerilogConfigForms*);
 
 { TmneSynVerilogSyn }
 
@@ -99,13 +100,20 @@ var
   aFrame: TFrame;
 begin
   aFrame := TCompilerProjectOptionsForm.Create(AOwner);
-  (aFrame as TCompilerProjectOptionsForm).Project := AProject;
+  (aFrame as TCompilerProjectOptionsForm).FProject := AProject;
   aFrame.Caption := 'Compiler';
   AddFrame(aFrame);
   {aFrame := TVerilogProjectFrame.Create(AOwner);
   (aFrame as TVerilogProjectFrame).Project := AProject;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);}
+end;
+
+procedure TVerilogProjectOptions.CreateProjectPanel(AOwner: TComponent; AProject: TEditorProject; var AFrame: TFrame);
+begin
+  aFrame := TVerilogProjectPanel.Create(AOwner);
+  (aFrame as TVerilogProjectPanel).FProject := AProject;
+  aFrame.Caption := 'Files';
 end;
 
 { TVerilogTendency }

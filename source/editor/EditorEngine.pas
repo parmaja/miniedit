@@ -55,6 +55,12 @@ type
     procedure Retrieve;
   end;
 
+  IEditorProjectFrame = interface
+    ['{C5D191FE-D449-4EB4-9D7D-E3E53DBB89FA}']
+    function GetProject: TEditorProject;
+    property Project: TEditorProject read GetProject;
+  end;
+
   IEditorControl = interface
     ['{8C2646A1-2738-4830-8107-CF8753D14EBD}']
     function GetMainControl: TWinControl; //Like datagrid in csv form
@@ -340,6 +346,7 @@ type
   public
     constructor Create; virtual;
     procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); virtual;
+    procedure CreateProjectPanel(AOwner: TComponent; AProject: TEditorProject; var AFrame: TFrame); virtual;
   published
     property RunMode: TmneRunMode read FRunMode write FRunMode;
     //PauseConsole do not end until use press any key or enter
@@ -1477,6 +1484,11 @@ end;
 
 procedure TEditorProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack);
 begin
+end;
+
+procedure TEditorProjectOptions.CreateProjectPanel(AOwner: TComponent; AProject: TEditorProject; var AFrame: TFrame);
+begin
+
 end;
 
 procedure TCompilerProjectOptions.SetPaths(AValue: TStrings);

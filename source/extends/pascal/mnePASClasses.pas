@@ -113,7 +113,7 @@ var
   aFrame: TFrame;
 begin
   aFrame := TCompilerProjectOptionsForm.Create(AOwner);
-  (aFrame as TCompilerProjectOptionsForm).Project := AProject;
+  (aFrame as TCompilerProjectOptionsForm).FProject := AProject;
   aFrame.Caption := 'Compiler';
   AddFrame(aFrame);
   aFrame := TPasProjectFrame.Create(AOwner);

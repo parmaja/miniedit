@@ -54,8 +54,11 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    FileList: TListView;
+    FolderPathLbl: TLabel;
     MenuItem26: TMenuItem;
     OutputEdit: TSynEdit;
+    FolderPanel: TPanel;
     RunSignBtn: TSpeedButton;
     WatchesGrid: TStringGrid;
     SearchGrid: TStringGrid;
@@ -64,9 +67,7 @@ type
     TypesOptionsAct: TAction;
     DBGCompileAct: TAction;
     BrowseTabs: TntvTabSet;
-    FileList: TListView;
     FolderBtn: TSpeedButton;
-    FolderPathLbl: TLabel;
     MenuItem22: TMenuItem;
     MenuItem23: TMenuItem;
     MenuItem24: TMenuItem;
@@ -214,8 +215,8 @@ type
     UnixMnu: TMenuItem;
     WindowsMnu: TMenuItem;
     MacMnu: TMenuItem;
-    FoldersPnl: TPanel;
-    FolderPanel: TPanel;
+    BrowserPnl: TPanel;
+    BrowserHeaderPanel: TPanel;
     FolderCloseBtn: TSpeedButton;
     Extractkeywords: TMenuItem;
     ManageAct: TAction;
@@ -513,6 +514,7 @@ type
     procedure UpdateFolder;
     procedure ProjectChanged;
     procedure UpdateMenu;
+    procedure UpdatePanel;
     procedure SetFolder(const Value: string);
     procedure ReopenClick(Sender: TObject);
     procedure ReopenProjectClick(Sender: TObject);
@@ -525,6 +527,7 @@ type
     procedure DeleteCurrentWatch;
     procedure MoveListIndex(vForward: boolean);
   protected
+    FProjectFrame: TFrame;
     FOutputBuffer: string; //TODO stupid idea
     procedure RunFile;
     procedure CompileFile;
@@ -607,7 +610,7 @@ begin
   SortFolderFiles := Engine.Options.SortFolderFiles;
   FoldersAct.Checked := Engine.Options.ShowFolder;
   MessagesAct.Checked := Engine.Options.ShowMessages;
-  FoldersPnl.Width := Engine.Options.FoldersWidth;
+  BrowserPnl.Width := Engine.Options.FoldersWidth;
   //MessagesTabs.Height := Engine.Options.MessagesHeight;
   with MessagesTabs, BoundsRect do
     BoundsRect := Rect(Left, Bottom - Engine.Options.MessagesHeight, Right, Bottom);
@@ -628,7 +631,7 @@ end;
 procedure TMainForm.UpdateFoldersPnl;
 begin
   FoldersSpl.Visible := FoldersAct.Checked;
-  FoldersPnl.Visible := FoldersAct.Checked;
+  BrowserPnl.Visible := FoldersAct.Checked;
   if FoldersAct.Checked then
     UpdateFolder;
 end;
@@ -657,7 +660,22 @@ end;
 
 procedure TMainForm.BrowseTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
 begin
-  FileList.Visible := True;
+  if NewTab.Index = 0 then
+  begin
+    FolderPanel.Visible := True;
+    if FProjectFrame <> nil then
+      FProjectFrame.Visible := False;
+  end
+  else
+  begin
+    if FProjectFrame <> nil then
+    begin
+      FolderPanel.Visible := False;
+      FProjectFrame.Visible := True;
+    end
+    else
+      FolderPanel.Visible := True;
+  end;
 end;
 
 procedure TMainForm.CallStackListDblClick(Sender: TObject);
@@ -1202,7 +1220,7 @@ begin
   Engine.Options.SortFolderFiles := SortFolderFiles;
   Engine.Options.ShowMessages := MessagesAct.Checked;
   Engine.Options.MessagesHeight := MessagesTabs.Height;
-  Engine.Options.FoldersWidth := FoldersPnl.Width;
+  Engine.Options.FoldersWidth := BrowserPnl.Width;
   if Engine.Session.IsOpened then
     Engine.Options.LastProject := Engine.Session.Project.FileName
   else
@@ -1582,9 +1600,9 @@ begin
   if Engine.SCM <> nil then
     SCMMnu.Caption := Engine.SCM.Name;
   TypePnl.Caption := Engine.Tendency.Name;
-  BrowseTabs.Items[1].Visible := False;//capBrowser in Engine.Tendency.Capabilities;
 
   UpdateMenu;
+  UpdatePanel;
 end;
 
 procedure TMainForm.UpdateMenu;
@@ -1626,6 +1644,38 @@ begin
     DBGStepOutAct.Enabled := capTrace in Capabilities;
     DBGRunToCursorAct.Enabled := capTrace in Capabilities;
   end;
+end;
+
+procedure TMainForm.UpdatePanel;
+  procedure FreeFrame;
+  begin
+{    if (FProjectFrame <> nil) and Supports(FProjectFrame, IEditorOptions) then
+      (FProjectFrame as IEditorOptions).Apply;} //Project is already freed we cant apply
+    FreeAndNil(FProjectFrame);
+  end;
+var
+  i: Integer;
+begin
+  if Engine.Session.IsOpened then
+  begin
+    if (FProjectFrame = nil) or ((FProjectFrame as IEditorProjectFrame).Project <> Engine.Session.Project) then
+    begin
+      if (FProjectFrame <> nil) then
+        FreeFrame;
+      Engine.Session.Project.Options.CreateProjectPanel(Self, Engine.Session.Project, FProjectFrame);
+      if FProjectFrame <> nil then
+      begin
+        FProjectFrame.Parent := BrowserPnl;
+        FProjectFrame.Align := alClient;
+        FProjectFrame.Visible := False;
+        if Supports(FProjectFrame, IEditorOptions) then
+          (FProjectFrame as IEditorOptions).Retrieve;
+      end;
+    end;
+  end
+  else
+    FreeFrame;
+  BrowseTabs.Items[1].Visible := FProjectFrame <> nil;
 end;
 
 procedure TMainForm.SaveAsProjectActExecute(Sender: TObject);
@@ -2082,7 +2132,7 @@ var
 begin
   Pt.X := FolderBtn.BoundsRect.Left;
   Pt.Y := FolderBtn.BoundsRect.Bottom;
-  Pt := FolderPanel.ClientToScreen(Pt);
+  Pt := BrowserHeaderPanel.ClientToScreen(Pt);
   FolderBtn.PopupMenu.Popup(Pt.X, Pt.Y);
 end;
 

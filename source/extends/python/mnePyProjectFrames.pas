@@ -12,14 +12,15 @@ type
 
   { TPyProjectFrame }
 
-  TPyProjectFrame = class(TFrame, IEditorOptions)
+  TPyProjectFrame = class(TFrame, IEditorOptions, IEditorProjectFrame)
     ExpandPathsChk1: TCheckBox;
     ExpandPathsChk2: TCheckBox;
   private
     Options: TPyProjectOptions;
   protected
+    function GetProject: TEditorProject;
   public
-    Project: TEditorProject;
+    FProject: TEditorProject;
     procedure Apply;
     procedure Retrieve;
   end;
@@ -30,13 +31,18 @@ implementation
 
 { TPyProjectFrame }
 
+function TPyProjectFrame.GetProject: TEditorProject;
+begin
+  Result := FProject;
+end;
+
 procedure TPyProjectFrame.Apply;
 begin
 end;
 
 procedure TPyProjectFrame.Retrieve;
 begin
-  Options := (Project.Options as TPyProjectOptions);
+  Options := (FProject.Options as TPyProjectOptions);
 end;
 
 end.
