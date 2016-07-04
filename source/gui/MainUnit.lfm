@@ -1615,7 +1615,7 @@ object MainForm: TMainForm
         OnClick = SwitchFocusActExecute
       end
     end
-    object Edit1: TMenuItem
+    object EditMnu: TMenuItem
       Caption = 'Edit'
       object OpenInclude1: TMenuItem
         Action = OpenIncludeAct
@@ -1671,13 +1671,6 @@ object MainForm: TMainForm
       object SelectAll1: TMenuItem
         Action = SelectAllAct
         OnClick = SelectAllActExecute
-      end
-      object N8: TMenuItem
-        Caption = '-'
-      end
-      object EditorOptions1: TMenuItem
-        Action = EditorOptionsAct
-        OnClick = EditorOptionsActExecute
       end
     end
     object SCMMnu: TMenuItem
@@ -1814,9 +1807,14 @@ object MainForm: TMainForm
     end
     object ToolsMnu: TMenuItem
       Caption = 'Tools'
+      OnClick = ToolsMnuClick
       object OptionsMnu: TMenuItem
         Action = GeneralOptionsAct
         OnClick = GeneralOptionsActExecute
+      end
+      object EditorOptions1: TMenuItem
+        Action = EditorOptionsAct
+        OnClick = EditorOptionsActExecute
       end
       object TypeOptionsForMnu: TMenuItem
         Action = TypesOptionsAct
@@ -1827,10 +1825,6 @@ object MainForm: TMainForm
       end
       object N6: TMenuItem
         Caption = '-'
-      end
-      object Extractkeywords: TMenuItem
-        Caption = 'Extract keywords'
-        Visible = False
       end
     end
     object Help1: TMenuItem

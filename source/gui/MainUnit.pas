@@ -20,7 +20,7 @@ SynEdit:
 interface
 
 uses
-  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, MsgBox,
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, MsgBox, contnrs,
   LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorDebugger, FileUtil,
   LazFileUtils, Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus,
   ToolWin, Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses,
@@ -177,7 +177,7 @@ type
     FolderOpenAct1: TMenuItem;
     FindAct: TAction;
     FindNextAct: TAction;
-    Edit1: TMenuItem;
+    EditMnu: TMenuItem;
     Find1: TMenuItem;
     Findnext1: TMenuItem;
     HelpIndexAct: TAction;
@@ -218,7 +218,6 @@ type
     BrowserPnl: TPanel;
     BrowserHeaderPanel: TPanel;
     FolderCloseBtn: TSpeedButton;
-    Extractkeywords: TMenuItem;
     ManageAct: TAction;
     Manage1: TMenuItem;
     OpenFolder2: TMenuItem;
@@ -230,7 +229,6 @@ type
     PasteAct: TAction;
     SelectAllAct: TAction;
     Copy1: TMenuItem;
-    N8: TMenuItem;
     Cut1: TMenuItem;
     Paste1: TMenuItem;
     SelectAll1: TMenuItem;
@@ -411,6 +409,7 @@ type
     procedure SortByExtensionsActExecute(Sender: TObject);
     procedure SortByNamesActExecute(Sender: TObject);
     procedure ToolButton4Click(Sender: TObject);
+    procedure ToolsMnuClick(Sender: TObject);
     procedure TypeOptionsActExecute(Sender: TObject);
     procedure TypesOptionsActExecute(Sender: TObject);
     procedure UnixMnuClick(Sender: TObject);
@@ -513,6 +512,7 @@ type
     procedure ProjectLoaded;
     procedure UpdateFolder;
     procedure ProjectChanged;
+    procedure AddMenuItem(AName, ACaption: string; AOnClickEvent: TNotifyEvent; AShortCut: TShortCut = 0);
     procedure UpdateMenu;
     procedure UpdatePanel;
     procedure SetFolder(const Value: string);
@@ -529,6 +529,7 @@ type
   protected
     FProjectFrame: TFrame;
     FOutputBuffer: string; //TODO stupid idea
+    FMenuItemsList: TObjectList;
     procedure RunFile;
     procedure CompileFile;
     //
@@ -587,6 +588,7 @@ var
   aWorkspace: string;
 begin
   inherited;
+  FMenuItemsList := TObjectList.Create(True);
   aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
   try
     aWorkspace := aIniFile.ReadString(SysPlatform, 'Workspace', '');
@@ -1494,6 +1496,11 @@ procedure TMainForm.ToolButton4Click(Sender: TObject);
 begin
 end;
 
+procedure TMainForm.ToolsMnuClick(Sender: TObject);
+begin
+  //
+end;
+
 procedure TMainForm.TypeOptionsActExecute(Sender: TObject);
 begin
   ShowTendencyForm(Engine.Tendency);
@@ -1539,9 +1546,6 @@ begin
   Application.OnException := @CatchErr;
 
   FMessages := Engine.MessagesList.GetMessages('Messages');
-{$IFOPT D+}
-  Extractkeywords.Visible := True;
-{$ENDIF}
   EngineChanged;
   EngineRefresh;
   EngineDebug;
@@ -1605,14 +1609,40 @@ begin
   UpdatePanel;
 end;
 
+procedure TMainForm.AddMenuItem(AName, ACaption: string; AOnClickEvent: TNotifyEvent; AShortCut: TShortCut);
+var
+  MenuItem: TMenuItem;
+begin
+  if FMenuItemsList.Count = 0 then
+  begin
+    MenuItem := TMenuItem.Create(MainMenu);
+    EditMnu.Add(MenuItem);
+    MenuItem.Name := 'FILE_EDIT_MENUITEM_SEP';
+    MenuItem.Caption := '-';
+    FMenuItemsList.Add(MenuItem);
+  end;
+  MenuItem := TMenuItem.Create(MainMenu);
+  EditMnu.Add(MenuItem);
+  MenuItem.Name := 'FILE_EDIT_MENUITEM__' + AName;
+  MenuItem.Caption := ACaption;
+  MenuItem.OnClick := AOnClickEvent;
+  MenuItem.ShortCut := AShortCut;
+  FMenuItemsList.Add(MenuItem);
+end;
+
 procedure TMainForm.UpdateMenu;
 var
   aTendency: TEditorTendency;
+  MenuItem: TMenuItem;
 begin
   aTendency := nil;
 
   if Engine.Files.Current <> nil then
+  begin
     aTendency := Engine.Files.Current.Tendency;
+    FMenuItemsList.Clear;
+    Engine.Files.Current.Group.Category.EnumMenuItems(@AddMenuItem);
+  end;
 
   if aTendency = nil then
     aTendency := Engine.Tendency;
@@ -1975,6 +2005,7 @@ end;
 
 destructor TMainForm.Destroy;
 begin
+  FreeAndNil(FMenuItemsList);
   Application.OnException := nil;
   inherited;
 end;

@@ -210,6 +210,7 @@ type
   end;
 
   TAddFrameCallBack = procedure(AFrame: TFrame) of object;
+  TAddClickCallBack = procedure(Name, Caption: string; OnClickEvent: TNotifyEvent; ShortCut: TShortCut = 0) of object;
 
   { TFileCategories }
 
@@ -776,6 +777,7 @@ type
   public
     constructor Create(const vName: string; vKind: TFileCategoryKinds = []); virtual;
     destructor Destroy; override;
+    procedure EnumMenuItems(AddItems: TAddClickCallBack); virtual;
     function CreateHighlighter: TSynCustomHighlighter; //todo replace with doCreate....
     procedure InitHighlighter;
     property Mapper:TMapper read GetMapper write FMapper;
@@ -4289,6 +4291,10 @@ begin
   FreeAndNil(FCompletion);
   FreeAndNil(FHighlighter);
   inherited;
+end;
+
+procedure TFileCategory.EnumMenuItems(AddItems: TAddClickCallBack);
+begin
 end;
 
 function TFileCategory.CreateHighlighter: TSynCustomHighlighter;

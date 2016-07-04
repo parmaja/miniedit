@@ -16,7 +16,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  LazFileUtils, SynHighlighterD, EditorDebugger, EditorClasses, mneClasses,
+  LazFileUtils, SynHighlighterD, EditorDebugger, EditorClasses, mneClasses, MsgBox,
   mneCompileProjectOptions, EditorRun, DebugClasses, mneConsoleClasses,
   mneConsoleForms;
 
@@ -37,7 +37,9 @@ type
   TDFileCategory = class(TCodeFileCategory)
   private
   protected
+    procedure DoSomthingClick(Sender: TObject);
     procedure InitMappers; override;
+    procedure EnumMenuItems(AddItems: TAddClickCallBack); override;
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddKeywords; override;
@@ -71,7 +73,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, SynHighlighterMultiProc, SynEditStrConst, mneDConfigForms, mneDProjectFrames;
+  IniFiles, mnStreams, mnUtils, SynHighlighterMultiProc, SynEditStrConst, mneDConfigForms, mneDProjectFrames, LCLProc;
 
 { TDProject }
 
@@ -297,6 +299,11 @@ begin
   EnumerateKeywords(Ord(tkFunction), sDFunctions, Highlighter.IdentChars, @DoAddCompletion);
 end;
 
+procedure TDFileCategory.DoSomthingClick(Sender: TObject);
+begin
+  MsgBox.Msg.Ok('Ok ok');
+end;
+
 procedure TDFileCategory.InitMappers;
 begin
   with Highlighter as TSynDSyn do
@@ -315,6 +322,12 @@ begin
     Mapper.Add(VariableAttri, attVariable);
     Mapper.Add(ProcessorAttri, attDirective);
   end;
+end;
+
+procedure TDFileCategory.EnumMenuItems(AddItems: TAddClickCallBack);
+begin
+  inherited EnumMenuItems(AddItems);
+  AddItems('Somthing', 'Do Somthing', @DoSomthingClick, TextToShortCut('Ctrl+U'));
 end;
 
 initialization
