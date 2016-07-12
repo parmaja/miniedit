@@ -16,6 +16,7 @@ uses
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   EditorDebugger, EditorRun, DebugClasses, mneCompileProjectOptions, LazFileUtils,
+  LCLProc,
   SynHighlighterVerilog;
 
 type
@@ -38,11 +39,16 @@ type
 
   TVerilogFileCategory = class(TCodeFileCategory)
   private
+    procedure CreateInstantiation(AWires: boolean);
+    procedure ImplementClick(Sender: TObject);
+    procedure ImplementWiresClick(Sender: TObject);
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddKeywords; override;
+
+    procedure EnumMenuItems(AddItems: TAddClickCallBack); override;
   public
   end;
 
@@ -50,14 +56,18 @@ type
 
   TVerilogProjectOptions = class(TCompilerProjectOptions)
   private
-    FUseCFG: Boolean;
+    FFileList: TStringList;
+    function GetFileList: string;
+    procedure SetFileList(const AValue: string);
   public
     constructor Create; override;
     destructor Destroy; override;
     procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); override;
     procedure CreateProjectPanel(AOwner: TComponent; AProject: TEditorProject; var AFrame: TFrame); override;
+
+    property Files: TStringList read FFileList;
   published
-    property UseCFG: Boolean read FUseCFG write FUseCFG default True;
+    property FileList: string read GetFileList write SetFileList;
   end;
 
   { TVerilogTendency }
@@ -78,20 +88,32 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, mneVerilogProjectPanel(*, mneVerilogProjectFrames, mneVerilogConfigForms*);
+  IniFiles, mnStreams, mnUtils, mneVerilogProjectPanel,
+  verilogparser, busintf;
 
 { TmneSynVerilogSyn }
 
 { TVerilogProjectOptions }
 
+function TVerilogProjectOptions.GetFileList: string;
+begin
+  result:=FFileList.Text;
+end;
+
+procedure TVerilogProjectOptions.SetFileList(const AValue: string);
+begin
+  FFileList.Text:=AValue;
+end;
+
 constructor TVerilogProjectOptions.Create;
 begin
   inherited Create;
-  FUseCFG := True;
+  FFileList:=TStringList.Create;
 end;
 
 destructor TVerilogProjectOptions.Destroy;
 begin
+  FFileList.Free;
   inherited Destroy;
 end;
 
@@ -103,10 +125,6 @@ begin
   (aFrame as TCompilerProjectOptionsForm).FProject := AProject;
   aFrame.Caption := 'Compiler';
   AddFrame(aFrame);
-  {aFrame := TVerilogProjectFrame.Create(AOwner);
-  (aFrame as TVerilogProjectFrame).Project := AProject;
-  aFrame.Caption := 'Options';
-  AddFrame(aFrame);}
 end;
 
 procedure TVerilogProjectOptions.CreateProjectPanel(AOwner: TComponent; AProject: TEditorProject; var AFrame: TFrame);
@@ -125,7 +143,7 @@ end;
 
 function TVerilogTendency.CreateOptions: TEditorProjectOptions;
 begin
-  Result := TVerilogProjectOptions.Create;;
+  Result := TVerilogProjectOptions.Create;
 end;
 
 procedure TVerilogTendency.Init;
@@ -219,6 +237,92 @@ begin
 end;
 
 { TVerilogFileCategory }
+                           
+procedure TVerilogFileCategory.CreateInstantiation(AWires: boolean);
+var
+  CurrentFile: TTextEditorFile;
+  ai, ns: Boolean;
+  id, f, inst: String;
+  vp: TVerilogParser;
+  proj: TVerilogProjectOptions;
+  i, sx, ex: Integer;
+  st: TStringList;
+  cr: TPoint;
+begin
+  if (Engine.Session.IsOpened) then
+  begin
+    CurrentFile:=Engine.Files.Current as TTextEditorFile;
+    proj:=Engine.Session.Project.Options as TVerilogProjectOptions;
+
+    if Assigned(CurrentFile) and
+       Assigned(CurrentFile.SynEdit) and
+       Assigned(CurrentFile.SynEdit.Highlighter) then
+    begin                             
+      cr:=CurrentFile.SynEdit.CaretXY;
+      CurrentFile.SynEdit.CaretAtIdentOrString(cr, ai,ns);
+
+      if (not ai) and
+         (cr.x>0) and
+         (length(CurrentFile.SynEdit.TextBetweenPoints[cr.Subtract(point(1,0)), cr])=1) and
+         (CurrentFile.SynEdit.IsIdentChar(CurrentFile.SynEdit.TextBetweenPoints[cr.Subtract(point(1,0)), cr][1])) then
+      begin
+        cr:=cr.Subtract(point(1,0));
+        CurrentFile.SynEdit.CaretAtIdentOrString(cr, ai,ns);
+      end;
+
+      if ai then
+      begin
+        id:=CurrentFile.SynEdit.GetWordAtRowCol(cr);
+
+        vp:=TVerilogParser.Create;
+        try
+          for i:=0 to proj.Files.Count-1 do
+          begin
+            f:=ConcatPaths([Engine.Session.Project.RootDir,proj.Files[i]]);
+
+            if LowerCase(ExtractFileExt(f))='.v' then
+            begin
+              st:=TStringList.Create;
+              try
+                st.LoadFromFile(f);
+                vp.Parse(st.Text);
+              finally
+                st.Free;
+              end;
+            end;
+          end;
+
+          for i:=0 to vp.ModuleCount-1 do
+          begin
+            if vp.Module[i].Name=id then
+            begin
+              CurrentFile.SynEdit.GetWordBoundsAtRowCol(CurrentFile.SynEdit.CaretXY, sx,ex);
+
+              inst:=GenerateInstance(vp.Module[i], sx-1);
+              if AWires then inst:=GenerateWires(vp.Module[i], sx-1)+LineEnding+LineEnding+inst;
+
+              CurrentFile.SynEdit.SetTextBetweenPoints(Point(sx,CurrentFile.SynEdit.CaretY),Point(ex,CurrentFile.SynEdit.CaretY),TrimLeft(inst));
+
+              break;
+            end;
+          end;
+        finally
+          vp.free;
+        end;
+      end;
+    end;
+  end;
+end;
+
+procedure TVerilogFileCategory.ImplementClick(Sender: TObject);
+begin
+  CreateInstantiation(False);
+end;
+
+procedure TVerilogFileCategory.ImplementWiresClick(Sender: TObject);
+begin
+  CreateInstantiation(true);
+end;
 
 function TVerilogFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
@@ -253,6 +357,13 @@ begin
   inherited DoAddKeywords;
   //EnumerateKeywords(Ord(tkKeyword), sVerilogKeywords, Highlighter.IdentChars, @DoAddCompletion);
   //EnumerateKeywords(Ord(tkDirective), sVerilogDirectives, Highlighter.IdentChars, @DoAddCompletion);
+end;
+
+procedure TVerilogFileCategory.EnumMenuItems(AddItems: TAddClickCallBack);
+begin
+  inherited EnumMenuItems(AddItems);
+  AddItems('Implement','Implement', @ImplementClick, TextToShortCut('Ctrl+W'));
+  AddItems('ImplementWires','Implement+Wires', @ImplementWiresClick, TextToShortCut('Ctrl+Shift+W'));
 end;
 
 { TVerilogFile }
