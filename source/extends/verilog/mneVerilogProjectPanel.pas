@@ -6,16 +6,22 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, SynEdit, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, EditorEngine, SelectFiles, DebugClasses, mneVerilogClasses;
+  StdCtrls, Buttons, ComCtrls, ExtCtrls, EditorEngine, SelectFiles, DebugClasses, mneVerilogClasses;
 
 type
 
   { TVerilogProjectPanel }
 
   TVerilogProjectPanel = class(TFrame, IEditorOptions, IEditorProjectFrame)
-    Button1: TButton;
-    Memo1: TMemo;
-    procedure Button4Click(Sender: TObject);
+    AddButton: TBitBtn;
+    OpenDialog1: TOpenDialog;
+    RemoveButton: TBitBtn;
+    GroupBox1: TGroupBox;
+    ProjectFileList: TListBox;
+    Panel1: TPanel;
+    procedure AddButtonClick(Sender: TObject);
+    procedure ProjectFileListSelectionChange(Sender: TObject; User: boolean);
+    procedure RemoveButtonClick(Sender: TObject);
   private
   protected
     function GetProject: TEditorProject;
@@ -31,8 +37,38 @@ implementation
 
 { TVerilogProjectPanel }
 
-procedure TVerilogProjectPanel.Button4Click(Sender: TObject);
+procedure TVerilogProjectPanel.ProjectFileListSelectionChange(Sender: TObject; User: boolean);
 begin
+  RemoveButton.Enabled:=(ProjectFileList.ItemIndex>=0);
+end;
+
+procedure TVerilogProjectPanel.AddButtonClick(Sender: TObject);
+var
+  path: string;
+  i: SizeInt;
+begin
+  OpenDialog1.InitialDir:=FProject.RootDir;
+
+  if OpenDialog1.Execute then
+  begin
+    for i:=0 to OpenDialog1.Files.Count-1 do
+    begin
+      path:=ExtractRelativepath(IncludeTrailingBackslash(FProject.RootDir),OpenDialog1.Files[i]);
+      ProjectFileList.Items.Add(path);
+    end;
+
+    Apply();
+  end;
+end;
+
+procedure TVerilogProjectPanel.RemoveButtonClick(Sender: TObject);
+begin
+  if ProjectFileList.SelCount>0 then
+  begin
+    ProjectFileList.DeleteSelected;
+
+    Apply();
+  end;
 end;
 
 function TVerilogProjectPanel.GetProject: TEditorProject;
@@ -43,8 +79,8 @@ end;
 procedure TVerilogProjectPanel.Apply;
 begin
   with (FProject.Options as TVerilogProjectOptions) do
-  begin
-    //UseCFG := UseCFGFileChk.Checked;
+  begin                      
+    Files.Assign(ProjectFileList.Items);
   end;
 end;
 
@@ -52,7 +88,7 @@ procedure TVerilogProjectPanel.Retrieve;
 begin
   with (FProject.Options as TVerilogProjectOptions) do
   begin
-    //UseCFGFileChk.Checked := UseCFG;
+    ProjectFileList.Items.Assign(Files);
   end;
 end;
 
