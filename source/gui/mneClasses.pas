@@ -348,8 +348,10 @@ initialization
     Categories.Add(TINIFileCategory.Create('ini'));
     Categories.Add(TXMLFileCategory.Create('xml'));
     Categories.Add(TCFGFileCategory.Create('CFG'));
+    Categories.Add(TTXTFileCategory.Create('md'));
 
     Groups.Add(TTXTFile, 'txt', 'TXT files', 'txt', ['txt'], []);
+    Groups.Add(TTXTFile, 'md', 'MarkDown files', 'md', ['md'], []);
     Groups.Add(TSQLFile, 'sql', 'SQL files', 'SQL', ['sql'], [fgkAssociated, fgkMember, fgkBrowsable]);
     Groups.Add(TApacheFile, 'htaccess', 'htaccess files', 'apache', ['htaccess', 'conf'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TXMLFile, 'xml', 'XML files', 'xml', ['xml'], [fgkMember, fgkBrowsable]);
