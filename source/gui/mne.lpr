@@ -53,7 +53,8 @@ uses
   mneDClasses, mneDConfigForms, MsgBox, GUIMsgBox, Classes, PHPUtils, mneSetups,
   mneSettings, mneSARDClasses, EditorClasses, DebugClasses, mneViewClasses,
   mneCompileProjectOptions, mneManageRecentsForms, mneTendencyOptions,
-  mneCSVForms;
+  mneCSVForms,
+  mnUtils;
 
 {$R *.res}
 
@@ -71,7 +72,9 @@ begin
     aIniFile := TIniFile.Create(aIni);
     try
       aPath := aIniFile.ReadString(SysPlatform, 'Workspace', '');
-      Result := DirectoryExists(aPath);
+      //aPath := ExpandToPath(aPath, Application.Location);
+      //Result := DirectoryExists(aPath);
+      Result := aPath <> '';
     finally
       aIniFile.Free;
     end;
