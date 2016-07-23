@@ -6,8 +6,8 @@ object VerilogProjectPanel: TVerilogProjectPanel
   ClientHeight = 312
   ClientWidth = 229
   TabOrder = 0
-  DesignLeft = 1412
-  DesignTop = 1188
+  DesignLeft = 266
+  DesignTop = 327
   object GroupBox1: TGroupBox
     Left = 0
     Height = 312
@@ -15,12 +15,12 @@ object VerilogProjectPanel: TVerilogProjectPanel
     Width = 229
     Align = alClient
     Caption = 'Files'
-    ClientHeight = 293
+    ClientHeight = 292
     ClientWidth = 225
     TabOrder = 0
     object ProjectFileList: TListBox
       Left = 0
-      Height = 261
+      Height = 260
       Top = 32
       Width = 225
       Align = alClient
@@ -29,7 +29,6 @@ object VerilogProjectPanel: TVerilogProjectPanel
       OnSelectionChange = ProjectFileListSelectionChange
       ScrollWidth = 223
       TabOrder = 0
-      TopIndex = -1
     end
     object Panel1: TPanel
       Left = 0

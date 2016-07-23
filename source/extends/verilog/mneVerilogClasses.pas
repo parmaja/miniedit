@@ -1,5 +1,7 @@
 unit mneVerilogClasses;
 {$mode objfpc}{$H+}
+{$modeswitch advancedrecords}
+
 {**
  * Mini Edit
  *
@@ -234,6 +236,35 @@ begin
   aFrame.FTendency := ATendency;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);}
+end;
+
+type
+
+  { TPoint_Helper }
+
+  TPoint_Helper = record helper for TPoint
+  public
+    procedure SetLocation(const X, Y: Integer); overload;
+    procedure SetLocation(const P: TPoint); overload;
+    function Subtract(const Point: TPoint): TPoint;
+  end;
+
+{ TPoint_Helper }
+
+procedure TPoint_Helper.SetLocation(const X, Y: Integer);
+begin
+  Self.X := X;
+  Self.Y := Y;
+end;
+
+procedure TPoint_Helper.SetLocation(const P: TPoint);
+begin
+  Self := P;
+end;
+
+function TPoint_Helper.Subtract(const Point: TPoint): TPoint;
+begin
+  Result.SetLocation(Self.X - Point.X, Self.Y - Point.Y);
 end;
 
 { TVerilogFileCategory }

@@ -1560,7 +1560,7 @@ begin
       Stream.Read(Pointer(Contents)^, Size);
       Mode := DetectFileMode(Contents);
       if eoTabsToSpaces in SynEdit.Options then
-        Contents := ChangeTabsToSpace(Contents, SynEdit.TabWidth);
+        Contents := ChangeTabsToSpace(Contents, SynEdit.TabWidth);//tabs
       SynEdit.Lines.Text := Contents;
     finally
       SynEdit.EndUpdate;
@@ -1695,10 +1695,10 @@ begin
 
     aProfile.AssignTo(SynEdit);
 
-    if Engine.Session.IsOpened and Engine.Tendency.OverrideEditorOptions then
+    if (Tendency <> nil) and Tendency.OverrideEditorOptions then
     begin
-      SynEdit.Options := SynEdit.Options - cSynOverridedOptions + Engine.Tendency.EditorOptions;
-      SynEdit.TabWidth := Engine.Tendency.TabWidth;
+      SynEdit.Options := SynEdit.Options - cSynOverridedOptions + Tendency.EditorOptions;
+      SynEdit.TabWidth := Tendency.TabWidth;
     end;
 
     if (Group <> nil) and (Group.Category.Highlighter <> nil) then
