@@ -18,7 +18,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="4"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="95"/>
+      <BuildNr Value="96"/>
       <Language Value=""/>
       <CharSet Value=""/>
       <Attributes pvaPreRelease="True"/>
@@ -35,7 +35,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\extends\custom;..\extends\python;..\extends\verilog"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\extends\custom;..\extends\python;..\extends\verilog;..\..\..\..\lib\minilib\lazarus\lib"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Linking>
@@ -66,7 +66,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\extends\custom;..\extends\python;..\extends\verilog"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\extends\custom;..\extends\python;..\extends\verilog;..\..\..\..\lib\minilib\lazarus\lib"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Parsing>
@@ -114,7 +114,9 @@
     <RunParams>
       <local>
         <FormatVersion Value="1"/>
+        <CommandLineParams Value="C:\temp\python\test.py"/>
         <LaunchingApplication PathPlusParams="\usr\X11R6\bin\xterm -T 'Lazarus Run Output' -e $(LazarusDir)\tools\runwait.sh $(TargetCmdLine)"/>
+        <WorkingDirectory Value="C:\temp\python\"/>
         <Display Value=":1"/>
       </local>
     </RunParams>
@@ -158,7 +160,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="50">
+    <Units Count="51">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -446,6 +448,10 @@
         <Filename Value="..\extends\verilog\SynHighlighterVerilog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit49>
+      <Unit50>
+        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\mnSynHighlighterCpp.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit50>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -456,7 +462,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);D:\dev\lazarus\ide\include\"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\custom;..\extends\python;..\extends\verilog"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\custom;..\extends\python;..\extends\verilog;..\..\..\..\lib\minilib\lazarus\lib"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <Linking>

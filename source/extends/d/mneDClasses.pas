@@ -1,5 +1,4 @@
 unit mneDClasses;
-
 {$mode objfpc}{$H+}
 {**
  * Mini Edit
@@ -16,7 +15,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  LazFileUtils, SynHighlighterD, EditorDebugger, EditorClasses, mneClasses, MsgBox,
+  LazFileUtils, SynHighlighterD, mnSynHighlighterCpp, EditorDebugger, EditorClasses, mneClasses, MsgBox,
   mneCompileProjectOptions, EditorRun, DebugClasses, mneConsoleClasses,
   mneConsoleForms;
 
@@ -112,7 +111,7 @@ end;
 
 procedure TCppFileCategory.InitMappers;
 begin
-  with Highlighter as TSynDSyn do //TODO TSynCppSyn
+  with Highlighter as TmnSynCppSyn do
   begin
     Mapper.Add(WhitespaceAttri, attDefault);
     Mapper.Add(CommentAttri, attComment);
@@ -138,14 +137,14 @@ end;
 
 function TCppFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
-  Result := TSynDSyn.Create(nil); //Todo TSynCppSyn
+  Result := TmnSynCppSyn.Create(nil);
 end;
 
 procedure TCppFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   FCompletion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
-  IdentifierID := ord(SynHighlighterMultiProc.tkIdentifier); //ToDO SynHighlighterCpp
+  IdentifierID := ord(SynHighlighterMultiProc.tkIdentifier);
 end;
 
 procedure TCppFileCategory.DoAddKeywords;

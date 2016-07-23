@@ -595,7 +595,7 @@ begin
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
     Mapper.Add(EventAttri, attVariable);   
-    //Mapper.Add(BracketAttri, attSymbol);
+    Mapper.Add(BracketAttri, attSymbol);
   end;
 end;
 

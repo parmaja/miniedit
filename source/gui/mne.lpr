@@ -50,11 +50,10 @@ uses
   mneVerilogClasses, SynHighlighterVerilog, mneCustomProjectFrames,
   mneCustomConfigFrames, mneCustomClasses, mnePHPProjectFrames,
   mnePasProjectFrames, mnePasConfigForms, mnePASClasses, mneCSVClasses,
-  mneDClasses, mneDConfigForms, MsgBox, GUIMsgBox, Classes, PHPUtils, mneSetups,
-  mneSettings, mneSARDClasses, EditorClasses, DebugClasses, mneViewClasses,
-  mneCompileProjectOptions, mneManageRecentsForms, mneTendencyOptions,
-  mneCSVForms,
-  mnUtils;
+  mneDClasses, mneDConfigForms, MsgBox, GUIMsgBox, Classes, PHPUtils,
+  mnSynHighlighterCpp, mneSetups, mneSettings, mneSARDClasses, EditorClasses,
+  DebugClasses, mneViewClasses, mneCompileProjectOptions, mneManageRecentsForms,
+  mneTendencyOptions, mneCSVForms, mnUtils;
 
 {$R *.res}
 
