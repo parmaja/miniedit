@@ -264,6 +264,7 @@ type
     FEditorOptions: TSynEditorOptions;
     FGroups: TFileGroups;
     FCommand: string;
+    FIdentMode: TIdentMode;
     FOverrideEditorOptions: Boolean;
     FPauseConsole: Boolean;
     FRunMode: TmneRunMode;
@@ -294,6 +295,7 @@ type
     //Override options
     property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False; //TODO move it to Tendency
     property TabWidth: Integer read FTabWidth write FTabWidth default 4;
+    property IdentMode: TIdentMode read FIdentMode write FIdentMode default idntNone;
     property EditorOptions: TSynEditorOptions read FEditorOptions write FEditorOptions;
     property TabsSpecialFiles: string read FTabsSpecialFiles write FTabsSpecialFiles;
 
@@ -1135,7 +1137,8 @@ procedure SaveAsWindows(Strings: TStrings; Stream: TStream);
 procedure SaveAsMAC(Strings: TStrings; Stream: TStream);
 procedure SaveAsMode(const FileName: string; Mode: TEditorFileMode; Strings: Tstrings);
 function DetectFileMode(const Contents: string): TEditorFileMode;
-function ChangeTabsToSpace(const Contents: string; TabWidth: integer): string;
+
+function ConvertIdents(const Contents: string; TabWidth: integer; Options: TIdentMode = idntTabsToSpaces): string;
 
 type
   //If set Resume to false it will stop loop
@@ -1146,7 +1149,8 @@ procedure EnumFiles(Folder, Filter: string; FileList: TStringList);
 function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount,vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean): Boolean;
 procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean);
 
-procedure EunmRunMode(vItems: TStrings);
+procedure EnumRunMode(vItems: TStrings);
+procedure EnumIdentMode(vItems: TStrings);
 
 function GetWordAtRowColEx(SynEdit: TCustomSynEdit; XY: TPoint; BreakChars: TSynIdentChars; Select: boolean): string;
 
@@ -1559,8 +1563,8 @@ begin
       SetString(Contents, nil, Size);
       Stream.Read(Pointer(Contents)^, Size);
       Mode := DetectFileMode(Contents);
-      if eoTabsToSpaces in SynEdit.Options then
-        Contents := ChangeTabsToSpace(Contents, SynEdit.TabWidth);//tabs
+      if Tendency.IdentMode > idntNone then
+        Contents := ConvertIdents(Contents, SynEdit.TabWidth, Tendency.IdentMode);
       SynEdit.Lines.Text := Contents;
     finally
       SynEdit.EndUpdate;
@@ -1572,6 +1576,8 @@ end;
 
 procedure TTextEditorFile.DoSave(FileName: string);
 begin
+  if Tendency.IdentMode > idntNone then
+    SynEdit.Lines.Text := ConvertIdents(SynEdit.Lines.Text, SynEdit.TabWidth, Tendency.IdentMode);
   SaveAsMode(FileName, Mode, SynEdit.Lines);
 end;
 
@@ -2539,7 +2545,7 @@ begin
   TStringList(AObject).Add(FileName);
 end;
 
-procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: integer; ReturnFullPath, Recursive: Boolean);
+procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean);
 begin
   EnumFileList(Root, Masks, Ignore, @EnumFileListStringsCallback, Strings, vMaxCount, vMaxLevel, ReturnFullPath, Recursive);
 end;
@@ -2581,7 +2587,7 @@ begin
 end;
 
 
-procedure EunmRunMode(vItems: TStrings);
+procedure EnumRunMode(vItems: TStrings);
 begin
   vItems.Clear;
   vItems.Add('Console');
@@ -2589,6 +2595,14 @@ begin
   vItems.Add('Embedded');
   vItems.Add('Output');
   vItems.Add('Browser');
+end;
+
+procedure EnumIdentMode(vItems: TStrings);
+begin
+  vItems.Clear;
+  vItems.Add('Keep it');
+  vItems.Add('Tab to Spaces');
+  vItems.Add('Spaces to Tabs');
 end;
 
 { TListFileSearcher }
@@ -3943,7 +3957,7 @@ begin
   end;
 end;
 
-function ChangeTabsToSpace(const Contents: string; TabWidth: integer): string;
+function ConvertIdents(const Contents: string; TabWidth: integer; Options: TIdentMode): string;
 var
   p, l: integer;
 
@@ -3966,7 +3980,7 @@ var
 
   procedure ScanSpaces;
   var
-    i, c: integer;
+    i, c, t: integer;
   begin
     i := p;
     c := 0;
@@ -3979,6 +3993,12 @@ var
       else
         break;
       Inc(i);
+    end;
+    if Options = idntSpacesToTabs then
+    begin
+      t := c div TabWidth;
+      c := c mod TabWidth;
+      Result := Result + RepeatString(#9, t);
     end;
     Result := Result + RepeatString(' ', c);
     p := i;

@@ -41,7 +41,9 @@ type
     GutterGrp: TGroupBox;
     GutterShowLeaderZerosChk: TCheckBox;
     HalfPageScrollChk: TCheckBox;
+    IdentModeCbo: TComboBox;
     Label10: TLabel;
+    Label3: TLabel;
     Label8: TLabel;
     Label9: TLabel;
     LineSpacingEdit: TEdit;
@@ -87,6 +89,7 @@ type
     WordWrapChk: TCheckBox;
     procedure BackgroundCboChange(Sender: TObject);
     procedure ForegroundCboChange(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
     procedure LoadBtnClick(Sender: TObject);
     procedure NoAntialiasingChkChange(Sender: TObject);
     procedure DefaultBackgroundCboSelect(Sender: TObject);
@@ -222,6 +225,11 @@ begin
     ForegroundChk.Checked := True;
     ApplyAttribute;
   end;
+end;
+
+procedure TEditorOptionsForm.FormCreate(Sender: TObject);
+begin
+  EnumIdentMode(IdentModeCbo.Items);
 end;
 
 procedure TEditorOptionsForm.BackgroundCboChange(Sender: TObject);
@@ -487,6 +495,7 @@ begin
     BracketHighlightChk.Checked := eoBracketHighlight in FProfile.EditorOptions;
     //Can be override by project options
     TabWidthEdit.Text := IntToStr(FProfile.TabWidth);
+    IdentModeCbo.ItemIndex := Ord(FProfile.IdentMode);
   finally
     InChanging := False;
   end;
@@ -544,6 +553,7 @@ begin
   //Spacing
   FProfile.ExtraLineSpacing := StrToIntDef(LineSpacingEdit.Text, 0);
   FProfile.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
+  FProfile.IdentMode := TIdentMode(IdentModeCbo.ItemIndex);
 
   //Font
   FProfile.Attributes.FontNoAntialiasing := NoAntialiasingChk.Checked;

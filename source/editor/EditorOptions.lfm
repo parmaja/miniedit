@@ -9,6 +9,7 @@ object EditorOptionsForm: TEditorOptionsForm
   ClientWidth = 444
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
+  OnCreate = FormCreate
   OnShow = FormShow
   Position = poScreenCenter
   ShowHint = True
@@ -134,7 +135,7 @@ object EditorOptionsForm: TEditorOptionsForm
         ParentColor = False
       end
       object Label9: TLabel
-        Left = 21
+        Left = 18
         Height = 13
         Top = 313
         Width = 53
@@ -142,7 +143,7 @@ object EditorOptionsForm: TEditorOptionsForm
         ParentColor = False
       end
       object TabWidthEdit: TEdit
-        Left = 84
+        Left = 83
         Height = 21
         Top = 309
         Width = 52
@@ -227,22 +228,40 @@ object EditorOptionsForm: TEditorOptionsForm
         Caption = 'Tab Indent'
         TabOrder = 15
       end
+      object Label10: TLabel
+        Left = 16
+        Height = 13
+        Top = 260
+        Width = 228
+        Caption = 'Tabs in editors, Can be overriden by project type'
+        ParentColor = False
+      end
       object TabsToSpacesChk: TCheckBox
         Left = 21
         Height = 19
         Hint = 'Converts a tab character to the number of spaces in Tab Width'
-        Top = 288
+        Top = 184
         Width = 93
         Caption = 'Tabs to spaces'
         TabOrder = 16
       end
-      object Label10: TLabel
-        Left = 20
+      object Label3: TLabel
+        Left = 17
         Height = 13
-        Top = 271
-        Width = 228
-        Caption = 'Tabs in editors, Can be overriden by project type'
+        Top = 287
+        Width = 54
+        Caption = 'Ident Mode'
         ParentColor = False
+      end
+      object IdentModeCbo: TComboBox
+        Left = 83
+        Height = 21
+        Top = 283
+        Width = 165
+        Anchors = [akTop, akLeft, akRight]
+        ItemHeight = 13
+        Style = csDropDownList
+        TabOrder = 17
       end
     end
     object ColorTab: TTabSheet

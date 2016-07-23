@@ -106,7 +106,7 @@ procedure TEditorSettingForm.Retrieve;
 var
   i, c: Integer;
 begin
-  EunmRunMode(RunModeCbo.Items);
+  EnumRunMode(RunModeCbo.Items);
   RunModeCbo.ItemIndex := ord(FEngine.Options.RunMode);
   PauseChk.Checked := FEngine.Options.PauseConsole;
 

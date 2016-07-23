@@ -10,7 +10,7 @@ object TendencyForm: TTendencyForm
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Position = poMainFormCenter
-  LCLVersion = '1.6.0.4'
+  LCLVersion = '1.7'
   object OkBtn: TButton
     Left = 392
     Height = 25
@@ -57,29 +57,20 @@ object TendencyForm: TTendencyForm
         ClientWidth = 319
         TabOrder = 0
         object TabWidthEdit: TEdit
-          Left = 86
+          Left = 80
           Height = 21
-          Top = 38
+          Top = 34
           Width = 52
           TabOrder = 0
           Text = '4'
         end
         object Label9: TLabel
-          Left = 28
+          Left = 15
           Height = 13
-          Top = 41
+          Top = 38
           Width = 53
           Caption = 'Tab Width:'
           ParentColor = False
-        end
-        object TabsToSpacesChk: TCheckBox
-          Left = 25
-          Height = 19
-          Hint = 'Converts a tab character to the number of spaces in Tab Width'
-          Top = 13
-          Width = 93
-          Caption = 'Tabs to spaces'
-          TabOrder = 1
         end
         object Label10: TLabel
           Left = 18
@@ -94,7 +85,7 @@ object TendencyForm: TTendencyForm
           Height = 21
           Top = 72
           Width = 182
-          TabOrder = 2
+          TabOrder = 1
         end
         object Label11: TLabel
           Left = 14
@@ -103,6 +94,24 @@ object TendencyForm: TTendencyForm
           Width = 87
           Caption = 'Example: .php;.inc'
           ParentColor = False
+        end
+        object Label3: TLabel
+          Left = 14
+          Height = 13
+          Top = 12
+          Width = 54
+          Caption = 'Ident Mode'
+          ParentColor = False
+        end
+        object IdentModeCbo: TComboBox
+          Left = 80
+          Height = 21
+          Top = 8
+          Width = 165
+          Anchors = [akTop, akLeft, akRight]
+          ItemHeight = 13
+          Style = csDropDownList
+          TabOrder = 2
         end
       end
       object OverrideOptionsChk: TCheckBox

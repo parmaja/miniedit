@@ -11,7 +11,8 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, SynEdit,
-  EditorEngine, DebugClasses, mneClasses, Dialogs, StdCtrls, ExtCtrls, ComCtrls, Menus;
+  EditorEngine, EditorProfiles, DebugClasses, mneClasses, Dialogs, StdCtrls,
+  ExtCtrls, ComCtrls, Menus;
 
 type
 
@@ -19,6 +20,8 @@ type
 
   TTendencyForm = class(TForm)
     Label11: TLabel;
+    Label3: TLabel;
+    IdentModeCbo: TComboBox;
     TabsSpecialEdit: TEdit;
     GroupBox1: TGroupBox;
     Label10: TLabel;
@@ -28,7 +31,6 @@ type
     OverrideOptionsChk: TCheckBox;
     PageControl: TPageControl;
     GeneralSheet: TTabSheet;
-    TabsToSpacesChk: TCheckBox;
     TabWidthEdit: TEdit;
     procedure PageControlChanging(Sender: TObject; var AllowChange: Boolean);
   private
@@ -73,19 +75,20 @@ begin
 end;
 
 procedure TTendencyForm.Apply;
-  procedure SetFlag(aOption: TSynEditorOption; aValue: boolean);
+  {procedure SetFlag(aOption: TSynEditorOption; aValue: boolean);
   begin
     if aValue then
       FTendency.EditorOptions := FTendency.EditorOptions + [aOption]
     else
       FTendency.EditorOptions := FTendency.EditorOptions - [aOption];
-  end;
+  end;}
 begin
   FTendency.EditorOptions := [];
   FTendency.OverrideEditorOptions := OverrideOptionsChk.Checked;
   FTendency.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
+  FTendency.IdentMode := TIdentMode(IdentModeCbo.ItemIndex);
   FTendency.TabsSpecialFiles := TabsSpecialEdit.Text;
-  SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
+  //SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
 end;
 
 procedure TTendencyForm.RetrieveFrames;
@@ -112,9 +115,11 @@ end;
 procedure TTendencyForm.Retrieve;
 begin
   //Add any new overrided options to cSynOverridedOptions in EditorProfiles unit
+  EnumIdentMode(IdentModeCbo.Items);
   OverrideOptionsChk.Checked := FTendency.OverrideEditorOptions;
   TabWidthEdit.Text := IntToStr(FTendency.TabWidth);
-  TabsToSpacesChk.Checked := eoTabsToSpaces in FTendency.EditorOptions;
+  IdentModeCbo.ItemIndex := Ord(FTendency.IdentMode);
+  //TabsToSpacesChk.Checked := eoTabsToSpaces in FTendency.EditorOptions;
   TabsSpecialEdit.Text := FTendency.TabsSpecialFiles;
 end;
 

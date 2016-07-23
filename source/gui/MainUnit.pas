@@ -1510,10 +1510,13 @@ procedure TMainForm.TypesOptionsActExecute(Sender: TObject);
 var
   lTendency: TEditorTendency;
 begin
-  lTendency := nil;
-  if ChooseTendency(lTendency) and (lTendency <> nil) then
-    ShowTendencyForm(lTendency);
-    //lTendency.Show;
+  if Engine.Files.Current <> nil then
+    lTendency := Engine.Files.Current.Tendency
+  else
+    lTendency := nil;
+  if ChooseTendency(lTendency) then
+    if (lTendency <> nil) then
+      ShowTendencyForm(lTendency);
 end;
 
 procedure TMainForm.UnixMnuClick(Sender: TObject);
