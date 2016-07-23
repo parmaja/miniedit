@@ -91,15 +91,6 @@ object EditorOptionsForm: TEditorOptionsForm
         Caption = 'Home key jumps to first char'
         TabOrder = 6
       end
-      object ShowSpecialCharsChk: TCheckBox
-        Left = 21
-        Height = 19
-        Hint = 'Shows linebreaks, spaces and tabs using special symbols'
-        Top = 146
-        Width = 112
-        Caption = 'Show special chars'
-        TabOrder = 7
-      end
       object WordWrapChk: TCheckBox
         Left = 21
         Height = 19
@@ -107,23 +98,23 @@ object EditorOptionsForm: TEditorOptionsForm
         Top = 128
         Width = 75
         Caption = 'Word Wrap'
-        TabOrder = 8
+        TabOrder = 7
       end
       object BracketHighlightChk: TCheckBox
         Left = 21
         Height = 19
         Hint = 'Shows linebreaks, spaces and tabs using special symbols'
-        Top = 165
+        Top = 146
         Width = 99
         Caption = 'Bracket highlight'
-        TabOrder = 9
+        TabOrder = 8
       end
       object LineSpacingEdit: TEdit
         Left = 296
         Height = 21
         Top = 233
         Width = 52
-        TabOrder = 10
+        TabOrder = 9
         Text = '0'
       end
       object Label8: TLabel
@@ -147,7 +138,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Height = 21
         Top = 309
         Width = 52
-        TabOrder = 11
+        TabOrder = 10
         Text = '4'
       end
       object GutterGrp: TGroupBox
@@ -159,7 +150,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Caption = 'Gutter'
         ClientHeight = 106
         ClientWidth = 200
-        TabOrder = 12
+        TabOrder = 11
         object GutterAutosizeChk: TCheckBox
           Left = 9
           Height = 19
@@ -208,7 +199,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Top = 73
         Width = 70
         Caption = 'Smart tabs'
-        TabOrder = 13
+        TabOrder = 12
       end
       object SmartTabDeleteChk: TCheckBox
         Left = 21
@@ -217,7 +208,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Top = 92
         Width = 97
         Caption = 'Smart tab delete'
-        TabOrder = 14
+        TabOrder = 13
       end
       object TabIndentChk: TCheckBox
         Left = 21
@@ -226,7 +217,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Top = 35
         Width = 72
         Caption = 'Tab Indent'
-        TabOrder = 15
+        TabOrder = 14
       end
       object Label10: TLabel
         Left = 16
@@ -240,10 +231,10 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 21
         Height = 19
         Hint = 'Converts a tab character to the number of spaces in Tab Width'
-        Top = 184
+        Top = 165
         Width = 93
         Caption = 'Tabs to spaces'
-        TabOrder = 16
+        TabOrder = 15
       end
       object Label3: TLabel
         Left = 17
@@ -261,7 +252,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Anchors = [akTop, akLeft, akRight]
         ItemHeight = 13
         Style = csDropDownList
-        TabOrder = 17
+        TabOrder = 16
       end
     end
     object ColorTab: TTabSheet

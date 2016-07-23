@@ -64,7 +64,6 @@ type
     ShowModifiedLinesChk: TCheckBox;
     ShowScrollHintChk: TCheckBox;
     ShowSeparatorChk: TCheckBox;
-    ShowSpecialCharsChk: TCheckBox;
     SmartTabDeleteChk: TCheckBox;
     SmartTabsChk: TCheckBox;
     TabIndentChk: TCheckBox;
@@ -491,7 +490,6 @@ begin
     SmartTabDeleteChk.Checked := eoSmartTabDelete in FProfile.EditorOptions;
     EnhanceHomeKeyChk.Checked := eoEnhanceHomeKey in FProfile.EditorOptions;
     GroupUndoChk.Checked := eoGroupUndo in FProfile.EditorOptions;
-    ShowSpecialCharsChk.Checked := eoShowSpecialChars in FProfile.EditorOptions;
     BracketHighlightChk.Checked := eoBracketHighlight in FProfile.EditorOptions;
     //Can be override by project options
     TabWidthEdit.Text := IntToStr(FProfile.TabWidth);
@@ -536,7 +534,6 @@ begin
   SetFlag(eoSmartTabDelete, SmartTabDeleteChk.Checked);
   SetFlag(eoEnhanceHomeKey, EnhanceHomeKeyChk.Checked);
   SetFlag(eoGroupUndo, GroupUndoChk.Checked);
-  SetFlag(eoShowSpecialChars, ShowSpecialCharsChk.Checked);
   SetFlag(eoBracketHighlight, BracketHighlightChk.Checked);
   SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
 

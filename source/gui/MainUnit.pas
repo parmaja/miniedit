@@ -54,9 +54,11 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    ShowSpecialCharsAct: TAction;
     FileList: TListView;
     FolderPathLbl: TLabel;
     MenuItem26: TMenuItem;
+    MenuItem27: TMenuItem;
     OutputEdit: TSynEdit;
     FolderPanel: TPanel;
     RunSignBtn: TSpeedButton;
@@ -349,6 +351,7 @@ type
     procedure CallStackListDblClick(Sender: TObject);
     procedure DBGCompileActExecute(Sender: TObject);
     procedure DeleteActExecute(Sender: TObject);
+    procedure EditorPopupMenuPopup(Sender: TObject);
     procedure EditorsPnlClick(Sender: TObject);
     procedure FetchCallStackBtnClick(Sender: TObject);
     procedure FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
@@ -406,6 +409,7 @@ type
     procedure ShowAllActExecute(Sender: TObject);
     procedure ShowRelatedActExecute(Sender: TObject);
     procedure ShowKnownActExecute(Sender: TObject);
+    procedure ShowSpecialCharsActExecute(Sender: TObject);
     procedure SortByExtensionsActExecute(Sender: TObject);
     procedure SortByNamesActExecute(Sender: TObject);
     procedure ToolButton4Click(Sender: TObject);
@@ -719,6 +723,14 @@ begin
     if not MsgBox.Msg.No('Are you sure want delete ' + Engine.Files.Current.NakeName) then
       Engine.Files.Current.Delete;
   end;
+end;
+
+procedure TMainForm.EditorPopupMenuPopup(Sender: TObject);
+begin
+  if (Engine.Files.Current <> nil) and (Engine.Files.Current is TSourceEditorFile) then
+    ShowSpecialCharsAct.Checked := eoShowSpecialChars in (Engine.Files.Current as TSourceEditorFile).SynEdit.Options
+  else
+    ShowSpecialCharsAct.Checked := False;
 end;
 
 procedure TMainForm.EditorsPnlClick(Sender: TObject);
@@ -1480,6 +1492,18 @@ end;
 procedure TMainForm.ShowKnownActExecute(Sender: TObject);
 begin
   ShowFolderFiles := sffKnown;
+end;
+
+procedure TMainForm.ShowSpecialCharsActExecute(Sender: TObject);
+begin
+   if (Engine.Files.Current <> nil) and (Engine.Files.Current is TSourceEditorFile) then
+   begin
+     ShowSpecialCharsAct.Checked := not ShowSpecialCharsAct.Checked;
+     if ShowSpecialCharsAct.Checked then
+       (Engine.Files.Current as TSourceEditorFile).SynEdit.Options := (Engine.Files.Current as TSourceEditorFile).SynEdit.Options + [eoShowSpecialChars]
+     else
+       (Engine.Files.Current as TSourceEditorFile).SynEdit.Options := (Engine.Files.Current as TSourceEditorFile).SynEdit.Options - [eoShowSpecialChars];
+   end;
 end;
 
 procedure TMainForm.SortByExtensionsActExecute(Sender: TObject);

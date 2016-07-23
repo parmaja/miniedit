@@ -2402,6 +2402,11 @@ object MainForm: TMainForm
       OnExecute = ProjectOptionsActExecute
       ShortCut = 24698
     end
+    object ShowSpecialCharsAct: TAction
+      Category = 'View'
+      Caption = 'Show Special Chars'
+      OnExecute = ShowSpecialCharsActExecute
+    end
   end
   object FolderMenu: TPopupMenu
     left = 32
@@ -2484,6 +2489,7 @@ object MainForm: TMainForm
   end
   object EditorPopupMenu: TPopupMenu
     TrackButton = tbLeftButton
+    OnPopup = EditorPopupMenuPopup
     left = 532
     top = 182
     object OpenInclude2: TMenuItem
@@ -2540,6 +2546,9 @@ object MainForm: TMainForm
     end
     object N10: TMenuItem
       Caption = '-'
+    end
+    object MenuItem27: TMenuItem
+      Action = ShowSpecialCharsAct
     end
     object EditorOptions2: TMenuItem
       Action = EditorOptionsAct

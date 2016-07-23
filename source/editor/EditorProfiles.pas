@@ -49,7 +49,7 @@ type
 const
   cSynRequiredOptions = [eoDragDropEditing, eoTrimTrailingSpaces, eoDropFiles, eoShowCtrlMouseLinks, eoAltSetsColumnMode, eoScrollPastEol, eoRightMouseMovesCursor, eoHideRightMargin];
 
-  cSynRemoveOptions = [eoRightMouseMovesCursor, eoScrollPastEof];
+  cSynRemoveOptions = [eoShowSpecialChars, eoRightMouseMovesCursor, eoScrollPastEof];
 
   cSynOverridedOptions = [];
 
@@ -270,6 +270,7 @@ end;
 procedure TEditorProfile.AssignTo(Dest: TPersistent);
 var
   SynEdit: TSynEdit;
+  SpecialChars: Boolean;
 begin
   if Dest is TSynEdit then
   begin
@@ -291,7 +292,11 @@ begin
 
     SynEdit.MarkupManager.MarkupByClass[TSynEditMarkupWordGroup].MarkupInfo.FrameColor := Attributes.Selected.Background;
 
+    SpecialChars := eoShowSpecialChars in SynEdit.Options; //Save it maybe set by MainForm
     SynEdit.Options := EditorOptions + cSynRequiredOptions - cSynRemoveOptions;
+    if SpecialChars then
+      SynEdit.Options := SynEdit.Options + [eoShowSpecialChars];
+
     SynEdit.ExtraLineSpacing := ExtraLineSpacing;
     SynEdit.InsertCaret := ctVerticalLine;
     SynEdit.OverwriteCaret := ctBlock;
