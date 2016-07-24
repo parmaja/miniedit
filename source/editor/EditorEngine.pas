@@ -1575,9 +1575,22 @@ begin
 end;
 
 procedure TTextEditorFile.DoSave(FileName: string);
+var
+  saveLeftChar, saveTopLine: Integer;
+  saveXY: TPoint;
 begin
   if Tendency.IndentMode > idntNone then
-    SynEdit.Lines.Text := ConvertIndents(SynEdit.Lines.Text, SynEdit.TabWidth, Tendency.IndentMode);
+  begin
+    SynEdit.BeginUpdate(False);
+    saveTopLine := SynEdit.TopLine;
+    saveLeftChar := SynEdit.LeftChar;
+    saveXY := SynEdit.CaretXY;
+    SynEdit.Text := ConvertIndents(SynEdit.Lines.Text, SynEdit.TabWidth, Tendency.IndentMode);
+    SynEdit.TopLine := saveTopLine;
+    SynEdit.LeftChar := saveLeftChar;
+    SynEdit.CaretXY := saveXY;
+    SynEdit.EndUpdate;
+  end;
   SaveAsMode(FileName, Mode, SynEdit.Lines);
 end;
 
