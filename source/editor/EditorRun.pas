@@ -73,6 +73,7 @@ type
     FRun: TmneRun;
     FItems: TmneRunItems;
     FCurrent: TmneRunItem;
+    procedure UpdateState;
   public
     constructor Create(ARun: TmneRun);
     destructor Destroy; override;
@@ -123,6 +124,7 @@ begin
     if Current.BreakOnFail and (Current.Status > 0) then
       Items.Clear;
     FreeAndNil(FCurrent);
+    //Synchronize(@UpdateState); //not yet
   end
 end;
 
@@ -167,6 +169,11 @@ begin
     ShowProcess(Current.Process.ProcessID);
   end;
   {$endif}
+end;
+
+procedure TmneRunPool.UpdateState;
+begin
+  Engine.UpdateState([ecsDebug]);
 end;
 
 constructor TmneRunPool.Create(ARun: TmneRun);

@@ -304,6 +304,7 @@ begin
     SynEdit.RightEdge := 80;
     SynEdit.RightEdgeColor := clSilver;
     SynEdit.TabWidth := TabWidth;
+    SynEdit.BlockIndent := TabWidth;
     SynEdit.Gutter.Assign(Attributes);
   end
   else

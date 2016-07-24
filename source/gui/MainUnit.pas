@@ -2315,13 +2315,17 @@ end;
 
 procedure TMainForm.EngineDebug;
 begin
-  if Assigned(Engine) and (Engine.Session.Debug <> nil) then
+  if Assigned(Engine) then
   begin
-    DebugPnl.Caption := Engine.Session.Debug.GetKey;
-    UpdateFileHeaderPanel;
-    UpdateCallStack;
-    UpdateWatches;
-    Engine.Files.Refresh; // not safe thread
+    DBGRunAct.Enabled := not Engine.Session.Run.Active;
+    if (Engine.Session.Debug <> nil) then
+    begin
+      DebugPnl.Caption := Engine.Session.Debug.GetKey;
+      UpdateFileHeaderPanel;
+      UpdateCallStack;
+      UpdateWatches;
+      Engine.Files.Refresh; // not safe thread
+    end;
   end;
 end;
 

@@ -1705,6 +1705,7 @@ begin
     begin
       SynEdit.Options := SynEdit.Options - cSynOverridedOptions + Tendency.EditorOptions;
       SynEdit.TabWidth := Tendency.TabWidth;
+      SynEdit.BlockIndent := Tendency.TabWidth;
     end;
 
     if (Group <> nil) and (Group.Category.Highlighter <> nil) then
