@@ -264,7 +264,7 @@ type
     FEditorOptions: TSynEditorOptions;
     FGroups: TFileGroups;
     FCommand: string;
-    FIdentMode: TIdentMode;
+    FIndentMode: TIndentMode;
     FOverrideEditorOptions: Boolean;
     FPauseConsole: Boolean;
     FRunMode: TmneRunMode;
@@ -295,7 +295,7 @@ type
     //Override options
     property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False; //TODO move it to Tendency
     property TabWidth: Integer read FTabWidth write FTabWidth default 4;
-    property IdentMode: TIdentMode read FIdentMode write FIdentMode default idntNone;
+    property IndentMode: TIndentMode read FIndentMode write FIndentMode default idntNone;
     property EditorOptions: TSynEditorOptions read FEditorOptions write FEditorOptions;
     property TabsSpecialFiles: string read FTabsSpecialFiles write FTabsSpecialFiles;
 
@@ -1138,7 +1138,7 @@ procedure SaveAsMAC(Strings: TStrings; Stream: TStream);
 procedure SaveAsMode(const FileName: string; Mode: TEditorFileMode; Strings: Tstrings);
 function DetectFileMode(const Contents: string): TEditorFileMode;
 
-function ConvertIdents(const Contents: string; TabWidth: integer; Options: TIdentMode = idntTabsToSpaces): string;
+function ConvertIndents(const Contents: string; TabWidth: integer; Options: TIndentMode = idntTabsToSpaces): string;
 
 type
   //If set Resume to false it will stop loop
@@ -1150,7 +1150,7 @@ function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCal
 procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean);
 
 procedure EnumRunMode(vItems: TStrings);
-procedure EnumIdentMode(vItems: TStrings);
+procedure EnumIndentMode(vItems: TStrings);
 
 function GetWordAtRowColEx(SynEdit: TCustomSynEdit; XY: TPoint; BreakChars: TSynIdentChars; Select: boolean): string;
 
@@ -1563,8 +1563,8 @@ begin
       SetString(Contents, nil, Size);
       Stream.Read(Pointer(Contents)^, Size);
       Mode := DetectFileMode(Contents);
-      if Tendency.IdentMode > idntNone then
-        Contents := ConvertIdents(Contents, SynEdit.TabWidth, Tendency.IdentMode);
+      if Tendency.IndentMode > idntNone then
+        Contents := ConvertIndents(Contents, SynEdit.TabWidth, Tendency.IndentMode);
       SynEdit.Lines.Text := Contents;
     finally
       SynEdit.EndUpdate;
@@ -1576,8 +1576,8 @@ end;
 
 procedure TTextEditorFile.DoSave(FileName: string);
 begin
-  if Tendency.IdentMode > idntNone then
-    SynEdit.Lines.Text := ConvertIdents(SynEdit.Lines.Text, SynEdit.TabWidth, Tendency.IdentMode);
+  if Tendency.IndentMode > idntNone then
+    SynEdit.Lines.Text := ConvertIndents(SynEdit.Lines.Text, SynEdit.TabWidth, Tendency.IndentMode);
   SaveAsMode(FileName, Mode, SynEdit.Lines);
 end;
 
@@ -2597,7 +2597,7 @@ begin
   vItems.Add('Browser');
 end;
 
-procedure EnumIdentMode(vItems: TStrings);
+procedure EnumIndentMode(vItems: TStrings);
 begin
   vItems.Clear;
   vItems.Add('Keep it');
@@ -3957,7 +3957,7 @@ begin
   end;
 end;
 
-function ConvertIdents(const Contents: string; TabWidth: integer; Options: TIdentMode): string;
+function ConvertIndents(const Contents: string; TabWidth: integer; Options: TIndentMode): string;
 var
   p, l: integer;
 

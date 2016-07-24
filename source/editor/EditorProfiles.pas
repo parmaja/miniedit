@@ -44,7 +44,7 @@ type
     attValue
    );
 
-  TIdentMode = (idntNone, idntTabsToSpaces, idntSpacesToTabs);
+  TIndentMode = (idntNone, idntTabsToSpaces, idntSpacesToTabs);
 
 const
   cSynRequiredOptions = [eoDragDropEditing, eoTrimTrailingSpaces, eoDropFiles, eoShowCtrlMouseLinks, eoAltSetsColumnMode, eoScrollPastEol, eoRightMouseMovesCursor, eoHideRightMargin];
@@ -197,7 +197,7 @@ type
     ExtraLineSpacing: Integer;
     TabsToSpaces: Boolean;
     TabWidth: Integer;
-    IdentMode: TIdentMode;
+    IndentMode: TIndentMode;
     EditorOptions: TSynEditorOptions;
     ExtEditorOptions: TSynEditorOptions2;
   end;
@@ -230,7 +230,7 @@ type
     property DrawDivider: Boolean read FInfo.DrawDivider write FInfo.DrawDivider default False; //TODO not yet
     //Can be overriden by project options
     property TabWidth: Integer read FInfo.TabWidth write FInfo.TabWidth default 4;
-    property IdentMode: TIdentMode read FInfo.IdentMode write FInfo.IdentMode default idntNone;
+    property IndentMode: TIndentMode read FInfo.IndentMode write FInfo.IndentMode default idntNone;
   end;
 
 implementation

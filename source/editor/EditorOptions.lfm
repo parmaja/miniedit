@@ -28,6 +28,7 @@ object EditorOptionsForm: TEditorOptionsForm
       Caption = 'Options'
       ClientHeight = 351
       ClientWidth = 428
+      OnContextPopup = OptionsTabContextPopup
       object AutoIndentChk: TCheckBox
         Left = 21
         Height = 19
@@ -240,11 +241,11 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 17
         Height = 13
         Top = 287
-        Width = 54
-        Caption = 'Ident Mode'
+        Width = 60
+        Caption = 'Indent Mode'
         ParentColor = False
       end
-      object IdentModeCbo: TComboBox
+      object IndentModeCbo: TComboBox
         Left = 83
         Height = 21
         Top = 283

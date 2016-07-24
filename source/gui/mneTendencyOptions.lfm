@@ -99,11 +99,11 @@ object TendencyForm: TTendencyForm
           Left = 14
           Height = 13
           Top = 12
-          Width = 54
-          Caption = 'Ident Mode'
+          Width = 60
+          Caption = 'Indent Mode'
           ParentColor = False
         end
-        object IdentModeCbo: TComboBox
+        object IndentModeCbo: TComboBox
           Left = 80
           Height = 21
           Top = 8

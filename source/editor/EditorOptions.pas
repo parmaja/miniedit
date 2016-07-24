@@ -13,7 +13,7 @@ uses
   Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
   Registry, ExtCtrls, Buttons, ImgList, Menus, ColorBox, SynEdit, SynGutter, SynEditMarkupWordGroup,
   SynEditHighlighter, SynEditMiscClasses, SynEditKeyCmds, Classes, SysUtils, typinfo,
-  EditorProfiles, SynGutterBase, SynEditMarks, mnStreams;
+  EditorProfiles, SynGutterBase, SynEditMarks, mnStreams, Types;
 
 type
   TSynEditorOptionsUserCommand = procedure(AUserCommand: integer; var ADescription: string) of object;
@@ -41,7 +41,7 @@ type
     GutterGrp: TGroupBox;
     GutterShowLeaderZerosChk: TCheckBox;
     HalfPageScrollChk: TCheckBox;
-    IdentModeCbo: TComboBox;
+    IndentModeCbo: TComboBox;
     Label10: TLabel;
     Label3: TLabel;
     Label8: TLabel;
@@ -102,6 +102,8 @@ type
     procedure OkBtnClick(Sender: TObject);
     procedure GutterFontBtnClick(Sender: TObject);
     procedure GutterFontChkClick(Sender: TObject);
+
+      procedure OptionsTabContextPopup(Sender: TObject; MousePos: TPoint; var Handled: Boolean);
     procedure PageControlChange(Sender: TObject);
     procedure ResetBtnClick(Sender: TObject);
     procedure RevertBtnClick(Sender: TObject);
@@ -228,7 +230,7 @@ end;
 
 procedure TEditorOptionsForm.FormCreate(Sender: TObject);
 begin
-  EnumIdentMode(IdentModeCbo.Items);
+  EnumIndentMode(IndentModeCbo.Items);
 end;
 
 procedure TEditorOptionsForm.BackgroundCboChange(Sender: TObject);
@@ -295,6 +297,11 @@ end;
 
 procedure TEditorOptionsForm.GutterFontChkClick(Sender: TObject);
 begin
+end;
+
+procedure TEditorOptionsForm.OptionsTabContextPopup(Sender: TObject; MousePos: TPoint; var Handled: Boolean);
+begin
+
 end;
 
 procedure TEditorOptionsForm.PageControlChange(Sender: TObject);
@@ -493,7 +500,7 @@ begin
     BracketHighlightChk.Checked := eoBracketHighlight in FProfile.EditorOptions;
     //Can be override by project options
     TabWidthEdit.Text := IntToStr(FProfile.TabWidth);
-    IdentModeCbo.ItemIndex := Ord(FProfile.IdentMode);
+    IndentModeCbo.ItemIndex := Ord(FProfile.IndentMode);
   finally
     InChanging := False;
   end;
@@ -550,7 +557,7 @@ begin
   //Spacing
   FProfile.ExtraLineSpacing := StrToIntDef(LineSpacingEdit.Text, 0);
   FProfile.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
-  FProfile.IdentMode := TIdentMode(IdentModeCbo.ItemIndex);
+  FProfile.IndentMode := TIndentMode(IndentModeCbo.ItemIndex);
 
   //Font
   FProfile.Attributes.FontNoAntialiasing := NoAntialiasingChk.Checked;

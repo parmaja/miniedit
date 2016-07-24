@@ -2405,6 +2405,7 @@ object MainForm: TMainForm
     object ShowSpecialCharsAct: TAction
       Category = 'View'
       Caption = 'Show Special Chars'
+      ImageIndex = 29
       OnExecute = ShowSpecialCharsActExecute
     end
   end
@@ -2488,6 +2489,7 @@ object MainForm: TMainForm
     end
   end
   object EditorPopupMenu: TPopupMenu
+    Images = EditorResource.ToolbarImageList
     TrackButton = tbLeftButton
     OnPopup = EditorPopupMenuPopup
     left = 532

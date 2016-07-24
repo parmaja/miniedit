@@ -21,7 +21,7 @@ type
   TTendencyForm = class(TForm)
     Label11: TLabel;
     Label3: TLabel;
-    IdentModeCbo: TComboBox;
+    IndentModeCbo: TComboBox;
     TabsSpecialEdit: TEdit;
     GroupBox1: TGroupBox;
     Label10: TLabel;
@@ -86,7 +86,7 @@ begin
   FTendency.EditorOptions := [];
   FTendency.OverrideEditorOptions := OverrideOptionsChk.Checked;
   FTendency.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
-  FTendency.IdentMode := TIdentMode(IdentModeCbo.ItemIndex);
+  FTendency.IndentMode := TIndentMode(IndentModeCbo.ItemIndex);
   FTendency.TabsSpecialFiles := TabsSpecialEdit.Text;
   //SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
 end;
@@ -115,10 +115,10 @@ end;
 procedure TTendencyForm.Retrieve;
 begin
   //Add any new overrided options to cSynOverridedOptions in EditorProfiles unit
-  EnumIdentMode(IdentModeCbo.Items);
+  EnumIndentMode(IndentModeCbo.Items);
   OverrideOptionsChk.Checked := FTendency.OverrideEditorOptions;
   TabWidthEdit.Text := IntToStr(FTendency.TabWidth);
-  IdentModeCbo.ItemIndex := Ord(FTendency.IdentMode);
+  IndentModeCbo.ItemIndex := Ord(FTendency.IndentMode);
   //TabsToSpacesChk.Checked := eoTabsToSpaces in FTendency.EditorOptions;
   TabsSpecialEdit.Text := FTendency.TabsSpecialFiles;
 end;
