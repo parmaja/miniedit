@@ -25,7 +25,7 @@ uses
   LazFileUtils, Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus,
   ToolWin, Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses,
   StdActns, Grids, SynEditHighlighter, SynEdit, IAddons, ntvSplitters,
-  SynHighlighterSQL, EditorClasses,
+  SynHighlighterSQL, EditorClasses, ntvImgBtns,
   {$ifdef WINDOWS}
   Windows, //TODO, i hate include it
   {$endif}
@@ -54,6 +54,9 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    FileCloseBtn: TntvImgBtn;
+    FolderCloseBtn: TntvImgBtn;
+    FolderCloseBtn1: TntvImgBtn;
     ShowSpecialCharsAct: TAction;
     FileList: TListView;
     FolderPathLbl: TLabel;
@@ -61,7 +64,6 @@ type
     MenuItem27: TMenuItem;
     OutputEdit: TSynEdit;
     FolderPanel: TPanel;
-    RunSignBtn: TSpeedButton;
     WatchesGrid: TStringGrid;
     SearchGrid: TStringGrid;
     MessagesGrid: TStringGrid;
@@ -69,7 +71,6 @@ type
     TypesOptionsAct: TAction;
     DBGCompileAct: TAction;
     BrowseTabs: TntvTabSet;
-    FolderBtn: TSpeedButton;
     MenuItem22: TMenuItem;
     MenuItem23: TMenuItem;
     MenuItem24: TMenuItem;
@@ -78,7 +79,6 @@ type
     TypeOptionsAct: TAction;
     BugSignBtn: TSpeedButton;
     DeleteAct: TAction;
-    FileCloseBtn: TSpeedButton;
     FileHeaderPanel: TPanel;
     FileModeBtn: TBitBtn;
     FileNameLbl: TLabel;
@@ -219,7 +219,6 @@ type
     MacMnu: TMenuItem;
     BrowserPnl: TPanel;
     BrowserHeaderPanel: TPanel;
-    FolderCloseBtn: TSpeedButton;
     ManageAct: TAction;
     Manage1: TMenuItem;
     OpenFolder2: TMenuItem;
@@ -354,6 +353,7 @@ type
     procedure EditorPopupMenuPopup(Sender: TObject);
     procedure EditorsPnlClick(Sender: TObject);
     procedure FetchCallStackBtnClick(Sender: TObject);
+    procedure FileCloseBtnClick(Sender: TObject);
     procedure FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure FindPreviousActExecute(Sender: TObject);
     procedure FolderCloseBtnClick(Sender: TObject);
@@ -369,7 +369,7 @@ type
     procedure NewAsActExecute(Sender: TObject);
     procedure OpenActExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure FileCloseBtnClick(Sender: TObject);
+    procedure FileClose1BtnClick(Sender: TObject);
     procedure FileTabsClick(Sender: TObject);
     procedure NextActExecute(Sender: TObject);
     procedure PriorActExecute(Sender: TObject);
@@ -447,7 +447,6 @@ type
     procedure FileFolder1Click(Sender: TObject);
     procedure OpenColorActUpdate(Sender: TObject);
     procedure OpenColorActExecute(Sender: TObject);
-    procedure FolderBtnClick(Sender: TObject);
     procedure SCMCommitActExecute(Sender: TObject);
     procedure SCMDiffFileActExecute(Sender: TObject);
     procedure SCMCommitFileActExecute(Sender: TObject);
@@ -745,6 +744,11 @@ begin
   end;
 end;
 
+procedure TMainForm.FileCloseBtnClick(Sender: TObject);
+begin
+  CloseAct.Execute;
+end;
+
 procedure TMainForm.ApplicationPropertiesActivate(Sender: TObject);
 begin
   if not (csLoading in ComponentState) then
@@ -993,9 +997,9 @@ begin
   IPCServer.StopServer;
 end;
 
-procedure TMainForm.FileCloseBtnClick(Sender: TObject);
+procedure TMainForm.FileClose1BtnClick(Sender: TObject);
 begin
-  CloseAct.Execute;
+
 end;
 
 procedure TMainForm.FileTabsClick(Sender: TObject);
@@ -2184,16 +2188,6 @@ begin
   end;
 end;
 
-procedure TMainForm.FolderBtnClick(Sender: TObject);
-var
-  Pt: TPoint;
-begin
-  Pt.X := FolderBtn.BoundsRect.Left;
-  Pt.Y := FolderBtn.BoundsRect.Bottom;
-  Pt := BrowserHeaderPanel.ClientToScreen(Pt);
-  FolderBtn.PopupMenu.Popup(Pt.X, Pt.Y);
-end;
-
 procedure TMainForm.SCMCommitActExecute(Sender: TObject);
 begin
   Engine.SCM.CommitDirectory(Folder);
@@ -2335,11 +2329,7 @@ begin
     BugSignBtn.Visible := True
   else
     BugSignBtn.Visible := False;
-  if Engine.Session.Run.Active then
-    RunSignBtn.Visible := True
-  else
-    RunSignBtn.Visible := False;
-    //FileHeaderPanel.Color := $00EEE0D7;
+  //FileHeaderPanel.Color := $00EEE0D7;
   FileHeaderPanel.Visible := Engine.Files.Count > 0;
   if FileHeaderPanel.Visible then
     FileHeaderPanel.Refresh;
@@ -2381,6 +2371,13 @@ begin
 
   FoldersSpl.RaisedColor := Engine.Options.Profile.Attributes.Separator.Foreground;
   FoldersSpl.LoweredColor := Engine.Options.Profile.Attributes.Separator.Background;}
+
+  {BrowserPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
+  ClientPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
+  FoldersSpl.Color := Engine.Options.Profile.Attributes.Panel.Background;
+  MessagesSpl.Color := Engine.Options.Profile.Attributes.Panel.Background;
+  MessagesSpl.LoweredColor
+  MessagesTabs.Color := Engine.Options.Profile.Attributes.Panel.Background;}
 
   FileTabs.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   FileTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;

@@ -188,7 +188,7 @@ begin
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aRunItem.Info.Message := 'Runing ' + Info.MainFile;
-    aRunItem.Info.Params := Info.MainFile + #13;
+    aRunItem.Info.Params := {'-m pyxdebug ' + }Info.MainFile + #13;
   end
   else if rnaExecute in Info.Actions then
   begin

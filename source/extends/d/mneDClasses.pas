@@ -21,29 +21,6 @@ uses
 
 type
 
-  { TCppFile }
-
-  TCppFile = class(TSourceEditorFile)
-  protected
-  public
-    procedure NewContent; override;
-  end;
-
-
-  { TCppFileCategory }
-
-  TCppFileCategory = class(TCodeFileCategory)
-  private
-  protected
-    procedure DoFormatClick(Sender: TObject);
-    procedure InitMappers; override;
-    procedure EnumMenuItems(AddItems: TAddClickCallBack); override;
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
-    procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
-    procedure DoAddKeywords; override;
-  public
-  end;
-
   { TDFile }
 
   TDFile = class(TSourceEditorFile)
@@ -94,63 +71,6 @@ implementation
 
 uses
   IniFiles, mnStreams, mnUtils, SynHighlighterMultiProc, SynEditStrConst, mneDConfigForms, mneDProjectFrames, LCLProc;
-
-{ TCppFile }
-
-procedure TCppFile.NewContent;
-begin
-  SynEdit.Text := cDSample;
-end;
-
-{ TCppFileCategory }
-
-procedure TCppFileCategory.DoFormatClick(Sender: TObject);
-begin
-
-end;
-
-procedure TCppFileCategory.InitMappers;
-begin
-  with Highlighter as TmnSynCppSyn do
-  begin
-    Mapper.Add(WhitespaceAttri, attDefault);
-    Mapper.Add(CommentAttri, attComment);
-    Mapper.Add(KeywordAttri, attKeyword);
-    Mapper.Add(DocumentAttri, attDocument);
-    Mapper.Add(ValueAttri, attValue);
-    Mapper.Add(FunctionAttri, attStandard);
-    Mapper.Add(IdentifierAttri, attIdentifier);
-    Mapper.Add(TextAttri, attText);
-    Mapper.Add(NumberAttri, attNumber);
-    Mapper.Add(StringAttri, attQuotedString);
-    Mapper.Add(SymbolAttri, attSymbol);
-    Mapper.Add(VariableAttri, attVariable);
-    Mapper.Add(ProcessorAttri, attDirective);
-  end;
-end;
-
-procedure TCppFileCategory.EnumMenuItems(AddItems: TAddClickCallBack);
-begin
-  inherited EnumMenuItems(AddItems);
-  AddItems('Format', 'Format', @DoFormatClick, TextToShortCut('Ctrl+Shift+F'));
-end;
-
-function TCppFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
-begin
-  Result := TmnSynCppSyn.Create(nil);
-end;
-
-procedure TCppFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
-begin
-  inherited;
-  FCompletion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
-  IdentifierID := ord(SynHighlighterMultiProc.tkIdentifier);
-end;
-
-procedure TCppFileCategory.DoAddKeywords;
-begin
-  inherited DoAddKeywords;
-end;
 
 { TDProject }
 
@@ -401,9 +321,7 @@ initialization
   with Engine do
   begin
     Categories.Add(TDFileCategory.Create('D', [fckPublish]));
-    Categories.Add(TCppFileCategory.Create('Cpp', [fckPublish]));
     Groups.Add(TDFile, 'D', 'D Files', 'D', ['d', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
-    Groups.Add(TCppFile, 'CPP', 'C++ Files', 'Cpp', ['cpp', 'c', 'ino', 'h'], [fgkMember, fgkBrowsable]);//todo
     Tendencies.Add(TDTendency);
   end;
 end.

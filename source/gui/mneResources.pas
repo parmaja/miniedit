@@ -20,6 +20,7 @@ type
     FileImages: TImageList;
     BookmarkImages: TImageList;
     DebugImages: TImageList;
+    PanelImages: TImageList;
     ToolbarImageList: TImageList;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
