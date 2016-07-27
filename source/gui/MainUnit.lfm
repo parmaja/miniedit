@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 327
+  Left = 109
   Height = 591
-  Top = 167
+  Top = 95
   Width = 881
   AllowDropFiles = True
   Caption = 'Mini Edit'

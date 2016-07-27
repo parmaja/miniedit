@@ -38,7 +38,6 @@ uses
   EditorEngine in '..\editor\EditorEngine.pas',
   mneResources in 'mneResources.pas' {EditorResource: TDataModule},
   SelectFiles in '..\editor\SelectFiles.pas' {SelectFileForm},
-  mneClasses in 'mneClasses.pas',
   mneConsts in 'mneConsts.pas',
   AboutForms in 'AboutForms.pas' {AboutForm},
   GotoForms in '..\editor\GotoForms.pas' {GotoLineForm},

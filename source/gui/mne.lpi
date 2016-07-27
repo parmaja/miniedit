@@ -18,7 +18,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="4"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="104"/>
+      <BuildNr Value="105"/>
       <Language Value=""/>
       <CharSet Value=""/>
       <Attributes pvaPreRelease="True"/>
@@ -159,7 +159,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="50">
+    <Units Count="49">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -290,163 +290,159 @@
         <IsPartOfProject Value="True"/>
       </Unit20>
       <Unit21>
-        <Filename Value="mneClasses.pas"/>
+        <Filename Value="..\lib\DebugClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit21>
       <Unit22>
-        <Filename Value="..\lib\DebugClasses.pas"/>
+        <Filename Value="..\extends\pascal\mnePASClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit22>
       <Unit23>
-        <Filename Value="..\extends\pascal\mnePASClasses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit23>
-      <Unit24>
         <Filename Value="..\extends\php\mnePHPConfigForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PHPConfigForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit24>
-      <Unit25>
+      </Unit23>
+      <Unit24>
         <Filename Value="..\extends\php\mnePHPIniForm.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PHPIniForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit24>
+      <Unit25>
+        <Filename Value="..\extends\php\mnePHPClasses.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit25>
       <Unit26>
-        <Filename Value="..\extends\php\mnePHPClasses.pas"/>
+        <Filename Value="..\extends\d\mneDClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit26>
       <Unit27>
-        <Filename Value="..\extends\d\mneDClasses.pas"/>
+        <Filename Value="..\extends\csv\mneCSVClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit27>
       <Unit28>
-        <Filename Value="..\extends\csv\mneCSVClasses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit28>
-      <Unit29>
         <Filename Value="..\extends\csv\mneCSVForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CSVForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit29>
-      <Unit30>
+      </Unit28>
+      <Unit29>
         <Filename Value="..\extends\d\mneDConfigForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="DConfigForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit30>
-      <Unit31>
+      </Unit29>
+      <Unit30>
         <Filename Value="..\extends\d\mneDProjectFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="DProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit31>
-      <Unit32>
+      </Unit30>
+      <Unit31>
         <Filename Value="..\extends\pascal\mnePasProjectFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PasProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit32>
-      <Unit33>
+      </Unit31>
+      <Unit32>
         <Filename Value="..\extends\pascal\mnePasConfigForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PasConfigForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit33>
-      <Unit34>
+      </Unit32>
+      <Unit33>
         <Filename Value="..\extends\php\mnePHPProjectFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PHPProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit34>
-      <Unit35>
+      </Unit33>
+      <Unit34>
         <Filename Value="..\editor\EditorRun.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit35>
-      <Unit36>
+      </Unit34>
+      <Unit35>
         <Filename Value="mneCompileProjectOptions.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CompilerProjectOptionsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit36>
-      <Unit37>
+      </Unit35>
+      <Unit36>
         <Filename Value="mneManageRecentsForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ManageProjectsForm"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit37>
-      <Unit38>
+      </Unit36>
+      <Unit37>
         <Filename Value="mneTendencyOptions.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="TendencyForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit38>
-      <Unit39>
+      </Unit37>
+      <Unit38>
         <Filename Value="..\extends\custom\mneCustomClasses.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit39>
-      <Unit40>
+      </Unit38>
+      <Unit39>
         <Filename Value="..\extends\custom\mneCustomConfigFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CustomConfigFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
         <UnitName Value="mneCustomConfigForms"/>
-      </Unit40>
-      <Unit41>
+      </Unit39>
+      <Unit40>
         <Filename Value="..\extends\custom\mneCustomProjectFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CustomProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit41>
-      <Unit42>
+      </Unit40>
+      <Unit41>
         <Filename Value="..\extends\python\mnePyClasses.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit42>
-      <Unit43>
+      </Unit41>
+      <Unit42>
         <Filename Value="..\extends\python\mnePyConfigForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PyConfigForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+      </Unit42>
+      <Unit43>
+        <Filename Value="..\extends\mneExtends.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit43>
       <Unit44>
-        <Filename Value="..\extends\mneExtends.pas"/>
+        <Filename Value="..\extends\verilog\mneVerilogClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit44>
       <Unit45>
-        <Filename Value="..\extends\verilog\mneVerilogClasses.pas"/>
+        <Filename Value="..\extends\verilog\SynHighlighterVerilog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit45>
       <Unit46>
-        <Filename Value="..\extends\verilog\SynHighlighterVerilog.pas"/>
+        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\mnSynHighlighterCpp.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit46>
       <Unit47>
-        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\mnSynHighlighterCpp.pas"/>
+        <Filename Value="..\extends\cpp\mneCppClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit47>
       <Unit48>
-        <Filename Value="..\extends\cpp\mneCppClasses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit48>
-      <Unit49>
         <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvImgBtns.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit49>
+      </Unit48>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -457,7 +453,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);D:\dev\lazarus\ide\include\"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\custom;..\extends\python;..\extends\verilog;..\extends\sard;..\extends\image;..\..\..\..\lib\minilib\lazarus\lib;..\extends\cpp;..\..\..\..\lib\minilib\lazarus\components\native"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\custom;..\extends\python;..\extends\verilog;..\extends\sard;..\extends\image;..\extends\commons;..\..\..\..\lib\minilib\lazarus\lib;..\extends\cpp;..\..\..\..\lib\minilib\lazarus\components\native"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <Linking>
