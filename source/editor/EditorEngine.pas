@@ -1585,7 +1585,7 @@ begin
     saveTopLine := SynEdit.TopLine;
     saveLeftChar := SynEdit.LeftChar;
     saveXY := SynEdit.CaretXY;
-    SynEdit.Text := ConvertIndents(SynEdit.Lines.Text, SynEdit.TabWidth, Tendency.IndentMode);
+    SynEdit.Lines.Text := ConvertIndents(SynEdit.Lines.Text, SynEdit.TabWidth, Tendency.IndentMode);
     SynEdit.TopLine := saveTopLine;
     SynEdit.LeftChar := saveLeftChar;
     SynEdit.CaretXY := saveXY;

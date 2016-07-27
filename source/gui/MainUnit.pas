@@ -42,7 +42,7 @@ uses
   {$endif}
   mnePHPIniForm, mneConsoleForms,
   //end of addons
-  mneAddons, mneTendencyOptions, DebugClasses, IniFiles, mnFields, simpleipc,
+  mneTendencyOptions, DebugClasses, IniFiles, mnFields, simpleipc,
   mnUtils, ntvTabs, ntvPageControls;
 
 type

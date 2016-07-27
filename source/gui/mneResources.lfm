@@ -1215,8 +1215,8 @@ object EditorResource: TEditorResource
     BkColor = clForeground
     DrawingStyle = dsTransparent
     ShareImages = True
-    left = 143
-    top = 18
+    left = 150
+    top = 29
     Bitmap = {
       4C690A00000010000000100000008000FF008000FF008000FF008000FF008000
       FF008000FF008000FF008000FF008000FF008000FF008000FF008000FF008000

@@ -45,14 +45,14 @@ uses
   EditorRun in '..\editor\EditorRun.pas',
   mneBreakpoints in 'mneBreakpoints.pas' {BreakpointsForm},
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
-  SearchProgressForms, EditorDebugger, PHP_xDebug, SelectList,
-  SynHighlighterApache, IniFiles, mneAddons, mneAssociateForm, mneExtends,
+  SearchProgressForms, EditorDebugger, SelectList,
+  SynHighlighterApache, IniFiles, mneAssociateForm, mneExtends,
   mneCppClasses, mneVerilogClasses, SynHighlighterVerilog,
   mneCustomProjectFrames, mneCustomConfigFrames, mneCustomClasses,
   mnePHPProjectFrames, mnePasProjectFrames, mnePasConfigForms, mnePASClasses,
   mneCSVClasses, mneDClasses, mneDConfigForms, MsgBox, GUIMsgBox, Classes,
   PHPUtils, mnSynHighlighterCpp, ntvImgBtns, mneSetups, mneSettings,
-  mneSARDClasses, EditorClasses, DebugClasses, mneViewClasses,
+  EditorClasses, DebugClasses,
   mneCompileProjectOptions, mneManageRecentsForms, mneTendencyOptions,
   mneCSVForms, mnUtils;
 
