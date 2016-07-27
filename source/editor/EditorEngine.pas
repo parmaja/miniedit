@@ -26,7 +26,7 @@ uses
   Graphics, Contnrs, Types, IniFiles, EditorOptions, EditorProfiles,
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch,
-  SynEdit, SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase, SynEditPointClasses,
+  SynEdit, SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
   dbgpServers, DebugClasses, Masks, mnXMLRttiProfile, mnXMLUtils, FileUtil, mnClasses,
   LazFileUtils, mnUtils, LCLType, EditorClasses, EditorRun;
 
@@ -1028,7 +1028,7 @@ type
     FSession: TEditorSession;
     FMessagesList: TEditorMessagesList;
     FBrowseFolder: string;
-    //FMacroRecorder: TSynMacroRecorder;
+    FMacroRecorder: TSynMacroRecorder;
     FWorkSpace: string;
     //Extenstion Cache
     //FExtenstionCache: TExtenstionCache; //TODO
@@ -1045,7 +1045,7 @@ type
     property SearchEngine: TSynEditSearch read FSearchEngine;
     procedure InternalChangedState(State: TEditorChangeStates);
     procedure DoChangedState(State: TEditorChangeStates); virtual;
-    procedure DoMacroStateChange(Sender: TObject);
+    procedure DoMacroRecorderChanged(Sender: TObject);
     procedure DoReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
     procedure UpdateExtensionsCache;
   public
@@ -1104,7 +1104,7 @@ type
     function GetIsChanged: Boolean;
     procedure SetNotifyEngine(ANotifyObject: INotifyEngine);
     procedure RemoveNotifyEngine(ANotifyObject: INotifyEngine);
-    //property MacroRecorder: TSynMacroRecorder read FMacroRecorder;
+    property MacroRecorder: TSynMacroRecorder read FMacroRecorder;
     procedure SendOutout(S: string);
     procedure SendAction(EditorAction: TEditorAction);
 
@@ -1600,6 +1600,7 @@ begin
   if Group <> nil then
   begin
     FSynEdit.Highlighter := FGroup.Category.Highlighter;
+    Engine.MacroRecorder.AddEditor(FSynEdit);
     FGroup.Category.InitCompletion(FSynEdit);
 
     if (fgkExecutable in FGroup.Kind) then
@@ -1613,7 +1614,6 @@ begin
     FSynEdit.Gutter.SeparatorPart(0).Index := FSynEdit.Gutter.Parts.Count - 1;//TODO, what is this?
 
     FGroup.Category.InitEdit(FSynEdit);
-    //Engine.MacroRecorder.AddEditor(FSynEdit);
   end;
 end;
 
@@ -1700,6 +1700,7 @@ end;
 
 destructor TTextEditorFile.Destroy;
 begin
+  Engine.MacroRecorder.RemoveEditor(FSynEdit);
   FSynEdit.Free;
   inherited;
 end;
@@ -2420,8 +2421,9 @@ begin
   inherited;
   FEnvironment := TStringList.Create;
   FMessagesList := TEditorMessagesList.Create;
-  //FMacroRecorder := TSynMacroRecorder.Create(nil);
-  //FMacroRecorder.OnStateChange := DoMacroStateChange;
+  FMacroRecorder := TSynMacroRecorder.Create(nil);
+  FMacroRecorder.OnStateChange := @DoMacroRecorderChanged;
+
   FEnvironment.Add('Home=' + SysUtils.GetEnvironmentVariable('HOME'));
   FEnvironment.Add('EXE=' + Application.ExeName);
   FEnvironment.Add('MiniEdit=' + Application.Location);
@@ -2453,7 +2455,7 @@ begin
   FreeAndNil(FSearchEngine);
   FreeAndNil(FOptions);
   FreeAndNil(FSourceManagements);
-  //FreeAndNil(FMacroRecorder);
+  FreeAndNil(FMacroRecorder);
   FreeAndNil(FMessagesList);
   FInternalTendency := nil;
   //profFreeAndNil(FForms);
@@ -3448,7 +3450,7 @@ begin
   UpdateState([ecsFolder]);
 end;
 
-procedure TEditorEngine.DoMacroStateChange(Sender: TObject);
+procedure TEditorEngine.DoMacroRecorderChanged(Sender: TObject);
 begin
   UpdateState([ecsState]);
 end;

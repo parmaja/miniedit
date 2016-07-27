@@ -148,27 +148,27 @@ object MainForm: TMainForm
         Caption = 'Files'
         TabOrder = 0
         object FolderCloseBtn: TntvImgBtn
-          Left = 160
+          Left = 168
           Height = 24
           Top = 0
-          Width = 20
-          ImageList = EditorResource.PanelImages
-          ImageIndex = 0
+          Width = 16
+          Images = EditorResource.PanelImages
+          ImageIndex = 1
           Style = ibsToolbar
           Align = alRight
           OnClick = FolderCloseBtnClick
           AutoCheck = False
         end
         object FolderCloseBtn1: TntvImgBtn
-          Left = 180
+          Left = 184
           Height = 24
           Top = 0
-          Width = 20
-          ImageList = EditorResource.PanelImages
-          ImageIndex = 1
+          Width = 16
+          Images = EditorResource.PanelImages
+          ImageIndex = 0
           Style = ibsToolbar
           Align = alRight
-          PopupMenu = FolderMenu
+          PopupMenu = MessagesPopup
           AutoCheck = False
         end
       end
@@ -381,63 +381,19 @@ object MainForm: TMainForm
       TabOrder = 1
       Visible = False
       object FileNameLbl: TLabel
-        Left = 19
+        Left = 2
         Height = 21
         Hint = 'File name'
         Top = 2
-        Width = 542
+        Width = 547
         Align = alClient
         Caption = 'File name'
         Layout = tlCenter
         ParentColor = False
         PopupMenu = FilePopupMenu
       end
-      object BugSignBtn: TSpeedButton
-        Left = 2
-        Height = 21
-        Hint = 'Close file'
-        Top = 2
-        Width = 17
-        Align = alLeft
-        Flat = True
-        Font.CharSet = SYMBOL_CHARSET
-        Font.Color = clWhite
-        Font.Height = -11
-        Font.Name = 'Webdings'
-        Glyph.Data = {
-          36030000424D3603000000000000360000002800000010000000100000000100
-          1800000000000003000064000000640000000000000000000000FF00FFFF00FF
-          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-          FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-          00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000
-          FF00FFFF00FFFF00FFFF00FF000000000000000000000000FF00FFFF00FFFF00
-          FFFF00FF000000FF00FFFF00FF000000FF00FFFF00FFFF00FF000000008CBD00
-          8CBD007394007394000000FF00FFFF00FFFF00FF000000FF00FFFF00FFFF00FF
-          00000000000000000000A5D600A5D6008CBD008CBD0073940073940000000000
-          00000000FF00FFFF00FFFF00FF000000FF00FFFF00FF00000000C6FF00A5D600
-          8CBD008CBD008CBD007394000000FF00FFFF00FF000000FF00FFFF00FFFF00FF
-          00000000000000000000A5D600A5D6008CBD008CBD0073940073940000000000
-          00000000FF00FFFF00FFFF00FF000000FF00FFFF00FF00000000C6FF00A5D600
-          8CBD008CBD008CBD007394000000FF00FFFF00FF000000FF00FFFF00FFFF00FF
-          00000000000000000000C6FF00A5D6008CBD008CBD008CBD008CBD0000000000
-          00000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF00000000C6FF00C6FF00
-          A5D600A5D600A5D6008CBD000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-          FF00FFFF00FF00000000000000C6FF00C6FF00C6FF00A5D6000000000000FF00
-          FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000FFFFFFFFFFFF00000000
-          0000000000000000FFFFFFFFFFFF000000FF00FFFF00FFFF00FFFF00FFFF00FF
-          FF00FF000000AD214AFFFFFF000000FF00FFFF00FF000000FFFFFFAD214A0000
-          00FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF000000000000FF00FFFF
-          00FFFF00FFFF00FF000000000000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-          FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-          FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
-          00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF
-        }
-        Layout = blGlyphTop
-        Visible = False
-        ParentFont = False
-      end
       object FileModeBtn: TBitBtn
-        Left = 561
+        Left = 549
         Height = 21
         Top = 2
         Width = 86
@@ -449,12 +405,24 @@ object MainForm: TMainForm
         TabOrder = 0
       end
       object FileCloseBtn: TntvImgBtn
-        Left = 647
+        Left = 651
         Height = 21
         Top = 2
-        Width = 20
-        ImageList = EditorResource.PanelImages
+        Width = 16
+        Images = EditorResource.PanelImages
         ImageIndex = 0
+        Style = ibsToolbar
+        Align = alRight
+        OnClick = FileCloseBtnClick
+        AutoCheck = False
+      end
+      object BugSignBtn: TntvImgBtn
+        Left = 635
+        Height = 21
+        Top = 2
+        Width = 16
+        Images = EditorResource.ToolbarImageList
+        ImageIndex = 20
         Style = ibsToolbar
         Align = alRight
         OnClick = FileCloseBtnClick
@@ -1714,7 +1682,7 @@ object MainForm: TMainForm
         Caption = 'Setup Workpsace'
         OnClick = WorkspaceMnuClick
       end
-      object N6: TMenuItem
+      object MenuItem29: TMenuItem
         Caption = '-'
       end
     end

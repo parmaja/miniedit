@@ -261,6 +261,7 @@ end;
 
 procedure TPyFileCategory.DoAddKeywords;
 begin
+  //Completion.ItemList.Assign((SynEdit as TSynPythonSyn).get
   //EnumerateKeywords(Ord(tkKeyword), sDKeywords, Highlighter.IdentChars, @DoAddCompletion);
   //EnumerateKeywords(Ord(tkFunction), sDFunctions, Highlighter.IdentChars, @DoAddCompletion);
 end;

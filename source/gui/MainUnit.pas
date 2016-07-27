@@ -15,7 +15,7 @@ SynEdit:
 
   MessageList TabStop must be False, can not Maximize window in startup the application (When it is take the focus)
 
-  //i must move Macro Recorder to Engine not in Category
+  //i should move Macro Recorder to Engine not in Category
 }
 interface
 
@@ -55,8 +55,10 @@ type
 
   TMainForm = class(TForm, INotifyEngine)
     FileCloseBtn: TntvImgBtn;
+    BugSignBtn: TntvImgBtn;
     FolderCloseBtn: TntvImgBtn;
     FolderCloseBtn1: TntvImgBtn;
+    MenuItem29: TMenuItem;
     ShowSpecialCharsAct: TAction;
     FileList: TListView;
     FolderPathLbl: TLabel;
@@ -77,7 +79,6 @@ type
     MenuItem25: TMenuItem;
     TypeOptionsMnu: TMenuItem;
     TypeOptionsAct: TAction;
-    BugSignBtn: TSpeedButton;
     DeleteAct: TAction;
     FileHeaderPanel: TPanel;
     FileModeBtn: TBitBtn;
@@ -570,7 +571,7 @@ uses
   EditorProfiles, mneResources, mneSetups, Clipbrd, ColorUtils,
   SelectFiles, mneSettings, mneConsts,
   SynEditTypes, AboutForms, mneManageRecentsForms, Types,
-  mneBreakpoints,
+  mneBreakpoints, SynMacroRecorder,
   SearchInFilesForms, SelectList;
 
 function SortByExt(List: TStringList; Index1, Index: Integer): Integer;
@@ -2726,10 +2727,9 @@ var
   r: integer;
   s: string;
 begin
-{  if Engine.MacroRecorder.State = msRecording then
+  if Engine.MacroRecorder.State = msRecording then
     StatePnl.Caption := 'R'
-  else}
-  if Engine.Files.Current <> nil then
+  else if Engine.Files.Current <> nil then
   begin
     CursorPnl.Caption := Engine.Files.Current.GetGlance;
     if Engine.Files.Current.IsNew then
