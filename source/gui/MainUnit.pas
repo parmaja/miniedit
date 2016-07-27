@@ -1652,6 +1652,12 @@ begin
     MenuItem.Name := 'FILE_EDIT_MENUITEM_SEP';
     MenuItem.Caption := '-';
     FMenuItemsList.Add(MenuItem);
+
+    MenuItem := TMenuItem.Create(EditorPopupMenu);
+    EditorPopupMenu.Items.Add(MenuItem);
+    MenuItem.Name := 'FILE_EDIT_POPUPMENUITEM_SEP';
+    MenuItem.Caption := '-';
+    FMenuItemsList.Add(MenuItem);
   end;
   MenuItem := TMenuItem.Create(MainMenu);
   EditMnu.Add(MenuItem);
@@ -1659,6 +1665,14 @@ begin
   MenuItem.Caption := ACaption;
   MenuItem.OnClick := AOnClickEvent;
   MenuItem.ShortCut := AShortCut;
+  FMenuItemsList.Add(MenuItem);
+
+  MenuItem := TMenuItem.Create(EditorPopupMenu);
+  EditorPopupMenu.Items.Add(MenuItem);
+  MenuItem.Name := 'FILE_EDIT_POPUPMENUITEM__' + AName;
+  MenuItem.Caption := ACaption;
+  MenuItem.OnClick := AOnClickEvent;
+  //MenuItem.ShortCut := AShortCut; //No ShortCut for popup, no dublicate
   FMenuItemsList.Add(MenuItem);
 end;
 

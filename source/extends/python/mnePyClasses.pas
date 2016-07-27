@@ -34,6 +34,8 @@ type
   TPyFileCategory = class(TCodeFileCategory)
   private
   protected
+    procedure DoFixTabsSpaces(Sender: TObject);
+    procedure EnumMenuItems(AddItems: TAddClickCallBack); override;
     procedure InitMappers; override;
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
@@ -256,14 +258,33 @@ procedure TPyFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   FCompletion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
-  IdentifierID := ord(tkIdentifier);
+  IdentifierID := ord(SynHighlighterPython.tkIdentifier);
 end;
 
 procedure TPyFileCategory.DoAddKeywords;
 begin
-  //Completion.ItemList.Assign((SynEdit as TSynPythonSyn).get
+  //this a hack to lazarus source, just make GetKeywordIdentifiers public
+  Completion.ItemList.Assign((Highlighter as TSynPythonSyn).GetKeywordIdentifiers);
   //EnumerateKeywords(Ord(tkKeyword), sDKeywords, Highlighter.IdentChars, @DoAddCompletion);
   //EnumerateKeywords(Ord(tkFunction), sDFunctions, Highlighter.IdentChars, @DoAddCompletion);
+end;
+
+procedure TPyFileCategory.DoFixTabsSpaces(Sender: TObject);
+begin
+  with (Engine.Files.Current as TSourceEditorFile) do
+  begin
+    SynEdit.BeginUndoBlock;
+    try
+      SynEdit.TextBetweenPoints[Point(1,1), Point(length(SynEdit.Lines[SynEdit.Lines.Count-1]),SynEdit.Lines.Count)] := ConvertIndents(SynEdit.Text, SynEdit.TabWidth, Tendency.IndentMode);
+    finally
+      SynEdit.EndUndoBlock;
+    end;
+  end;
+end;
+
+procedure TPyFileCategory.EnumMenuItems(AddItems: TAddClickCallBack);
+begin
+  AddItems('FixTabsSpaces', 'Fix Tabs/Spaces', @DoFixTabsSpaces);
 end;
 
 procedure TPyFileCategory.InitMappers;

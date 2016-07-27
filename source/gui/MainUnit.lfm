@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 109
+  Left = 331
   Height = 591
-  Top = 95
+  Top = 85
   Width = 881
   AllowDropFiles = True
   Caption = 'Mini Edit'
@@ -148,24 +148,24 @@ object MainForm: TMainForm
         Caption = 'Files'
         TabOrder = 0
         object FolderCloseBtn: TntvImgBtn
-          Left = 168
-          Height = 24
-          Top = 0
-          Width = 16
-          Images = EditorResource.PanelImages
-          ImageIndex = 1
-          Style = ibsToolbar
-          Align = alRight
-          OnClick = FolderCloseBtnClick
-          AutoCheck = False
-        end
-        object FolderCloseBtn1: TntvImgBtn
           Left = 184
           Height = 24
           Top = 0
           Width = 16
           Images = EditorResource.PanelImages
           ImageIndex = 0
+          Style = ibsToolbar
+          Align = alRight
+          OnClick = FolderCloseBtnClick
+          AutoCheck = False
+        end
+        object FolderCloseBtn1: TntvImgBtn
+          Left = 168
+          Height = 24
+          Top = 0
+          Width = 16
+          Images = EditorResource.PanelImages
+          ImageIndex = 1
           Style = ibsToolbar
           Align = alRight
           PopupMenu = MessagesPopup

@@ -1578,20 +1578,21 @@ procedure TTextEditorFile.DoSave(FileName: string);
 var
   saveLeftChar, saveTopLine: Integer;
   saveXY: TPoint;
+  aLines: TStringList;
 begin
   if Tendency.IndentMode > idntNone then
   begin
-    SynEdit.BeginUpdate(False);
-    saveTopLine := SynEdit.TopLine;
-    saveLeftChar := SynEdit.LeftChar;
-    saveXY := SynEdit.CaretXY;
-    SynEdit.Lines.Text := ConvertIndents(SynEdit.Lines.Text, SynEdit.TabWidth, Tendency.IndentMode);
-    SynEdit.TopLine := saveTopLine;
-    SynEdit.LeftChar := saveLeftChar;
-    SynEdit.CaretXY := saveXY;
-    SynEdit.EndUpdate;
-  end;
-  SaveAsMode(FileName, Mode, SynEdit.Lines);
+    //Ref: http://forum.lazarus.freepascal.org/index.php?topic=33500.msg217147#msg217147
+    aLines := TStringList.Create;
+    try
+      aLines.Text := ConvertIndents(SynEdit.Lines.Text, SynEdit.TabWidth, Tendency.IndentMode);
+      SaveAsMode(FileName, Mode, aLines);
+    finally
+      aLines.Free;
+    end;
+  end
+  else
+    SaveAsMode(FileName, Mode, SynEdit.Lines);
 end;
 
 procedure TTextEditorFile.GroupChanged;
@@ -1696,6 +1697,12 @@ begin
   FSynEdit.Visible := False;
   FSynEdit.WantTabs := True;
   FSynEdit.Parent := Engine.Container;
+  with FSynEdit.Keystrokes.Add do
+  begin
+    Key       := VK_DELETE;
+    Shift     := [ssCtrl];
+    Command   := ecDeleteWord;
+  end;
 end;
 
 destructor TTextEditorFile.Destroy;
