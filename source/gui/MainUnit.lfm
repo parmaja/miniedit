@@ -168,7 +168,7 @@ object MainForm: TMainForm
           ImageIndex = 1
           Style = ibsToolbar
           Align = alRight
-          PopupMenu = MessagesPopup
+          PopupMenu = FolderMenu
           AutoCheck = False
         end
       end
@@ -1707,8 +1707,8 @@ object MainForm: TMainForm
   end
   object ActionList: TActionList
     Images = EditorResource.ToolbarImageList
-    left = 27
-    top = 112
+    left = 23
+    top = 90
     object PasteAct: TAction
       Category = 'Edit'
       Caption = 'Paste'
@@ -2275,18 +2275,6 @@ object MainForm: TMainForm
       Action = FolderHomeAct
       OnClick = FolderHomeActExecute
     end
-    object MenuItem22: TMenuItem
-      Caption = 'Project Folder'
-      OnClick = MenuItem22Click
-    end
-    object MenuItem23: TMenuItem
-      Caption = 'File Folder'
-      OnClick = MenuItem23Click
-    end
-    object MenuItem24: TMenuItem
-      Caption = 'Copy File Name'
-      OnClick = MenuItem24Click
-    end
     object FolderOpenAct1: TMenuItem
       Action = FolderOpenAct
       OnClick = FolderOpenActExecute
@@ -2295,9 +2283,27 @@ object MainForm: TMainForm
       Action = FolderOpenAllAct
       OnClick = FolderOpenAllActExecute
     end
+    object MenuItem24: TMenuItem
+      Caption = 'Copy File Name'
+      OnClick = MenuItem24Click
+    end
+    object MenuItem28: TMenuItem
+      Caption = '-'
+    end
+    object RecentFoldersMnu: TMenuItem
+      Caption = 'Recents'
+    end
     object GotoFolder1: TMenuItem
       Caption = 'Go to Folder'
       OnClick = GotoFolder1Click
+    end
+    object MenuItem23: TMenuItem
+      Caption = 'Go to File Folder'
+      OnClick = MenuItem23Click
+    end
+    object MenuItem22: TMenuItem
+      Caption = 'Go to Project Folder'
+      OnClick = MenuItem22Click
     end
     object FileFolder1: TMenuItem
       Caption = 'Browse File Folder'
@@ -2705,7 +2711,7 @@ object MainForm: TMainForm
     end
   end
   object WatchesPopupMenu: TPopupMenu
-    left = 194
+    left = 204
     top = 110
     object Add1: TMenuItem
       Caption = 'Add'
@@ -2742,8 +2748,8 @@ object MainForm: TMainForm
     top = 91
   end
   object MessagesPopup: TPopupMenu
-    left = 144
-    top = 179
+    left = 172
+    top = 186
     object Clear1: TMenuItem
       Caption = 'Clear'
       OnClick = Clear1Click

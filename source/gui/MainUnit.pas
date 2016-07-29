@@ -58,7 +58,9 @@ type
     BugSignBtn: TntvImgBtn;
     FolderCloseBtn: TntvImgBtn;
     FolderCloseBtn1: TntvImgBtn;
+    MenuItem28: TMenuItem;
     MenuItem29: TMenuItem;
+    RecentFoldersMnu: TMenuItem;
     ShowSpecialCharsAct: TAction;
     FileList: TListView;
     FolderPathLbl: TLabel;
@@ -346,7 +348,6 @@ type
     QuickSearch: TMenuItem;
     procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
-
     procedure BrowseTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure CallStackListDblClick(Sender: TObject);
     procedure DBGCompileActExecute(Sender: TObject);
@@ -378,8 +379,7 @@ type
     procedure FileListDblClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure SearchGridDblClick(Sender: TObject);
-
-      procedure SearchGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
+    procedure SearchGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
     procedure SelectProjectTypeActExecute(Sender: TObject);
     procedure FileModeBtnClick(Sender: TObject);
     procedure RefreshFilesActExecute(Sender: TObject);
@@ -418,8 +418,7 @@ type
     procedure TypeOptionsActExecute(Sender: TObject);
     procedure TypesOptionsActExecute(Sender: TObject);
     procedure UnixMnuClick(Sender: TObject);
-
-      procedure WatchesGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure WatchesGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure WindowsMnuClick(Sender: TObject);
     procedure MacMnuClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -521,10 +520,13 @@ type
     procedure UpdatePanel;
     procedure SetFolder(const Value: string);
     procedure ReopenClick(Sender: TObject);
+    procedure ReopenFolderClick(Sender: TObject);
     procedure ReopenProjectClick(Sender: TObject);
     procedure AddWatch(s: string);
     procedure DeleteWatch(s: string);
-    procedure EnumRecentFile;
+    procedure EnumRecents;
+    procedure EnumRecentFiles;
+    procedure EnumRecentFolders;
     procedure EnumRecentProjects;
     function GetCurrentColorText: string;
     function GetFolder: string;
@@ -859,13 +861,19 @@ end;
 procedure TMainForm.MenuItem22Click(Sender: TObject);
 begin
   if Engine.Session.IsOpened then
+  begin
     Folder := ExtractFilePath(Engine.Session.Project.FileName);
+    Engine.ProcessRecentFolder(Folder);
+  end;
 end;
 
 procedure TMainForm.MenuItem23Click(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
+  begin
     Folder := ExtractFilePath(Engine.Files.Current.Name);
+    Engine.ProcessRecentFolder(Folder);
+  end;
 end;
 
 procedure TMainForm.MenuItem24Click(Sender: TObject);
@@ -959,8 +967,7 @@ begin
   else
     Caption := sApplicationTitle;
   Application.Title := Caption;
-  EnumRecentFile;
-  EnumRecentProjects;
+  EnumRecents;
 end;
 
 procedure TMainForm.EngineRefresh;
@@ -1396,7 +1403,7 @@ begin
     Engine.Files.OpenFile(aFileName);
 end;
 
-procedure TMainForm.EnumRecentFile;
+procedure TMainForm.EnumRecentFiles;
 var
   i, c: integer;
   aMenuItem: TMenuItem;
@@ -1415,6 +1422,25 @@ begin
   end;
 end;
 
+procedure TMainForm.EnumRecentFolders;
+var
+  i, c: integer;
+  aMenuItem: TMenuItem;
+begin
+  RecentFoldersMnu.Clear;
+  c := Engine.Options.RecentFolders.Count;
+  if c > 10 then
+    c := 10;
+  for i := 0 to c - 1 do
+  begin
+    aMenuItem := TMenuItem.Create(Self);
+    aMenuItem.Caption := Engine.Options.RecentFolders[i];
+    aMenuItem.Hint := aMenuItem.Caption;
+    aMenuItem.OnClick := @ReopenFolderClick;
+    RecentFoldersMnu.Add(aMenuItem);
+  end;
+end;
+
 procedure TMainForm.ReopenClick(Sender: TObject);
 var
   aFile: string;
@@ -1425,6 +1451,16 @@ begin
     if Engine.Session.IsOpened then
       aFile := ExpandToPath(aFile, Engine.Session.Project.RootDir);
     Engine.Files.OpenFile(aFile);
+  end;
+end;
+
+procedure TMainForm.ReopenFolderClick(Sender: TObject);
+var
+  aFile: string;
+begin
+  if Sender is TMenuItem then
+  begin
+    Folder := (Sender as TMenuItem).Caption;
   end;
 end;
 
@@ -1987,6 +2023,7 @@ begin
   if SelectFolder('Select root directory for you Engine', '', aFolder) then
   begin
     Folder := aFolder;
+    Engine.ProcessRecentFolder(Folder);
   end;
 end;
 
@@ -2008,6 +2045,8 @@ begin
     ProjectChanged;
   if ecsProjectLoaded in State then
     ProjectLoaded;
+  if ecsRecents in State then
+    EnumRecents;
   if ecsState in State then
     EngineState;
   if ecsOptions in State then
@@ -2541,6 +2580,13 @@ begin
     Engine.Session.Debug.Watches.Remove(s);
     //UpdateWatches;
   end;
+end;
+
+procedure TMainForm.EnumRecents;
+begin
+  EnumRecentFiles;
+  EnumRecentFolders;
+  EnumRecentProjects;
 end;
 
 procedure TMainForm.DBGToggleBreakpointActExecute(Sender: TObject);
