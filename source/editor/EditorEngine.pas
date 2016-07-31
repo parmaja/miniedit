@@ -1169,7 +1169,10 @@ type
 
 procedure EnumFiles(Folder, Filter: string; FileList: TStringList);
 //EnumFileList return false if canceled by callback function
-function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount,vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean): Boolean;
+type
+  TFileFindTypes = set of (fftDir, fftFile);
+
+function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount, vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean; Types: TFileFindTypes = [fftFile]): Boolean;
 procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean);
 
 procedure EnumRunMode(vItems: TStrings);
@@ -2512,7 +2515,7 @@ begin
   FindClose(SearchRec);
 end;
 
-function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount,vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean): Boolean;
+function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount, vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean; Types: TFileFindTypes): Boolean;
 var
   Resume: Boolean;
   IgnoreList: TStringList;
@@ -2525,25 +2528,28 @@ var
     f: string;
   begin
     vLevel := vLevel + 1;
-    if FindFirst(Root + Path + '*'{Files}, faAnyFile, sr) = 0 then
+    if fftFile in Types then
     begin
-      repeat
-        if (sr.Name = '') or
-          ((IgnoreList <> nil) and (IgnoreList.IndexOf(sr.Name) >= 0)) or
-          not ((MaskList = nil) or (MaskList.Matches(sr.Name))) then
-            continue;
-        if ReturnFullPath then
-          f := Root + IncludePathSeparator(Path) + sr.Name
-        else
-          f := IncludePathSeparator(Path) + sr.Name;
-        Callback(AObject, f, aCount, vLevel, Resume);
-        if (vMaxCount > 0) and (aCount > vMaxCount) then
-          Resume := False;
-          //raise Exception.Create('Too many files');
-        if not Resume then
-          break;
-        aCount := aCount + 1;
-      until (FindNext(sr) <> 0);
+      if FindFirst(Root + Path + '*'{Files}, faAnyFile, sr) = 0 then
+      begin
+        repeat
+          if (sr.Name = '') or
+            ((IgnoreList <> nil) and (IgnoreList.IndexOf(sr.Name) >= 0)) or
+            not ((MaskList = nil) or (MaskList.Matches(sr.Name))) then
+              continue;
+          if ReturnFullPath then
+            f := Root + IncludePathSeparator(Path) + sr.Name
+          else
+            f := IncludePathSeparator(Path) + sr.Name;
+          Callback(AObject, f, aCount, vLevel, Resume);
+          if (vMaxCount > 0) and (aCount > vMaxCount) then
+            Resume := False;
+            //raise Exception.Create('Too many files');
+          if not Resume then
+            break;
+          aCount := aCount + 1;
+        until (FindNext(sr) <> 0);
+      end;
     end;
 
     if (vMaxLevel = 0) or (vLevel < vMaxLevel) then
@@ -2554,8 +2560,19 @@ var
             if (sr.Name = '') or (sr.Name[1] = '.') or (sr.Name = '..') or
               ((IgnoreList <> nil) and (IgnoreList.IndexOf(sr.Name) >= 0)) then
                 continue;
+
             if (sr.Attr and faDirectory) <> 0 then
             begin
+              if fftDir in Types then
+              begin
+                if ReturnFullPath then
+                  f := Root + IncludePathSeparator(Path) + sr.Name
+                else
+                  f := IncludePathSeparator(Path) + sr.Name;
+                Callback(AObject, f, aCount, vLevel, Resume);
+                if not Resume then
+                  break;
+              end;
               DoFind(Root, IncludePathSeparator(Path + sr.Name), vLevel);
             end;
           until (FindNext(sr) <> 0);
@@ -3671,7 +3688,7 @@ begin
   UpdateAge;
 end;
 
-procedure SaveAsMode(const FileName: string; Mode: TEditorFileMode; Strings: TStrings);
+procedure SaveAsMode(const FileName: string; Mode: TEditorFileMode; Strings: Tstrings);
 var
   aStream: TFileStream;
 begin
