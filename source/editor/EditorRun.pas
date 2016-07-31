@@ -46,7 +46,7 @@ type
   protected
     FProcess: TProcess;
     FControl: TConsoleForm;
-    FOnWrite: TmnOnWrite;
+    FOnWrite: TmnOnWrite; //TODO need Sync!!!
     FPool: TmneRunPool;
     procedure CreateControl;
     procedure CreateConsole(AInfo: TmneCommandInfo);

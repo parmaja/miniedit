@@ -1014,10 +1014,14 @@ type
   TOnFoundEvent = procedure(FileName: string; const Line: string; LineNo, Column, FoundLength: integer) of object;
   TOnEditorChangeState = procedure(State: TEditorChangeStates) of object;
 
+  { INotifyEngine }
+
   INotifyEngine = interface(IInterface)
     procedure EditorChangeState(State: TEditorChangeStates);
     procedure EngineAction(EngineAction: TEditorAction);
     procedure EngineOutput(S: string);
+    //Temporary clear it after a period
+    procedure EngineMessage(S: string; Temporary: Boolean = False);
     procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
     procedure EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
   end;
@@ -3476,8 +3480,11 @@ end;
 function TEditorFiles.LoadFile(vFileName: string; AppendToRecent: Boolean): TEditorFile;
 begin
   try
-    Result := InternalOpenFile(vFileName, AppendToRecent);
-    Engine.UpdateState([ecsChanged]);
+    try
+      Result := InternalOpenFile(vFileName, AppendToRecent);
+    finally
+      Engine.UpdateState([ecsChanged]);
+    end;
     if Result <> nil then
       Current := Result;
   finally
@@ -3657,8 +3664,8 @@ end;
 procedure TEditorFile.Load(FileName: string);
 begin
   FileName := ExpandFileName(FileName);
-  DoLoad(FileName);
   Name := FileName;
+  DoLoad(FileName);
   IsEdited := False;
   IsNew := False;
   UpdateAge;
@@ -4894,9 +4901,7 @@ begin
       begin
         aFile := Engine.Files.LoadFile(aItem.FileName, False);
         if aFile <> nil then
-        begin
           aFile.Assign(aItem);
-        end;
       end;
     end;
     Engine.Files.SetActiveFile(Files.CurrentFile);

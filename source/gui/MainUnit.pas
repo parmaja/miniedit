@@ -54,6 +54,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    FileModeBtn: TntvImgBtn;
     FileCloseBtn: TntvImgBtn;
     BugSignBtn: TntvImgBtn;
     FolderCloseBtn: TntvImgBtn;
@@ -83,7 +84,6 @@ type
     TypeOptionsAct: TAction;
     DeleteAct: TAction;
     FileHeaderPanel: TPanel;
-    FileModeBtn: TBitBtn;
     FileNameLbl: TLabel;
     FileTabs: TntvTabSet;
     MenuItem18: TMenuItem;
@@ -544,6 +544,7 @@ type
 
     procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
     procedure EditorChangeState(State: TEditorChangeStates);
+    procedure EngineMessage(S: string; Temporary: Boolean = False);
     procedure EngineOutput(S: string);
     procedure EngineAction(EngineAction: TEditorAction);
     procedure EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
@@ -2051,6 +2052,13 @@ begin
     EngineState;
   if ecsOptions in State then
     OptionsChanged;
+end;
+
+procedure TMainForm.EngineMessage(S: string; Temporary: Boolean);
+begin
+  MessageLabel.Caption := S;
+  if Temporary then
+    StatusTimer.Enabled := True;
 end;
 
 function TMainForm.ChooseTendency(var vTendency: TEditorTendency): Boolean;

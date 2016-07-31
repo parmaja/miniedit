@@ -385,24 +385,12 @@ object MainForm: TMainForm
         Height = 21
         Hint = 'File name'
         Top = 2
-        Width = 547
+        Width = 553
         Align = alClient
         Caption = 'File name'
         Layout = tlCenter
         ParentColor = False
         PopupMenu = FilePopupMenu
-      end
-      object FileModeBtn: TBitBtn
-        Left = 549
-        Height = 21
-        Top = 2
-        Width = 86
-        Align = alRight
-        Caption = 'Unix'
-        Margin = 8
-        OnClick = FileModeBtnClick
-        PopupMenu = FileModeMenu
-        TabOrder = 0
       end
       object FileCloseBtn: TntvImgBtn
         Left = 651
@@ -426,6 +414,19 @@ object MainForm: TMainForm
         Style = ibsToolbar
         Align = alRight
         OnClick = FileCloseBtnClick
+        AutoCheck = False
+      end
+      object FileModeBtn: TntvImgBtn
+        Left = 555
+        Height = 21
+        Top = 2
+        Width = 80
+        Caption = 'Unix'
+        ImageIndex = 0
+        Style = ibsNormal
+        Align = alRight
+        PopupMenu = FileModeMenu
+        OnClick = FileModeBtnClick
         AutoCheck = False
       end
     end
@@ -541,6 +542,46 @@ object MainForm: TMainForm
     Caption = 'Call Stack'
     Constraints.MinHeight = 60
     TabOrder = 4
+    object SearchGrid: TStringGrid
+      Left = 3
+      Height = 101
+      Top = 23
+      Width = 875
+      Align = alClient
+      ColCount = 4
+      Flat = True
+      MouseWheelOption = mwGrid
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goSmoothScroll, goFixedRowNumbering, goRowHighlight]
+      ParentColor = True
+      PopupMenu = MessagesPopup
+      RowCount = 1
+      TabOrder = 0
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnDblClick = SearchGridDblClick
+      OnDrawCell = SearchGridDrawCell
+      ColWidths = (
+        21
+        184
+        53
+        548
+      )
+      Cells = (
+        3
+        1
+        0
+        'File'
+        2
+        0
+        'Line'
+        3
+        0
+        'Result'
+      )
+    end
     object CallStackGrid: TStringGrid
       Left = 3
       Height = 101
@@ -663,46 +704,6 @@ object MainForm: TMainForm
         4
         0
         'Line'
-      )
-    end
-    object SearchGrid: TStringGrid
-      Left = 3
-      Height = 101
-      Top = 23
-      Width = 875
-      Align = alClient
-      ColCount = 4
-      Flat = True
-      MouseWheelOption = mwGrid
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goSmoothScroll, goFixedRowNumbering, goRowHighlight]
-      ParentColor = True
-      PopupMenu = MessagesPopup
-      RowCount = 1
-      TabOrder = 0
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnDblClick = SearchGridDblClick
-      OnDrawCell = SearchGridDrawCell
-      ColWidths = (
-        21
-        184
-        53
-        548
-      )
-      Cells = (
-        3
-        1
-        0
-        'File'
-        2
-        0
-        'Line'
-        3
-        0
-        'Result'
       )
     end
     inline OutputEdit: TSynEdit

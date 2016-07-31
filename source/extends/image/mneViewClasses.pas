@@ -80,6 +80,7 @@ begin
   begin
     FContents := TImagePanel.Create(Engine.Container);
     FContents.Parent := Engine.Container;
+    FContents.Align := alClient;
   end;
   Result := FContents;
 end;

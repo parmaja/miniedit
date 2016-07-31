@@ -377,7 +377,7 @@ begin
       s := s + CSVOptions.EndOfLine;
       if CSVOptions.ANSIContents then
       begin
-        ansi := UTF8Decode(s);
+        ansi := s; //TODO
         aFile.WriteBuffer(Pointer(ansi)^, length(ansi));
       end
       else

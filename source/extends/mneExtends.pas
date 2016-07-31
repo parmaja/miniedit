@@ -14,8 +14,18 @@ unit mneExtends;
 interface
 
 uses
-  SysUtils, StrUtils, Classes,
-  mnePHPClasses, mnePASClasses, mneCSVClasses, mnePyClasses, mneVerilogClasses;
+  SysUtils, StrUtils,
+  mneClasses,
+  mneConsoleClasses,
+  mneViewClasses,
+  mneDClasses,
+  mneSARDClasses,
+  mnePHPClasses,
+  mnePASClasses,
+  mneCSVClasses,
+  mnePyClasses,
+  mneVerilogClasses,
+  Classes;
 
 implementation
 
