@@ -17,9 +17,9 @@ object ManageProjectsForm: TManageProjectsForm
     Height = 298
     Top = 3
     Width = 468
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Projects'
@@ -80,14 +80,14 @@ object ManageProjectsForm: TManageProjectsForm
     end
     object TabSheet2: TTabSheet
       Caption = 'Recent Projects'
-      ClientHeight = 264
-      ClientWidth = 462
+      ClientHeight = 272
+      ClientWidth = 460
       ImageIndex = 1
       object RProjectsList: TListBox
         Left = 1
-        Height = 255
+        Height = 263
         Top = 4
-        Width = 458
+        Width = 456
         Anchors = [akTop, akLeft, akRight, akBottom]
         ItemHeight = 18
         OnDblClick = ProjectsListDblClick
@@ -99,14 +99,14 @@ object ManageProjectsForm: TManageProjectsForm
     end
     object TabSheet3: TTabSheet
       Caption = 'Recent files'
-      ClientHeight = 264
-      ClientWidth = 462
+      ClientHeight = 272
+      ClientWidth = 460
       ImageIndex = 2
       object RFilesList: TListBox
         Left = 1
-        Height = 255
+        Height = 263
         Top = 4
-        Width = 458
+        Width = 456
         Anchors = [akTop, akLeft, akRight, akBottom]
         ItemHeight = 18
         OnDblClick = ProjectsListDblClick

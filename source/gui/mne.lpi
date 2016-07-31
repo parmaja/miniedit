@@ -18,7 +18,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="4"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="106"/>
+      <BuildNr Value="107"/>
       <Language Value=""/>
       <CharSet Value=""/>
       <Attributes pvaPreRelease="True"/>
@@ -35,7 +35,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\extends\custom;..\extends\python;..\extends\verilog;..\..\..\..\lib\minilib\lazarus\lib;..\extends\cpp;..\..\..\..\lib\minilib\lazarus\components\native"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\custom;..\extends\python;..\extends\verilog;..\..\..\..\lib\minilib\lazarus\lib;..\extends\cpp;..\..\..\..\lib\minilib\lazarus\components\native"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Linking>
@@ -66,7 +66,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\..\..\..\lib\minilib\connection\source\ui;..\extends\custom;..\extends\python;..\extends\verilog;..\..\..\..\lib\minilib\lazarus\lib;..\extends\cpp;..\..\..\..\lib\minilib\lazarus\components\native"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\custom;..\extends\python;..\extends\verilog;..\..\..\..\lib\minilib\lazarus\lib;..\extends\cpp;..\..\..\..\lib\minilib\lazarus\components\native"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Parsing>
@@ -380,6 +380,7 @@
         <Filename Value="mneManageRecentsForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ManageProjectsForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit36>
       <Unit37>
@@ -453,7 +454,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);D:\dev\lazarus\ide\include\"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\addons;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\custom;..\extends\python;..\extends\verilog;..\extends\sard;..\extends\image;..\extends\commons;..\..\..\..\lib\minilib\lazarus\lib;..\extends\cpp;..\..\..\..\lib\minilib\lazarus\components\native"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\custom;..\extends\python;..\extends\verilog;..\extends\sard;..\extends\image;..\extends\commons;..\..\..\..\lib\minilib\lazarus\lib;..\extends\cpp;..\..\..\..\lib\minilib\lazarus\components\native"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <Linking>
