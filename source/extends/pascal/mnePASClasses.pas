@@ -93,7 +93,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, mnePasProjectFrames, mnePasConfigForms;
+  IniFiles, mnStreams, mnUtils, mnePasProjectFrames, mnePasTendencyFrames;
 
 { TPasProjectOptions }
 
@@ -265,9 +265,9 @@ end;
 
 procedure TPasTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
-  aFrame: TPasConfigForm;
+  aFrame: TPasTendencyFrame;
 begin
-  aFrame := TPasConfigForm.Create(AOwner);
+  aFrame := TPasTendencyFrame.Create(AOwner);
   aFrame.FTendency := ATendency;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);

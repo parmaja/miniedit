@@ -130,7 +130,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, PHPProcessor, SynEditStrConst, mnePHPConfigForms;
+  IniFiles, mnStreams, mnUtils, PHPProcessor, SynEditStrConst, mnePHPTendencyFrames;
 
 { TPHPProject }
 
@@ -299,9 +299,9 @@ end;
 
 procedure TPHPTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
-  aFrame: TPHPConfigForm;
+  aFrame: TPHPTendencyFrame;
 begin
-  aFrame := TPHPConfigForm.Create(AOwner);
+  aFrame := TPHPTendencyFrame.Create(AOwner);
   aFrame.FTendency := ATendency;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);

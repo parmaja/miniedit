@@ -1,4 +1,4 @@
-unit mneDConfigForms;
+unit mneDTendencyFrames;
 
 {$mode objfpc}{$H+}
 
@@ -10,9 +10,9 @@ uses
 
 type
 
-  { TDConfigForm }
+  { TDTendencyFrame }
 
-  TDConfigForm = class(TFrame, IEditorOptions)
+  TDTendencyFrame = class(TFrame, IEditorOptions)
     Button3: TButton;
     Label1: TLabel;
     CompilerEdit: TEdit;
@@ -30,9 +30,9 @@ implementation
 
 {$R *.lfm}
 
-{ TDConfigForm }
+{ TDTendencyFrame }
 
-procedure TDConfigForm.Button3Click(Sender: TObject);
+procedure TDTendencyFrame.Button3Click(Sender: TObject);
 begin
   OpenDialog.Filter := 'EXE files|*.exe|All files|*.*';
   OpenDialog.FileName := CompilerEdit.Text;
@@ -43,12 +43,12 @@ begin
   end;
 end;
 
-procedure TDConfigForm.Apply;
+procedure TDTendencyFrame.Apply;
 begin
   (FTendency as TDTendency).Command := CompilerEdit.Text;
 end;
 
-procedure TDConfigForm.Retrieve;
+procedure TDTendencyFrame.Retrieve;
 begin
   CompilerEdit.Text := (FTendency as TDTendency).Command;
 end;

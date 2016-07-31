@@ -1,4 +1,4 @@
-unit mnePyConfigForms;
+unit mneCppTendencyFrames;
 
 {$mode objfpc}{$H+}
 
@@ -6,13 +6,13 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  EditorEngine;
+  EditorEngine, mneDClasses;
 
 type
 
-  { TPyConfigForm }
+  { TDTendencyFrame }
 
-  TPyConfigForm = class(TFrame, IEditorOptions)
+  TCppTendencyFrame = class(TFrame, IEditorOptions)
     Button3: TButton;
     Label1: TLabel;
     CompilerEdit: TEdit;
@@ -28,14 +28,11 @@ type
 
 implementation
 
-uses
-  mnePyClasses;
-
 {$R *.lfm}
 
-{ TPyConfigForm }
+{ TCppTendencyFrame }
 
-procedure TPyConfigForm.Button3Click(Sender: TObject);
+procedure TCppTendencyFrame.Button3Click(Sender: TObject);
 begin
   OpenDialog.Filter := 'EXE files|*.exe|All files|*.*';
   OpenDialog.FileName := CompilerEdit.Text;
@@ -46,14 +43,14 @@ begin
   end;
 end;
 
-procedure TPyConfigForm.Apply;
+procedure TCppTendencyFrame.Apply;
 begin
-  (FTendency as TPyTendency).Command := CompilerEdit.Text;
+  (FTendency as TDTendency).Command := CompilerEdit.Text;
 end;
 
-procedure TPyConfigForm.Retrieve;
+procedure TCppTendencyFrame.Retrieve;
 begin
-  CompilerEdit.Text := (FTendency as TPyTendency).Command;
+  CompilerEdit.Text := (FTendency as TDTendency).Command;
 end;
 
 end.

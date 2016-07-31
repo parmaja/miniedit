@@ -230,9 +230,9 @@ end;
 
 procedure TVerilogTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 {var
-  aFrame: TVerilogConfigForm;}
+  aFrame: TVerilogTendencyFrame;}
 begin
-  {aFrame := TVerilogConfigForm.Create(AOwner);
+  {aFrame := TVerilogTendencyFrame.Create(AOwner);
   aFrame.FTendency := ATendency;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);}

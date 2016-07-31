@@ -1,4 +1,4 @@
-object CustomConfigFrame: TCustomConfigFrame
+object PyTendencyFrame: TPyTendencyFrame
   Left = 0
   Height = 180
   Top = 0
@@ -30,8 +30,8 @@ object CustomConfigFrame: TCustomConfigFrame
     Left = 11
     Height = 15
     Top = 9
-    Width = 49
-    Caption = 'Compiler'
+    Width = 88
+    Caption = 'Python compiler'
     ParentColor = False
   end
   object OpenDialog: TOpenDialog

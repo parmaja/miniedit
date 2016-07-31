@@ -1,4 +1,4 @@
-unit mnePHPConfigForms;
+unit mnePHPTendencyFrames;
 
 {$mode objfpc}{$H+}
 
@@ -10,9 +10,9 @@ uses
 
 type
 
-  { TPHPConfigForm }
+  { TPHPTendencyFrame }
 
-  TPHPConfigForm = class(TFrame, IEditorOptions)
+  TPHPTendencyFrame = class(TFrame, IEditorOptions)
     Button1: TButton;
     Button3: TButton;
     Button5: TButton;
@@ -38,9 +38,9 @@ implementation
 
 {$R *.lfm}
 
-{ TPHPConfigForm }
+{ TPHPTendencyFrame }
 
-procedure TPHPConfigForm.Button3Click(Sender: TObject);
+procedure TPHPTendencyFrame.Button3Click(Sender: TObject);
 var
   aFolder: String;
 begin
@@ -51,7 +51,7 @@ begin
   end;
 end;
 
-procedure TPHPConfigForm.Button1Click(Sender: TObject);
+procedure TPHPTendencyFrame.Button1Click(Sender: TObject);
 begin
   OpenDialog.Title := 'select PHP Help file "php_manual_en.chm"';
   OpenDialog.Filter := 'Help files|*.chm|All files|*.*';
@@ -63,7 +63,7 @@ begin
   end;
 end;
 
-procedure TPHPConfigForm.Button5Click(Sender: TObject);
+procedure TPHPTendencyFrame.Button5Click(Sender: TObject);
 begin
   OpenDialog.Title := 'select HTML Help file';
   OpenDialog.Filter := 'Help files|*.chm|All files|*.*';
@@ -76,7 +76,7 @@ begin
 end;
 
 
-procedure TPHPConfigForm.Apply;
+procedure TPHPTendencyFrame.Apply;
 begin
   with (FTendency as TPHPTendency) do
   begin
@@ -86,7 +86,7 @@ begin
   end;
 end;
 
-procedure TPHPConfigForm.Retrieve;
+procedure TPHPTendencyFrame.Retrieve;
 begin
   with (FTendency as TPHPTendency) do
   begin

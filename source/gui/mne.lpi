@@ -35,7 +35,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\custom;..\extends\python;..\extends\verilog;..\..\..\..\lib\minilib\lazarus\lib;..\extends\cpp;..\..\..\..\lib\minilib\lazarus\components\native"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\..\..\..\lib;..\extends;..\extends\php;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\custom;..\extends\python;..\extends\verilog;..\..\..\..\lib\minilib\lazarus\lib;..\extends\cpp;..\..\..\..\lib\minilib\lazarus\components\native"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Linking>
@@ -66,7 +66,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\..\..\..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\custom;..\extends\python;..\extends\verilog;..\..\..\..\lib\minilib\lazarus\lib;..\extends\cpp;..\..\..\..\lib\minilib\lazarus\components\native"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\..\..\..\lib;..\extends;..\extends\php;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\custom;..\extends\python;..\extends\verilog;..\..\..\..\lib\minilib\lazarus\lib;..\extends\cpp;..\..\..\..\lib\minilib\lazarus\components\native"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Parsing>
@@ -454,7 +454,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);D:\dev\lazarus\ide\include\"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\custom;..\extends\python;..\extends\verilog;..\extends\sard;..\extends\image;..\extends\commons;..\..\..\..\lib\minilib\lazarus\lib;..\extends\cpp;..\..\..\..\lib\minilib\lazarus\components\native"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\..\..\..\lib;..\extends;..\extends\php;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\custom;..\extends\python;..\extends\verilog;..\..\..\..\lib\minilib\lazarus\lib;..\extends\cpp;..\..\..\..\lib\minilib\lazarus\components\native"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <Linking>

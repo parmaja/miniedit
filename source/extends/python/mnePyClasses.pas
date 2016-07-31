@@ -76,7 +76,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, PHP_xDebug, mnUtils, SynHighlighterMultiProc, SynEditStrConst, mnePyConfigForms, mnePyProjectFrames;
+  IniFiles, mnStreams, PHP_xDebug, mnUtils, SynHighlighterMultiProc, SynEditStrConst, mnePyTendencyFrames, mnePyProjectFrames;
 
 { TDProject }
 
@@ -221,9 +221,9 @@ end;
 
 procedure TPyTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
-  aFrame: TPyConfigForm;
+  aFrame: TPyTendencyFrame;
 begin
-  aFrame := TPyConfigForm.Create(AOwner);
+  aFrame := TPyTendencyFrame.Create(AOwner);
   aFrame.FTendency := ATendency;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);

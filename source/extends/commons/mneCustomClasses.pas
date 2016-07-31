@@ -90,7 +90,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, SynEditStrConst, mneDConfigForms, mneDProjectFrames;
+  IniFiles, mnStreams, mnUtils, SynEditStrConst, mneDTendencyFrames, mneDProjectFrames;
 
 { TSynCustomSyn }
 
@@ -288,9 +288,9 @@ end;
 
 procedure TCustomTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
-  aFrame: TDConfigForm;
+  aFrame: TDTendencyFrame;
 begin
-  aFrame := TDConfigForm.Create(AOwner);
+  aFrame := TDTendencyFrame.Create(AOwner);
   aFrame.FTendency := ATendency;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);

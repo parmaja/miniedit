@@ -74,7 +74,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, SynHighlighterMultiProc, SynEditStrConst, mneDConfigForms, mneDProjectFrames, LCLProc;
+  IniFiles, mnStreams, mnUtils, SynHighlighterMultiProc, SynEditStrConst, mneDTendencyFrames, mneDProjectFrames, LCLProc;
 
 { TCppFile }
 
@@ -299,9 +299,9 @@ end;
 
 procedure TCppTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
-  aFrame: TDConfigForm;
+  aFrame: TDTendencyFrame;
 begin
-  aFrame := TDConfigForm.Create(AOwner);
+  aFrame := TDTendencyFrame.Create(AOwner);
   aFrame.FTendency := ATendency;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);

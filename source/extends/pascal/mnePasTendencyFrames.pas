@@ -1,4 +1,4 @@
-unit mneCppConfigForms;
+unit mnePasTendencyFrames;
 
 {$mode objfpc}{$H+}
 
@@ -6,13 +6,13 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, Forms, Controls, Graphics, Dialogs, StdCtrls,
-  EditorEngine, mneDClasses;
+  EditorEngine, mnePasClasses;
 
 type
 
-  { TDConfigForm }
+  { TPasTendencyFrame }
 
-  TCppConfigForm = class(TFrame, IEditorOptions)
+  TPasTendencyFrame = class(TFrame, IEditorOptions)
     Button3: TButton;
     Label1: TLabel;
     CompilerEdit: TEdit;
@@ -30,9 +30,9 @@ implementation
 
 {$R *.lfm}
 
-{ TCppConfigForm }
+{ TPasTendencyFrame }
 
-procedure TCppConfigForm.Button3Click(Sender: TObject);
+procedure TPasTendencyFrame.Button3Click(Sender: TObject);
 begin
   OpenDialog.Filter := 'EXE files|*.exe|All files|*.*';
   OpenDialog.FileName := CompilerEdit.Text;
@@ -43,14 +43,14 @@ begin
   end;
 end;
 
-procedure TCppConfigForm.Apply;
+procedure TPasTendencyFrame.Apply;
 begin
-  (FTendency as TDTendency).Command := CompilerEdit.Text;
+  (FTendency as TPasTendency).Compiler := CompilerEdit.Text;
 end;
 
-procedure TCppConfigForm.Retrieve;
+procedure TPasTendencyFrame.Retrieve;
 begin
-  CompilerEdit.Text := (FTendency as TDTendency).Command;
+  CompilerEdit.Text := (FTendency as TPasTendency).Compiler;
 end;
 
 end.

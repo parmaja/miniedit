@@ -1,4 +1,4 @@
-object PHPConfigForm: TPHPConfigForm
+object PHPTendencyFrame: TPHPTendencyFrame
   Left = 0
   Height = 156
   Top = 0
