@@ -18,7 +18,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="4"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="110"/>
+      <BuildNr Value="111"/>
       <Language Value=""/>
       <CharSet Value=""/>
       <Attributes pvaPreRelease="True"/>
@@ -399,6 +399,7 @@
     <Linking>
       <Debugging>
         <UseHeaptrc Value="True"/>
+        <UseValgrind Value="True"/>
       </Debugging>
       <Options>
         <Win32>

@@ -46,8 +46,13 @@ type
   protected
     FProcess: TProcess;
     FControl: TConsoleForm;
-    FOnWrite: TmnOnWrite; //TODO need Sync!!!
     FPool: TmneRunPool;
+  protected
+    FOnWrite: TmnOnWrite; //TODO need Sync!!!
+    InternalString: string;
+    procedure InternalWrite; //This for sync it, it will send to FOnWriteString
+    procedure OnWriteString(S: string); //This assign it to consoles
+  protected
     procedure CreateControl;
     procedure CreateConsole(AInfo: TmneCommandInfo);
   public
@@ -279,7 +284,7 @@ var
   ProcessObject: TmnProcessObject;
 begin
   if Assigned(FOnWrite) and (AInfo.Message <> '') then
-    FOnWrite(AInfo.Message + #13#10);
+    OnWriteString(AInfo.Message + #13#10);
   FProcess := TProcess.Create(nil);
   FProcess.ConsoleTitle := Info.Title;
   FProcess.Executable := AInfo.Command;
@@ -292,7 +297,7 @@ begin
     FProcess.Options :=  [poUsePipes, poStderrToOutPut];
     FProcess.ShowWindow := swoHIDE;
     FProcess.PipeBufferSize := 40; //80 char in line
-    ProcessObject := TmnProcessObject.Create(FProcess, FPool, FOnWrite);
+    ProcessObject := TmnProcessObject.Create(FProcess, FPool, @OnWriteString);
     try
       Status := ProcessObject.Read;
     finally
@@ -307,7 +312,19 @@ begin
     FProcess.Execute;
   end;
   if Assigned(FOnWrite) then
-    FOnWrite(#13#10'End Status: ' + IntToStr(Status)+#13#10);
+    OnWriteString(#13#10'End Status: ' + IntToStr(Status)+#13#10);
+end;
+
+procedure TmneRunItem.InternalWrite;
+begin
+  if Assigned(FOnWrite) then
+    FOnWrite(InternalString);
+end;
+
+procedure TmneRunItem.OnWriteString(S: string);
+begin
+  InternalString := S;
+  FPool.Synchronize(@InternalWrite);
 end;
 
 procedure TmneRunItem.Execute;

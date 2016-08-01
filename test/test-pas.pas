@@ -5,8 +5,6 @@ uses
 var
   s: string;
 begin
-  write('Enter your name: ');
-  //readln(s);
-  writeln('Your name is ' + s);
+  writeln('Hello World');
+  writeln('Bye bye world');
 end.
-

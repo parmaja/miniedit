@@ -1592,7 +1592,7 @@ begin
       if Tendency.IndentMode > idntNone then
         Contents := ConvertIndents(Contents, SynEdit.TabWidth, Tendency.IndentMode);
       if IsNew then //there is no undo here
-        SynEdit.Lines.Text := Contents;
+        SynEdit.Lines.Text := Contents
       else
       begin
         SynEdit.BeginUndoBlock;  //adding it to history of undo, so we can undo the revert to changes in by external

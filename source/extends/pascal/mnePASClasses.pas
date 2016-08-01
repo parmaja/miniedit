@@ -247,6 +247,11 @@ begin
       aRunItem.Info.Params := aRunItem.Info.Params + p + #13;
   end;
 
+  if rnaDebug in Info.Actions then
+  begin
+    aRunItem.Info.Params := aRunItem.Info.Params + '-gw'#13;
+  end;
+
   if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
