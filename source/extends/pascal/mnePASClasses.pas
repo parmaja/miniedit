@@ -184,7 +184,7 @@ end;
 
 procedure TPasTendency.Init;
 begin
-  FCapabilities := [capRun, capCompile, capLink, capOptions];
+  FCapabilities := [capRun, capDebug, capTrace, capCompile, capLink, capOptions];
   FName := 'Pascal';
   FTitle := 'Pascal project';
   FDescription := 'Pascal/FPC/Lazarus Files, *.pas, *.pp *.inc';

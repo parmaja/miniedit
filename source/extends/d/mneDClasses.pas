@@ -272,7 +272,7 @@ end;
 
 procedure TDTendency.Init;
 begin
-  FCapabilities := [capRun, capCompile, capLink, capOptions];
+  FCapabilities := [capRun, capDebug, capTrace, capCompile, capLink, capOptions];
   FTitle := 'D Lang';
   FDescription := 'D Files, *.D, *.inc';
   FName := 'D';
