@@ -48,7 +48,7 @@ type
     FControl: TConsoleForm;
     FPool: TmneRunPool;
   protected
-    FOnWrite: TmnOnWrite; //TODO need Sync!!!
+    FOnWrite: TmnOnWrite;
     InternalString: string;
     procedure InternalWrite; //This for sync it, it will send to FOnWriteString
     procedure OnWriteString(S: string); //This assign it to consoles
@@ -385,4 +385,3 @@ begin
 end;
 
 end.
-
