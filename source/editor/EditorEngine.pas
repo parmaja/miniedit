@@ -1165,7 +1165,7 @@ function ConvertIndents(const Contents: string; TabWidth: integer; Options: TInd
 
 type
   //If set Resume to false it will stop loop
-  TEnumFilesCallback = procedure(AObject: TObject; const FileName: string; Count, Level:Integer; var Resume: Boolean);
+  TEnumFilesCallback = procedure(AObject: TObject; const FileName: string; Count, Level:Integer; IsDirectory: Boolean; var Resume: Boolean);
 
 procedure EnumFiles(Folder, Filter: string; FileList: TStringList);
 //EnumFileList return false if canceled by callback function
@@ -1591,7 +1591,18 @@ begin
       Mode := DetectFileMode(Contents);
       if Tendency.IndentMode > idntNone then
         Contents := ConvertIndents(Contents, SynEdit.TabWidth, Tendency.IndentMode);
-      SynEdit.Lines.Text := Contents;
+      if IsNew then //there is no undo here
+        SynEdit.Lines.Text := Contents;
+      else
+      begin
+        SynEdit.BeginUndoBlock;  //adding it to history of undo, so we can undo the revert to changes in by external
+        try
+          SynEdit.TextBetweenPoints[Point(1,1), Point(length(SynEdit.Lines[SynEdit.Lines.Count-1]),SynEdit.Lines.Count)] := Contents;
+        finally
+          SynEdit.EndUndoBlock;
+        end;
+      end;
+
     finally
       SynEdit.EndUpdate;
       Stream.Free;
@@ -2541,7 +2552,7 @@ var
             f := Root + IncludePathSeparator(Path) + sr.Name
           else
             f := IncludePathSeparator(Path) + sr.Name;
-          Callback(AObject, f, aCount, vLevel, Resume);
+          Callback(AObject, f, aCount, vLevel, False, Resume);
           if (vMaxCount > 0) and (aCount > vMaxCount) then
             Resume := False;
             //raise Exception.Create('Too many files');
@@ -2569,7 +2580,7 @@ var
                   f := Root + IncludePathSeparator(Path) + sr.Name
                 else
                   f := IncludePathSeparator(Path) + sr.Name;
-                Callback(AObject, f, aCount, vLevel, Resume);
+                Callback(AObject, f, aCount, vLevel, True, Resume);
                 if not Resume then
                   break;
               end;
@@ -2604,7 +2615,7 @@ begin
   Result := Resume;
 end;
 
-procedure EnumFileListStringsCallback(AObject: TObject; const FileName: string; Count, Level:Integer; var Resume: Boolean);
+procedure EnumFileListStringsCallback(AObject: TObject; const FileName: string; Count, Level:Integer; IsDirectory: Boolean; var Resume: Boolean);
 begin
   TStringList(AObject).Add(FileName);
 end;

@@ -54,7 +54,7 @@ uses EditorEngine, SearchForms;
 
 {$R *.lfm}
 
-procedure DoSearchInFileCallback(AObject: TObject; const FileName: string; Count, Level:Integer; var Resume: Boolean);
+procedure DoSearchInFileCallback(AObject: TObject; const FileName: string; Count, Level:Integer; IsDirectory: Boolean; var Resume: Boolean);
 begin
   with (AObject as TSearchInFilesForm) do
   begin
