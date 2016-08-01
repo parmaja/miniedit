@@ -183,7 +183,7 @@ begin
 
     aRunItem.Info.Command := Info.Command;
     if aRunItem.Info.Command = '' then
-      aRunItem.Info.Command := 'dmd.exe';
+      aRunItem.Info.Command := 'gdc.exe';
 
     aRunItem.Info.Mode := runOutput;
     aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);
@@ -197,7 +197,13 @@ begin
 
     aRunItem.Info.Params := aPath + #13;
     if Info.OutputFile <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + '-of' + Info.OutputFile + #13;
+      //aRunItem.Info.Params := aRunItem.Info.Params + '-of' + Info.OutputFile + #13; //dmd
+      aRunItem.Info.Params := aRunItem.Info.Params + '-o' + Info.OutputFile + #13;
+
+    if rnaDebug in Info.Actions then
+    begin
+      aRunItem.Info.Params := aRunItem.Info.Params + '-g'#13;
+    end;
 
     aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
     //aRunItem.Info.Params := aRunItem.Info.Params + '-color=on' + #13; //not work :(
@@ -212,7 +218,8 @@ begin
         if not DirectoryExists(aPath) then
           raise EEditorException.Create('Path not exists: ' + aParams);
 
-        aRunItem.Info.Params := aRunItem.Info.Params + '-I' +aPath + #13;
+        //aRunItem.Info.Params := aRunItem.Info.Params + '-I' +aPath + #13;
+        aRunItem.Info.Params := aRunItem.Info.Params + '-B' +aPath + #13;
       end;
     end;
 

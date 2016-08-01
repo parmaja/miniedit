@@ -2057,8 +2057,7 @@ end;
 procedure TMainForm.EngineMessage(S: string; Temporary: Boolean);
 begin
   MessageLabel.Caption := S;
-  if Temporary then
-    StatusTimer.Enabled := True;
+  StatusTimer.Enabled := Temporary;
 end;
 
 function TMainForm.ChooseTendency(var vTendency: TEditorTendency): Boolean;

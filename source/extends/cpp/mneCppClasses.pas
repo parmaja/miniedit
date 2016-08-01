@@ -320,14 +320,11 @@ end;
 procedure TCppTendency.Init;
 begin
   FCapabilities := [capRun, capCompile, capLink, capOptions];
-  FTitle := 'D Lang';
-  FDescription := 'D Files, *.D, *.inc';
-  FName := 'D';
+  FTitle := 'Cpp Lang';
+  FDescription := 'Cpp Files, *.cpp, *.c, *.h, *.ino';
+  FName := 'Cpp';
   FImageIndex := -1;
-  AddGroup('D', 'd');
-  AddGroup('cfg', 'cfg');
-  AddGroup('ini', 'ini');
-  AddGroup('txt', 'txt');
+  AddGroup('Cpp', 'cpp');
   //AddGroup('json', 'json');
 end;
 

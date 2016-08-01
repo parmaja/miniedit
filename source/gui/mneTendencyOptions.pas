@@ -69,6 +69,7 @@ begin
       ApplyFrames;
       Engine.Options.Apply;
       Engine.UpdateState([ecsOptions]);
+      Engine.SaveOptions;
     end;
     Free;
   end;

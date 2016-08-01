@@ -303,7 +303,7 @@ type
     property Capabilities: TEditorCapabilities read FCapabilities;
     property Groups: TFileGroups read GetGroups;
   published
-    property Command: string read FCommand write FCommand; //like php.exe or rdmd.exe
+    property Command: string read FCommand write FCommand; //like php.exe or gdc.exe or fpc.exe
 
     //Override options
     property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False; //TODO move it to Tendency
@@ -311,7 +311,6 @@ type
     property IndentMode: TIndentMode read FIndentMode write FIndentMode default idntNone;
     property EditorOptions: TSynEditorOptions read FEditorOptions write FEditorOptions;
     property TabsSpecialFiles: string read FTabsSpecialFiles write FTabsSpecialFiles;
-
   end;
 
   TEditorTendencyClass = class of TEditorTendency;
@@ -1129,6 +1128,7 @@ type
     procedure RemoveNotifyEngine(ANotifyObject: INotifyEngine);
     property MacroRecorder: TSynMacroRecorder read FMacroRecorder;
     procedure SendOutout(S: string);
+    procedure SendMessage(S: string; Temporary: Boolean = False);
     procedure SendAction(EditorAction: TEditorAction);
 
     property Environment: TStringList read FEnvironment write FEnvironment;
@@ -2143,6 +2143,7 @@ begin
       if rnaCompile in RunActions then
         Engine.SendAction(eaClearOutput);
       p.Root := Engine.Session.GetRoot;
+      p.Command := Command;
       if (Engine.Session.IsOpened) then
       begin
         p.Mode := Engine.Session.Project.Options.RunMode;
@@ -3483,6 +3484,12 @@ procedure TEditorEngine.SendOutout(S: string);
 begin
   if FNotifyObject <> nil then
     FNotifyObject.EngineOutput(S);
+end;
+
+procedure TEditorEngine.SendMessage(S: string; Temporary: Boolean);
+begin
+  if FNotifyObject <> nil then
+    FNotifyObject.EngineMessage(S, Temporary);
 end;
 
 procedure TEditorEngine.SendAction(EditorAction: TEditorAction);

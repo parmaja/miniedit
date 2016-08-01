@@ -50,8 +50,11 @@ type
   protected
     FOnWrite: TmnOnWrite;
     InternalString: string;
+    InternalTemporary: Boolean;
     procedure InternalWrite; //This for sync it, it will send to FOnWriteString
-    procedure OnWriteString(S: string); //This assign it to consoles
+    procedure WriteString(S: string); //This assign it to consoles
+    procedure InternalMessage; //This for sync it, it will send to FWriteString
+    procedure WriteMessage(S: string; Temporary: Boolean = False); //This assign it to consoles
   protected
     procedure CreateControl;
     procedure CreateConsole(AInfo: TmneCommandInfo);
@@ -284,7 +287,8 @@ var
   ProcessObject: TmnProcessObject;
 begin
   if Assigned(FOnWrite) and (AInfo.Message <> '') then
-    OnWriteString(AInfo.Message + #13#10);
+    WriteString(AInfo.Message + #13#10);
+  WriteMessage(AInfo.Message + #13#10);
   FProcess := TProcess.Create(nil);
   FProcess.ConsoleTitle := Info.Title;
   FProcess.Executable := AInfo.Command;
@@ -292,12 +296,14 @@ begin
   FProcess.CurrentDirectory := AInfo.CurrentDirectory;
   FProcess.InheritHandles := True;
 
+  WriteString(AInfo.Command + ' ' +FProcess.Parameters.Text);
+
   if Assigned(FOnWrite) then
   begin
     FProcess.Options :=  [poUsePipes, poStderrToOutPut];
     FProcess.ShowWindow := swoHIDE;
     FProcess.PipeBufferSize := 40; //80 char in line
-    ProcessObject := TmnProcessObject.Create(FProcess, FPool, @OnWriteString);
+    ProcessObject := TmnProcessObject.Create(FProcess, FPool, @WriteString);
     try
       Status := ProcessObject.Read;
     finally
@@ -312,7 +318,8 @@ begin
     FProcess.Execute;
   end;
   if Assigned(FOnWrite) then
-    OnWriteString(#13#10'End Status: ' + IntToStr(Status)+#13#10);
+    WriteString(#13#10'End Status: ' + IntToStr(Status)+#13#10);
+  WriteMessage('Done', True);
 end;
 
 procedure TmneRunItem.InternalWrite;
@@ -321,10 +328,25 @@ begin
     FOnWrite(InternalString);
 end;
 
-procedure TmneRunItem.OnWriteString(S: string);
+procedure TmneRunItem.WriteString(S: string);
 begin
   InternalString := S;
   FPool.Synchronize(@InternalWrite);
+  InternalString := '';
+end;
+
+procedure TmneRunItem.InternalMessage;
+begin
+  Engine.SendMessage(InternalString, InternalTemporary);
+end;
+
+procedure TmneRunItem.WriteMessage(S: string; Temporary: Boolean);
+begin
+  InternalString := S;
+  InternalTemporary:= Temporary;
+  FPool.Synchronize(@InternalMessage);
+  InternalString := '';
+  InternalTemporary := False;
 end;
 
 procedure TmneRunItem.Execute;

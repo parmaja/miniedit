@@ -2742,7 +2742,6 @@ object MainForm: TMainForm
     end
   end
   object StatusTimer: TTimer
-    Enabled = False
     Interval = 5000
     OnTimer = StatusTimerTimer
     left = 335
