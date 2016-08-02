@@ -25,7 +25,7 @@ uses
   Messages, SysUtils, Forms, StrUtils, Dialogs, Variants, Classes, Controls, LCLIntf,
   Graphics, Contnrs, Types, IniFiles, EditorOptions, EditorProfiles,
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses,
-  SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch,
+  SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
   dbgpServers, Masks, mnXMLRttiProfile, mnXMLUtils, FileUtil, mnClasses,
   LazFileUtils, mnUtils, LCLType, EditorClasses, EditorRun;
@@ -1675,14 +1675,17 @@ begin
 end;
 
 procedure TTextEditorFile.DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
+var
+  aColor: TColor;
 begin
   if (Tendency.Debug <> nil) and (Tendency.Debug.ExecutedControl = Sender) then
   begin
     if Tendency.Debug.ExecutedLine = Line then
     begin
       Special := True;
-      Markup.Background := clNavy;
-      Markup.Foreground := clWhite;
+      aColor := Engine.Options.Profile.Attributes.Default.Background;
+      Markup.Background := MixColors(aColor, clWhite, 200);
+      Markup.Foreground := Engine.Options.Profile.Attributes.Default.Foreground;
     end;
   end;
 end;

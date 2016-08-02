@@ -13,8 +13,8 @@ unit SelectFiles;
 interface
 
 uses
-  LMessages, LCLIntf, LCLProc, LCLType, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Match, EditorEngine, Dialogs, ComCtrls, StdCtrls, ExtCtrls;
+  LCLIntf, LCLProc, LCLType, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  EditorEngine, Dialogs, ComCtrls, StdCtrls, ExtCtrls;
 
 type
   TSelectFileForm = class(TForm)

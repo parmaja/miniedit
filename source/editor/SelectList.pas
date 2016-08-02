@@ -11,7 +11,7 @@ interface
 
 uses
   LMessages, LCLIntf, LCLProc, LCLType, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Match, EditorEngine, Dialogs, ComCtrls, StdCtrls, ExtCtrls;
+  EditorEngine, Dialogs, ComCtrls, StdCtrls, ExtCtrls;
 
 type
   TSelectListFormStyle = set of (slfIncludeNone, slfUseNameTitle);
