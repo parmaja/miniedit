@@ -27,7 +27,7 @@ uses
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
-  dbgpServers, DebugClasses, Masks, mnXMLRttiProfile, mnXMLUtils, FileUtil, mnClasses,
+  dbgpServers, Masks, mnXMLRttiProfile, mnXMLUtils, FileUtil, mnClasses,
   LazFileUtils, mnUtils, LCLType, EditorClasses, EditorRun;
 
 type

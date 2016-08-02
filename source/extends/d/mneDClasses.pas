@@ -17,7 +17,7 @@ uses
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   LazFileUtils, SynHighlighterD, mnSynHighlighterCpp, EditorDebugger, gdbClasses,
   EditorClasses, mneClasses, MsgBox,
-  mneCompileProjectOptions, EditorRun, DebugClasses, mneConsoleClasses,
+  mneCompileProjectOptions, EditorRun, mneConsoleClasses,
   mneConsoleForms;
 
 type

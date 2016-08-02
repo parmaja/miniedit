@@ -10,7 +10,7 @@ unit gdbClasses;
 interface
 
 uses
-  Classes, SysUtils, mnClasses, process, EditorEngine, DebugClasses, EditorDebugger;
+  Classes, SysUtils, mnClasses, process, EditorEngine, EditorDebugger;
 
 type
   TGDBDebug = class;

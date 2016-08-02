@@ -20,7 +20,7 @@ uses
   SynHighlighterHashEntries, EditorProfiles, SynHighlighterCSS,
   SynHighlighterSQL, SynHighlighterXML, SynHighlighterJScript,
   SynHighlighterXHTML, SynHighlighterMultiProc, HTMLProcessor, EditorDebugger,
-  EditorClasses, PHP_xDebug, mneClasses, EditorRun, DebugClasses,
+  EditorClasses, PHP_xDebug, mneClasses, EditorRun,
   mnePHPProjectFrames;
 
 type
@@ -309,7 +309,7 @@ end;
 
 function TPHPTendency.CreateDebugger: TEditorDebugger;
 begin
-  Result := TPHP_xDebug.Create;
+  Result := TPHPDebug.Create;
 end;
 
 function TPHPTendency.CreateOptions: TEditorProjectOptions;

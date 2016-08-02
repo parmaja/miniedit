@@ -14,7 +14,7 @@ interface
 uses
   SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
   SynEdit, mnClasses,
-  EditorClasses, DebugClasses;
+  EditorClasses;
 
 type
   TmneRunAction = (rnaCompile, rnaExecute, rnaDebug, rnaLink);
@@ -81,7 +81,6 @@ type
     procedure AssignFrom(vItems: TCallStackItems);
   end;
 
-//////////////
   TDebugAction = (
     dbaStartServer,
     dbaStopServer,
@@ -101,7 +100,8 @@ type
 
    TDebugStates = set of TDebugState;
 
-  { TEditorElements }
+
+  { TEditorItem }
 
   TEditorItem = class(TObject)
   protected

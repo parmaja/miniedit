@@ -20,7 +20,7 @@ uses
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   LazFileUtils, SynHighlighterPython, EditorDebugger, EditorClasses, mneClasses,
-  mneCompileProjectOptions, EditorRun, DebugClasses, mneConsoleClasses,
+  mneCompileProjectOptions, EditorRun, mneConsoleClasses,
   mneConsoleForms;
 
 type
@@ -231,7 +231,7 @@ end;
 
 function TPyTendency.CreateDebugger: TEditorDebugger;
 begin
-  Result := TPHP_xDebug.Create;
+  Result := TPHPDebug.Create;
 end;
 
 function TPyTendency.CreateOptions: TEditorProjectOptions;
