@@ -20,7 +20,7 @@ interface
 uses
   SysUtils, StrUtils, Classes, Contnrs, Dialogs, Variants,
   mnSockets, mnStreams, mnConnections, mnServers, mnXMLUtils, Base64,
-  mnXMLRttiProfile, mnXMLNodes, SyncObjs, IniFiles, DebugClasses, mnClasses;
+  mnXMLRttiProfile, mnXMLNodes, SyncObjs, IniFiles, EditorDebugger, mnClasses;
 
 type
   EdbgpException = class(Exception);

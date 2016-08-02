@@ -6,7 +6,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, SynEdit, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, EditorEngine, SelectFiles, DebugClasses;
+  StdCtrls, EditorEngine, SelectFiles, EditorDebugger;
 
 type
 

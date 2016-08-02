@@ -13,7 +13,7 @@ interface
 uses
   Forms, SysUtils, StrUtils, Classes, SyncObjs, contnrs,
   mnUtils, ConsoleProcess, process,
-  mnStreams, mneConsoleForms, DebugClasses, mnClasses, mnXMLUtils;
+  mnStreams, mneConsoleForms, EditorDebugger, mnClasses, mnXMLUtils;
 
 {$i '..\lib\mne.inc'}
 
