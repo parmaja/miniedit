@@ -153,7 +153,7 @@ begin
     else
       aAction := TdbgpGetWatchInstance.Create;
     aAction.CreateEvent;
-    aAction.Info.VarName := vName;
+    aAction.Info.Name := vName;
     with FDebug.FServer do
     begin
       AddAction(aAction);

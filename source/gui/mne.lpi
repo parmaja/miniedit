@@ -35,7 +35,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\..\..\..\lib;..\extends;..\extends\php;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Linking>
@@ -66,7 +66,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\..\..\..\lib;..\extends;..\extends\php;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Parsing>
@@ -121,27 +121,27 @@
     </RunParams>
     <RequiredPackages Count="11">
       <Item1>
-        <PackageName Value="cmdbox"/>
+        <PackageName Value="MiniCommons"/>
       </Item1>
       <Item2>
         <PackageName Value="MiniConnections"/>
       </Item2>
       <Item3>
-        <PackageName Value="MiniCommons"/>
+        <PackageName Value="MiniLib"/>
       </Item3>
       <Item4>
-        <PackageName Value="MiniLib"/>
+        <PackageName Value="MiniSockets"/>
       </Item4>
       <Item5>
-        <PackageName Value="MiniSockets"/>
+        <PackageName Value="MiniXML"/>
+        <MinVersion Valid="True"/>
       </Item5>
       <Item6>
-        <PackageName Value="MiniXML"/>
+        <PackageName Value="NativeLib"/>
         <MinVersion Valid="True"/>
       </Item6>
       <Item7>
-        <PackageName Value="NativeLib"/>
-        <MinVersion Valid="True"/>
+        <PackageName Value="cmdbox"/>
       </Item7>
       <Item8>
         <PackageName Value="SynEdit"/>
@@ -389,7 +389,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);D:\dev\lazarus\ide\include\"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\..\..\..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <Linking>
@@ -405,8 +405,12 @@
     </Linking>
     <Other>
       <Verbosity>
-        <ShowNotes Value="False"/>
-        <ShowHints Value="False"/>
+        <ShoLineNum Value="True"/>
+        <ShowUsedFiles Value="True"/>
+        <ShowTriedFiles Value="True"/>
+        <ShowCond Value="True"/>
+        <ShowExecInfo Value="True"/>
+        <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
       </Verbosity>
       <CustomOptions Value="-dDEBUG"/>
     </Other>

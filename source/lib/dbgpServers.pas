@@ -303,7 +303,7 @@ type
     property Server: TdbgpServer read FServer;
   public
     function Find(Name: string): TdbgpWatch;
-    function Add(VarName: string; Value: variant): integer; overload;
+    function Add(Name: string; Value: variant): integer; overload;
     procedure AddWatch(Name: string);
     procedure RemoveWatch(Name: string);
     procedure Clean;
@@ -427,7 +427,7 @@ end;
 
 function TdbgpEval.GetData: string;
 begin
-  Result := 'echo ' + Info.VarName;
+  Result := 'echo ' + Info.Name;
 end;
 
 procedure TdbgpEval.Process(Respond: TdbgpRespond);
@@ -1058,14 +1058,14 @@ end;
 
 { TdbgpWatches }
 
-function TdbgpWatches.Add(VarName: string; Value: variant): integer;
+function TdbgpWatches.Add(Name: string; Value: variant): integer;
 var
   aWatch: TdbgpWatch;
 begin
   Inc(CurrentHandle);
   aWatch := TdbgpWatch.Create;
   aWatch.Handle := CurrentHandle;
-  aWatch.Info.VarName := VarName;
+  aWatch.Info.Name := Name;
   aWatch.Info.VarType := '';
   aWatch.Info.Value := Value;
   Result := Add(aWatch);
@@ -1111,7 +1111,7 @@ begin
   Result := nil;
   for i := 0 to Count - 1 do
   begin
-    if Items[i].Info.VarName = Name then
+    if Items[i].Info.Name = Name then
     begin
       Result := Items[i];
       break;
@@ -1138,7 +1138,7 @@ begin
   Founded := False;
   for i := 0 to Count - 1 do
   begin
-    if Items[i].Info.VarName = Name then
+    if Items[i].Info.Name = Name then
     begin
       Delete(i);
       Founded:=True;
@@ -1288,7 +1288,7 @@ begin
   try
     Result := Current < Connection.Server.Watches.Count;
     if Result then
-      Info.VarName := Connection.Server.Watches[Current].Info.VarName;
+      Info.Name := Connection.Server.Watches[Current].Info.Name;
   finally
     DBGP.Lock.Leave;
   end;
@@ -1433,8 +1433,8 @@ end;
 
 function TdbgpCustomGetWatch.GetCommand: string;
 begin
-  Result := 'property_value -n "' + Info.VarName + '" -m 1024';
-  //Result := 'property_get -n "' + VarName + '" -m 1024';
+  Result := 'property_value -n "' + Info.Name + '" -m 1024';
+  //Result := 'property_get -n "' + Name + '" -m 1024';
 end;
 
 procedure TdbgpCustomGetWatch.Process(Respond: TdbgpRespond);

@@ -46,9 +46,9 @@ type
   end;
 
   TDebugWatchInfo = record
-    VarName: string;
-    VarType: string;
+    Name: string;
     Value: variant;
+    VarType: string;
   end;
 
   TDebugBreakpointInfo = record

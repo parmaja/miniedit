@@ -15,7 +15,8 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  LazFileUtils, SynHighlighterD, mnSynHighlighterCpp, EditorDebugger, EditorClasses, mneClasses, MsgBox,
+  LazFileUtils, SynHighlighterD, mnSynHighlighterCpp, EditorDebugger, gdbClasses,
+  EditorClasses, mneClasses, MsgBox,
   mneCompileProjectOptions, EditorRun, DebugClasses, mneConsoleClasses,
   mneConsoleForms;
 
@@ -262,7 +263,7 @@ end;
 
 function TDTendency.CreateDebugger: TEditorDebugger;
 begin
-  Result := nil;
+  Result := TGDBDebug.Create;
 end;
 
 function TDTendency.CreateOptions: TEditorProjectOptions;

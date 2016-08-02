@@ -4998,7 +4998,7 @@ begin
 
       for i := 0 to Project.Tendency.Debug.Watches.Count - 1 do
       begin
-        Watches.Add(Project.Tendency.Debug.Watches[i].VarName);
+        Watches.Add(Project.Tendency.Debug.Watches[i].Name);
       end;
     finally
       Project.Tendency.Debug.Unlock;

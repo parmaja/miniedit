@@ -55,6 +55,9 @@ type
   TGDBWatchItem = class(TObject)
   public
     Info: TDebugWatchInfo;
+    property Name: string read Info.Name write Info.Name;
+    property VarType: string read Info.VarType write Info.VarType;
+    property Value: Variant read Info.Value write Info.Value;
   end;
 
   { TGDBWatchList }
@@ -63,7 +66,7 @@ type
   private
   protected
   public
-    function Add(VarName: string; VarType: string): Integer; overload;
+    function Add(Name: string; VarType: string): Integer; overload;
   end;
 
   { TGDBWatches }
@@ -101,12 +104,12 @@ implementation
 
 { TGDBWatchList }
 
-function TGDBWatchList.Add(VarName: string; VarType: string): Integer;
+function TGDBWatchList.Add(Name: string; VarType: string): Integer;
 var
   aItem: TGDBWatchItem;
 begin
   aItem := TGDBWatchItem.Create;
-  aItem.Info.VarName := VarName;
+  aItem.Info.Name := Name;
   aItem.Info.VarType := VarType;
   Result := inherited Add(aItem);
 end;
@@ -124,20 +127,31 @@ begin
 end;
 
 function TGDBBreakPointList.IndexOf(FileName: string; LineNo: integer): Integer;
+var
+  i: integer;
 begin
-
+  Result := -1;
+  if FileName <> '' then
+    for i := 0 to Count - 1 do
+    begin
+      if SameText(Items[i].Info.FileName, FileName) and (Items[i].Info.Line = LineNo) then
+      begin
+        Result := i;
+        break;
+      end;
+    end;
 end;
 
 { TGDBWatches }
 
 function TGDBWatches.GetCount: integer;
 begin
-
+  Result := Watches.Count;
 end;
 
 function TGDBWatches.GetItems(Index: integer): TDebugWatchInfo;
 begin
-
+  Result := Watches.Items[Index].Info;
 end;
 
 constructor TGDBWatches.Create;
@@ -172,20 +186,32 @@ begin
 end;
 
 function TGDBWatches.GetValue(vName: string; var vValue: Variant; var vType: string; EvalIt: Boolean): boolean;
+var
+  aItem: TGDBWatchItem;
 begin
-
+  aItem := Watches.Find(vName);
+  if aItem <> nil then
+  begin
+    vValue := aItem.Value;
+    vType := aItem.VarType;
+  end
+  else
+  begin
+    vValue := Null;
+    vType := '';
+  end;
 end;
 
 { TGDBBreakPoints }
 
 function TGDBBreakPoints.GetCount: integer;
 begin
-
+  Result := BreakPoints.Count;
 end;
 
 function TGDBBreakPoints.GetItems(Index: integer): TDebugBreakpointInfo;
 begin
-
+  Result := BreakPoints[Index].Info;
 end;
 
 constructor TGDBBreakPoints.Create;
@@ -202,30 +228,39 @@ end;
 
 procedure TGDBBreakPoints.Clear;
 begin
-
+  BreakPoints.Clear;
 end;
 
 procedure TGDBBreakPoints.Toggle(FileName: string; LineNo: integer);
+var
+  i: Integer;
 begin
-
+  i := BreakPoints.IndexOf(FileName, LineNo);
+  if i >= 0 then
+    BreakPoints.Delete(i)
+  else
+    BreakPoints.Add(FileName, LineNo);
 end;
 
 function TGDBBreakPoints.IsExists(FileName: string; LineNo: integer): boolean;
 begin
+  Result := BreakPoints.IndexOf(FileName, LineNo) >= 0;
 end;
 
 procedure TGDBBreakPoints.Add(FileName: string; LineNo: integer);
 begin
-
+  if IsExists(FileName, LineNo) then
+    raise Exception.Create('Breakpoint Already exists');
+  BreakPoints.Add(FileName, LineNo);
 end;
 
 procedure TGDBBreakPoints.Remove(FileName: string; Line: integer);
-{var
-  i: Integer;}
+var
+  i: Integer;
 begin
-  {i := BreakPoints.Find(vName);
+  i := BreakPoints.IndexOf(FileName, Line);
   if i >= 0 then
-    BreakPoints.Delete(i);}
+    BreakPoints.Delete(i);
 end;
 
 procedure TGDBBreakPoints.Remove(Handle: integer);

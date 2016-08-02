@@ -2451,7 +2451,7 @@ begin
       try
         for i := 0 to Engine.Tendency.Debug.Watches.Count - 1 do
         begin
-          WatchesGrid.Cells[1, i + 1] := Engine.Tendency.Debug.Watches[i].VarName;
+          WatchesGrid.Cells[1, i + 1] := Engine.Tendency.Debug.Watches[i].Name;
           WatchesGrid.Cells[2, i + 1] := Engine.Tendency.Debug.Watches[i].VarType;
           WatchesGrid.Cells[3, i + 1] := Engine.Tendency.Debug.Watches[i].Value;
         end;
