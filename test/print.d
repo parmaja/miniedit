@@ -1,7 +1,7 @@
 import std.stdio;
 
-void print_i(int i) {
-
+void print_i(int i)
+{
     if (i < 9) {
         writeln(i);
         print_i(i+1);

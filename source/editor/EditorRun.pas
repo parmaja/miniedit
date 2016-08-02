@@ -296,7 +296,7 @@ begin
   FProcess.CurrentDirectory := AInfo.CurrentDirectory;
   FProcess.InheritHandles := True;
 
-  WriteString(AInfo.Command + ' ' +FProcess.Parameters.Text);
+  //WriteString(AInfo.Command + ' ' +FProcess.Parameters.Text);
 
   if Assigned(FOnWrite) then
   begin

@@ -182,13 +182,15 @@ type
   TEditorDesktop = class(TPersistent)
   private
     FBreakpoints: TmneBreakpoints;
-    FFiles: TEditorDesktopFiles;
     FWatches: TmneWatches;
+    FFiles: TEditorDesktopFiles;
+    FProject: TEditorProject;
   public
     constructor Create;
     destructor Destroy; override;
     procedure Load;
     procedure Save;
+    property Project: TEditorProject read FProject;
   published
     property Breakpoints: TmneBreakpoints read FBreakpoints;
     property Watches: TmneWatches read FWatches;
@@ -274,6 +276,7 @@ type
 
   TEditorTendency = class(TEditorElement)
   private
+    FDebug: TEditorDebugger;
     FEditorOptions: TSynEditorOptions;
     FGroups: TFileGroups;
     FCommand: string;
@@ -283,13 +286,17 @@ type
     FRunMode: TmneRunMode;
     FTabsSpecialFiles: string;
     FTabWidth: Integer;
+    procedure SetDebug(AValue: TEditorDebugger);
   protected
+    IsPrepared: Boolean;
     FCapabilities: TEditorCapabilities;
     procedure AddGroup(vName, vCategory: string);
     function CreateDebugger: TEditorDebugger; virtual;
     function GetGroups: TFileGroups; virtual;
     procedure Init; virtual; abstract;
     procedure DoRun(Info: TmneRunInfo); virtual;
+    procedure Prepare;
+    procedure Unprepare;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -302,6 +309,7 @@ type
     //OSDepended: When save to file, the filename changed depend on the os system name
     property Capabilities: TEditorCapabilities read FCapabilities;
     property Groups: TFileGroups read GetGroups;
+    property Debug: TEditorDebugger read FDebug write SetDebug;
   published
     property Command: string read FCommand write FCommand; //like php.exe or gdc.exe or fpc.exe
 
@@ -939,7 +947,6 @@ type
 
   TEditorSession = class(TObject)
   private
-    FDebug: TEditorDebugger;
     FIsChanged: Boolean;
     FOptions: TEditorSessionOptions;
     FProject: TEditorProject;
@@ -948,7 +955,6 @@ type
     FCachedVariables: THashedStringList;
     FCachedAge: DWORD;
     function GetActive: Boolean;
-    procedure SetDebug(AValue: TEditorDebugger);
     procedure SetProject(const Value: TEditorProject);
     function GetIsOpened: Boolean;
     procedure SetRun(AValue: TmneRun);
@@ -961,8 +967,6 @@ type
     function New(Tendency: TEditorTendency): TEditorProject;
     procedure Open;
     procedure Close;
-    procedure Prepare; //After load or new project, create a debugger
-    procedure Unprepare;
     function Save(AProject: TEditorProject): Boolean;
     function SaveAs(AProject: TEditorProject): Boolean;
     function Save: Boolean;
@@ -978,7 +982,6 @@ type
     property IsChanged: Boolean read FIsChanged;
     //Process the project running if it is null, process should nil it after finish
     property Run: TmneRun read FRun write SetRun;
-    property Debug: TEditorDebugger read FDebug write SetDebug;
 
     property CachedVariables: THashedStringList read FCachedVariables;
     property CachedIdentifiers: THashedStringList read FCachedIdentifiers;
@@ -1658,14 +1661,14 @@ procedure TTextEditorFile.DoGutterClickEvent(Sender: TObject; X, Y, Line: intege
 var
   aLine: integer;
 begin
-  if (Engine.Session.Debug <> nil) and (fgkExecutable in Group.Kind) then
+  if (Tendency.Debug <> nil) and (fgkExecutable in Group.Kind) then
   begin
     aLine := SynEdit.PixelsToRowColumn(Point(X, Y)).y;
-    Engine.Session.Debug.Lock;
+    Tendency.Debug.Lock;
     try
-      Engine.Session.Debug.Breakpoints.Toggle(Name, aLine);
+      Tendency.Debug.Breakpoints.Toggle(Name, aLine);
     finally
-      Engine.Session.Debug.Unlock;
+      Tendency.Debug.Unlock;
     end;
     SynEdit.InvalidateLine(aLine);
   end;
@@ -1673,9 +1676,9 @@ end;
 
 procedure TTextEditorFile.DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
 begin
-  if (Engine.Session.Debug <> nil) and (Engine.Session.Debug.ExecutedControl = Sender) then
+  if (Tendency.Debug <> nil) and (Tendency.Debug.ExecutedControl = Sender) then
   begin
-    if Engine.Session.Debug.ExecutedLine = Line then
+    if Tendency.Debug.ExecutedLine = Line then
     begin
       Special := True;
       Markup.Background := clNavy;
@@ -1858,13 +1861,13 @@ function TTextEditorFile.EvalByMouse(p: TPoint; out v, s, t: string): boolean;
 var
   l: variant;
 begin
-  if Engine.Session.Debug <> nil then
+  if Tendency.Debug <> nil then
   begin
     if not SynEdit.SelAvail then
       v := Trim(GetWordAtRowColEx(SynEdit, SynEdit.PixelsToRowColumn(p), TSynWordBreakChars + [' ', #13, #10, #9] - ['.', '"', '''', '-', '>', '[', ']'], False))//todo get it from the synedit
     else
       v := SynEdit.SelText;
-    Result := (v <> '') and Engine.Session.Debug.Watches.GetValue(v, l, t, False);
+    Result := (v <> '') and Tendency.Debug.Watches.GetValue(v, l, t, False);
     s := l;
   end
   else
@@ -1875,13 +1878,13 @@ function TTextEditorFile.EvalByCursor(out v, s, t: string): boolean;
 var
   l: variant;
 begin
-  if Engine.Session.Debug <> nil then
+  if Tendency.Debug <> nil then
   begin
     if not SynEdit.SelAvail then
       v := Trim(SynEdit.GetWordAtRowCol(SynEdit.CaretXY))
     else
       v := SynEdit.SelText;
-    Result := (v <> '') and Engine.Session.Debug.Watches.GetValue(v, l, t, False);
+    Result := (v <> '') and Tendency.Debug.Watches.GetValue(v, l, t, False);
     s := l;
   end
   else
@@ -2072,6 +2075,28 @@ procedure TEditorTendency.DoRun(Info: TmneRunInfo);
 begin
 end;
 
+procedure TEditorTendency.Prepare;
+begin
+  if not IsPrepared then
+  begin
+    Debug := CreateDebugger;
+    if (Debug <> nil) and Engine.Options.AutoStartDebugServer then
+      Debug.Active := True;
+    IsPrepared := True;
+  end;
+end;
+
+procedure TEditorTendency.Unprepare;
+begin
+  FreeAndNil(FDebug);
+end;
+
+procedure TEditorTendency.SetDebug(AValue: TEditorDebugger);
+begin
+  if FDebug =AValue then Exit;
+  FDebug :=AValue;
+end;
+
 procedure TEditorTendency.AddGroup(vName, vCategory: string);
 var
   G: TFileGroup;
@@ -2108,6 +2133,7 @@ end;
 
 destructor TEditorTendency.Destroy;
 begin
+  Unprepare;
   FreeAndNil(FGroups);
   inherited;
 end;
@@ -2120,15 +2146,15 @@ var
 begin
   s := Name;
   p.Actions := RunActions;
-  if (Engine.Session.Debug <> nil) and (Engine.Session.Debug.Running) then
+  if (Debug <> nil) and (Debug.Running) then
   begin
     if Engine.Session.Run.Active then
       Engine.Session.Run.Show;
     if rnaDebug in RunActions then
-      Engine.Session.Debug.Action(dbaRun)
+      Debug.Action(dbaRun)
     else
     begin
-      Engine.Session.Debug.Action(dbaResume);
+      Debug.Action(dbaResume);
     end;
   end
   else
@@ -2441,25 +2467,12 @@ end;
 
 procedure TEditorSession.Close;
 begin
-  Unprepare;
-  Engine.Files.CloseAll;
-  FreeAndNil(FProject);
-  Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
-end;
-
-procedure TEditorSession.Prepare;
-begin
-  Debug := Project.Tendency.CreateDebugger;
-  if (Debug <> nil) and Engine.Options.AutoStartDebugServer then
-    Debug.Active := True;
-end;
-
-procedure TEditorSession.Unprepare;
-begin
-  FreeAndNil(FDebug);
   FCachedIdentifiers.Clear;
   FCachedVariables.Clear;
   FCachedAge := 0;
+  Engine.Files.CloseAll;
+  FreeAndNil(FProject);
+  Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
 end;
 
 constructor TEditorEngine.Create;
@@ -2809,6 +2822,8 @@ function TEditorEngine.GetTendency: TEditorTendency;
 begin
   if (Session <> nil) and (Session.Project <> nil) and (Session.Project.Tendency <> nil) then
     Result := Session.Project.Tendency
+  else if Engine.Files.Current <> nil then
+    Result := Engine.Files.Current.Tendency
   else
     Result := FInternalTendency;
 end;
@@ -3247,7 +3262,7 @@ begin
       FProject := Value;
       if FProject <> nil then
       begin
-        Prepare;
+        FProject.Tendency.Prepare; //Prepare debug object and others
         if FProject.SaveDesktop then
           FProject.Desktop.Load;
       end;
@@ -3257,12 +3272,6 @@ begin
       Engine.EndUpdate;
     end;
   end;
-end;
-
-procedure TEditorSession.SetDebug(AValue: TEditorDebugger);
-begin
-  if FDebug =AValue then Exit;
-  FDebug :=AValue;
 end;
 
 function TEditorSession.GetActive: Boolean;
@@ -3369,8 +3378,8 @@ begin
   begin
     SaveOptions;
   end;
-  if Session.Debug <> nil then
-    Session.Debug.Action(dbaStopServer);
+  if Tendency.Debug <> nil then
+    Tendency.Debug.Action(dbaStopServer);
   Files.Clear;
   FIsEngineShutdown := True;
 end;
@@ -4508,6 +4517,7 @@ constructor TEditorProject.Create;
 begin
   inherited Create;
   FDesktop := TEditorDesktop.Create;
+  FDesktop.FProject := Self;
   FSaveDesktop := True;
 end;
 
@@ -4691,6 +4701,7 @@ begin
   Result := FFileClass.Create(vFiles);
   Result.Group := Self;
   Result.Tendency := vTendency;
+  Result.Tendency.Prepare; //Prepare its objects like debuggers
   Result.Assign(Engine.Options.Profile);
 end;
 
@@ -4881,24 +4892,24 @@ var
 
 begin
   //inherited;
-  if Engine.Session.Debug <> nil then
+  if Engine.Tendency.Debug <> nil then
   begin
     lh := TSynEdit(SynEdit).LineHeight;
     iw := EditorResource.DebugImages.Width;
 
-    Engine.Session.Debug.Lock;
+    Engine.Tendency.Debug.Lock;
     try
-      for i := 0 to Engine.Session.Debug.Breakpoints.Count - 1 do
+      for i := 0 to Engine.Tendency.Debug.Breakpoints.Count - 1 do
       begin
-        if SameText(Engine.Session.Debug.Breakpoints[i].FileName, FEditorFile.Name) then//need improve
-          DrawIndicator(Engine.Session.Debug.Breakpoints[i].Line, DEBUG_IMAGE_BREAKPOINT);
+        if SameText(Engine.Tendency.Debug.Breakpoints[i].FileName, FEditorFile.Name) then//need improve
+          DrawIndicator(Engine.Tendency.Debug.Breakpoints[i].Line, DEBUG_IMAGE_BREAKPOINT);
       end;
     finally
-      Engine.Session.Debug.Unlock;
+      Engine.Tendency.Debug.Unlock;
     end;
 
-    if (Engine.Session.Debug.ExecutedControl = SynEdit) and (Engine.Session.Debug.ExecutedLine >= 0) then
-      DrawIndicator(Engine.Session.Debug.ExecutedLine, DEBUG_IMAGE_EXECUTE);
+    if (Engine.Tendency.Debug.ExecutedControl = SynEdit) and (Engine.Tendency.Debug.ExecutedLine >= 0) then
+      DrawIndicator(Engine.Tendency.Debug.ExecutedLine, DEBUG_IMAGE_EXECUTE);
   end;
 end;
 
@@ -4942,23 +4953,23 @@ begin
     Engine.Files.SetActiveFile(Files.CurrentFile);
     Engine.BrowseFolder := Files.CurrentFolder;
 
-    if Engine.Session.Debug <> nil then
+    if Project.Tendency.Debug <> nil then
     begin
-      Engine.Session.Debug.Lock;
+      Project.Tendency.Debug.Lock;
       try
-       Engine.Session.Debug.Breakpoints.Clear;
+       Project.Tendency.Debug.Breakpoints.Clear;
         for i := 0 to Breakpoints.Count - 1 do
         begin
-          Engine.Session.Debug.Breakpoints.Add(Breakpoints[i].FileName, Breakpoints[i].LineNo);
+          Project.Tendency.Debug.Breakpoints.Add(Breakpoints[i].FileName, Breakpoints[i].LineNo);
         end;
 
-        Engine.Session.Debug.Watches.Clear;
+        Project.Tendency.Debug.Watches.Clear;
         for i := 0 to Watches.Count - 1 do
         begin
-          Engine.Session.Debug.Watches.Add(Watches[i].Name);
+          Project.Tendency.Debug.Watches.Add(Watches[i].Name);
         end;
       finally
-        Engine.Session.Debug.Unlock;
+        Project.Tendency.Debug.Unlock;
       end;
       Engine.UpdateState([ecsDebug]);
     end;
@@ -4976,21 +4987,21 @@ var
 begin
   Breakpoints.Clear;
   Watches.Clear;
-  if Engine.Session.Debug <> nil then
+  if Project.Tendency.Debug <> nil then
   begin
-    Engine.Session.Debug.Lock;
+    Project.Tendency.Debug.Lock;
     try
-      for i := 0 to Engine.Session.Debug.Breakpoints.Count - 1 do
+      for i := 0 to Project.Tendency.Debug.Breakpoints.Count - 1 do
       begin
-        Breakpoints.Add(Engine.Session.Debug.Breakpoints[i].FileName, Engine.Session.Debug.Breakpoints[i].Line);
+        Breakpoints.Add(Project.Tendency.Debug.Breakpoints[i].FileName, Project.Tendency.Debug.Breakpoints[i].Line);
       end;
 
-      for i := 0 to Engine.Session.Debug.Watches.Count - 1 do
+      for i := 0 to Project.Tendency.Debug.Watches.Count - 1 do
       begin
-        Watches.Add(Engine.Session.Debug.Watches[i].VarName);
+        Watches.Add(Project.Tendency.Debug.Watches[i].VarName);
       end;
     finally
-      Engine.Session.Debug.Unlock;
+      Project.Tendency.Debug.Unlock;
     end;
   end;
 

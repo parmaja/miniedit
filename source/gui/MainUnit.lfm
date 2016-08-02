@@ -2212,15 +2212,6 @@ object MainForm: TMainForm
       Caption = 'Run To Cursor'
       ShortCut = 115
     end
-    object DBGActiveServerAct: TAction
-      Category = 'Debug'
-      Caption = 'Debug'
-      Hint = 'XDebug Server Run'
-      ImageIndex = 20
-      OnExecute = DBGActiveServerActExecute
-      OnUpdate = DBGActiveServerActUpdate
-      ShortCut = 32888
-    end
     object DBGToggleBreakpointAct: TAction
       Category = 'Debug'
       Caption = 'Toggle Breakpoint'

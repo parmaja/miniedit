@@ -284,7 +284,6 @@ type
     StepInto1: TMenuItem;
     StepOver1: TMenuItem;
     Reset2: TMenuItem;
-    DBGActiveServerAct: TAction;
     DBGExecuteAct: TAction;
     ResumeMnu: TMenuItem;
     DBGStepOutAct: TAction;
@@ -459,8 +458,6 @@ type
     procedure DBGStopServerActExecute(Sender: TObject);
     procedure DBGStepOverActExecute(Sender: TObject);
     procedure DBGStepIntoActExecute(Sender: TObject);
-    procedure DBGActiveServerActUpdate(Sender: TObject);
-    procedure DBGActiveServerActExecute(Sender: TObject);
     procedure DBGResetActExecute(Sender: TObject);
     procedure DBGExecuteActExecute(Sender: TObject);
     procedure DBGStepOutActExecute(Sender: TObject);
@@ -743,7 +740,7 @@ end;
 
 procedure TMainForm.FetchCallStackBtnClick(Sender: TObject);
 begin
-  if (Engine.Session.Debug <> nil) then
+  if (Engine.Tendency.Debug <> nil) then
   begin
   end;
 end;
@@ -1718,17 +1715,13 @@ var
   aTendency: TEditorTendency;
   MenuItem: TMenuItem;
 begin
-  aTendency := nil;
+  aTendency := Engine.Tendency;
 
   if Engine.Files.Current <> nil then
   begin
-    aTendency := Engine.Files.Current.Tendency;
     FMenuItemsList.Clear;
     Engine.Files.Current.Group.Category.EnumMenuItems(@AddMenuItem);
   end;
-
-  if aTendency = nil then
-    aTendency := Engine.Tendency;
 
   with aTendency do
   begin
@@ -1740,9 +1733,8 @@ begin
     DBGResetAct.Enabled := capRun in Capabilities;
     DBGLintAct.Enabled := capLint in Capabilities;
 
-    DBGStartServerAct.Enabled := capDebugServer in Capabilities;
-    DBGStopServerAct.Enabled := capDebugServer in Capabilities;
-    DBGActiveServerAct.Enabled := capDebugServer in Capabilities;
+    DBGStartServerAct.Enabled := (capDebugServer in Capabilities) and (aTendency.Debug <> nil) and (not aTendency.Debug.Active);
+    DBGStopServerAct.Enabled := (capDebugServer in Capabilities) and (aTendency.Debug <> nil) and (aTendency.Debug.Active);
 
     DBGAddWatchAct.Enabled := capTrace in Capabilities;
     DBGBreakpointsAct.Enabled := capTrace in Capabilities;
@@ -2284,21 +2276,20 @@ end;
 
 procedure TMainForm.DBGStopServerActUpdate(Sender: TObject);
 begin
-  if Engine.Session.Debug <> nil then
-    DBGStopServerAct.Enabled := Engine.Session.Debug.Active;
+  DBGStopServerAct.Enabled := (Engine.Tendency.Debug <> nil) and Engine.Tendency.Debug.Active;
 end;
 
 procedure TMainForm.DBGStartServerActUpdate(Sender: TObject);
 begin
-  DBGStartServerAct.Checked := (Engine.Session.Debug <> nil) and Engine.Session.Debug.Active;
+  DBGStartServerAct.Enabled := (Engine.Tendency.Debug <> nil) and not Engine.Tendency.Debug.Active;
 end;
 
 procedure TMainForm.DBGStartServerActExecute(Sender: TObject);
 begin
-  if Engine.Session.Debug <> nil then
+  if Engine.Tendency.Debug <> nil then
   begin
     DBGStartServerAct.Checked := not DBGStartServerAct.Checked;
-    Engine.Session.Debug.Active := DBGStartServerAct.Checked;
+    Engine.Tendency.Debug.Active := DBGStartServerAct.Checked;
   end
   else
     DBGStartServerAct.Checked := False;
@@ -2306,40 +2297,29 @@ end;
 
 procedure TMainForm.DBGStopServerActExecute(Sender: TObject);
 begin
-  if Engine.Session.Debug <> nil then
-    Engine.Session.Debug.Action(dbaStopServer);
+  if Engine.Tendency.Debug <> nil then
+    Engine.Tendency.Debug.Action(dbaStopServer);
 end;
 
 procedure TMainForm.DBGStepOverActExecute(Sender: TObject);
 begin
-  if Engine.Session.Debug <> nil then
-    if Engine.Session.Debug.Running then
-      Engine.Session.Debug.Action(dbaStepOver);
+  if Engine.Tendency.Debug <> nil then
+    if Engine.Tendency.Debug.Running then
+      Engine.Tendency.Debug.Action(dbaStepOver);
 end;
 
 procedure TMainForm.DBGStepIntoActExecute(Sender: TObject);
 begin
-  if Engine.Session.Debug <> nil then
-    if Engine.Session.Debug.Running then
-      Engine.Session.Debug.Action(dbaStepInto);
+  if Engine.Tendency.Debug <> nil then
+    if Engine.Tendency.Debug.Running then
+      Engine.Tendency.Debug.Action(dbaStepInto);
 end;
 
-procedure TMainForm.DBGActiveServerActUpdate(Sender: TObject);
-begin
-  if Engine.Session.Debug <> nil then
-    DBGActiveServerAct.Checked := Engine.Session.Debug.Active;
-end;
-
-procedure TMainForm.DBGActiveServerActExecute(Sender: TObject);
-begin
-  if Engine.Session.Debug <> nil then
-    Engine.Session.Debug.Active := not DBGActiveServerAct.Checked;
-end;
 
 procedure TMainForm.DBGResetActExecute(Sender: TObject);
 begin
-  if Engine.Session.Debug <> nil then
-    Engine.Session.Debug.Action(dbaReset)
+  if Engine.Tendency.Debug <> nil then
+    Engine.Tendency.Debug.Action(dbaReset)
   else
     Engine.Session.Run.Stop;
 end;
@@ -2354,8 +2334,8 @@ end;
 
 procedure TMainForm.DBGStepOutActExecute(Sender: TObject);
 begin
-  if Engine.Session.Debug <> nil then
-    Engine.Session.Debug.Action(dbaStepOut);
+  if Engine.Tendency.Debug <> nil then
+    Engine.Tendency.Debug.Action(dbaStepOut);
 end;
 
 function TMainForm.GetFolder: string;
@@ -2373,9 +2353,9 @@ begin
   if Assigned(Engine) then
   begin
     DBGRunAct.Enabled := not Engine.Session.Run.Active;
-    if (Engine.Session.Debug <> nil) then
+    if (Engine.Tendency.Debug <> nil) then
     begin
-      DebugPnl.Caption := Engine.Session.Debug.GetKey;
+      DebugPnl.Caption := Engine.Tendency.Debug.GetKey;
       UpdateFileHeaderPanel;
       UpdateCallStack;
       UpdateWatches;
@@ -2386,7 +2366,7 @@ end;
 
 procedure TMainForm.UpdateFileHeaderPanel;
 begin
-  if (Engine.Files.Current <> nil) and (Engine.Session.Debug <> nil) and (Engine.Files.Current.Control = Engine.Session.Debug.ExecutedControl) then
+  if (Engine.Files.Current <> nil) and (Engine.Tendency.Debug <> nil) and (Engine.Files.Current.Control = Engine.Tendency.Debug.ExecutedControl) then
     BugSignBtn.Visible := True
   else
     BugSignBtn.Visible := False;
@@ -2402,18 +2382,18 @@ var
   aItem: TListItem;
   aIndex: integer;
 begin
-  if Engine.Session.Debug <> nil then
+  if Engine.Tendency.Debug <> nil then
   begin
     aIndex := CallStackGrid.Row;
     CallStackGrid.BeginUpdate;
     try
-      CallStackGrid.RowCount := Engine.Session.Debug.CallStack.Count + 1;
-      with Engine.Session.Debug do
+      CallStackGrid.RowCount := Engine.Tendency.Debug.CallStack.Count + 1;
+      with Engine.Tendency.Debug do
       try
         for i := 0 to CallStack.Count - 1 do
         begin
-          CallStackGrid.Cells[1, i + 1] := Engine.Session.Debug.CallStack[i].FileName;
-          CallStackGrid.Cells[2, i + 1] := IntToStr(Engine.Session.Debug.CallStack[i].Line);
+          CallStackGrid.Cells[1, i + 1] := Engine.Tendency.Debug.CallStack[i].FileName;
+          CallStackGrid.Cells[2, i + 1] := IntToStr(Engine.Tendency.Debug.CallStack[i].Line);
         end;
       finally
       end;
@@ -2461,22 +2441,22 @@ var
   aIndex: integer;
 begin
   //todo not good idea, we should refresh without clear the grid
-  if Engine.Session.Debug <> nil then
+  if Engine.Tendency.Debug <> nil then
   begin
     aIndex := WatchesGrid.Row;
     WatchesGrid.BeginUpdate;
     try
-      WatchesGrid.RowCount := Engine.Session.Debug.Watches.Count + 1;
-      Engine.Session.Debug.Lock;
+      WatchesGrid.RowCount := Engine.Tendency.Debug.Watches.Count + 1;
+      Engine.Tendency.Debug.Lock;
       try
-        for i := 0 to Engine.Session.Debug.Watches.Count - 1 do
+        for i := 0 to Engine.Tendency.Debug.Watches.Count - 1 do
         begin
-          WatchesGrid.Cells[1, i + 1] := Engine.Session.Debug.Watches[i].VarName;
-          WatchesGrid.Cells[2, i + 1] := Engine.Session.Debug.Watches[i].VarType;
-          WatchesGrid.Cells[3, i + 1] := Engine.Session.Debug.Watches[i].Value;
+          WatchesGrid.Cells[1, i + 1] := Engine.Tendency.Debug.Watches[i].VarName;
+          WatchesGrid.Cells[2, i + 1] := Engine.Tendency.Debug.Watches[i].VarType;
+          WatchesGrid.Cells[3, i + 1] := Engine.Tendency.Debug.Watches[i].Value;
         end;
       finally
-        Engine.Session.Debug.Unlock;
+        Engine.Tendency.Debug.Unlock;
       end;
     finally
       if (aIndex > 0) and (aIndex <= WatchesGrid.RowCount) then
@@ -2564,12 +2544,12 @@ end;
 
 procedure TMainForm.AddWatch(s: string);
 begin
-  if Engine.Session.Debug <> nil then
+  if Engine.Tendency.Debug <> nil then
   begin
     s := Trim(s);
     if s <> '' then
     begin
-      Engine.Session.Debug.Watches.Add(s);
+      Engine.Tendency.Debug.Watches.Add(s);
       UpdateWatches;
     end;
   end;
@@ -2582,9 +2562,9 @@ end;
 
 procedure TMainForm.DeleteWatch(s: string);
 begin
-  if Engine.Session.Debug <> nil then
+  if Engine.Tendency.Debug <> nil then
   begin
-    Engine.Session.Debug.Watches.Remove(s);
+    Engine.Tendency.Debug.Watches.Remove(s);
     //UpdateWatches;
   end;
 end;
@@ -2600,17 +2580,17 @@ procedure TMainForm.DBGToggleBreakpointActExecute(Sender: TObject);
 var
   aLine: integer;
 begin
-  if Engine.Session.Debug <> nil then
+  if Engine.Tendency.Debug <> nil then
   begin
     if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomSynEdit) and (ActiveControl = Engine.Files.Current.Control) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
       with Engine.Files.Current do
       begin
         aLine := (Control as TCustomSynEdit).CaretY;
-        Engine.Session.Debug.Lock;
+        Engine.Tendency.Debug.Lock;
         try
-          Engine.Session.Debug.Breakpoints.Toggle(Name, aLine);
+          Engine.Tendency.Debug.Breakpoints.Toggle(Name, aLine);
         finally
-          Engine.Session.Debug.Unlock;
+          Engine.Tendency.Debug.Unlock;
         end;
         (Control as TCustomSynEdit).InvalidateLine(aLine);
       end;

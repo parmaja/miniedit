@@ -8,27 +8,12 @@
       <Breakpoints Class="TmneBreakpoints">
         <Objects>
           <Object Type="TmneBreakpoint">
-            <FileName>M:\web\projects\wp_metallic\wp-content\themes\wp_metallic\header.php</FileName>
-            <LineNo>20</LineNo>
-          </Object>
-          <Object Type="TmneBreakpoint">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
-            <LineNo>4</LineNo>
+            <LineNo>5</LineNo>
           </Object>
         </Objects>
       </Breakpoints>
       <Watches Class="TmneWatches">
-        <Objects>
-          <Object Type="TmneWatch">
-            <Name>$name</Name>
-          </Object>
-          <Object Type="TmneWatch">
-            <Name>$int</Name>
-          </Object>
-          <Object Type="TmneWatch">
-            <Name>$name</Name>
-          </Object>
-        </Objects>
       </Watches>
       <Files Class="TEditorDesktopFiles">
         <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.php</CurrentFile>
@@ -41,7 +26,6 @@
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
-            <CaretX>36</CaretX>
             <CaretY>9</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
