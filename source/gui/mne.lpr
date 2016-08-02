@@ -50,8 +50,8 @@ uses
   mneCustomClasses,
   mnePHPProjectFrames, mnePasProjectFrames, mnePasTendencyFrames, mnePASClasses,
   mneCSVClasses, mneDClasses, mneDTendencyFrames, MsgBox, GUIMsgBox, Classes,
-  PHPUtils, mnSynHighlighterCpp, ntvImgBtns, mneSetups, mneSettings,
-  EditorClasses, DebugClasses,
+  PHPUtils, mneSetups, mneSettings,
+  EditorClasses, DebugClasses, gdbClasses,
   mneCompileProjectOptions, mneManageRecentsForms, mneTendencyOptions,
   mneCSVForms, mnUtils;
 

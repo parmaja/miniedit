@@ -56,7 +56,7 @@ type
   public
     procedure Clear; override;
     procedure Toggle(FileName: string; LineNo: integer); override;
-    function Found(FileName: string; LineNo: integer): boolean; override;
+    function IsExists(FileName: string; LineNo: integer): boolean; override;
     procedure Add(FileName: string; LineNo: integer); override;
     procedure Remove(FileName: string; Line: integer); override; overload;
     procedure Remove(Handle: integer); override; overload;
@@ -203,7 +203,7 @@ begin
     Breakpoints.Toggle(FileName, LineNo);
 end;
 
-function TPHP_xDebugBreakPoints.Found(FileName: string; LineNo: integer): boolean;
+function TPHP_xDebugBreakPoints.IsExists(FileName: string; LineNo: integer): boolean;
 begin
   with FDebug.FServer do
     Result := Breakpoints.Find(FileName, LineNo) <> nil;

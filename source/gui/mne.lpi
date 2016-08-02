@@ -18,7 +18,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="4"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="115"/>
+      <BuildNr Value="116"/>
       <Language Value=""/>
       <CharSet Value=""/>
       <Attributes pvaPreRelease="True"/>
@@ -159,7 +159,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="40">
+    <Units Count="39">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -372,17 +372,13 @@
         <IsPartOfProject Value="True"/>
       </Unit36>
       <Unit37>
-        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\mnSynHighlighterCpp.pas"/>
+        <Filename Value="..\extends\cpp\mneCppClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit37>
       <Unit38>
-        <Filename Value="..\extends\cpp\mneCppClasses.pas"/>
+        <Filename Value="..\lib\gdbClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit38>
-      <Unit39>
-        <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvImgBtns.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit39>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -51,7 +51,7 @@ type
     function GetItems(Index: Integer): TDebugBreakpointInfo; virtual; abstract;
   public
     procedure Toggle(FileName: string; LineNo: Integer); virtual; abstract;
-    function Found(FileName: string; LineNo: Integer): boolean; virtual; abstract;
+    function IsExists(FileName: string; LineNo: Integer): boolean; virtual; abstract;
     procedure Add(FileName: string; LineNo: Integer); virtual; abstract;
     procedure Remove(FileName: string; Line: Integer); virtual; overload; abstract;
     procedure Remove(Handle: Integer); virtual; overload; abstract;
@@ -93,7 +93,7 @@ type
 
   { TEditorDebugger }
 
-  TEditorDebugger = class(TObject)
+  TEditorDebugger = class abstract(TObject)
   private
     FBreakpoints: TEditorBreakPoints;
     FWatches: TEditorWatches;
