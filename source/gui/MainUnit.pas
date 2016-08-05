@@ -54,6 +54,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    Button1: TButton;
     FileModeBtn: TntvImgBtn;
     FileCloseBtn: TntvImgBtn;
     BugSignBtn: TntvImgBtn;
@@ -348,6 +349,7 @@ type
     procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
     procedure BrowseTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
+    procedure Button1Click(Sender: TObject);
     procedure CallStackListDblClick(Sender: TObject);
     procedure DBGCompileActExecute(Sender: TObject);
     procedure DeleteActExecute(Sender: TObject);
@@ -588,7 +590,7 @@ end;
 constructor TMainForm.Create(AOwner: TComponent);
 var
   aIniFile: TIniFile;
-  aEngineFile, lFilePath: string;
+  lFilePath: string;
   aWorkspace: string;
 begin
   inherited;
@@ -684,10 +686,19 @@ begin
   end;
 end;
 
+procedure TMainForm.Button1Click(Sender: TObject);
+begin
+  with Engine.Tendencies.Find('Pascal') do
+  begin
+    Prepare;
+    Debug.Start;
+  end;
+end;
+
 procedure TMainForm.CallStackListDblClick(Sender: TObject);
 var
   s: string;
-  aLine, c, l: integer;
+  aLine: integer;
 begin
   if CallStackGrid.Row > 0 then
   begin
@@ -1283,7 +1294,7 @@ procedure TMainForm.FolderOpenActExecute(Sender: TObject);
 begin
   if FileList.Selected <> nil then
   begin
-    if PtrUInt(FileList.Selected.Data) = 0 then
+    if FileList.Selected.Data = nil then
       FollowFolder(FileList.Selected.Caption, FileList.Focused)
     else
       Engine.Files.OpenFile(Folder + FileList.Selected.Caption);
@@ -1453,13 +1464,9 @@ begin
 end;
 
 procedure TMainForm.ReopenFolderClick(Sender: TObject);
-var
-  aFile: string;
 begin
   if Sender is TMenuItem then
-  begin
     Folder := (Sender as TMenuItem).Caption;
-  end;
 end;
 
 procedure TMainForm.ReopenProjectClick(Sender: TObject);
@@ -1713,7 +1720,6 @@ end;
 procedure TMainForm.UpdateMenu;
 var
   aTendency: TEditorTendency;
-  MenuItem: TMenuItem;
 begin
   aTendency := Engine.Tendency;
 
@@ -1758,8 +1764,6 @@ procedure TMainForm.UpdatePanel;
       (FProjectFrame as IEditorOptions).Apply;} //Project is already freed we cant apply
     FreeAndNil(FProjectFrame);
   end;
-var
-  i: Integer;
 begin
   if Engine.Session.IsOpened then
   begin
@@ -1922,7 +1926,6 @@ var
   end;
 
 var
-  i:Integer;
   aFiles: TStringList;
 begin
   FolderPathLbl.Caption := Folder;
@@ -2379,7 +2382,6 @@ end;
 procedure TMainForm.UpdateCallStack;
 var
   i: integer;
-  aItem: TListItem;
   aIndex: integer;
 begin
   if Engine.Tendency.Debug <> nil then
@@ -2482,9 +2484,7 @@ var
 
   procedure AddMenu(vParentMenu, vName, vCaption: string; vOnClick: TNotifyEvent);
   var
-    p: TMenuItem;
     c: TComponent;
-    tb: TToolButton;
 
     function CreateMenuItem: TMenuItem;
     begin
@@ -2673,7 +2673,7 @@ begin
     (MessagesPopup.PopupComponent as TStringGrid).RowCount := 1;
 end;
 
-type
+{type
   TSearchListItem = class(TListItem)
   private
     FColumn: Integer;
@@ -2681,7 +2681,7 @@ type
   public
     property Column: Integer read FColumn write FColumn;
     property Length: Integer read FLength write FLength;
-  end;
+  end; } //TODO delete it
 
 procedure TMainForm.SearchFoundEvent(Index: Integer; FileName: string; const Line: string; LineNo, Column, FoundLength: Integer);
 begin
@@ -2770,9 +2770,6 @@ begin
 end;
 
 procedure TMainForm.EngineState;
-var
-  r: integer;
-  s: string;
 begin
   if Engine.MacroRecorder.State = msRecording then
     StatePnl.Caption := 'R'

@@ -18,7 +18,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="4"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="118"/>
+      <BuildNr Value="146"/>
       <Language Value=""/>
       <CharSet Value=""/>
       <Attributes pvaPreRelease="True"/>
@@ -394,7 +394,6 @@
     </SearchPaths>
     <Linking>
       <Debugging>
-        <UseHeaptrc Value="True"/>
         <UseValgrind Value="True"/>
       </Debugging>
       <Options>
@@ -408,10 +407,11 @@
         <ShoLineNum Value="True"/>
         <ShowUsedFiles Value="True"/>
         <ShowTriedFiles Value="True"/>
-        <ShowCond Value="True"/>
-        <ShowExecInfo Value="True"/>
         <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
       </Verbosity>
+      <CompilerMessages>
+        <IgnoredMessages idx5024="True" idx5023="True"/>
+      </CompilerMessages>
       <CustomOptions Value="-dDEBUG"/>
     </Other>
   </CompilerOptions>

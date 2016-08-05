@@ -32,7 +32,7 @@ type
   end;
 
 function ShowSelectList(ACaption: string; vElements: TEditorElements; Style: TSelectListFormStyle; var vName: string): Boolean;
-function ShowSelectList(ACaption: string; vElements: TEditorElements; Style: TSelectListFormStyle; var vIndex: Integer): Boolean;
+function ShowSelectList(ACaption: string; vElements: TEditorElements; Style: TSelectListFormStyle; out vIndex: Integer): Boolean;
 
 implementation
 
@@ -59,7 +59,7 @@ begin
   end;
 end;
 
-function ShowSelectList(ACaption: string; vElements: TEditorElements; Style: TSelectListFormStyle; var vIndex: Integer): Boolean;
+function ShowSelectList(ACaption: string; vElements: TEditorElements; Style: TSelectListFormStyle; out vIndex: Integer): Boolean;
 begin
   with TSelectListForm.Create(Application) do
   begin
@@ -84,12 +84,9 @@ end;
 
 procedure TSelectListForm.ShowItems(vSelect: string);
 var
-  s: string;
   i, c, t: Integer;
   aItem: TListItem;
   procedure AddItem(Name, Title, Description: string; ImageIndex: Integer);
-  var
-    s: string;
   begin
     aItem := ItemsList.Items.Add;
 

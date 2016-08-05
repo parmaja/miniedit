@@ -266,6 +266,7 @@ type
     capLint, //Check error of file without compiling or run
     capUpload, //Have upload, like avr projects need to upload to mcu
     capDebug, //we can debug the project/file
+    capEval, //Debugger can evaluate
     capTrace, //Steps (Step Into, Step Over etc...)
     capDebugServer //PHP style need to start debug server
   );
@@ -282,8 +283,6 @@ type
     FCommand: string;
     FIndentMode: TIndentMode;
     FOverrideEditorOptions: Boolean;
-    FPauseConsole: Boolean;
-    FRunMode: TmneRunMode;
     FTabsSpecialFiles: string;
     FTabWidth: Integer;
     procedure SetDebug(AValue: TEditorDebugger);
@@ -295,8 +294,6 @@ type
     function GetGroups: TFileGroups; virtual;
     procedure Init; virtual; abstract;
     procedure DoRun(Info: TmneRunInfo); virtual;
-    procedure Prepare;
-    procedure Unprepare;
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -307,6 +304,9 @@ type
     function CreateOptions: TEditorProjectOptions; virtual;
     function GetDefaultGroup: TFileGroup; virtual;
     //OSDepended: When save to file, the filename changed depend on the os system name
+    procedure Prepare;
+    procedure Unprepare;
+    //
     property Capabilities: TEditorCapabilities read FCapabilities;
     property Groups: TFileGroups read GetGroups;
     property Debug: TEditorDebugger read FDebug write SetDebug;
@@ -402,7 +402,6 @@ type
     FOptions: TEditorProjectOptions;
     FTendencyName: string;
     FDescription: string;
-    FRootUrl: string;
     FRootDir: string;
     FFileName: string;
     FName: string;
@@ -691,10 +690,9 @@ type
     FSortFolderFiles: TSortFolderFiles;
     FWindowMaxmized: Boolean;
     FBoundRect: TRect;
-    FCompilerFolder: string;
     FShowMessages: Boolean;
     FCollectAutoComplete: Boolean;
-    FCollectTimeout: DWORD;
+    FCollectTimeout: QWORD;
     FReplaceHistory: TStringList;
     FAutoStartDebugServer: Boolean;
 
@@ -739,7 +737,7 @@ type
     property ExtraExtensions: TStringList read FExtraExtensions write FExtraExtensions;
     property IgnoreNames: string read FIgnoreNames write FIgnoreNames;
     property CollectAutoComplete: Boolean read FCollectAutoComplete write FCollectAutoComplete default False;
-    property CollectTimeout: DWORD read FCollectTimeout write FCollectTimeout default 60;
+    property CollectTimeout: QWORD read FCollectTimeout write FCollectTimeout default 60;
     property ShowFolder: Boolean read FShowFolder write FShowFolder default True;
     property ShowFolderFiles: TShowFolderFiles read FShowFolderFiles write FShowFolderFiles default sffRelated;
     property SortFolderFiles: TSortFolderFiles read FSortFolderFiles write FSortFolderFiles default srtfByNames;
@@ -953,7 +951,7 @@ type
     FRun: TmneRun;
     FCachedIdentifiers: THashedStringList;
     FCachedVariables: THashedStringList;
-    FCachedAge: DWORD;
+    FCachedAge: QWord;
     function GetActive: Boolean;
     procedure SetProject(const Value: TEditorProject);
     function GetIsOpened: Boolean;
@@ -985,7 +983,7 @@ type
 
     property CachedVariables: THashedStringList read FCachedVariables;
     property CachedIdentifiers: THashedStringList read FCachedIdentifiers;
-    property CachedAge: Cardinal read FCachedAge write FCachedAge;
+    property CachedAge: QWord read FCachedAge write FCachedAge;
   end;
 
   TEditorMessagesList = class;
@@ -1616,8 +1614,6 @@ end;
 
 procedure TTextEditorFile.DoSave(FileName: string);
 var
-  saveLeftChar, saveTopLine: Integer;
-  saveXY: TPoint;
   aLines: TStringList;
 begin
   if Tendency.IndentMode > idntNone then
@@ -1717,8 +1713,6 @@ begin
 end;
 
 constructor TTextEditorFile.Create(ACollection: TCollection);
-var
-  aKey: TSynEditKeyStroke;
 begin
   inherited;
   { There is more assigns in TEditorFile.SetGroup and TEditorProfile.Assign}
@@ -1843,9 +1837,12 @@ function TTextEditorFile.GetHint(HintControl: TControl; CursorPos: TPoint; out v
 var
   v, s, t: string;
 begin
-  Result := EvalByMouse(CursorPos, v, s, t);
-  if Result then
-    vHint := v + ':' + t + '=' + #13#10 + s;
+  if capEval in Tendency.Capabilities then
+  begin
+    Result := EvalByMouse(CursorPos, v, s, t);
+    if Result then
+      vHint := v + ':' + t + '=' + #13#10 + s;
+  end;
 end;
 
 function TTextEditorFile.GetGlance: string;
@@ -2091,6 +2088,10 @@ end;
 
 procedure TEditorTendency.Unprepare;
 begin
+  if Debug <> nil then
+  begin
+    Debug.Stop;
+  end;
   FreeAndNil(FDebug);
 end;
 
@@ -2136,7 +2137,6 @@ end;
 
 destructor TEditorTendency.Destroy;
 begin
-  Unprepare;
   FreeAndNil(FGroups);
   inherited;
 end;
@@ -2144,10 +2144,7 @@ end;
 procedure TEditorTendency.Run(RunActions: TmneRunActions);
 var
   p: TmneRunInfo;
-  s: string;
-  aGroup: TFileGroup;
 begin
-  s := Name;
   p.Actions := RunActions;
   if (Debug <> nil) and (Debug.Running) then
   begin
@@ -2193,7 +2190,6 @@ begin
           p.Pause := false;
         end;
       end;
-      aGroup := Engine.Files.Current.Group;
 
       if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
         p.MainFile := Engine.Files.Current.Name;
@@ -3284,8 +3280,6 @@ end;
 
 procedure TEditorOptions.Show;
 var
-  i: integer;
-  aList: TList;
   aSelect: string;
 begin
   with TEditorOptionsForm.Create(Application) do
@@ -3376,14 +3370,16 @@ begin
 end;
 
 procedure TEditorEngine.Shutdown;
+var
+  i: Integer;
 begin
   if FIsEngineStart then
   begin
     SaveOptions;
+    for i := 0 to Tendencies.Count - 1 do
+      Tendencies[i].Unprepare;
+    Files.Clear;
   end;
-  if Tendency.Debug <> nil then
-    Tendency.Debug.Action(dbaStopServer);
-  Files.Clear;
   FIsEngineShutdown := True;
 end;
 
@@ -3770,8 +3766,6 @@ begin
 end;
 
 procedure TEditorFile.Delete;
-var
-  p: string;
 begin
   Engine.BeginUpdate;
   try
@@ -4276,7 +4270,6 @@ var
   end;
 var
   i: integer;
-  s: string;
   aDefaultGroup: TFileGroup;
 begin
   aSupported := '';
@@ -4388,7 +4381,7 @@ end;
 
 procedure TFileCategory.Apply(AHighlighter: TSynCustomHighlighter; Attributes: TGlobalAttributes);
 var
-  i, a: Integer;
+  i: Integer;
   M: TMap;
   G: TGlobalAttribute;
   Att: TSynHighlighterAttributes;
@@ -4861,9 +4854,6 @@ end;
 
 { TDebugSupportPlugin }
 
-type
-  THackSynEdit = class(TCustomSynEdit);
-
 procedure CenterRect(var R1: TRect; R2: TRect);//from posDraws
 begin
   OffsetRect(R1, ((R2.Right - R2.Left) div 2) - ((R1.Right - R1.Left) div 2) + (R2.Left - R1.Left), ((R2.Bottom - R2.Top) div 2) - ((R1.Bottom - R1.Top) div 2) + (R2.Top - R1.Top));
@@ -4871,8 +4861,7 @@ end;
 
 procedure TSynDebugMarksPart.Paint(Canvas: TCanvas; AClip: TRect; FirstLine, LastLine: integer);
 var
-  i, x, y, lh, iw, el: integer;
-  aLine: integer;
+  i, lh, iw: integer;
   aRect: TRect;
 
   procedure DrawIndicator(Line: integer; ImageIndex: integer);

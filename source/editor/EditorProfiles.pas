@@ -122,7 +122,6 @@ type
     FSeparator: TGlobalAttribute;
     FComment: TGlobalAttribute;
     FSymbol: TGlobalAttribute;
-    FUI: TGlobalAttribute;
     FPanel: TGlobalAttribute;
     FLink: TGlobalAttribute;
     FValue: TGlobalAttribute;

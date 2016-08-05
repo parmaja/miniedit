@@ -73,7 +73,7 @@ type
     procedure Clear; override;
     procedure Add(vName: string); override;
     procedure Remove(vName: string); override;
-    function GetValue(vName: string; var vValue: Variant; var vType: string; EvalIt: Boolean): boolean; override;
+    function GetValue(vName: string; out vValue: Variant; out vType: string; EvalIt: Boolean): boolean; override;
   end;
 
   { TPHPDebug }
@@ -86,8 +86,6 @@ type
     function CreateWatches: TEditorWatches; override;
     procedure DoShowFile(const Key, FileName: string; Line: integer; vCallStack: TCallStackItems); deprecated;
 
-    procedure Start;
-    procedure Stop;
     procedure Reset;
     procedure Resume;
     procedure StepInto;
@@ -97,6 +95,8 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+    procedure Start; override;
+    procedure Stop; override;
     procedure Action(AAction: TDebugAction); override;
     function GetState: TDebugStates; override;
     procedure Lock; override;
@@ -141,7 +141,7 @@ begin
     Watches.RemoveWatch(vName);
 end;
 
-function TPHPDebugWatches.GetValue(vName: string; var vValue: Variant; var vType: string; EvalIt: Boolean): boolean;
+function TPHPDebugWatches.GetValue(vName: string; out vValue: Variant; out vType: string; EvalIt: Boolean): boolean;
 var
   aAction: TdbgpCustomGet;
 begin
@@ -268,7 +268,7 @@ end;
 
 procedure TPHPDebug.Action(AAction: TDebugAction);
 begin
-  case AAction of
+    case AAction of
     dbaStartServer: Start;
     dbaStopServer: Stop;
     dbaReset: Reset;
@@ -291,6 +291,7 @@ end;
 
 procedure TPHPDebug.Start;
 begin
+  inherited;
   FServer.Start;
 end;
 
@@ -298,6 +299,7 @@ procedure TPHPDebug.Stop;
 var
   aAction: TdbgpDetach;
 begin
+  inherited;
   if FServer.IsRuning then
   begin
     FServer.Clear;

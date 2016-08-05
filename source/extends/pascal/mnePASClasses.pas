@@ -14,7 +14,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  EditorDebugger, EditorRun, mneCompileProjectOptions, LazFileUtils,
+  EditorDebugger, gdbClasses, EditorRun, mneCompileProjectOptions, LazFileUtils,
   SynHighlighterPas, SynHighlighterLFM;
 
 type
@@ -82,11 +82,11 @@ type
     FCompiler: string;
   protected
     function CreateDebugger: TEditorDebugger; override;
-    function CreateOptions: TEditorProjectOptions; override;
     procedure Init; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
+    function CreateOptions: TEditorProjectOptions; override;
     property Compiler: string read FCompiler write FCompiler;
   end;
 
@@ -174,7 +174,7 @@ end;
 
 function TPasTendency.CreateDebugger: TEditorDebugger;
 begin
-  Result := nil;
+  Result := TGDBDebug.Create;
 end;
 
 function TPasTendency.CreateOptions: TEditorProjectOptions;
@@ -199,8 +199,6 @@ end;
 
 procedure TPasTendency.DoRun(Info: TmneRunInfo);
 var
-  aParams: string;
-  s: string;
   i: Integer;
   aPath: string;
   Options: TPasProjectOptions;
@@ -259,6 +257,7 @@ begin
     aRunItem.Info.Mode := Info.Mode;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Pause := Info.Pause;
+    aRunItem.Info.DebugIt := rnaDebug in Info.Actions;
     aRunItem.Info.Title := ExtractFileNameOnly(Info.OutputFile);
     aRunItem.Info.Command := Info.RunFile;
     if Options.RunParams <> '' then

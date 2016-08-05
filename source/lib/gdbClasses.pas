@@ -6,7 +6,22 @@ unit gdbClasses;
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author    Zaher Dirkey <zaher at parmaja dot com>
  *}
+{**
+TODO show gdb log
 
+set prompt >>>>>>gdb:
+
+set new-console on
+directory .
+//set breakpoint pending on
+//set unwindonsignal on
+//set print elements 0
+//catch throw
+
+break "test.d:1"
+run
+next
+}
 interface
 
 uses
@@ -83,16 +98,26 @@ type
     procedure Clear; override;
     procedure Add(vName: string); override;
     procedure Remove(vName: string); override;
-    function GetValue(vName: string; var vValue: Variant; var vType: string; EvalIt: Boolean): boolean; override;
+    function GetValue(vName: string; out vValue: Variant; out vType: string; EvalIt: Boolean): boolean; override;
   end;
 
-  { TmnGDB }
+  { TGDBDebug }
 
   TGDBDebug = class(TEditorDebugger)
   protected
+    FGDBProcess: TProcess;
     function CreateBreakPoints: TEditorBreakPoints; override;
     function CreateWatches: TEditorWatches; override;
+    function ReadProcess: string;
+    procedure WriteProcess(S: ansistring);
+    property GDBProcess: TProcess read FGDBProcess;
   public
+    procedure Start; override;
+    procedure Attach(SubProcess: TProcess; Resume: Boolean); override;
+    procedure Stop; override;
+    procedure Next;
+    procedure Run;
+    procedure Step;
     procedure Lock; override;
     procedure Unlock; override;
     function GetState: TDebugStates; override;
@@ -185,15 +210,17 @@ begin
     Watches.Delete(i);
 end;
 
-function TGDBWatches.GetValue(vName: string; var vValue: Variant; var vType: string; EvalIt: Boolean): boolean;
+function TGDBWatches.GetValue(vName: string; out vValue: Variant; out vType: string; EvalIt: Boolean): boolean;
 var
   aItem: TGDBWatchItem;
 begin
+  Result := False;
   aItem := Watches.Find(vName);
   if aItem <> nil then
   begin
     vValue := aItem.Value;
     vType := aItem.VarType;
+    Result := True;
   end
   else
   begin
@@ -294,6 +321,107 @@ begin
   (Result as TGDBWatches).FDebug := Self;
 end;
 
+function TGDBDebug.ReadProcess: string;
+var
+  C: DWORD;
+  S: string;
+  FirstTime: Boolean;
+  aBuffer: array[0..79] of AnsiChar;
+begin
+  Result := '';
+  C := 0;
+  FirstTime := True;
+  aBuffer := '';
+  while GDBProcess.Active and (FirstTime or (C > 0)) do
+  begin
+    FirstTime := False;
+    if GDBProcess.Output.NumBytesAvailable > 0 then
+    begin
+      C := GDBProcess.Output.Read(aBuffer, SizeOf(aBuffer));
+      if C > 0 then
+      begin
+        SetString(S, aBuffer, C);
+        Result := Result + s;
+      end;
+    end
+    else
+      break;
+  end;
+  //Result := S;
+//  Process.WaitOnExit;
+//  Result := Process.ExitStatus;
+//  Process.Terminate(0);
+end;
+
+procedure TGDBDebug.WriteProcess(S: ansistring);
+begin
+  S := S+#13#10;
+  Engine.SendOutout(S);
+  //Engine.SendOutout(ReadProcess);
+  FGDBProcess.Input.WriteBuffer(S[1], Length(S));
+  Engine.SendOutout(ReadProcess);
+end;
+
+procedure TGDBDebug.Start;
+begin
+  FGDBProcess := TProcess.Create(nil);
+  FGDBProcess.ConsoleTitle := 'GDB';
+  FGDBProcess.Executable := 'GDB.exe';
+  FGDBProcess.Parameters.Add('--silent');
+  FGDBProcess.Parameters.Add('test-pas.exe');
+  FGDBProcess.CurrentDirectory := 'M:/home/pascal/projects/miniEdit/test';
+  FGDBProcess.InheritHandles := True;
+  FGDBProcess.Options :=  [poUsePipes, poStderrToOutPut];
+  FGDBProcess.ShowWindow := swoHIDE;
+  FGDBProcess.PipeBufferSize := 80;
+  FGDBProcess.Execute;
+  Engine.SendOutout(ReadProcess);
+  //WriteProcess('set verbose off');
+  WriteProcess('set confirm off');
+
+  //WriteProcess('attach '+ IntToStr(SubProcess.ProcessID));
+  WriteProcess('directory '+ FGDBProcess.CurrentDirectory);
+  WriteProcess('break test-pas.pas:8');
+  WriteProcess('run');
+end;
+
+procedure TGDBDebug.Attach(SubProcess: TProcess; Resume: Boolean);
+begin
+  //WriteProcess('help');
+  //WriteProcess('set new-console on
+  WriteProcess('attach '+ IntToStr(SubProcess.ProcessID));
+  WriteProcess('directory '+ SubProcess.CurrentDirectory);
+  WriteProcess('break test-pas.pas:1');
+  SubProcess.Resume;
+  WriteProcess('run');
+  //SubProcess.ProcessID
+end;
+
+procedure TGDBDebug.Stop;
+begin
+  if GDBProcess <> nil then
+  begin
+    WriteProcess('q');
+    GDBProcess.WaitOnExit;
+    FreeAndNil(FGDBProcess);
+  end;
+end;
+
+procedure TGDBDebug.Next;
+begin
+  WriteProcess('next');
+end;
+
+procedure TGDBDebug.Run;
+begin
+  WriteProcess('run');
+end;
+
+procedure TGDBDebug.Step;
+begin
+  WriteProcess('step');
+end;
+
 procedure TGDBDebug.Lock;
 begin
 
@@ -306,12 +434,24 @@ end;
 
 function TGDBDebug.GetState: TDebugStates;
 begin
-
+  if GDBProcess <> nil then
+    Result := [dbsDebugging, dbsRunning]
+  else
+    Result := [];
 end;
 
 procedure TGDBDebug.Action(AAction: TDebugAction);
 begin
-
+  case AAction of
+    dbaReset:
+      Stop;
+    dbaRun:
+      Run;
+    dbaStepInto:
+      Step;
+    dbaStepOver:
+      Next;
+  end;
 end;
 
 function TGDBDebug.GetKey: string;

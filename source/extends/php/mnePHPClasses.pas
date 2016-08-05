@@ -115,12 +115,12 @@ type
     FPHPPath: string;
   protected
     function CreateDebugger: TEditorDebugger; override;
-    function CreateOptions: TEditorProjectOptions; override;
     procedure Init; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
     constructor Create; override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
+    function CreateOptions: TEditorProjectOptions; override;
   published
     property PHPPath: string read FPHPPath write FPHPPath;
     property PHPHelpFile: string read FPHPHelpFile write FPHPHelpFile;
@@ -246,7 +246,6 @@ end;
 procedure TPHPTendency.DoRun(Info: TmneRunInfo);
 var
   Options: TPHPProjectOptions;
-  aRun: TmneRun;
   aRunItem: TmneRunItem;
 begin
   if (Engine.Session.IsOpened) then
@@ -319,7 +318,7 @@ end;
 
 procedure TPHPTendency.Init;
 begin
-  FCapabilities := [capRun, capDebug, capTrace, capDebugServer, capOptions];
+  FCapabilities := [capRun, capDebug, capEval, capTrace, capDebugServer, capOptions];
   FTitle := 'PHP project';
   FDescription := 'PHP Files, *.php, *.inc';
   FName := 'PHP';

@@ -26,10 +26,10 @@ type
   TCppFile = class(TSourceEditorFile)
   private
   protected
-    function CanOpenInclude: Boolean; override;
-    procedure OpenInclude; override;
   public
     procedure NewContent; override;
+    function CanOpenInclude: Boolean; override;
+    procedure OpenInclude; override;
   end;
 
 
@@ -40,11 +40,11 @@ type
   protected
     procedure DoFormatClick(Sender: TObject);
     procedure InitMappers; override;
-    procedure EnumMenuItems(AddItems: TAddClickCallBack); override;
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddKeywords; override;
   public
+    procedure EnumMenuItems(AddItems: TAddClickCallBack); override;
   end;
 
   { TDProjectOptions }
@@ -62,12 +62,12 @@ type
   private
   protected
     function CreateDebugger: TEditorDebugger; override;
-    function CreateOptions: TEditorProjectOptions; override;
     procedure Init; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
     constructor Create; override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
+    function CreateOptions: TEditorProjectOptions; override;
   published
   end;
 
@@ -217,7 +217,6 @@ end;
 procedure TCppTendency.DoRun(Info: TmneRunInfo);
 var
   aParams: string;
-  s: string;
   i: Integer;
   aPath: string;
   Options: TCppProjectOptions;

@@ -140,7 +140,6 @@ function TEditorOptionsForm.Execute(Profile: TEditorProfile; Select: string): bo
 var
   i: integer;
   n: Integer;
-  aHighlighter: TSynCustomHighlighter;
   aFileCategory: TFileCategory;
   S: string;
 begin
@@ -332,18 +331,11 @@ end;
 
 procedure TEditorOptionsForm.SampleEditGutterClick(Sender: TObject; X, Y, Line: integer; mark: TSynEditMark);
 var
-  M: TMap;
   G: TGlobalAttribute;
-  aFileCategory: TFileCategory;
-  s:string;
 begin
-  aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
-
   G := FProfile.Attributes.Find(attGutter);
-
   if G = nil then
     G := FProfile.Attributes.Default;
-
   AttributeCbo.ItemIndex := G.Index;
   RetrieveAttribute;
 end;
@@ -431,7 +423,6 @@ end;
 
 procedure TEditorOptionsForm.ApplyAttribute;
 var
-  i: Integer;
   aFontStyle: TFontStyles;
   aGlobalAttribute: TGlobalAttribute;
 begin
@@ -465,9 +456,6 @@ begin
 end;
 
 procedure TEditorOptionsForm.Retrieve;
-var
-  i: integer;
-  aFileCategory: TFileCategory;
 begin
   InChanging := True;
   try
@@ -581,7 +569,6 @@ procedure TEditorOptionsForm.SaveBtnClick(Sender: TObject);
 {$ifdef debug}
 var
   i: Integer;
-  v: Integer;
   s: string;
   aName: string;
   Stream: TFileStream;

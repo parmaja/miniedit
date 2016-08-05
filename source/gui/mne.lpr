@@ -123,7 +123,7 @@ begin
   //* http://wiki.freepascal.org/leakview
   if FileExists(Application.Location+'heap.trc') then
     DeleteFile(Application.Location+'heap.trc');
-  SetHeapTraceOutput(Application.Location+'heap.trc');
+  //SetHeapTraceOutput(Application.Location+'heap.trc');
   {$ENDIF DEBUG}
   Application.CreateForm(TEditorResource, EditorResource);
   Application.CreateForm(TMainForm, MainForm);

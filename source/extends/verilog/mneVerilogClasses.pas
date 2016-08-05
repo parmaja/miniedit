@@ -50,8 +50,8 @@ type
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddKeywords; override;
 
-    procedure EnumMenuItems(AddItems: TAddClickCallBack); override;
   public
+    procedure EnumMenuItems(AddItems: TAddClickCallBack); override;
   end;
 
   { TVerilogProjectOptions }
@@ -79,10 +79,10 @@ type
     FCompiler: string;
   protected
     function CreateDebugger: TEditorDebugger; override;
-    function CreateOptions: TEditorProjectOptions; override;
     procedure Init; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
+    function CreateOptions: TEditorProjectOptions; override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
     property Compiler: string read FCompiler write FCompiler;
   end;
@@ -160,8 +160,6 @@ end;
 
 procedure TVerilogTendency.DoRun(Info: TmneRunInfo);
 var
-  aParams: string;
-  s: string;
   i: Integer;
   aPath: string;
   Options: TVerilogProjectOptions;

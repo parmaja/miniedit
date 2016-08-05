@@ -7,4 +7,5 @@ var
 begin
   writeln('Hello World');
   writeln('Bye bye world');
+  ReadLn();
 end.

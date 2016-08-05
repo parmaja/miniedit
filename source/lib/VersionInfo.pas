@@ -231,7 +231,7 @@ begin
   ResID := 1;
 
   // Defensive code to prevent failure if no resource available...
-  Res := FindResource(Instance, PChar(PtrInt(ResID)), PChar(RT_VERSION));
+  Res := FindResource(Instance, PAnsiChar(PtrInt(ResID)), PChar(RT_VERSION));
   If Res = 0 then
     Exit;
 

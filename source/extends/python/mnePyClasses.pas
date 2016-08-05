@@ -41,12 +41,12 @@ type
   private
   protected
     procedure DoFixTabsSpaces(Sender: TObject);
-    procedure EnumMenuItems(AddItems: TAddClickCallBack); override;
     procedure InitMappers; override;
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddKeywords; override;
   public
+    procedure EnumMenuItems(AddItems: TAddClickCallBack); override;
   end;
 
   { TPyProjectOptions }
@@ -64,12 +64,12 @@ type
   private
   protected
     function CreateDebugger: TEditorDebugger; override;
-    function CreateOptions: TEditorProjectOptions; override;
     procedure Init; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
     constructor Create; override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
+    function CreateOptions: TEditorProjectOptions; override;
   published
   end;
 
@@ -168,10 +168,6 @@ end;
 
 procedure TPyTendency.DoRun(Info: TmneRunInfo);
 var
-  aParams: string;
-  s: string;
-  i: Integer;
-  aPath: string;
   Options: TPyProjectOptions;
   aRunItem: TmneRunItem;
 begin

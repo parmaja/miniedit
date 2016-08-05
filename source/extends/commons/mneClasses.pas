@@ -119,6 +119,7 @@ var
   aRGB: TColorRef;
 begin
   aRGB := ColorToRGB(Color);
+  Result := '';//temporary
   FmtStr(Result, '%s%.2x%.2x%.2x', ['#', GetRValue(aRGB), GetGValue(aRGB), GetBValue(aRGB)]);
 end;
 

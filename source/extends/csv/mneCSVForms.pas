@@ -393,8 +393,6 @@ end;
 procedure TCSVForm.Load(FileName: string);
 var
   aFile: TFileStream;
-  r, c:Integer;
-  s: string;
   b: Boolean;
   csvCnn: TmncCSVConnection;
   csvSes: TmncCSVSession;

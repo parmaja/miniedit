@@ -78,11 +78,11 @@ type
   private
   protected
     function CreateDebugger: TEditorDebugger; override;
-    function CreateOptions: TEditorProjectOptions; override;
     procedure Init; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
     constructor Create; override;
+    function CreateOptions: TEditorProjectOptions; override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
   published
   end;
@@ -215,8 +215,6 @@ end;
 
 procedure TCustomTendency.DoRun(Info: TmneRunInfo);
 var
-  aParams: string;
-  s: string;
   i: Integer;
   aPath: string;
   Options: TCustomProjectOptions;

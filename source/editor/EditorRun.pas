@@ -117,7 +117,7 @@ uses
   {$ifdef windows}
   Windows,
   {$endif}
-  EditorEngine, lclintf;
+  EditorEngine, gdbClasses, lclintf;
 
 { TmneRunPool }
 
@@ -284,22 +284,27 @@ end;
 procedure TmneRunItem.CreateConsole(AInfo: TmneCommandInfo);
 var
   ProcessObject: TmnProcessObject;
+  aOptions: TProcessOptions;
 begin
   if Assigned(FOnWrite) and (AInfo.Message <> '') then
     WriteString(AInfo.Message + #13#10);
   WriteMessage(AInfo.Message + #13#10);
   FProcess := TProcess.Create(nil);
   FProcess.ConsoleTitle := Info.Title;
-  FProcess.Executable := AInfo.Command;
+  FProcess.Executable := ReplaceStr(AInfo.Command, '\', '/');;
   FProcess.Parameters.Text := AInfo.Params;
-  FProcess.CurrentDirectory := AInfo.CurrentDirectory;
+  FProcess.CurrentDirectory := ReplaceStr(AInfo.CurrentDirectory, '\', '/');
   FProcess.InheritHandles := True;
+
+  aOptions := [];
+  if Info.Suspended then
+    aOptions := [poRunSuspended];
 
   //WriteString(AInfo.Command + ' ' +FProcess.Parameters.Text);
 
   if Assigned(FOnWrite) then
   begin
-    FProcess.Options :=  [poUsePipes, poStderrToOutPut];
+    FProcess.Options :=  aOptions + [poUsePipes, poStderrToOutPut];
     FProcess.ShowWindow := swoHIDE;
     FProcess.PipeBufferSize := 40; //80 char in line
     ProcessObject := TmnProcessObject.Create(FProcess, FPool, @WriteString);
@@ -312,7 +317,7 @@ begin
   end
   else
   begin
-    FProcess.Options :=  [poWaitOnExit];
+    FProcess.Options :=  aOptions + [poWaitOnExit];
     FProcess.ShowWindow := swoShow;
     FProcess.Execute;
   end;
@@ -351,20 +356,33 @@ end;
 procedure TmneRunItem.Execute;
 var
   s: string;
-  p: TProcess;
 begin
   case Info.Mode of
     runConsole:
     begin
-      s := '/c "'+ Info.GetCommandLine + '"';
-      if Info.Pause then
-        s := s + ' & pause';
-      Info.Command := 'cmd';
-      Info.Params := s;
-      CreateConsole(Info);
-      //Sync this function to make it modal
-      {
-      Status := ExecuteProcess('cmd ', s, [ExecInheritsHandles]);}
+      if Info.DebugIt then
+      begin
+        if Engine.Tendency.Debug <> nil then
+          Engine.Tendency.Debug.Start;
+        Info.Command := Info.GetCommandLine;
+        Info.Suspended := True;
+        Info.Params := '';
+        CreateConsole(Info);
+        if Engine.Tendency.Debug <> nil then
+          Engine.Tendency.Debug.Attach(Process, True);
+      end
+      else
+      begin
+        s := '/c "'+ Info.GetCommandLine + '"';
+        if Info.Pause then
+          s := s + ' & pause';
+        Info.Command := 'cmd';
+        Info.Params := s;
+        CreateConsole(Info);
+        //Sync this function to make it modal
+        {
+        Status := ExecuteProcess('cmd ', s, [ExecInheritsHandles]);}
+      end;
     end;
     runOutput:
     begin

@@ -12,8 +12,8 @@ unit EditorDebugger;
 interface
 
 uses
-  SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
-  SynEdit, mnClasses,
+  SysUtils, Forms, Variants, Classes, Controls, Graphics, Contnrs,
+  SynEdit, process, mnClasses,
   EditorClasses;
 
 type
@@ -44,6 +44,8 @@ type
     CurrentDirectory: string;
     Pause: Boolean;
     Link: string; //URL to show in browser
+    Suspended: Boolean; //For attach with debugger
+    DebugIt: Boolean;
     function GetCommandLine: string;
   end;
 
@@ -86,8 +88,8 @@ type
     dbaStopServer,
     dbaReset, //stop debug and stop the run
     dbaResume, //run and do not stop at breakpoints, or run without debug
-    dbaStepInto,
     dbaStepOver,
+    dbaStepInto,
     dbaStepOut,
     dbaRun
    );
@@ -135,7 +137,7 @@ type
   public
     procedure Add(vName: string); virtual; abstract;
     procedure Remove(vName: string); virtual; abstract;
-    function GetValue(vName: string; var vValue: Variant; var vType: string; EvalIt: Boolean): boolean; virtual; abstract;
+    function GetValue(vName: string; out vValue: Variant; out vType: string; EvalIt: Boolean): boolean; virtual; abstract;
     property Items[Index: Integer]: TDebugWatchInfo read GetItems; default;
   end;
 
@@ -180,6 +182,10 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+
+    procedure Start; virtual;
+    procedure Attach(SubProcess: TProcess; Resume: Boolean); virtual;
+    procedure Stop; virtual;
 
     procedure Lock; virtual; abstract;
     procedure Unlock; virtual; abstract;
@@ -278,6 +284,21 @@ begin
   FreeAndNil(FWatches);
   FreeAndNil(FLink);
   inherited;
+end;
+
+procedure TEditorDebugger.Start;
+begin
+
+end;
+
+procedure TEditorDebugger.Attach(SubProcess: TProcess; Resume: Boolean);
+begin
+
+end;
+
+procedure TEditorDebugger.Stop;
+begin
+
 end;
 
 function TEditorDebugger.GetActive: Boolean;

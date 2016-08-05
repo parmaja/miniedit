@@ -954,7 +954,6 @@ end;
 procedure TdbgpGetCurrent.Process(Respond: TdbgpRespond);
 var
   i: Integer;
-  s: string;
 begin
   inherited;
 (*
@@ -1072,12 +1071,10 @@ begin
 end;
 
 procedure TdbgpWatches.AddWatch(Name: string);
-var
-  aIndex: integer;
 begin
   DBGP.Lock.Enter;
   try
-    aIndex := Add(Name, '');
+    Add(Name, '');
   finally
     DBGP.Lock.Leave;
   end;
@@ -1133,15 +1130,12 @@ end;
 procedure TdbgpWatches.RemoveWatch(Name: string);
 var
   i: integer;
-  Founded: Boolean;
 begin
-  Founded := False;
   for i := 0 to Count - 1 do
   begin
     if Items[i].Info.Name = Name then
     begin
       Delete(i);
-      Founded:=True;
       break;
     end;
   end;
