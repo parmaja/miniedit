@@ -470,7 +470,6 @@ type
     procedure DBGBreakpointsActExecute(Sender: TObject);
     procedure CopyFileNameActExecute(Sender: TObject);
     procedure DBGAddWatchActExecute(Sender: TObject);
-    procedure WatchListKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
     procedure FolderHomeActExecute(Sender: TObject);
     procedure StatusTimerTimer(Sender: TObject);
     procedure Clear1Click(Sender: TObject);
@@ -2441,6 +2440,7 @@ procedure TMainForm.UpdateWatches;
 var
   i: integer;
   aIndex: integer;
+  v: string;
 begin
   //todo not good idea, we should refresh without clear the grid
   if Engine.Tendency.Debug <> nil then
@@ -2648,10 +2648,6 @@ begin
   begin
     DeleteWatch(WatchesGrid.Cells[1, WatchesGrid.Row]);
   end;
-end;
-
-procedure TMainForm.WatchListKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
-begin
 end;
 
 procedure TMainForm.FolderHomeActExecute(Sender: TObject);

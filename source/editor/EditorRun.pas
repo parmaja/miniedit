@@ -47,7 +47,7 @@ type
     FControl: TConsoleForm;
     FPool: TmneRunPool;
   protected
-    FOnWrite: TmnOnWrite;
+    FOnWrite: TmnOnWriteString;
     InternalString: string;
     InternalTemporary: Boolean;
     procedure InternalWrite; //This for sync it, it will send to FOnWriteString
@@ -351,7 +351,8 @@ end;
 
 procedure TmneRunItem.InternalMessage;
 begin
-  Engine.SendMessage(InternalString, InternalTemporary);
+  //if not Engine.IsShutdown then //not safe to ingore it
+    Engine.SendMessage(InternalString, InternalTemporary);
 end;
 
 procedure TmneRunItem.WriteMessage(S: string; Temporary: Boolean);

@@ -11,7 +11,7 @@
     </Link>
     <Panel Class="TGlobalAttribute">
       <AttType>attPanel</AttType>
-      <Background>clBlack</Background>
+      <Background>9594183</Background>
       <Foreground>clWhite</Foreground>
     </Panel>
     <Selected Class="TGlobalAttribute">

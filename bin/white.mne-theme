@@ -3,7 +3,7 @@
   <Object Type="TGlobalAttributes">
     <Default Class="TGlobalAttribute">
       <AttType>attDefault</AttType>
-      <Background>14087160</Background>
+      <Background>clWhite</Background>
       <Foreground>clBlack</Foreground>
     </Default>
     <Link Class="TGlobalAttribute">
@@ -96,7 +96,7 @@
     </EmbedText>
     <Comment Class="TGlobalAttribute">
       <AttType>attComment</AttType>
-      <Foreground>12885388</Foreground>
+      <Foreground>10841172</Foreground>
     </Comment>
     <QuotedString Class="TGlobalAttribute">
       <AttType>attQuotedString</AttType>

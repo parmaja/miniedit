@@ -17,6 +17,8 @@ uses
   EditorClasses;
 
 type
+  EDebugException = class(Exception);
+
   TmneRunAction = (rnaCompile, rnaExecute, rnaDebug, rnaLink);
   TmneRunActions = set of TmneRunAction;
   TmneRunMode = (runConsole, runProcess, runEmbedded, runOutput, runBrowser);
@@ -162,6 +164,40 @@ type
     property CallStack: TCallStackItems read FCallStack;
   end;
 
+
+  TDebugCommandFlag = (dafSend, dafCheckError, dafStopOnError);
+  TDebugCommandFlags = set of TDebugCommandFlag;
+
+  TDebugCommand = class(TObject)
+  private
+    FKeepAlive: Boolean;
+    FKey: string;
+    FFlags: TDebugCommandFlags;
+    FEvent: TEvent; //must be nil until we need one
+  protected
+    function GetCommand: string; virtual;
+    function GetData: string; virtual;
+    function Stay: boolean; virtual;
+    function Enabled: boolean; virtual;
+    function Accept: boolean; virtual;
+    procedure Created; virtual; //after create it
+    procedure Prepare; virtual; //after pop from spool
+    property Key: string read FKey;
+    property Flags: TDebugCommandFlags read FFlags write FFlags;
+  public
+    constructor Create; virtual;
+    destructor Destroy; override;
+    procedure CreateEvent; virtual;
+    procedure FreeEvent; virtual;
+    property Event: TEvent read FEvent;
+    property KeepAlive: Boolean read FKeepAlive write FKeepAlive; //do no free it
+  end;
+
+  {TDebugCommandSpool = class(specialize GItems<TDebugCommand>)
+  private
+  public
+  end;}
+
   { TEditorDebugger }
 
   TEditorDebugger = class abstract(TObject)
@@ -274,6 +310,66 @@ begin
     begin
        Add(vItems[i].FileName, vItems[i].Line);
     end;
+end;
+
+{ TDebugCommand }
+
+function TDebugCommand.GetCommand: string;
+begin
+  Result := '';
+end;
+
+function TDebugCommand.GetData: string;
+begin
+  Result := '';
+end;
+
+function TDebugCommand.Stay: boolean;
+begin
+  Result := False;
+end;
+
+function TDebugCommand.Accept: boolean;
+begin
+  Result := True;
+end;
+
+procedure TDebugCommand.CreateEvent;
+begin
+  if FEvent <> nil then
+    raise EDebugException.Create('Event already exists');
+  FEvent := TEvent.Create(nil, True, False, '');
+end;
+
+procedure TDebugCommand.FreeEvent;
+begin
+  FreeAndNil(FEvent);
+end;
+
+function TDebugCommand.Enabled: boolean;
+begin
+  Result := True;
+end;
+
+procedure TDebugCommand.Prepare;
+begin
+end;
+
+constructor TDebugCommand.Create;
+begin
+  inherited Create;
+  Created;
+end;
+
+destructor TDebugCommand.Destroy;
+begin
+  FreeEvent;
+  inherited;
+end;
+
+procedure TDebugCommand.Created;
+begin
+  Flags := [dafSend];
 end;
 
 { TEditorDebugger }
