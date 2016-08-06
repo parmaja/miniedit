@@ -50,7 +50,7 @@ type
     procedure CheckError(Respond: TdbgpRespond);
     function GetCommand: string; virtual;
     function GetData: string; virtual;
-    procedure Process(Respond: TdbgpRespond); virtual;
+    procedure Execute(Respond: TdbgpRespond); virtual; abstract;
     procedure Created; virtual; //after create it
     procedure Prepare; virtual; //after pop from spool
     function Stay: boolean; virtual;
@@ -89,7 +89,7 @@ type
     procedure Created; override;
   public
     function GetCommand: string; override;
-    procedure Process(Respond: TdbgpRespond); override;
+    procedure Execute(Respond: TdbgpRespond); override;
   end;
 
   { TdbgpFeatureSet }
@@ -126,31 +126,31 @@ type
     procedure Created; override;
     destructor Destroy; override;
     function GetCommand: string; override;
-    procedure Process(Respond: TdbgpRespond); override;
+    procedure Execute(Respond: TdbgpRespond); override;
   end;
 
   TdbgpStepOver = class(TdbgpAction)
   public
     function GetCommand: string; override;
-    procedure Process(Respond: TdbgpRespond); override;
+    procedure Execute(Respond: TdbgpRespond); override;
   end;
 
   TdbgpStepInto = class(TdbgpAction)
   public
     function GetCommand: string; override;
-    procedure Process(Respond: TdbgpRespond); override;
+    procedure Execute(Respond: TdbgpRespond); override;
   end;
 
   TdbgpStepOut = class(TdbgpAction)
   public
     function GetCommand: string; override;
-    procedure Process(Respond: TdbgpRespond); override;
+    procedure Execute(Respond: TdbgpRespond); override;
   end;
 
   TdbgpRun = class(TdbgpAction)
   public
     function GetCommand: string; override;
-    procedure Process(Respond: TdbgpRespond); override;
+    procedure Execute(Respond: TdbgpRespond); override;
   end;
 
   { TdbgpDetach }
@@ -158,14 +158,14 @@ type
   TdbgpDetach = class(TdbgpAction)
   public
     function GetCommand: string; override;
-    procedure Process(Respond: TdbgpRespond); override;
+    procedure Execute(Respond: TdbgpRespond); override;
     destructor Destroy; override;
   end;
 
   TdbgpStop = class(TdbgpAction)
   public
     function GetCommand: string; override;
-    procedure Process(Respond: TdbgpRespond); override;
+    procedure Execute(Respond: TdbgpRespond); override;
   end;
 
   TdbgpCustomGet = class(TdbgpAction)
@@ -178,14 +178,14 @@ type
   protected
   public
     function GetCommand: string; override;
-    procedure Process(Respond: TdbgpRespond); override;
+    procedure Execute(Respond: TdbgpRespond); override;
   end;
 
   TdbgpGetWatch = class(TdbgpCustomGetWatch)
   protected
   public
     Index: integer;
-    procedure Process(Respond: TdbgpRespond); override;
+    procedure Execute(Respond: TdbgpRespond); override;
   end;
 
   { TdbgpEval }
@@ -195,7 +195,7 @@ type
   public
     function GetCommand: string; override;
     function GetData: string; override;
-    procedure Process(Respond: TdbgpRespond); override;
+    procedure Execute(Respond: TdbgpRespond); override;
   end;
 
   { TdbgpGetWatchInstance }
@@ -211,7 +211,7 @@ type
     Current: integer;
     function Stay: boolean; override;
     function Enabled: boolean; override;
-    procedure Process(Respond: TdbgpRespond); override;
+    procedure Execute(Respond: TdbgpRespond); override;
   end;
 
   // Breakpoints
@@ -223,7 +223,7 @@ type
     FileName: string;
     FileLine: integer;
     function GetCommand: string; override;
-    procedure Process(Respond: TdbgpRespond); override;
+    procedure Execute(Respond: TdbgpRespond); override;
   end;
 
   TdbgpSetBreakpoints = class(TdbgpSetBreakpoint)
@@ -259,8 +259,8 @@ type
     function PopAction: TdbgpAction;
     function SendCommand(Command: string; Data: string): integer;
     procedure Prepare; override;
-    procedure DoProcess;
-    procedure Process; override;
+    procedure DoExecute;
+    procedure Execute; override;
     procedure Unprepare; override;
   public
     constructor Create(vConnector: TmnConnector; Socket: TmnCustomSocket); override;
@@ -430,9 +430,8 @@ begin
   Result := 'echo ' + Info.Name;
 end;
 
-procedure TdbgpEval.Process(Respond: TdbgpRespond);
+procedure TdbgpEval.Execute(Respond: TdbgpRespond);
 begin
-  inherited Process(Respond);
 end;
 
 { TdbgpFeatureSet }
@@ -527,7 +526,7 @@ begin
   DBGP.ShowFile(FCurKey, FCurFile, FCurLine, FCallStack);
 end;
 
-procedure TdbgpConnection.DoProcess;
+procedure TdbgpConnection.DoExecute;
 var
   aAction: TdbgpAction;
   aRespond: TdbgpRespond;
@@ -560,7 +559,7 @@ begin
               begin
                 try
                   if (aRespond <> nil) and Connected and (aRespond.Root <> nil) then
-                    aAction.Process(aRespond);
+                    aAction.Execute(aRespond);
                 finally
                 end;
               end;
@@ -758,12 +757,12 @@ begin
   end;
 end;
 
-procedure TdbgpConnection.Process;
+procedure TdbgpConnection.Execute;
 begin
-  //Allow one connection to process
+  //Allow one connection to Execute
   //Listener.Enter;
   try
-    DoProcess;
+    DoExecute;
   finally
     //Listener.Leave;
   end;
@@ -830,11 +829,6 @@ begin
   Result := False;
 end;
 
-procedure TdbgpAction.Process(Respond: TdbgpRespond);
-begin
-
-end;
-
 function TdbgpAction.Accept: boolean;
 begin
   Result := True;
@@ -892,9 +886,8 @@ begin
   Result := 'step_over';
 end;
 
-procedure TdbgpStepOver.Process(Respond: TdbgpRespond);
+procedure TdbgpStepOver.Execute(Respond: TdbgpRespond);
 begin
-  inherited;
 end;
 
 { TdbgpStepInto }
@@ -904,9 +897,8 @@ begin
   Result := 'step_into';
 end;
 
-procedure TdbgpStepInto.Process(Respond: TdbgpRespond);
+procedure TdbgpStepInto.Execute(Respond: TdbgpRespond);
 begin
-  inherited;
 end;
 
 procedure TdbgpServer.Resume;
@@ -927,9 +919,8 @@ begin
   Result := 'init';
 end;
 
-procedure TdbgpInit.Process(Respond: TdbgpRespond);
+procedure TdbgpInit.Execute(Respond: TdbgpRespond);
 begin
-  inherited;
   DBGP.Lock.Enter;
   try
     Connection.Server.Watches.Clean;
@@ -951,11 +942,10 @@ begin
     Result := Result + ' -d ' + IntToStr(aDepth);}
 end;
 
-procedure TdbgpGetCurrent.Process(Respond: TdbgpRespond);
+procedure TdbgpGetCurrent.Execute(Respond: TdbgpRespond);
 var
   i: Integer;
 begin
-  inherited;
 (*
   <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="http://xdebug.org/dbgp/xdebug" command="stack_get" transaction_id="8">
   <stack where="App-&gt;__construct" level="0" type="file" filename="file:///W:/web/sites/abrash.com/websale/fw/core/ui/app.php" lineno="200"></stack>
@@ -1007,9 +997,8 @@ begin
   Result := 'run';
 end;
 
-procedure TdbgpRun.Process(Respond: TdbgpRespond);
+procedure TdbgpRun.Execute(Respond: TdbgpRespond);
 begin
-  inherited;
 end;
 
 { TdbgpDetach }
@@ -1019,9 +1008,8 @@ begin
   Result := 'detach';
 end;
 
-procedure TdbgpDetach.Process(Respond: TdbgpRespond);
+procedure TdbgpDetach.Execute(Respond: TdbgpRespond);
 begin
-  inherited;
   Connection.Disconnect;
 end;
 
@@ -1037,9 +1025,8 @@ begin
   Result := 'stop';
 end;
 
-procedure TdbgpStop.Process(Respond: TdbgpRespond);
+procedure TdbgpStop.Execute(Respond: TdbgpRespond);
 begin
-  inherited;
   Connection.Disconnect;
 end;
 
@@ -1050,9 +1037,8 @@ begin
   Result := 'step_out';
 end;
 
-procedure TdbgpStepOut.Process(Respond: TdbgpRespond);
+procedure TdbgpStepOut.Execute(Respond: TdbgpRespond);
 begin
-  inherited;
 end;
 
 { TdbgpWatches }
@@ -1158,9 +1144,8 @@ end;
 
 { TdbgpGetWatch }
 
-procedure TdbgpGetWatch.Process(Respond: TdbgpRespond);
+procedure TdbgpGetWatch.Execute(Respond: TdbgpRespond);
 begin
-  inherited;
   DBGP.Lock.Enter;
   try
     Connection.Server.Watches[Index].Info.Value := Info.Value;
@@ -1264,9 +1249,8 @@ begin
   end;
 end;
 
-procedure TdbgpGetWatches.Process(Respond: TdbgpRespond);
+procedure TdbgpGetWatches.Execute(Respond: TdbgpRespond);
 begin
-  inherited;
   DBGP.Lock.Enter;
   try
     Connection.Server.Watches[Current].Info.Value := Info.Value;
@@ -1324,9 +1308,8 @@ begin
   Result := 'breakpoint_set -t line -n ' + IntToStr(FileLine) + ' -f ' + FileNameToURI(FileName) + '';
 end;
 
-procedure TdbgpSetBreakpoint.Process(Respond: TdbgpRespond);
+procedure TdbgpSetBreakpoint.Execute(Respond: TdbgpRespond);
 begin
-  inherited;
   CheckError(Respond);
   BreakpointID := StrToInt(Respond.Root.Attributes['id']);
 end;
@@ -1431,14 +1414,13 @@ begin
   //Result := 'property_get -n "' + Name + '" -m 1024';
 end;
 
-procedure TdbgpCustomGetWatch.Process(Respond: TdbgpRespond);
+procedure TdbgpCustomGetWatch.Execute(Respond: TdbgpRespond);
 const
   //sCmd = 'property';
   sCmd = 'response';
 var
   S: string;
 begin
-  inherited;
   if Respond[sCmd] <> nil then
   begin
     S := Respond[sCmd].Value;
