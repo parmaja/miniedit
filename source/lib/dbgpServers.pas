@@ -248,48 +248,7 @@ type
     function GetCommand: string; override;
   end;
 
-  { TdbgpConnection }
-
-  TdbgpConnection = class(TmnServerConnection)
-  private
-    FLocalSpool: TdbgpConnectionSpool;
-    FKey: string;
-    function GetServer: TdbgpServer;
-  public
-    FTransactionID: integer;
-  protected
-    function NewTransactionID: integer;
-{$IFDEF SAVELOG}
-    procedure SaveLog(s: string);
-{$ENDIF}
-    function ReadRespond: TdbgpRespond;
-    function PopAction: TdbgpAction;
-    function SendCommand(Command: string; Data: string): integer;
-    procedure Prepare; override;
-    procedure DoExecute;
-    procedure Execute; override;
-    procedure Unprepare; override;
-  public
-    constructor Create(vConnector: TmnConnector; Socket: TmnCustomSocket); override;
-    destructor Destroy; override;
-    procedure Stop; override;
-    property Key: string read FKey;
-    property Server: TdbgpServer read GetServer;
-  published
-  end;
-
-  TmnDBGListener = class(TmnListener)
-  private
-    FAddress: string;
-    FPort: integer;
-  protected
-    function CreateConnection(vSocket: TmnCustomSocket): TmnServerConnection; override;
-  public
-    constructor Create;
-    destructor Destroy; override;
-    property Port: integer read FPort write FPort;
-    property Address: string read FAddress write FAddress;
-  end;
+//* Watches
 
   TdbgpWatch = class(TObject)
   private
@@ -316,6 +275,8 @@ type
     procedure Clean;
     property Values[Name: string]: variant read GetValues write SetValues;
   end;
+
+//* Breakpoints
 
   TdbgpBreakpoint = class(TObject)
   private
@@ -346,7 +307,48 @@ type
   end;
 
   TdbgpOnServerEvent = procedure(Sender: TObject; Socket: TdbgpConnection) of object;
-  TdbgpOnShowFile = procedure(const Key, FileName: string; Line: integer; CallStack: TCallStackItems) of object;
+
+  { TdbgpConnection }
+
+  TdbgpConnection = class(TmnServerConnection)
+  private
+    FLocalSpool: TdbgpConnectionSpool;
+    FKey: string;
+    function GetServer: TdbgpServer;
+  public
+    FTransactionID: integer;
+  protected
+    function NewTransactionID: integer;
+{$IFDEF SAVELOG}
+    procedure SaveLog(s: string);
+{$ENDIF}
+    function ReadRespond: TdbgpRespond;
+    function PopAction: TdbgpAction;
+    function SendCommand(Command: string; Data: string): integer;
+    procedure Prepare; override;
+    procedure DoExecute;
+    procedure Process; override;
+  public
+    constructor Create(vConnector: TmnConnector; Socket: TmnCustomSocket); override;
+    destructor Destroy; override;
+    procedure Stop; override;
+    property Key: string read FKey;
+    property Server: TdbgpServer read GetServer;
+  published
+  end;
+
+  TmnDBGListener = class(TmnListener)
+  private
+    FAddress: string;
+    FPort: integer;
+  protected
+    function CreateConnection(vSocket: TmnCustomSocket): TmnServerConnection; override;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    property Port: integer read FPort write FPort;
+    property Address: string read FAddress write FAddress;
+  end;
 
   { TdbgpServer }
 
@@ -425,12 +427,11 @@ type
   protected
     function CreateBreakPoints: TEditorBreakPoints; override;
     function CreateWatches: TEditorWatches; override;
-    procedure DoShowFile(const Key, FileName: string; Line: integer; vCallStack: TCallStackItems); deprecated;
 
     procedure Reset;
     procedure Resume;
-    procedure StepInto;
     procedure StepOver;
+    procedure StepInto;
     procedure StepOut;
     procedure Run;
   public
@@ -449,19 +450,19 @@ type
 
   TdbgpManager = class(TObject)
   private
-    FOnShowFile: TdbgpOnShowFile;
    public
     Lock: TCriticalSection;
     Event: TEvent;
     constructor Create;
     destructor Destroy; override;
-    procedure ShowFile(const Key, FileName: string; Line: integer = -1; CallStack: TCallStackItems = nil);
-    property OnShowFile: TdbgpOnShowFile read FOnShowFile write FOnShowFile;
   end;
 
 function DBGP: TdbgpManager;
 
 implementation
+
+uses
+  EditorEngine;
 
 var
   FDBGP: TdbgpManager = nil;
@@ -542,12 +543,6 @@ begin
   inherited;
 end;
 
-procedure TdbgpManager.ShowFile(const Key, FileName: string; Line: integer; CallStack: TCallStackItems);
-begin
-  if Assigned(FOnShowFile) then
-    FOnShowFile(Key, FileName, Line, CallStack);
-end;
-
 constructor TdbgpServer.Create;
 begin
   inherited;
@@ -600,7 +595,7 @@ end;
 
 procedure TdbgpGetCurrent.ShowFile; //this function must Synchronize
 begin
-  DBGP.ShowFile(FCurKey, FCurFile, FCurLine, FCallStack);
+  Engine.DebugLink.SetExecutedLine(FCurKey, FCurFile, FCurLine, FCallStack);
 end;
 
 procedure TdbgpConnection.DoExecute;
@@ -658,11 +653,6 @@ begin
         end;
       end;
   end;
-end;
-
-procedure TdbgpConnection.Unprepare;
-begin
-  inherited Unprepare;
 end;
 
 { TdbgpSocketServer }
@@ -834,8 +824,9 @@ begin
   end;
 end;
 
-procedure TdbgpConnection.Execute;
+procedure TdbgpConnection.Process;
 begin
+  inherited;
   //Allow one connection to Execute
   //Listener.Enter;
   try
@@ -886,7 +877,7 @@ procedure TdbgpServer.DoChanged(vListener: TmnListener);
 begin
   inherited;
   if vListener.Count = 0 then //TODO: i am not sure in Linux
-    DBGP.ShowFile('', '');
+    Engine.DebugLink.SetExecutedLine('', '', 0);
 end;
 
 { TdbgpAction }
@@ -1659,22 +1650,15 @@ begin
   (Result as TdbgpDebugWatches).FDebug := Self;
 end;
 
-procedure TdbgpDebug.DoShowFile(const Key, FileName: string; Line: integer; vCallStack: TCallStackItems);
-begin
-  SetExecutedLine(Key, FileName, Line, vCallStack);
-end;
-
 constructor TdbgpDebug.Create;
 begin
   inherited Create;
   FServer := TdbgpServer.Create;
   //FServer.FDebug := Self;
-  DBGP.OnShowFile := @DoShowFile;
 end;
 
 destructor TdbgpDebug.Destroy;
 begin
-  DBGP.OnShowFile := nil;
   FreeAndNil(FServer);
   inherited;
 end;

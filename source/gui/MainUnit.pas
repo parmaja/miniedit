@@ -2369,7 +2369,7 @@ end;
 
 procedure TMainForm.UpdateFileHeaderPanel;
 begin
-  if (Engine.Files.Current <> nil) and (Engine.Tendency.Debug <> nil) and (Engine.Files.Current.Control = Engine.Tendency.Debug.ExecutedControl) then
+  if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control = Engine.DebugLink.ExecutedControl) then
     BugSignBtn.Visible := True
   else
     BugSignBtn.Visible := False;
@@ -2389,13 +2389,13 @@ begin
     aIndex := CallStackGrid.Row;
     CallStackGrid.BeginUpdate;
     try
-      CallStackGrid.RowCount := Engine.Tendency.Debug.CallStack.Count + 1;
-      with Engine.Tendency.Debug do
+      CallStackGrid.RowCount := Engine.DebugLink.CallStack.Count + 1;
+      with Engine.DebugLink do
       try
         for i := 0 to CallStack.Count - 1 do
         begin
-          CallStackGrid.Cells[1, i + 1] := Engine.Tendency.Debug.CallStack[i].FileName;
-          CallStackGrid.Cells[2, i + 1] := IntToStr(Engine.Tendency.Debug.CallStack[i].Line);
+          CallStackGrid.Cells[1, i + 1] := Engine.DebugLink.CallStack[i].FileName;
+          CallStackGrid.Cells[2, i + 1] := IntToStr(Engine.DebugLink.CallStack[i].Line);
         end;
       finally
       end;

@@ -53,7 +53,7 @@ uses
   PHPUtils, mneSetups, mneSettings,
   EditorClasses, gdbClasses,
   mneCompileProjectOptions, mneManageRecentsForms, mneTendencyOptions,
-  mneCSVForms, mnUtils;
+  mneCSVForms, mnUtils, mnConnections;
 
 {$R *.res}
 

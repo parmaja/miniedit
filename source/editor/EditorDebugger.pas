@@ -145,7 +145,7 @@ type
 
   TEditorDebugLink = class(TComponent) //to use Notification :P
   private
-    procedure SetExecutedExit(const AValue: TCustomSynEdit);
+    procedure SetExecutedControl(const AValue: TCustomSynEdit);
   public
     FExecutedLine: Integer;
     FExecutedControl: TCustomSynEdit;
@@ -155,8 +155,10 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    property ExecutedLine: Integer read FExecutedLine write FExecutedLine;
-    property ExecutedControl: TCustomSynEdit read FExecutedControl write SetExecutedExit;
+    procedure SetExecutedLine(Key: string; Edit: TCustomSynEdit; const Line: Integer; vCallStack: TCallStackItems = nil);
+    procedure SetExecutedLine(Key: string; FileName: string; const Line: Integer; vCallStack: TCallStackItems = nil);
+    property ExecutedLine: Integer read FExecutedLine;// write FExecutedLine;
+    property ExecutedControl: TCustomSynEdit read FExecutedControl write SetExecutedControl;
     property CallStack: TCallStackItems read FCallStack;
   end;
 
@@ -167,14 +169,10 @@ type
     FBreakpoints: TEditorBreakPoints;
     FWatches: TEditorWatches;
     FKey: string;
-    FLink: TEditorDebugLink;
-    function GetCallStack: TCallStackItems;
-    function GetExecutedControl: TCustomSynEdit;
-    function GetExecutedLine: Integer;
+    //FLink: TEditorDebugLink;
     function GetActive: Boolean;
     function GetRunning: boolean;
     procedure SetActive(AValue: boolean);
-    procedure SetExecutedControl(const AValue: TCustomSynEdit);
   protected
     function GetCaption: string; virtual;
     function CreateBreakPoints: TEditorBreakPoints; virtual; abstract;
@@ -193,15 +191,9 @@ type
     procedure Action(AAction: TDebugAction); virtual; abstract;
     function GetKey: string; virtual;
 
-    property ExecutedLine: Integer read GetExecutedLine;
-    property ExecutedControl: TCustomSynEdit read GetExecutedControl write SetExecutedControl;
-    property CallStack: TCallStackItems read GetCallStack;
-
     property Active: boolean read GetActive write SetActive;
     property Running: boolean read GetRunning;
 
-    procedure SetExecutedLine(Key: string; Edit: TCustomSynEdit; const Line: Integer; vCallStack: TCallStackItems); overload;
-    procedure SetExecutedLine(Key: string; FileName: string; const Line: Integer; vCallStack: TCallStackItems); overload;
     property Breakpoints: TEditorBreakPoints read FBreakpoints;
     property Watches: TEditorWatches read FWatches;
   end;
@@ -264,25 +256,17 @@ begin
     Action(dbaStopServer);
 end;
 
-procedure TEditorDebugger.SetExecutedControl(const AValue: TCustomSynEdit);
-begin
-  FLink.ExecutedControl := AValue;
-end;
-
 constructor TEditorDebugger.Create;
 begin
   inherited;
-  FLink := TEditorDebugLink.Create(nil);
   FBreakpoints := CreateBreakPoints;
   FWatches := CreateWatches;
 end;
 
 destructor TEditorDebugger.Destroy;
 begin
-  FLink.ExecutedControl := nil;//just for safe free
   FreeAndNil(FBreakpoints);
   FreeAndNil(FWatches);
-  FreeAndNil(FLink);
   inherited;
 end;
 
@@ -306,49 +290,34 @@ begin
   Result := dbsActive in GetState;
 end;
 
-function TEditorDebugger.GetExecutedControl: TCustomSynEdit;
-begin
-  Result := FLink.ExecutedControl;
-end;
-
-function TEditorDebugger.GetCallStack: TCallStackItems;
-begin
-  Result := FLink.CallStack;
-end;
-
-function TEditorDebugger.GetExecutedLine: Integer;
-begin
-  Result := FLink.ExecutedLine;
-end;
-
 function TEditorDebugger.GetKey: string;
 begin
   Result := FKey;
 end;
 
-procedure TEditorDebugger.SetExecutedLine(Key: string; Edit: TCustomSynEdit; const Line: Integer; vCallStack: TCallStackItems);
+procedure TEditorDebugLink.SetExecutedLine(Key: string; Edit: TCustomSynEdit; const Line: Integer; vCallStack: TCallStackItems);
 var
   OldLine: Integer;
   OldEdit: TCustomSynEdit;
 begin
-  FKey := Key;
-  if (FLink.ExecutedControl <> Edit) or (FLink.ExecutedLine <> Line) then
+//  FKey := Key;
+  if (ExecutedControl <> Edit) or (ExecutedLine <> Line) then
   begin
-    OldLine := FLink.ExecutedLine;
-    OldEdit := FLink.ExecutedControl;
+    OldLine := ExecutedLine;
+    OldEdit := ExecutedControl;
 
-    FLink.ExecutedLine := Line;
-    FLink.ExecutedControl := Edit;
-    FLink.CallStack.AssignFrom(vCallStack);
+    FExecutedLine := Line;
+    ExecutedControl := Edit;
+    CallStack.AssignFrom(vCallStack);
 
     if OldEdit <> nil then
       OldEdit.InvalidateLine(OldLine);
 
     if ExecutedControl <> nil then
     begin
-      ExecutedControl.CaretY := FLink.ExecutedLine;
+      ExecutedControl.CaretY := ExecutedLine;
       ExecutedControl.CaretX := 1;
-      ExecutedControl.InvalidateLine(FLink.ExecutedLine);
+      ExecutedControl.InvalidateLine(ExecutedLine);
     end;
     if Line >= 0 then
       Engine.UpdateState([ecsDebug, ecsShow])
@@ -365,7 +334,7 @@ begin
   end;
 end;
 
-procedure TEditorDebugger.SetExecutedLine(Key: string; FileName: string; const Line: Integer; vCallStack: TCallStackItems);
+procedure TEditorDebugLink.SetExecutedLine(Key: string; FileName: string; const Line: Integer; vCallStack: TCallStackItems);
 var
   aFile: TEditorFile;
 begin
@@ -379,7 +348,7 @@ begin
     SetExecutedLine(Key, nil, -1, vCallStack);
 end;
 
-procedure TEditorDebugLink.SetExecutedExit(const AValue: TCustomSynEdit);
+procedure TEditorDebugLink.SetExecutedControl(const AValue: TCustomSynEdit);
 begin
   if FExecutedControl <> AValue then
   begin

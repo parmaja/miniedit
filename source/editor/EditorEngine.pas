@@ -108,7 +108,6 @@ type
     procedure Add(Name:string; ImageIndex: Integer = -1);
   end;
 
-
   TEditorDesktopFile = class(TCollectionItem)
   private
     FFileName: string;
@@ -1030,6 +1029,7 @@ type
 
   TEditorEngine = class(TObject)
   private
+    FDebugLink: TEditorDebugLink;
     FDefaultSCM: TEditorSCM;
     //FInternalTendency used only there is no any default Tendency defined, it is mean simple editor without any project type
     FInternalTendency: TDefaultTendency;
@@ -1120,6 +1120,7 @@ type
     //BrowseFolder: Current folder
     property BrowseFolder: string read FBrowseFolder write SetBrowseFolder;
     procedure SetDefaultSCM(vName: string);
+    property DebugLink: TEditorDebugLink read FDebugLink;
     property Tendency: TEditorTendency read GetTendency;
     property InternalTendency: TDefaultTendency read FInternalTendency;
     property DefaultSCM: TEditorSCM read FDefaultSCM write SetDefaultSCM;
@@ -1674,9 +1675,9 @@ procedure TTextEditorFile.DoSpecialLineMarkup(Sender: TObject; Line: integer; va
 var
   aColor: TColor;
 begin
-  if (Tendency.Debug <> nil) and (Tendency.Debug.ExecutedControl = Sender) then
+  if (Engine.DebugLink.ExecutedControl = Sender) then
   begin
-    if Tendency.Debug.ExecutedLine = Line then
+    if Engine.DebugLink.ExecutedLine = Line then
     begin
       Special := True;
       aColor := Engine.Options.Profile.Attributes.Default.Background;
@@ -2495,6 +2496,7 @@ begin
   FSourceManagements := TSourceManagements.Create(True);
   FSearchEngine := TSynEditSearch.Create;
   FFiles := TEditorFiles.Create(TEditorFile);
+  FDebugLink := TEditorDebugLink.Create(nil);
   FSession := TEditorSession.Create;
   Extenstion := 'mne-project';
   //Tendencies.Add(FInternalTendency); //removed problem when finding tendency depend on extension
@@ -2505,6 +2507,7 @@ begin
   SetNotifyEngine(nil);
   if not FIsEngineShutdown then
     Shutdown;
+  FreeAndNil(FDebugLink);
   FreeAndNil(FFiles);
   FreeAndNil(FSession);
   FreeAndNil(FCategories);
@@ -4900,8 +4903,8 @@ begin
       Engine.Tendency.Debug.Unlock;
     end;
 
-    if (Engine.Tendency.Debug.ExecutedControl = SynEdit) and (Engine.Tendency.Debug.ExecutedLine >= 0) then
-      DrawIndicator(Engine.Tendency.Debug.ExecutedLine, DEBUG_IMAGE_EXECUTE);
+    if (Engine.DebugLink.ExecutedControl = SynEdit) and (Engine.DebugLink.ExecutedLine >= 0) then
+      DrawIndicator(Engine.DebugLink.ExecutedLine, DEBUG_IMAGE_EXECUTE);
   end;
 end;
 

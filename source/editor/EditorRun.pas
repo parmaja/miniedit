@@ -57,6 +57,7 @@ type
   protected
     procedure CreateControl;
     procedure CreateConsole(AInfo: TmneCommandInfo);
+    procedure Attach; //To Sync
   public
     Info: TmneCommandInfo;
     Status: integer;
@@ -326,6 +327,15 @@ begin
   WriteMessage('Done', True);
 end;
 
+procedure TmneRunItem.Attach;
+begin
+  if Engine.Tendency.Debug <> nil then
+  begin
+    Engine.Tendency.Debug.Start;
+    Engine.Tendency.Debug.Attach(Process, True);
+  end;
+end;
+
 procedure TmneRunItem.InternalWrite;
 begin
   if Assigned(FOnWrite) then
@@ -362,14 +372,12 @@ begin
     begin
       if Info.DebugIt then
       begin
-        if Engine.Tendency.Debug <> nil then
-          Engine.Tendency.Debug.Start;
         Info.Command := Info.GetCommandLine;
-        Info.Suspended := True;
         Info.Params := '';
+        Info.Suspended := True;
         CreateConsole(Info);
-        if Engine.Tendency.Debug <> nil then
-          Engine.Tendency.Debug.Attach(Process, True);
+        FPool.Synchronize(@Attach);
+        Process.Resume;
       end
       else
       begin
