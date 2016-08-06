@@ -20,7 +20,7 @@ uses
   SynHighlighterHashEntries, EditorProfiles, SynHighlighterCSS,
   SynHighlighterSQL, SynHighlighterXML, SynHighlighterJScript,
   SynHighlighterXHTML, SynHighlighterMultiProc, HTMLProcessor, EditorDebugger,
-  EditorClasses, PHP_xDebug, mneClasses, EditorRun,
+  EditorClasses, dbgpServers, mneClasses, EditorRun,
   mnePHPProjectFrames;
 
 type

@@ -20,7 +20,7 @@ uses
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   LazFileUtils, SynHighlighterPython, EditorDebugger, EditorClasses, mneClasses,
-  mneCompileProjectOptions, EditorRun, mneConsoleClasses,
+  mneCompileProjectOptions, EditorRun, mneConsoleClasses, dbgpServers,
   mneConsoleForms;
 
 type
