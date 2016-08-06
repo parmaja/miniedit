@@ -441,38 +441,13 @@ type
     procedure Stop; override;
     procedure Action(AAction: TDebugAction); override;
     function GetState: TDebugStates; override;
-    procedure Lock; override;
-    procedure Unlock; override;
     function GetKey: string; override;
   end;
-
-  { TdbgpManager }
-
-  TdbgpManager = class(TObject)
-  private
-   public
-    Lock: TCriticalSection;
-    Event: TEvent;
-    constructor Create;
-    destructor Destroy; override;
-  end;
-
-function DBGP: TdbgpManager;
 
 implementation
 
 uses
   EditorEngine;
-
-var
-  FDBGP: TdbgpManager = nil;
-
-function DBGP: TdbgpManager;
-begin
-  if FDBGP = nil then
-    FDBGP := TdbgpManager.Create;
-  Result := FDBGP;
-end;
 
 { TdbgpCommandSet }
 
@@ -525,22 +500,6 @@ function TdbgpFeatureSet.GetCommand: string;
 begin
   // 'feature_set -n show_hidden -v 1';
   Result := 'feature_set -n ' + FName + ' -v '+ FValue;
-end;
-
-{ TdbgpManager }
-
-constructor TdbgpManager.Create;
-begin
-  inherited;
-  Lock := TCriticalSection.Create;
-  Event := TEvent.Create(nil, False, False, '');
-end;
-
-destructor TdbgpManager.Destroy;
-begin
-  FreeAndNil(Event);
-  FreeAndNil(Lock);
-  inherited;
 end;
 
 constructor TdbgpServer.Create;
@@ -768,10 +727,10 @@ begin
   if FLocalSpool.Count = 0 then
   begin
     InterLockedIncrement(Server.FRunCount);
-    DBGP.Event.WaitFor(INFINITE); //wait the ide to make resume
+    DebugManager.Event.WaitFor(INFINITE); //wait the ide to make resume
     InterLockedDecrement(Server.FRunCount);
 
-    DBGP.Lock.Enter;
+    DebugManager.Lock.Enter;
     try
       i := 0;
       while i < Server.Spool.Count do
@@ -783,7 +742,7 @@ begin
         //        inc(i);
       end;
     finally
-      DBGP.Lock.Leave;
+      DebugManager.Lock.Leave;
     end;
   end;
   Result := nil;
@@ -839,7 +798,7 @@ end;
 procedure TdbgpConnection.Stop;
 begin
   inherited;
-  DBGP.Event.SetEvent;
+  DebugManager.Event.SetEvent;
 end;
 
 { TmnDBGListener }
@@ -971,7 +930,7 @@ end;
 
 procedure TdbgpServer.Resume;
 begin
-  DBGP.Event.SetEvent;
+  DebugManager.Event.SetEvent;
 end;
 
 { TdbgpInit }
@@ -989,12 +948,12 @@ end;
 
 procedure TdbgpInit.Execute(Respond: TdbgpRespond);
 begin
-  DBGP.Lock.Enter;
+  DebugManager.Lock.Enter;
   try
     Connection.Server.Watches.Clean;
     Connection.FKey := Respond.Root.Attributes['idekey'];
   finally
-    DBGP.Lock.Leave;
+    DebugManager.Lock.Leave;
   end;
 end;
 
@@ -1015,7 +974,7 @@ var
   i: Integer;
 begin
 (*
-  <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="http://xdebug.org/dbgp/xdebug" command="stack_get" transaction_id="8">
+  <response xmlns="urn:debugger_protocol_v1" xmlns:xdebug="http://xdebug.org/DebugManager/xdebug" command="stack_get" transaction_id="8">
   <stack where="App-&gt;__construct" level="0" type="file" filename="file:///W:/web/sites/abrash.com/websale/fw/core/ui/app.php" lineno="200"></stack>
   <stack where="{main}" level="1" type="file" filename="file:///W:/web/sites/abrash.com/websale/index.php" lineno="8"></stack>
   </response>
@@ -1126,20 +1085,20 @@ end;
 
 procedure TdbgpWatches.AddWatch(Name: string);
 begin
-  DBGP.Lock.Enter;
+  DebugManager.Lock.Enter;
   try
     Add(Name, '');
   finally
-    DBGP.Lock.Leave;
+    DebugManager.Lock.Leave;
   end;
   if Server.IsRuning then
   begin
-    DBGP.Lock.Enter;
+    DebugManager.Lock.Enter;
     try
       Server.Spool.Add(TdbgpGetWatches.Create);
       Server.Spool.Add(TdbgpGetCurrent.Create);
     finally
-      DBGP.Lock.Leave;
+      DebugManager.Lock.Leave;
     end;
     Server.Resume;
   end;
@@ -1195,12 +1154,12 @@ begin
   end;
   if Server.IsRuning then
   begin
-    DBGP.Lock.Enter;
+    DebugManager.Lock.Enter;
     try
       Server.Spool.Add(TdbgpGetWatches.Create);
       Server.Spool.Add(TdbgpGetCurrent.Create);
     finally
-      DBGP.Lock.Leave;
+      DebugManager.Lock.Leave;
     end;
     Server.Resume;
   end;
@@ -1214,12 +1173,12 @@ end;
 
 procedure TdbgpGetWatch.Execute(Respond: TdbgpRespond);
 begin
-  DBGP.Lock.Enter;
+  DebugManager.Lock.Enter;
   try
     Connection.Server.Watches[Index].Info.Value := Info.Value;
     Connection.Server.Watches[Index].Info.VarType := Info.VarType;
   finally
-    DBGP.Lock.Leave;
+    DebugManager.Lock.Leave;
   end;
 end;
 
@@ -1308,35 +1267,35 @@ end;
 
 function TdbgpGetWatches.Stay: boolean;
 begin
-  DBGP.Lock.Enter;
+  DebugManager.Lock.Enter;
   try
     Inc(Current);
     Result := Current < Connection.Server.Watches.Count;
   finally
-    DBGP.Lock.Leave;
+    DebugManager.Lock.Leave;
   end;
 end;
 
 procedure TdbgpGetWatches.Execute(Respond: TdbgpRespond);
 begin
-  DBGP.Lock.Enter;
+  DebugManager.Lock.Enter;
   try
     Connection.Server.Watches[Current].Info.Value := Info.Value;
     Connection.Server.Watches[Current].Info.VarType := Info.VarType;
   finally
-    DBGP.Lock.Leave;
+    DebugManager.Lock.Leave;
   end;
 end;
 
 function TdbgpGetWatches.Enabled: boolean;
 begin
-  DBGP.Lock.Enter;
+  DebugManager.Lock.Enter;
   try
     Result := Current < Connection.Server.Watches.Count;
     if Result then
       Info.Name := Connection.Server.Watches[Current].Info.Name;
   finally
-    DBGP.Lock.Leave;
+    DebugManager.Lock.Leave;
   end;
 end;
 
@@ -1344,7 +1303,7 @@ end;
 
 function TdbgpSetBreakpoints.Enabled: boolean;
 begin
-  DBGP.Lock.Enter;
+  DebugManager.Lock.Enter;
   try
     Result := Current < Connection.Server.Breakpoints.Count;
     if Result then
@@ -1353,19 +1312,19 @@ begin
       FileLine := Connection.Server.Breakpoints[Current].Line;
     end;
   finally
-    DBGP.Lock.Leave;
+    DebugManager.Lock.Leave;
   end;
 end;
 
 function TdbgpSetBreakpoints.Stay: boolean;
 begin
-  DBGP.Lock.Enter;
+  DebugManager.Lock.Enter;
   try
     Connection.Server.Breakpoints[Current].ID := BreakpointID;
     Inc(Current);
     Result := Current < Connection.Server.Breakpoints.Count;
   finally
-    DBGP.Lock.Leave;
+    DebugManager.Lock.Leave;
   end;
 end;
 
@@ -1435,11 +1394,11 @@ end;
 
 procedure TdbgpServer.AddAction(Action: TdbgpAction);
 begin
-  DBGP.Lock.Enter;
+  DebugManager.Lock.Enter;
   try
     Spool.Add(Action);
   finally
-    DBGP.Lock.Leave;
+    DebugManager.Lock.Leave;
   end;
 end;
 
@@ -1450,31 +1409,31 @@ end;
 
 procedure TdbgpServer.RemoveAction(Action: TdbgpAction);
 begin
-  DBGP.Lock.Enter;
+  DebugManager.Lock.Enter;
   try
     Spool.Remove(Action);
   finally
-    DBGP.Lock.Leave;
+    DebugManager.Lock.Leave;
   end;
 end;
 
 procedure TdbgpServer.ExtractAction(Action: TdbgpAction);
 begin
-  DBGP.Lock.Enter;
+  DebugManager.Lock.Enter;
   try
     Spool.Extract(Action);
   finally
-    DBGP.Lock.Leave;
+    DebugManager.Lock.Leave;
   end;
 end;
 
 procedure TdbgpServer.Clear;
 begin
-  DBGP.Lock.Enter;
+  DebugManager.Lock.Enter;
   try
     Spool.Clear;
   finally
-    DBGP.Lock.Leave;
+    DebugManager.Lock.Leave;
   end;
 end;
 
@@ -1758,23 +1717,10 @@ begin
   FServer.Resume;
 end;
 
-procedure TdbgpDebug.Lock;
-begin
-  DBGP.Lock.Enter;
-end;
-
-procedure TdbgpDebug.Unlock;
-begin
-  DBGP.Lock.Leave;
-end;
-
 function TdbgpDebug.GetKey: string;
 begin
   Result := FServer.Key;
 end;
 
-initialization
-finalization
-  FreeAndNil(FDBGP);
 end.
 

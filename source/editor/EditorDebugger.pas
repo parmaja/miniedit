@@ -12,7 +12,7 @@ unit EditorDebugger;
 interface
 
 uses
-  SysUtils, Forms, Variants, Classes, Controls, Graphics, Contnrs,
+  SysUtils, Forms, Variants, Classes, Controls, Graphics, Contnrs, SyncObjs,
   SynEdit, process, mnClasses,
   EditorClasses;
 
@@ -185,8 +185,8 @@ type
     procedure Attach(SubProcess: TProcess; Resume: Boolean); virtual;
     procedure Stop; virtual;
 
-    procedure Lock; virtual; abstract;
-    procedure Unlock; virtual; abstract;
+    procedure Lock; virtual;
+    procedure Unlock; virtual;
     function GetState: TDebugStates; virtual; abstract;
     procedure Action(AAction: TDebugAction); virtual; abstract;
     function GetKey: string; virtual;
@@ -198,10 +198,50 @@ type
     property Watches: TEditorWatches read FWatches;
   end;
 
+
+  { TDebugManager }
+
+  TDebugManager = class(TObject)
+  private
+   public
+    Lock: TCriticalSection;
+    Event: TEvent;
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+function DebugManager: TDebugManager;
+
 implementation
 
 uses
   EditorEngine;
+
+var
+  FDebugManager: TDebugManager = nil;
+
+function DebugManager: TDebugManager;
+begin
+  if FDebugManager = nil then
+    FDebugManager := TDebugManager.Create;
+  Result := FDebugManager;
+end;
+
+{ TDebugManager }
+
+constructor TDebugManager.Create;
+begin
+  inherited;
+  Lock := TCriticalSection.Create;
+  Event := TEvent.Create(nil, False, False, '');
+end;
+
+destructor TDebugManager.Destroy;
+begin
+  FreeAndNil(Event);
+  FreeAndNil(Lock);
+  inherited;
+end;
 
 { TmneRunInfo }
 
@@ -283,6 +323,16 @@ end;
 procedure TEditorDebugger.Stop;
 begin
 
+end;
+
+procedure TEditorDebugger.Lock;
+begin
+  DebugManager.Lock.Enter;
+end;
+
+procedure TEditorDebugger.Unlock;
+begin
+  DebugManager.Lock.Leave
 end;
 
 function TEditorDebugger.GetActive: Boolean;
@@ -383,5 +433,9 @@ begin
   inherited Destroy;
 end;
 
+
+initialization
+finalization
+  FreeAndNil(FDebugManager);
 end.
 
