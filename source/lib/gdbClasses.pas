@@ -25,7 +25,7 @@ next
 interface
 
 uses
-  Classes, SysUtils, mnClasses, process, EditorEngine, EditorDebugger;
+  Classes, SysUtils, mnClasses, process, ConsoleProcess, EditorEngine, EditorDebugger;
 
 type
   TGDBDebug = class;
@@ -106,9 +106,11 @@ type
   TGDBDebug = class(TEditorDebugger)
   protected
     FGDBProcess: TProcess;
+    FConsoleThread: TmnConsoleThread;
     function CreateBreakPoints: TEditorBreakPoints; override;
     function CreateWatches: TEditorWatches; override;
-    function ReadProcess: string;
+    //function ReadProcess: string;
+    procedure ReceiveProcess(S: ansistring);
     procedure WriteProcess(S: ansistring);
     property GDBProcess: TProcess read FGDBProcess;
   public
@@ -321,7 +323,12 @@ begin
   (Result as TGDBWatches).FDebug := Self;
 end;
 
-function TGDBDebug.ReadProcess: string;
+procedure TGDBDebug.ReceiveProcess(S: ansistring);
+begin
+  Engine.SendOutout(S);
+end;
+
+{function TGDBDebug.ReadProcess: string;
 var
   C: DWORD;
   S: string;
@@ -351,49 +358,61 @@ begin
 //  Process.WaitOnExit;
 //  Result := Process.ExitStatus;
 //  Process.Terminate(0);
-end;
+end;}
 
 procedure TGDBDebug.WriteProcess(S: ansistring);
 begin
   S := S+#13#10;
   Engine.SendOutout(S);
-  //Engine.SendOutout(ReadProcess);
   FGDBProcess.Input.WriteBuffer(S[1], Length(S));
-  Engine.SendOutout(ReadProcess);
 end;
 
 procedure TGDBDebug.Start;
 begin
-  FGDBProcess := TProcess.Create(nil);
-  FGDBProcess.ConsoleTitle := 'GDB';
-  FGDBProcess.Executable := 'GDB.exe';
-  FGDBProcess.Parameters.Add('--silent');
-  FGDBProcess.Parameters.Add('test-pas.exe');
-  FGDBProcess.CurrentDirectory := 'M:/home/pascal/projects/miniEdit/test';
-  FGDBProcess.InheritHandles := True;
-  FGDBProcess.Options :=  [poUsePipes, poStderrToOutPut];
-  FGDBProcess.ShowWindow := swoHIDE;
-  FGDBProcess.PipeBufferSize := 80;
-  FGDBProcess.Execute;
-  Engine.SendOutout(ReadProcess);
-  //WriteProcess('set verbose off');
-  WriteProcess('set confirm off');
+  if FGDBProcess = nil then
+  begin
+    FGDBProcess := TProcess.Create(nil);
+    FGDBProcess.ConsoleTitle := 'GDB';
+    FGDBProcess.Executable := 'GDB.exe';
+    FGDBProcess.Parameters.Add('--silent');
+  //  FGDBProcess.Parameters.Add('test-pas.exe');
+    FGDBProcess.CurrentDirectory := ExtractFilePath(ParamStr(0));
+    FGDBProcess.InheritHandles := True;
+    FGDBProcess.Options :=  [poUsePipes, poStderrToOutPut];
+    FGDBProcess.ShowWindow := swoHIDE;
+    FGDBProcess.PipeBufferSize := 80;
 
-  //WriteProcess('attach '+ IntToStr(SubProcess.ProcessID));
-  WriteProcess('directory '+ FGDBProcess.CurrentDirectory);
-  WriteProcess('break test-pas.pas:8');
-  WriteProcess('run');
+    FConsoleThread := TmnConsoleThread.Create(FGDBProcess, @ReceiveProcess);
+    FConsoleThread.FreeOnTerminate := False;
+
+
+    FGDBProcess.Execute;
+    FConsoleThread.Start;
+
+
+  //  WriteProcess('set new-console on');
+    WriteProcess('set prompt gdb:');
+    //Engine.SendOutout(ReadProcess);
+    //WriteProcess('set verbose off');
+    WriteProcess('set confirm off');
+
+    //WriteProcess('attach '+ IntToStr(SubProcess.ProcessID));
+    {WriteProcess('directory '+ FGDBProcess.CurrentDirectory);
+    WriteProcess('break test-pas.pas:8');
+    WriteProcess('run');}
+  end;
 end;
 
 procedure TGDBDebug.Attach(SubProcess: TProcess; Resume: Boolean);
 begin
   //WriteProcess('help');
   //WriteProcess('set new-console on
+  WriteProcess('cd '+ SubProcess.CurrentDirectory);
   WriteProcess('attach '+ IntToStr(SubProcess.ProcessID));
   WriteProcess('directory '+ SubProcess.CurrentDirectory);
-  WriteProcess('break test-pas.pas:1');
-  SubProcess.Resume;
-  WriteProcess('run');
+  WriteProcess('break test-pas.pas:8');
+  //WriteProcess('continue');
+  //WriteProcess('run');
   //SubProcess.ProcessID
 end;
 
@@ -401,9 +420,12 @@ procedure TGDBDebug.Stop;
 begin
   if GDBProcess <> nil then
   begin
+    WriteProcess('kill');
     WriteProcess('q');
     GDBProcess.WaitOnExit;
     FreeAndNil(FGDBProcess);
+    FConsoleThread.Terminate;
+    FreeAndNil(FConsoleThread);
   end;
 end;
 
