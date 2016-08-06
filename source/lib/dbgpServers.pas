@@ -385,13 +385,13 @@ type
   published
   end;
 
-  TPHPDebug = class;
+  TdbgpDebug = class;
 
-  { TPHPDebugBreakPoints }
+  { TdbgpDebugBreakPoints }
 
-  TPHPDebugBreakPoints = class(TEditorBreakPoints)
+  TdbgpDebugBreakPoints = class(TEditorBreakPoints)
   protected
-    FDebug: TPHPDebug;
+    FDebug: TdbgpDebug;
     function GetCount: integer; override;
     function GetItems(Index: integer): TDebugBreakpointInfo; override;
   public
@@ -403,11 +403,11 @@ type
     procedure Remove(Handle: integer); override; overload;
   end;
 
-  { TPHPDebugWatches }
+  { TdbgpDebugWatches }
 
-  TPHPDebugWatches = class(TEditorWatches)
+  TdbgpDebugWatches = class(TEditorWatches)
   protected
-    FDebug: TPHPDebug;
+    FDebug: TdbgpDebug;
     function GetCount: integer; override;
     function GetItems(Index: integer): TDebugWatchInfo; override;
   public
@@ -417,9 +417,9 @@ type
     function GetValue(vName: string; out vValue: Variant; out vType: string; EvalIt: Boolean): boolean; override;
   end;
 
-  { TPHPDebug }
+  { TdbgpDebug }
 
-  TPHPDebug = class(TEditorDebugger)
+  TdbgpDebug = class(TEditorDebugger)
   private
     FServer: TdbgpServer;
   protected
@@ -1519,15 +1519,15 @@ begin
   end;
 end;
 
-{ TPHPDebugWatches }
+{ TdbgpDebugWatches }
 
-function TPHPDebugWatches.GetCount: integer;
+function TdbgpDebugWatches.GetCount: integer;
 begin
   with FDebug.FServer do
     Result := Watches.Count;
 end;
 
-function TPHPDebugWatches.GetItems(Index: integer): TDebugWatchInfo;
+function TdbgpDebugWatches.GetItems(Index: integer): TDebugWatchInfo;
 var
   aWt: TdbgpWatch;
 begin
@@ -1536,25 +1536,25 @@ begin
   Result:= aWt.Info;
 end;
 
-procedure TPHPDebugWatches.Clear;
+procedure TdbgpDebugWatches.Clear;
 begin
   with FDebug.FServer do
     Watches.Clear;
 end;
 
-procedure TPHPDebugWatches.Add(vName: string);
+procedure TdbgpDebugWatches.Add(vName: string);
 begin
   with FDebug.FServer do
     Watches.AddWatch(vName);
 end;
 
-procedure TPHPDebugWatches.Remove(vName: string);
+procedure TdbgpDebugWatches.Remove(vName: string);
 begin
   with FDebug.FServer do
     Watches.RemoveWatch(vName);
 end;
 
-function TPHPDebugWatches.GetValue(vName: string; out vValue: Variant; out vType: string; EvalIt: Boolean): boolean;
+function TdbgpDebugWatches.GetValue(vName: string; out vValue: Variant; out vType: string; EvalIt: Boolean): boolean;
 var
   aAction: TdbgpCustomGet;
 begin
@@ -1585,15 +1585,15 @@ begin
   end;
 end;
 
-{ TPHPDebugBreakPoints }
+{ TdbgpDebugBreakPoints }
 
-function TPHPDebugBreakPoints.GetCount: integer;
+function TdbgpDebugBreakPoints.GetCount: integer;
 begin
   with FDebug.FServer do
     Result := Breakpoints.Count;
 end;
 
-function TPHPDebugBreakPoints.GetItems(Index: integer): TDebugBreakpointInfo;
+function TdbgpDebugBreakPoints.GetItems(Index: integer): TDebugBreakpointInfo;
 var
   aBP: TdbgpBreakpoint;
 begin
@@ -1604,31 +1604,31 @@ begin
   Result.Line := aBP.Line;
 end;
 
-procedure TPHPDebugBreakPoints.Clear;
+procedure TdbgpDebugBreakPoints.Clear;
 begin
   with FDebug.FServer do
     Breakpoints.Clear;
 end;
 
-procedure TPHPDebugBreakPoints.Toggle(FileName: string; LineNo: integer);
+procedure TdbgpDebugBreakPoints.Toggle(FileName: string; LineNo: integer);
 begin
   with FDebug.FServer do
     Breakpoints.Toggle(FileName, LineNo);
 end;
 
-function TPHPDebugBreakPoints.IsExists(FileName: string; LineNo: integer): boolean;
+function TdbgpDebugBreakPoints.IsExists(FileName: string; LineNo: integer): boolean;
 begin
   with FDebug.FServer do
     Result := Breakpoints.Find(FileName, LineNo) <> nil;
 end;
 
-procedure TPHPDebugBreakPoints.Add(FileName: string; LineNo: integer);
+procedure TdbgpDebugBreakPoints.Add(FileName: string; LineNo: integer);
 begin
   with FDebug.FServer do
     Breakpoints.Add(FileName, LineNo);
 end;
 
-procedure TPHPDebugBreakPoints.Remove(FileName: string; Line: integer);
+procedure TdbgpDebugBreakPoints.Remove(FileName: string; Line: integer);
 var
   aBP: TdbgpBreakpoint;
 begin
@@ -1639,32 +1639,32 @@ begin
       Breakpoints.Remove(aBP);
 end;
 
-procedure TPHPDebugBreakPoints.Remove(Handle: integer);
+procedure TdbgpDebugBreakPoints.Remove(Handle: integer);
 begin
   with FDebug.FServer do
     Breakpoints.Remove(Handle);
 end;
 
-{ TPHPDebug }
+{ TdbgpDebug }
 
-function TPHPDebug.CreateBreakPoints: TEditorBreakPoints;
+function TdbgpDebug.CreateBreakPoints: TEditorBreakPoints;
 begin
-  Result := TPHPDebugBreakPoints.Create;
-  (Result as TPHPDebugBreakPoints).FDebug := Self;
+  Result := TdbgpDebugBreakPoints.Create;
+  (Result as TdbgpDebugBreakPoints).FDebug := Self;
 end;
 
-function TPHPDebug.CreateWatches: TEditorWatches;
+function TdbgpDebug.CreateWatches: TEditorWatches;
 begin
-  Result := TPHPDebugWatches.Create;
-  (Result as TPHPDebugWatches).FDebug := Self;
+  Result := TdbgpDebugWatches.Create;
+  (Result as TdbgpDebugWatches).FDebug := Self;
 end;
 
-procedure TPHPDebug.DoShowFile(const Key, FileName: string; Line: integer; vCallStack: TCallStackItems);
+procedure TdbgpDebug.DoShowFile(const Key, FileName: string; Line: integer; vCallStack: TCallStackItems);
 begin
   SetExecutedLine(Key, FileName, Line, vCallStack);
 end;
 
-constructor TPHPDebug.Create;
+constructor TdbgpDebug.Create;
 begin
   inherited Create;
   FServer := TdbgpServer.Create;
@@ -1672,14 +1672,14 @@ begin
   DBGP.OnShowFile := @DoShowFile;
 end;
 
-destructor TPHPDebug.Destroy;
+destructor TdbgpDebug.Destroy;
 begin
   DBGP.OnShowFile := nil;
   FreeAndNil(FServer);
   inherited;
 end;
 
-procedure TPHPDebug.Action(AAction: TDebugAction);
+procedure TdbgpDebug.Action(AAction: TDebugAction);
 begin
     case AAction of
     dbaStartServer: Start;
@@ -1693,7 +1693,7 @@ begin
   end;
 end;
 
-function TPHPDebug.GetState: TDebugStates;
+function TdbgpDebug.GetState: TDebugStates;
 begin
   Result := [];
   if FServer.Active then
@@ -1702,13 +1702,13 @@ begin
     Result := Result + [dbsRunning];
 end;
 
-procedure TPHPDebug.Start;
+procedure TdbgpDebug.Start;
 begin
   inherited;
   FServer.Start;
 end;
 
-procedure TPHPDebug.Stop;
+procedure TdbgpDebug.Stop;
 var
   aAction: TdbgpDetach;
 begin
@@ -1727,7 +1727,7 @@ begin
   FServer.Stop;
 end;
 
-procedure TPHPDebug.Reset;
+procedure TdbgpDebug.Reset;
 begin
   FServer.Clear; //no need to any exists actions
   FServer.AddAction(TdbgpStop.Create);
@@ -1735,14 +1735,14 @@ begin
   FServer.Resume;
 end;
 
-procedure TPHPDebug.Resume;
+procedure TdbgpDebug.Resume;
 begin
   FServer.AddAction(TdbgpDetach.Create);
   FServer.AddAction(TdbgpGetCurrent.Create);
   FServer.Resume;
 end;
 
-procedure TPHPDebug.StepInto;
+procedure TdbgpDebug.StepInto;
 begin
   FServer.AddAction(TdbgpStepInto.Create);
   FServer.AddAction(TdbgpGetWatches.Create);
@@ -1750,7 +1750,7 @@ begin
   FServer.Resume;
 end;
 
-procedure TPHPDebug.StepOver;
+procedure TdbgpDebug.StepOver;
 begin
   FServer.AddAction(TdbgpStepOver.Create);
   FServer.AddAction(TdbgpGetWatches.Create);
@@ -1758,7 +1758,7 @@ begin
   FServer.Resume;
 end;
 
-procedure TPHPDebug.StepOut;
+procedure TdbgpDebug.StepOut;
 begin
   FServer.AddAction(TdbgpStepOut.Create);
   FServer.AddAction(TdbgpGetWatches.Create);
@@ -1766,7 +1766,7 @@ begin
   FServer.Resume;
 end;
 
-procedure TPHPDebug.Run;
+procedure TdbgpDebug.Run;
 begin
   FServer.AddAction(TdbgpRun.Create);
   FServer.AddAction(TdbgpGetWatches.Create);
@@ -1774,17 +1774,17 @@ begin
   FServer.Resume;
 end;
 
-procedure TPHPDebug.Lock;
+procedure TdbgpDebug.Lock;
 begin
   DBGP.Lock.Enter;
 end;
 
-procedure TPHPDebug.Unlock;
+procedure TdbgpDebug.Unlock;
 begin
   DBGP.Lock.Leave;
 end;
 
-function TPHPDebug.GetKey: string;
+function TdbgpDebug.GetKey: string;
 begin
   Result := FServer.Key;
 end;

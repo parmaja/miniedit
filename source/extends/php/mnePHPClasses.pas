@@ -308,7 +308,7 @@ end;
 
 function TPHPTendency.CreateDebugger: TEditorDebugger;
 begin
-  Result := TPHPDebug.Create;
+  Result := TdbgpDebug.Create;
 end;
 
 function TPHPTendency.CreateOptions: TEditorProjectOptions;

@@ -76,7 +76,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, PHP_xDebug, mnUtils, SynHighlighterMultiProc, SynEditStrConst, mnePyTendencyFrames, mnePyProjectFrames;
+  IniFiles, mnStreams, mnUtils, SynHighlighterMultiProc, SynEditStrConst, mnePyTendencyFrames, mnePyProjectFrames;
 
 { TDProject }
 
@@ -227,7 +227,7 @@ end;
 
 function TPyTendency.CreateDebugger: TEditorDebugger;
 begin
-  Result := TPHPDebug.Create;
+  Result := TdbgpDebug.Create;
 end;
 
 function TPyTendency.CreateOptions: TEditorProjectOptions;
