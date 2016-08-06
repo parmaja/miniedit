@@ -1088,6 +1088,7 @@ type
     procedure LoadOptions;
     procedure SaveOptions;
     procedure Shutdown;
+    function IsShutdown: Boolean;
 
     procedure BeginUpdate;
     procedure UpdateState(State: TEditorChangeStates);
@@ -1681,7 +1682,7 @@ begin
     begin
       Special := True;
       aColor := Engine.Options.Profile.Attributes.Default.Background;
-      Markup.Background := MixColors(aColor, clWhite, 200);
+      Markup.Background := MixColors(aColor,  OppositeColor(Engine.Options.Profile.Attributes.Default.Background), 200);
       Markup.Foreground := Engine.Options.Profile.Attributes.Default.Foreground;
     end;
   end;
@@ -2091,6 +2092,7 @@ procedure TEditorTendency.Unprepare;
 begin
   if Debug <> nil then
   begin
+    Debug.Action(dbaResume);
     Debug.Stop;
   end;
   FreeAndNil(FDebug);
@@ -3384,6 +3386,11 @@ begin
     Files.Clear;
   end;
   FIsEngineShutdown := True;
+end;
+
+function TEditorEngine.IsShutdown: Boolean;
+begin
+  Result := FIsEngineShutdown;
 end;
 
 procedure TEditorEngine.RemoveRecentProject(const FileName: string);
@@ -4879,8 +4886,8 @@ var
       aRect.Bottom := aRect.Top + lh;
       r := aRect;
       r.Right := r.Left + iw;
+      r.Bottom := r.Top + EditorResource.DebugImages.Width;
       CenterRect(r, aRect);
-      //todo center the rect by image size
       EditorResource.DebugImages.Draw(Canvas, r.Left, r.Top, ImageIndex);
     end;
   end;
