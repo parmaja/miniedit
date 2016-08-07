@@ -248,7 +248,10 @@ begin
   if rnaDebug in Info.Actions then
   begin
     aRunItem.Info.Params := aRunItem.Info.Params + '-gw'#13;
-  end;
+    aRunItem.Info.Params := aRunItem.Info.Params + '-dDebug'#13;
+  end
+  else
+    aRunItem.Info.Params := aRunItem.Info.Params + '-dRelease'#13;
 
   if rnaExecute in Info.Actions then
   begin

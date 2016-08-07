@@ -39,6 +39,7 @@ type
     constructor Create(AProcess: TProcess; AOnWriteString: TmnOnWriteString = nil);
     destructor Destroy; override;
     procedure Execute; override;
+    procedure Read; virtual;
     property OnWriteString: TmnOnWriteString read FOnWriteString write FOnWriteString;
   end;
 
@@ -151,36 +152,38 @@ begin
   inherited Destroy;
 end;
 
-procedure TmnConsoleThread.Execute;
+procedure TmnConsoleThread.Read;
 var
   C: DWORD;
-  S: string;
-  FirstTime: Boolean;
+  T, S: string;
   aBuffer: array[0..79] of AnsiChar;
 begin
-  C := 0;
-  FirstTime := True;
   aBuffer := '';
   while Process.Active do
   begin
-    FirstTime := False;
-    if Process.Output.NumBytesAvailable > 0 then
-    begin
-      C := Process.Output.Read(aBuffer, SizeOf(aBuffer));
-      if C > 0 then
+    S := '';
+    repeat
+      if (Process.Output.NumBytesAvailable > 0) then
       begin
-        SetString(S, aBuffer, C);
-        WriteString(S);
-      end;
-    end
-    //else
-      //break;
+        C := Process.Output.Read(aBuffer, SizeOf(aBuffer));
+        if C > 0 then
+        begin
+          SetString(T, aBuffer, C);
+          S := S + T;
+        end;
+      end
+      else
+        C := 0;
+    until C = 0;
+    if S <> '' then
+      WriteString(S);
   end;
-  //Result := S;
-//  Process.WaitOnExit;
-//  Result := Process.ExitStatus;
-//  Process.Terminate(0);
   WriteString('------exit--------');
+end;
+
+procedure TmnConsoleThread.Execute;
+begin
+  Read;
 end;
 
 end.

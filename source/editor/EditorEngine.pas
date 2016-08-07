@@ -299,7 +299,6 @@ type
     procedure Run(RunActions: TmneRunActions);
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); virtual;
     function CreateEditorFile(vGroup: TFileGroup): TEditorFile;
-    function CreateEditorProject: TEditorProject;
     function CreateOptions: TEditorProjectOptions; virtual;
     function GetDefaultGroup: TFileGroup; virtual;
     //OSDepended: When save to file, the filename changed depend on the os system name
@@ -414,6 +413,7 @@ type
     procedure SetRootDir(AValue: string);
     procedure SetSCM(AValue: TEditorSCM);
   protected
+    procedure RecreateOptions;
     procedure RttiCreateObject(var vObject: TObject; vInstance: TObject; vObjectClass: TClass; const vClassName, vName: string); override;
     procedure Loaded(Failed: Boolean); override;
     procedure Saving; override;
@@ -2234,11 +2234,6 @@ begin
     //Result := TTextEditorFile.Create(Engine.Files);
 end;
 
-function TEditorTendency.CreateEditorProject: TEditorProject;
-begin
-  Result := TEditorProject.Create;
-  Result.TendencyName := Name;
-end;
 
 function TEditorTendency.CreateOptions: TEditorProjectOptions;
 begin
@@ -2806,7 +2801,7 @@ begin
     vExtension := Copy(vExtension, 2, MaxInt);
 
   if Session.IsOpened then
-    Result := Session.Project.Tendency.Groups.FindExtension(vExtension);
+    Result := Tendency.Groups.FindExtension(vExtension);
 
   if Result = nil then
     Result := Groups.FindExtension(vExtension)
@@ -2826,7 +2821,7 @@ function TEditorEngine.GetTendency: TEditorTendency;
 begin
   if (Session <> nil) and (Session.Project <> nil) and (Session.Project.Tendency <> nil) then
     Result := Session.Project.Tendency
-  else if Engine.Files.Current <> nil then
+  else if (Engine.Files.Current <> nil) and (Engine.Files.Current.Tendency <> nil) then
     Result := Engine.Files.Current.Tendency
   else
     Result := FInternalTendency;
@@ -2954,7 +2949,9 @@ end;
 
 function TEditorSession.New(Tendency: TEditorTendency): TEditorProject;
 begin
-  Result := Tendency.CreateEditorProject;
+  Result := TEditorProject.Create;
+  if Tendency <> nil then
+    Result.TendencyName := Tendency.Name;
 end;
 
 procedure TEditorFiles.Next;
@@ -3266,7 +3263,8 @@ begin
       FProject := Value;
       if FProject <> nil then
       begin
-        FProject.Tendency.Prepare; //Prepare debug object and others
+        if FProject.Tendency <> nil then
+          FProject.Tendency.Prepare; //Prepare debug object and others
         if FProject.SaveDesktop then
           FProject.Desktop.Load;
       end;
@@ -4560,8 +4558,7 @@ begin
   if FTendency <> AValue then
   begin
     FTendency := AValue;
-    FOptions.Free;
-    FOptions := FTendency.CreateOptions;
+    RecreateOptions;
   end;
 end;
 
@@ -4577,6 +4574,12 @@ begin
   FreeAndNil(FSCM);
   FSCM :=AValue;
   Engine.UpdateState([ecsChanged, ecsProject]);
+end;
+
+procedure TEditorProject.RecreateOptions;
+begin
+  FOptions.Free;
+  FOptions := FTendency.CreateOptions;
 end;
 
 procedure TEditorProject.RttiCreateObject(var vObject: TObject; vInstance: TObject; vObjectClass:TClass; const vClassName, vName: string);
@@ -4955,7 +4958,7 @@ begin
     Engine.Files.SetActiveFile(Files.CurrentFile);
     Engine.BrowseFolder := Files.CurrentFolder;
 
-    if Project.Tendency.Debug <> nil then
+    if (FProject.Tendency <> nil) and (Project.Tendency.Debug <> nil) then
     begin
       Project.Tendency.Debug.Lock;
       try
@@ -4989,7 +4992,7 @@ var
 begin
   Breakpoints.Clear;
   Watches.Clear;
-  if Project.Tendency.Debug <> nil then
+  if (FProject.Tendency <> nil) and (Project.Tendency.Debug <> nil) then
   begin
     Project.Tendency.Debug.Lock;
     try

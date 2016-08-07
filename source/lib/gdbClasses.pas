@@ -325,6 +325,8 @@ end;
 
 procedure TGDBDebug.ReceiveProcess(S: ansistring);
 begin
+  //if LeftStr(S, 2) = '→→' then
+    //Engine.SendOutout('Set line to :');
   Engine.SendOutout(S);
 end;
 
@@ -374,10 +376,16 @@ begin
     FGDBProcess := TProcess.Create(nil);
     FGDBProcess.ConsoleTitle := 'GDB';
     FGDBProcess.Executable := 'GDB.exe';
-    FGDBProcess.Parameters.Add('--silent');
-  //  FGDBProcess.Parameters.Add('test-pas.exe');
+    FGDBProcess.Parameters.Add('-q'); //"Quiet". Do not print the introductory and copyright messages.
+    FGDBProcess.Parameters.Add('-n');//Do not execute commands found in any initialization files.
+    FGDBProcess.Parameters.Add('-f');//Full name GDB output the full file name and line number in a standard.
+    //FGDBProcess.Parameters.Add('-annotate 1');
+    //FGDBProcess.Parameters.Add('-interpreter mi');//GDB/MI
+    //-nw not work with mi
+    //FGDBProcess.Parameters.Add('-nw');//"No windows".
+    //FGDBProcess.Parameters.Add('-noasync');//Disable the asynchronous event loop for the command-line interface.
+
     FGDBProcess.CurrentDirectory := ExtractFilePath(ParamStr(0));
-    FGDBProcess.InheritHandles := True;
     FGDBProcess.Options :=  [poUsePipes, poStderrToOutPut];
     FGDBProcess.ShowWindow := swoHIDE;
     FGDBProcess.PipeBufferSize := 80;
@@ -390,28 +398,25 @@ begin
     FConsoleThread.Start;
 
 
-  //  WriteProcess('set new-console on');
+    //WriteProcess('set new-console on');
     WriteProcess('set prompt gdb:');
-    //Engine.SendOutout(ReadProcess);
     //WriteProcess('set verbose off');
     WriteProcess('set confirm off');
-
-    //WriteProcess('attach '+ IntToStr(SubProcess.ProcessID));
-    {WriteProcess('directory '+ FGDBProcess.CurrentDirectory);
-    WriteProcess('break test-pas.pas:8');
-    WriteProcess('run');}
   end;
 end;
 
 procedure TGDBDebug.Attach(SubProcess: TProcess; Resume: Boolean);
+var
+  i: Integer;
 begin
   //WriteProcess('help');
   //WriteProcess('set new-console on
   WriteProcess('cd '+ SubProcess.CurrentDirectory);
   WriteProcess('attach '+ IntToStr(SubProcess.ProcessID));
   WriteProcess('directory '+ SubProcess.CurrentDirectory);
-  WriteProcess('break test-pas.pas:8');
-  //WriteProcess('continue');
+  for i := 0 to Breakpoints.Count - 1 do
+    WriteProcess('break "'+ Breakpoints[i].FileName+':'+IntToStr(Breakpoints[i].Line)+'"');
+  WriteProcess('continue');
   //WriteProcess('run');
   //SubProcess.ProcessID
 end;
@@ -480,5 +485,5 @@ function TGDBDebug.GetKey: string;
 begin
   Result := 'GDB'; //Return version of debugger
 end;
-
+//→→M:\home\
 end.

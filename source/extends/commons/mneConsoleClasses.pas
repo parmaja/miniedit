@@ -158,6 +158,6 @@ initialization
   begin
     Categories.Add(TConsoleFileCategory.Create('Console'));
     Groups.Add(TConsoleFile, 'Console', 'Console Files', 'Console', ['Console'], [fgkVirtual, fgkText], []);
-    Tendencies.Add(TConsoleTendency);
+    //Tendencies.Add(TConsoleTendency);
   end;
 end.

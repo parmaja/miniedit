@@ -671,6 +671,50 @@ object MainForm: TMainForm
         'Line'
       )
     end
+    object WatchesGrid: TStringGrid
+      Left = 3
+      Height = 101
+      Top = 23
+      Width = 875
+      Align = alClient
+      ColCount = 4
+      Columns = <      
+        item
+          Title.Caption = 'Variable'
+          Width = 140
+        end      
+        item
+          Title.Caption = 'Type'
+          Width = 60
+        end      
+        item
+          Title.Caption = 'Value'
+          Width = 300
+        end>
+      Flat = True
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
+      ParentColor = True
+      RowCount = 1
+      TabOrder = 3
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnKeyDown = WatchesGridKeyDown
+      ColWidths = (
+        18
+        140
+        60
+        300
+      )
+      Cells = (
+        1
+        1
+        0
+        'Variable'
+      )
+    end
     inline OutputEdit: TSynEdit
       Left = 3
       Height = 101
@@ -1242,50 +1286,6 @@ object MainForm: TMainForm
           MarkupInfo.Foreground = clGray
         end
       end
-    end
-    object WatchesGrid: TStringGrid
-      Left = 3
-      Height = 101
-      Top = 23
-      Width = 875
-      Align = alClient
-      ColCount = 4
-      Columns = <      
-        item
-          Title.Caption = 'Variable'
-          Width = 140
-        end      
-        item
-          Title.Caption = 'Type'
-          Width = 60
-        end      
-        item
-          Title.Caption = 'Value'
-          Width = 300
-        end>
-      Flat = True
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
-      ParentColor = True
-      RowCount = 1
-      TabOrder = 3
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnKeyDown = WatchesGridKeyDown
-      ColWidths = (
-        18
-        140
-        60
-        300
-      )
-      Cells = (
-        1
-        1
-        0
-        'Variable'
-      )
     end
   end
   object MessagesSpl: TntvSplitter

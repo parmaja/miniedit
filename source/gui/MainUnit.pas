@@ -2062,7 +2062,7 @@ begin
     aName := vTendency.Name
   else
     aName := '';
-  Result := ShowSelectList('Select project type', Engine.Tendencies, [], aName);
+  Result := ShowSelectList('Select project type', Engine.Tendencies, [], aName); //slfIncludeNone
   if Result then
     vTendency := Engine.Tendencies.Find(aName);
 end;
@@ -2440,7 +2440,6 @@ procedure TMainForm.UpdateWatches;
 var
   i: integer;
   aIndex: integer;
-  v: string;
 begin
   //todo not good idea, we should refresh without clear the grid
   if Engine.Tendency.Debug <> nil then

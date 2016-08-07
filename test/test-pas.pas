@@ -4,8 +4,13 @@ uses
   SysUtils;
 var
   s: string;
+  x: integer;
 begin
-  writeln('Hello World');
-  writeln('Bye bye world');
-  ReadLn();
+  x:=10;
+  writeln(x);
+  x:=x+10;
+  writeln(x);
+  s:='Hi';
+  writeln(s);
+  writeln('Bye');
 end.

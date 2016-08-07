@@ -134,7 +134,8 @@ end;
 
 procedure TProjectForm.Retrieve;
 begin
-  Caption := Caption + ' [' + FProject.Tendency.Name + ']';
+  if FProject.Tendency <> nil then
+    Caption := Caption + ' [' + FProject.Tendency.Name + ']';
   TitleEdit.Text := FProject.Title;
   NameEdit.Text := FProject.Name;
   DescriptionEdit.Text := FProject.Description;
