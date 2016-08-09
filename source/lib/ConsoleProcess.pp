@@ -137,6 +137,7 @@ procedure TmnConsoleThread.WriteString(S: string);
 begin
   Buffer := S;
   Synchronize(@DoOnWriteString);
+  //DoOnWriteString;
   Buffer := '';
 end;
 
@@ -155,28 +156,22 @@ end;
 procedure TmnConsoleThread.Read;
 var
   C: DWORD;
-  T, S: string;
+  T: string;
   aBuffer: array[0..79] of AnsiChar;
 begin
   aBuffer := '';
-  while Process.Active do
+  while Process.Running do
   begin
-    S := '';
     repeat
-      if (Process.Output.NumBytesAvailable > 0) then
+      //if (Process.Output.NumBytesAvailable > 0) then
+      C := Process.Output.Read(aBuffer, SizeOf(aBuffer));
+      if C > 0 then
       begin
-        C := Process.Output.Read(aBuffer, SizeOf(aBuffer));
-        if C > 0 then
-        begin
-          SetString(T, aBuffer, C);
-          S := S + T;
-        end;
-      end
-      else
-        C := 0;
+        SetString(T, aBuffer, C);
+        if T <> '' then
+          WriteString(T);
+      end;
     until C = 0;
-    if S <> '' then
-      WriteString(S);
   end;
   WriteString('------exit--------');
 end;

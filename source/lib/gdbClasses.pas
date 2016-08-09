@@ -109,7 +109,6 @@ type
     FConsoleThread: TmnConsoleThread;
     function CreateBreakPoints: TEditorBreakPoints; override;
     function CreateWatches: TEditorWatches; override;
-    //function ReadProcess: string;
     procedure ReceiveProcess(S: ansistring);
     procedure WriteProcess(S: ansistring);
     property GDBProcess: TProcess read FGDBProcess;
@@ -330,38 +329,6 @@ begin
   Engine.SendOutout(S);
 end;
 
-{function TGDBDebug.ReadProcess: string;
-var
-  C: DWORD;
-  S: string;
-  FirstTime: Boolean;
-  aBuffer: array[0..79] of AnsiChar;
-begin
-  Result := '';
-  C := 0;
-  FirstTime := True;
-  aBuffer := '';
-  while GDBProcess.Active and (FirstTime or (C > 0)) do
-  begin
-    FirstTime := False;
-    if GDBProcess.Output.NumBytesAvailable > 0 then
-    begin
-      C := GDBProcess.Output.Read(aBuffer, SizeOf(aBuffer));
-      if C > 0 then
-      begin
-        SetString(S, aBuffer, C);
-        Result := Result + s;
-      end;
-    end
-    else
-      break;
-  end;
-  //Result := S;
-//  Process.WaitOnExit;
-//  Result := Process.ExitStatus;
-//  Process.Terminate(0);
-end;}
-
 procedure TGDBDebug.WriteProcess(S: ansistring);
 begin
   S := S+#13#10;
@@ -393,15 +360,14 @@ begin
     FConsoleThread := TmnConsoleThread.Create(FGDBProcess, @ReceiveProcess);
     FConsoleThread.FreeOnTerminate := False;
 
-
     FGDBProcess.Execute;
     FConsoleThread.Start;
 
+    WriteProcess('set prompt gdb:');
+    WriteProcess('set confirm off');
 
     //WriteProcess('set new-console on');
-    WriteProcess('set prompt gdb:');
     //WriteProcess('set verbose off');
-    WriteProcess('set confirm off');
   end;
 end;
 
@@ -418,7 +384,6 @@ begin
     WriteProcess('break "'+ Breakpoints[i].FileName+':'+IntToStr(Breakpoints[i].Line)+'"');
   WriteProcess('continue');
   //WriteProcess('run');
-  //SubProcess.ProcessID
 end;
 
 procedure TGDBDebug.Stop;

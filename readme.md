@@ -1,12 +1,14 @@
 ## Mini Edit 
 
-MiniEdit is an open source desktop application for edit files like PHP, HTML and Pascal using UTF8 encoding.
+MiniEdit is an open source desktop application for editing files like PHP, HTML, CSS, Python, D, C and Pascal using UTF8 encoding.
+Also it can compile or run script of this files, if your already installed its compilers in your system, without need to open a project for it, 
+if you are editing multiple files, e.g. Python, PHP it can run this files.
 
 ### Target
 
  * Simple
  * Portable
- * Fast
+ * Fast 
 
 ### Features
 
@@ -17,25 +19,28 @@ MiniEdit is an open source desktop application for edit files like PHP, HTML and
  * Projects files, each project have special type (PHP/Pascal/...)
  * PHP XDebug
  * Until now it is very Fast
- * Tortoise SVN/GIT integrated
+ * Tortoise SVN/GIT integrated in Windows 
 
-### Compile
 
- * Use source code from github.com in branch "release", "master" branch is my upstream work.
- * FreePascal FPC 2.6.4 or later
- * Lazarus last update from svn repo
- * MiniLib http://sourceforge.net/projects/minilib
- * CMDBox http://wiki.freepascal.org/CmdLine
+###Rules
+
+For contributors keep it as simple as possible.
 
 ###Build
 
- You need to install all packages that needed for the project
+Miniedit is FreePascal/Lazarus project, so if you want to compile it need to install all packages that needed for the project
+
+ * Use source code from github.com in branch "release", "master" branch is my upstream work.
+ * FreePascal FPC 3.0 or later
+ * Lazarus last update from svn repo, it is recomended, or use version 1.7
+ * MiniLib http://sourceforge.net/projects/minilib
+ * CMDBox http://wiki.freepascal.org/CmdLine
 
 CMDBox package
 
     CMDLine\cmdbox.dpk
 
-minilib packages
+####minilib packages
 
     minilib\lib\MiniCommons.lpk
     minilib\xml\source\MiniXML.lpk
@@ -45,4 +50,4 @@ minilib packages
     minilib\lazarus\lib\MiniLib.lpk
     minilib\lazarus\components\native\NativeLib.lpk
 
-Build minilib project
+####Build minilib project

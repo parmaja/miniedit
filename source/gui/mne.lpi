@@ -18,9 +18,9 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="4"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="176"/>
+      <BuildNr Value="177"/>
       <Language Value=""/>
-      <CharSet Value=""/>
+      <CharSet Value="04B0"/>
       <Attributes pvaPreRelease="True"/>
       <StringTable ProductVersion=""/>
     </VersionInfo>
