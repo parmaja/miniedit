@@ -272,12 +272,16 @@ begin
 end;
 
 procedure TPyFileCategory.DoFixTabsSpaces(Sender: TObject);
+var
+  S: string;
 begin
   with (Engine.Files.Current as TSourceEditorFile) do
   begin
     SynEdit.BeginUndoBlock;
     try
-      SynEdit.TextBetweenPoints[Point(1,1), Point(length(SynEdit.Lines[SynEdit.Lines.Count-1]),SynEdit.Lines.Count)] := ConvertIndents(SynEdit.Text, SynEdit.TabWidth, Tendency.IndentMode);
+      S := SynEdit.TextBetweenPoints[Point(1,1), Point(length(SynEdit.Lines[SynEdit.Lines.Count - 1]) + 1, SynEdit.Lines.Count)];
+      SynEdit.TextBetweenPoints[Point(1,1), Point(length(SynEdit.Lines[SynEdit.Lines.Count - 1]) + 1, SynEdit.Lines.Count)] := ConvertIndents(S, SynEdit.TabWidth, Tendency.IndentMode);
+      //SynEdit.Text := ConvertIndents(SynEdit.Text, SynEdit.TabWidth, Tendency.IndentMode);
     finally
       SynEdit.EndUndoBlock;
     end;

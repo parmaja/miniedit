@@ -454,7 +454,7 @@ begin
       aFontStyle := aFontStyle + [fsItalic];}
 
     aGlobalAttribute.Style := aFontStyle;
-    //FProfile.Attributes.Refresh;
+    FProfile.Attributes.Refresh;
     ChangeEdit;
   end;
 end;

@@ -4135,6 +4135,7 @@ var
   end;
 
 begin
+  Result := '';
   p := 1;
   l := Length(Contents);
   while p <= l do
