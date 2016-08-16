@@ -70,6 +70,7 @@ type
     FStyle: TFontStyles;
     FAttType: TAttributeType;
     FTitle: string;
+    function GetIsDefault: Boolean;
   protected
     property Parent: TGlobalAttributes read FParent;
   public
@@ -78,6 +79,7 @@ type
     procedure Assign(Source: TPersistent); override;
     property Index: Integer read FIndex;
     property Title: string read FTitle write FTitle;
+    property IsDefault: Boolean read GetIsDefault;
   published
     property AttType: TAttributeType read FAttType write FAttType;
     property Background: TColor read FBackground write FBackground default clNone;
@@ -432,12 +434,12 @@ var
 begin
   for i := 0 to FList.Count - 1 do
   begin
-    if FList[i] <> FDefault then
+    if FList[i].AttType <> attDefault then
     begin
-      if FList[i].Foreground = clDefault then
+      if (FList[i].Foreground = clDefault) or (FList[i].Foreground = clNone) then
         FList[i].Foreground := Default.Foreground;
 
-      if FList[i].Background = clDefault then
+      if (FList[i].Background = clDefault) or (FList[i].Background = clNone) then
         FList[i].Background := Default.Background;
     end;
   end;
@@ -514,6 +516,11 @@ begin
   end
   else
     inherited;
+end;
+
+function TGlobalAttribute.GetIsDefault: Boolean;
+begin
+  Result := AttType = attDefault;
 end;
 
 constructor TGlobalAttribute.Create;

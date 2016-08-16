@@ -19,9 +19,9 @@ object EditorOptionsForm: TEditorOptionsForm
     Height = 377
     Top = 3
     Width = 436
-    ActivePage = OptionsTab
+    ActivePage = ColorTab
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     OnChange = PageControlChange
     object OptionsTab: TTabSheet
@@ -1112,8 +1112,8 @@ object EditorOptionsForm: TEditorOptionsForm
     MaxFontSize = 0
     Options = [fdEffects, fdFixedPitchOnly, fdNoStyleSel]
     PreviewText = 'Hello World'
-    left = 260
-    top = 317
+    left = 267
+    top = 285
   end
   object OpenDialog: TOpenDialog
     Width = 28
@@ -1123,7 +1123,7 @@ object EditorOptionsForm: TEditorOptionsForm
     Filter = 'theme|*.mne-theme'
     Options = [ofFileMustExist, ofEnableSizing, ofViewDetail]
     left = 335
-    top = 327
+    top = 290
   end
   object SaveDialog: TSaveDialog
     DefaultExt = '.mne-theme'
@@ -1131,6 +1131,6 @@ object EditorOptionsForm: TEditorOptionsForm
     Filter = 'theme|*.mne-theme'
     Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
     left = 202
-    top = 323
+    top = 277
   end
 end

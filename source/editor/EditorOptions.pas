@@ -111,7 +111,7 @@ type
     procedure SampleEditGutterClick(Sender: TObject; X, Y, Line: integer; mark: TSynEditMark);
     procedure SampleEditMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
     procedure BoldChkClick(Sender: TObject);
-    procedure BackgroundChkClick(Sender: TObject);
+//    procedure BackgroundChkClick(Sender: TObject);
     procedure SaveBtnClick(Sender: TObject);
   private
     FProfile: TEditorProfile;
@@ -212,7 +212,7 @@ procedure TEditorOptionsForm.LoadBtnClick(Sender: TObject);
 begin
   if OpenDialog.Execute then
   begin
-    FProfile.Attributes.Empty;;
+    FProfile.Attributes.Empty;
     XMLReadObjectFile(FProfile.Attributes, OpenDialog.FileName);
     Retrieve;
   end;
@@ -222,7 +222,8 @@ procedure TEditorOptionsForm.ForegroundCboChange(Sender: TObject);
 begin
   if not InChanging then
   begin
-    ForegroundChk.Checked := True;
+    if ForegroundChk.Enabled then
+      ForegroundChk.Checked := True;
     ApplyAttribute;
   end;
 end;
@@ -236,7 +237,8 @@ procedure TEditorOptionsForm.BackgroundCboChange(Sender: TObject);
 begin
   if not InChanging then
   begin
-    BackgroundChk.Checked := True;
+    if BackgroundChk.Enabled then
+      BackgroundChk.Checked := True;
     ApplyAttribute;
   end;
 end;
@@ -378,7 +380,6 @@ end;
 
 procedure TEditorOptionsForm.RetrieveAttribute;
 var
-  aColor: TColor;
   aGlobalAttribute: TGlobalAttribute;
 begin
   if not InChanging and (AttributeCbo.ItemIndex >= 0) then
@@ -386,30 +387,43 @@ begin
     aGlobalAttribute := (AttributeCbo.Items.Objects[AttributeCbo.ItemIndex] as TGlobalAttribute);
     InChanging := True;
     try
-      aColor := aGlobalAttribute.Foreground;
-      //ForegroundCbo.CustomColor := aColor;
-      ForegroundCbo.Selected := aColor;
-      if aColor = clNone then
-      begin
-        ForegroundChk.Checked := False;
-      end
-      else
-      begin
-        ForegroundChk.Checked := True;
-        ForegroundCbo.Refresh;//bug when custom and then custom colors
-      end;
+      ForegroundCbo.Selected := aGlobalAttribute.Foreground;
+      BackgroundCbo.Selected := aGlobalAttribute.Background;
 
-      aColor := aGlobalAttribute.Background;
-      //BackgroundCbo.CustomColor := aColor;
-      BackgroundCbo.Selected := aColor;
-      if aColor = clNone then
+      //ForegroundCbo.CustomColor := ;
+
+      if aGlobalAttribute.AttType = attDefault then //Default is required
       begin
+        ForegroundChk.Enabled := False;
+        BackgroundChk.Enabled := False;
+
+        ForegroundChk.Checked := False;
         BackgroundChk.Checked := False;
       end
       else
       begin
-        BackgroundChk.Checked := True;
-        BackgroundCbo.Refresh;//bug when custom and then custom colors
+        ForegroundChk.Enabled := True;
+        BackgroundChk.Enabled := True;
+
+        if aGlobalAttribute.Foreground = clNone then
+        begin
+          ForegroundChk.Checked := False;
+        end
+        else
+        begin
+          ForegroundChk.Checked := True;
+          ForegroundCbo.Refresh;//bug when custom and then custom colors
+        end;
+
+        if aGlobalAttribute.Background = clNone then
+        begin
+          BackgroundChk.Checked := False;
+        end
+        else
+        begin
+          BackgroundChk.Checked := True;
+          BackgroundCbo.Refresh;//bug when custom and then custom colors
+        end;
       end;
 
       BoldChk.Checked := (fsBold in aGlobalAttribute.Style);
@@ -432,12 +446,12 @@ begin
 
     //Copy some from TGutterOptions.AssignTo(Dest: TPersistent);
 
-    if ForegroundChk.Checked then
+    if aGlobalAttribute.IsDefault or ForegroundChk.Checked then
       aGlobalAttribute.Foreground := ForegroundCbo.Selected
     else
       aGlobalAttribute.Foreground := clNone;
 
-    if BackgroundChk.Checked then
+    if aGlobalAttribute.IsDefault or BackgroundChk.Checked then
       aGlobalAttribute.Background := BackgroundCbo.Selected
     else
       aGlobalAttribute.Background := clNone;
@@ -557,14 +571,14 @@ procedure TEditorOptionsForm.BoldChkClick(Sender: TObject);
 begin
   ApplyAttribute;
 end;
-
+{
 procedure TEditorOptionsForm.BackgroundChkClick(Sender: TObject);
 begin
   if not InChanging then
     BackgroundChk.Checked := True;
   ApplyAttribute;
 end;
-
+}
 procedure TEditorOptionsForm.SaveBtnClick(Sender: TObject);
 {$ifdef debug}
 var

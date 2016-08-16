@@ -93,8 +93,6 @@ uses
   IniFiles, mnStreams, mnUtils, mneVerilogProjectPanel,
   verilogparser, busintf;
 
-{ TmneSynVerilogSyn }
-
 { TVerilogProjectOptions }
 
 function TVerilogProjectOptions.GetFileList: string;

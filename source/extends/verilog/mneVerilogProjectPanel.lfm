@@ -27,6 +27,7 @@ object VerilogProjectPanel: TVerilogProjectPanel
       ItemHeight = 0
       MultiSelect = True
       OnSelectionChange = ProjectFileListSelectionChange
+      ParentColor = True
       ScrollWidth = 223
       TabOrder = 0
     end
