@@ -4,13 +4,23 @@
     <Name>test-pascal</Name>
     <TendencyName>Pascal</TendencyName>
     <Desktop Class="TEditorDesktop">
+      <Breakpoints Class="TmneBreakpoints">
+      </Breakpoints>
+      <Watches Class="TmneWatches">
+      </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test-pas.pas</CurrentFile>
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.html</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\test-pas.pas</FileName>
-            <CaretY>7</CaretY>
+            <FileName>M:\home\pascal\projects\miniEdit\test\test.html</FileName>
+            <CaretX>16</CaretX>
+            <CaretY>12</CaretY>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>M:\home\pascal\projects\miniEdit\test\test2.py</FileName>
+            <CaretX>7</CaretX>
+            <CaretY>2</CaretY>
           </Object>
         </Items>
       </Files>

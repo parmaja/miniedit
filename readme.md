@@ -12,15 +12,15 @@ if you are editing multiple files, e.g. Python, PHP it can run this files.
 
 ### Features
 
- * UTF8 encoding
+ * UTF8 encoding, Only UTF8 sorry for that.
  * Search in files
  * Search for file
- * Portable, one executable file
- * Projects files, each project have special type (PHP/Pascal/...)
+ * Portable, one executable file.
+ * Projects files, each project have special type (PHP/Pascal/D...)
  * PHP XDebug
- * Until now it is very Fast
- * Tortoise SVN/GIT integrated in Windows 
-
+ * GDB debugging 
+ * Until now it is very Fast and very small
+ * Tortoise SVN/GIT integrated in Windows
 
 ###Rules
 
@@ -30,9 +30,9 @@ For contributors keep it as simple as possible.
 
 Miniedit is FreePascal/Lazarus project, so if you want to compile it need to install all packages that needed for the project
 
- * Use source code from github.com in branch "release", "master" branch is my upstream work.
+ * Use source code from github.com in branch "release", or use last tag,  branch "master" is my upstream work, it is not stable.
  * FreePascal FPC 3.0 or later
- * Lazarus last update from svn repo, it is recomended, or use version 1.7
+ * Lazarus last update from subversion repo, it is recommended, or use version 1.7
  * MiniLib http://sourceforge.net/projects/minilib
  * CMDBox http://wiki.freepascal.org/CmdLine
 

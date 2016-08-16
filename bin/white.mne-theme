@@ -8,12 +8,13 @@
     </Default>
     <Link Class="TGlobalAttribute">
       <AttType>attLink</AttType>
+      <Background>clWhite</Background>
       <Foreground>14185302</Foreground>
       <Style>fsUnderline</Style>
     </Link>
     <Panel Class="TGlobalAttribute">
       <AttType>attPanel</AttType>
-      <Background>clSilver</Background>
+      <Background>clWhite</Background>
       <Foreground>clBlack</Foreground>
     </Panel>
     <Selected Class="TGlobalAttribute">
@@ -43,63 +44,80 @@
     </Modified>
     <Keyword Class="TGlobalAttribute">
       <AttType>attKeyword</AttType>
+      <Background>clWhite</Background>
       <Foreground>clNavy</Foreground>
       <Style>fsBold</Style>
     </Keyword>
     <Symbol Class="TGlobalAttribute">
       <AttType>attSymbol</AttType>
+      <Background>clWhite</Background>
       <Foreground>clMaroon</Foreground>
     </Symbol>
     <Number Class="TGlobalAttribute">
       <AttType>attNumber</AttType>
+      <Background>clWhite</Background>
       <Foreground>2185063</Foreground>
     </Number>
     <Directive Class="TGlobalAttribute">
       <AttType>attDirective</AttType>
+      <Background>clWhite</Background>
       <Foreground>clMaroon</Foreground>
       <Style>fsBold</Style>
     </Directive>
     <Identifier Class="TGlobalAttribute">
       <AttType>attIdentifier</AttType>
+      <Background>clWhite</Background>
       <Foreground>clBackground</Foreground>
     </Identifier>
     <Variable Class="TGlobalAttribute">
       <AttType>attVariable</AttType>
+      <Background>clWhite</Background>
       <Foreground>clBlack</Foreground>
       <Style>fsBold</Style>
     </Variable>
     <Standard Class="TGlobalAttribute">
       <AttType>attStandard</AttType>
+      <Background>clWhite</Background>
       <Foreground>1325648</Foreground>
     </Standard>
     <Value Class="TGlobalAttribute">
       <AttType>attValue</AttType>
+      <Background>clWhite</Background>
       <Foreground>clGreen</Foreground>
     </Value>
     <DataType Class="TGlobalAttribute">
       <AttType>attDataType</AttType>
+      <Background>clWhite</Background>
       <Foreground>3111647</Foreground>
     </DataType>
     <DataName Class="TGlobalAttribute">
       <AttType>attDataName</AttType>
+      <Background>clWhite</Background>
       <Foreground>743695</Foreground>
     </DataName>
     <Document Class="TGlobalAttribute">
       <AttType>attDocument</AttType>
+      <Background>clWhite</Background>
       <Foreground>3690</Foreground>
     </Document>
     <Text Class="TGlobalAttribute">
       <AttType>attText</AttType>
+      <Background>clWhite</Background>
+      <Foreground>clBlack</Foreground>
     </Text>
     <EmbedText Class="TGlobalAttribute">
       <AttType>attEmbedText</AttType>
+      <Background>clWhite</Background>
+      <Foreground>clBlack</Foreground>
     </EmbedText>
     <Comment Class="TGlobalAttribute">
       <AttType>attComment</AttType>
+      <Background>clWhite</Background>
       <Foreground>10841172</Foreground>
     </Comment>
     <QuotedString Class="TGlobalAttribute">
       <AttType>attQuotedString</AttType>
+      <Background>clWhite</Background>
       <Foreground>clGreen</Foreground>
       <Style>fsBold</Style>
     </QuotedString>

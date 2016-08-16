@@ -8,10 +8,13 @@
     </Default>
     <Link Class="TGlobalAttribute">
       <AttType>attLink</AttType>
+      <Background>2758927</Background>
+      <Foreground>clWhite</Foreground>
+      <Options>gaoDefaultBackground,gaoDefaultForeground</Options>
     </Link>
     <Panel Class="TGlobalAttribute">
       <AttType>attPanel</AttType>
-      <Background>9594183</Background>
+      <Background>5651497</Background>
       <Foreground>clWhite</Foreground>
     </Panel>
     <Selected Class="TGlobalAttribute">
@@ -41,61 +44,93 @@
     </Modified>
     <Keyword Class="TGlobalAttribute">
       <AttType>attKeyword</AttType>
+      <Background>2758927</Background>
       <Foreground>clMenuHighlight</Foreground>
+      <Options>gaoDefaultBackground</Options>
     </Keyword>
     <Symbol Class="TGlobalAttribute">
       <AttType>attSymbol</AttType>
+      <Background>2758927</Background>
       <Foreground>16772561</Foreground>
+      <Options>gaoDefaultBackground</Options>
     </Symbol>
     <Number Class="TGlobalAttribute">
       <AttType>attNumber</AttType>
+      <Background>2758927</Background>
       <Foreground>1040362</Foreground>
+      <Options>gaoDefaultBackground</Options>
     </Number>
     <Directive Class="TGlobalAttribute">
       <AttType>attDirective</AttType>
+      <Background>2758927</Background>
       <Foreground>4276694</Foreground>
+      <Options>gaoDefaultBackground</Options>
     </Directive>
     <Identifier Class="TGlobalAttribute">
       <AttType>attIdentifier</AttType>
+      <Background>2758927</Background>
       <Foreground>clWhite</Foreground>
+      <Options>gaoDefaultBackground</Options>
     </Identifier>
     <Variable Class="TGlobalAttribute">
       <AttType>attVariable</AttType>
+      <Background>2758927</Background>
       <Foreground>clSkyBlue</Foreground>
+      <Options>gaoDefaultBackground</Options>
     </Variable>
     <Standard Class="TGlobalAttribute">
       <AttType>attStandard</AttType>
+      <Background>2758927</Background>
       <Foreground>4107007</Foreground>
+      <Options>gaoDefaultBackground</Options>
     </Standard>
     <Value Class="TGlobalAttribute">
       <AttType>attValue</AttType>
+      <Background>2758927</Background>
       <Foreground>1491229</Foreground>
+      <Options>gaoDefaultBackground</Options>
     </Value>
     <DataType Class="TGlobalAttribute">
       <AttType>attDataType</AttType>
+      <Background>2758927</Background>
       <Foreground>3111647</Foreground>
+      <Options>gaoDefaultBackground</Options>
     </DataType>
     <DataName Class="TGlobalAttribute">
       <AttType>attDataName</AttType>
+      <Background>2758927</Background>
       <Foreground>1491229</Foreground>
+      <Options>gaoDefaultBackground</Options>
     </DataName>
     <Document Class="TGlobalAttribute">
       <AttType>attDocument</AttType>
+      <Background>2758927</Background>
       <Foreground>10540718</Foreground>
+      <Options>gaoDefaultBackground</Options>
     </Document>
     <Text Class="TGlobalAttribute">
       <AttType>attText</AttType>
+      <Background>2758927</Background>
+      <Foreground>clWhite</Foreground>
+      <Options>gaoDefaultBackground,gaoDefaultForeground</Options>
     </Text>
     <EmbedText Class="TGlobalAttribute">
       <AttType>attEmbedText</AttType>
+      <Background>2758927</Background>
+      <Foreground>clWhite</Foreground>
+      <Options>gaoDefaultBackground,gaoDefaultForeground</Options>
     </EmbedText>
     <Comment Class="TGlobalAttribute">
       <AttType>attComment</AttType>
+      <Background>2758927</Background>
       <Foreground>12885388</Foreground>
+      <Options>gaoDefaultBackground</Options>
     </Comment>
     <QuotedString Class="TGlobalAttribute">
       <AttType>attQuotedString</AttType>
+      <Background>2758927</Background>
       <Foreground>1491229</Foreground>
+      <Options>gaoDefaultBackground</Options>
     </QuotedString>
     <FontName>Consolas</FontName>
     <FontSize>12</FontSize>

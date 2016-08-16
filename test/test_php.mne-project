@@ -14,6 +14,11 @@
         </Objects>
       </Breakpoints>
       <Watches Class="TmneWatches">
+        <Objects>
+          <Object Type="TmneWatch">
+            <Name>$name</Name>
+          </Object>
+        </Objects>
       </Watches>
       <Files Class="TEditorDesktopFiles">
         <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.php</CurrentFile>
@@ -26,7 +31,7 @@
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
-            <CaretY>9</CaretY>
+            <CaretY>10</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.py</FileName>

@@ -59,6 +59,8 @@ const
 type
   TGlobalAttributes = class;
 
+  TGlobalAttributeOptions = set of (gaoDefaultBackground, gaoDefaultForeground);
+
   { TGlobalAttribute }
 
   TGlobalAttribute = class(TPersistent)
@@ -66,6 +68,7 @@ type
     FBackground: TColor;
     FForeground: TColor;
     FIndex: Integer;
+    FOptions: TGlobalAttributeOptions;
     FParent: TGlobalAttributes;
     FStyle: TFontStyles;
     FAttType: TAttributeType;
@@ -77,6 +80,7 @@ type
     constructor Create;
     procedure AssignTo(Dest: TPersistent); override;
     procedure Assign(Source: TPersistent); override;
+    procedure Reset;
     property Index: Integer read FIndex;
     property Title: string read FTitle write FTitle;
     property IsDefault: Boolean read GetIsDefault;
@@ -85,6 +89,7 @@ type
     property Background: TColor read FBackground write FBackground default clNone;
     property Foreground: TColor read FForeground write FForeground default clNone;
     property Style: TFontStyles read FStyle write FStyle default [];
+    property Options: TGlobalAttributeOptions read FOptions write FOptions default [];
   end;
 
   { TGlobalAttributes }
@@ -366,9 +371,7 @@ var
 begin
   for i := 0 to FList.Count - 1 do
   begin
-    FList[i].Foreground := clNone;
-    FList[i].Background := clNone;
-    FList[i].Style := [];
+    FList[i].Reset;
   end;
 end;
 
@@ -380,6 +383,10 @@ procedure TGlobalAttributes.Reset;
     Item.Title := Title;
     Item.Foreground := Foreground;
     Item.Background := Background;
+    if Item.Foreground = clNone then
+      Item.Options := Item.Options + [gaoDefaultForeground];
+    if Item.Background = clNone then
+      Item.Options := Item.Options + [gaoDefaultBackground];
     Item.Style := Style;
     Item.FParent := Self;
     Item.FIndex := FList.Add(Item);
@@ -434,12 +441,19 @@ var
 begin
   for i := 0 to FList.Count - 1 do
   begin
-    if FList[i].AttType <> attDefault then
+    if not FList[i].IsDefault then
     begin
+      //Fix old file that not have Options property
       if (FList[i].Foreground = clDefault) or (FList[i].Foreground = clNone) then
-        FList[i].Foreground := Default.Foreground;
+        FList[i].Options := FList[i].Options + [gaoDefaultForeground];
 
       if (FList[i].Background = clDefault) or (FList[i].Background = clNone) then
+        FList[i].Options := FList[i].Options + [gaoDefaultBackground];
+
+      if (gaoDefaultForeground in FList[i].Options) then
+        FList[i].Foreground := Default.Foreground;
+
+      if (gaoDefaultBackground in FList[i].Options) then
         FList[i].Background := Default.Background;
     end;
   end;
@@ -500,10 +514,19 @@ begin
   begin
     Background := (Source as TGlobalAttribute).Background;
     Foreground := (Source as TGlobalAttribute).Foreground;
+    Options := (Source as TGlobalAttribute).Options;
     Style := (Source as TGlobalAttribute).Style - [fsItalic]; //removed old font style from old version of miniedit
   end
   else
     inherited;
+end;
+
+procedure TGlobalAttribute.Reset;
+begin
+  Foreground := clNone;
+  Background := clNone;
+  Style := [];
+  Options := [];
 end;
 
 procedure TGlobalAttribute.AssignTo(Dest: TPersistent);

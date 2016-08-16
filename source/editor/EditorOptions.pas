@@ -388,7 +388,9 @@ begin
     InChanging := True;
     try
       ForegroundCbo.Selected := aGlobalAttribute.Foreground;
+      ForegroundCbo.Refresh;//bug when custom and then custom colors
       BackgroundCbo.Selected := aGlobalAttribute.Background;
+      BackgroundCbo.Refresh;//bug when custom and then custom colors
 
       //ForegroundCbo.CustomColor := ;
 
@@ -397,33 +399,16 @@ begin
         ForegroundChk.Enabled := False;
         BackgroundChk.Enabled := False;
 
-        ForegroundChk.Checked := False;
-        BackgroundChk.Checked := False;
+        ForegroundChk.Checked := True;
+        BackgroundChk.Checked := True;
       end
       else
       begin
         ForegroundChk.Enabled := True;
         BackgroundChk.Enabled := True;
 
-        if aGlobalAttribute.Foreground = clNone then
-        begin
-          ForegroundChk.Checked := False;
-        end
-        else
-        begin
-          ForegroundChk.Checked := True;
-          ForegroundCbo.Refresh;//bug when custom and then custom colors
-        end;
-
-        if aGlobalAttribute.Background = clNone then
-        begin
-          BackgroundChk.Checked := False;
-        end
-        else
-        begin
-          BackgroundChk.Checked := True;
-          BackgroundCbo.Refresh;//bug when custom and then custom colors
-        end;
+        ForegroundChk.Checked := not (gaoDefaultForeground in aGlobalAttribute.Options);
+        BackgroundChk.Checked :=  not (gaoDefaultBackground in aGlobalAttribute.Options);
       end;
 
       BoldChk.Checked := (fsBold in aGlobalAttribute.Style);
@@ -446,15 +431,19 @@ begin
 
     //Copy some from TGutterOptions.AssignTo(Dest: TPersistent);
 
-    if aGlobalAttribute.IsDefault or ForegroundChk.Checked then
-      aGlobalAttribute.Foreground := ForegroundCbo.Selected
-    else
-      aGlobalAttribute.Foreground := clNone;
+    aGlobalAttribute.Foreground := ForegroundCbo.Selected;
 
-    if aGlobalAttribute.IsDefault or BackgroundChk.Checked then
-      aGlobalAttribute.Background := BackgroundCbo.Selected
+    if ForegroundChk.Checked then
+      aGlobalAttribute.Options := aGlobalAttribute.Options - [gaoDefaultForeground]
     else
-      aGlobalAttribute.Background := clNone;
+      aGlobalAttribute.Options := aGlobalAttribute.Options + [gaoDefaultForeground];
+
+    aGlobalAttribute.Background := BackgroundCbo.Selected;
+
+    if BackgroundChk.Checked then
+      aGlobalAttribute.Options := aGlobalAttribute.Options - [gaoDefaultBackground]
+    else
+      aGlobalAttribute.Options := aGlobalAttribute.Options + [gaoDefaultBackground];
 
     aFontStyle := [];
     if BoldChk.Checked then
@@ -465,6 +454,7 @@ begin
       aFontStyle := aFontStyle + [fsItalic];}
 
     aGlobalAttribute.Style := aFontStyle;
+    //FProfile.Attributes.Refresh;
     ChangeEdit;
   end;
 end;

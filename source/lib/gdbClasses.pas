@@ -343,7 +343,7 @@ begin
     FGDBProcess := TProcess.Create(nil);
     FGDBProcess.ConsoleTitle := 'GDB';
     FGDBProcess.Executable := 'GDB.exe';
-    FGDBProcess.Parameters.Add('-q'); //"Quiet". Do not print the introductory and copyright messages.
+    FGDBProcess.Parameters.Add('-q');//"Quiet". Do not print the introductory and copyright messages.
     FGDBProcess.Parameters.Add('-n');//Do not execute commands found in any initialization files.
     FGDBProcess.Parameters.Add('-f');//Full name GDB output the full file name and line number in a standard.
     //FGDBProcess.Parameters.Add('-annotate 1');
@@ -416,12 +416,10 @@ end;
 
 procedure TGDBDebug.Lock;
 begin
-
 end;
 
 procedure TGDBDebug.Unlock;
 begin
-
 end;
 
 function TGDBDebug.GetState: TDebugStates;
