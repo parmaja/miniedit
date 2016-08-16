@@ -1,11 +1,11 @@
 object MainForm: TMainForm
-  Left = 331
-  Height = 591
-  Top = 85
+  Left = 353
+  Height = 557
+  Top = 173
   Width = 881
   AllowDropFiles = True
   Caption = 'Mini Edit'
-  ClientHeight = 571
+  ClientHeight = 537
   ClientWidth = 881
   Color = clWindow
   Font.CharSet = ANSI_CHARSET
@@ -96,25 +96,16 @@ object MainForm: TMainForm
         Action = MessagesAct
         Style = tbsCheck
       end
-      object Button1: TButton
-        Left = 543
-        Height = 23
-        Top = 0
-        Width = 75
-        Caption = 'Button1'
-        OnClick = Button1Click
-        TabOrder = 0
-      end
     end
   end
   object BrowserPnl: TPanel
     Left = 0
-    Height = 385
+    Height = 351
     Top = 29
     Width = 200
     Align = alLeft
     BevelOuter = bvNone
-    ClientHeight = 385
+    ClientHeight = 351
     ClientWidth = 200
     Constraints.MinHeight = 60
     TabOrder = 0
@@ -132,7 +123,7 @@ object MainForm: TMainForm
       Font.Name = 'MS Sans Serif'
       ParentFont = False
       TabOrder = 0
-      object BrowseTabs: TntvTabSet
+      object BrowserTabs: TntvTabSet
         Left = 0
         Height = 24
         Top = 0
@@ -152,9 +143,11 @@ object MainForm: TMainForm
             Name = 'ProjectTab'
             AutoWidth = True
           end>
-        OnTabSelected = BrowseTabsTabSelected
+        OnTabSelected = BrowserTabsTabSelected
         Align = alClient
         Caption = 'Files'
+        Color = clWindow
+        ParentColor = False
         TabOrder = 0
         object FolderCloseBtn: TntvImgBtn
           Left = 184
@@ -184,18 +177,18 @@ object MainForm: TMainForm
     end
     object FolderPanel: TPanel
       Left = 0
-      Height = 361
+      Height = 327
       Top = 24
       Width = 200
       Align = alClient
       BevelOuter = bvNone
       Caption = 'FolderPanel'
-      ClientHeight = 361
+      ClientHeight = 327
       ClientWidth = 200
       TabOrder = 1
       object FileList: TListView
         Left = 3
-        Height = 337
+        Height = 303
         Top = 21
         Width = 194
         Align = alClient
@@ -235,22 +228,22 @@ object MainForm: TMainForm
   end
   object ClientPnl: TPanel
     Left = 212
-    Height = 385
+    Height = 351
     Top = 29
     Width = 669
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 385
+    ClientHeight = 351
     ClientWidth = 669
     TabOrder = 1
     object EditorsPnl: TPanel
       Left = 0
-      Height = 360
+      Height = 326
       Top = 25
       Width = 669
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 360
+      ClientHeight = 326
       ClientWidth = 669
       FullRepaint = False
       TabOrder = 0
@@ -258,7 +251,7 @@ object MainForm: TMainForm
       object QuickFindPnl: TPanel
         Left = 0
         Height = 28
-        Top = 332
+        Top = 298
         Width = 669
         Align = alBottom
         BevelInner = bvSpace
@@ -396,6 +389,7 @@ object MainForm: TMainForm
         Top = 2
         Width = 553
         Align = alClient
+        AutoSize = False
         Caption = 'File name'
         Layout = tlCenter
         ParentColor = False
@@ -443,7 +437,7 @@ object MainForm: TMainForm
   object StatusPanel: TPanel
     Left = 0
     Height = 21
-    Top = 550
+    Top = 516
     Width = 881
     Align = alBottom
     BevelOuter = bvNone
@@ -511,7 +505,7 @@ object MainForm: TMainForm
   object MessagesTabs: TntvPageControl
     Left = 0
     Height = 127
-    Top = 423
+    Top = 389
     Width = 881
     StoreIndex = False
     ShowButtons = False
@@ -551,6 +545,45 @@ object MainForm: TMainForm
     Caption = 'Call Stack'
     Constraints.MinHeight = 60
     TabOrder = 4
+    object CallStackGrid: TStringGrid
+      Left = 3
+      Height = 101
+      Top = 23
+      Width = 875
+      Align = alClient
+      ColCount = 3
+      Columns = <      
+        item
+          Title.Caption = 'File'
+          Width = 300
+        end      
+        item
+          Title.Caption = 'Line'
+          Width = 60
+        end>
+      Flat = True
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
+      ParentColor = True
+      RowCount = 1
+      TabOrder = 4
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnKeyDown = WatchesGridKeyDown
+      ColWidths = (
+        18
+        300
+        60
+      )
+      Cells = (
+        1
+        1
+        0
+        'Variable'
+      )
+    end
     object SearchGrid: TStringGrid
       Left = 3
       Height = 101
@@ -591,27 +624,31 @@ object MainForm: TMainForm
         'Result'
       )
     end
-    object CallStackGrid: TStringGrid
+    object WatchesGrid: TStringGrid
       Left = 3
       Height = 101
       Top = 23
       Width = 875
       Align = alClient
-      ColCount = 3
+      ColCount = 4
       Columns = <      
         item
-          Title.Caption = 'File'
-          Width = 300
+          Title.Caption = 'Variable'
+          Width = 140
         end      
         item
-          Title.Caption = 'Line'
+          Title.Caption = 'Type'
           Width = 60
+        end      
+        item
+          Title.Caption = 'Value'
+          Width = 300
         end>
       Flat = True
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
       ParentColor = True
       RowCount = 1
-      TabOrder = 4
+      TabOrder = 3
       TitleFont.CharSet = ANSI_CHARSET
       TitleFont.Height = -13
       TitleFont.Name = 'Tahoma'
@@ -620,8 +657,9 @@ object MainForm: TMainForm
       OnKeyDown = WatchesGridKeyDown
       ColWidths = (
         18
-        300
+        140
         60
+        300
       )
       Cells = (
         1
@@ -671,50 +709,6 @@ object MainForm: TMainForm
         'Line'
       )
     end
-    object WatchesGrid: TStringGrid
-      Left = 3
-      Height = 101
-      Top = 23
-      Width = 875
-      Align = alClient
-      ColCount = 4
-      Columns = <      
-        item
-          Title.Caption = 'Variable'
-          Width = 140
-        end      
-        item
-          Title.Caption = 'Type'
-          Width = 60
-        end      
-        item
-          Title.Caption = 'Value'
-          Width = 300
-        end>
-      Flat = True
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
-      ParentColor = True
-      RowCount = 1
-      TabOrder = 3
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnKeyDown = WatchesGridKeyDown
-      ColWidths = (
-        18
-        140
-        60
-        300
-      )
-      Cells = (
-        1
-        1
-        0
-        'Variable'
-      )
-    end
     inline OutputEdit: TSynEdit
       Left = 3
       Height = 101
@@ -731,6 +725,7 @@ object MainForm: TMainForm
       PopupMenu = OutputPopup
       TabOrder = 1
       TabStop = False
+      BorderStyle = bsNone
       Gutter.Width = 19
       Gutter.MouseActions = <      
         item
@@ -1292,14 +1287,14 @@ object MainForm: TMainForm
     Cursor = crVSplit
     Left = 0
     Height = 9
-    Top = 414
+    Top = 380
     Width = 881
     ResizeControl = MessagesTabs
   end
   object FoldersSpl: TntvSplitter
     Cursor = crHSplit
     Left = 200
-    Height = 385
+    Height = 351
     Top = 29
     Width = 12
     ResizeControl = BrowserPnl

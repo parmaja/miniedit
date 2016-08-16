@@ -54,7 +54,6 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
-    Button1: TButton;
     FileModeBtn: TntvImgBtn;
     FileCloseBtn: TntvImgBtn;
     BugSignBtn: TntvImgBtn;
@@ -76,7 +75,7 @@ type
     TypeOptionsForMnu: TMenuItem;
     TypesOptionsAct: TAction;
     DBGCompileAct: TAction;
-    BrowseTabs: TntvTabSet;
+    BrowserTabs: TntvTabSet;
     MenuItem22: TMenuItem;
     MenuItem23: TMenuItem;
     MenuItem24: TMenuItem;
@@ -348,8 +347,7 @@ type
     QuickSearch: TMenuItem;
     procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
-    procedure BrowseTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
-    procedure Button1Click(Sender: TObject);
+    procedure BrowserTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure CallStackListDblClick(Sender: TObject);
     procedure DBGCompileActExecute(Sender: TObject);
     procedure DeleteActExecute(Sender: TObject);
@@ -491,6 +489,7 @@ type
     FMessages: TEditorMessages;
     FShowFolderFiles: TShowFolderFiles;
     FSortFolderFiles: TSortFolderFiles;
+    procedure TestDebug;
     function CanOpenInclude: boolean;
     procedure CatchErr(Sender: TObject; e: exception);
     procedure ForceForegroundWindow;
@@ -665,7 +664,7 @@ begin
   end;
 end;
 
-procedure TMainForm.BrowseTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
+procedure TMainForm.BrowserTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
 begin
   if NewTab.Index = 0 then
   begin
@@ -685,7 +684,7 @@ begin
   end;
 end;
 
-procedure TMainForm.Button1Click(Sender: TObject);
+procedure TMainForm.TestDebug;
 begin
   with Engine.Tendencies.Find('Pascal') do
   begin
@@ -1776,6 +1775,7 @@ begin
         FProjectFrame.Parent := BrowserPnl;
         FProjectFrame.Align := alClient;
         FProjectFrame.Visible := False;
+        FProjectFrame.Color := BrowserPnl.Color;
         if Supports(FProjectFrame, IEditorOptions) then
           (FProjectFrame as IEditorOptions).Retrieve;
       end;
@@ -1783,7 +1783,7 @@ begin
   end
   else
     FreeFrame;
-  BrowseTabs.Items[1].Visible := FProjectFrame <> nil;
+  BrowserTabs.Items[1].Visible := FProjectFrame <> nil;
 end;
 
 procedure TMainForm.SaveAsProjectActExecute(Sender: TObject);
@@ -2409,21 +2409,39 @@ end;
 procedure TMainForm.OptionsChanged;
 begin
   {Color := Engine.Options.Profile.Attributes.Panel.Background;
-  Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
+  Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;}
 
-  FoldersSpl.RaisedColor := Engine.Options.Profile.Attributes.Separator.Foreground;
-  FoldersSpl.LoweredColor := Engine.Options.Profile.Attributes.Separator.Background;}
 
-  {BrowserPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
-  ClientPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
   FoldersSpl.Color := Engine.Options.Profile.Attributes.Panel.Background;
-  MessagesSpl.Color := Engine.Options.Profile.Attributes.Panel.Background;
-  MessagesSpl.LoweredColor
-  MessagesTabs.Color := Engine.Options.Profile.Attributes.Panel.Background;}
+  FoldersSpl.RaisedColor := Lighten(Engine.Options.Profile.Attributes.Panel.Background, 25);
+  FoldersSpl.LoweredColor := Darken(Engine.Options.Profile.Attributes.Panel.Background, 25);
+
+  MessagesSpl.Color := FoldersSpl.Color;
+  MessagesSpl.LoweredColor := FoldersSpl.LoweredColor;
+  MessagesSpl.RaisedColor := FoldersSpl.RaisedColor;
+
+
+
+  MessagesTabs.Color := Engine.Options.Profile.Attributes.Panel.Background;
+  MessagesTabs.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
+  MessagesTabs.ActiveColor := Engine.Options.Profile.Attributes.Panel.Background;
+  MessagesTabs.NormalColor := MixColors(OppositeColor(MessagesTabs.ActiveColor), MessagesTabs.ActiveColor, 50);
+
+  //BrowserHeaderPanel.Color := Engine.Options.Profile.Attributes.Panel.Background;
+  BrowserTabs.Color := Engine.Options.Profile.Attributes.Panel.Background;
+  BrowserTabs.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
+  BrowserTabs.ActiveColor := Engine.Options.Profile.Attributes.Panel.Background;
+  BrowserTabs.NormalColor := MixColors(OppositeColor(BrowserTabs.ActiveColor), BrowserTabs.ActiveColor, 50);
+
+  BrowserPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
+  BrowserPnl.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
+
+  ClientPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
+  ClientPnl.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
 
   FileTabs.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   FileTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
-  FileTabs.NormalColor := MixColors(FileTabs.ActiveColor, OppositeColor(FileTabs.ActiveColor), 200);
+  FileTabs.NormalColor := MixColors(OppositeColor(FileTabs.ActiveColor), FileTabs.ActiveColor, 50);
 
   FileList.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   FileList.Color := Engine.Options.Profile.Attributes.Default.Background;
@@ -2536,6 +2554,7 @@ procedure TMainForm.Add1Click(Sender: TObject);
 var
   S: string;
 begin
+  S := '';
   if MsgBox.Msg.Input(S, 'Add Watch, Enter variable name') then
     if S <> '' then
       AddWatch(S);
