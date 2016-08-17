@@ -146,7 +146,7 @@ type
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Empty;
+    procedure Init;
     procedure Reset;
     procedure Refresh; //reset the default colors based on whitespace
     function Find(AttType: TAttributeType): TGlobalAttribute;
@@ -333,7 +333,7 @@ end;
 
 procedure TEditorProfile.Loading;
 begin
-  Attributes.Empty;
+  Attributes.Reset;
   inherited;
 end;
 
@@ -356,7 +356,7 @@ begin
   inherited Create(AOwner);
   FComponentStyle := FComponentStyle + [csSubComponent];
   FList := TGlobalAttributeList.Create(True);
-  Reset;
+  Init;
 end;
 
 destructor TGlobalAttributes.Destroy;
@@ -365,17 +365,28 @@ begin
   inherited Destroy;
 end;
 
-procedure TGlobalAttributes.Empty;
+procedure TGlobalAttributes.Reset;
 var
   i: Integer;
 begin
+  FontName := 'Courier New';
+  FontSize := 10;
+  FontNoAntialiasing := True;
+
+  GutterAutoSize := True;
+  GutterShowSeparator := True;
+  GutterLeftOffset := 0;
+  GutterRightOffset := 0;
+  GutterWidth := 30;
+  GutterLeadingZeros := False;
+  GutterShowModifiedLines := True;
   for i := 0 to FList.Count - 1 do
   begin
     FList[i].Reset;
   end;
 end;
 
-procedure TGlobalAttributes.Reset;
+procedure TGlobalAttributes.Init;
   procedure Add(var Item: TGlobalAttribute; AttType: TAttributeType; Title: string; Foreground, Background: TColor; Style: TFontStyles = []);
   begin
     Item := TGlobalAttribute.Create;
@@ -394,19 +405,7 @@ procedure TGlobalAttributes.Reset;
 
 begin
   FList.Clear;
-
-  FontName := 'Courier New';
-  FontSize := 10;
-  FontNoAntialiasing := True;
-
-  GutterAutoSize := True;
-  GutterShowSeparator := True;
-  GutterLeftOffset := 0;
-  GutterRightOffset := 0;
-  GutterWidth := 30;
-  GutterLeadingZeros := False;
-  GutterShowModifiedLines := True;
-
+  Reset;
   Add(FDefault, attDefault, 'Default', clBlack, $00E0E8E9, []);
 
   Add(FPanel, attPanel, 'Panel', clNone, clNone, []);

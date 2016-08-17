@@ -212,7 +212,7 @@ procedure TEditorOptionsForm.LoadBtnClick(Sender: TObject);
 begin
   if OpenDialog.Execute then
   begin
-    FProfile.Attributes.Empty;
+    FProfile.Attributes.Reset;
     XMLReadObjectFile(FProfile.Attributes, OpenDialog.FileName);
     Retrieve;
   end;

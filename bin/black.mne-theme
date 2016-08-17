@@ -35,7 +35,7 @@
     <Separator Class="TGlobalAttribute">
       <AttType>attSeparator</AttType>
       <Background>4934475</Background>
-      <Foreground>clActiveCaption</Foreground>
+      <Foreground>8871997</Foreground>
     </Separator>
     <Modified Class="TGlobalAttribute">
       <AttType>attModified</AttType>
