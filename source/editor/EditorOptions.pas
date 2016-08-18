@@ -599,7 +599,7 @@ begin
     Apply;
     XMLWriteObjectFile(FProfile.Attributes, SaveDialog.FileName);
     {$ifdef debug}
-    Stream := TFileStream.Create(SaveDialog.FileName+'.pas', fmCreate);
+    Stream := TFileStream.Create(SaveDialog.FileName+'-code.pas', fmCreate);
     try
       for i := 0 to FProfile.Attributes.Count -1 do
       begin

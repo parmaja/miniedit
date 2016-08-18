@@ -1112,15 +1112,16 @@ object EditorOptionsForm: TEditorOptionsForm
     MaxFontSize = 0
     Options = [fdEffects, fdFixedPitchOnly, fdNoStyleSel]
     PreviewText = 'Hello World'
-    left = 267
-    top = 285
+    left = 228
+    top = 198
   end
   object OpenDialog: TOpenDialog
     Width = 28
     Height = 28
     DefaultExt = '.mne-theme'
-    FileName = '*.mne-theme'
-    Filter = 'theme|*.mne-theme'
+    FileName = 'M:\home\pascal\projects\miniEdit\bin'
+    Filter = 'Theme (*.mne-theme)|*.mne-theme'
+    InitialDir = 'M:\home\pascal\projects\miniEdit\'
     Options = [ofFileMustExist, ofEnableSizing, ofViewDetail]
     left = 335
     top = 290
@@ -1130,7 +1131,7 @@ object EditorOptionsForm: TEditorOptionsForm
     FileName = '*.mne-theme'
     Filter = 'theme|*.mne-theme'
     Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
-    left = 202
-    top = 277
+    left = 152
+    top = 284
   end
 end

@@ -50,7 +50,7 @@ uses
   mneCustomClasses,
   mnePHPProjectFrames, mnePasProjectFrames, mnePasTendencyFrames, mnePASClasses,
   mneCSVClasses, mneDClasses, mneDTendencyFrames, MsgBox, GUIMsgBox, Classes,
-  PHPUtils, mneSetups, mneSettings,
+  PHPUtils, ntvThemes, mneSetups, mneSettings,
   EditorClasses, gdbClasses,
   mneCompileProjectOptions, mneManageRecentsForms, mneTendencyOptions,
   mneCSVForms, mnUtils, mnConnections;

@@ -24,7 +24,7 @@ uses
   LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorDebugger, FileUtil,
   LazFileUtils, Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus,
   ToolWin, Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses,
-  StdActns, Grids, SynEditHighlighter, SynEdit, IAddons, ntvSplitters,
+  StdActns, Grids, SynEditHighlighter, SynEdit, IAddons, ntvSplitters, ntvThemes,
   SynHighlighterSQL, EditorClasses, ntvImgBtns,
   {$ifdef WINDOWS}
   Windows, //TODO, i hate include it
@@ -2412,25 +2412,28 @@ begin
   Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;}
 
 
-  FoldersSpl.Color := Engine.Options.Profile.Attributes.Panel.Background;
-  FoldersSpl.RaisedColor := Lighten(Engine.Options.Profile.Attributes.Panel.Background, 25);
-  FoldersSpl.LoweredColor := Darken(Engine.Options.Profile.Attributes.Panel.Background, 25);
+  if IsDarkColor(Engine.Options.Profile.Attributes.Panel.Background) then
+    EditorResource.Switch(thsDark)
+  else
+    EditorResource.Switch(thsLight);
 
+  ntvTheme.Painter.RaisedColor := Lighten(Engine.Options.Profile.Attributes.Panel.Background, 25);
+  ntvTheme.Painter.LoweredColor := Darken(Engine.Options.Profile.Attributes.Panel.Background, 25);
+
+  FoldersSpl.Color := Engine.Options.Profile.Attributes.Panel.Background;
   MessagesSpl.Color := FoldersSpl.Color;
-  MessagesSpl.LoweredColor := FoldersSpl.LoweredColor;
-  MessagesSpl.RaisedColor := FoldersSpl.RaisedColor;
 
 
 
   MessagesTabs.Color := Engine.Options.Profile.Attributes.Panel.Background;
   MessagesTabs.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
-  MessagesTabs.ActiveColor := Engine.Options.Profile.Attributes.Panel.Background;
+  MessagesTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
   MessagesTabs.NormalColor := MixColors(OppositeColor(MessagesTabs.ActiveColor), MessagesTabs.ActiveColor, 50);
 
   //BrowserHeaderPanel.Color := Engine.Options.Profile.Attributes.Panel.Background;
   BrowserTabs.Color := Engine.Options.Profile.Attributes.Panel.Background;
   BrowserTabs.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
-  BrowserTabs.ActiveColor := Engine.Options.Profile.Attributes.Panel.Background;
+  BrowserTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
   BrowserTabs.NormalColor := MixColors(OppositeColor(BrowserTabs.ActiveColor), BrowserTabs.ActiveColor, 50);
 
   BrowserPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;

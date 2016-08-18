@@ -18,7 +18,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="4"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="183"/>
+      <BuildNr Value="185"/>
       <Language Value=""/>
       <CharSet Value="04B0"/>
       <Attributes pvaPreRelease="True"/>
@@ -35,7 +35,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\..\..\..\lib\minilib\socket\source"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\..\..\..\lib\minilib\socket\source;..\..\..\..\lib\minilib\lazarus\components\native"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Linking>
@@ -66,7 +66,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\..\..\..\lib\minilib\socket\source"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\..\..\..\lib\minilib\socket\source;..\..\..\..\lib\minilib\lazarus\components\native"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Parsing>
@@ -159,7 +159,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="40">
+    <Units Count="41">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -383,6 +383,10 @@
         <Filename Value="..\..\..\..\lib\minilib\socket\source\mnConnections.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit39>
+      <Unit40>
+        <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvThemes.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit40>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -393,7 +397,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);D:\dev\lazarus\ide\include\"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\..\..\..\lib\minilib\socket\source"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\..\..\..\lib\minilib\socket\source;..\..\..\..\lib\minilib\lazarus\components\native"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <Linking>

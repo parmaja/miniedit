@@ -10,9 +10,12 @@ unit mneResources;
 interface
 
 uses
-  SysUtils, Classes, ImgList, Controls, contnrs, EditorEngine;
+  SysUtils, Classes, ImgList, Controls, contnrs,
+  LCLType,
+  EditorEngine;
 
 type
+  TThemeStyle = (thsLight, thsDark);
 
   { TEditorResource }
 
@@ -21,6 +24,7 @@ type
     BookmarkImages: TImageList;
     DebugImages: TImageList;
     PanelImages: TImageList;
+    PanelImages1: TImageList;
     ToolbarImageList: TImageList;
     procedure DataModuleCreate(Sender: TObject);
     procedure DataModuleDestroy(Sender: TObject);
@@ -28,6 +32,7 @@ type
   public
     Extensions: TEditorExtensions;
     function GetFileImageIndex(const FileName: string): integer;
+    procedure Switch(Style: TThemeStyle);
   end;
 
 const
@@ -39,6 +44,9 @@ var
   EditorResource: TEditorResource = nil;
 
 implementation
+
+uses
+  Graphics, GraphType;
 
 function TEditorResource.GetFileImageIndex(const FileName: string): integer;
 var
@@ -54,6 +62,46 @@ begin
     Result := Extension.ImageIndex
   else
     Result := 1;//any file
+end;
+
+procedure TEditorResource.Switch(Style: TThemeStyle);
+var
+  img: TRawImage;
+  Bmp: TBitmap;
+  p: PRGBAQuad;
+  m, c, i: integer;
+  new: Byte;
+begin
+  PanelImages.BeginUpdate;
+  try
+    if Style = thsLight then
+      new := 0
+    else
+      new := $ff;
+    Bmp := TBitmap.Create;
+    PanelImages.GetFullBitmap(Bmp);
+    Img := Bmp.RawImage;
+    //PanelImages.GetFullRawImage(m, img);
+    p := PRGBAQuad(img.Data);
+    c := img.DataSize div SizeOf(p^);
+    i := 0;
+    while i < c do
+    begin
+      //stupid idea, but the mask will work with it
+      //if p^.Green = 0 then //we should check if masked
+      begin
+        p^.Blue := new;
+        p^.Green := new;
+        p^.Red := new;
+      end;
+      inc(p);
+      inc(i);
+    end;
+    PanelImages.Clear;
+    PanelImages.AddMasked(Bmp, clFuchsia);
+  finally
+    PanelImages.EndUpdate;
+  end;
 end;
 
 

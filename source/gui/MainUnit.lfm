@@ -155,7 +155,7 @@ object MainForm: TMainForm
           Width = 16
           Images = EditorResource.PanelImages
           ImageIndex = 0
-          Style = ibsToolbar
+          Style = ibsNormal
           Align = alRight
           OnClick = FolderCloseBtnClick
           AutoCheck = False
@@ -167,7 +167,7 @@ object MainForm: TMainForm
           Width = 16
           Images = EditorResource.PanelImages
           ImageIndex = 1
-          Style = ibsToolbar
+          Style = ibsNormal
           Align = alRight
           PopupMenu = FolderMenu
           AutoCheck = False
@@ -364,6 +364,7 @@ object MainForm: TMainForm
         OnTabSelected = FileTabsTabSelected
         Align = alTop
         Caption = 'Files'
+        PopupMenu = FilePopupMenu
         TabOrder = 1
       end
     end
@@ -400,7 +401,7 @@ object MainForm: TMainForm
         Width = 16
         Images = EditorResource.PanelImages
         ImageIndex = 0
-        Style = ibsToolbar
+        Style = ibsNormal
         Align = alRight
         OnClick = FileCloseBtnClick
         AutoCheck = False
@@ -412,7 +413,7 @@ object MainForm: TMainForm
         Width = 16
         Images = EditorResource.ToolbarImageList
         ImageIndex = 20
-        Style = ibsToolbar
+        Style = ibsNormal
         Align = alRight
         OnClick = FileCloseBtnClick
         AutoCheck = False
@@ -664,6 +665,47 @@ object MainForm: TMainForm
         1
         0
         'Variable'
+      )
+    end
+    object MessagesGrid: TStringGrid
+      Left = 1
+      Height = 105
+      Top = 21
+      Width = 879
+      Align = alClient
+      Flat = True
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
+      ParentColor = True
+      PopupMenu = MessagesPopup
+      RowCount = 1
+      TabOrder = 2
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnDblClick = MessagesGridDblClick
+      ColWidths = (
+        18
+        64
+        378
+        164
+        64
+      )
+      Cells = (
+        4
+        1
+        0
+        'Type'
+        2
+        0
+        'Message'
+        3
+        0
+        'File'
+        4
+        0
+        'Line'
       )
     end
     inline OutputEdit: TSynEdit
@@ -1238,47 +1280,6 @@ object MainForm: TMainForm
           MarkupInfo.Foreground = clGray
         end
       end
-    end
-    object MessagesGrid: TStringGrid
-      Left = 1
-      Height = 105
-      Top = 21
-      Width = 879
-      Align = alClient
-      Flat = True
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
-      ParentColor = True
-      PopupMenu = MessagesPopup
-      RowCount = 1
-      TabOrder = 2
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnDblClick = MessagesGridDblClick
-      ColWidths = (
-        18
-        64
-        378
-        164
-        64
-      )
-      Cells = (
-        4
-        1
-        0
-        'Type'
-        2
-        0
-        'Message'
-        3
-        0
-        'File'
-        4
-        0
-        'Line'
-      )
     end
   end
   object MessagesSpl: TntvSplitter
