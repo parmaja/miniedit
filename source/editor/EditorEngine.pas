@@ -1401,6 +1401,10 @@ begin
       Completion.TheForm.Font.Color := aSynEdit.Font.Color;
       Completion.TheForm.Color := aSynEdit.Color;
       Completion.TheForm.Caption := Name;
+      Completion.SelectedColor := aSynEdit.SelectedColor.Background;
+      Completion.TheForm.BackgroundColor := aSynEdit.Color;
+      Completion.TheForm.TextColor := aSynEdit.Font.Color;
+      Completion.TheForm.DrawBorderColor := aSynEdit.Font.Color;
 
       //Completion.AutoUseSingleIdent := True;
       //CanExecute := False
