@@ -1,0 +1,45 @@
+object Form1: TForm1
+  Left = 200
+  Height = 211
+  Top = 130
+  Width = 515
+  Caption = 'Form1'
+  ClientHeight = 211
+  ClientWidth = 515
+  LCLVersion = '1.7'
+  object Memo1: TMemo
+    Left = 5
+    Height = 166
+    Top = 37
+    Width = 497
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    TabOrder = 0
+  end
+  object Button1: TButton
+    Left = 11
+    Height = 25
+    Top = 5
+    Width = 80
+    Caption = 'Run Lua'
+    OnClick = Button1Click
+    TabOrder = 1
+  end
+  object Button2: TButton
+    Left = 91
+    Height = 25
+    Top = 6
+    Width = 113
+    Caption = 'Run D example'
+    OnClick = Button2Click
+    TabOrder = 2
+  end
+  object Button3: TButton
+    Left = 206
+    Height = 25
+    Top = 6
+    Width = 92
+    Caption = 'Run PAS'
+    OnClick = Button3Click
+    TabOrder = 3
+  end
+end
