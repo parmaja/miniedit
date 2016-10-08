@@ -24,6 +24,7 @@ uses
   mnePASClasses,
   mneCSVClasses,
   mnePyClasses,
+  mneLuaClasses,
   mneVerilogClasses,
   Classes;
 

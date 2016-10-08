@@ -19,7 +19,7 @@ uses
   mnXMLRttiProfile, mnXMLUtils, SynEditTypes, SynCompletion,
   SynHighlighterHashEntries, EditorProfiles, SynHighlighterCSS,
   SynHighlighterSQL, SynHighlighterXML, SynHighlighterJScript,
-  SynHighlighterXHTML, SynHighlighterMultiProc, HTMLProcessor, EditorDebugger,
+  mnSynHighlighterXHTML, mnSynHighlighterMultiProc, HTMLProcessor, EditorDebugger,
   EditorClasses, dbgpServers, mneClasses, EditorRun,
   mnePHPProjectFrames;
 

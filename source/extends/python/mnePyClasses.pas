@@ -76,7 +76,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, SynHighlighterMultiProc, SynEditStrConst, mnePyTendencyFrames, mnePyProjectFrames;
+  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mnePyTendencyFrames, mnePyProjectFrames;
 
 { TDProject }
 

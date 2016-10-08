@@ -15,7 +15,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  LazFileUtils, SynHighlighterD, mnSynHighlighterCpp, EditorDebugger, gdbClasses,
+  LazFileUtils, mnSynHighlighterD, EditorDebugger, gdbClasses,
   EditorClasses, mneClasses, MsgBox,
   mneCompileProjectOptions, EditorRun, mneConsoleClasses,
   mneConsoleForms;
@@ -71,7 +71,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, SynHighlighterMultiProc, SynEditStrConst, mneDTendencyFrames, mneDProjectFrames, LCLProc;
+  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mneDTendencyFrames, mneDProjectFrames, LCLProc;
 
 { TDProject }
 
@@ -296,7 +296,7 @@ procedure TDFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   FCompletion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
-  IdentifierID := ord(SynHighlighterMultiProc.tkIdentifier);
+  IdentifierID := ord(mnSynHighlighterMultiProc.tkIdentifier);
 end;
 
 procedure TDFileCategory.DoAddKeywords;

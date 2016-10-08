@@ -24,7 +24,7 @@ interface
 
 uses
   SysUtils, Classes, Graphics,
-  SynUtils, //exists in minilib at sourceforge
+  mnSynUtils, //exists in minilib at sourceforge
   SynEditTypes, SynEditHighlighter, SynHighlighterHashEntries;
 
 type

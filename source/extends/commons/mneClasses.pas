@@ -15,7 +15,7 @@ uses
   Dialogs, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit,
   Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  SynHighlighterSQL, SynHighlighterXML, SynHighlighterApache, SynHighlighterINI,
+  SynHighlighterSQL, SynHighlighterXML, mnSynHighlighterApache, SynHighlighterINI,
   SynHighlighterPython;
 
 type
@@ -112,7 +112,7 @@ function GetHighlighterAttriAtRowColExtend(SynEdit: TCustomSynEdit; const XY: TP
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, SynHighlighterStdSQL;
+  IniFiles, mnStreams, mnUtils, mnSynHighlighterStdSQL;
 
 function ColorToRGBHex(Color: TColor): string;
 var
