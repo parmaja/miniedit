@@ -61,20 +61,25 @@ type
 
   TGlobalAttributeOptions = set of (gaoDefaultBackground, gaoDefaultForeground);
 
+  TGlobalAttributeInfo = record
+    Background: TColor;
+    Foreground: TColor;
+    Options: TGlobalAttributeOptions;
+    Style: TFontStyles;
+  end;
+
   { TGlobalAttribute }
 
   TGlobalAttribute = class(TPersistent)
   private
-    FBackground: TColor;
-    FForeground: TColor;
+    FInfo: TGlobalAttributeInfo;
     FIndex: Integer;
-    FOptions: TGlobalAttributeOptions;
     FParent: TGlobalAttributes;
-    FStyle: TFontStyles;
     FAttType: TAttributeType;
     FTitle: string;
     function GetIsDefault: Boolean;
   protected
+    ResetInfo: TGlobalAttributeInfo;
     property Parent: TGlobalAttributes read FParent;
   public
     constructor Create;
@@ -84,12 +89,13 @@ type
     property Index: Integer read FIndex;
     property Title: string read FTitle write FTitle;
     property IsDefault: Boolean read GetIsDefault;
-  published
     property AttType: TAttributeType read FAttType write FAttType;
-    property Background: TColor read FBackground write FBackground default clNone;
-    property Foreground: TColor read FForeground write FForeground default clNone;
-    property Style: TFontStyles read FStyle write FStyle default [];
-    property Options: TGlobalAttributeOptions read FOptions write FOptions default [];
+    property Info: TGlobalAttributeInfo read FInfo write FInfo;
+  published
+    property Background: TColor read FInfo.Background write FInfo.Background default clNone;
+    property Foreground: TColor read FInfo.Foreground write FInfo.Foreground default clNone;
+    property Style: TFontStyles read FInfo.Style write FInfo.Style default [];
+    property Options: TGlobalAttributeOptions read FInfo.Options write FInfo.Options default [];
   end;
 
   { TGlobalAttributes }
@@ -401,36 +407,35 @@ procedure TGlobalAttributes.Init;
     Item.Style := Style;
     Item.FParent := Self;
     Item.FIndex := FList.Add(Item);
+    Item.ResetInfo := Item.Info;
   end;
 
 begin
   FList.Clear;
   Reset;
-  Add(FDefault, attDefault, 'Default', clBlack, $00E0E8E9, []);
-
-  Add(FPanel, attPanel, 'Panel', clNone, clNone, []);
-  Add(FLink, attLink, 'Link', clWhite, $002A190F, []);
-
+  Add(FDefault, attDefault, 'Default', clBlack, clWhite, []);
+  Add(FPanel, attPanel, 'Panel', clBlack, clWhite, []);
+  Add(FLink, attLink, 'Link', $00D87356, clWhite, [fsUnderline]);
   Add(FSelected, attSelected, 'Selected', clBlack, $00DCCBC0, []);
-  Add(FActive, attActive, 'Active', clBlack, $00DCCBC0, []);
+  Add(FActive, attActive, 'Active', clBlack, $00EDEAE4, []);
   Add(FModified, attModified, 'Modified', $00370268, $00E19855, []);
-  Add(FGutter, attGutter, 'Gutter', $006A3000, $00E4D8D1, []);
-  Add(FSeparator, attSeparator, 'Separator', $00E0B8A9, $00E6E6E6, []);
-  Add(FKeyword, attKeyword, 'Keyword', $00D76100, clNone, []);
-  Add(FQuotedString, attQuotedString, 'String', clGreen, clNone, [fsBold]);
-  Add(FDocument, attDocument, 'Document', $00000E6A, clNone, []);
-  Add(FComment, attComment, 'Comment', $00C49D8C, clNone, []);
-  Add(FSymbol, attSymbol, 'Symbol', clMaroon, clNone, []);
-  Add(FStandard, attStandard, 'Standard', $00143A50, clNone, []);
-  Add(FNumber, attNumber, 'Number', $00215767, clNone, []);
-  Add(FDirective, attDirective, 'Directive', clMaroon, clNone, [fsBold]);
-  Add(FIdentifier, attIdentifier, 'Identifier', clBackground, clNone, []);
-  Add(FText, attText, 'Text', clNone, clNone, []);
-  Add(FEmbedText, attEmbedText, 'Embed Text', $000E7613, clNone, []);
-  Add(FVariable, attVariable, 'Variable', clBlack, clNone, [fsBold]);
-  Add(FDataType, attDataType, 'Type', $002F7ADF, clNone, []);
-  Add(FDataName, attDataName, 'Name', $000B590F, clNone, []);
-  Add(FValue, attValue, 'Value', clGreen, clNone, []);
+  Add(FGutter, attGutter, 'Gutter', clBlack, $00CDC5BC, []);
+  Add(FSeparator, attSeparator, 'Separator', $00C77E63, $00E6E6E6, []);
+  Add(FKeyword, attKeyword, 'Keyword', clNavy, clWhite, [fsBold]);
+  Add(FQuotedString, attQuotedString, 'String', clGreen, clWhite, [fsBold]);
+  Add(FDocument, attDocument, 'Document', $00000E6A, clWhite, []);
+  Add(FComment, attComment, 'Comment', $00A56C54, clWhite, []);
+  Add(FSymbol, attSymbol, 'Symbol', clMaroon, clWhite, []);
+  Add(FStandard, attStandard, 'Standard', $00143A50, clWhite, []);
+  Add(FNumber, attNumber, 'Number', $00215767, clWhite, []);
+  Add(FDirective, attDirective, 'Directive', clMaroon, clWhite, [fsBold]);
+  Add(FIdentifier, attIdentifier, 'Identifier', clBackground, clWhite, []);
+  Add(FText, attText, 'Text', clBlack, clWhite, []);
+  Add(FEmbedText, attEmbedText, 'Embed Text', clBlack, clWhite, []);
+  Add(FVariable, attVariable, 'Variable', clBlack, clWhite, [fsBold]);
+  Add(FDataType, attDataType, 'Type', $002F7ADF, clWhite, []);
+  Add(FDataName, attDataName, 'Name', $000B590F, clWhite, []);
+  Add(FValue, attValue, 'Value', clGreen, clWhite, []);
   Refresh;
 end;
 
@@ -522,10 +527,7 @@ end;
 
 procedure TGlobalAttribute.Reset;
 begin
-  Foreground := clNone;
-  Background := clNone;
-  Style := [];
-  Options := [];
+  Info := ResetInfo;
 end;
 
 procedure TGlobalAttribute.AssignTo(Dest: TPersistent);
@@ -548,8 +550,8 @@ end;
 constructor TGlobalAttribute.Create;
 begin
   inherited;
-  FBackground := clNone;
-  FForeground := clNone;
+  FInfo.Background := clNone;
+  FInfo.Foreground := clNone;
 end;
 
 procedure TGlobalAttributes.AssignTo(Dest: TPersistent);

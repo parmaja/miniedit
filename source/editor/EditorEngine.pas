@@ -3363,6 +3363,7 @@ var
   i: integer;
 begin
   Options.Save(WorkSpace);
+  ForceDirectory(Workspace);
   Session.Options.SaveToFile(LowerCase(Workspace + 'mne-options-' + SysPlatform + '.xml'));
 
   for i := 0 to Tendencies.Count - 1 do
