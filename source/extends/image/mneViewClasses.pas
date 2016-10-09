@@ -131,9 +131,9 @@ initialization
   with Engine do
   begin
     Categories.Add(TImageFileCategory.Create('Image'));
-    Groups.Add(TImageFile, 'png', 'PNG files', 'Image', ['png'], [fgkBrowsable]);
-    Groups.Add(TImageFile, 'jpg', 'Jpg files', 'Image', ['jpg'], [fgkBrowsable]);
-    Groups.Add(TImageFile, 'bmp', 'BMP files', 'Image', ['bmp'], [fgkBrowsable]);
+    Groups.Add(TImageFile, 'png', 'PNG files', TImageFileCategory, ['png'], [fgkBrowsable]);
+    Groups.Add(TImageFile, 'jpg', 'Jpg files', TImageFileCategory, ['jpg'], [fgkBrowsable]);
+    Groups.Add(TImageFile, 'bmp', 'BMP files', TImageFileCategory, ['bmp'], [fgkBrowsable]);
   end;
 end.
 

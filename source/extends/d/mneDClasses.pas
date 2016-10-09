@@ -329,7 +329,7 @@ initialization
   with Engine do
   begin
     Categories.Add(TDFileCategory.Create('D', [fckPublish]));
-    Groups.Add(TDFile, 'D', 'D Files', 'D', ['d', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
+    Groups.Add(TDFile, 'D', 'D Files', TDFileCategory, ['d', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
     Tendencies.Add(TDTendency);
   end;
 end.

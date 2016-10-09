@@ -157,7 +157,7 @@ initialization
   with Engine do
   begin
     Categories.Add(TConsoleFileCategory.Create('Console'));
-    Groups.Add(TConsoleFile, 'Console', 'Console Files', 'Console', ['Console'], [fgkVirtual, fgkText], []);
+    Groups.Add(TConsoleFile, 'Console', 'Console Files', TConsoleFileCategory, ['Console'], [fgkVirtual, fgkText], []);
     //Tendencies.Add(TConsoleTendency);
   end;
 end.

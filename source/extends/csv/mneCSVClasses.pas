@@ -161,7 +161,7 @@ initialization
   with Engine do
   begin
     Categories.Add(TCSVFileCategory.Create('csv'));
-    Groups.Add(TCSVFile, 'csv', 'CSV Files', 'csv', ['csv'], [fgkMember, fgkBrowsable], []);
+    Groups.Add(TCSVFile, 'csv', 'CSV Files', TCSVFileCategory, ['csv'], [fgkMember, fgkBrowsable], []);
     Tendencies.Add(TCSVTendency);
   end;
 end.

@@ -318,7 +318,7 @@ initialization
   with Engine do
   begin
     Categories.Add(TPyFileCategory.Create('Python', [fckPublish]));
-    Groups.Add(TPyFile, 'Python', 'Python Files', 'Python', ['py'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
+    Groups.Add(TPyFile, 'Python', 'Python Files', TPyFileCategory, ['py'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
     Tendencies.Add(TPyTendency);
   end;
 end.

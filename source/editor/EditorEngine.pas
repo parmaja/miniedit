@@ -226,10 +226,6 @@ type
   TAddFrameCallBack = procedure(AFrame: TFrame) of object;
   TAddClickCallBack = procedure(Name, Caption: string; OnClickEvent: TNotifyEvent; ShortCut: TShortCut = 0) of object;
 
-  { TFileCategories }
-
-  TFileCategories = class(specialize GNamedItems<TFileCategory>);
-
   TFileGroupKind = (
     fgkExecutable,//You can guess what is it :P
     fgkText, //Is it an Text Editor like SQL or PHP
@@ -817,6 +813,15 @@ type
 
   TFileCategoryClass = class of TFileCategory;
 
+  { TFileCategories }
+
+  TFileCategories = class(specialize GNamedItems<TFileCategory>)
+  public
+    function FindByClass(CategoryClass: TFileCategoryClass): TFileCategory;
+    function Add(vCategory: TFileCategory): Integer;
+
+  end;
+
   { TTextFileCategory }
 
   TTextFileCategory = class(TFileCategory)
@@ -867,6 +872,8 @@ type
   TFileGroups = class(TEditorElements)
   private
     function GetItem(Index: integer): TFileGroup;
+  protected
+    procedure InternalAdd(GroupClass: TFileGroupClass; FileClass: TEditorFileClass; const Name, Title: string; Category: TFileCategoryClass; Extensions: array of string; Kind: TFileGroupKinds = []; Style: TFileGroupStyles = []);
   public
     function Find(vName: string): TFileGroup;
     function Find(vName, vCategory: string): TFileGroup;
@@ -876,8 +883,7 @@ type
     //FullFilter return title of that filter for open/save dialog boxes
     function CreateFilter(FullFilter:Boolean = True; FirstExtension: string = ''; vGroup: TFileGroup = nil; OnlyThisGroup: Boolean = true): string;
     procedure Add(vGroup: TFileGroup);
-    procedure Add(GroupClass: TFileGroupClass; FileClass: TEditorFileClass; const Name, Title: string; Category: string; Extensions: array of string; Kind: TFileGroupKinds = []; Style: TFileGroupStyles = []);
-    procedure Add(FileClass: TEditorFileClass; const Name, Title: string; Category: string; Extensions: array of string; Kind: TFileGroupKinds = []; Style: TFileGroupStyles = []);
+    procedure Add(FileClass: TEditorFileClass; const Name, Title: string; Category: TFileCategoryClass; Extensions: array of string; Kind: TFileGroupKinds = []; Style: TFileGroupStyles = []);
     property Items[Index: integer]: TFileGroup read GetItem; default;
   end;
 
@@ -1033,7 +1039,7 @@ type
     FDefaultSCM: TEditorSCM;
     //FInternalTendency used only there is no any default Tendency defined, it is mean simple editor without any project type
     FInternalTendency: TDefaultTendency;
-//    FForms: TEditorFormList;
+    //FForms: TEditorFormList;
     FTendencies: TTendencies;
     FSourceManagements: TSourceManagements;
     FUpdateState: TEditorChangeStates;
@@ -1282,6 +1288,30 @@ begin
       S := S + #$D;
     Stream.WriteBuffer(Pointer(S)^, Length(S));
   end;
+end;
+
+{ TFileCategories }
+
+function TFileCategories.FindByClass(CategoryClass: TFileCategoryClass): TFileCategory;
+var
+  i: Integer;
+begin
+  Result := nil;
+  for i := 0 to Count - 1 do
+  begin
+    if Items[i].ClassType = CategoryClass then
+    begin
+      Result := Items[i];
+      break;
+    end;
+  end;
+end;
+
+function TFileCategories.Add(vCategory: TFileCategory): Integer;
+begin
+  if FindByClass(TFileCategoryClass(vCategory.ClassType)) <> nil then
+    raise Exception.Create('Category is already exists: ' + vCategory.ClassName);
+  Result := inherited Add(vCategory);
 end;
 
 { TEditorExtensions }
@@ -2864,6 +2894,7 @@ begin
     aTendency := Engine.Tendency
   else
     aTendency := Engine.Tendencies.FindByExtension(aGroup, vExtension, [fgkExecutable]);
+
   aGroup := Engine.FindExtension(vExtension);
   if aGroup = nil then
     raise EEditorException.Create('Cannot open this file type: ' + vExtension);
@@ -2921,7 +2952,7 @@ begin
   try
     if vGroup = nil then
       vGroup := Engine.Tendency.Groups[0];
-    Result := CreateEditorFile(vGroup.Extensions[0].Name);
+    Result := Engine.Tendency.CreateEditorFile(vGroup);
     Result.NewContent;
     Result.Edit;
     Current := Result;
@@ -4721,15 +4752,15 @@ end;
 
 { TFileGroups }
 
-procedure TFileGroups.Add(GroupClass: TFileGroupClass; FileClass: TEditorFileClass; const Name, Title:string; Category: string; Extensions: array of string; Kind: TFileGroupKinds; Style: TFileGroupStyles);
+procedure TFileGroups.InternalAdd(GroupClass: TFileGroupClass; FileClass: TEditorFileClass; const Name, Title:string; Category: TFileCategoryClass; Extensions: array of string; Kind: TFileGroupKinds; Style: TFileGroupStyles);
 var
   aCategory: TFileCategory;
   aGroup: TFileGroup;
   i: integer;
 begin
-  aCategory := Engine.Categories.Find(Category);
+  aCategory := Engine.Categories.FindByClass(Category);
   if aCategory = nil then
-    raise Exception.Create('Can not find category ' + Category);
+    raise Exception.Create('Can not find category ' + Category.ClassName);
   aGroup:= Find(Name);
   if aGroup <> nil then
     raise Exception.Create(Name + ' already exists');
@@ -4745,9 +4776,9 @@ begin
   inherited Add(aGroup);
 end;
 
-procedure TFileGroups.Add(FileClass: TEditorFileClass; const Name, Title: string; Category: string; Extensions: array of string; Kind: TFileGroupKinds; Style: TFileGroupStyles);
+procedure TFileGroups.Add(FileClass: TEditorFileClass; const Name, Title: string; Category: TFileCategoryClass; Extensions: array of string; Kind: TFileGroupKinds; Style: TFileGroupStyles);
 begin
-  Add(TFileGroup, FileClass, Name, Title, Category, Extensions, Kind, Style);
+  InternalAdd(TFileGroup, FileClass, Name, Title, Category, Extensions, Kind, Style);
 end;
 
 function TFileGroups.Find(vName: string): TFileGroup;

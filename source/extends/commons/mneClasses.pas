@@ -349,15 +349,15 @@ initialization
     Categories.Add(TINIFileCategory.Create('ini'));
     Categories.Add(TXMLFileCategory.Create('xml'));
     Categories.Add(TCFGFileCategory.Create('CFG'));
-    Categories.Add(TTXTFileCategory.Create('md'));
+    //Categories.Add(TTXTFileCategory.Create('md'));
 
-    Groups.Add(TTXTFile, 'txt', 'TXT files', 'txt', ['txt'], []);
-    Groups.Add(TTXTFile, 'md', 'MarkDown files', 'md', ['md'], []);
-    Groups.Add(TSQLFile, 'sql', 'SQL files', 'SQL', ['sql'], [fgkAssociated, fgkMember, fgkBrowsable]);
-    Groups.Add(TApacheFile, 'htaccess', 'htaccess files', 'apache', ['htaccess', 'conf'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TXMLFile, 'xml', 'XML files', 'xml', ['xml'], [fgkMember, fgkBrowsable]);
-    Groups.Add(TINIFile, 'ini', 'INI files', 'ini', ['ini'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TCFGFile, 'cfg', 'CFG files', 'CFG', ['cfg'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TTXTFile, 'txt', 'TXT files', TTXTFileCategory, ['txt'], []);
+    Groups.Add(TTXTFile, 'md', 'MarkDown files', TTXTFileCategory, ['md'], []);
+    Groups.Add(TSQLFile, 'sql', 'SQL files', TSQLFileCategory, ['sql'], [fgkAssociated, fgkMember, fgkBrowsable]);
+    Groups.Add(TApacheFile, 'htaccess', 'htaccess files', TApacheFileCategory, ['htaccess', 'conf'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TXMLFile, 'xml', 'XML files', TXMLFileCategory, ['xml'], [fgkMember, fgkBrowsable]);
+    Groups.Add(TINIFile, 'ini', 'INI files', TINIFileCategory, ['ini'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TCFGFile, 'cfg', 'CFG files', TCFGFileCategory, ['cfg'], [fgkAssociated, fgkBrowsable]);
   end;
   //Engine.AddInstant('Python', ['py'], TSynPythonSyn, []);
 end.

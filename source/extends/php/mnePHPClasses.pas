@@ -605,10 +605,10 @@ initialization
     Categories.Add(TCSSFileCategory.Create('css', [fckPublish]));
     Categories.Add(TJSFileCategory.Create('js', [fckPublish]));
 
-    Groups.Add(TPHPFile, 'php', 'PHP Files', 'php/html', ['php', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
-    Groups.Add(TXHTMLFile, 'html', 'HTML Files', 'php/html', ['html', 'xhtml', 'htm', 'tpl'], [fgkAssociated, fgkMember, fgkBrowsable]);
-    Groups.Add(TCssFile, 'css', 'CSS Files', 'css', ['css'], [fgkAssociated, fgkMember, fgkBrowsable]);
-    Groups.Add(TJSFile,'js', 'Java Script Files', 'js', ['js'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable]);
+    Groups.Add(TPHPFile, 'php', 'PHP Files', TXHTMLFileCategory, ['php', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
+    Groups.Add(TXHTMLFile, 'html', 'HTML Files', TXHTMLFileCategory, ['html', 'xhtml', 'htm', 'tpl'], [fgkAssociated, fgkMember, fgkBrowsable]);
+    Groups.Add(TCssFile, 'css', 'CSS Files', TCSSFileCategory, ['css'], [fgkAssociated, fgkMember, fgkBrowsable]);
+    Groups.Add(TJSFile,'js', 'Java Script Files', TJSFileCategory, ['js'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable]);
 
     Tendencies.Add(TPHPTendency);
   end;

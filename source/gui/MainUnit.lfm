@@ -1930,7 +1930,7 @@ object MainForm: TMainForm
     end
     object TypeOptionsAct: TAction
       Category = 'Project'
-      Caption = 'Project Type Options'
+      Caption = 'Type Options'
       OnExecute = TypeOptionsActExecute
     end
     object OpenFolderAct: TAction
@@ -2204,13 +2204,13 @@ object MainForm: TMainForm
       ShortCut = 16500
     end
     object TypesOptionsAct: TAction
-      Category = 'Project'
+      Category = 'Tools'
       Caption = 'Types Options'
       OnExecute = TypesOptionsActExecute
     end
     object ProjectOptionsAct: TAction
       Category = 'Project'
-      Caption = 'Project Options'
+      Caption = 'Options'
       ImageIndex = 12
       OnExecute = ProjectOptionsActExecute
       ShortCut = 24698

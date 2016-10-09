@@ -110,7 +110,7 @@ initialization
   with Engine do
   begin
     Categories.Add(TSARDFileCategory.Create('Sard'));
-    Groups.Add(TSARDFile, 'sard', 'SARD Files', 'sard', ['sard'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
+    Groups.Add(TSARDFile, 'sard', 'SARD Files', TSARDFileCategory, ['sard'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
 
     Tendencies.Add(TSARDTendency);
   end;

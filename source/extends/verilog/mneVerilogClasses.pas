@@ -413,7 +413,7 @@ initialization
   with Engine do
   begin
     Categories.Add(TVerilogFileCategory.Create('Verilog'));
-    Groups.Add(TVerilogFile, 'Verilog', 'Verilog Files', 'Verilog', ['v', 'vh'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain], [fgsFolding]);
+    Groups.Add(TVerilogFile, 'Verilog', 'Verilog Files', TVerilogFileCategory, ['v', 'vh'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain], [fgsFolding]);
     Tendencies.Add(TVerilogTendency);
   end;
 end.

@@ -331,7 +331,7 @@ initialization
   with Engine do
   begin
     Categories.Add(TCppFileCategory.Create('Cpp', [fckPublish]));
-    Groups.Add(TCppFile, 'Cpp', 'C++ Files', 'Cpp', ['cpp', 'c', 'ino', 'h'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
+    Groups.Add(TCppFile, 'Cpp', 'C++ Files', TCppFileCategory, ['cpp', 'c', 'ino', 'h'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
     Tendencies.Add(TCppTendency);
   end;
 end.
