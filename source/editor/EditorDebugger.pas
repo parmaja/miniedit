@@ -21,7 +21,7 @@ type
 
   TmneRunAction = (rnaCompile, rnaExecute, rnaDebug, rnaLink);
   TmneRunActions = set of TmneRunAction;
-  TmneRunMode = (runConsole, runProcess, runEmbedded, runOutput, runBrowser);
+  TmneRunMode = (runConsole, runOutput, runBox, runBrowser);
 
   { TmneRunInfo }
 

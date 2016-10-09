@@ -1156,7 +1156,7 @@ type
     List: TStringList;
   end;
 
-function SelectFolder(const Caption: string; const Root: WideString; var Directory: string): Boolean;
+function SelectFolder(const Caption: string; const Root: string; var Directory: string): Boolean;
 procedure SpliteStr(S, Separator: string; var Name, Value: string);
 procedure SaveAsUnix(Strings: TStrings; Stream: TStream);
 procedure SaveAsWindows(Strings: TStrings; Stream: TStream);
@@ -1217,7 +1217,7 @@ begin
   Result := FEngine;
 end;
 
-function SelectFolder(const Caption: string; const Root: WideString; var Directory: string): Boolean;
+function SelectFolder(const Caption: string; const Root: String; var Directory: string): Boolean;
 begin
   Result := SelectDirectory(Caption, Root, Directory);
 end;
@@ -2683,9 +2683,8 @@ procedure EnumRunMode(vItems: TStrings);
 begin
   vItems.Clear;
   vItems.Add('Console');
-  vItems.Add('Process');
-  vItems.Add('Embedded');
   vItems.Add('Output');
+  vItems.Add('Box');
   vItems.Add('Browser');
 end;
 

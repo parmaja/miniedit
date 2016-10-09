@@ -89,12 +89,7 @@ procedure TCompilerProjectOptionsForm.Retrieve;
 begin
   Options := (FProject.Options as TCompilerProjectOptions);
 
-  RunModeCbo.Items.Add('Console');
-  RunModeCbo.Items.Add('Process');
-  RunModeCbo.Items.Add('Embedded');
-  RunModeCbo.Items.Add('Output');
-  RunModeCbo.Items.Add('Browser');
-
+  EnumRunMode(RunModeCbo.Items);
   RunModeCbo.ItemIndex := ord(Options.RunMode);
 
   PauseChk.Checked := Options.PauseConsole;

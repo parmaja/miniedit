@@ -20,11 +20,11 @@ type
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
   private
-    procedure Run(AFile, AParam: string);
+    procedure Run(AFile, AParam: String);
     function Read: Integer;
     procedure Flush;
   public
-    FBuffer: string;
+    FBuffer: String;
     FProcess: TProcess;
   end;
 
@@ -47,37 +47,38 @@ begin
   FirstTime := True;
   Count := 0;
   C := 0;
-    try
-      FProcess.Execute;
-      while (FirstTime or FProcess.Running or (C > 0)) do
+  try
+    FProcess.Execute;
+
+    while (FirstTime or FProcess.Running or (C > 0)) do
+    begin
+      L := Length(FBuffer);
+      Setlength(FBuffer, L + READ_BYTES);
+      C := FProcess.Output.Read(FBuffer[1 + L], READ_BYTES);
+      SetLength(FBuffer, L + C);
+      if Length(FBuffer) > 0 then
       begin
-        L := Length(FBuffer);
-        Setlength(FBuffer, L + READ_BYTES);
-        C := FProcess.Output.Read(FBuffer[1 + L], READ_BYTES);
-        SetLength(FBuffer, L + C);
-        if Length(FBuffer) > 0 then
-        begin
-          Flush;
-        end;
-
-        if C > 0 then
-          Inc(Count, C)
-        else
-          Sleep(100);
-
-        FirstTime := False;
+        Flush;
       end;
 
-      FProcess.WaitOnExit;
+      if C > 0 then
+        Inc(Count, C)
+      else
+        Sleep(100);
 
-      Result := FProcess.ExitStatus;
-    except
-      on e : Exception do
-      begin
-        if FProcess.Running then
-          FProcess.Terminate(0);
-      end;
+      FirstTime := False;
     end;
+
+    FProcess.WaitOnExit;
+
+    Result := FProcess.ExitStatus;
+  except
+    on e: Exception do
+    begin
+      if FProcess.Running then
+        FProcess.Terminate(0);
+    end;
+  end;
 end;
 
 procedure TForm1.Flush;
@@ -86,7 +87,7 @@ begin
   FBuffer := '';
 end;
 
-procedure TForm1.Run(AFile, AParam: string);
+procedure TForm1.Run(AFile, AParam: String);
 var
   aOptions: TProcessOptions;
   Status: Integer;
@@ -102,9 +103,9 @@ begin
 
   //aOptions := [poRunSuspended];
 
-  FProcess.Options :=  aOptions + [poUsePipes, poStderrToOutPut];
+  FProcess.Options := aOptions + [poUsePipes, poStderrToOutPut];
   FProcess.ShowWindow := swoHIDE;
-  FProcess.PipeBufferSize := 40; //80 char in line
+  //FProcess.PipeBufferSize := 40; //80 char in line
   try
     Status := Read;
   finally
@@ -126,7 +127,6 @@ procedure TForm1.Button3Click(Sender: TObject);
 begin
   Run('test_pas.exe', '');
 end;
-
 
 end.
 

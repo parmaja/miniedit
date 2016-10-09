@@ -51,3 +51,12 @@ CMDBox package
     minilib\lazarus\components\native\NativeLib.lpk
 
 ####Build minilib project
+
+
+##miniEdit
+
+####Options
+
+###Project Options
+
+Console: Run program in Terminal Console of system

@@ -69,7 +69,7 @@ var
   img: TRawImage;
   Bmp: TBitmap;
   p: PRGBAQuad;
-  m, c, i: integer;
+  c, i: integer;
   new: Byte;
 begin
   PanelImages.BeginUpdate;

@@ -57,18 +57,10 @@ end;
 
 procedure TPHPProjectFrame.Retrieve;
 begin
-  RunModeCbo.Items.Add('Console');
-  RunModeCbo.Items.Add('Process');
-  RunModeCbo.Items.Add('Embedded');
-  RunModeCbo.Items.Add('Output');
-  RunModeCbo.Items.Add('Browser');
-
-  with (Project.Options as TPHPProjectOptions) do
-  begin
-    RunModeCbo.ItemIndex := ord(RunMode);
-    PauseChk.Checked := PauseConsole;
-    MainEdit.Text := MainFile;
-  end;
+  EnumRunMode(RunModeCbo.Items);
+  RunModeCbo.ItemIndex := ord(Project.Options.RunMode);
+  PauseChk.Checked := Project.Options.PauseConsole;
+  MainEdit.Text := Project.Options.MainFile;
 end;
 
 end.

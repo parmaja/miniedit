@@ -20,7 +20,6 @@ program mne;
 uses
   {$IFDEF UNIX}
   cthreads,
-  cmem,
   {$ENDIF}
   Dialogs,
   Controls,

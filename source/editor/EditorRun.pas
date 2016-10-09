@@ -234,6 +234,14 @@ begin
     FPool.Show;
 end;
 
+procedure TmneRun.Stop;
+begin
+  if FPool <> nil then
+  begin
+    FPool.Stop;
+  end;
+end;
+
 function TmneRun.Add(AItemClass: TmneRunItemClass): TmneRunItem;
 begin
   if FPool = nil then
@@ -258,28 +266,23 @@ end;
 
 procedure TmneRunItem.CreateControl;
 begin
-  if Info.Mode = runEmbedded then
-  begin
-    FControl := TConsoleForm.Create(Application);
-    FControl.Parent := Engine.Container;
-    Engine.Files.New('CMD: ' + Info.Title, FControl);
+  FControl := TConsoleForm.Create(Application);
+  FControl.Parent := Engine.Container;
+  Engine.Files.New('CMD: ' + Info.Title, FControl);
 
-    FControl.CMDBox.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
-    FControl.CMDBox.BackGroundColor := Engine.Options.Profile.Attributes.Default.Background;
-    FControl.ContentPanel.Color := FControl.CMDBox.BackGroundColor;
+  FControl.CMDBox.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
+  FControl.CMDBox.BackGroundColor := Engine.Options.Profile.Attributes.Default.Background;
+  FControl.ContentPanel.Color := FControl.CMDBox.BackGroundColor;
 
-    FControl.CMDBox.Font.Name := Engine.Options.Profile.Attributes.FontName;
-    FControl.CMDBox.Font.Size := Engine.Options.Profile.Attributes.FontSize;
-    //FControl.CMDBox.GraphicalCharacterWidth := 14;
+  FControl.CMDBox.Font.Name := Engine.Options.Profile.Attributes.FontName;
+  FControl.CMDBox.Font.Size := Engine.Options.Profile.Attributes.FontSize;
+  //FControl.CMDBox.GraphicalCharacterWidth := 14;
 
-    FControl.CMDBox.TextColor(Engine.Options.Profile.Attributes.Default.Foreground);
-    FControl.CMDBox.TextBackground(Engine.Options.Profile.Attributes.Default.Background);
-    FControl.CMDBox.Write('Ready!'+#13#10);
-    FOnWrite := @FControl.WriteText;
-    Engine.UpdateState([ecsRefresh]);
-  end
-  else
-    FOnWrite := @Engine.SendOutout;
+  FControl.CMDBox.TextColor(Engine.Options.Profile.Attributes.Default.Foreground);
+  FControl.CMDBox.TextBackground(Engine.Options.Profile.Attributes.Default.Background);
+  FControl.CMDBox.Write('Ready!'+#13#10);
+  FOnWrite := @FControl.WriteText;
+  Engine.UpdateState([ecsRefresh]);
 end;
 
 procedure TmneRunItem.CreateConsole(AInfo: TmneCommandInfo);
@@ -292,7 +295,7 @@ begin
   WriteMessage(AInfo.Message + #13#10);
   FProcess := TProcess.Create(nil);
   FProcess.ConsoleTitle := Info.Title;
-  FProcess.Executable := ReplaceStr(AInfo.Command, '\', '/');;
+  FProcess.Executable := ReplaceStr(AInfo.Command, '\', '/');
   FProcess.Parameters.Text := AInfo.Params;
   FProcess.CurrentDirectory := ReplaceStr(AInfo.CurrentDirectory, '\', '/');
   FProcess.InheritHandles := True;
@@ -306,8 +309,8 @@ begin
   if Assigned(FOnWrite) then
   begin
     FProcess.Options :=  aOptions + [poUsePipes, poStderrToOutPut];
-    FProcess.ShowWindow := swoHIDE;
-    FProcess.PipeBufferSize := 40; //80 char in line
+    FProcess.ShowWindow := swoShowNormal;
+    FProcess.PipeBufferSize := 0; //80 char in line
     ProcessObject := TmnProcessObject.Create(FProcess, FPool, @WriteString);
     try
       Status := ProcessObject.Read;
@@ -364,6 +367,19 @@ begin
   InternalTemporary := False;
 end;
 
+procedure TmneRunItem.Stop;
+begin
+  if FProcess <> nil then
+    FProcess.Terminate(1);
+end;
+
+constructor TmneRunItem.Create(APool: TmneRunPool);
+begin
+  inherited Create;
+  BreakOnFail := True;
+  FPool := APool;
+end;
+
 procedure TmneRunItem.Execute;
 var
   s: string;
@@ -395,10 +411,10 @@ begin
     end;
     runOutput:
     begin
-      FPool.Synchronize(FPool, @CreateControl);
+      FOnWrite := @Engine.SendOutout;
       CreateConsole(Info);
     end;
-    runEmbedded:
+    runBox:
     begin
       FPool.Synchronize(FPool, @CreateControl);
       CreateConsole(Info);
@@ -408,27 +424,6 @@ begin
     begin
       OpenURL(Info.Link);
     end;
-  end;
-end;
-
-procedure TmneRunItem.Stop;
-begin
-  if FProcess <> nil then
-    FProcess.Terminate(1);
-end;
-
-constructor TmneRunItem.Create(APool: TmneRunPool);
-begin
-  inherited Create;
-  BreakOnFail := True;
-  FPool := APool;
-end;
-
-procedure TmneRun.Stop;
-begin
-  if FPool <> nil then
-  begin
-    FPool.Stop;
   end;
 end;
 
