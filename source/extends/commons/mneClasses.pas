@@ -90,6 +90,15 @@ type
   public
   end;
 
+  { TMDFileCategory }
+
+  TMDFileCategory = class(TTextFileCategory)
+  protected
+    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    procedure InitMappers; override;
+  public
+  end;
+
   { TXMLFileCategory }
 
   TXMLFileCategory = class(TTextFileCategory)
@@ -195,6 +204,17 @@ begin
         end;
     end;
   end;
+end;
+
+{ TMDFileCategory }
+
+function TMDFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+begin
+  Result := nil;
+end;
+
+procedure TMDFileCategory.InitMappers;
+begin
 end;
 
 { TCFGFileCategory }
@@ -349,15 +369,15 @@ initialization
     Categories.Add(TINIFileCategory.Create('ini'));
     Categories.Add(TXMLFileCategory.Create('xml'));
     Categories.Add(TCFGFileCategory.Create('CFG'));
-    //Categories.Add(TTXTFileCategory.Create('md'));
+    Categories.Add(TMDFileCategory.Create('md'));
 
-    Groups.Add(TTXTFile, 'txt', 'TXT files', TTXTFileCategory, ['txt'], []);
-    Groups.Add(TTXTFile, 'md', 'MarkDown files', TTXTFileCategory, ['md'], []);
+    Groups.Add(TTXTFile, 'txt', 'Text files', TTXTFileCategory, ['txt', 'text'], []);
+    Groups.Add(TTXTFile, 'md', 'MarkDown files', TMDFileCategory, ['md'], []);
     Groups.Add(TSQLFile, 'sql', 'SQL files', TSQLFileCategory, ['sql'], [fgkAssociated, fgkMember, fgkBrowsable]);
     Groups.Add(TApacheFile, 'htaccess', 'htaccess files', TApacheFileCategory, ['htaccess', 'conf'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TXMLFile, 'xml', 'XML files', TXMLFileCategory, ['xml'], [fgkMember, fgkBrowsable]);
     Groups.Add(TINIFile, 'ini', 'INI files', TINIFileCategory, ['ini'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TCFGFile, 'cfg', 'CFG files', TCFGFileCategory, ['cfg'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TCFGFile, 'cfg', 'Config files', TCFGFileCategory, ['cfg', 'conf'], [fgkAssociated, fgkBrowsable]);
   end;
   //Engine.AddInstant('Python', ['py'], TSynPythonSyn, []);
 end.
