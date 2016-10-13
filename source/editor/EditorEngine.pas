@@ -2300,6 +2300,7 @@ var
   aGroup: TFileGroup;
 begin
   Result := nil;
+  vGroup := nil;
   for i := 0 to Count - 1 do
   begin
     aGroup := Items[i].Groups.FindExtension(vExt, vKind);
@@ -2895,7 +2896,12 @@ begin
   else
     aTendency := Engine.Tendencies.FindByExtension(aGroup, vExtension, [fgkExecutable]);
 
-  aGroup := Engine.FindExtension(vExtension);
+  if aTendency = nil then
+    aTendency := Engine.InternalTendency;
+
+  if aGroup = nil then
+    aGroup := Engine.FindExtension(vExtension);
+
   if aGroup = nil then
     raise EEditorException.Create('Cannot open this file type: ' + vExtension);
   Result := aTendency.CreateEditorFile(aGroup);
