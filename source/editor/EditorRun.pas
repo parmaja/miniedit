@@ -398,11 +398,20 @@ begin
       end
       else
       begin
+        {$ifdef windows}
         s := '/c "'+ Info.GetCommandLine + '"';
         if Info.Pause then
           s := s + ' & pause';
         Info.Command := 'cmd';
         Info.Params := s;
+        {$else}
+        s := '';
+//        s := '/c "'+ Info.GetCommandLine + '"';
+{        if Info.Pause then
+          s := s + ' & pause';}
+        Info.Command := 'xterm';
+        Info.Params := s;
+        {$endif}
         CreateConsole(Info);
         //Sync this function to make it modal
         {
