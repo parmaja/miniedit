@@ -678,6 +678,7 @@ type
     FAutoOpenProject: Boolean;
     FIgnoreNames: string;
     FLastFolder: string;
+    FLastNewAs: string;
     FLastProject: string;
     FPauseConsole: Boolean;
     FRecentFolders: TStringList;
@@ -751,6 +752,7 @@ type
     property RunMode: TmneRunMode read FRunMode write FRunMode;
     //PauseConsole do not end until use press any key or enter
     property PauseConsole: Boolean read FPauseConsole write FPauseConsole default True;
+    property LastNewAs: string read FLastNewAs write FLastNewAs; //Last NewAs file extension to use it in New file
   end;
 
   TmneSynCompletion = class;
@@ -2960,7 +2962,7 @@ begin
   Engine.BeginUpdate;
   try
     if vGroup = nil then
-      vGroup := Engine.Tendency.Groups[0];
+      vGroup := Engine.Tendency.Groups.Find(Engine.Options.LastNewAs);
     Result := Engine.Tendency.CreateEditorFile(vGroup);
     Result.NewContent;
     Result.Edit;
