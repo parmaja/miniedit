@@ -3377,12 +3377,12 @@ begin
   Engine.BeginUpdate;
   try
     Options.Load(Workspace);
-    Session.Options.SafeLoadFromFile(LowerCase(Workspace + 'mne-options-' + SysPlatform + '.xml'));
+    Session.Options.SafeLoadFromFile(Workspace + 'mne-options-' + SysPlatform + '.xml');
     for i := 0 to Tendencies.Count - 1 do
     begin
       if capOptions in Tendencies[i].Capabilities then
       begin
-        aFile := LowerCase(Workspace + 'mne-tendency-' + Tendencies[i].Name + '.xml');
+        aFile := Workspace + 'mne-tendency-' + LowerCase(Tendencies[i].Name) + '.xml';
         if FileExists(aFile) then
           XMLReadObjectFile(Tendencies[i], aFile);
       end;
@@ -3399,15 +3399,15 @@ var
   aFile: string;
   i: integer;
 begin
-  Options.Save(WorkSpace);
   ForceDirectory(Workspace);
-  Session.Options.SaveToFile(LowerCase(Workspace + 'mne-options-' + SysPlatform + '.xml'));
+  Options.Save(WorkSpace);
+  Session.Options.SaveToFile(Workspace + 'mne-options-' + SysPlatform + '.xml');
 
   for i := 0 to Tendencies.Count - 1 do
   begin
     if capOptions in Tendencies[i].Capabilities then
     begin
-      aFile := LowerCase(Workspace + 'mne-tendency-' + Tendencies[i].Name + '.xml');
+      aFile := Workspace + 'mne-tendency-' + LowerCase(Tendencies[i].Name) + '.xml';
       XMLWriteObjectFile(Tendencies[i], aFile);
     end;
   end;
@@ -3532,7 +3532,7 @@ end;
 
 procedure TEditorEngine.RemoveNotifyEngine(ANotifyObject: INotifyEngine);
 begin
-  if FNotifyObject <> ANotifyObject then
+  if (FNotifyObject <> nil) and (FNotifyObject <> ANotifyObject) then
     raise Exception.Create('NotifyObject not exists');
   FNotifyObject := nil; //TODO if list we should remove it
 end;
@@ -4344,7 +4344,7 @@ begin
   if FullFilter then
   begin
     if Result <> '' then
-      Result := 'All files (' + aSupported + ')|' + aSupported + '|' + Result;
+      Result := 'All files (Supported)|' + aSupported + '|' + Result;
 
     if Result <> '' then
       Result := Result + '|';
@@ -5094,3 +5094,5 @@ end;
 finalization
   FreeAndNil(FEngine);
 end.
+
+'/home/zaher/pascal/miniEdit/bin/setting/mne-editor.xml'
