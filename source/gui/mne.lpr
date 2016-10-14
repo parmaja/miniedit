@@ -48,8 +48,8 @@ uses
   mneCppClasses, mneVerilogClasses, SynHighlighterVerilog,
   mneCustomClasses,
   mnePHPProjectFrames, mnePasProjectFrames, mnePasTendencyFrames, mnePASClasses,
-  mneCSVClasses, mneDClasses, mneDTendencyFrames, MsgBox, GUIMsgBox, Classes,
-  PHPUtils, mnSynHighlighterLua, ntvThemes, mneSetups, mneSettings,
+  mneCSVClasses, mneDClasses, mneLuaClasses, mneDTendencyFrames, MsgBox, GUIMsgBox, Classes,
+  PHPUtils, ntvThemes, mneSetups, mneSettings,
   EditorClasses, gdbClasses,
   mneCompileProjectOptions, mneManageRecentsForms, mneTendencyOptions,
   mneCSVForms, mnUtils, mnConnections;

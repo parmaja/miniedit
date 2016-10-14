@@ -278,6 +278,7 @@ type
     FCommand: string;
     FIndentMode: TIndentMode;
     FOverrideEditorOptions: Boolean;
+    FRequire: string;
     FTabsSpecialFiles: string;
     FTabWidth: Integer;
     procedure SetDebug(AValue: TEditorDebugger);
@@ -306,6 +307,7 @@ type
     property Debug: TEditorDebugger read FDebug write SetDebug;
   published
     property Command: string read FCommand write FCommand; //like php.exe or gdc.exe or fpc.exe
+    property Require: string read FRequire write FRequire; //Require modules to pass to the compiler
 
     //Override options
     property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False; //TODO move it to Tendency
@@ -2891,6 +2893,7 @@ var
   aTendency: TEditorTendency;
   aGroup: TFileGroup;
 begin
+  aGroup := nil;
   if Engine.Session.IsOpened then
     aTendency := Engine.Tendency
   else

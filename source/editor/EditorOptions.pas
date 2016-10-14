@@ -365,7 +365,9 @@ begin
       s := Attributes.Name;
       M := aFileCategory.Mapper.Find(s);
       if M <> nil then
-        G := FProfile.Attributes.Find(M.AttType);
+        G := FProfile.Attributes.Find(M.AttType)
+      else
+        G := nil;
 
       if G = nil then
         G := FProfile.Attributes.Default;

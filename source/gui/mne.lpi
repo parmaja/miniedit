@@ -18,7 +18,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="4"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="195"/>
+      <BuildNr Value="198"/>
       <Language Value=""/>
       <CharSet Value="04B0"/>
       <Attributes pvaPreRelease="True"/>
@@ -41,7 +41,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\..\..\..\lib\minilib\lazarus\lib"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp"/>
             <UnitOutputDirectory Value="..\..\units\linux"/>
           </SearchPaths>
           <CodeGeneration>
@@ -75,7 +75,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\..\..\..\lib\minilib\lazarus\lib"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp"/>
             <UnitOutputDirectory Value="..\..\units"/>
           </SearchPaths>
           <Parsing>
@@ -397,7 +397,7 @@
         <IsPartOfProject Value="True"/>
       </Unit40>
       <Unit41>
-        <Filename Value="..\..\..\..\lib\minilib\lazarus\lib\mnSynHighlighterLua.pas"/>
+        <Filename Value="..\extends\lua\mneLuaClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit41>
     </Units>
@@ -410,7 +410,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir);D:\dev\lazarus\ide\include\"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\..\..\..\lib\minilib\lazarus\lib"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <Linking>
