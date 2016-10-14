@@ -18,15 +18,21 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="4"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="194"/>
+      <BuildNr Value="195"/>
       <Language Value=""/>
       <CharSet Value="04B0"/>
       <Attributes pvaPreRelease="True"/>
       <StringTable ProductVersion="1.4.1.186"/>
     </VersionInfo>
+    <MacroValues Count="1">
+      <Macro2 Name="LCLWidgetType" Value="win32"/>
+    </MacroValues>
     <BuildModes Count="3">
       <Item1 Name="windows" Default="True"/>
       <Item2 Name="linux">
+        <MacroValues Count="1">
+          <Macro1 Name="LCLWidgetType" Value="gtk2"/>
+        </MacroValues>
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -104,8 +110,9 @@
           </Other>
         </CompilerOptions>
       </Item3>
-      <SharedMatrixOptions Count="1">
-        <Item1 ID="404340325604" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
+      <SharedMatrixOptions Count="2">
+        <Item1 ID="404340325604" Modes="linux" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
+        <Item2 ID="971028019367" Modes="windows" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
@@ -409,6 +416,7 @@
     <Linking>
       <Debugging>
         <UseValgrind Value="True"/>
+        <UseExternalDbgSyms Value="True"/>
       </Debugging>
       <Options>
         <Win32>

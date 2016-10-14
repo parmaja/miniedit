@@ -2417,8 +2417,9 @@ begin
   else
     EditorResource.Switch(thsLight);
 
-  ntvTheme.Painter.RaisedColor := Lighten(Engine.Options.Profile.Attributes.Panel.Background, 25);
-  ntvTheme.Painter.LoweredColor := Darken(Engine.Options.Profile.Attributes.Panel.Background, 25);
+  ntvTheme.Painter.ActiveColor := MixColors(Engine.Options.Profile.Attributes.Panel.Foreground, Engine.Options.Profile.Attributes.Panel.Background, 50);
+  ntvTheme.Painter.RaisedColor := Lighten(ntvTheme.Painter.ActiveColor, 10);
+  ntvTheme.Painter.LoweredColor := Darken(ntvTheme.Painter.ActiveColor, 10);
 
   FoldersSpl.Color := Engine.Options.Profile.Attributes.Panel.Background;
   MessagesSpl.Color := FoldersSpl.Color;
