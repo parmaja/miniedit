@@ -2857,6 +2857,7 @@ end;
 
 function TEditorEngine.GetTendency: TEditorTendency;
 begin
+  //TODO: Wrong behavor when no project opened, Browser should not filer depend on Tendency of current file, please fix it
   if (Session <> nil) and (Session.Project <> nil) and (Session.Project.Tendency <> nil) then
     Result := Session.Project.Tendency
   else if (Engine.Files.Current <> nil) and (Engine.Files.Current.Tendency <> nil) then

@@ -114,6 +114,7 @@ begin
   Extensions.Add('pas', 4);
   Extensions.Add('d', 5);
   Extensions.Add('py', 6);
+  Extensions.Add('lua', 7);
 end;
 
 procedure TEditorResource.DataModuleDestroy(Sender: TObject);
