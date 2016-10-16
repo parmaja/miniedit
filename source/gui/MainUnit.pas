@@ -792,7 +792,7 @@ begin
     for i := 0 to Length(FileNames) - 1 do
     begin
       A := FileNames[i];
-      if DirectoryExistsUTF8(A) and (i = 0) then
+      if DirectoryExists(A) and (i = 0) then
         aFolder := A
       else if FileExists(A) then
         Engine.Files.OpenFile(A);
@@ -810,7 +810,7 @@ begin
   begin
     if Engine.Options.AutoOpenProject then
     begin
-      if FileExistsUTF8(Engine.Options.LastProject) then
+      if FileExists(Engine.Options.LastProject) then
         Engine.Session.Load(Engine.Options.LastProject)
       else
         Folder := Engine.Options.LastFolder;
@@ -1949,10 +1949,10 @@ begin
       aFiles := TStringList.Create;
       try
         //Folders
-        if (Folder <> '') and DirectoryExistsUTF8(Folder) then
+        if (Folder <> '') and DirectoryExists(Folder) then
         begin
           aFiles.Clear;
-          r := FindFirstUTF8(Folder + '*.*', faAnyFile or faDirectory, SearchRec);
+          r := FindFirst(Folder + '*', faAnyFile or faDirectory, SearchRec);
           while r = 0 do
           begin
             if (SearchRec.Name <> '.') then
@@ -1960,9 +1960,9 @@ begin
               if (SearchRec.Attr and faDirectory) <> 0 then
                 aFiles.Add(SearchRec.Name);
             end;
-            r := FindNextUTF8(SearchRec);
+            r := FindNext(SearchRec);
           end;
-          FindCloseUTF8(SearchRec);
+          FindClose(SearchRec);
 
           aFiles.Sort;
 
@@ -1976,7 +1976,7 @@ begin
 
           //Files
           aFiles.Clear;
-          r := FindFirstUTF8(Folder + '*.*', faAnyFile, SearchRec);
+          r := FindFirst(Folder + '*', faAnyFile, SearchRec);
           while r = 0 do
           begin
             //if (SearchRec.Name <> '.') and (SearchRec.Name <> '..') then
@@ -1985,9 +1985,9 @@ begin
               if MatchExtension(ExtractFileExt(SearchRec.Name)) then
                 aFiles.Add(SearchRec.Name);
             end;
-            r := FindNextUTF8(SearchRec);
+            r := FindNext(SearchRec);
           end;
-          FindCloseUTF8(SearchRec);
+          FindClose(SearchRec);
 
           if SortFolderFiles  = srtfByNames then
             aFiles.Sort

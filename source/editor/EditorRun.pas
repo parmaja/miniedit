@@ -352,6 +352,7 @@ begin
   FProcess.CurrentDirectory := ReplaceStr(AInfo.CurrentDirectory, '\', '/');
 
   FProcess.Executable := ReplaceStr(AInfo.Command, '\', '/');
+  //Engine.SendOutout(AInfo.Params);//buggy
   CommandToList(AInfo.Params, FProcess.Parameters);
 
   aOptions := [];
@@ -416,7 +417,12 @@ begin
         //xterm -e "lua lua-test.lua && bash"
         //xterm -e "lua lua-test.lua && read -rsp $''Press any key to continue'' -n1 key"
 
-        s := '-e "'+Info.GetCommandLine;
+        if Info.Title <> '' then
+            s := '-title "' + Info.Title + '"'
+        else
+            s := '';
+
+        s := s + ' -e "'+Info.GetCommandLine;
         if Info.Pause then
           s := s + '; read -rsp $''Press any key to continue'' -n1 key';
         s := s + '"';

@@ -273,7 +273,13 @@ begin
 
     aRunItem.Info.Command := Info.Command;
     if aRunItem.Info.Command = '' then
+    begin
+      {$ifdef windows}
       aRunItem.Info.Command := 'php.exe';
+      {$else linux}
+      aRunItem.Info.Command := 'php';
+      {$endif}
+    end;
 
     if Info.MainFile <> '' then
       aRunItem.Info.Params := aRunItem.Info.Params + Info.MainFile + #13;

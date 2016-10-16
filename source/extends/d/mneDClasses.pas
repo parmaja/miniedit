@@ -183,7 +183,13 @@ begin
 
     aRunItem.Info.Command := Info.Command;
     if aRunItem.Info.Command = '' then
+    begin
+      {$ifdef windows}
       aRunItem.Info.Command := 'gdc.exe';
+      {$else}
+      aRunItem.Info.Command := 'gdc';
+      {$endif}
+    end;
 
     aRunItem.Info.Mode := runOutput;
     aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);

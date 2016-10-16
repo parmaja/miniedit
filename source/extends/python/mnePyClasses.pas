@@ -184,7 +184,13 @@ begin
 
     aRunItem.Info.Command := Info.Command;
     if aRunItem.Info.Command = '' then
+    begin
+      {$ifdef windows}
       aRunItem.Info.Command := 'python.exe';
+      {$else}
+      aRunItem.Info.Command := 'python';
+      {$endif}
+    end;
 
     aRunItem.Info.Mode := Info.Mode;
     aRunItem.Info.Pause := Info.Pause;
