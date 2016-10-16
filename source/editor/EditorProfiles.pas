@@ -415,7 +415,7 @@ begin
   Reset;
   Add(FDefault, attDefault, 'Default', clBlack, clWhite, []);
   Add(FPanel, attPanel, 'Panel', clBlack, clWhite, []);
-  Add(FLink, attLink, 'Link', $00D87356, clWhite, [fsUnderline]);
+  Add(FLink, attLink, 'Link', $00D87356, clWhite, []);
   Add(FSelected, attSelected, 'Selected', clBlack, $00DCCBC0, []);
   Add(FActive, attActive, 'Active', clBlack, $00EDEAE4, []);
   Add(FModified, attModified, 'Modified', $00370268, $00E19855, []);
