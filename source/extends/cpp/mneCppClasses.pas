@@ -12,10 +12,10 @@ interface
 
 uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics,
-  Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
+  Contnrs, FileUtil, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  LazFileUtils, mnSynHighlighterD, mnSynHighlighterCpp, EditorDebugger, EditorClasses, mneClasses, MsgBox,
+  mnSynHighlighterD, mnSynHighlighterCpp, EditorDebugger, EditorClasses, mneClasses, MsgBox,
   mneCompileProjectOptions, EditorRun, mneConsoleClasses,
   mneConsoleForms;
 
@@ -239,7 +239,7 @@ begin
       aRunItem.Info.Command := 'dmd.exe';
 
     aRunItem.Info.Mode := runOutput;
-    aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);
+    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aPath := Info.MainFile;

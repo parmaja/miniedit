@@ -21,10 +21,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Grids, ExtCtrls, StdCtrls,
-  FileUtil, LazFileUtils,
-  LCLType, Graphics, Menus, Buttons, EditorEngine, IniFiles,
-  MsgBox,
-  mnStreams, mncConnections, mncCSV;
+  FileUtil, LCLType, Graphics, Menus, Buttons, EditorEngine, IniFiles,
+  MsgBox, mnStreams, mncConnections, mncCSV;
 
 type
 
@@ -184,7 +182,7 @@ end;
 
 procedure TCSVForm.DelConfigFileBtnClick(Sender: TObject);
 begin
-  DeleteFileUTF8(FFileName + '.conf');
+  DeleteFile(FFileName + '.conf');
   RefreshControls;
 end;
 
@@ -325,7 +323,7 @@ end;
 
 function TCSVForm.IsConfigFileExists: Boolean;
 begin
-  Result := FileExistsUTF8(FFileName + '.conf');
+  Result := FileExists(FFileName + '.conf');
 end;
 
 procedure TCSVForm.SaveConfigFile;

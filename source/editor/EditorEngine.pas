@@ -28,7 +28,7 @@ uses
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
   dbgpServers, Masks, mnXMLRttiProfile, mnXMLUtils, FileUtil, mnClasses,
-  LazFileUtils, mnUtils, LCLType, EditorClasses, EditorRun;
+  mnUtils, LCLType, EditorClasses, EditorRun;
 
 type
   TEditorChangeStates = set of (
@@ -2240,7 +2240,7 @@ begin
 
       if p.OutputFile = '' then
       begin
-        p.OutputFile := ExtractFileNameOnly(p.MainFile);
+        p.OutputFile := ExtractFileNameWithoutExt(p.MainFile);
         {$ifndef linux}
         p.OutputFile := p.OutputFile + '.exe';
         {$endif}
@@ -2916,7 +2916,7 @@ end;
 procedure TEditorOptions.Load(vWorkspace: string);
   procedure SafeLoad(s: TStringList; vName:string);
   begin
-    if FileExistsUTF8(vName) then
+    if FileExists(vName) then
       s.LoadFromFile(vName);
   end;
 begin
@@ -3246,7 +3246,7 @@ end;
 
 procedure TEditorOptions.Save(vWorkspace: string);
 begin
-  if DirectoryExistsUTF8(vWorkspace) then
+  if DirectoryExists(vWorkspace) then
   begin
     Profile.SaveToFile(vWorkspace + 'mne-editor.xml');
     SaveToFile(vWorkspace + 'mne-options.xml');
@@ -3405,7 +3405,7 @@ var
   aFile: string;
   i: integer;
 begin
-  ForceDirectory(Workspace);
+  ForceDirectories(Workspace);
   Options.Save(WorkSpace);
   Session.Options.SaveToFile(Workspace + 'mne-options-' + SysPlatform + '.xml');
 
@@ -3805,7 +3805,7 @@ begin
     if Name <> '' then
     begin
       p := ExtractFilePath(Name);
-      if RenameFileUTF8(Name, p + ToNakeName) then
+      if RenameFile(Name, p + ToNakeName) then
       begin
         Engine.RemoveRecentFile(Name);
         Name := p + ToNakeName;
@@ -3826,7 +3826,7 @@ begin
   try
     if Name <> '' then
     begin
-      if DeleteFileUTF8(Name) then
+      if DeleteFile(Name) then
       begin
         Engine.RemoveRecentFile(Name);
         Name := ExtractFileName(Name);

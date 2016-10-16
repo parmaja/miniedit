@@ -14,11 +14,10 @@ interface
 
 uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics,
-  Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
+  Contnrs, FileUtil, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter, LCLProc,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  EditorDebugger, EditorRun, mneCompileProjectOptions, LazFileUtils,
-  LCLProc,
+  EditorDebugger, EditorRun, mneCompileProjectOptions,
   SynHighlighterVerilog;
 
 type
@@ -178,7 +177,7 @@ begin
       aRunItem.Info.Command := 'iverilog'{$ifdef windows}+'.exe'{$endif};
 
     aRunItem.Info.Mode := runOutput;
-    aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);
+    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aRunItem.Info.Params := '-s' + Info.MainFile + #13;
@@ -215,7 +214,7 @@ begin
     aRunItem.Info.Mode := Info.Mode;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Pause := Info.Pause;
-    aRunItem.Info.Title := ExtractFileNameOnly(Info.OutputFile);
+    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);
     aRunItem.Info.Command := Info.RunFile;
     if Options.RunParams <> '' then
       aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;

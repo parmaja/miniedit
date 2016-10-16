@@ -21,8 +21,8 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, MsgBox, contnrs,
-  LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorDebugger, FileUtil,
-  LazFileUtils, Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus,
+  LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorDebugger,
+  Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus,
   ToolWin, Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses,
   StdActns, Grids, SynEditHighlighter, SynEdit, IAddons, ntvSplitters, ntvThemes,
   SynHighlighterSQL, EditorClasses, ntvImgBtns,
@@ -1962,7 +1962,7 @@ begin
             end;
             r := FindNext(SearchRec);
           end;
-          FindClose(SearchRec);
+          SysUtils.FindClose(SearchRec);
 
           aFiles.Sort;
 
@@ -1987,7 +1987,7 @@ begin
             end;
             r := FindNext(SearchRec);
           end;
-          FindClose(SearchRec);
+          SysUtils.FindClose(SearchRec);
 
           if SortFolderFiles  = srtfByNames then
             aFiles.Sort

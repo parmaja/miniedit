@@ -15,8 +15,7 @@ interface
 
 uses
   SysUtils, Forms, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
-  FileUtil, LazFileUtils,
-  SynEdit, EditorEngine,
+  FileUtil, SynEdit, EditorEngine,
   Windows;
 
 type
@@ -99,7 +98,7 @@ var
   s: string;
 begin
   s := '';
-  if (s = '') and DirectoryExistsUTF8('C:\Program Files\TortoiseGit') then
+  if (s = '') and DirectoryExists('C:\Program Files\TortoiseGit') then
     s := 'C:\Program Files\TortoiseGit';
   if s <> '' then
     s := IncludeTrailingPathDelimiter(s);
@@ -116,7 +115,7 @@ var
   s: string;
 begin
   s := '';
-  if (s = '') and DirectoryExistsUTF8('C:\Program Files\TortoiseGit') then
+  if (s = '') and DirectoryExists('C:\Program Files\TortoiseGit') then
     s := 'C:\Program Files\TortoiseGit';
   if s <> '' then
     s := IncludeTrailingPathDelimiter(s);

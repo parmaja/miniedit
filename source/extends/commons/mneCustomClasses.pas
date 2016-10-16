@@ -19,7 +19,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  LazFileUtils, mnSynHighlighterD, EditorDebugger, EditorClasses, mneClasses,
+  FileUtil, mnSynHighlighterD, EditorDebugger, EditorClasses, mneClasses,
   mneCompileProjectOptions, EditorRun, mneConsoleClasses, mnSynHighlighterMultiProc,
   mneConsoleForms;
 
@@ -236,7 +236,7 @@ begin
       aRunItem.Info.Command := 'dmd.exe';
 
     aRunItem.Info.Mode := runOutput;
-    aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);
+    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aRunItem.Info.Params := Info.MainFile + #13;
@@ -270,7 +270,7 @@ begin
     aRunItem.Info.Mode := Options.RunMode;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Pause := Options.PauseConsole;
-    aRunItem.Info.Title := ExtractFileNameOnly(Info.OutputFile);;
+    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
     aRunItem.Info.Command := ChangeFileExt(Info.OutputFile, '.exe');
     if Options.RunParams <> '' then
       aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;

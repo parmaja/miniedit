@@ -11,7 +11,7 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  mneClasses, Dialogs, StdCtrls, FileUtil, LazFileUtils, IniFiles;
+  mneClasses, Dialogs, StdCtrls, FileUtil, IniFiles;
 
 type
 
@@ -84,7 +84,7 @@ begin
   WorkspaceEdit.Items.Add('.' + DirectorySeparator + 'setting');
   {$ifdef windows}
   WorkspaceEdit.Items.Add('C:\workspace\miniedit');
-  if DirectoryExistsUTF8('D:\') then
+  if DirectoryExists('D:\') then
     WorkspaceEdit.Items.Add('D:\workspace\miniedit');
   WorkspaceEdit.Items.Add('\workspace\miniedit');
   {$else}

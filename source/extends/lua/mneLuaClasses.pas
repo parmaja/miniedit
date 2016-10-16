@@ -13,7 +13,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  LazFileUtils, mnSynHighlighterLua, EditorDebugger, EditorClasses, mneClasses,
+  FileUtil, mnSynHighlighterLua, EditorDebugger, EditorClasses, mneClasses,
   mneCompileProjectOptions, EditorRun, mneConsoleClasses, dbgpServers,
   mneConsoleForms;
 
@@ -187,7 +187,7 @@ begin
 
     aRunItem.Info.Mode := Info.Mode;
     aRunItem.Info.Pause := Info.Pause;
-    aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);
+    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aRunItem.Info.Message := 'Runing ' + Info.MainFile;
@@ -202,7 +202,7 @@ begin
     aRunItem.Info.Mode := Info.Mode;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Pause := Options.PauseConsole;
-    aRunItem.Info.Title := ExtractFileNameOnly(Info.OutputFile);;
+    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
     aRunItem.Info.Command := ChangeFileExt(Info.OutputFile, '.exe');
     if Options.RunParams <> '' then
       aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;

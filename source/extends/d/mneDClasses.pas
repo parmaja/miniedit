@@ -11,11 +11,11 @@ unit mneDClasses;
 interface
 
 uses
-  Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics,
+  Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, FileUtil,
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  LazFileUtils, mnSynHighlighterD, EditorDebugger, gdbClasses,
+  mnSynHighlighterD, EditorDebugger, gdbClasses,
   EditorClasses, mneClasses, MsgBox,
   mneCompileProjectOptions, EditorRun, mneConsoleClasses,
   mneConsoleForms;
@@ -192,7 +192,7 @@ begin
     end;
 
     aRunItem.Info.Mode := runOutput;
-    aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);
+    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aPath := Info.MainFile;

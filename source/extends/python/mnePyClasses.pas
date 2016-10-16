@@ -16,10 +16,10 @@ interface
 
 uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics,
-  Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
+  Contnrs, FileUtil, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  LazFileUtils, SynHighlighterPython, EditorDebugger, EditorClasses, mneClasses,
+  SynHighlighterPython, EditorDebugger, EditorClasses, mneClasses,
   mneCompileProjectOptions, EditorRun, mneConsoleClasses, dbgpServers,
   mneConsoleForms;
 
@@ -194,7 +194,7 @@ begin
 
     aRunItem.Info.Mode := Info.Mode;
     aRunItem.Info.Pause := Info.Pause;
-    aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);
+    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aRunItem.Info.Message := 'Runing ' + Info.MainFile;
@@ -207,7 +207,7 @@ begin
     aRunItem.Info.Mode := Info.Mode;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Pause := Options.PauseConsole;
-    aRunItem.Info.Title := ExtractFileNameOnly(Info.OutputFile);;
+    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
     aRunItem.Info.Command := ChangeFileExt(Info.OutputFile, '.exe');
     if Options.RunParams <> '' then
       aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;

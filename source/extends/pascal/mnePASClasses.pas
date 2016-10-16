@@ -14,7 +14,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  EditorDebugger, gdbClasses, EditorRun, mneCompileProjectOptions, LazFileUtils,
+  EditorDebugger, gdbClasses, EditorRun, mneCompileProjectOptions, FileUtil,
   SynHighlighterPas, SynHighlighterLFM;
 
 type
@@ -219,7 +219,7 @@ begin
       aRunItem.Info.Command := 'fpc.exe';
 
     aRunItem.Info.Mode := runOutput;
-    aRunItem.Info.Title := ExtractFileNameOnly(Info.MainFile);
+    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aRunItem.Info.Params := Info.MainFile + #13;
@@ -261,7 +261,7 @@ begin
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Pause := Info.Pause;
     aRunItem.Info.DebugIt := rnaDebug in Info.Actions;
-    aRunItem.Info.Title := ExtractFileNameOnly(Info.OutputFile);
+    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);
     aRunItem.Info.Command := Info.RunFile;
     if Options.RunParams <> '' then
       aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;
