@@ -310,7 +310,7 @@ type
     property Require: string read FRequire write FRequire; //Require modules to pass to the compiler
 
     //Override options
-    property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False; //TODO move it to Tendency
+    property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False;
     property TabWidth: Integer read FTabWidth write FTabWidth default 4;
     property IndentMode: TIndentMode read FIndentMode write FIndentMode default idntNone;
     property EditorOptions: TSynEditorOptions read FEditorOptions write FEditorOptions;
