@@ -922,12 +922,12 @@ var
   E: Integer;
 begin
   try
-    if Engine.Tendency is TDefaultTendency then
-      G := Engine.Groups
-    else
-      G := Engine.Tendency.Groups;
+    G := Engine.Tendency.Groups;
     if ShowSelectList('Select file type', G, [slfUseNameTitle], E) then
+    begin
+      Engine.Options.LastNewAs := G[E].Name;
       Engine.Files.New(G[E]);
+    end;
   finally
   end;
 end;
@@ -1269,7 +1269,10 @@ end;
 
 procedure TMainForm.NewActExecute(Sender: TObject);
 begin
-  Engine.Files.New;
+  if Engine.Options.LastNewAs = '' then
+    NewAsAct.Execute
+  else
+    Engine.Files.New;
 end;
 
 procedure TMainForm.FolderOpenAllActExecute(Sender: TObject);

@@ -1,10 +1,12 @@
 @echo off
 if exist ..\bin\mne.exe (del ..\bin\mne.exe)
  
-lazbuild --build-mode=release_win32 gui\mne.lpr -r -B
+lazbuild --build-mode=Windows gui\mne.lpr -r -B
 if errorlevel 1 goto erroroccurred
 
-7z a "../release/miniedit-%DATE:~-4%-%DATE:~4,2%-%DATE:~7,2%.7z" ../bin/mne.exe ../readme.md ../bin/*.mne-theme
+rem strip ..\bin\mne.exe
+rem if errorlevel 1 goto erroroccurred
+
 goto noerrors
 
 :erroroccurred

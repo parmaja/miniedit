@@ -18,7 +18,7 @@
       <MajorVersionNr Value="1"/>
       <MinorVersionNr Value="4"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="200"/>
+      <BuildNr Value="198"/>
       <Language Value=""/>
       <CharSet Value="04B0"/>
       <Attributes pvaPreRelease="True"/>
@@ -37,18 +37,26 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\..\bin\mne"/>
+            <Filename Value="..\..\bin\mne_linux"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
             <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp"/>
             <UnitOutputDirectory Value="..\..\units\linux"/>
           </SearchPaths>
+          <CodeGeneration>
+            <TargetCPU Value="x86_64"/>
+          </CodeGeneration>
           <Linking>
             <Debugging>
               <DebugInfoType Value="dsStabs"/>
               <UseExternalDbgSyms Value="True"/>
             </Debugging>
+            <Options>
+              <Win32>
+                <GraphicApplication Value="True"/>
+              </Win32>
+            </Options>
           </Linking>
           <Other>
             <Verbosity>
