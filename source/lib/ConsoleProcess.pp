@@ -4,12 +4,14 @@ unit ConsoleProcess;
 interface
 
 uses
-  Classes, SysUtils, process;
+  Classes, SysUtils, process, Pipes;
 
 type
   TmnOnWriteString = procedure(S: string) of object;
 
   { TmnProcessObject }
+
+  TmnProcessReadStream = (strmOutput, strmError);
 
   TmnProcessObject = class(TObject)
   protected
@@ -19,7 +21,7 @@ type
     Thread: TThread;
     OnWrite: TmnOnWriteString;
     function IsTerminated: Boolean;
-    function Read: Integer;
+    function Read(ReadStream: TmnProcessReadStream = strmOutput): Integer;
     procedure FlushBuffer;
     constructor Create(AProcess: TProcess; AThread: TThread; AOnWrite: TmnOnWriteString);
   end;
@@ -71,23 +73,29 @@ begin
   Result := (Thread <> nil) and THackThread(Thread).Terminated;
 end;
 
-function TmnProcessObject.Read: Integer;
+function TmnProcessObject.Read(ReadStream: TmnProcessReadStream): Integer;
 const
   READ_BYTES = 1024;
 var
   C, Count, L: DWORD;
   FirstTime: Boolean;
+  aStream: TInputPipeStream;
 begin
   FirstTime := True;
   Count := 0;
   C := 0;
     try
       Process.Execute;
+      if ReadStream = strmOutput then
+        aStream := Process.Output
+      else
+        aStream := Process.Stderr;
+
       while not IsTerminated and (FirstTime or Process.Running or (C > 0)) do
       begin
         L := Length(FBuffer);
         Setlength(FBuffer, L + READ_BYTES);
-        C := Process.Output.Read(FBuffer[1 + L], READ_BYTES);
+        C := aStream.Read(FBuffer[1 + L], READ_BYTES);
         if Assigned(OnWrite) then
         begin
           SetLength(FBuffer, L + C);

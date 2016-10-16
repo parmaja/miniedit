@@ -191,7 +191,8 @@ begin
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aRunItem.Info.Message := 'Runing ' + Info.MainFile;
-    aRunItem.Info.Params := '-l basic' + #13;
+    if Require <> '' then
+        aRunItem.Info.Params := '-l '+ Require + #13;
     aRunItem.Info.Params := aRunItem.Info.Params + Info.MainFile + #13;
   end
   else if rnaExecute in Info.Actions then

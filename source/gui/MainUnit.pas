@@ -2050,7 +2050,7 @@ end;
 
 procedure TMainForm.EngineMessage(S: string; Temporary: Boolean);
 begin
-  MessageLabel.Caption := S;
+  MessageLabel.Caption := Trim(S);
   StatusTimer.Enabled := Temporary;
 end;
 

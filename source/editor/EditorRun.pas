@@ -285,51 +285,6 @@ begin
   Engine.UpdateState([ecsRefresh]);
 end;
 
-procedure TmneRunItem.CreateConsole(AInfo: TmneCommandInfo);
-var
-  ProcessObject: TmnProcessObject;
-  aOptions: TProcessOptions;
-begin
-  if Assigned(FOnWrite) and (AInfo.Message <> '') then
-    WriteString(AInfo.Message + #13#10);
-  WriteMessage(AInfo.Message + #13#10);
-  FProcess := TProcess.Create(nil);
-  FProcess.ConsoleTitle := Info.Title;
-  FProcess.Executable := ReplaceStr(AInfo.Command, '\', '/');
-  FProcess.Parameters.Text := AInfo.Params;
-  FProcess.CurrentDirectory := ReplaceStr(AInfo.CurrentDirectory, '\', '/');
-  FProcess.InheritHandles := True;
-
-  aOptions := [];
-  if Info.Suspended then
-    aOptions := [poRunSuspended];
-
-  //WriteString(AInfo.Command + ' ' +FProcess.Parameters.Text);
-
-  if Assigned(FOnWrite) then
-  begin
-    FProcess.Options :=  aOptions + [poUsePipes, poStderrToOutPut];
-    FProcess.ShowWindow := swoShowNormal;
-    FProcess.PipeBufferSize := 0; //80 char in line
-    ProcessObject := TmnProcessObject.Create(FProcess, FPool, @WriteString);
-    try
-      Status := ProcessObject.Read;
-    finally
-      FreeAndNil(FProcess);
-      FreeAndNil(ProcessObject);
-    end;
-  end
-  else
-  begin
-    FProcess.Options :=  aOptions + [poWaitOnExit];
-    FProcess.ShowWindow := swoShow;
-    FProcess.Execute;
-  end;
-  if Assigned(FOnWrite) then
-    WriteString(#13#10'End Status: ' + IntToStr(Status)+#13#10);
-  WriteMessage('Done', True);
-end;
-
 procedure TmneRunItem.Attach;
 begin
   if Engine.Tendency.Debug <> nil then
@@ -380,9 +335,62 @@ begin
   FPool := APool;
 end;
 
+procedure TmneRunItem.CreateConsole(AInfo: TmneCommandInfo);
+var
+  ProcessObject: TmnProcessObject;
+  aOptions: TProcessOptions;
+  s: string;
+begin
+  if Assigned(FOnWrite) and (AInfo.Message <> '') then
+    WriteString(AInfo.Message + #13#10);
+  WriteMessage(AInfo.Message + #13#10);
+  FProcess := TProcess.Create(nil);
+  FProcess.ConsoleTitle := Info.Title;
+  FProcess.InheritHandles := True;
+  FProcess.CurrentDirectory := ReplaceStr(AInfo.CurrentDirectory, '\', '/');
+
+  //FProcess.Executable := ReplaceStr(AInfo.Command, '\', '/');
+  //FProcess.Parameters.Text := AInfo.Params;
+
+  FProcess.CommandLine := AInfo.Command + ' ' + ReplaceStr(AInfo.Params, #13, ' ');;
+
+
+  aOptions := [];
+  if Info.Suspended then
+    aOptions := [poRunSuspended];
+
+  if Assigned(FOnWrite) then
+  begin
+    FProcess.Options :=  aOptions + [poUsePipes, poStderrToOutPut];
+    FProcess.ShowWindow := swoShowNormal;
+    FProcess.StartupOptions:=[suoUseShowWindow];
+    FProcess.PipeBufferSize := 0; //80 char in line
+    ProcessObject := TmnProcessObject.Create(FProcess, FPool, @WriteString);
+    try
+      Status := ProcessObject.Read(strmOutput);
+    finally
+      FreeAndNil(FProcess);
+      FreeAndNil(ProcessObject);
+    end;
+  end
+  else
+  begin
+    FProcess.Options :=  aOptions + [poWaitOnExit];
+    FProcess.ShowWindow := swoShow;
+    FProcess.StartupOptions:=[suoUseShowWindow]; //<- need it in linux to show window
+    FProcess.CloseInput;
+    FProcess.Execute;
+    //Status := ProcessObject.Read(strmOutput);
+  end;
+  if Assigned(FOnWrite) then
+    WriteString(#13#10'End Status: ' + IntToStr(Status)+#13#10);
+  WriteMessage('Done', True);
+end;
+
 procedure TmneRunItem.Execute;
 var
   s: string;
+  term: string;
 begin
   case Info.Mode of
     runConsole:
@@ -402,20 +410,30 @@ begin
         s := '/c "'+ Info.GetCommandLine + '"';
         if Info.Pause then
           s := s + ' & pause';
+        Info.Params := s;
         Info.Command := 'cmd';
-        Info.Params := s;
         {$else}
-        s := '';
-//        s := '/c "'+ Info.GetCommandLine + '"';
-{        if Info.Pause then
-          s := s + ' & pause';}
-        Info.Command := 'xterm';
+
+        //xterm -e "lua lua-test.lua && bash"
+        //xterm -e "lua lua-test.lua && read -rsp $''Press any key to continue'' -n1 key"
+
+        s := '-e "'+Info.GetCommandLine;
+        if Info.Pause then
+          s := s + '; read -rsp $''Press any key to continue'' -n1 key';
+        s := s + '"';
         Info.Params := s;
+
+        //s := GetEnvironmentVariable('SHELL');
+        term := GetEnvironmentVariable('COLORTERM');
+        if term = '' then
+           term := GetEnvironmentVariable('TERM');
+        if term = '' then
+           term := 'xterm';
+        Info.Command := term;
+
         {$endif}
+        //FOnWrite := @Engine.SendOutout;
         CreateConsole(Info);
-        //Sync this function to make it modal
-        {
-        Status := ExecuteProcess('cmd ', s, [ExecInheritsHandles]);}
       end;
     end;
     runOutput:
