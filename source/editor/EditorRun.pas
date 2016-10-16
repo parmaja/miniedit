@@ -339,7 +339,6 @@ procedure TmneRunItem.CreateConsole(AInfo: TmneCommandInfo);
 var
   ProcessObject: TmnProcessObject;
   aOptions: TProcessOptions;
-  s: string;
 begin
   if Assigned(FOnWrite) and (AInfo.Message <> '') then
     WriteString(AInfo.Message + #13#10);
@@ -349,11 +348,9 @@ begin
   FProcess.InheritHandles := True;
   FProcess.CurrentDirectory := ReplaceStr(AInfo.CurrentDirectory, '\', '/');
 
-  //FProcess.Executable := ReplaceStr(AInfo.Command, '\', '/');
-  //FProcess.Parameters.Text := AInfo.Params;
-
-  FProcess.CommandLine := AInfo.Command + ' ' + ReplaceStr(AInfo.Params, #13, ' ');;
-
+  FProcess.Executable := ReplaceStr(AInfo.Command, '\', '/');
+  FProcess.Parameters.Text := AInfo.Params;
+  //FProcess.CommandLine := AInfo.Command + ' ' + ReplaceStr(AInfo.Params, #13, ' ');
 
   aOptions := [];
   if Info.Suspended then
