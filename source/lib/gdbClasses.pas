@@ -342,7 +342,11 @@ begin
   begin
     FGDBProcess := TProcess.Create(nil);
     FGDBProcess.ConsoleTitle := 'GDB';
-    FGDBProcess.Executable := 'GDB.exe';
+    {$ifdef windows}
+    FGDBProcess.Executable := 'gdb.exe';
+    {$else}
+    FGDBProcess.Executable := 'gdb';
+    {$endif}
     FGDBProcess.Parameters.Add('-q');//"Quiet". Do not print the introductory and copyright messages.
     FGDBProcess.Parameters.Add('-n');//Do not execute commands found in any initialization files.
     FGDBProcess.Parameters.Add('-f');//Full name GDB output the full file name and line number in a standard.

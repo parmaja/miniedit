@@ -13,7 +13,7 @@ interface
 
 uses
   Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, Registry, ExtCtrls, Buttons, ImgList,
-  mnXMLRttiProfile, SynEditMarkupWordGroup,
+  LCLType, mnXMLRttiProfile, SynEditMarkupWordGroup,
   Contnrs, Menus, SynEdit, SynEditHighlighter, SynEditMiscClasses, SynEditPointClasses, SynGutterCodeFolding, mnClasses,
   SynGutter, SynEditKeyCmds, Classes, SysUtils;
 
@@ -400,9 +400,9 @@ procedure TGlobalAttributes.Init;
     Item.Title := Title;
     Item.Foreground := Foreground;
     Item.Background := Background;
-    if Item.Foreground = clNone then
+    if Item.Foreground in [clNone, clDefault] then
       Item.Options := Item.Options + [gaoDefaultForeground];
-    if Item.Background = clNone then
+    if Item.Background in [clNone, clDefault] then
       Item.Options := Item.Options + [gaoDefaultBackground];
     Item.Style := Style;
     Item.FParent := Self;
@@ -429,7 +429,7 @@ begin
   Add(FStandard, attStandard, 'Standard', $00143A50, clWhite, []);
   Add(FNumber, attNumber, 'Number', $00215767, clWhite, []);
   Add(FDirective, attDirective, 'Directive', clMaroon, clWhite, [fsBold]);
-  Add(FIdentifier, attIdentifier, 'Identifier', clBackground, clWhite, []);
+  Add(FIdentifier, attIdentifier, 'Identifier', clBlack, clWhite, []);
   Add(FText, attText, 'Text', clBlack, clWhite, []);
   Add(FEmbedText, attEmbedText, 'Embed Text', clBlack, clWhite, []);
   Add(FVariable, attVariable, 'Variable', clBlack, clWhite, [fsBold]);
@@ -447,6 +447,12 @@ begin
   begin
     if not FList[i].IsDefault then
     begin
+      if FList[i].Foreground >= SYS_COLOR_BASE then
+         FList[i].Foreground := clDefault;
+
+      if FList[i].Background >= SYS_COLOR_BASE then
+         FList[i].Background := clDefault;
+
       //Fix old file that not have Options property
       if (FList[i].Foreground = clDefault) or (FList[i].Foreground = clNone) then
         FList[i].Options := FList[i].Options + [gaoDefaultForeground];
