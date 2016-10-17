@@ -423,7 +423,6 @@ object MainForm: TMainForm
         ImageIndex = 0
         Align = alRight
         PopupMenu = FileModeMenu
-        OnClick = FileModeBtnClick
         AutoCheck = False
       end
     end

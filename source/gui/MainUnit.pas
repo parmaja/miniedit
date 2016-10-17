@@ -380,7 +380,6 @@ type
     procedure SearchGridDblClick(Sender: TObject);
     procedure SearchGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
     procedure SelectProjectTypeActExecute(Sender: TObject);
-    procedure FileModeBtnClick(Sender: TObject);
     procedure RefreshFilesActExecute(Sender: TObject);
     procedure RenameActExecute(Sender: TObject);
     procedure SaveActExecute(Sender: TObject);
@@ -1185,16 +1184,6 @@ begin
         Engine.Session.Project.TendencyName := lTendency.Name;
     end;
   end
-end;
-
-procedure TMainForm.FileModeBtnClick(Sender: TObject);
-var
-  Pt: TPoint;
-begin
-  Pt.X := FileModeBtn.BoundsRect.Left;
-  Pt.Y := FileModeBtn.BoundsRect.Bottom;
-  Pt := FileModeBtn.Parent.ClientToScreen(Pt);
-  FileModeBtn.PopupMenu.Popup(Pt.X, Pt.Y);
 end;
 
 procedure TMainForm.RefreshFilesActExecute(Sender: TObject);
