@@ -400,9 +400,9 @@ procedure TGlobalAttributes.Init;
     Item.Title := Title;
     Item.Foreground := Foreground;
     Item.Background := Background;
-    if Item.Foreground in [clNone, clDefault] then
+    if (Item.Foreground = clNone) or (Item.Foreground = clDefault) then
       Item.Options := Item.Options + [gaoDefaultForeground];
-    if Item.Background in [clNone, clDefault] then
+    if (Item.Background = clNone) or (Item.Background = clDefault) then
       Item.Options := Item.Options + [gaoDefaultBackground];
     Item.Style := Style;
     Item.FParent := Self;
@@ -447,10 +447,10 @@ begin
   begin
     if not FList[i].IsDefault then
     begin
-      if FList[i].Foreground >= SYS_COLOR_BASE then
+      if TColorRef(FList[i].Foreground) >= SYS_COLOR_BASE then
          FList[i].Foreground := clDefault;
 
-      if FList[i].Background >= SYS_COLOR_BASE then
+      if TColorRef(FList[i].Background) >= SYS_COLOR_BASE then
          FList[i].Background := clDefault;
 
       //Fix old file that not have Options property
