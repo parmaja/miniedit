@@ -879,10 +879,10 @@ end;
 { TdbgpGetCurrent }
 
 function TdbgpGetCurrent.GetCommand: string;
-var
-  aDepth: Integer;
+{var
+  aDepth: Integer;}
 begin
-  aDepth := Connection.Server.StackDepth;
+  //aDepth := Connection.Server.StackDepth;
   Result := 'stack_get';
 {  if aDepth > 0 then
     Result := Result + ' -d ' + IntToStr(aDepth);}

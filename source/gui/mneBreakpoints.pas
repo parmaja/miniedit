@@ -68,7 +68,7 @@ begin
   begin
     aItem := BreakpointList.Items.Add;
     aItem.ImageIndex := 40;
-    aItem.Data := Pointer(Engine.Tendency.Debug.Breakpoints[i].Handle);
+    aItem.Data := Pointer(PtrInt(Engine.Tendency.Debug.Breakpoints[i].Handle));
     aItem.Caption := Engine.Tendency.Debug.Breakpoints[i].FileName;
     aItem.SubItems.Add(IntToStr(Engine.Tendency.Debug.Breakpoints[i].Line));
   end;
@@ -80,7 +80,7 @@ begin
   begin
     Engine.Tendency.Debug.Lock;
     try
-      Engine.Tendency.Debug.Breakpoints.Remove(Integer(BreakpointList.Selected.Data));
+      Engine.Tendency.Debug.Breakpoints.Remove(IntPtr(BreakpointList.Selected.Data));
       Reload;
       Engine.UpdateState([ecsDebug]);
     finally

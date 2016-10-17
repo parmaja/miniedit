@@ -1499,12 +1499,15 @@ var
   s: string;
 begin
   if Engine.Files.Current <> nil then
+  begin
+    s := '';
 {$ifdef WINDOWS}
     //ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Files.Current.Name + '"'), nil, SW_SHOW);
     RunCommand('Explorer', ['/select,"' + Engine.Files.Current.Name + '"'], s);
 {$else}
     RunCommand('xdg-open', [Engine.Files.Current.Path], s);
 {$endif}
+  end;
 end;
 
 procedure TMainForm.UpdateMessagesPnl;
@@ -2150,6 +2153,7 @@ var
 begin
   if FileList.Selected <> nil then
   begin
+      s := '';
   {$ifdef WINDOWS}
       RunCommand('Explorer', ['/select,"' + Folder + FileList.Selected.Caption + '"'], s);
   {$else}

@@ -339,9 +339,6 @@ procedure TmneRunItem.CreateConsole(AInfo: TmneCommandInfo);
 var
   ProcessObject: TmnProcessObject;
   aOptions: TProcessOptions;
-  aStrings:TStringList;
-  s: string;
-  i: Integer;
 begin
   if Assigned(FOnWrite) and (AInfo.Message <> '') then
     WriteString(AInfo.Message + #13#10);
@@ -390,7 +387,10 @@ end;
 procedure TmneRunItem.Execute;
 var
   s: string;
+{$ifdef windows}
+{$else}
   term: string;
+{$endif}
 begin
   case Info.Mode of
     runConsole:

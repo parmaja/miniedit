@@ -37,8 +37,7 @@
     </Modified>
     <Keyword Class="TGlobalAttribute">
       <Background>2758927</Background>
-      <Foreground>clMenuHighlight</Foreground>
-      <Style>fsBold</Style>
+      <Foreground>14917711</Foreground>
       <Options>gaoDefaultBackground</Options>
     </Keyword>
     <Symbol Class="TGlobalAttribute">
@@ -111,7 +110,6 @@
     <QuotedString Class="TGlobalAttribute">
       <Background>2758927</Background>
       <Foreground>1491229</Foreground>
-      <Style>fsBold</Style>
       <Options>gaoDefaultBackground</Options>
     </QuotedString>
     <FontName>Consolas</FontName>
