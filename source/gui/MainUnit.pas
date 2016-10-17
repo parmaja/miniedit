@@ -21,7 +21,7 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, MsgBox, contnrs,
-  LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorDebugger,
+  LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorDebugger, process,
   Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus,
   ToolWin, Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses,
   StdActns, Grids, SynEditHighlighter, SynEdit, IAddons, ntvSplitters, ntvThemes,
@@ -254,7 +254,7 @@ type
     Replace1: TMenuItem;
     RevertAct: TAction;
     Revert1: TMenuItem;
-    FileFolder1: TMenuItem;
+    OpenFileFolder: TMenuItem;
     OpenColorAct: TAction;
     Open2: TMenuItem;
     OpenColor1: TMenuItem;
@@ -443,7 +443,7 @@ type
     procedure ReplaceActExecute(Sender: TObject);
     procedure RevertActExecute(Sender: TObject);
     procedure FileListKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
-    procedure FileFolder1Click(Sender: TObject);
+    procedure OpenFileFolderClick(Sender: TObject);
     procedure OpenColorActUpdate(Sender: TObject);
     procedure OpenColorActExecute(Sender: TObject);
     procedure SCMCommitActExecute(Sender: TObject);
@@ -1506,13 +1506,16 @@ begin
 end;
 
 procedure TMainForm.OpenFolderActExecute(Sender: TObject);
+var
+  s: string;
 begin
-(*
-{$ifdef WINDOWS}
   if Engine.Files.Current <> nil then
-    ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Files.Current.Name + '"'), nil, SW_SHOW);
+{$ifdef WINDOWS}
+    //ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Files.Current.Name + '"'), nil, SW_SHOW);
+    RunCommand('Explorer', ['/select,"' + Engine.Files.Current.Name + '"'], s);
+{$else}
+    RunCommand('xdg-open', [Engine.Files.Current.Path], s);
 {$endif}
-*)
 end;
 
 procedure TMainForm.UpdateMessagesPnl;
@@ -2152,11 +2155,17 @@ begin
   end;
 end;
 
-procedure TMainForm.FileFolder1Click(Sender: TObject);
+procedure TMainForm.OpenFileFolderClick(Sender: TObject);
+var
+  s: string;
 begin
   if FileList.Selected <> nil then
   begin
-    //    ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Folder + FileList.Selected.Caption + '"'), nil, SW_SHOW);
+  {$ifdef WINDOWS}
+      RunCommand('Explorer', ['/select,"' + Folder + FileList.Selected.Caption + '"'], s);
+  {$else}
+      RunCommand('xdg-open', [Folder], s);
+  {$endif}
   end;
 end;
 

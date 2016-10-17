@@ -1,11 +1,11 @@
 object MainForm: TMainForm
   Left = 353
   Height = 557
-  Top = 173
+  Top = 171
   Width = 881
   AllowDropFiles = True
   Caption = 'Mini Edit'
-  ClientHeight = 537
+  ClientHeight = 534
   ClientWidth = 881
   Color = clWindow
   Font.CharSet = ANSI_CHARSET
@@ -70,12 +70,12 @@ object MainForm: TMainForm
         Action = SaveAllAct
       end
       object ToolButton6: TToolButton
-        Left = 301
+        Left = 302
         Top = 0
         Action = DBGRunAct
       end
       object ToolButton7: TToolButton
-        Left = 376
+        Left = 377
         Height = 23
         Top = 0
         Width = 10
@@ -84,14 +84,14 @@ object MainForm: TMainForm
         Style = tbsSeparator
       end
       object FoldersBtn: TToolButton
-        Left = 386
+        Left = 387
         Top = 0
         Action = FoldersAct
         Indeterminate = True
         Style = tbsCheck
       end
       object ToolButton2: TToolButton
-        Left = 461
+        Left = 462
         Top = 0
         Action = MessagesAct
         Style = tbsCheck
@@ -100,12 +100,12 @@ object MainForm: TMainForm
   end
   object BrowserPnl: TPanel
     Left = 0
-    Height = 351
+    Height = 348
     Top = 29
     Width = 200
     Align = alLeft
     BevelOuter = bvNone
-    ClientHeight = 351
+    ClientHeight = 348
     ClientWidth = 200
     Constraints.MinHeight = 60
     TabOrder = 0
@@ -174,18 +174,18 @@ object MainForm: TMainForm
     end
     object FolderPanel: TPanel
       Left = 0
-      Height = 327
+      Height = 324
       Top = 24
       Width = 200
       Align = alClient
       BevelOuter = bvNone
       Caption = 'FolderPanel'
-      ClientHeight = 327
+      ClientHeight = 324
       ClientWidth = 200
       TabOrder = 1
       object FileList: TListView
         Left = 3
-        Height = 303
+        Height = 300
         Top = 21
         Width = 194
         Align = alClient
@@ -194,7 +194,7 @@ object MainForm: TMainForm
           item
             AutoSize = True
             Caption = 'File Name'
-            Width = 190
+            Width = 174
           end>
         HideSelection = False
         ParentColor = True
@@ -225,22 +225,22 @@ object MainForm: TMainForm
   end
   object ClientPnl: TPanel
     Left = 212
-    Height = 351
+    Height = 348
     Top = 29
     Width = 669
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 351
+    ClientHeight = 348
     ClientWidth = 669
     TabOrder = 1
     object EditorsPnl: TPanel
       Left = 0
-      Height = 326
+      Height = 323
       Top = 25
       Width = 669
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 326
+      ClientHeight = 323
       ClientWidth = 669
       FullRepaint = False
       TabOrder = 0
@@ -248,7 +248,7 @@ object MainForm: TMainForm
       object QuickFindPnl: TPanel
         Left = 0
         Height = 28
-        Top = 298
+        Top = 295
         Width = 669
         Align = alBottom
         BevelInner = bvSpace
@@ -259,7 +259,7 @@ object MainForm: TMainForm
         Visible = False
         object Label2: TLabel
           Left = 32
-          Height = 16
+          Height = 15
           Top = 8
           Width = 29
           Caption = 'Find:'
@@ -341,7 +341,7 @@ object MainForm: TMainForm
         end
         object QuickSearchEdit: TEdit
           Left = 60
-          Height = 24
+          Height = 25
           Top = 4
           Width = 173
           OnChange = QuickSearchEditChange
@@ -431,7 +431,7 @@ object MainForm: TMainForm
   object StatusPanel: TPanel
     Left = 0
     Height = 21
-    Top = 516
+    Top = 513
     Width = 881
     Align = alBottom
     BevelOuter = bvNone
@@ -499,7 +499,7 @@ object MainForm: TMainForm
   object MessagesTabs: TntvPageControl
     Left = 0
     Height = 127
-    Top = 389
+    Top = 386
     Width = 881
     Margin = 1
     StoreIndex = False
@@ -1281,14 +1281,14 @@ object MainForm: TMainForm
     Cursor = crVSplit
     Left = 0
     Height = 9
-    Top = 380
+    Top = 377
     Width = 881
     ResizeControl = MessagesTabs
   end
   object FoldersSpl: TntvSplitter
     Cursor = crHSplit
     Left = 200
-    Height = 351
+    Height = 348
     Top = 29
     Width = 12
     ResizeControl = BrowserPnl
@@ -2259,9 +2259,9 @@ object MainForm: TMainForm
       Caption = 'Go to Project Folder'
       OnClick = MenuItem22Click
     end
-    object FileFolder1: TMenuItem
+    object OpenFileFolder: TMenuItem
       Caption = 'Browse File Folder'
-      OnClick = FileFolder1Click
+      OnClick = OpenFileFolderClick
     end
     object MenuItem2: TMenuItem
       Caption = '-'
