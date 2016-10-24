@@ -414,26 +414,29 @@ begin
         Info.Command := 'cmd';
         {$else}
 
-        //xterm -e "lua lua-test.lua && bash"
-        //xterm -e "lua lua-test.lua && read -rsp $''Press any key to continue'' -n1 key"
-
-        if Info.Title <> '' then
-            s := '-title "' + Info.Title + '"'
-        else
-            s := '';
-
-        s := s + ' -e "'+Info.GetCommandLine;
-        if Info.Pause then
-          s := s + '; read -rsp $''Press any key to continue'' -n1 key';
-        s := s + '"';
-        Info.Params := s;
-
         //s := GetEnvironmentVariable('SHELL');
         term := GetEnvironmentVariable('COLORTERM');
         if term = '' then
            term := GetEnvironmentVariable('TERM');
         if term = '' then
            term := 'xterm';
+
+        //xterm -e "lua lua-test.lua && bash"
+        //xterm -e "lua lua-test.lua && read -rsp $''Press any key to continue'' -n1 key"
+
+
+        if Info.Title <> '' then
+            s := '-title "' + Info.Title + '"'
+        else
+            s := '';
+        if term = 'xterm' then
+            s := s + ' -fa "' + Engine.Options.Profile.Attributes.FontName+  '" -fs ' + IntToStr(Engine.Options.Profile.Attributes.FontSize);
+        s := s + ' -e "'+Info.GetCommandLine;
+        if Info.Pause then
+          s := s + '; read -rsp $''Press any key to continue'' -n1 key';
+        s := s + '"';
+        Info.Params := s;
+
         Info.Command := term;
 
         {$endif}
