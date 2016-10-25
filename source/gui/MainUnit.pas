@@ -1717,7 +1717,7 @@ procedure TMainForm.UpdateMenu;
 var
   aTendency: TEditorTendency;
 begin
-  aTendency := Engine.Tendency;
+  aTendency := Engine.CurrentTendency;
 
   if Engine.Files.Current <> nil then
   begin
