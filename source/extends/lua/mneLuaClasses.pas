@@ -243,7 +243,6 @@ begin
   FDescription := 'Lua Files, *.lua';
   FName := 'Lua';
   FImageIndex := -1;
-  AddGroup('lua', 'lua');
   AddGroup('cfg', 'cfg');
   AddGroup('ini', 'ini');
   AddGroup('txt', 'txt');
@@ -314,8 +313,8 @@ end;
 initialization
   with Engine do
   begin
-    Categories.Add(TLuaFileCategory.Create('Lua', [fckPublish]));
-    Groups.Add(TLuaFile, 'Lua', 'Lua Files', TLuaFileCategory, ['lua'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
     Tendencies.Add(TLuaTendency);
+    Categories.Add(TLuaFileCategory.Create(TLuaTendency, 'Lua', [fckPublish]));
+    Groups.Add(TLuaFile, 'Lua', 'Lua Files', TLuaFileCategory, ['lua'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
   end;
 end.

@@ -12,7 +12,7 @@ object AboutForm: TAboutForm
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '1.3'
+  LCLVersion = '1.7'
   object Label1: TLabel
     Left = 51
     Height = 13
@@ -261,7 +261,7 @@ object AboutForm: TAboutForm
   end
   object SiteLbl: TLabel
     Cursor = crHandPoint
-    Left = 72
+    Left = 60
     Height = 13
     Top = 50
     Width = 192
@@ -294,8 +294,8 @@ object AboutForm: TAboutForm
     Left = 14
     Height = 13
     Top = 50
-    Width = 52
-    Caption = 'Project site'
+    Width = 25
+    Caption = 'URL:'
     ParentColor = False
   end
   object Label2: TLabel

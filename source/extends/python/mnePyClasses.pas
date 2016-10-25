@@ -248,11 +248,9 @@ begin
   FDescription := 'Python Files, *.py';
   FName := 'Python';
   FImageIndex := -1;
-  AddGroup('Python', 'py');
   AddGroup('cfg', 'cfg');
   AddGroup('ini', 'ini');
   AddGroup('txt', 'txt');
-  //AddGroup('json', 'json');
 end;
 
 { TPyFileCategory }
@@ -323,8 +321,8 @@ end;
 initialization
   with Engine do
   begin
-    Categories.Add(TPyFileCategory.Create('Python', [fckPublish]));
-    Groups.Add(TPyFile, 'Python', 'Python Files', TPyFileCategory, ['py'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
     Tendencies.Add(TPyTendency);
+    Categories.Add(TPyFileCategory.Create(TPyTendency, 'Python', [fckPublish]));
+    Groups.Add(TPyFile, 'Python', 'Python Files', TPyFileCategory, ['py'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
   end;
 end.

@@ -123,7 +123,6 @@ begin
   FTitle := 'Console project';
   FDescription := 'Comma seperator values Files, *.Console';
   FImageIndex := -1;
-  AddGroup('Console', 'Console');
 end;
 
 { TConsoleFileCategory }
@@ -156,8 +155,8 @@ end;
 initialization
   with Engine do
   begin
-    Categories.Add(TConsoleFileCategory.Create('Console'));
-    Groups.Add(TConsoleFile, 'Console', 'Console Files', TConsoleFileCategory, ['Console'], [fgkVirtual, fgkText], []);
     //Tendencies.Add(TConsoleTendency);
+    Categories.Add(TConsoleFileCategory.Create(DefaultTendency, 'Console'));
+    Groups.Add(TConsoleFile, 'Console', 'Console Files', TConsoleFileCategory, ['Console'], [fgkVirtual, fgkText], []);
   end;
 end.

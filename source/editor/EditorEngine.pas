@@ -295,7 +295,6 @@ type
     destructor Destroy; override;
     procedure Run(RunActions: TmneRunActions);
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); virtual;
-    function CreateEditorFile(vGroup: TFileGroup): TEditorFile;
     function CreateOptions: TEditorProjectOptions; virtual;
     function GetDefaultGroup: TFileGroup; virtual;
     //OSDepended: When save to file, the filename changed depend on the os system name
@@ -466,12 +465,12 @@ type
     FGroup: TFileGroup;
     FRelated: string;
     FMode: TEditorFileMode;
-    FTendency: TEditorTendency;
     function GetCapability: TEditCapability;
     function GetIsText: Boolean;
     function GetNakeName: string;
     function GetExtension: string;
     function GetPath: string;
+    function GetTendency: TEditorTendency;
     procedure SetGroup(const Value: TFileGroup);
     procedure SetIsEdited(const Value: Boolean);
     procedure SetIsNew(AValue: Boolean);
@@ -539,7 +538,7 @@ type
     property NakeName: string read GetNakeName;
     property Extension: string read GetExtension;
     property Path: string read GetPath;
-    property Tendency: TEditorTendency read FTendency write FTendency;
+    property Tendency: TEditorTendency read GetTendency;
     property Related: string read FRelated write FRelated;
     property IsEdited: Boolean read FIsEdited write SetIsEdited; //TODO rename to IsChanged
     property IsNew: Boolean read FIsNew write SetIsNew default False;
@@ -781,6 +780,7 @@ type
     FHighlighter: TSynCustomHighlighter;
     FKind: TFileCategoryKinds;
     FMapper: TMapper;
+    FTendency: TEditorTendency;
     function GetHighlighter: TSynCustomHighlighter;
     function GetItem(Index: Integer): TFileGroup;
     function GetMapper: TMapper;
@@ -797,7 +797,8 @@ type
     procedure InitEdit(vSynEdit: TCustomSynEdit); virtual;
     function GetIsText: Boolean; virtual;
   public
-    constructor Create(const vName: string; vKind: TFileCategoryKinds = []); virtual;
+    constructor Create(ATendency: TEditorTendency; const vName: string; vKind: TFileCategoryKinds = []); virtual;
+    constructor Create(ATendency: TEditorTendencyClass; const vName: string; vKind: TFileCategoryKinds = []); virtual;
     destructor Destroy; override;
     procedure EnumMenuItems(AddItems: TAddClickCallBack); virtual;
     function CreateHighlighter: TSynCustomHighlighter; //todo replace with doCreate....
@@ -808,6 +809,7 @@ type
     function Find(vName: string): TFileGroup;
     procedure EnumExtensions(vExtensions: TStringList);
     function GetExtensions: string;
+    property Tendency: TEditorTendency read FTendency;
     property IsText: Boolean read GetIsText;
     property Highlighter: TSynCustomHighlighter read GetHighlighter;
     property Completion: TmneSynCompletion read FCompletion;
@@ -823,7 +825,6 @@ type
   public
     function FindByClass(CategoryClass: TFileCategoryClass): TFileCategory;
     function Add(vCategory: TFileCategory): Integer;
-
   end;
 
   { TTextFileCategory }
@@ -881,6 +882,7 @@ type
   public
     function Find(vName: string): TFileGroup;
     function Find(vName, vCategory: string): TFileGroup;
+    function IsExists(AGroup: TFileGroup): Boolean;
     procedure EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds = []);
     procedure EnumExtensions(vExtensions: TEditorElements);
     function FindExtension(vExtension: string; vKind: TFileGroupKinds = []): TFileGroup;
@@ -898,8 +900,9 @@ type
     function GetItem(Index: integer): TEditorTendency;
   public
     function Find(vName: string): TEditorTendency;
+    function FindByClass(TendencyClass: TEditorTendencyClass): TEditorTendency;
     function FindByExtension(out vGroup:TFileGroup; vExt: string; vKind: TFileGroupKinds = []): TEditorTendency; deprecated;
-    procedure Add(vEditorTendency: TEditorTendencyClass);
+    function Add(vEditorTendency: TEditorTendencyClass): TEditorTendency;
     procedure Add(vEditorTendency: TEditorTendency);
     property Items[Index: integer]: TEditorTendency read GetItem; default;
   end;
@@ -1041,8 +1044,8 @@ type
   private
     FDebugLink: TEditorDebugLink;
     FDefaultSCM: TEditorSCM;
-    //FInternalTendency used only there is no any default Tendency defined, it is mean simple editor without any project type
-    FInternalTendency: TDefaultTendency;
+    //FDefaultTendency used only there is no any Tendency defined, it is mean simple editor without any behavior
+    FDefaultTendency: TDefaultTendency;
     //FForms: TEditorFormList;
     FTendencies: TTendencies;
     FSourceManagements: TSourceManagements;
@@ -1068,6 +1071,7 @@ type
     procedure SetBrowseFolder(const Value: string);
     function GetWorkSpace: string;
     procedure SetDefaultSCM(AValue: TEditorSCM);
+    function GetCurrentTendency: TEditorTendency;
     function GetTendency: TEditorTendency;
   protected
     FInUpdateState: Integer;
@@ -1119,7 +1123,6 @@ type
     property Groups: TFileGroups read FGroups;
     property Tendencies: TTendencies read FTendencies;
     property SourceManagements: TSourceManagements read FSourceManagements;
-    function FindExtension(vExtension: string): TFileGroup; deprecated;
     //property Forms: TEditorFormList read FForms;
     //
     property Files: TEditorFiles read FFiles;
@@ -1132,8 +1135,9 @@ type
     property BrowseFolder: string read FBrowseFolder write SetBrowseFolder;
     procedure SetDefaultSCM(vName: string);
     property DebugLink: TEditorDebugLink read FDebugLink;
-    property Tendency: TEditorTendency read GetTendency;
-    property InternalTendency: TDefaultTendency read FInternalTendency;
+    property Tendency: TEditorTendency read GetTendency; //It get Project/Default tendency no for current file
+    property CurrentTendency: TEditorTendency read GetCurrentTendency; //It get Project/File/Default tendency
+    property DefaultTendency: TDefaultTendency read FDefaultTendency;
     property DefaultSCM: TEditorSCM read FDefaultSCM write SetDefaultSCM;
     property SCM: TEditorSCM read GetSCM;
     function GetIsChanged: Boolean;
@@ -2172,8 +2176,6 @@ begin
   FGroups := TFileGroups.Create(False);//it already owned by Engine.Groups
   FTabWidth := 4;
   Init;
-{  if Groups.Count = 0 then
-    raise Exception.Create('You must add groups in Init method');}//removed DefaultTendency has no groups
 end;
 
 destructor TEditorTendency.Destroy;
@@ -2263,16 +2265,6 @@ procedure TEditorTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEdi
 begin
 end;
 
-function TEditorTendency.CreateEditorFile(vGroup: TFileGroup): TEditorFile;
-begin
-  if vGroup <> nil then
-    Result := vGroup.CreateEditorFile(Engine.Files, Self)
-  else
-    raise EEditorException.Create('Cannot create file editor without group');
-    //Result := TTextEditorFile.Create(Engine.Files);
-end;
-
-
 function TEditorTendency.CreateOptions: TEditorProjectOptions;
 begin
   Result := TEditorProjectOptions.Create;
@@ -2298,6 +2290,21 @@ begin
   Result := inherited Find(vName) as TEditorTendency;
 end;
 
+function TTendencies.FindByClass(TendencyClass: TEditorTendencyClass): TEditorTendency;
+var
+  i: Integer;
+begin
+  Result := nil;
+  for i := 0 to Count - 1 do
+  begin
+    if Items[i].ClassType = TendencyClass then
+    begin
+      Result := Items[i];
+      break;
+    end;
+  end;
+end;
+
 function TTendencies.FindByExtension(out vGroup: TFileGroup; vExt: string; vKind: TFileGroupKinds): TEditorTendency;
 var
   i: Integer;
@@ -2317,13 +2324,11 @@ begin
   end;
 end;
 
-procedure TTendencies.Add(vEditorTendency: TEditorTendencyClass);
-var
-  aItem: TEditorTendency;
+function TTendencies.Add(vEditorTendency: TEditorTendencyClass): TEditorTendency;
 begin
   RegisterClass(vEditorTendency);
-  aItem := vEditorTendency.Create;
-  Add(aItem);
+  Result := vEditorTendency.Create;
+  Add(Result);
 end;
 
 procedure TTendencies.Add(vEditorTendency: TEditorTendency);
@@ -2523,7 +2528,7 @@ begin
   FEnvironment.Add('EXE=' + Application.ExeName);
   FEnvironment.Add('MiniEdit=' + Application.Location);
 
-  FInternalTendency := TDefaultTendency.Create;
+  FDefaultTendency := TDefaultTendency.Create;
   //FForms := TEditorFormList.Create(True);
   FOptions := TEditorOptions.Create;
   FCategories := TFileCategories.Create(True);
@@ -2535,7 +2540,7 @@ begin
   FDebugLink := TEditorDebugLink.Create(nil);
   FSession := TEditorSession.Create;
   Extenstion := 'mne-project';
-  //Tendencies.Add(FInternalTendency); //removed problem when finding tendency depend on extension
+  Tendencies.Add(FDefaultTendency);
 end;
 
 destructor TEditorEngine.Destroy;
@@ -2554,8 +2559,8 @@ begin
   FreeAndNil(FSourceManagements);
   FreeAndNil(FMacroRecorder);
   FreeAndNil(FMessagesList);
-  FInternalTendency := nil;
-  //profFreeAndNil(FForms);
+  //FDefaultTendency := nil; no need to free it is in the list
+  //FreeAndNil(FForms);
   FreeAndNil(FEnvironment);
   inherited;
 end;
@@ -2831,20 +2836,6 @@ begin
     Result := Application.Location;
 end;
 
-function TEditorEngine.FindExtension(vExtension: string): TFileGroup;
-begin
-  Result := nil;
-
-  if LeftStr(vExtension, 1) = '.' then
-    vExtension := Copy(vExtension, 2, MaxInt);
-
-  if Session.IsOpened then
-    Result := Tendency.Groups.FindExtension(vExtension);
-
-  if Result = nil then
-    Result := Groups.FindExtension(vExtension)
-end;
-
 function TEditorEngine.GetSCM: TEditorSCM;
 begin
   if (Session <> nil) and (Session.Project <> nil) and (Session.Project.SCM <> nil) then
@@ -2855,15 +2846,24 @@ begin
     Result := nil;
 end;
 
-function TEditorEngine.GetTendency: TEditorTendency;
+function TEditorEngine.GetCurrentTendency: TEditorTendency;
 begin
-  //TODO: Wrong behavor when no project opened, Browser should not filer depend on Tendency of current file, please fix it
   if (Session <> nil) and (Session.Project <> nil) and (Session.Project.Tendency <> nil) then
     Result := Session.Project.Tendency
   else if (Engine.Files.Current <> nil) and (Engine.Files.Current.Tendency <> nil) then
     Result := Engine.Files.Current.Tendency
   else
-    Result := FInternalTendency;
+    Result := FDefaultTendency;
+end;
+
+function TEditorEngine.GetTendency: TEditorTendency;
+begin
+  if (Session <> nil) and (Session.Project <> nil) and (Session.Project.Tendency <> nil) then
+    Result := Session.Project.Tendency
+{  else if (Engine.Files.Current <> nil) and (Engine.Files.Current.Tendency <> nil) then
+    Result := Engine.Files.Current.Tendency}
+  else
+    Result := FDefaultTendency;
 end;
 
 function TEditorFiles.InternalOpenFile(FileName: string; AppendToRecent: Boolean): TEditorFile;
@@ -2897,20 +2897,18 @@ var
   aGroup: TFileGroup;
 begin
   aGroup := nil;
-  if Engine.Session.IsOpened then
-    aTendency := Engine.Tendency
-  else
-    aTendency := Engine.Tendencies.FindByExtension(aGroup, vExtension, [fgkExecutable]);
+  aTendency := Engine.Tendencies.FindByExtension(aGroup, vExtension, [fgkExecutable]);
 
   if aTendency = nil then
-    aTendency := Engine.InternalTendency;
+    aTendency := Engine.DefaultTendency;
 
   if aGroup = nil then
-    aGroup := Engine.FindExtension(vExtension);
+    aGroup := aTendency.Groups.FindExtension(vExtension);
 
   if aGroup = nil then
     raise EEditorException.Create('Cannot open this file type: ' + vExtension);
-  Result := aTendency.CreateEditorFile(aGroup);
+
+  Result := aGroup.CreateEditorFile(Self, aTendency);
 end;
 
 procedure TEditorOptions.Load(vWorkspace: string);
@@ -2963,8 +2961,8 @@ begin
   Engine.BeginUpdate;
   try
     if vGroup = nil then
-      vGroup := Engine.Tendency.Groups.Find(Engine.Options.LastNewAs);
-    Result := Engine.Tendency.CreateEditorFile(vGroup);
+      vGroup := Engine.CurrentTendency.Groups.Find(Engine.Options.LastNewAs);
+    Result := vGroup.CreateEditorFile(Self, Engine.CurrentTendency);
     Result.NewContent;
     Result.Edit;
     Current := Result;
@@ -3026,7 +3024,7 @@ begin
     aDialog.Filter := Engine.Groups.CreateFilter;
     aDialog.FilterIndex := 0;
     aDialog.InitialDir := Engine.BrowseFolder;
-    aDialog.DefaultExt := Engine.Tendency.GetDefaultGroup.Extensions[0].Name;
+    aDialog.DefaultExt := Engine.CurrentTendency.GetDefaultGroup.Extensions[0].Name;
     //aDialog.FileName := '*' + aDialog.DefaultExt;
     if aDialog.Execute then
     begin
@@ -3879,7 +3877,7 @@ begin
       if Group <> nil then
         aDialog.DefaultExt := Group.Extensions[0].Name
       else
-        aDialog.DefaultExt := Engine.Tendency.GetDefaultGroup.Extensions[0].Name;
+        aDialog.DefaultExt := Engine.CurrentTendency.GetDefaultGroup.Extensions[0].Name;
     end;
     aDialog.FileName := '*' + aDialog.DefaultExt;
 
@@ -4079,6 +4077,11 @@ end;
 function TEditorFile.GetPath: string;
 begin
   Result := ExtractFilePath(Name);
+end;
+
+function TEditorFile.GetTendency: TEditorTendency;
+begin
+  Result := Group.Category.Tendency;
 end;
 
 function TEditorFile.GetControl: TWinControl;
@@ -4338,7 +4341,7 @@ begin
     if vGroup <> nil then
       aDefaultGroup := vGroup
     else
-      aDefaultGroup := Engine.Tendency.GetDefaultGroup;
+      aDefaultGroup := Engine.CurrentTendency.GetDefaultGroup;
     AddIt(aDefaultGroup);
     for i := 0 to Count - 1 do
     begin
@@ -4362,6 +4365,8 @@ end;
 
 procedure TFileGroups.Add(vGroup: TFileGroup);
 begin
+  if IsExists(vGroup) then
+    raise Exception.Create('Group is already exists: ' + vGroup.Name);
   inherited Add(vGroup);
 end;
 
@@ -4395,11 +4400,20 @@ end;
 
 { TFileCategory }
 
-constructor TFileCategory.Create(const vName: string; vKind: TFileCategoryKinds);
+constructor TFileCategory.Create(ATendency: TEditorTendency; const vName: string; vKind: TFileCategoryKinds);
 begin
   inherited Create(False);//childs is groups and already added to Groups and freed by it
+  FTendency := ATendency;
   FName := vName;
   FKind := vKind;
+end;
+
+constructor TFileCategory.Create(ATendency: TEditorTendencyClass; const vName: string; vKind: TFileCategoryKinds);
+var
+  lTendency: TEditorTendency;
+begin
+  lTendency := Engine.Tendencies.FindByClass(ATendency);
+  Create(lTendency, vName, vKind);
 end;
 
 procedure TFileCategory.EnumExtensions(vExtensions: TStringList);
@@ -4594,7 +4608,7 @@ begin
 
   aTendency := Engine.Tendencies.Find(TendencyName);
   {if aTendency = nil then
-    aTendency := Engine.InternalTendency;} //TODO not sure
+    aTendency := Engine.DefaultTendency;} //TODO not sure
 
   Tendency := aTendency;
 
@@ -4757,7 +4771,6 @@ function TFileGroup.CreateEditorFile(vFiles: TEditorFiles; vTendency: TEditorTen
 begin
   Result := FFileClass.Create(vFiles);
   Result.Group := Self;
-  Result.Tendency := vTendency;
   Result.Tendency.Prepare; //Prepare its objects like debuggers
   Result.Assign(Engine.Options.Profile);
 end;
@@ -4785,6 +4798,7 @@ begin
   for i := 0 to Length(Extensions) - 1 do
     aGroup.Extensions.Add(Extensions[i]);
   aGroup.Category := aCategory;
+  aCategory.Tendency.Groups.Add(aGroup);
   inherited Add(aGroup);
 end;
 
@@ -4809,6 +4823,22 @@ begin
       if SameText(Items[i].Name, vName) and (Items[i].Category.Name = vCategory) then
       begin
         Result := Items[i];
+        break;
+      end;
+    end;
+end;
+
+function TFileGroups.IsExists(AGroup: TFileGroup): Boolean;
+var
+  i: integer;
+begin
+  Result := false;
+  if AGroup <> nil then
+    for i := 0 to Count - 1 do
+    begin
+      if AGroup = Items[i] then
+      begin
+        Result := true;
         break;
       end;
     end;
@@ -5100,5 +5130,3 @@ end;
 finalization
   FreeAndNil(FEngine);
 end.
-
-'/home/zaher/pascal/miniEdit/bin/setting/mne-editor.xml'

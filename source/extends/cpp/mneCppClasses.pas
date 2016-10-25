@@ -323,15 +323,13 @@ begin
   FDescription := 'Cpp Files, *.cpp, *.c, *.h, *.ino';
   FName := 'Cpp';
   FImageIndex := -1;
-  AddGroup('Cpp', 'cpp');
-  //AddGroup('json', 'json');
 end;
 
 initialization
   with Engine do
   begin
-    Categories.Add(TCppFileCategory.Create('Cpp', [fckPublish]));
-    Groups.Add(TCppFile, 'Cpp', 'C++ Files', TCppFileCategory, ['cpp', 'c', 'ino', 'h'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
     Tendencies.Add(TCppTendency);
+    Categories.Add(TCppFileCategory.Create(TCppTendency, 'Cpp', [fckPublish]));
+    Groups.Add(TCppFile, 'Cpp', 'C++ Files', TCppFileCategory, ['cpp', 'c', 'ino', 'h'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
   end;
 end.

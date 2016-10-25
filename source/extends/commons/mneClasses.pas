@@ -363,13 +363,13 @@ initialization
   with Engine do
   begin
     //Categories.Add('', TTXTFile, TTXTFileCategory);
-    Categories.Add(TTXTFileCategory.Create('txt'));
-    Categories.Add(TSQLFileCategory.Create('sql'));
-    Categories.Add(TApacheFileCategory.Create('apache', []));
-    Categories.Add(TINIFileCategory.Create('ini'));
-    Categories.Add(TXMLFileCategory.Create('xml'));
-    Categories.Add(TCFGFileCategory.Create('CFG'));
-    Categories.Add(TMDFileCategory.Create('md'));
+    Categories.Add(TTXTFileCategory.Create(DefaultTendency, 'txt'));
+    Categories.Add(TSQLFileCategory.Create(DefaultTendency, 'sql'));
+    Categories.Add(TApacheFileCategory.Create(DefaultTendency, 'apache', []));
+    Categories.Add(TINIFileCategory.Create(DefaultTendency, 'ini'));
+    Categories.Add(TXMLFileCategory.Create(DefaultTendency, 'xml'));
+    Categories.Add(TCFGFileCategory.Create(DefaultTendency, 'CFG'));
+    Categories.Add(TMDFileCategory.Create(DefaultTendency, 'md'));
 
     Groups.Add(TTXTFile, 'txt', 'Text files', TTXTFileCategory, ['txt', 'text'], []);
     Groups.Add(TTXTFile, 'md', 'MarkDown files', TMDFileCategory, ['md'], []);
@@ -379,5 +379,4 @@ initialization
     Groups.Add(TINIFile, 'ini', 'INI files', TINIFileCategory, ['ini'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TCFGFile, 'cfg', 'Config files', TCFGFileCategory, ['cfg', 'conf'], [fgkAssociated, fgkBrowsable]);
   end;
-  //Engine.AddInstant('Python', ['py'], TSynPythonSyn, []);
 end.

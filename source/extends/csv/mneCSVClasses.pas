@@ -127,7 +127,6 @@ begin
   FTitle := 'CSV project';
   FDescription := 'Comma seperator values Files, *.csv';
   FImageIndex := -1;
-  AddGroup('csv', 'csv');
 end;
 
 { TCSVFileCategory }
@@ -160,8 +159,8 @@ end;
 initialization
   with Engine do
   begin
-    Categories.Add(TCSVFileCategory.Create('csv'));
-    Groups.Add(TCSVFile, 'csv', 'CSV Files', TCSVFileCategory, ['csv'], [fgkMember, fgkBrowsable], []);
     Tendencies.Add(TCSVTendency);
+    Categories.Add(TCSVFileCategory.Create(TCSVTendency, 'csv'));
+    Groups.Add(TCSVFile, 'csv', 'CSV Files', TCSVFileCategory, ['csv'], [fgkMember, fgkBrowsable], []);
   end;
 end.

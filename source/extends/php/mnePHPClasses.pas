@@ -329,10 +329,6 @@ begin
   FDescription := 'PHP Files, *.php, *.inc';
   FName := 'PHP';
   FImageIndex := -1;
-  AddGroup('php', 'html');
-  AddGroup('html', 'html');
-  AddGroup('css', 'css');
-  AddGroup('js', 'js');
 end;
 
 { TCSSFileCategory }
@@ -607,15 +603,14 @@ end;
 initialization
   with Engine do
   begin
-    Categories.Add(TXHTMLFileCategory.Create('php/html', [fckPublish]));
-    Categories.Add(TCSSFileCategory.Create('css', [fckPublish]));
-    Categories.Add(TJSFileCategory.Create('js', [fckPublish]));
+    Tendencies.Add(TPHPTendency);
+    Categories.Add(TXHTMLFileCategory.Create(TPHPTendency, 'php/html', [fckPublish]));
+    Categories.Add(TCSSFileCategory.Create(TPHPTendency, 'css', [fckPublish]));
+    Categories.Add(TJSFileCategory.Create(TPHPTendency, 'js', [fckPublish]));
 
     Groups.Add(TPHPFile, 'php', 'PHP Files', TXHTMLFileCategory, ['php', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
     Groups.Add(TXHTMLFile, 'html', 'HTML Files', TXHTMLFileCategory, ['html', 'xhtml', 'htm', 'tpl'], [fgkAssociated, fgkMember, fgkBrowsable]);
     Groups.Add(TCssFile, 'css', 'CSS Files', TCSSFileCategory, ['css'], [fgkAssociated, fgkMember, fgkBrowsable]);
     Groups.Add(TJSFile,'js', 'Java Script Files', TJSFileCategory, ['js'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable]);
-
-    Tendencies.Add(TPHPTendency);
   end;
 end.

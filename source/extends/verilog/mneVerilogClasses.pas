@@ -152,7 +152,6 @@ begin
   FTitle := 'Verilog project';
   FDescription := 'Verilog Files, *.v, *.vh';
   FImageIndex := -1;
-  AddGroup('Verilog', 'v');
 end;
 
 procedure TVerilogTendency.DoRun(Info: TmneRunInfo);
@@ -411,8 +410,8 @@ end;
 initialization
   with Engine do
   begin
-    Categories.Add(TVerilogFileCategory.Create('Verilog'));
-    Groups.Add(TVerilogFile, 'Verilog', 'Verilog Files', TVerilogFileCategory, ['v', 'vh'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain], [fgsFolding]);
     Tendencies.Add(TVerilogTendency);
+    Categories.Add(TVerilogFileCategory.Create(TVerilogTendency, 'Verilog'));
+    Groups.Add(TVerilogFile, 'Verilog', 'Verilog Files', TVerilogFileCategory, ['v', 'vh'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain], [fgsFolding]);
   end;
 end.

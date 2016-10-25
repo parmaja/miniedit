@@ -69,7 +69,6 @@ begin
   FTitle := 'SARD project';
   FDescription := 'SARD Files, *.sard';
   FImageIndex := -1;
-  AddGroup('sard', 'sard');
 end;
 
 function TSARDTendency.CreateDebugger: TEditorDebugger;
@@ -109,9 +108,8 @@ end;
 initialization
   with Engine do
   begin
-    Categories.Add(TSARDFileCategory.Create('Sard'));
-    Groups.Add(TSARDFile, 'sard', 'SARD Files', TSARDFileCategory, ['sard'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
-
     Tendencies.Add(TSARDTendency);
+    Categories.Add(TSARDFileCategory.Create(TSARDTendency, 'Sard'));
+    Groups.Add(TSARDFile, 'sard', 'SARD Files', TSARDFileCategory, ['sard'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
   end;
 end.
