@@ -287,7 +287,6 @@ type
     FCapabilities: TEditorCapabilities;
     procedure AddGroup(vName, vCategory: string);
     function CreateDebugger: TEditorDebugger; virtual;
-    function GetGroups: TFileGroups; virtual;
     procedure Init; virtual; abstract;
     procedure DoRun(Info: TmneRunInfo); virtual;
   public
@@ -302,7 +301,7 @@ type
     procedure Unprepare;
     //
     property Capabilities: TEditorCapabilities read FCapabilities;
-    property Groups: TFileGroups read GetGroups;
+    property Groups: TFileGroups read FGroups;
     property Debug: TEditorDebugger read FDebug write SetDebug;
   published
     property Command: string read FCommand write FCommand; //like php.exe or gdc.exe or fpc.exe
@@ -326,7 +325,6 @@ type
   TDefaultTendency = class(TEditorTendency)
   protected
     procedure Init; override;
-    function GetGroups: TFileGroups; override;
   public
     function GetDefaultGroup: TFileGroup; override;
   end;
@@ -2071,11 +2069,6 @@ begin
   FDescription := 'Default project type';
 end;
 
-function TDefaultTendency.GetGroups: TFileGroups;
-begin
-  Result := Engine.Groups;
-end;
-
 function TDefaultTendency.GetDefaultGroup: TFileGroup;
 begin
   Result := Groups.Find('txt');
@@ -2109,11 +2102,6 @@ begin
 end;
 
 { TEditorTendency }
-
-function TEditorTendency.GetGroups: TFileGroups;
-begin
-  Result := FGroups;
-end;
 
 procedure TEditorTendency.DoRun(Info: TmneRunInfo);
 begin
