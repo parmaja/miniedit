@@ -314,7 +314,7 @@ procedure TEditorOptionsForm.ResetBtnClick(Sender: TObject);
 begin
   InChanging := True;
   try
-    FProfile.Attributes.Reset;
+    FProfile.Attributes.Revert;
   finally
     InChanging := False;
   end;
@@ -456,7 +456,7 @@ begin
       aFontStyle := aFontStyle + [fsItalic];}
 
     aGlobalAttribute.Style := aFontStyle;
-    FProfile.Attributes.Refresh;
+    FProfile.Attributes.Correct;
     ChangeEdit;
   end;
 end;

@@ -79,13 +79,14 @@ type
     FTitle: string;
     function GetIsDefault: Boolean;
   protected
-    ResetInfo: TGlobalAttributeInfo;
+    RevertInfo: TGlobalAttributeInfo;
     property Parent: TGlobalAttributes read FParent;
   public
     constructor Create;
     procedure AssignTo(Dest: TPersistent); override;
     procedure Assign(Source: TPersistent); override;
     procedure Reset;
+    procedure Revert;
     property Index: Integer read FIndex;
     property Title: string read FTitle write FTitle;
     property IsDefault: Boolean read GetIsDefault;
@@ -148,13 +149,15 @@ type
     FList: TGlobalAttributeList;
     function GetCount: Integer;
     function GetItem(Index: Integer): TGlobalAttribute;
+    procedure Prepare;
+    procedure Init; //called by Reset, Revert
   protected
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Init;
     procedure Reset;
-    procedure Refresh; //reset the default colors based on whitespace
+    procedure Revert;
+    procedure Correct; //reset the default colors based on whitespace
     function Find(AttType: TAttributeType): TGlobalAttribute;
     property Items[Index: Integer]: TGlobalAttribute read GetItem; default;
     procedure Assign(Source: TPersistent); override;
@@ -229,6 +232,7 @@ type
     procedure AssignTo(Dest: TPersistent); override;
     constructor AssignFrom(SynEdit: TSynEdit);
     procedure Reset;
+    procedure Revert;
     procedure Loading; override;
     procedure Loaded(Failed: Boolean); override;
     procedure Saved(Failed: Boolean); override;
@@ -331,7 +335,15 @@ procedure TEditorProfile.Reset;
 begin
   Attributes.Reset;
   EditorOptions := cSynDefaultOptions;
-  //ExtEditorOptions :=
+  ExtraLineSpacing := 0;
+  MaxUndo := 1024;
+  TabWidth := 4;
+end;
+
+procedure TEditorProfile.Revert;
+begin
+  Attributes.Revert;
+  EditorOptions := cSynDefaultOptions;
   ExtraLineSpacing := 0;
   MaxUndo := 1024;
   TabWidth := 4;
@@ -346,12 +358,12 @@ end;
 procedure TEditorProfile.Loaded(Failed: Boolean);
 begin
   inherited;
-  Attributes.Refresh;
+  Attributes.Correct;
 end;
 
 procedure TEditorProfile.Saved(Failed: Boolean);
 begin
-  Attributes.Refresh;
+  Attributes.Correct;
   inherited Saved(Failed);
 end;
 
@@ -375,21 +387,24 @@ procedure TGlobalAttributes.Reset;
 var
   i: Integer;
 begin
-  FontName := 'Courier New';
-  FontSize := 10;
-  FontNoAntialiasing := True;
-
-  GutterAutoSize := True;
-  GutterShowSeparator := True;
-  GutterLeftOffset := 0;
-  GutterRightOffset := 0;
-  GutterWidth := 30;
-  GutterLeadingZeros := False;
-  GutterShowModifiedLines := True;
+  Prepare;
   for i := 0 to FList.Count - 1 do
   begin
     FList[i].Reset;
   end;
+  Correct;
+end;
+
+procedure TGlobalAttributes.Revert;
+var
+  i: Integer;
+begin
+  Prepare;
+  for i := 0 to FList.Count - 1 do
+  begin
+    FList[i].Revert;
+  end;
+  Correct;
 end;
 
 procedure TGlobalAttributes.Init;
@@ -407,12 +422,12 @@ procedure TGlobalAttributes.Init;
     Item.Style := Style;
     Item.FParent := Self;
     Item.FIndex := FList.Add(Item);
-    Item.ResetInfo := Item.Info;
+    Item.RevertInfo := Item.Info;
   end;
 
 begin
   FList.Clear;
-  Reset;
+  Prepare;
   Add(FDefault, attDefault, 'Default', clBlack, clWhite, []);
   Add(FPanel, attPanel, 'Panel', clBlack, clWhite, []);
   Add(FLink, attLink, 'Link', $00D87356, clWhite, []);
@@ -436,10 +451,25 @@ begin
   Add(FDataType, attDataType, 'Type', $002F7ADF, clWhite, []);
   Add(FDataName, attDataName, 'Name', $000B590F, clWhite, []);
   Add(FValue, attValue, 'Value', clGreen, clWhite, []);
-  Refresh;
+  Correct;
 end;
 
-procedure TGlobalAttributes.Refresh;
+procedure TGlobalAttributes.Prepare;
+begin
+  FontName := 'Courier New';
+  FontSize := 10;
+  FontNoAntialiasing := True;
+
+  GutterAutoSize := True;
+  GutterShowSeparator := True;
+  GutterLeftOffset := 0;
+  GutterRightOffset := 0;
+  GutterWidth := 30;
+  GutterLeadingZeros := False;
+  GutterShowModifiedLines := True;
+end;
+
+procedure TGlobalAttributes.Correct;
 var
   i: Integer;
 begin
@@ -531,11 +561,6 @@ begin
     inherited;
 end;
 
-procedure TGlobalAttribute.Reset;
-begin
-  Info := ResetInfo;
-end;
-
 procedure TGlobalAttribute.AssignTo(Dest: TPersistent);
 begin
   if Dest is TSynHighlighterAttributes then
@@ -548,6 +573,19 @@ begin
     inherited;
 end;
 
+procedure TGlobalAttribute.Reset;
+begin
+  FInfo.Background := clNone;
+  FInfo.Foreground := clNone;
+  FInfo.Style := [];
+  FInfo.Options := [];
+end;
+
+procedure TGlobalAttribute.Revert;
+begin
+  Info := RevertInfo;
+end;
+
 function TGlobalAttribute.GetIsDefault: Boolean;
 begin
   Result := AttType = attDefault;
@@ -558,6 +596,8 @@ begin
   inherited;
   FInfo.Background := clNone;
   FInfo.Foreground := clNone;
+  FInfo.Style := [];
+  FInfo.Options := [];
 end;
 
 procedure TGlobalAttributes.AssignTo(Dest: TPersistent);
