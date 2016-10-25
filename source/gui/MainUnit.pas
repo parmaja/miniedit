@@ -513,6 +513,7 @@ type
     procedure ProjectChanged;
     procedure AddMenuItem(AName, ACaption: string; AOnClickEvent: TNotifyEvent; AShortCut: TShortCut = 0);
     procedure UpdateMenu;
+    procedure UpdateActions;
     procedure UpdatePanel;
     procedure SetFolder(const Value: string);
     procedure ReopenClick(Sender: TObject);
@@ -1003,6 +1004,7 @@ begin
   end;
   //  DebugPnl.Visible := DebugPnl.Caption <> '';
   UpdateMenu;
+  UpdateActions;
   UpdateFileHeaderPanel;
 end;
 
@@ -1675,6 +1677,7 @@ begin
   TypePnl.Caption := Engine.Tendency.Name;
 
   UpdateMenu;
+  UpdateActions;
   UpdatePanel;
 end;
 
@@ -1717,7 +1720,6 @@ procedure TMainForm.UpdateMenu;
 var
   aTendency: TEditorTendency;
 begin
-  aTendency := Engine.CurrentTendency;
 
   if Engine.Files.Current <> nil then
   begin
@@ -1725,26 +1727,32 @@ begin
     Engine.Files.Current.Group.Category.EnumMenuItems(@AddMenuItem);
   end;
 
-  with aTendency do
+  with Engine.CurrentTendency do
+  begin
+    MessagesTabs.PageItem[WatchesGrid].Visible := capDebug in Capabilities;
+    MessagesTabs.PageItem[CallStackGrid].Visible := capTrace in Capabilities;
+    MessagesTabs.PageItem[MessagesGrid].Visible := capErrors in Capabilities;
+  end;
+end;
+
+procedure TMainForm.UpdateActions;
+begin
+  with Engine.CurrentTendency do
   begin
     //ExecuteMnu.Visible := capRun in Engine.Tendency.Capabilities;
 
-    DBGRunAct.Enabled := capRun in Capabilities;
+    DBGRunAct.Enabled := (capRun in Capabilities) and (not Engine.Session.Run.Active);
     DBGCompileAct.Visible := capCompile in Capabilities;
     DBGExecuteAct.Enabled := capRun in Capabilities;
     DBGResetAct.Enabled := capRun in Capabilities;
     DBGLintAct.Enabled := capLint in Capabilities;
 
-    DBGStartServerAct.Enabled := (capDebugServer in Capabilities) and (aTendency.Debug <> nil) and (not aTendency.Debug.Active);
-    DBGStopServerAct.Enabled := (capDebugServer in Capabilities) and (aTendency.Debug <> nil) and (aTendency.Debug.Active);
+    DBGStartServerAct.Enabled := (capDebugServer in Capabilities) and (Debug <> nil) and (not Debug.Active);
+    DBGStopServerAct.Enabled := (capDebugServer in Capabilities) and (Debug <> nil) and (Debug.Active);
 
     DBGAddWatchAct.Enabled := capTrace in Capabilities;
     DBGBreakpointsAct.Enabled := capTrace in Capabilities;
     DBGToggleBreakpointAct.Enabled := capTrace in Capabilities;
-
-    MessagesTabs.PageItem[WatchesGrid].Visible := capDebug in Capabilities;
-    MessagesTabs.PageItem[CallStackGrid].Visible := capTrace in Capabilities;
-    MessagesTabs.PageItem[MessagesGrid].Visible := capErrors in Capabilities;
 
     DBGStepOverAct.Enabled := capTrace in Capabilities;
     DBGStepIntoAct.Enabled := capTrace in Capabilities;
@@ -2357,17 +2365,15 @@ end;
 
 procedure TMainForm.EngineDebug;
 begin
-  if Assigned(Engine) then
+  //DBGRunAct.Enabled := not Engine.Session.Run.Active;
+  UpdateActions;
+  if (Engine.Tendency.Debug <> nil) then
   begin
-    DBGRunAct.Enabled := not Engine.Session.Run.Active;
-    if (Engine.Tendency.Debug <> nil) then
-    begin
-      DebugPnl.Caption := Engine.Tendency.Debug.GetKey;
-      UpdateFileHeaderPanel;
-      UpdateCallStack;
-      UpdateWatches;
-      Engine.Files.Refresh; // not safe thread
-    end;
+    DebugPnl.Caption := Engine.Tendency.Debug.GetKey;
+    UpdateFileHeaderPanel;
+    UpdateCallStack;
+    UpdateWatches;
+    Engine.Files.Refresh; // not safe thread
   end;
 end;
 
