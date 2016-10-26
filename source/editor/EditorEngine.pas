@@ -4536,7 +4536,7 @@ begin
         if FHighlighter.AttrCount <> Mapper.Count then
           raise Exception.Create('Mapper count not equal to AttrCount for: ' + FHighlighter.ClassName + ' ' + IntToStr(FHighlighter.AttrCount) + ', Mapper: ' + IntToStr(Mapper.Count));
       end;
-      Apply(FHighlighter, Engine.Options.Profile.Attributes);
+      //Apply(FHighlighter, Engine.Options.Profile.Attributes);
     end;
   end;
 end;

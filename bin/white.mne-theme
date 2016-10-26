@@ -2,108 +2,108 @@
 <rtti version="1.0" author="MiniXML">
   <Object Type="TGlobalAttributes">
     <Default Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>clBlack</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>clBlack</ForeColor>
       <Options>gaoDefaultForeground</Options>
     </Default>
     <Link Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>14185302</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>14185302</ForeColor>
     </Link>
     <Panel Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>clBlack</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>clBlack</ForeColor>
       <Options>gaoDefaultForeground</Options>
     </Panel>
     <Selected Class="TGlobalAttribute">
-      <Background>14470080</Background>
-      <Foreground>clBlack</Foreground>
+      <BackColor>14470080</BackColor>
+      <ForeColor>clBlack</ForeColor>
       <Options>gaoDefaultForeground</Options>
     </Selected>
     <Active Class="TGlobalAttribute">
-      <Background>15592164</Background>
-      <Foreground>clBlack</Foreground>
+      <BackColor>15592164</BackColor>
+      <ForeColor>clBlack</ForeColor>
       <Options>gaoDefaultForeground</Options>
     </Active>
     <Gutter Class="TGlobalAttribute">
-      <Background>13485500</Background>
-      <Foreground>clBlack</Foreground>
+      <BackColor>13485500</BackColor>
+      <ForeColor>clBlack</ForeColor>
       <Options>gaoDefaultForeground</Options>
     </Gutter>
     <Separator Class="TGlobalAttribute">
-      <Background>15132390</Background>
-      <Foreground>13074019</Foreground>
+      <BackColor>15132390</BackColor>
+      <ForeColor>13074019</ForeColor>
     </Separator>
     <Modified Class="TGlobalAttribute">
-      <Background>14784597</Background>
-      <Foreground>3605096</Foreground>
+      <BackColor>14784597</BackColor>
+      <ForeColor>3605096</ForeColor>
     </Modified>
     <Keyword Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>clNavy</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>clNavy</ForeColor>
       <Style>fsBold</Style>
     </Keyword>
     <Symbol Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>clMaroon</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>clMaroon</ForeColor>
     </Symbol>
     <Number Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>2185063</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>2185063</ForeColor>
     </Number>
     <Directive Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>clMaroon</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>clMaroon</ForeColor>
       <Style>fsBold</Style>
     </Directive>
     <Identifier Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>clBlack</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>clBlack</ForeColor>
       <Options>gaoDefaultForeground</Options>
     </Identifier>
     <Variable Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>clBlack</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>clBlack</ForeColor>
       <Style>fsBold</Style>
       <Options>gaoDefaultForeground</Options>
     </Variable>
     <Standard Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>1325648</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>1325648</ForeColor>
     </Standard>
     <Value Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>clGreen</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>clGreen</ForeColor>
     </Value>
     <DataType Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>3111647</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>3111647</ForeColor>
     </DataType>
     <DataName Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>743695</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>743695</ForeColor>
     </DataName>
     <Document Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>3690</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>3690</ForeColor>
     </Document>
     <Text Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>clBlack</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>clBlack</ForeColor>
       <Options>gaoDefaultForeground</Options>
     </Text>
     <EmbedText Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>clBlack</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>clBlack</ForeColor>
       <Options>gaoDefaultForeground</Options>
     </EmbedText>
     <Comment Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>10841172</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>10841172</ForeColor>
     </Comment>
     <QuotedString Class="TGlobalAttribute">
-      <Background>clWhite</Background>
-      <Foreground>clGreen</Foreground>
+      <BackColor>clWhite</BackColor>
+      <ForeColor>clGreen</ForeColor>
       <Style>fsBold</Style>
     </QuotedString>
     <FontName>Courier New</FontName>

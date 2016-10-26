@@ -355,9 +355,9 @@ begin
     aGlobalAttribute := (AttributeCbo.Items.Objects[AttributeCbo.ItemIndex] as TGlobalAttribute);
     InChanging := True;
     try
-      ForegroundCbo.Selected := aGlobalAttribute.ForegroundColor;
+      ForegroundCbo.Selected := aGlobalAttribute.ForeColor;
       ForegroundCbo.Refresh;//bug when custom and then custom colors
-      BackgroundCbo.Selected := aGlobalAttribute.BackgroundColor;
+      BackgroundCbo.Selected := aGlobalAttribute.BackColor;
       BackgroundCbo.Refresh;//bug when custom and then custom colors
 
       //ForegroundCbo.CustomColor := ;
@@ -395,14 +395,14 @@ begin
 
     //Copy some from TGutterOptions.AssignTo(Dest: TPersistent);
 
-    aGlobalAttribute.ForegroundColor := ForegroundCbo.Selected;
+    aGlobalAttribute.ForeColor := ForegroundCbo.Selected;
 
     if ForegroundChk.Checked then
       aGlobalAttribute.Options := aGlobalAttribute.Options - [gaoDefaultForeground]
     else
       aGlobalAttribute.Options := aGlobalAttribute.Options + [gaoDefaultForeground];
 
-    aGlobalAttribute.BackgroundColor := BackgroundCbo.Selected;
+    aGlobalAttribute.BackColor := BackgroundCbo.Selected;
 
     if BackgroundChk.Checked then
       aGlobalAttribute.Options := aGlobalAttribute.Options - [gaoDefaultBackground]
@@ -550,7 +550,7 @@ begin
         //v := Integer(FProfile.Attributes[i].Style);
         s := '  Add(F'+Copy(aName, 4, MaxInt) + ', ' +
           aName + ', '''+FProfile.Attributes[i].Title+''', ' +
-          ColorToString(FProfile.Attributes[i].ForegroundColor)+', '+ColorToString(FProfile.Attributes[i].BackgroundColor)+', '+
+          ColorToString(FProfile.Attributes[i].ForeColor)+', '+ColorToString(FProfile.Attributes[i].BackColor)+', '+
           //'['+SetToString(TypeInfo(TFontStyles), v)+']'+
 
           '['+GetStyle(FProfile.Attributes[i].Options)+']'+

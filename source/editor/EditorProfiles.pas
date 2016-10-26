@@ -81,7 +81,7 @@ type
     FInfo: TGlobalAttributeInfo; //Can saved
     function GetIsDefault: Boolean;
   protected
-    SourceInfo: TGlobalAttributeInfo;
+    RevertInfo: TGlobalAttributeInfo;
     property Parent: TGlobalAttributes read FParent;
   public
     constructor Create;
@@ -98,8 +98,8 @@ type
     property Background: TColor read FBackground;
     property Foreground: TColor read FForeground;
   published
-    property BackgroundColor: TColor read FInfo.Background write FInfo.Background default clNone; //Do not use this, use Background to read color, this one for save and load
-    property ForegroundColor: TColor read FInfo.Foreground write FInfo.Foreground default clNone;
+    property BackColor: TColor read FInfo.Background write FInfo.Background default clNone; //Do not use this, use Background to read color, this one for save and load
+    property ForeColor: TColor read FInfo.Foreground write FInfo.Foreground default clNone;
     property Options: TGlobalAttributeOptions read FInfo.Options write FInfo.Options default [];
   end;
 
@@ -417,8 +417,8 @@ procedure TGlobalAttributes.Prepare;
     Item := TGlobalAttribute.Create;
     Item.AttType := AttType;
     Item.Title := Title;
-    Item.ForegroundColor := Foreground;
-    Item.BackgroundColor := Background;
+    Item.ForeColor := Foreground;
+    Item.BackColor := Background;
     if (Item.Foreground = clDefault) then
       Item.Options := Item.Options + [gaoDefaultForeground];
     if (Item.Background = clDefault) then
@@ -426,7 +426,7 @@ procedure TGlobalAttributes.Prepare;
     Item.Options := Options;
     Item.FParent := Self;
     Item.FIndex := FList.Add(Item);
-    Item.SourceInfo := Item.Info;
+    Item.RevertInfo := Item.Info;
   end;
 
 begin
@@ -523,12 +523,16 @@ var
   i: Integer;
 begin
   if Source is TSynGutter then
-    AssignFrom(Source as TSynGutter)
+  begin
+    AssignFrom(Source as TSynGutter);
+    Correct;
+  end
   else if Source is TGlobalAttributes then
   begin
     Info := (Source as TGlobalAttributes).Info;
     for i := 0 to Count -1 do
       Items[i].Assign((Source as TGlobalAttributes).Items[i]);
+    Correct;
   end
   else
     inherited Assign(Source);
@@ -550,13 +554,13 @@ procedure TGlobalAttribute.Assign(Source: TPersistent);
 begin
   if Source is TSynHighlighterAttributes then
   begin
-    BackgroundColor := TSynHighlighterAttributes(Source).Background;
-    ForegroundColor := TSynHighlighterAttributes(Source).Foreground;
+    BackColor := TSynHighlighterAttributes(Source).Background;
+    ForeColor := TSynHighlighterAttributes(Source).Foreground;
   end
   else if Source is TGlobalAttribute then
   begin
-    BackgroundColor := (Source as TGlobalAttribute).BackgroundColor;
-    ForegroundColor := (Source as TGlobalAttribute).ForegroundColor;
+    BackColor := (Source as TGlobalAttribute).BackColor;
+    ForeColor := (Source as TGlobalAttribute).ForeColor;
     Options := (Source as TGlobalAttribute).Options;
   end
   else
@@ -584,7 +588,7 @@ end;
 
 procedure TGlobalAttribute.Revert;
 begin
-  Info := SourceInfo;
+  Info := RevertInfo;
 end;
 
 procedure TGlobalAttribute.Correct;
