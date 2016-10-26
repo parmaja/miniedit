@@ -361,7 +361,6 @@ type
     procedure FoldersActExecute(Sender: TObject);
     procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
     procedure FormShow(Sender: TObject);
-    procedure FormWindowStateChange(Sender: TObject);
     procedure IPCServerMessage(Sender: TObject);
     procedure MenuItem22Click(Sender: TObject);
     procedure MenuItem23Click(Sender: TObject);
@@ -513,7 +512,7 @@ type
     procedure ProjectChanged;
     procedure AddMenuItem(AName, ACaption: string; AOnClickEvent: TNotifyEvent; AShortCut: TShortCut = 0);
     procedure UpdateMenu;
-    procedure UpdateActions;
+    procedure UpdateMenuItems;
     procedure UpdatePanel;
     procedure SetFolder(const Value: string);
     procedure ReopenClick(Sender: TObject);
@@ -651,7 +650,7 @@ procedure TMainForm.ApplicationPropertiesShowHint(var HintStr: string; var CanSh
 var
   s: string;
 begin
-  if (Engine.Files.Current <> nil) then
+  if (Engine.Files.Current <> nil) and (HintInfo.HintControl is TCustomSynEdit) then
   begin
     CanShow := Engine.Files.Current.GetHint(HintInfo.HintControl, HintInfo.CursorPos, s);
 
@@ -661,7 +660,12 @@ begin
       HintInfo.HideTimeout := 10000;
       HintInfo.ReshowTimeout := 1;
     end;
-  end;
+  end
+  else if (HintInfo.HintStr = '') and (HintInfo.HintControl.Action is TAction) then
+    with (HintInfo.HintControl.Action as TAction) do
+    begin
+      HintInfo.HintStr := HintInfo.HintControl.Caption + ' (' + ShortCutToText(ShortCut) + ')';
+    end;
 end;
 
 procedure TMainForm.BrowserTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
@@ -818,10 +822,6 @@ begin
     else
         Folder := Engine.Options.LastFolder;
   end;
-end;
-
-procedure TMainForm.FormWindowStateChange(Sender: TObject);
-begin
 end;
 
 procedure TMainForm.ForceForegroundWindow;
@@ -1004,7 +1004,7 @@ begin
   end;
   //  DebugPnl.Visible := DebugPnl.Caption <> '';
   UpdateMenu;
-  UpdateActions;
+  UpdateMenuItems;
   UpdateFileHeaderPanel;
 end;
 
@@ -1677,7 +1677,7 @@ begin
   TypePnl.Caption := Engine.Tendency.Name;
 
   UpdateMenu;
-  UpdateActions;
+  UpdateMenuItems;
   UpdatePanel;
 end;
 
@@ -1717,10 +1717,7 @@ begin
 end;
 
 procedure TMainForm.UpdateMenu;
-var
-  aTendency: TEditorTendency;
 begin
-
   if Engine.Files.Current <> nil then
   begin
     FMenuItemsList.Clear;
@@ -1735,7 +1732,7 @@ begin
   end;
 end;
 
-procedure TMainForm.UpdateActions;
+procedure TMainForm.UpdateMenuItems;
 begin
   with Engine.CurrentTendency do
   begin
@@ -2366,7 +2363,7 @@ end;
 procedure TMainForm.EngineDebug;
 begin
   //DBGRunAct.Enabled := not Engine.Session.Run.Active;
-  UpdateActions;
+  UpdateMenuItems;
   if (Engine.Tendency.Debug <> nil) then
   begin
     DebugPnl.Caption := Engine.Tendency.Debug.GetKey;

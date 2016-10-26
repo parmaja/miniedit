@@ -20,7 +20,6 @@ object MainForm: TMainForm
   OnDestroy = FormDestroy
   OnDropFiles = FormDropFiles
   OnShow = FormShow
-  OnWindowStateChange = FormWindowStateChange
   Position = poDefaultPosOnly
   ShowHint = True
   LCLVersion = '1.7'
@@ -1943,6 +1942,7 @@ object MainForm: TMainForm
       AutoCheck = True
       Caption = 'Messages'
       Checked = True
+      Hint = 'Show messages panel'
       ImageIndex = 14
       OnExecute = MessagesActExecute
       ShortCut = 16461
