@@ -12,10 +12,11 @@ unit EditorProfiles;
 interface
 
 uses
-  Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, Registry, ExtCtrls, Buttons, ImgList,
-  LCLType, mnXMLRttiProfile, SynEditMarkupWordGroup,
-  Contnrs, Menus, SynEdit, SynEditHighlighter, SynEditMiscClasses, SynEditPointClasses, SynGutterCodeFolding, mnClasses,
-  SynGutter, SynEditKeyCmds, Classes, SysUtils;
+  Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, Registry,
+  ExtCtrls, Buttons, ImgList, LCLType, mnXMLRttiProfile, SynEditMarkupWordGroup,
+  Contnrs, Menus, SynEdit, SynEditHighlighter, SynEditMiscClasses,
+  SynEditPointClasses, SynGutterCodeFolding, mnClasses, SynGutter,
+  SynEditKeyCmds, Classes, SysUtils;
 
 type
   TAttributeType = (
@@ -65,21 +66,22 @@ type
     Background: TColor;
     Foreground: TColor;
     Options: TGlobalAttributeOptions;
-    Style: TFontStyles;
   end;
 
   { TGlobalAttribute }
 
   TGlobalAttribute = class(TPersistent)
   private
-    FInfo: TGlobalAttributeInfo;
+    FBackground: TColor;
+    FForeground: TColor;
     FIndex: Integer;
     FParent: TGlobalAttributes;
     FAttType: TAttributeType;
     FTitle: string;
+    FInfo: TGlobalAttributeInfo; //Can saved
     function GetIsDefault: Boolean;
   protected
-    RevertInfo: TGlobalAttributeInfo;
+    SourceInfo: TGlobalAttributeInfo;
     property Parent: TGlobalAttributes read FParent;
   public
     constructor Create;
@@ -87,19 +89,22 @@ type
     procedure Assign(Source: TPersistent); override;
     procedure Reset;
     procedure Revert;
+    procedure Correct;
     property Index: Integer read FIndex;
     property Title: string read FTitle write FTitle;
     property IsDefault: Boolean read GetIsDefault;
     property AttType: TAttributeType read FAttType write FAttType;
     property Info: TGlobalAttributeInfo read FInfo write FInfo;
+    property Background: TColor read FBackground;
+    property Foreground: TColor read FForeground;
   published
-    property Background: TColor read FInfo.Background write FInfo.Background default clNone;
-    property Foreground: TColor read FInfo.Foreground write FInfo.Foreground default clNone;
-    property Style: TFontStyles read FInfo.Style write FInfo.Style default [];
+    property BackgroundColor: TColor read FInfo.Background write FInfo.Background default clNone; //Do not use this, use Background to read color, this one for save and load
+    property ForegroundColor: TColor read FInfo.Foreground write FInfo.Foreground default clNone;
     property Options: TGlobalAttributeOptions read FInfo.Options write FInfo.Options default [];
   end;
 
   { TGlobalAttributes }
+
   TGlobalAttributesInfo = record
     FontName: String;
     FontNoAntialiasing: Boolean;
@@ -149,8 +154,8 @@ type
     FList: TGlobalAttributeList;
     function GetCount: Integer;
     function GetItem(Index: Integer): TGlobalAttribute;
-    procedure Prepare;
-    procedure Init; //called by Reset, Revert
+    procedure Init;
+    procedure Prepare; //called by Reset, Revert
   protected
   public
     constructor Create(AOwner: TComponent); override;
@@ -231,6 +236,7 @@ type
     procedure Assign(Source: TPersistent); override;
     procedure AssignTo(Dest: TPersistent); override;
     constructor AssignFrom(SynEdit: TSynEdit);
+    procedure Init;
     procedure Reset;
     procedure Revert;
     procedure Loading; override;
@@ -252,7 +258,7 @@ type
 implementation
 
 uses
-  SynGutterBase, SynGutterLineNumber, SynGutterChanges;
+  EditorEngine, SynGutterBase, SynGutterLineNumber, SynGutterChanges;
 
 { TEditorProfile }
 
@@ -261,7 +267,7 @@ begin
   inherited;
   FAttributes := TGlobalAttributes.Create(nil);
   DrawDivider := False;
-  Reset;
+  Init;
 end;
 
 destructor TEditorProfile.Destroy;
@@ -331,22 +337,24 @@ constructor TEditorProfile.AssignFrom(SynEdit: TSynEdit);
 begin
 end;
 
-procedure TEditorProfile.Reset;
+procedure TEditorProfile.Init;
 begin
-  Attributes.Reset;
   EditorOptions := cSynDefaultOptions;
   ExtraLineSpacing := 0;
   MaxUndo := 1024;
   TabWidth := 4;
 end;
 
+procedure TEditorProfile.Reset;
+begin
+  Attributes.Reset;
+  Init;
+end;
+
 procedure TEditorProfile.Revert;
 begin
   Attributes.Revert;
-  EditorOptions := cSynDefaultOptions;
-  ExtraLineSpacing := 0;
-  MaxUndo := 1024;
-  TabWidth := 4;
+  Init;
 end;
 
 procedure TEditorProfile.Loading;
@@ -374,7 +382,7 @@ begin
   inherited Create(AOwner);
   FComponentStyle := FComponentStyle + [csSubComponent];
   FList := TGlobalAttributeList.Create(True);
-  Init;
+  Prepare;
 end;
 
 destructor TGlobalAttributes.Destroy;
@@ -387,11 +395,9 @@ procedure TGlobalAttributes.Reset;
 var
   i: Integer;
 begin
-  Prepare;
+  Init;
   for i := 0 to FList.Count - 1 do
-  begin
     FList[i].Reset;
-  end;
   Correct;
 end;
 
@@ -399,35 +405,33 @@ procedure TGlobalAttributes.Revert;
 var
   i: Integer;
 begin
-  Prepare;
+  Init;
   for i := 0 to FList.Count - 1 do
-  begin
     FList[i].Revert;
-  end;
   Correct;
 end;
 
-procedure TGlobalAttributes.Init;
-  procedure Add(var Item: TGlobalAttribute; AttType: TAttributeType; Title: string; Foreground, Background: TColor; Style: TFontStyles = []);
+procedure TGlobalAttributes.Prepare;
+  procedure Add(var Item: TGlobalAttribute; AttType: TAttributeType; Title: string; Foreground, Background: TColor; Options: TGlobalAttributeOptions = []);
   begin
     Item := TGlobalAttribute.Create;
     Item.AttType := AttType;
     Item.Title := Title;
-    Item.Foreground := Foreground;
-    Item.Background := Background;
-    if (Item.Foreground = clNone) or (Item.Foreground = clDefault) then
+    Item.ForegroundColor := Foreground;
+    Item.BackgroundColor := Background;
+    if (Item.Foreground = clDefault) then
       Item.Options := Item.Options + [gaoDefaultForeground];
-    if (Item.Background = clNone) or (Item.Background = clDefault) then
+    if (Item.Background = clDefault) then
       Item.Options := Item.Options + [gaoDefaultBackground];
-    Item.Style := Style;
+    Item.Options := Options;
     Item.FParent := Self;
     Item.FIndex := FList.Add(Item);
-    Item.RevertInfo := Item.Info;
+    Item.SourceInfo := Item.Info;
   end;
 
 begin
   FList.Clear;
-  Prepare;
+  Init;
   Add(FDefault, attDefault, 'Default', clBlack, clWhite, []);
   Add(FPanel, attPanel, 'Panel', clBlack, clWhite, []);
   Add(FLink, attLink, 'Link', $00D87356, clWhite, []);
@@ -436,25 +440,25 @@ begin
   Add(FModified, attModified, 'Modified', $00370268, $00E19855, []);
   Add(FGutter, attGutter, 'Gutter', clBlack, $00CDC5BC, []);
   Add(FSeparator, attSeparator, 'Separator', $00C77E63, $00E6E6E6, []);
-  Add(FKeyword, attKeyword, 'Keyword', clNavy, clWhite, [fsBold]);
-  Add(FQuotedString, attQuotedString, 'String', clGreen, clWhite, [fsBold]);
+  Add(FKeyword, attKeyword, 'Keyword', clNavy, clWhite, []);
+  Add(FQuotedString, attQuotedString, 'String', clGreen, clWhite, []);
   Add(FDocument, attDocument, 'Document', $00000E6A, clWhite, []);
   Add(FComment, attComment, 'Comment', $00A56C54, clWhite, []);
   Add(FSymbol, attSymbol, 'Symbol', clMaroon, clWhite, []);
   Add(FStandard, attStandard, 'Standard', $00143A50, clWhite, []);
   Add(FNumber, attNumber, 'Number', $00215767, clWhite, []);
-  Add(FDirective, attDirective, 'Directive', clMaroon, clWhite, [fsBold]);
+  Add(FDirective, attDirective, 'Directive', clMaroon, clWhite, []);
   Add(FIdentifier, attIdentifier, 'Identifier', clBlack, clWhite, []);
   Add(FText, attText, 'Text', clBlack, clWhite, []);
   Add(FEmbedText, attEmbedText, 'Embed Text', clBlack, clWhite, []);
-  Add(FVariable, attVariable, 'Variable', clBlack, clWhite, [fsBold]);
+  Add(FVariable, attVariable, 'Variable', clBlack, clWhite, []);
   Add(FDataType, attDataType, 'Type', $002F7ADF, clWhite, []);
   Add(FDataName, attDataName, 'Name', $000B590F, clWhite, []);
   Add(FValue, attValue, 'Value', clGreen, clWhite, []);
   Correct;
 end;
 
-procedure TGlobalAttributes.Prepare;
+procedure TGlobalAttributes.Init;
 begin
   FontName := 'Courier New';
   FontSize := 10;
@@ -475,26 +479,26 @@ var
 begin
   for i := 0 to FList.Count - 1 do
   begin
+    FList[i].Correct;
     if not FList[i].IsDefault then
     begin
       if TColorRef(FList[i].Foreground) >= SYS_COLOR_BASE then
-         FList[i].Foreground := clDefault;
+         FList[i].FForeground := clDefault;
 
       if TColorRef(FList[i].Background) >= SYS_COLOR_BASE then
-         FList[i].Background := clDefault;
+         FList[i].FBackground := clDefault;
 
-      //Fix old file that not have Options property
-      if (FList[i].Foreground = clDefault) or (FList[i].Foreground = clNone) then
+      if (FList[i].Foreground = clDefault) then
         FList[i].Options := FList[i].Options + [gaoDefaultForeground];
 
-      if (FList[i].Background = clDefault) or (FList[i].Background = clNone) then
+      if (FList[i].Background = clDefault) then
         FList[i].Options := FList[i].Options + [gaoDefaultBackground];
 
       if (gaoDefaultForeground in FList[i].Options) then
-        FList[i].Foreground := Default.Foreground;
+        FList[i].FForeground := Default.Foreground;
 
       if (gaoDefaultBackground in FList[i].Options) then
-        FList[i].Background := Default.Background;
+        FList[i].FBackground := Default.Background;
     end;
   end;
 end;
@@ -546,16 +550,14 @@ procedure TGlobalAttribute.Assign(Source: TPersistent);
 begin
   if Source is TSynHighlighterAttributes then
   begin
-    Background := TSynHighlighterAttributes(Source).Background;
-    Foreground := TSynHighlighterAttributes(Source).Foreground;
-    Style := TSynHighlighterAttributes(Source).Style - [fsItalic]; //removed old font style from old version of miniedit
+    BackgroundColor := TSynHighlighterAttributes(Source).Background;
+    ForegroundColor := TSynHighlighterAttributes(Source).Foreground;
   end
   else if Source is TGlobalAttribute then
   begin
-    Background := (Source as TGlobalAttribute).Background;
-    Foreground := (Source as TGlobalAttribute).Foreground;
+    BackgroundColor := (Source as TGlobalAttribute).BackgroundColor;
+    ForegroundColor := (Source as TGlobalAttribute).ForegroundColor;
     Options := (Source as TGlobalAttribute).Options;
-    Style := (Source as TGlobalAttribute).Style - [fsItalic]; //removed old font style from old version of miniedit
   end
   else
     inherited;
@@ -567,7 +569,7 @@ begin
   begin
     TSynHighlighterAttributes(Dest).Background := Background;
     TSynHighlighterAttributes(Dest).Foreground := Foreground;
-    TSynHighlighterAttributes(Dest).Style := Style - [fsItalic]; //removed old font style from old version of miniedit
+    TSynHighlighterAttributes(Dest).Style := [];
   end
   else
     inherited;
@@ -577,13 +579,18 @@ procedure TGlobalAttribute.Reset;
 begin
   FInfo.Background := clNone;
   FInfo.Foreground := clNone;
-  FInfo.Style := [];
   FInfo.Options := [];
 end;
 
 procedure TGlobalAttribute.Revert;
 begin
-  Info := RevertInfo;
+  Info := SourceInfo;
+end;
+
+procedure TGlobalAttribute.Correct;
+begin
+  FBackground := FInfo.Background;
+  FForeground := FInfo.Foreground;
 end;
 
 function TGlobalAttribute.GetIsDefault: Boolean;
@@ -596,7 +603,6 @@ begin
   inherited;
   FInfo.Background := clNone;
   FInfo.Foreground := clNone;
-  FInfo.Style := [];
   FInfo.Options := [];
 end;
 

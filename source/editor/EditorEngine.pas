@@ -1195,6 +1195,9 @@ procedure EnumIndentMode(vItems: TStrings);
 
 function GetWordAtRowColEx(SynEdit: TCustomSynEdit; XY: TPoint; BreakChars: TSynIdentChars; Select: boolean): string;
 
+{$ifdef DEBUG}
+procedure Nothing;
+{$endif}
 
 const
   cFallbackGroup = 'txt';
@@ -2705,7 +2708,12 @@ begin
     end;
   end;
 end;
-
+{$ifdef DEBUG}
+procedure Nothing;
+begin
+  //nothing, just nothing
+end;
+{$endif}
 
 procedure EnumRunMode(vItems: TStrings);
 begin
@@ -4461,7 +4469,7 @@ begin
 
     Att.Background := G.Background;
     Att.Foreground := G.Foreground;
-    Att.Style := G.Style;
+    Att.Style := [];
   end;
 end;
 

@@ -49,7 +49,6 @@ type
     LineSpacingEdit: TEdit;
     NoAntialiasingChk: TCheckBox;
     Bevel1: TBevel;
-    BoldChk: TCheckBox;
     FontBtn: TButton;
     FontLbl: TLabel;
     OpenDialog: TOpenDialog;
@@ -69,7 +68,6 @@ type
     TabIndentChk: TCheckBox;
     TabsToSpacesChk: TCheckBox;
     TabWidthEdit: TEdit;
-    ItalicChk: TCheckBox;
     PageControl: TPageControl;
     OkBtn: TButton;
     CancelBtn: TButton;
@@ -84,7 +82,6 @@ type
     ForegroundChk: TCheckBox;
     Label12: TLabel;
     CategoryCbo: TComboBox;
-    UnderlineChk: TCheckBox;
     WordWrapChk: TCheckBox;
     procedure BackgroundCboChange(Sender: TObject);
     procedure ForegroundCboChange(Sender: TObject);
@@ -97,21 +94,14 @@ type
     procedure FontBtnClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure CategoryCboSelect(Sender: TObject);
-    procedure GutterFontChkChange(Sender: TObject);
     procedure KeyListEditing(Sender: TObject; Item: TListItem; var AllowEdit: boolean);
     procedure OkBtnClick(Sender: TObject);
-    procedure GutterFontBtnClick(Sender: TObject);
-    procedure GutterFontChkClick(Sender: TObject);
-
-      procedure OptionsTabContextPopup(Sender: TObject; MousePos: TPoint; var Handled: Boolean);
-    procedure PageControlChange(Sender: TObject);
     procedure ResetBtnClick(Sender: TObject);
     procedure RevertBtnClick(Sender: TObject);
 
     procedure SampleEditGutterClick(Sender: TObject; X, Y, Line: integer; mark: TSynEditMark);
     procedure SampleEditMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
     procedure BoldChkClick(Sender: TObject);
-//    procedure BackgroundChkClick(Sender: TObject);
     procedure SaveBtnClick(Sender: TObject);
   private
     FProfile: TEditorProfile;
@@ -276,11 +266,6 @@ begin
   Retrieve;
 end;
 
-procedure TEditorOptionsForm.GutterFontChkChange(Sender: TObject);
-begin
-
-end;
-
 procedure TEditorOptionsForm.KeyListEditing(Sender: TObject; Item: TListItem; var AllowEdit: boolean);
 begin
   AllowEdit := False;
@@ -289,25 +274,6 @@ end;
 procedure TEditorOptionsForm.OkBtnClick(Sender: TObject);
 begin
   ModalResult := mrOk;
-end;
-
-procedure TEditorOptionsForm.GutterFontBtnClick(Sender: TObject);
-begin
-
-end;
-
-procedure TEditorOptionsForm.GutterFontChkClick(Sender: TObject);
-begin
-end;
-
-procedure TEditorOptionsForm.OptionsTabContextPopup(Sender: TObject; MousePos: TPoint; var Handled: Boolean);
-begin
-
-end;
-
-procedure TEditorOptionsForm.PageControlChange(Sender: TObject);
-begin
-
 end;
 
 procedure TEditorOptionsForm.ResetBtnClick(Sender: TObject);
@@ -389,9 +355,9 @@ begin
     aGlobalAttribute := (AttributeCbo.Items.Objects[AttributeCbo.ItemIndex] as TGlobalAttribute);
     InChanging := True;
     try
-      ForegroundCbo.Selected := aGlobalAttribute.Foreground;
+      ForegroundCbo.Selected := aGlobalAttribute.ForegroundColor;
       ForegroundCbo.Refresh;//bug when custom and then custom colors
-      BackgroundCbo.Selected := aGlobalAttribute.Background;
+      BackgroundCbo.Selected := aGlobalAttribute.BackgroundColor;
       BackgroundCbo.Refresh;//bug when custom and then custom colors
 
       //ForegroundCbo.CustomColor := ;
@@ -413,9 +379,6 @@ begin
         BackgroundChk.Checked :=  not (gaoDefaultBackground in aGlobalAttribute.Options);
       end;
 
-      BoldChk.Checked := (fsBold in aGlobalAttribute.Style);
-      ItalicChk.Checked := (fsItalic in aGlobalAttribute.Style);
-      UnderlineChk.Checked := (fsUnderline in aGlobalAttribute.Style);
     finally
       InChanging := False;
     end;
@@ -424,7 +387,6 @@ end;
 
 procedure TEditorOptionsForm.ApplyAttribute;
 var
-  aFontStyle: TFontStyles;
   aGlobalAttribute: TGlobalAttribute;
 begin
   if not InChanging and (AttributeCbo.ItemIndex >= 0) then
@@ -433,30 +395,20 @@ begin
 
     //Copy some from TGutterOptions.AssignTo(Dest: TPersistent);
 
-    aGlobalAttribute.Foreground := ForegroundCbo.Selected;
+    aGlobalAttribute.ForegroundColor := ForegroundCbo.Selected;
 
     if ForegroundChk.Checked then
       aGlobalAttribute.Options := aGlobalAttribute.Options - [gaoDefaultForeground]
     else
       aGlobalAttribute.Options := aGlobalAttribute.Options + [gaoDefaultForeground];
 
-    aGlobalAttribute.Background := BackgroundCbo.Selected;
+    aGlobalAttribute.BackgroundColor := BackgroundCbo.Selected;
 
     if BackgroundChk.Checked then
       aGlobalAttribute.Options := aGlobalAttribute.Options - [gaoDefaultBackground]
     else
       aGlobalAttribute.Options := aGlobalAttribute.Options + [gaoDefaultBackground];
 
-    aFontStyle := [];
-    if BoldChk.Checked then
-      aFontStyle := aFontStyle + [fsBold];
-    if UnderlineChk.Checked then
-      aFontStyle := aFontStyle + [fsUnderline];
-    {if ItalicChk.Checked then
-      aFontStyle := aFontStyle + [fsItalic];}
-
-    aGlobalAttribute.Style := aFontStyle;
-    FProfile.Attributes.Correct;
     ChangeEdit;
   end;
 end;
@@ -563,14 +515,7 @@ procedure TEditorOptionsForm.BoldChkClick(Sender: TObject);
 begin
   ApplyAttribute;
 end;
-{
-procedure TEditorOptionsForm.BackgroundChkClick(Sender: TObject);
-begin
-  if not InChanging then
-    BackgroundChk.Checked := True;
-  ApplyAttribute;
-end;
-}
+
 procedure TEditorOptionsForm.SaveBtnClick(Sender: TObject);
 {$ifdef debug}
 var
@@ -578,7 +523,7 @@ var
   s: string;
   aName: string;
   Stream: TFileStream;
-  function GetStyle(fs: TFontStyles): string;
+  function GetStyle(op: TGlobalAttributeOptions): string;
     procedure Add(ss: string);
     begin
       if Result <> '' then
@@ -587,12 +532,8 @@ var
     end;
   begin
     Result := '';
-    if fsBold in fs then
-      Add('fsBold');
-    if fsStrikeOut in fs then
-      Add('fsStrikeOut');
-    if fsUnderline in fs then
-      Add('fsUnderline');
+{    if gaoBold in op then
+      Add('gaoBold');}
   end;
   {$endif}
 begin
@@ -609,10 +550,10 @@ begin
         //v := Integer(FProfile.Attributes[i].Style);
         s := '  Add(F'+Copy(aName, 4, MaxInt) + ', ' +
           aName + ', '''+FProfile.Attributes[i].Title+''', ' +
-          ColorToString(FProfile.Attributes[i].Foreground)+', '+ColorToString(FProfile.Attributes[i].Background)+', '+
+          ColorToString(FProfile.Attributes[i].ForegroundColor)+', '+ColorToString(FProfile.Attributes[i].BackgroundColor)+', '+
           //'['+SetToString(TypeInfo(TFontStyles), v)+']'+
 
-          '['+GetStyle(FProfile.Attributes[i].Style)+']'+
+          '['+GetStyle(FProfile.Attributes[i].Options)+']'+
           ');'+#13#10;
          Stream.WriteBuffer(Pointer(s)^, length(s));
       end;
@@ -629,6 +570,7 @@ var
   aFileCategory: TFileCategory;
   sp: TSynGutterSeparator;
 begin
+  FProfile.Attributes.Correct;
   aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
 
   if (SampleEdit.Highlighter = nil) or (SampleEdit.Highlighter.ClassType <> aFileCategory.Highlighter.ClassType) then

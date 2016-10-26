@@ -19,100 +19,98 @@ object EditorOptionsForm: TEditorOptionsForm
     Height = 377
     Top = 3
     Width = 436
-    ActivePage = OptionsTab
+    ActivePage = ColorTab
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
-    OnChange = PageControlChange
     object OptionsTab: TTabSheet
       Caption = 'Options'
-      ClientHeight = 346
-      ClientWidth = 430
-      OnContextPopup = OptionsTabContextPopup
+      ClientHeight = 351
+      ClientWidth = 428
       object AutoIndentChk: TCheckBox
         Left = 21
-        Height = 22
+        Height = 19
         Hint = 'Will indent the caret on new lines with the same amount of leading white space as the preceding line'
         Top = 16
-        Width = 88
+        Width = 74
         Caption = 'Auto indent'
         TabOrder = 0
       end
       object HalfPageScrollChk: TCheckBox
         Left = 225
-        Height = 22
+        Height = 19
         Hint = 'When scrolling with page-up and page-down commands, only scroll a half page at a time'
         Top = 34
-        Width = 113
+        Width = 93
         Caption = 'Half page scroll'
         TabOrder = 1
       end
       object ScrollByOneLessChk: TCheckBox
         Left = 225
-        Height = 22
+        Height = 19
         Hint = 'Forces scrolling to be one less'
         Top = 53
-        Width = 126
+        Width = 102
         Caption = 'Scroll by one less'
         TabOrder = 2
       end
       object ShowScrollHintChk: TCheckBox
         Left = 225
-        Height = 22
+        Height = 19
         Hint = 'Shows a hint of the visible line numbers when scrolling vertically'
         Top = 16
-        Width = 115
+        Width = 94
         Caption = 'Show scroll hint'
         TabOrder = 3
       end
       object ScrollHintFollowsChk: TCheckBox
         Left = 225
-        Height = 22
+        Height = 19
         Hint = 'The scroll hint follows the mouse when scrolling vertically'
         Top = 73
-        Width = 168
+        Width = 135
         Caption = 'Scroll hint follows mouse'
         TabOrder = 4
       end
       object GroupUndoChk: TCheckBox
         Left = 21
-        Height = 22
+        Height = 19
         Hint = 'When undoing/redoing actions, handle all continous changes of the same kind in one call instead undoing/redoing each command separately'
         Top = 110
-        Width = 91
+        Width = 76
         Caption = 'Group undo'
         TabOrder = 5
       end
       object EnhanceHomeKeyChk: TCheckBox
         Left = 21
-        Height = 22
+        Height = 19
         Hint = 'enhances home key positioning, similar to visual studio'
         Top = 53
-        Width = 190
+        Width = 153
         Caption = 'Home key jumps to first char'
         TabOrder = 6
       end
       object WordWrapChk: TCheckBox
         Left = 21
-        Height = 22
+        Height = 19
         Hint = 'if enabled, then the scrollbars will only show when necessary.  If you have ScrollPastEOL, then it the horizontal bar will always be there (it uses MaxLength instead)'
         Top = 128
-        Width = 83
+        Width = 75
         Caption = 'Word Wrap'
         TabOrder = 7
       end
       object BracketHighlightChk: TCheckBox
         Left = 21
-        Height = 22
+        Height = 19
         Hint = 'Shows linebreaks, spaces and tabs using special symbols'
         Top = 146
-        Width = 119
+        Width = 99
         Caption = 'Bracket highlight'
         TabOrder = 8
       end
       object LineSpacingEdit: TEdit
         Left = 296
-        Height = 23
+        Height = 21
         Top = 233
         Width = 52
         TabOrder = 9
@@ -122,7 +120,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 225
         Height = 13
         Top = 237
-        Width = 60
+        Width = 50
         Caption = 'Extra Line:'
         ParentColor = False
       end
@@ -130,13 +128,13 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 18
         Height = 13
         Top = 316
-        Width = 57
+        Width = 53
         Caption = 'Tab Width:'
         ParentColor = False
       end
       object TabWidthEdit: TEdit
         Left = 99
-        Height = 23
+        Height = 21
         Top = 311
         Width = 52
         TabOrder = 10
@@ -146,77 +144,77 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 214
         Height = 124
         Top = 102
-        Width = 206
+        Width = 204
         Anchors = [akTop, akLeft, akRight]
         Caption = 'Gutter'
-        ClientHeight = 109
-        ClientWidth = 202
+        ClientHeight = 106
+        ClientWidth = 200
         TabOrder = 11
         object GutterAutosizeChk: TCheckBox
           Left = 9
-          Height = 22
+          Height = 19
           Top = 3
-          Width = 79
+          Width = 60
           Caption = 'Autosize'
           TabOrder = 0
         end
         object GutterShowLeaderZerosChk: TCheckBox
           Left = 9
-          Height = 22
+          Height = 19
           Top = 21
-          Width = 147
+          Width = 112
           Caption = 'Show leading zeros'
           TabOrder = 1
         end
         object ShowSeparatorChk: TCheckBox
           Left = 9
-          Height = 22
+          Height = 19
           Top = 80
-          Width = 126
+          Width = 96
           Caption = 'Show Separator'
           TabOrder = 2
         end
         object ShowModifiedLinesChk: TCheckBox
           Left = 9
-          Height = 22
+          Height = 19
           Top = 60
-          Width = 115
+          Width = 90
           Caption = 'Show Modified'
           TabOrder = 3
         end
         object CodeFoldingChk: TCheckBox
           Left = 9
-          Height = 22
+          Height = 19
           Top = 41
-          Width = 106
+          Width = 82
           Caption = 'Code Folding'
           TabOrder = 4
         end
       end
       object SmartTabsChk: TCheckBox
         Left = 21
-        Height = 22
+        Height = 19
         Hint = 'When using <Tab> key, caret will go to the next non-space character of the previous line'
         Top = 73
-        Width = 88
+        Width = 70
         Caption = 'Smart tabs'
         TabOrder = 12
       end
       object SmartTabDeleteChk: TCheckBox
         Left = 21
-        Height = 22
+        Height = 19
         Hint = 'similar to Smart Tabs, but when you delete characters'
         Top = 92
-        Width = 120
+        Width = 97
         Caption = 'Smart tab delete'
         TabOrder = 13
       end
       object TabIndentChk: TCheckBox
         Left = 21
-        Height = 22
+        Height = 19
         Hint = 'When active <Tab> and <Shift><Tab> act as block indent, unindent when text is selected'
         Top = 35
-        Width = 82
+        Width = 72
         Caption = 'Tab Indent'
         TabOrder = 14
       end
@@ -224,16 +222,16 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 16
         Height = 13
         Top = 260
-        Width = 278
+        Width = 228
         Caption = 'Tabs in editors, Can be overriden by project type'
         ParentColor = False
       end
       object TabsToSpacesChk: TCheckBox
         Left = 21
-        Height = 22
+        Height = 19
         Hint = 'Converts a tab character to the number of spaces in Tab Width'
         Top = 165
-        Width = 110
+        Width = 93
         Caption = 'Tabs to spaces'
         TabOrder = 15
       end
@@ -241,38 +239,38 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 17
         Height = 13
         Top = 287
-        Width = 69
+        Width = 60
         Caption = 'Indent Mode'
         ParentColor = False
       end
       object IndentModeCbo: TComboBox
         Left = 99
-        Height = 27
+        Height = 21
         Top = 283
-        Width = 167
+        Width = 165
         Anchors = [akTop, akLeft, akRight]
-        ItemHeight = 0
+        ItemHeight = 13
         Style = csDropDownList
         TabOrder = 16
       end
     end
     object ColorTab: TTabSheet
       Caption = 'Color'
-      ClientHeight = 346
-      ClientWidth = 430
+      ClientHeight = 351
+      ClientWidth = 428
       ImageIndex = 3
       object Bevel1: TBevel
         Left = 3
         Height = 26
         Top = 8
-        Width = 338
+        Width = 336
         Anchors = [akTop, akLeft, akRight]
       end
       object Label11: TLabel
         Left = 5
         Height = 13
         Top = 43
-        Width = 52
+        Width = 42
         Caption = '&Attribute:'
         ParentColor = False
       end
@@ -280,15 +278,15 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 8
         Height = 13
         Top = 126
-        Width = 59
+        Width = 51
         Caption = '&Language:'
         ParentColor = False
       end
       object BackgroundCbo: TColorBox
         Left = 102
-        Height = 27
+        Height = 22
         Top = 94
-        Width = 237
+        Width = 235
         DefaultColorColor = clWhite
         NoneColorColor = clWhite
         Selected = clWhite
@@ -300,9 +298,9 @@ object EditorOptionsForm: TEditorOptionsForm
       end
       object ForegroundCbo: TColorBox
         Left = 102
-        Height = 27
+        Height = 22
         Top = 67
-        Width = 237
+        Width = 235
         Style = [cbStandardColors, cbExtendedColors, cbCustomColor, cbPrettyNames, cbCustomColors]
         Anchors = [akTop, akLeft, akRight]
         ItemHeight = 16
@@ -311,40 +309,40 @@ object EditorOptionsForm: TEditorOptionsForm
       end
       object AttributeCbo: TComboBox
         Left = 71
-        Height = 27
+        Height = 21
         Top = 38
-        Width = 168
+        Width = 166
         Anchors = [akTop, akLeft, akRight]
-        ItemHeight = 0
+        ItemHeight = 13
         OnSelect = AttributeCboSelect
         Style = csDropDownList
         TabOrder = 1
       end
       object BackgroundChk: TCheckBox
         Left = 3
-        Height = 22
+        Height = 19
         Top = 95
-        Width = 91
+        Width = 78
         Caption = 'Background'
         OnClick = BoldChkClick
         TabOrder = 4
       end
       object ForegroundChk: TCheckBox
         Left = 3
-        Height = 22
+        Height = 19
         Top = 69
-        Width = 89
+        Width = 74
         Caption = 'Foreground'
         OnClick = BoldChkClick
         TabOrder = 2
       end
       object CategoryCbo: TComboBox
         Left = 71
-        Height = 27
+        Height = 21
         Top = 124
-        Width = 168
+        Width = 166
         Anchors = [akTop, akLeft, akRight]
-        ItemHeight = 0
+        ItemHeight = 13
         OnSelect = CategoryCboSelect
         Style = csDropDownList
         TabOrder = 0
@@ -353,14 +351,14 @@ object EditorOptionsForm: TEditorOptionsForm
         Left = 10
         Height = 13
         Top = 13
-        Width = 99
+        Width = 82
         Caption = 'Courier New 10pt'
         Color = clDefault
         ParentColor = False
         Transparent = False
       end
       object FontBtn: TButton
-        Left = 360
+        Left = 358
         Height = 25
         Top = 7
         Width = 54
@@ -369,82 +367,51 @@ object EditorOptionsForm: TEditorOptionsForm
         OnClick = FontBtnClick
         TabOrder = 6
       end
-      object BoldChk: TCheckBox
-        Left = 346
-        Height = 22
-        Top = 90
-        Width = 49
-        Anchors = [akTop, akRight]
-        Caption = '&Bold'
-        OnClick = BoldChkClick
-        TabOrder = 7
-      end
-      object ItalicChk: TCheckBox
-        Left = 346
-        Height = 22
-        Top = 113
-        Width = 50
-        Anchors = [akTop, akRight]
-        Caption = '&Italic'
-        OnClick = BoldChkClick
-        TabOrder = 8
-        Visible = False
-      end
-      object UnderlineChk: TCheckBox
-        Left = 346
-        Height = 22
-        Top = 68
-        Width = 78
-        Anchors = [akTop, akRight]
-        Caption = '&Underline'
-        OnClick = BoldChkClick
-        TabOrder = 9
-      end
       object NoAntialiasingChk: TCheckBox
-        Left = 296
-        Height = 22
+        Left = 312
+        Height = 19
         Top = 38
-        Width = 108
+        Width = 90
         Anchors = [akTop, akRight]
         Caption = 'No &Antialiasing'
         OnChange = NoAntialiasingChkChange
-        TabOrder = 10
+        TabOrder = 7
       end
       object SaveBtn: TButton
         Left = 284
         Height = 25
-        Top = 320
+        Top = 325
         Width = 70
         Anchors = [akLeft, akBottom]
         Caption = 'Save'
         OnClick = SaveBtnClick
-        TabOrder = 11
+        TabOrder = 8
       end
       object LoadBtn: TButton
         Left = 214
         Height = 25
-        Top = 320
+        Top = 325
         Width = 70
         Anchors = [akLeft, akBottom]
         Caption = 'Load'
         OnClick = LoadBtnClick
-        TabOrder = 12
+        TabOrder = 9
       end
       object ResetBtn: TButton
         Left = 354
         Height = 25
-        Top = 320
+        Top = 325
         Width = 70
         Anchors = [akLeft, akBottom]
         Caption = 'Reset'
         OnClick = ResetBtnClick
-        TabOrder = 13
+        TabOrder = 10
       end
       inline SampleEdit: TSynEdit
         Left = 3
-        Height = 163
+        Height = 168
         Top = 154
-        Width = 423
+        Width = 421
         Anchors = [akTop, akLeft, akRight, akBottom]
         Font.Height = -13
         Font.Name = 'Courier New'
@@ -452,7 +419,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Font.Quality = fqNonAntialiased
         ParentColor = False
         ParentFont = False
-        TabOrder = 14
+        TabOrder = 11
         OnMouseUp = SampleEditMouseUp
         Gutter.AutoSize = False
         Gutter.Width = 57
