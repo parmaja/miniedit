@@ -14,7 +14,7 @@ uses
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   FileUtil, mnSynHighlighterLua, EditorDebugger, EditorClasses, mneClasses,
-  mneCompileProjectOptions, EditorRun, mneConsoleClasses, dbgpServers,
+  mneCompileProjectOptions, EditorRun, mneConsoleClasses, LuaDBGServers,
   mneConsoleForms;
 
 type
@@ -228,7 +228,7 @@ end;
 
 function TLuaTendency.CreateDebugger: TEditorDebugger;
 begin
-  Result := TdbgpDebug.Create;
+  Result := TLuaDBGDebug.Create;
 end;
 
 function TLuaTendency.CreateOptions: TEditorProjectOptions;
@@ -246,7 +246,6 @@ begin
   AddGroup('cfg', 'cfg');
   AddGroup('ini', 'ini');
   AddGroup('txt', 'txt');
-  //AddGroup('json', 'json');
 end;
 
 { TLuaFileCategory }

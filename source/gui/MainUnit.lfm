@@ -1564,12 +1564,8 @@ object MainForm: TMainForm
     object ExecuteMnu: TMenuItem
       Caption = 'Execute'
       object StartServer1: TMenuItem
-        Action = DBGStartServerAct
-        OnClick = DBGStartServerActExecute
-      end
-      object DBGStopServerAct1: TMenuItem
-        Action = DBGStopServerAct
-        OnClick = DBGStopServerActExecute
+        Action = DBGDebugModeAct
+        OnClick = DBGDebugModeActExecute
       end
       object N12: TMenuItem
         Caption = '-'
@@ -2128,21 +2124,14 @@ object MainForm: TMainForm
       OnExecute = DBGLintActExecute
       ShortCut = 16504
     end
-    object DBGStartServerAct: TAction
+    object DBGDebugModeAct: TAction
       Category = 'Debug'
-      Caption = 'Start Server'
-      Hint = 'Start XDebug server'
+      Caption = 'Debug Mode'
+      DisableIfNoHandler = False
+      Hint = 'Debug Mode'
       ImageIndex = 20
-      OnExecute = DBGStartServerActExecute
-      OnUpdate = DBGStartServerActUpdate
-      ShortCut = 49220
-    end
-    object DBGStopServerAct: TAction
-      Category = 'Debug'
-      Caption = 'Stop Server'
-      Hint = 'Stop XDebug Server'
-      OnExecute = DBGStopServerActExecute
-      OnUpdate = DBGStopServerActUpdate
+      OnExecute = DBGDebugModeActExecute
+      OnUpdate = DBGDebugModeActUpdate
     end
     object DBGStepIntoAct: TAction
       Category = 'Debug'

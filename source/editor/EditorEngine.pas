@@ -2133,7 +2133,8 @@ end;
 
 procedure TEditorTendency.SetDebug(AValue: TEditorDebugger);
 begin
-  if FDebug =AValue then Exit;
+  if FDebug =AValue then
+    Exit;
   FDebug :=AValue;
 end;
 
