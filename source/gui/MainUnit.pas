@@ -916,12 +916,9 @@ var
   E: Integer;
 begin
   try
-    G := Engine.CurrentTendency.Groups;
+    G := Engine.Tendency.Groups;
     if ShowSelectList('Select file type', G, [slfUseNameTitle], E) then
-    begin
-      Engine.Options.LastNewAs := G[E].Name;
       Engine.Files.New(G[E]);
-    end;
   finally
   end;
 end;
@@ -1248,10 +1245,7 @@ end;
 
 procedure TMainForm.NewActExecute(Sender: TObject);
 begin
-  if Engine.Options.LastNewAs = '' then
-    NewAsAct.Execute
-  else
-    Engine.Files.New;
+  Engine.Files.New(Engine.CurrentTendency.GetDefaultGroup);
 end;
 
 procedure TMainForm.FolderOpenAllActExecute(Sender: TObject);

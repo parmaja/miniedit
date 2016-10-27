@@ -64,6 +64,7 @@ type
     constructor Create; override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
     function CreateOptions: TEditorProjectOptions; override;
+    function GetDefaultGroup: TFileGroup; override;
   published
 
   end;
@@ -209,6 +210,11 @@ begin
   end;
 
   Engine.Session.Run.Start;
+end;
+
+function TLuaTendency.GetDefaultGroup: TFileGroup;
+begin
+  Result :=Groups.Find('lua');
 end;
 
 constructor TLuaTendency.Create;
