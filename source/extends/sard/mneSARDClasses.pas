@@ -110,6 +110,6 @@ initialization
   begin
     Tendencies.Add(TSARDTendency);
     Categories.Add(TSARDFileCategory.Create(TSARDTendency, 'Sard'));
-    Groups.Add(TSARDFile, 'sard', 'SARD Files', TSARDFileCategory, ['sard'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable], [fgsFolding]);
+    Groups.Add(TSARDFile, 'sard', 'SARD', TSARDFileCategory, ['sard'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
   end;
 end.

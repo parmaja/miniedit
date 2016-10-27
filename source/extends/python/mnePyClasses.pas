@@ -323,6 +323,6 @@ initialization
   begin
     Tendencies.Add(TPyTendency);
     Categories.Add(TPyFileCategory.Create(TPyTendency, 'Python', [fckPublish]));
-    Groups.Add(TPyFile, 'Python', 'Python Files', TPyFileCategory, ['py'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
+    Groups.Add(TPyFile, 'py', 'Python', TPyFileCategory, ['py'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
   end;
 end.

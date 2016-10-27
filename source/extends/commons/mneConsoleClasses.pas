@@ -157,6 +157,6 @@ initialization
   begin
     //Tendencies.Add(TConsoleTendency);
     Categories.Add(TConsoleFileCategory.Create(DefaultTendency, 'Console'));
-    Groups.Add(TConsoleFile, 'Console', 'Console Files', TConsoleFileCategory, ['Console'], [fgkVirtual, fgkText], []);
+    Groups.Add(TConsoleFile, 'console', 'Console', TConsoleFileCategory, ['Console'], [fgkUneditable, fgkVirtual, fgkText], []);
   end;
 end.

@@ -334,6 +334,6 @@ initialization
   begin
     Tendencies.Add(TDTendency);
     Categories.Add(TDFileCategory.Create(TDTendency, 'D', [fckPublish]));
-    Groups.Add(TDFile, 'D', 'D Files', TDFileCategory, ['d', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
+    Groups.Add(TDFile, 'd', 'D', TDFileCategory, ['d', 'inc'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
   end;
 end.

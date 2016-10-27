@@ -109,7 +109,7 @@ type
     procedure Execute(Respond: TDebugCommandRespond); override;
   end;
 
-  TLuaDBGStepOver = class(TLuaDBGAction)
+  TLuaDBGStep = class(TLuaDBGAction)
   public
     function GetCommand: string; override;
     procedure Execute(Respond: TDebugCommandRespond); override;
@@ -606,24 +606,6 @@ begin
   Result := TmnDBGListener.Create;
 end;
 
-procedure EnumDirList(const Path: string; Strings: TStrings);
-var
-  I: integer;
-  SearchRec: TSearchRec;
-begin
-  try
-    I := FindFirst(Path, faDirectory, SearchRec);
-    while I = 0 do
-    begin
-      if ((SearchRec.Attr and faDirectory) > 0) and (SearchRec.Name[1] <> '.') then
-        Strings.Add(SearchRec.Name);
-      I := FindNext(SearchRec);
-    end;
-    FindClose(SearchRec);
-  except
-  end;
-end;
-
 function TLuaDBGConnection.ReadRespond: TDebugCommandRespond;
 var
   Reader: TmnXMLNodeReader;
@@ -631,12 +613,16 @@ var
   aMatched: boolean;
 begin
   Result := nil;
-  Stream.ReadUntil(#13, true, s, aMatched);
+  Stream.ReadUntil(#10, true, s, aMatched);
   if Connected and aMatched and (S <> '') then
   begin
     Result := TDebugCommandRespond.Create;
-    Stream.ReadUntil(#0, true, s, aMatched);
-    s := Trim(s);
+    repeat
+      Stream.ReadUntil(#10, true, s, aMatched);
+      s := Trim(s);
+
+    until s = '';
+
     {$IFDEF SAVELOG}
     SaveLog(s);
     {$ENDIF}
@@ -689,11 +675,11 @@ function TLuaDBGConnection.SendCommand(Command: string; Data: string): integer;
 var
   s: string;
 begin
-  {esult := NewTransactionID;
-  s := Command + ' -i ' + IntToStr(Result);
+  Result := NewTransactionID;
+  s := Command ;//+ ' -i ' + IntToStr(Result);
   if Data <> '' then
-    s := s + ' -- ' + Data;}
-  Stream.WriteLine(s, #13);
+    s := s + ' ' + Data;
+  Stream.WriteLine(s, #13#10);
 {$IFDEF SAVELOG}
   SaveLog(s);
 {$ENDIF}
@@ -741,10 +727,11 @@ end;
 procedure TLuaDBGConnection.Prepare;
 begin
   inherited;
-  FLocalSpool.Add(TLuaDBGInit.Create);
-  FLocalSpool.Add(TLuaDBGFeatureSet.CreateBy('show_hidden', '1'));
+  //FLocalSpool.Add(TLuaDBGInit.Create);
+  FLocalSpool.Add(TLuaDBGStep.Create);
+  {FLocalSpool.Add(TLuaDBGFeatureSet.CreateBy('show_hidden', '1'));
   FLocalSpool.Add(TLuaDBGFeatureSet.CreateBy('max_depth', IntToStr(Server.StackDepth)));
-  FLocalSpool.Add(TLuaDBGFeatureSet.CreateBy('max_children', '100'));
+  FLocalSpool.Add(TLuaDBGFeatureSet.CreateBy('max_children', '100'));}
 
   FLocalSpool.Add(TLuaDBGSetBreakpoints.Create);
   FLocalSpool.Add(TLuaDBGCommandSet.CreateBy('breakpoint_set', '-t exception -X Error -s enabled'));
@@ -824,14 +811,14 @@ begin
     Engine.DebugLink.SetExecutedLine('', '', 0);
 end;
 
-{ TLuaDBGStepOver }
+{ TLuaDBGStep }
 
-function TLuaDBGStepOver.GetCommand: string;
+function TLuaDBGStep.GetCommand: string;
 begin
-  Result := 'step_over';
+  Result := 'STEP';
 end;
 
-procedure TLuaDBGStepOver.Execute(Respond: TDebugCommandRespond);
+procedure TLuaDBGStep.Execute(Respond: TDebugCommandRespond);
 begin
 end;
 
@@ -861,7 +848,7 @@ end;
 
 function TLuaDBGInit.GetCommand: string;
 begin
-  Result := 'STEP';
+  Result := 'init';
 end;
 
 procedure TLuaDBGInit.Execute(Respond: TDebugCommandRespond);
@@ -1609,7 +1596,7 @@ end;
 
 procedure TLuaDBGDebug.StepOver;
 begin
-  FServer.AddAction(TLuaDBGStepOver.Create);
+  FServer.AddAction(TLuaDBGStep.Create);
   FServer.AddAction(TLuaDBGGetWatches.Create);
   FServer.AddAction(TLuaDBGGetCurrent.Create);
   FServer.Resume;

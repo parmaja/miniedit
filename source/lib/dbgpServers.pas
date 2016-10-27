@@ -607,24 +607,6 @@ begin
   Result := TmnDBGListener.Create;
 end;
 
-procedure EnumDirList(const Path: string; Strings: TStrings);
-var
-  I: integer;
-  SearchRec: TSearchRec;
-begin
-  try
-    I := FindFirst(Path, faDirectory, SearchRec);
-    while I = 0 do
-    begin
-      if ((SearchRec.Attr and faDirectory) > 0) and (SearchRec.Name[1] <> '.') then
-        Strings.Add(SearchRec.Name);
-      I := FindNext(SearchRec);
-    end;
-    FindClose(SearchRec);
-  except
-  end;
-end;
-
 function TdbgpConnection.ReadRespond: TDebugCommandRespond;
 var
   Reader: TmnXMLNodeReader;

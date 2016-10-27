@@ -914,11 +914,26 @@ procedure TMainForm.NewAsActExecute(Sender: TObject);
 var
   G: TFileGroups;
   E: Integer;
+  i: Integer;
+  aGroups: TFileGroups;
 begin
   try
-    G := Engine.Tendency.Groups;
-    if ShowSelectList('Select file type', G, [slfUseNameTitle], E) then
-      Engine.Files.New(G[E]);
+    if Engine.Session.IsOpened then
+      aGroups := Engine.Tendency.Groups
+    else
+      aGroups := Engine.Groups;
+    G := TFileGroups.Create(False);
+    try
+      for i := 0 to aGroups.Count - 1  do
+      begin
+        if not (fgkUneditable in aGroups[i].Kind) then
+          G.Add(aGroups[i]);
+      end;
+      if ShowSelectList('Select file type', G, [slfUseNameTitle], E) then
+        Engine.Files.New(G[E]);
+    finally
+      G.Free;
+    end;
   finally
   end;
 end;

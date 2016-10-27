@@ -161,6 +161,6 @@ initialization
   begin
     Tendencies.Add(TCSVTendency);
     Categories.Add(TCSVFileCategory.Create(TCSVTendency, 'csv'));
-    Groups.Add(TCSVFile, 'csv', 'CSV Files', TCSVFileCategory, ['csv'], [fgkMember, fgkBrowsable], []);
+    Groups.Add(TCSVFile, 'csv', 'CSV', TCSVFileCategory, ['csv'], [fgkBrowsable], []);
   end;
 end.

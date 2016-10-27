@@ -93,7 +93,7 @@ begin
   c := 1;
   for i := 0 to FEngine.Groups.Count - 1 do
   begin
-    if fgkMember in FEngine.Groups[i].Kind then
+    if not FEngine.Groups[i].Category.Tendency.IsDefault then
     begin
       FEngine.Options.ExtraExtensions.Values[FExtraExtensions[c - 1]] := ExtensionsGrid.Cells[1, c];
       Inc(c);
@@ -119,7 +119,7 @@ begin
   c := 1;
   for i := 0 to FEngine.Groups.Count - 1 do
   begin
-    if fgkMember in FEngine.Groups[i].Kind then
+    if not FEngine.Groups[i].Category.Tendency.IsDefault then
     begin
       ExtensionsGrid.RowCount := c + 1;
       ExtensionsGrid.Cells[0, c] := FEngine.Groups[i].Title;

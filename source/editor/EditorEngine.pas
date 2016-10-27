@@ -229,10 +229,9 @@ type
   TFileGroupKind = (
     fgkExecutable,//You can guess what is it :P
     fgkText, //Is it an Text Editor like SQL or PHP
-    fgkEditor, // Can be editable
+    fgkUneditable, // Can be editable
     fgkMain,//this can be the main file for project
     fgkResult,//Result file, generated, like: exe or .o or .hex
-    fgkMember,//a member of project, inc are member, c, h, cpp members, pas,pp, p , inc also members, ini,txt not member of any project
     fgkBrowsable,//When open file show it in the extension list
     fgkAssociated, //Editor can be the editor of this files, like .php, .inc, but .txt is not
     fgkVirtual //Not a real file, like output console
@@ -281,6 +280,7 @@ type
     FRequire: string;
     FTabsSpecialFiles: string;
     FTabWidth: Integer;
+    function GetIsDefault: Boolean; virtual; //Keep it private
     procedure SetDebug(AValue: TEditorDebugger);
   protected
     IsPrepared: Boolean;
@@ -293,6 +293,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     procedure Run(RunActions: TmneRunActions);
+
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); virtual;
     function CreateOptions: TEditorProjectOptions; virtual;
     function GetDefaultGroup: TFileGroup; virtual;
@@ -303,6 +304,7 @@ type
     property Capabilities: TEditorCapabilities read FCapabilities;
     property Groups: TFileGroups read FGroups;
     property Debug: TEditorDebugger read FDebug write SetDebug;
+    property IsDefault: Boolean read GetIsDefault;
   published
     property Command: string read FCommand write FCommand; //like php.exe or gdc.exe or fpc.exe
     property Require: string read FRequire write FRequire; //Require modules to pass to the compiler
@@ -323,6 +325,8 @@ type
   }
 
   TDefaultTendency = class(TEditorTendency)
+  private
+    function GetIsDefault: Boolean; override;
   protected
     procedure Init; override;
   public
@@ -675,7 +679,6 @@ type
     FAutoOpenProject: Boolean;
     FIgnoreNames: string;
     FLastFolder: string;
-    FLastNewAs: string;
     FLastProject: string;
     FPauseConsole: Boolean;
     FRecentFolders: TStringList;
@@ -749,7 +752,6 @@ type
     property RunMode: TmneRunMode read FRunMode write FRunMode;
     //PauseConsole do not end until use press any key or enter
     property PauseConsole: Boolean read FPauseConsole write FPauseConsole default True;
-    property LastNewAs: string read FLastNewAs write FLastNewAs; //Last NewAs file extension to use it in New file
   end;
 
   TmneSynCompletion = class;
@@ -858,7 +860,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
-    function CreateEditorFile(vFiles: TEditorFiles; vTendency: TEditorTendency): TEditorFile;
+    function CreateEditorFile(vFiles: TEditorFiles): TEditorFile;
     procedure EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds = []);
     procedure EnumExtensions(vExtensions: TEditorElements);
     property Category: TFileCategory read FCategory write SetCategory;
@@ -899,7 +901,6 @@ type
   public
     function Find(vName: string): TEditorTendency;
     function FindByClass(TendencyClass: TEditorTendencyClass): TEditorTendency;
-    function FindByExtension(out vGroup:TFileGroup; vExt: string; vKind: TFileGroupKinds = []): TEditorTendency; deprecated;
     function Add(vEditorTendency: TEditorTendencyClass): TEditorTendency;
     procedure Add(vEditorTendency: TEditorTendency);
     property Items[Index: integer]: TEditorTendency read GetItem; default;
@@ -2065,6 +2066,11 @@ end;
 
 { TDefaultTendency }
 
+function TDefaultTendency.GetIsDefault: Boolean;
+begin
+  Result := True;
+end;
+
 procedure TDefaultTendency.Init;
 begin
   FTitle := 'Default';
@@ -2136,6 +2142,11 @@ begin
   if FDebug =AValue then
     Exit;
   FDebug :=AValue;
+end;
+
+function TEditorTendency.GetIsDefault: Boolean;
+begin
+  Result := False;
 end;
 
 procedure TEditorTendency.AddGroup(vName, vCategory: string);
@@ -2263,11 +2274,26 @@ begin
 end;
 
 function TEditorTendency.GetDefaultGroup: TFileGroup;
+var
+  i: integer;
 begin
-  if Groups.Count > 0 then
-    Result := Groups[0]
-  else
-    Result := Engine.Groups[0];//first group in all groups, naah //TODO wrong wrong
+  Result := nil;
+  for i := 0 to Groups.Count -1 do
+  begin
+    if Groups[i].Category.Tendency = Self then
+    begin
+      Result := Groups[i];
+      break;
+    end;
+  end;
+
+  if Result = nil then
+  begin
+    if Groups.Count > 0 then
+      Result := Groups[0]
+    else
+      Result := Engine.Groups[0];//first group in all groups, naah //TODO wrong wrong
+  end;
 end;
 
 { TTendencies }
@@ -2292,25 +2318,6 @@ begin
     if Items[i].ClassType = TendencyClass then
     begin
       Result := Items[i];
-      break;
-    end;
-  end;
-end;
-
-function TTendencies.FindByExtension(out vGroup: TFileGroup; vExt: string; vKind: TFileGroupKinds): TEditorTendency;
-var
-  i: Integer;
-  aGroup: TFileGroup;
-begin
-  Result := nil;
-  vGroup := nil;
-  for i := 0 to Count - 1 do
-  begin
-    aGroup := Items[i].Groups.FindExtension(vExt, vKind);
-    if aGroup <> nil then
-    begin
-      Result := Items[i];
-      vGroup := aGroup;
       break;
     end;
   end;
@@ -2890,22 +2897,14 @@ end;
 
 function TEditorFiles.CreateEditorFile(vExtension: string): TEditorFile;
 var
-  aTendency: TEditorTendency;
   aGroup: TFileGroup;
 begin
-  aGroup := nil;
-  aTendency := Engine.Tendencies.FindByExtension(aGroup, vExtension, [fgkExecutable]);
-
-  if aTendency = nil then
-    aTendency := Engine.DefaultTendency;
-
-  if aGroup = nil then
-    aGroup := aTendency.Groups.FindExtension(vExtension);
+  aGroup := Engine.Groups.FindExtension(vExtension);
 
   if aGroup = nil then
     raise EEditorException.Create('Cannot open this file type: ' + vExtension);
 
-  Result := aGroup.CreateEditorFile(Self, aTendency);
+  Result := aGroup.CreateEditorFile(Self);
 end;
 
 procedure TEditorOptions.Load(vWorkspace: string);
@@ -2958,8 +2957,8 @@ begin
   Engine.BeginUpdate;
   try
     if vGroup = nil then
-      vGroup := Engine.CurrentTendency.Groups.Find(Engine.Options.LastNewAs);
-    Result := vGroup.CreateEditorFile(Self, Engine.CurrentTendency);
+      raise Exception.Create('Group is not defined');
+    Result := vGroup.CreateEditorFile(Self);
     Result.NewContent;
     Result.Edit;
     Current := Result;
@@ -4347,7 +4346,7 @@ begin
     end;
   end;
 
-  if FullFilter then
+  if FullFilter then //Add extra text for open/save dialogs
   begin
     if Result <> '' then
       Result := 'All files (Supported)|' + aSupported + '|' + Result;
@@ -4764,7 +4763,7 @@ begin
   inherited;
 end;
 
-function TFileGroup.CreateEditorFile(vFiles: TEditorFiles; vTendency: TEditorTendency): TEditorFile;
+function TFileGroup.CreateEditorFile(vFiles: TEditorFiles): TEditorFile;
 begin
   Result := FFileClass.Create(vFiles);
   Result.Group := Self;

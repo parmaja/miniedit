@@ -608,9 +608,9 @@ initialization
     Categories.Add(TCSSFileCategory.Create(TPHPTendency, 'css', [fckPublish]));
     Categories.Add(TJSFileCategory.Create(TPHPTendency, 'js', [fckPublish]));
 
-    Groups.Add(TPHPFile, 'php', 'PHP Files', TXHTMLFileCategory, ['php', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
-    Groups.Add(TXHTMLFile, 'html', 'HTML Files', TXHTMLFileCategory, ['html', 'xhtml', 'htm', 'tpl'], [fgkAssociated, fgkMember, fgkBrowsable]);
-    Groups.Add(TCssFile, 'css', 'CSS Files', TCSSFileCategory, ['css'], [fgkAssociated, fgkMember, fgkBrowsable]);
-    Groups.Add(TJSFile,'js', 'Java Script Files', TJSFileCategory, ['js'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable]);
+    Groups.Add(TPHPFile, 'php', 'PHP', TXHTMLFileCategory, ['php', 'inc'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
+    Groups.Add(TXHTMLFile, 'html', 'HTML', TXHTMLFileCategory, ['html', 'xhtml', 'htm', 'tpl'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TCssFile, 'css', 'CSS', TCSSFileCategory, ['css'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TJSFile,'js', 'Java Script', TJSFileCategory, ['js'], [fgkAssociated, fgkExecutable, fgkBrowsable]);
   end;
 end.

@@ -371,12 +371,12 @@ initialization
     Categories.Add(TCFGFileCategory.Create(DefaultTendency, 'CFG'));
     Categories.Add(TMDFileCategory.Create(DefaultTendency, 'md'));
 
-    Groups.Add(TTXTFile, 'txt', 'Text files', TTXTFileCategory, ['txt', 'text'], []);
-    Groups.Add(TTXTFile, 'md', 'MarkDown files', TMDFileCategory, ['md'], []);
-    Groups.Add(TSQLFile, 'sql', 'SQL files', TSQLFileCategory, ['sql'], [fgkAssociated, fgkMember, fgkBrowsable]);
-    Groups.Add(TApacheFile, 'htaccess', 'htaccess files', TApacheFileCategory, ['htaccess', 'conf'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TXMLFile, 'xml', 'XML files', TXMLFileCategory, ['xml'], [fgkMember, fgkBrowsable]);
-    Groups.Add(TINIFile, 'ini', 'INI files', TINIFileCategory, ['ini'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TCFGFile, 'cfg', 'Config files', TCFGFileCategory, ['cfg', 'conf'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TTXTFile, 'txt', 'Text', TTXTFileCategory, ['txt', 'text'], []);
+    Groups.Add(TTXTFile, 'md', 'MarkDown', TMDFileCategory, ['md'], []);
+    Groups.Add(TSQLFile, 'sql', 'SQL', TSQLFileCategory, ['sql'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TApacheFile, 'htaccess', 'htaccess', TApacheFileCategory, ['htaccess', 'conf'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TXMLFile, 'xml', 'XML', TXMLFileCategory, ['xml'], [fgkBrowsable]);
+    Groups.Add(TINIFile, 'ini', 'INI', TINIFileCategory, ['ini'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TCFGFile, 'cfg', 'Config', TCFGFileCategory, ['cfg', 'conf'], [fgkAssociated, fgkBrowsable]);
   end;
 end.
