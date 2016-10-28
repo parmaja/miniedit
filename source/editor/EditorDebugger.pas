@@ -19,7 +19,7 @@ uses
 type
   EDebugException = class(Exception);
 
-  TmneRunAction = (rnaCompile, rnaExecute, rnaDebug, rnaLink);
+  TmneRunAction = (rnaCompile, rnaLint, rnaExecute, rnaDebug, rnaLink);
   TmneRunActions = set of TmneRunAction;
   TmneRunMode = (runConsole, runOutput, runBox, runBrowser);
 

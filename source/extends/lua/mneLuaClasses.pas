@@ -174,7 +174,7 @@ begin
 
   Engine.Session.Run.Clear;
 
-  if rnaCompile in Info.Actions then
+  if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
 
@@ -194,19 +194,12 @@ begin
     aRunItem.Info.Message := 'Runing ' + Info.MainFile;
     if Require <> '' then
         aRunItem.Info.Params := '-l '+ Require + #13;
+    if rnaDebug in Info.Actions then
+        aRunItem.Info.Params := '-e '+ '"require(''mobdebug'').start()"' + #13; //using mobdebug
     aRunItem.Info.Params := aRunItem.Info.Params + Info.MainFile + #13;
   end
-  else if rnaExecute in Info.Actions then
+  else if rnaLint in Info.Actions then
   begin
-    aRunItem := Engine.Session.Run.Add;
-    aRunItem.Info.Message := 'Running ' + Info.OutputFile;
-    aRunItem.Info.Mode := Info.Mode;
-    aRunItem.Info.CurrentDirectory := Info.Root;
-    aRunItem.Info.Pause := Options.PauseConsole;
-    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
-    aRunItem.Info.Command := ChangeFileExt(Info.OutputFile, '.exe');
-    if Options.RunParams <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;
   end;
 
   Engine.Session.Run.Start;

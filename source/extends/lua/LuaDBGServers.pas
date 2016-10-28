@@ -315,15 +315,11 @@ type
 
   TmnDBGListener = class(TmnListener)
   private
-    FAddress: string;
-    FPort: integer;
   protected
     function CreateConnection(vSocket: TmnCustomSocket): TmnServerConnection; override;
   public
     constructor Create;
     destructor Destroy; override;
-    property Port: integer read FPort write FPort;
-    property Address: string read FAddress write FAddress;
   end;
 
   { TLuaDBGServer }
@@ -609,18 +605,20 @@ end;
 function TLuaDBGConnection.ReadRespond: TDebugCommandRespond;
 var
   Reader: TmnXMLNodeReader;
-  s: string;
+  s, r: string;
   aMatched: boolean;
 begin
   Result := nil;
+  r := '';
   Stream.ReadUntil(#10, true, s, aMatched);
   if Connected and aMatched and (S <> '') then
   begin
     Result := TDebugCommandRespond.Create;
     repeat
+      //Stream.Connected
       Stream.ReadUntil(#10, true, s, aMatched);
       s := Trim(s);
-
+      r := r + s;
     until s = '';
 
     {$IFDEF SAVELOG}

@@ -316,15 +316,11 @@ type
 
   TmnDBGListener = class(TmnListener)
   private
-    FAddress: string;
-    FPort: integer;
   protected
     function CreateConnection(vSocket: TmnCustomSocket): TmnServerConnection; override;
   public
     constructor Create;
     destructor Destroy; override;
-    property Port: integer read FPort write FPort;
-    property Address: string read FAddress write FAddress;
   end;
 
   { TdbgpServer }

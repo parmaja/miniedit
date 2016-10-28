@@ -2,13 +2,13 @@
 
 MiniEdit is an open source desktop application for editing files like PHP, HTML, CSS, Python, D, C and Pascal using UTF8 encoding.
 Also it can compile or run script of this files, if your already installed its compilers in your system, without need to open a project for it, 
-if you are editing multiple files, e.g. Python, PHP it can run this files.
+if you are editing multiple files, e.g. Python, PHP it can run this files into console(cmd) or terminal(xterm).
 
 ### Target
 
- * Simple
+ * Simple (especially for beginners or kids)
  * Portable
- * Fast 
+ * Fast   
 
 ### Features
 
@@ -16,19 +16,25 @@ if you are editing multiple files, e.g. Python, PHP it can run this files.
  * Search in files
  * Search for file
  * Portable, one executable file.
- * Projects files, each project have special type (PHP/Pascal/D...)
+ * Projects files, each project have special type/tendency (PHP,Lua,Python,Pascal,D)
  * PHP XDebug
- * GDB debugging 
+ * [TODO] GDB debugging 
  * Until now it is very Fast and very small
- * Tortoise SVN/GIT integrated in Windows
+ * Tortoise SVN/GIT integrated in Windows, [TODO] RabbitVCS in Linux
+ * Works in Windows and Linux 
+ 
+###Disadvantages
+  
+ * Not good in auto complete
 
-###Rules
+###Contributing
 
-For contributors keep it as simple as possible.
+Keep it as simple as possible.
+There is an addons to add menu items to file or main menu tools
 
 ###Build
 
-Miniedit is FreePascal/Lazarus project, so if you want to compile it need to install all packages that needed for the project
+Miniedit is FreePascal/Lazarus project, to compile it need to install all packages that needed for the project
 
  * Use source code from github.com in branch "release", or use last tag,  branch "master" is my upstream work, it is not stable.
  * FreePascal FPC 3.0 or later
