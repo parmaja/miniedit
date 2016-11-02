@@ -2212,6 +2212,8 @@ begin
     end
     else
     begin
+      if Debug.Active then
+        p.Actions := [rnaDebug];
       if rnaCompile in RunActions then
         Engine.SendAction(eaClearOutput);
       p.Root := Engine.Session.GetRoot;
@@ -2246,7 +2248,7 @@ begin
       if p.OutputFile = '' then
       begin
         p.OutputFile := ExtractFileNameWithoutExt(p.MainFile);
-        {$ifndef linux}
+        {$ifdef windows}
         p.OutputFile := p.OutputFile + '.exe';
         {$endif}
       end;

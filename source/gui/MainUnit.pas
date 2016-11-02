@@ -1936,13 +1936,17 @@ begin
     AExtensions := TStringList.Create;
     try
       case ShowFolderFiles of
-        sffRelated: Engine.Tendency.Groups.EnumExtensions(AExtensions);
+        sffRelated:
+          if Engine.Session.IsOpened then
+            Engine.Tendency.Groups.EnumExtensions(AExtensions)
+          else
+            Engine.Groups.EnumExtensions(AExtensions);
         sffKnown: Engine.Groups.EnumExtensions(AExtensions);
         sffAll: All := True;
       end;
       AExtensions.Add('mne-project');
 
-      aFiles := TStringList.Create;
+      aFiles := THashedStringList.Create;
       try
         //Folders
         if (Folder <> '') and DirectoryExists(Folder) then
@@ -2318,10 +2322,7 @@ end;
 
 procedure TMainForm.DBGExecuteActExecute(Sender: TObject);
 begin
-  if Engine.Files.Current <> nil then
-    Engine.Files.Current.Tendency.Run([rnaExecute])
-  else
-    Engine.CurrentTendency.Run([rnaExecute]);
+  Engine.CurrentTendency.Run([rnaExecute])
 end;
 
 procedure TMainForm.DBGStepOutActExecute(Sender: TObject);
@@ -2609,11 +2610,9 @@ end;
 
 procedure TMainForm.RunFile;
 begin
-  if Engine.Files.Current <> nil then
-  begin
+  if Engine.Files.Count > 0 then
     SaveAllAct.Execute;
-    Engine.Files.Current.Tendency.Run([rnaCompile, rnaExecute, rnaDebug]);
-  end;
+  Engine.CurrentTendency.Run([rnaCompile, rnaExecute]);
 end;
 
 procedure TMainForm.CompileFile;
