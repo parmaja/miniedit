@@ -2213,7 +2213,7 @@ begin
     else
     begin
       if Debug.Active then
-        p.Actions := [rnaDebug];
+        p.Actions := p.Actions + [rnaDebug];
       if rnaCompile in RunActions then
         Engine.SendAction(eaClearOutput);
       p.Root := Engine.Session.GetRoot;
