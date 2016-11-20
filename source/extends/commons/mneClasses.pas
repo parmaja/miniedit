@@ -168,13 +168,13 @@ var
   Line: string;
   aToken: string;
 begin
+  TokenType := 0;
+  Token := '';
+  Attri := nil;
+  Result := False;
+  PosY := XY.Y - 1;
   with SynEdit do
   begin
-    TokenType := 0;
-    Token := '';
-    Attri := nil;
-    Result := False;
-    PosY := XY.Y - 1;
     if Assigned(Highlighter) and (PosY >= 0) and (PosY < Lines.Count) then
     begin
       Line := Lines[PosY];

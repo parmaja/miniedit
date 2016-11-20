@@ -26,6 +26,7 @@ type
     attGutter,
     attSeparator,
     attSelected,
+    attHighlighted,
     attActive,
     attModified,
     attText,
@@ -135,6 +136,7 @@ type
 
     FNumber: TGlobalAttribute;
     FSelected: TGlobalAttribute;
+    FHighlighted: TGlobalAttribute;
     FActive: TGlobalAttribute;
     FModified: TGlobalAttribute;
     FGutter: TGlobalAttribute;
@@ -176,6 +178,7 @@ type
     property Link: TGlobalAttribute read FLink;
     property Panel: TGlobalAttribute read FPanel;
     property Selected: TGlobalAttribute read FSelected;
+    property Highlighted: TGlobalAttribute  read FHighlighted;
     property Active: TGlobalAttribute read FActive;
     property Gutter: TGlobalAttribute read FGutter;
     property Separator: TGlobalAttribute read FSeparator;
@@ -309,8 +312,8 @@ begin
     SynEdit.Color := Attributes.Default.Background;
     SynEdit.SelectedColor.Foreground := Attributes.Selected.Foreground;
     SynEdit.SelectedColor.Background := Attributes.Selected.Background;
-    SynEdit.BracketMatchColor.Foreground := Attributes.Selected.Foreground;
-    SynEdit.BracketMatchColor.Background := Attributes.Selected.Background;
+    SynEdit.BracketMatchColor.Foreground := Attributes.Highlighted.Foreground;
+    SynEdit.BracketMatchColor.Background := Attributes.Highlighted.Background;
 
     SynEdit.MarkupManager.MarkupByClass[TSynEditMarkupWordGroup].MarkupInfo.FrameColor := Attributes.Selected.Background;
 
@@ -436,6 +439,7 @@ begin
   Add(FPanel, attPanel, 'Panel', clBlack, clWhite, []);
   Add(FLink, attLink, 'Link', $00D87356, clWhite, []);
   Add(FSelected, attSelected, 'Selected', clBlack, $00DCCBC0, []);
+  Add(FHighlighted, attHighlighted, 'Highlighted', clBlack, $00DCCBC0, []);
   Add(FActive, attActive, 'Active', clBlack, $00EDEAE4, []);
   Add(FModified, attModified, 'Modified', $00370268, $00E19855, []);
   Add(FGutter, attGutter, 'Gutter', clBlack, $00CDC5BC, []);

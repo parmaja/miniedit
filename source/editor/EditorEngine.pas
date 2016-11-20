@@ -940,11 +940,9 @@ type
 
   TEditorSessionOptions = class(TmnXMLProfile)
   private
-    FDefaultTendency: string;
     FDefaultSCM: string;
   public
   published
-    property DefaultTendency: string read FDefaultTendency write FDefaultTendency;
     property DefaultSCM: string read FDefaultSCM write FDefaultSCM;
   end;
 
@@ -1178,6 +1176,9 @@ procedure SaveAsMode(const FileName: string; Mode: TEditorFileMode; Strings: Tst
 function DetectFileMode(const Contents: string): TEditorFileMode;
 
 function ConvertIndents(const Contents: string; TabWidth: integer; Options: TIndentMode = idntTabsToSpaces): string;
+
+const
+  sEnvVarChar = '?';
 
 type
   //If set Resume to false it will stop loop
@@ -1420,7 +1421,6 @@ var
   i, r: integer;
   aSynEdit: TCustomSynEdit;
   aTokenType, aStart: integer;
-  aRange: pointer;
   P: TPoint;
   Attri: TSynHighlighterAttributes;
   aFiles: TStringList;
@@ -1436,7 +1436,9 @@ begin
     if (aSynEdit <> nil) and (Highlighter <> nil) then
     begin
       P := aSynEdit.CaretXY;
-      GetHighlighterAttriAtRowColExtend(aSynEdit, P, Current, aTokenType, aStart, Attri, aRange);
+
+      aSynEdit.GetHighlighterAttriAtRowColEx(P, Current, aTokenType, aStart, Attri); //we need just aStart to not collect this id word
+
       Completion.TheForm.Font.Size := aSynEdit.Font.Size;
       Completion.TheForm.Font.Color := aSynEdit.Font.Color;
       Completion.TheForm.Color := aSynEdit.Color;
@@ -2217,7 +2219,8 @@ begin
       if rnaCompile in RunActions then
         Engine.SendAction(eaClearOutput);
       p.Root := Engine.Session.GetRoot;
-      p.Command := Command;
+      p.Command := Engine.EnvReplace(Command);
+
       if (Engine.Session.IsOpened) then
       begin
         p.Mode := Engine.Session.Project.Options.RunMode;
@@ -2403,7 +2406,7 @@ begin
 
         if (ssoReplace in AOptions) then
         begin
-          //aReplaceText := SearchEngine.Replace(ASearch, AReplace);//need to review
+          //aReplaceText := SearchEngine.Replace(ASearch, AReplace); //need to review
           nReplaceLen := Length(aReplaceText);
           aLine := Copy(aLine, 1, nChar - 1) + aReplaceText + Copy(aLine, nChar + nSearchLen, MaxInt);
           if (nSearchLen <> nReplaceLen) then
@@ -3490,6 +3493,7 @@ begin
       begin
         List.Add('Main=' + Session.Project.Options.MainFile);
         List.Add('MainFile=' + Session.Project.Options.MainFile);
+        List.Add('MainDir=' + ExtractFilePath(Session.Project.Options.MainFile));
         List.Add('Output=' + Session.Project.Options.OutputFile);
         List.Add('Project=' + Session.Project.FileName);
         List.Add('ProjectName=' + Session.Project.FileName);
@@ -3503,7 +3507,7 @@ begin
         List.Add('FileName=' + ExtractFileName(Files.Current.Name));
         List.Add('FileDir=' + Files.Current.Path);
       end;
-      Result := VarReplace(S, List, '?');
+      Result := VarReplace(S, List, sEnvVarChar);
     finally
       List.Free;
     end;
