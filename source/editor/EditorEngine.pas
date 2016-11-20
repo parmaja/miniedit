@@ -1219,14 +1219,16 @@ uses
   Registry, SearchForms, SynEditTextBuffer, GotoForms, mneClasses,
   mneResources, MsgBox, GUIMsgBox;
 
+type
+  TEngineLife  = (engnNone, engnStarting, engnStarted, engnShutdowning, engnShutdowned);
+
 var
-  FIsEngineStart: Boolean = False;
-  FIsEngineShutdown: Boolean  = False;
+  FEngineLife: TEngineLife  = engnNone;
   FEngine: TEditorEngine = nil;
 
 function Engine: TEditorEngine;
 begin
-  if FIsEngineShutdown then
+  if FEngineLife = engnShutdowned  then
     raise Exception.Create('Engine in shutdown?');
   if FEngine = nil then
     FEngine := TEditorEngine.Create;
@@ -2558,7 +2560,7 @@ end;
 destructor TEditorEngine.Destroy;
 begin
   SetNotifyEngine(nil);
-  if not FIsEngineShutdown then
+  if FEngineLife <= engnStarted then
     Shutdown;
   FreeAndNil(FDebugLink);
   FreeAndNil(FFiles);
@@ -3360,10 +3362,12 @@ end;
 
 procedure TEditorEngine.Startup;
 begin
-  FIsEngineStart := True;
+  FEngineLife := engnStarted;
   Groups.Sort(@SortGroupsByTitle);
   DefaultProject.FileName := WorkSpace + 'mne-default-project.xml';
   LoadOptions;
+  //here we will autoopen last project
+  DefaultProject.LoadFromFile(DefaultProject.FileName);
   Session.Project := DefaultProject;
 end;
 
@@ -3385,7 +3389,6 @@ begin
           XMLReadObjectFile(Tendencies[i], aFile);
       end;
     end;
-    DefaultProject.LoadFromFile(DefaultProject.FileName);
     Engine.UpdateState([ecsOptions]);
   finally
     Engine.EndUpdate;
@@ -3415,7 +3418,7 @@ procedure TEditorEngine.Shutdown;
 var
   i: Integer;
 begin
-  if FIsEngineStart then
+  if FEngineLife < engnShutdowned then
   begin
     if Session.Active and (Session.Project.FileName <> '') then
       Session.Save;
@@ -3424,12 +3427,12 @@ begin
       Tendencies[i].Unprepare;
     Files.Clear;
   end;
-  FIsEngineShutdown := True;
+  FEngineLife := engnShutdowned;
 end;
 
 function TEditorEngine.IsShutdown: Boolean;
 begin
-  Result := FIsEngineShutdown;
+  Result := FEngineLife > engnStarted;
 end;
 
 procedure TEditorEngine.RemoveRecentProject(const FileName: string);
@@ -4570,7 +4573,7 @@ end;
 
 destructor TEditorProject.Destroy;
 begin
-  FDesktop.Free;
+  FreeAndNil(FDesktop);
   FreeAndNil(FOptions);
   inherited;
 end;
