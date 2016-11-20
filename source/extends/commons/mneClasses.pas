@@ -363,13 +363,13 @@ initialization
   with Engine do
   begin
     //Categories.Add('', TTXTFile, TTXTFileCategory);
-    Categories.Add(TTXTFileCategory.Create(DefaultTendency, 'txt'));
-    Categories.Add(TSQLFileCategory.Create(DefaultTendency, 'sql'));
-    Categories.Add(TApacheFileCategory.Create(DefaultTendency, 'apache', []));
-    Categories.Add(TINIFileCategory.Create(DefaultTendency, 'ini'));
-    Categories.Add(TXMLFileCategory.Create(DefaultTendency, 'xml'));
-    Categories.Add(TCFGFileCategory.Create(DefaultTendency, 'CFG'));
-    Categories.Add(TMDFileCategory.Create(DefaultTendency, 'md'));
+    Categories.Add(TTXTFileCategory.Create(DefaultProject.Tendency, 'txt'));
+    Categories.Add(TSQLFileCategory.Create(DefaultProject.Tendency, 'sql'));
+    Categories.Add(TApacheFileCategory.Create(DefaultProject.Tendency, 'apache', []));
+    Categories.Add(TINIFileCategory.Create(DefaultProject.Tendency, 'ini'));
+    Categories.Add(TXMLFileCategory.Create(DefaultProject.Tendency, 'xml'));
+    Categories.Add(TCFGFileCategory.Create(DefaultProject.Tendency, 'CFG'));
+    Categories.Add(TMDFileCategory.Create(DefaultProject.Tendency, 'md'));
 
     Groups.Add(TTXTFile, 'txt', 'Text', TTXTFileCategory, ['txt', 'text'], []);
     Groups.Add(TTXTFile, 'md', 'MarkDown', TMDFileCategory, ['md'], []);

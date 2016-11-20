@@ -1041,9 +1041,6 @@ type
   TEditorEngine = class(TObject)
   private
     FDebugLink: TEditorDebugLink;
-    //FDefaultSCM: TEditorSCM;
-    //FDefaultTendency used only there is no any Tendency defined, it is mean simple editor without any behavior
-    FDefaultTendency: TDefaultTendency;
     FDefaultProject: TDefaultProject;
     //FForms: TEditorFormList;
     FTendencies: TTendencies;
@@ -1135,9 +1132,7 @@ type
     property DebugLink: TEditorDebugLink read FDebugLink;
     property Tendency: TEditorTendency read GetTendency; //It get Project/Default tendency no for current file
     property CurrentTendency: TEditorTendency read GetCurrentTendency; //It get Project/File/Default tendency
-    property DefaultTendency: TDefaultTendency read FDefaultTendency;
     property DefaultProject: TDefaultProject read FDefaultProject;
-    //property DefaultSCM: TEditorSCM read FDefaultSCM write SetDefaultSCM;
     property SCM: TEditorSCM read GetSCM;
     function GetIsChanged: Boolean;
     procedure SetNotifyEngine(ANotifyObject: INotifyEngine);
@@ -2511,6 +2506,8 @@ begin
 end;
 
 constructor TEditorEngine.Create;
+var
+  aDefaultTendency: TDefaultTendency;
 begin
   inherited;
   FEnvironment := TStringList.Create;
@@ -2522,8 +2519,11 @@ begin
   FEnvironment.Add('EXE=' + Application.ExeName);
   FEnvironment.Add('MiniEdit=' + Application.Location);
 
-  FDefaultTendency := TDefaultTendency.Create;
   FDefaultProject := TDefaultProject.Create;
+
+  aDefaultTendency := TDefaultTendency.Create;
+  FDefaultProject.Tendency := aDefaultTendency;
+
   //FForms := TEditorFormList.Create(True);
   FOptions := TEditorOptions.Create;
   FCategories := TFileCategories.Create(True);
@@ -2535,7 +2535,7 @@ begin
   FDebugLink := TEditorDebugLink.Create(nil);
   FSession := TEditorSession.Create;
   Extenstion := 'mne-project';
-  Tendencies.Add(FDefaultTendency);
+  Tendencies.Add(aDefaultTendency);
 end;
 
 destructor TEditorEngine.Destroy;
@@ -2852,7 +2852,7 @@ begin
   else if (Engine.Files.Current <> nil) and (Engine.Files.Current.Tendency <> nil) then
     Result := Engine.Files.Current.Tendency
   else
-    Result := FDefaultTendency;
+    Result := DefaultProject.Tendency;
 end;
 
 function TEditorEngine.GetTendency: TEditorTendency;

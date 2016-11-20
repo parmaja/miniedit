@@ -130,7 +130,7 @@ end;
 initialization
   with Engine do
   begin
-    Categories.Add(TImageFileCategory.Create(DefaultTendency, 'Image'));
+    Categories.Add(TImageFileCategory.Create(DefaultProject.Tendency, 'Image'));
     Groups.Add(TImageFile, 'png', 'PNG', TImageFileCategory, ['png'], [fgkUneditable, fgkBrowsable]);
     Groups.Add(TImageFile, 'jpg', 'Jpg', TImageFileCategory, ['jpg'], [fgkUneditable, fgkBrowsable]);
     Groups.Add(TImageFile, 'bmp', 'BMP', TImageFileCategory, ['bmp'], [fgkUneditable, fgkBrowsable]);
