@@ -2511,11 +2511,14 @@ begin
   FCachedIdentifiers.Clear;
   FCachedVariables.Clear;
   FCachedAge := 0;
+  if Project.FileName <> '' then
+    Project.SaveToFile(Project.FileName);
+
   Engine.Files.CloseAll;
   if Active then
   begin
     FreeAndNil(FProject);
-    FProject := Engine.DefaultProject;
+    Project := Engine.DefaultProject;
   end;
   Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
 end;
@@ -2554,7 +2557,6 @@ begin
 
   FSession := TEditorSession.Create;
   Extenstion := 'mne-project';
-  //FSession.SetInternalProject(DefaultProject);
 end;
 
 destructor TEditorEngine.Destroy;
@@ -2948,7 +2950,8 @@ begin
     end;
     Project := aProject;
     FIsChanged := False;
-    Engine.ProcessRecentProject(FileName);
+    if Active then  //sure if not default project
+      Engine.ProcessRecentProject(FileName);
     Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject, ecsProjectLoaded]);
   finally
     Engine.EndUpdate;
@@ -3411,7 +3414,6 @@ begin
       XMLWriteObjectFile(Tendencies[i], aFile);
     end;
   end;
-  DefaultProject.SaveToFile(DefaultProject.FileName);
 end;
 
 procedure TEditorEngine.Shutdown;
