@@ -167,7 +167,7 @@ var
   Options: TLuaProjectOptions;
   aRunItem: TmneRunItem;
 begin
-  if (Engine.Session.IsOpened) then
+  if (Engine.Session.Project.Options is TLuaProjectOptions) then
     Options := (Engine.Session.Project.Options as TLuaProjectOptions)
   else
     Options := TLuaProjectOptions.Create;//Default options

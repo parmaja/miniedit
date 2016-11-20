@@ -861,7 +861,7 @@ end;
 
 procedure TMainForm.MenuItem22Click(Sender: TObject);
 begin
-  if Engine.Session.IsOpened then
+  if Engine.Session.Active then
   begin
     Folder := ExtractFilePath(Engine.Session.Project.FileName);
     Engine.ProcessRecentFolder(Folder);
@@ -918,7 +918,7 @@ var
   aGroups: TFileGroups;
 begin
   try
-    if Engine.Session.IsOpened then
+    if Engine.Session.Active then
       aGroups := Engine.Tendency.Groups
     else
       aGroups := Engine.Groups;
@@ -968,7 +968,7 @@ begin
   FileTabs.Visible := FileTabs.Items.Count > 0;
   if Engine.Files.Current = nil then
     QuickFindPnl.Visible := False;
-  if (Engine.Session.IsOpened) then
+  if (Engine.Session.Active) then
   begin
     if (Engine.Session.Project.Title <> '') then
       Caption := Engine.Session.Project.Title + ' - ' + sApplicationTitle
@@ -1071,7 +1071,7 @@ begin
       Engine.Files.SaveAll;
   end;
 
-  if CanClose and (Engine.Session.IsOpened) then
+  if CanClose and (Engine.Session.Active) then
   begin
     if (Engine.Session.Project.FileName = '') then
     begin
@@ -1178,7 +1178,7 @@ procedure TMainForm.SelectProjectTypeActExecute(Sender: TObject);
 var
   lTendency: TEditorTendency;
 begin
-  if Engine.Session.IsOpened then
+  if Engine.Session.Active then
   begin
     if not MsgBox.Msg.No('You cannot change the type without losing project setting, are you sure?') then
     begin
@@ -1246,7 +1246,7 @@ begin
   Engine.Options.ShowMessages := MessagesAct.Checked;
   Engine.Options.MessagesHeight := MessagesTabs.Height;
   Engine.Options.FoldersWidth := BrowserPnl.Width;
-  if Engine.Session.IsOpened then
+  if Engine.Session.Active then
     Engine.Options.LastProject := Engine.Session.Project.FileName
   else
       Engine.Options.LastProject := '';
@@ -1324,18 +1324,9 @@ procedure TMainForm.SelectSCMTypeActExecute(Sender: TObject);
 var
   lSCM: TEditorSCM;
 begin
-  if Engine.Session.IsOpened then
-  begin
-    lSCM := Engine.Session.Project.SCM;
-    if ChooseSCM(lSCM) then
-      Engine.Session.Project.SetSCMClass(lSCM);
-  end
-  else
-  begin
-    lSCM := Engine.DefaultSCM;
-    if ChooseSCM(lSCM) then
-      Engine.DefaultSCM := lSCM;
-  end;
+  lSCM := Engine.Session.Project.SCM;
+  if ChooseSCM(lSCM) then
+    Engine.Session.Project.SetSCMClass(lSCM);
 end;
 
 procedure TMainForm.GeneralOptionsActExecute(Sender: TObject);
@@ -1350,7 +1341,7 @@ end;
 
 procedure TMainForm.ProjectOptionsActExecute(Sender: TObject);
 begin
-  if Engine.Session.IsOpened then
+//  if Engine.Session.Active then
   begin
     if ShowProjectForm(Engine.Session.Project) then
       Engine.Session.Changed;
@@ -1364,7 +1355,7 @@ var
 begin
   Engine.BeginUpdate;
   try
-    if (not Engine.Session.IsOpened) or (Engine.Session.Save) then
+    if (not Engine.Session.Active) or (Engine.Session.Save) then
     begin
       aTendency := nil;
       if ChooseTendency(aTendency) then
@@ -1446,7 +1437,7 @@ begin
   if Sender is TMenuItem then
   begin
     aFile := (Sender as TMenuItem).Caption;
-    if Engine.Session.IsOpened then
+    if Engine.Session.Active then
       aFile := ExpandToPath(aFile, Engine.Session.Project.RootDir);
     Engine.Files.OpenFile(aFile);
   end;
@@ -1661,7 +1652,7 @@ procedure TMainForm.ProjectChanged;
 var
   b: boolean;
 begin
-  b := Engine.Session.IsOpened;
+  b := Engine.Session.Active;
   ProjectOptionsAct.Enabled := b;
   SaveProjectAct.Enabled := b;
   SaveAsProjectAct.Enabled := b;
@@ -1762,7 +1753,7 @@ procedure TMainForm.UpdatePanel;
     FreeAndNil(FProjectFrame);
   end;
 begin
-  if Engine.Session.IsOpened then
+  if Engine.Session.Active then
   begin
     if (FProjectFrame = nil) or ((FProjectFrame as IEditorProjectFrame).Project <> Engine.Session.Project) then
     begin
@@ -1787,7 +1778,7 @@ end;
 
 procedure TMainForm.SaveAsProjectActExecute(Sender: TObject);
 begin
-  if Engine.Session.IsOpened then
+  if Engine.Session.Active then
     Engine.Session.SaveAs;
 end;
 
@@ -1937,7 +1928,7 @@ begin
     try
       case ShowFolderFiles of
         sffRelated:
-          if Engine.Session.IsOpened then
+          if Engine.Session.Active then
             Engine.Tendency.Groups.EnumExtensions(AExtensions)
           else
             Engine.Groups.EnumExtensions(AExtensions);

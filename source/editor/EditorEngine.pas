@@ -394,7 +394,7 @@ type
 
   { TEditorProject }
 
-  TEditorProject = class sealed(TmnXMLProfile)
+  TEditorProject = class(TmnXMLProfile)
   private
     FOptions: TEditorProjectOptions;
     FTendencyName: string;
@@ -436,6 +436,13 @@ type
     property SaveDesktop: Boolean read FSaveDesktop write FSaveDesktop default True;
     property Desktop: TEditorDesktop read FDesktop stored FSaveDesktop;
     property Options: TEditorProjectOptions read FOptions write FOptions default nil;
+  end;
+
+  {* Default project to use it when no project opened
+  }
+
+  TDefaultProject = class sealed(TEditorProject)
+  public
   end;
 
   { TDebugMarksPart }
@@ -747,11 +754,7 @@ type
     property WindowTop: Integer read FBoundRect.Top write FBoundRect.Top;
     property WindowLeft: Integer read FBoundRect.Left write FBoundRect.Left;
     property WindowRight: Integer read FBoundRect.Right write FBoundRect.Right;
-    property WindoBottom: Integer read FBoundRect.Bottom write FBoundRect.Bottom;
-    //Compile and Run
-    property RunMode: TmneRunMode read FRunMode write FRunMode;
-    //PauseConsole do not end until use press any key or enter
-    property PauseConsole: Boolean read FPauseConsole write FPauseConsole default True;
+    property WindowBottom: Integer read FBoundRect.Bottom write FBoundRect.Bottom;
   end;
 
   TmneSynCompletion = class;
@@ -963,7 +966,6 @@ type
     FCachedAge: QWord;
     function GetActive: Boolean;
     procedure SetProject(const Value: TEditorProject);
-    function GetIsOpened: Boolean;
     procedure SetRun(AValue: TmneRun);
   public
     constructor Create;
@@ -980,8 +982,7 @@ type
     function SaveAs: Boolean;
     function GetRoot: string;
     //Is project opened
-    property IsOpened: Boolean read GetIsOpened;
-    property Active: Boolean read GetActive; //Alias for IsOpened
+    property Active: Boolean read GetActive;
     //Current is the opened project, if it is a nil that mean there is no opened project.
     property Project: TEditorProject read FProject write SetProject;
     //Session Options is depend on the system used not shared between OSs
@@ -1040,9 +1041,10 @@ type
   TEditorEngine = class(TObject)
   private
     FDebugLink: TEditorDebugLink;
-    FDefaultSCM: TEditorSCM;
+    //FDefaultSCM: TEditorSCM;
     //FDefaultTendency used only there is no any Tendency defined, it is mean simple editor without any behavior
     FDefaultTendency: TDefaultTendency;
+    FDefaultProject: TDefaultProject;
     //FForms: TEditorFormList;
     FTendencies: TTendencies;
     FSourceManagements: TSourceManagements;
@@ -1067,7 +1069,7 @@ type
     function GetUpdating: Boolean;
     procedure SetBrowseFolder(const Value: string);
     function GetWorkSpace: string;
-    procedure SetDefaultSCM(AValue: TEditorSCM);
+    //procedure SetDefaultSCM(AValue: TEditorSCM);
     function GetCurrentTendency: TEditorTendency;
     function GetTendency: TEditorTendency;
   protected
@@ -1130,12 +1132,12 @@ type
     property Container: TWinControl read FContainer write FContainer;
     //BrowseFolder: Current folder
     property BrowseFolder: string read FBrowseFolder write SetBrowseFolder;
-    procedure SetDefaultSCM(vName: string);
     property DebugLink: TEditorDebugLink read FDebugLink;
     property Tendency: TEditorTendency read GetTendency; //It get Project/Default tendency no for current file
     property CurrentTendency: TEditorTendency read GetCurrentTendency; //It get Project/File/Default tendency
     property DefaultTendency: TDefaultTendency read FDefaultTendency;
-    property DefaultSCM: TEditorSCM read FDefaultSCM write SetDefaultSCM;
+    property DefaultProject: TDefaultProject read FDefaultProject;
+    //property DefaultSCM: TEditorSCM read FDefaultSCM write SetDefaultSCM;
     property SCM: TEditorSCM read GetSCM;
     function GetIsChanged: Boolean;
     procedure SetNotifyEngine(ANotifyObject: INotifyEngine);
@@ -1470,7 +1472,7 @@ begin
             Engine.Session.CachedIdentifiers.Clear;
             aFiles := TStringList.Create;
             try
-              EnumFileList(Engine.Session.GetRoot, GetExtensions, Engine.Options.IgnoreNames, aFiles, 1000, 3, True, Engine.Session.IsOpened);//TODO check the root dir if no project opened
+              EnumFileList(Engine.Session.GetRoot, GetExtensions, Engine.Options.IgnoreNames, aFiles, 1000, 3, True, Engine.Session.Active);//TODO check the root dir if no project opened
               r := aFiles.IndexOf(Engine.Files.Current.Name);
               if r >= 0 then
                 aFiles.Delete(r);
@@ -2221,26 +2223,14 @@ begin
       p.Root := Engine.Session.GetRoot;
       p.Command := Engine.EnvReplace(Command);
 
-      if (Engine.Session.IsOpened) then
+      if (Engine.Session.Active) then
       begin
-        p.Mode := Engine.Session.Project.Options.RunMode;
-        p.Pause := Engine.Session.Project.Options.PauseConsole;
         p.MainFile := Engine.Session.Project.Options.MainFile;//ExpandToPath(Engine.Session.Project.Options.MainFile, p.Root);
         p.OutputFile := Engine.Session.Project.Options.OutputFile;//ExpandToPath(Engine.Session.Project.Options.MainFile, p.Root);
-      end
-      else
-      begin
-        if (Engine.Files.Current <> nil) then
-        begin
-          p.Mode := Engine.Options.RunMode;
-          p.Pause := Engine.Options.PauseConsole;
-        end
-        else
-        begin
-          p.Mode := runConsole;
-          p.Pause := false;
-        end;
       end;
+
+      p.Mode := Engine.Session.Project.Options.RunMode;
+      p.Pause := Engine.Session.Project.Options.PauseConsole;
 
       if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
         p.MainFile := Engine.Files.Current.Name;
@@ -2533,6 +2523,7 @@ begin
   FEnvironment.Add('MiniEdit=' + Application.Location);
 
   FDefaultTendency := TDefaultTendency.Create;
+  FDefaultProject := TDefaultProject.Create;
   //FForms := TEditorFormList.Create(True);
   FOptions := TEditorOptions.Create;
   FCategories := TFileCategories.Create(True);
@@ -2563,6 +2554,7 @@ begin
   FreeAndNil(FSourceManagements);
   FreeAndNil(FMacroRecorder);
   FreeAndNil(FMessagesList);
+  FreeAndNil(FDefaultProject);
   //FDefaultTendency := nil; no need to free it is in the list
   //FreeAndNil(FForms);
   FreeAndNil(FEnvironment);
@@ -2839,7 +2831,7 @@ end;
 
 function TEditorEngine.GetRoot: string;
 begin
-  if Session.IsOpened then
+  if Session.Active then
     Result := Session.GetRoot
   else
     Result := Application.Location;
@@ -2847,17 +2839,15 @@ end;
 
 function TEditorEngine.GetSCM: TEditorSCM;
 begin
-  if (Session <> nil) and (Session.Project <> nil) and (Session.Project.SCM <> nil) then
+  if (Session.Project.SCM <> nil) then
     Result := Session.Project.SCM
-  else if DefaultSCM <> nil then
-    Result := DefaultSCM
   else
     Result := nil;
 end;
 
 function TEditorEngine.GetCurrentTendency: TEditorTendency;
 begin
-  if (Session <> nil) and (Session.Project <> nil) and (Session.Project.Tendency <> nil) then
+  if Session.Active and (Session.Project.Tendency <> nil) then
     Result := Session.Project.Tendency
   else if (Engine.Files.Current <> nil) and (Engine.Files.Current.Tendency <> nil) then
     Result := Engine.Files.Current.Tendency
@@ -2867,12 +2857,7 @@ end;
 
 function TEditorEngine.GetTendency: TEditorTendency;
 begin
-  if (Session <> nil) and (Session.Project <> nil) and (Session.Project.Tendency <> nil) then
-    Result := Session.Project.Tendency
-{  else if (Engine.Files.Current <> nil) and (Engine.Files.Current.Tendency <> nil) then
-    Result := Engine.Files.Current.Tendency}
-  else
-    Result := FDefaultTendency;
+  Result := Session.Project.Tendency
 end;
 
 function TEditorFiles.InternalOpenFile(FileName: string; AppendToRecent: Boolean): TEditorFile;
@@ -3094,10 +3079,7 @@ end;
 
 function TEditorSession.Save: Boolean;
 begin
-  if Project <> nil then
-    Result := Save(Project)
-  else
-    Result := False;
+  Result := Save(Project)
 end;
 
 function TEditorSession.SaveAs(AProject: TEditorProject): Boolean;
@@ -3124,17 +3106,14 @@ end;
 
 function TEditorSession.SaveAs: Boolean;
 begin
-  if Project <> nil then
-    Result := SaveAs(Project)
-  else
-    Result := False;
+  Result := SaveAs(Project)
 end;
 
 function TEditorSession.GetRoot: string;
 var
   r: string;
 begin
-  if IsOpened then
+  if Active then
   begin
     if (Project.RootDir <> '') then
     begin
@@ -3303,16 +3282,15 @@ begin
   begin
     Engine.BeginUpdate;
     try
-      if IsOpened then
+      if Active then
         Close;
       FProject := Value;
-      if FProject <> nil then
-      begin
-        if FProject.Tendency <> nil then
-          FProject.Tendency.Prepare; //Prepare debug object and others
-        if FProject.SaveDesktop then
-          FProject.Desktop.Load;
-      end;
+
+      if FProject.Tendency <> nil then
+        FProject.Tendency.Prepare; //Prepare debug object and others
+      if FProject.SaveDesktop then
+        FProject.Desktop.Load;
+
       Changed;
       Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject, ecsProjectLoaded]);
     finally
@@ -3323,7 +3301,7 @@ end;
 
 function TEditorSession.GetActive: Boolean;
 begin
-  Result := FProject <> nil;
+  Result := Project is TDefaultProject;
 end;
 
 procedure TEditorOptions.Show;
@@ -3392,7 +3370,6 @@ begin
           XMLReadObjectFile(Tendencies[i], aFile);
       end;
     end;
-    SetDefaultSCM(Session.Options.DefaultSCM);
     Engine.UpdateState([ecsOptions]);
   finally
     Engine.EndUpdate;
@@ -3481,7 +3458,7 @@ begin
       List.Assign(Environment);
       if ForRoot then
       begin
-        if Session.IsOpened then
+        if Session.Active then
           List.Add('Root=' + ExtractFilePath(Session.Project.FileName))
         else
           List.Add('Root=' + Application.Location)
@@ -3489,7 +3466,7 @@ begin
       else
         List.Add('Root=' + GetRoot);
 
-      if Session.IsOpened then
+      if Session.Active then
       begin
         List.Add('Main=' + Session.Project.Options.MainFile);
         List.Add('MainFile=' + Session.Project.Options.MainFile);
@@ -3517,11 +3494,6 @@ end;
 function TEditorEngine.ExpandFile(FileName: string): string;
 begin
   Result := ExpandFileName(ExpandToPath(FileName, Session.GetRoot));
-end;
-
-procedure TEditorEngine.SetDefaultSCM(vName: string);
-begin
-  DefaultSCM := SourceManagements.Find(vName);
 end;
 
 function TEditorEngine.GetIsChanged: Boolean;
@@ -3621,16 +3593,6 @@ end;
 function TEditorEngine.GetWorkSpace: string;
 begin
   Result := IncludeTrailingPathDelimiter(FWorkSpace);
-end;
-
-procedure TEditorEngine.SetDefaultSCM(AValue: TEditorSCM);
-begin
-  if FDefaultSCM =AValue then
-    exit;
-  FDefaultSCM :=AValue;
-  if FDefaultSCM <> nil then
-    Session.Options.DefaultSCM := FDefaultSCM.Name;
-  Engine.UpdateState([ecsChanged, ecsProject]);
 end;
 
 procedure TEditorEngine.InternalChangedState(State: TEditorChangeStates);
@@ -4868,11 +4830,6 @@ procedure TEditorSession.Changed;
 begin
   FIsChanged := True;
   Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
-end;
-
-function TEditorSession.GetIsOpened: Boolean;
-begin
-  Result := FProject <> nil;
 end;
 
 procedure TEditorSession.SetRun(AValue: TmneRun);

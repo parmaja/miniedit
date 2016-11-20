@@ -222,7 +222,7 @@ var
   Options: TCppProjectOptions;
   aRunItem: TmneRunItem;
 begin
-  if (Engine.Session.IsOpened) then
+  if (Engine.Session.Project.Options is TCppProjectOptions) then
     Options := (Engine.Session.Project.Options as TCppProjectOptions)
   else
     Options := TCppProjectOptions.Create;//Default options

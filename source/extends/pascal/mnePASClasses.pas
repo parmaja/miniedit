@@ -199,7 +199,7 @@ var
   aRunItem: TmneRunItem;
   p: string;
 begin
-  if (Engine.Session.IsOpened) then
+  if (Engine.Session.Project.Options is TPasProjectOptions) then
     Options := (Engine.Session.Project.Options as TPasProjectOptions)
   else
     Options := TPasProjectOptions.Create;

@@ -24,12 +24,9 @@ type
     Label11: TLabel;
     Label12: TLabel;
     Label4: TLabel;
-    Label5: TLabel;
     OkBtn: TButton;
     CancelBtn: TButton;
     PageControl: TPageControl;
-    PauseChk: TCheckBox;
-    RunModeCbo: TComboBox;
     TabSheet2: TTabSheet;
     Label3: TLabel;
     CollectTimeoutEdit: TEdit;
@@ -83,9 +80,6 @@ procedure TEditorSettingForm.Apply;
 var
   i, c: Integer;
 begin
-  FEngine.Options.RunMode := TmneRunMode(RunModeCbo.ItemIndex);
-  FEngine.Options.PauseConsole := PauseChk.Checked;
-
   FEngine.Options.AutoOpenProject := AutoOpenProjectChk.Checked;
   FEngine.Options.CollectAutoComplete := CollectAutoCompleteChk.Checked;
   FEngine.Options.CollectTimeout := CollectTimeoutSpn.Position;
@@ -106,10 +100,6 @@ procedure TEditorSettingForm.Retrieve;
 var
   i, c: Integer;
 begin
-  EnumRunMode(RunModeCbo.Items);
-  RunModeCbo.ItemIndex := ord(FEngine.Options.RunMode);
-  PauseChk.Checked := FEngine.Options.PauseConsole;
-
   AutoOpenProjectChk.Checked := FEngine.Options.AutoOpenProject;
   CollectAutoCompleteChk.Checked := FEngine.Options.CollectAutoComplete;
   CollectTimeoutSpn.Position := FEngine.Options.CollectTimeout;

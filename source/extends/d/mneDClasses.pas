@@ -169,7 +169,7 @@ var
   Options: TDProjectOptions;
   aRunItem: TmneRunItem;
 begin
-  if (Engine.Session.IsOpened) then
+  if (Engine.Session.Project.Options is TDProjectOptions) then
     Options := (Engine.Session.Project.Options as TDProjectOptions)
   else
     Options := TDProjectOptions.Create;//Default options

@@ -162,7 +162,7 @@ var
   aRunItem: TmneRunItem;
   p: string;
 begin
-  if (Engine.Session.IsOpened) then
+  if (Engine.Session.Project.Options is TVerilogProjectOptions) then
     Options := (Engine.Session.Project.Options as TVerilogProjectOptions)
   else
     Options := TVerilogProjectOptions.Create;
@@ -274,10 +274,10 @@ var
   st: TStringList;
   cr: TPoint;
 begin
-  if (Engine.Session.IsOpened) then
+  if (Engine.Session.Active) then
   begin
-    CurrentFile:=Engine.Files.Current as TTextEditorFile;
-    proj:=Engine.Session.Project.Options as TVerilogProjectOptions;
+    CurrentFile := Engine.Files.Current as TTextEditorFile;
+    proj:= Engine.Session.Project.Options as TVerilogProjectOptions;
 
     if Assigned(CurrentFile) and
        Assigned(CurrentFile.SynEdit) and

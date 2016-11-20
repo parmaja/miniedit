@@ -171,7 +171,7 @@ var
   Options: TPyProjectOptions;
   aRunItem: TmneRunItem;
 begin
-  if (Engine.Session.IsOpened) then
+  if (Engine.Session.Project.Options is TPyProjectOptions) then
     Options := (Engine.Session.Project.Options as TPyProjectOptions)
   else
     Options := TPyProjectOptions.Create;//Default options
