@@ -441,8 +441,11 @@ type
   {* Default project to use it when no project opened
   }
 
+  { TDefaultProject }
+
   TDefaultProject = class sealed(TEditorProject)
   public
+    destructor Destroy; override;
   end;
 
   { TDebugMarksPart }
@@ -687,9 +690,7 @@ type
     FIgnoreNames: string;
     FLastFolder: string;
     FLastProject: string;
-    FPauseConsole: Boolean;
     FRecentFolders: TStringList;
-    FRunMode: TmneRunMode;
     FShowFolder: Boolean;
     FShowFolderFiles: TShowFolderFiles;
     FSortFolderFiles: TSortFolderFiles;
@@ -966,6 +967,7 @@ type
     FCachedAge: QWord;
     function GetActive: Boolean;
     procedure SetProject(const Value: TEditorProject);
+    procedure SetInternalProject(const Value: TEditorProject);
     procedure SetRun(AValue: TmneRun);
   public
     constructor Create;
@@ -1077,10 +1079,16 @@ type
     procedure DoChangedState(State: TEditorChangeStates); virtual;
     procedure DoMacroRecorderChanged(Sender: TObject);
     procedure DoReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
-    procedure UpdateExtensionsCache;
   public
     constructor Create; virtual;
     destructor Destroy; override;
+
+    procedure Startup;
+    procedure LoadOptions;
+    procedure SaveOptions;
+    procedure Shutdown;
+    function IsShutdown: Boolean;
+
     //I used it for search in files
     function SearchReplace(const FileName: string; const ALines: TStringList; const ASearch, AReplace: string; OnFoundEvent: TOnFoundEvent; AOptions: TSynSearchOptions): integer;
     //Recent
@@ -1093,12 +1101,6 @@ type
 
     procedure ProcessProject(const FileName: string);
     procedure RemoveProject(const FileName: string);
-
-    procedure Startup;
-    procedure LoadOptions;
-    procedure SaveOptions;
-    procedure Shutdown;
-    function IsShutdown: Boolean;
 
     procedure BeginUpdate;
     procedure UpdateState(State: TEditorChangeStates);
@@ -1296,6 +1298,13 @@ begin
       S := S + #$D;
     Stream.WriteBuffer(Pointer(S)^, Length(S));
   end;
+end;
+
+{ TDefaultProject }
+
+destructor TDefaultProject.Destroy;
+begin
+  inherited Destroy;
 end;
 
 { TFileCategories }
@@ -2501,7 +2510,11 @@ begin
   FCachedVariables.Clear;
   FCachedAge := 0;
   Engine.Files.CloseAll;
-  FreeAndNil(FProject);
+  if Active then
+  begin
+    FreeAndNil(FProject);
+    FProject := Engine.DefaultProject;
+  end;
   Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
 end;
 
@@ -2519,23 +2532,27 @@ begin
   FEnvironment.Add('EXE=' + Application.ExeName);
   FEnvironment.Add('MiniEdit=' + Application.Location);
 
-  FDefaultProject := TDefaultProject.Create;
-
+  FTendencies := TTendencies.Create(True);
   aDefaultTendency := TDefaultTendency.Create;
+  Tendencies.Add(aDefaultTendency);
+
+  FDefaultProject := TDefaultProject.Create;
+  FDefaultProject.Name := 'Default';
+
   FDefaultProject.Tendency := aDefaultTendency;
 
   //FForms := TEditorFormList.Create(True);
   FOptions := TEditorOptions.Create;
   FCategories := TFileCategories.Create(True);
   FGroups := TFileGroups.Create(True);
-  FTendencies := TTendencies.Create(True);
   FSourceManagements := TSourceManagements.Create(True);
   FSearchEngine := TSynEditSearch.Create;
   FFiles := TEditorFiles.Create(TEditorFile);
   FDebugLink := TEditorDebugLink.Create(nil);
+
   FSession := TEditorSession.Create;
   Extenstion := 'mne-project';
-  Tendencies.Add(aDefaultTendency);
+  //FSession.SetInternalProject(DefaultProject);
 end;
 
 destructor TEditorEngine.Destroy;
@@ -2555,7 +2572,6 @@ begin
   FreeAndNil(FMacroRecorder);
   FreeAndNil(FMessagesList);
   FreeAndNil(FDefaultProject);
-  //FDefaultTendency := nil; no need to free it is in the list
   //FreeAndNil(FForms);
   FreeAndNil(FEnvironment);
   inherited;
@@ -2778,11 +2794,6 @@ procedure TEditorEngine.DoReplaceText(Sender: TObject; const ASearch, AReplace: 
 begin
   if FNotifyObject <> nil then
     FNotifyObject.EngineReplaceText(Sender, ASearch, AReplace, Line, Column, ReplaceAction);
-end;
-
-procedure TEditorEngine.UpdateExtensionsCache;
-begin
-
 end;
 
 function TEditorFiles.FindFile(const vFileName: string): TEditorFile;
@@ -3284,13 +3295,11 @@ begin
     try
       if Active then
         Close;
-      FProject := Value;
-
+      SetInternalProject(Value);
       if FProject.Tendency <> nil then
         FProject.Tendency.Prepare; //Prepare debug object and others
       if FProject.SaveDesktop then
         FProject.Desktop.Load;
-
       Changed;
       Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject, ecsProjectLoaded]);
     finally
@@ -3299,9 +3308,14 @@ begin
   end;
 end;
 
+procedure TEditorSession.SetInternalProject(const Value: TEditorProject);
+begin
+  FProject := Value;
+end;
+
 function TEditorSession.GetActive: Boolean;
 begin
-  Result := Project is TDefaultProject;
+  Result := (Project <> nil) and not (Project is TDefaultProject);
 end;
 
 procedure TEditorOptions.Show;
@@ -3347,9 +3361,10 @@ end;
 procedure TEditorEngine.Startup;
 begin
   FIsEngineStart := True;
-  LoadOptions;
   Groups.Sort(@SortGroupsByTitle);
-  UpdateExtensionsCache;
+  DefaultProject.FileName := WorkSpace + 'mne-default-project.xml';
+  LoadOptions;
+  Session.Project := DefaultProject;
 end;
 
 procedure TEditorEngine.LoadOptions;
@@ -3370,6 +3385,7 @@ begin
           XMLReadObjectFile(Tendencies[i], aFile);
       end;
     end;
+    DefaultProject.LoadFromFile(DefaultProject.FileName);
     Engine.UpdateState([ecsOptions]);
   finally
     Engine.EndUpdate;
@@ -3384,7 +3400,6 @@ begin
   ForceDirectories(Workspace);
   Options.Save(WorkSpace);
   Session.Options.SaveToFile(Workspace + 'mne-options-' + SysPlatform + '.xml');
-
   for i := 0 to Tendencies.Count - 1 do
   begin
     if capOptions in Tendencies[i].Capabilities then
@@ -3393,6 +3408,7 @@ begin
       XMLWriteObjectFile(Tendencies[i], aFile);
     end;
   end;
+  DefaultProject.SaveToFile(DefaultProject.FileName);
 end;
 
 procedure TEditorEngine.Shutdown;
@@ -3401,6 +3417,8 @@ var
 begin
   if FIsEngineStart then
   begin
+    if Session.Active and (Session.Project.FileName <> '') then
+      Session.Save;
     SaveOptions;
     for i := 0 to Tendencies.Count - 1 do
       Tendencies[i].Unprepare;
@@ -4208,7 +4226,6 @@ begin
   FCollectTimeout := 60;
   FMessagesHeight := 100;
   FFoldersWidth := 180;
-  FPauseConsole := True;
 end;
 
 destructor TEditorOptions.Destroy;
@@ -4366,7 +4383,7 @@ end;
 
 constructor TFileCategory.Create(ATendency: TEditorTendency; const vName: string; vKind: TFileCategoryKinds);
 begin
-  inherited Create(False);//childs is groups and already added to Groups and freed by it
+  inherited Create(False); //childs is groups and already added to Groups and freed by it
   FTendency := ATendency;
   FName := vName;
   FKind := vKind;
@@ -4817,9 +4834,6 @@ destructor TEditorSession.Destroy;
 begin
   Run.Stop;
   FreeAndNil(FRun);
-  if (FProject <> nil) and (FProject.FileName <> '') then
-    Save;
-  FProject := nil;
   FreeAndNil(FOptions);
   FCachedVariables.Free;
   FCachedIdentifiers.Free;
