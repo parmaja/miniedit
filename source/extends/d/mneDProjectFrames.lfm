@@ -9,15 +9,15 @@ object DProjectFrame: TDProjectFrame
   DesignLeft = 363
   DesignTop = 223
   object ExpandPathsChk1: TCheckBox
-    Left = 10
+    Left = 25
     Height = 19
-    Top = 33
+    Top = 36
     Width = 217
     Caption = 'Auto include files from included path'
     TabOrder = 0
   end
   object ExpandPathsChk2: TCheckBox
-    Left = 10
+    Left = 25
     Height = 19
     Top = 14
     Width = 203

@@ -162,7 +162,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="43">
+    <Units Count="42">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -330,77 +330,70 @@
         <ResourceBaseClass Value="Frame"/>
       </Unit27>
       <Unit28>
-        <Filename Value="..\extends\php\mnePHPProjectFrames.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="PHPProjectFrame"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Frame"/>
-      </Unit28>
-      <Unit29>
         <Filename Value="..\editor\EditorRun.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit29>
-      <Unit30>
+      </Unit28>
+      <Unit29>
         <Filename Value="mneManageRecentsForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ManageProjectsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit30>
-      <Unit31>
+      </Unit29>
+      <Unit30>
         <Filename Value="mneTendencyOptions.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="TendencyForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit30>
+      <Unit31>
+        <Filename Value="..\extends\python\mnePyClasses.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit31>
       <Unit32>
-        <Filename Value="..\extends\python\mnePyClasses.pas"/>
+        <Filename Value="..\extends\mneExtends.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit32>
       <Unit33>
-        <Filename Value="..\extends\mneExtends.pas"/>
+        <Filename Value="..\extends\verilog\mneVerilogClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit33>
       <Unit34>
-        <Filename Value="..\extends\verilog\mneVerilogClasses.pas"/>
+        <Filename Value="..\extends\verilog\SynHighlighterVerilog.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit34>
       <Unit35>
-        <Filename Value="..\extends\verilog\SynHighlighterVerilog.pas"/>
+        <Filename Value="..\extends\cpp\mneCppClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit35>
       <Unit36>
-        <Filename Value="..\extends\cpp\mneCppClasses.pas"/>
+        <Filename Value="..\lib\gdbClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit36>
       <Unit37>
-        <Filename Value="..\lib\gdbClasses.pas"/>
+        <Filename Value="..\..\..\..\lib\minilib\socket\source\mnConnections.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit37>
       <Unit38>
-        <Filename Value="..\..\..\..\lib\minilib\socket\source\mnConnections.pas"/>
+        <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvThemes.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit38>
       <Unit39>
-        <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvThemes.pas"/>
+        <Filename Value="..\extends\lua\mneLuaClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit39>
       <Unit40>
-        <Filename Value="..\extends\lua\mneLuaClasses.pas"/>
+        <Filename Value="..\extends\lua\LuaDBGServers.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit40>
       <Unit41>
-        <Filename Value="..\extends\lua\LuaDBGServers.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit41>
-      <Unit42>
         <Filename Value="..\extends\commons\mneCompilerTendencyFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CompilerTendencyFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit42>
+      </Unit41>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

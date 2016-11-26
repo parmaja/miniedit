@@ -10,7 +10,7 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ComCtrls, StdCtrls;
+  Dialogs, ComCtrls, StdCtrls, EditorEngine;
 
 type
   TBreakpointsForm = class(TForm)
@@ -26,17 +26,18 @@ type
     procedure BreakpointListDblClick(Sender: TObject);
     procedure CloseBtnClick(Sender: TObject);
   private
+    FTendency: TEditorTendency;
     procedure Reload;
     procedure DoGoto;
   public
   end;
 
-procedure ShowBreakpointsForm;
+procedure ShowBreakpointsForm();
 
 implementation
 
 uses
-  EditorEngine, mneResources;
+  mneResources;
 
 {$R *.lfm}
 
@@ -50,11 +51,12 @@ end;
 
 procedure TBreakpointsForm.FormCreate(Sender: TObject);
 begin
-  Engine.Tendency.Debug.Lock;
+  FTendency := Engine.CurrentTendency;
+  FTendency.Debug.Lock;
   try
     Reload;
   finally
-    Engine.Tendency.Debug.Unlock;
+    FTendency.Debug.Unlock;
   end;
 end;
 
@@ -64,13 +66,13 @@ var
   aItem: TListItem;
 begin
   BreakpointList.Clear;
-  for i := 0 to Engine.Tendency.Debug.Breakpoints.Count - 1 do
+  for i := 0 to FTendency.Debug.Breakpoints.Count - 1 do
   begin
     aItem := BreakpointList.Items.Add;
     aItem.ImageIndex := 40;
-    aItem.Data := Pointer(PtrInt(Engine.Tendency.Debug.Breakpoints[i].Handle));
-    aItem.Caption := Engine.Tendency.Debug.Breakpoints[i].FileName;
-    aItem.SubItems.Add(IntToStr(Engine.Tendency.Debug.Breakpoints[i].Line));
+    aItem.Data := Pointer(PtrInt(FTendency.Debug.Breakpoints[i].Handle));
+    aItem.Caption := FTendency.Debug.Breakpoints[i].FileName;
+    aItem.SubItems.Add(IntToStr(FTendency.Debug.Breakpoints[i].Line));
   end;
 end;
 
@@ -78,26 +80,26 @@ procedure TBreakpointsForm.Button2Click(Sender: TObject);
 begin
   if BreakpointList.Selected <> nil then
   begin
-    Engine.Tendency.Debug.Lock;
+    FTendency.Debug.Lock;
     try
-      Engine.Tendency.Debug.Breakpoints.Remove(IntPtr(BreakpointList.Selected.Data));
+      FTendency.Debug.Breakpoints.Remove(IntPtr(BreakpointList.Selected.Data));
       Reload;
       Engine.UpdateState([ecsDebug]);
     finally
-      Engine.Tendency.Debug.Unlock;
+      FTendency.Debug.Unlock;
     end;
   end;
 end;
 
 procedure TBreakpointsForm.Button1Click(Sender: TObject);
 begin
-  Engine.Tendency.Debug.Lock;
+  FTendency.Debug.Lock;
   try
-    Engine.Tendency.Debug.Breakpoints.Clear;
+    FTendency.Debug.Breakpoints.Clear;
     Reload;
     Engine.UpdateState([ecsDebug]);
   finally
-    Engine.Tendency.Debug.Unlock;
+    FTendency.Debug.Unlock;
   end;
 end;
 

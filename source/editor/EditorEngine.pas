@@ -439,7 +439,7 @@ type
     property Options: TEditorProjectOptions read FOptions write FOptions default nil;
   end;
 
-  {* Default project to use it when no project opened
+  {* Default project to used when no project opened
   }
 
   { TDefaultProject }
