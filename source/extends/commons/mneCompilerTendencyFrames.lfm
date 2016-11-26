@@ -26,7 +26,7 @@ object CompilerTendencyFrame: TCompilerTendencyFrame
     OnClick = Button3Click
     TabOrder = 1
   end
-  object Label1: TLabel
+  object CompilerLabel: TLabel
     Left = 11
     Height = 15
     Top = 9

@@ -14,7 +14,7 @@ type
 
   TCompilerTendencyFrame = class(TFrame, IEditorOptions)
     Button3: TButton;
-    Label1: TLabel;
+    CompilerLabel: TLabel;
     CompilerEdit: TEdit;
     OpenDialog: TOpenDialog;
     procedure Button3Click(Sender: TObject);
@@ -45,12 +45,12 @@ end;
 
 procedure TCompilerTendencyFrame.Apply;
 begin
-  (FTendency as TPasTendency).Compiler := CompilerEdit.Text;
+  FTendency.Command := CompilerEdit.Text;
 end;
 
 procedure TCompilerTendencyFrame.Retrieve;
 begin
-  CompilerEdit.Text := (FTendency as TPasTendency).Compiler;
+  CompilerEdit.Text := FTendency.Command;
 end;
 
 end.

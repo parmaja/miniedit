@@ -20,7 +20,7 @@ uses
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   SynHighlighterPython, EditorDebugger, EditorClasses, mneClasses,
-  mneCompileProjectOptions, EditorRun, mneConsoleClasses, dbgpServers,
+  mneCompilerProjectFrames, EditorRun, mneConsoleClasses, dbgpServers,
   mneConsoleForms;
 
 type
@@ -84,8 +84,8 @@ procedure TPyProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEd
 var
   aFrame: TFrame;
 begin
-  aFrame := TCompilerProjectOptionsForm.Create(AOwner);
-  (aFrame as TCompilerProjectOptionsForm).FProject := AProject;
+  aFrame := TCompilerProjectFrame.Create(AOwner);
+  (aFrame as TCompilerProjectFrame).FProject := AProject;
   aFrame.Caption := 'Compiler';
   AddFrame(aFrame);
   aFrame := TPyProjectFrame.Create(AOwner);

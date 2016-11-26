@@ -17,7 +17,7 @@ uses
   Contnrs, FileUtil, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter, LCLProc,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  EditorDebugger, EditorRun, mneCompileProjectOptions,
+  EditorDebugger, EditorRun, mneCompilerProjectFrames,
   SynHighlighterVerilog;
 
 type
@@ -120,8 +120,8 @@ procedure TVerilogProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject
 var
   aFrame: TFrame;
 begin
-  aFrame := TCompilerProjectOptionsForm.Create(AOwner);
-  (aFrame as TCompilerProjectOptionsForm).FProject := AProject;
+  aFrame := TCompilerProjectFrame.Create(AOwner);
+  (aFrame as TCompilerProjectFrame).FProject := AProject;
   aFrame.Caption := 'Compiler';
   AddFrame(aFrame);
 end;

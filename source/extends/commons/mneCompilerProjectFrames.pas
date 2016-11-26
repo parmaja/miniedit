@@ -1,4 +1,4 @@
-unit mneCompileProjectFrames;
+unit mneCompilerProjectFrames;
 {$mode objfpc}{$H+}
 {**
  * Mini Edit
@@ -15,30 +15,22 @@ uses
 
 type
 
-  { TCompilerProjectOptionsFrame }
+  { TCompilerProjectFrame }
 
-  TCompilerProjectOptionsFrame = class(TFrame, IEditorOptions, IEditorProjectFrame)
+  TCompilerProjectFrame = class(TFrame, IEditorOptions, IEditorProjectFrame)
     Bevel1: TBevel;
-    Button4: TButton;
     RunParamsEdit: TEdit;
-    Label1: TLabel;
     Label4: TLabel;
     ConfigFileEdit: TEdit;
     Label5: TLabel;
     Label6: TLabel;
     OutputFileEdit: TEdit;
-    PauseChk: TCheckBox;
-    Label3: TLabel;
-    RunModeCbo: TComboBox;
     ExpandPathsChk: TCheckBox;
     ExpandPathsChk1: TCheckBox;
     ExpandPathsChk2: TCheckBox;
     PathsLbl: TLabel;
-    MainEdit: TEdit;
-    Label2: TLabel;
     PathsEdit: TSynEdit;
     procedure Bevel1ChangeBounds(Sender: TObject);
-    procedure Button4Click(Sender: TObject);
   private
     Options: TCompilerProjectOptions;
   protected
@@ -53,31 +45,20 @@ implementation
 
 {$R *.lfm}
 
-{ TCompilerProjectOptionsFrame }
+{ TCompilerProjectFrame }
 
-procedure TCompilerProjectOptionsFrame.Button4Click(Sender: TObject);
-var
-  s: string;
-begin
-  ShowSelectFile(FProject.RootDir, s);
-  MainEdit.Text := s;
-end;
-
-function TCompilerProjectOptionsFrame.GetProject: TEditorProject;
+function TCompilerProjectFrame.GetProject: TEditorProject;
 begin
   Result := FProject;
 end;
 
-procedure TCompilerProjectOptionsFrame.Bevel1ChangeBounds(Sender: TObject);
+procedure TCompilerProjectFrame.Bevel1ChangeBounds(Sender: TObject);
 begin
 
 end;
 
-procedure TCompilerProjectOptionsFrame.Apply;
+procedure TCompilerProjectFrame.Apply;
 begin
-  Options.RunMode := TmneRunMode(RunModeCbo.ItemIndex);
-  Options.PauseConsole := PauseChk.Checked;
-  Options.MainFile := MainEdit.Text;
   Options.OutputFile := OutputFileEdit.Text;
   Options.RunParams := RunParamsEdit.Text;
   Options.ConfigFile := ConfigFileEdit.Text;
@@ -85,15 +66,9 @@ begin
   Options.Paths.Assign(PathsEdit.Lines);
 end;
 
-procedure TCompilerProjectOptionsFrame.Retrieve;
+procedure TCompilerProjectFrame.Retrieve;
 begin
   Options := (FProject.Options as TCompilerProjectOptions);
-
-  EnumRunMode(RunModeCbo.Items);
-  RunModeCbo.ItemIndex := ord(Options.RunMode);
-
-  PauseChk.Checked := Options.PauseConsole;
-  MainEdit.Text := Options.MainFile;
   OutputFileEdit.Text := Options.OutputFile;
   RunParamsEdit.Text := Options.RunParams;
   ConfigFileEdit.Text := Options.ConfigFile;
@@ -102,4 +77,3 @@ begin
 end;
 
 end.
-

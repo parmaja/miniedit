@@ -20,7 +20,7 @@ uses
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   FileUtil, mnSynHighlighterD, EditorDebugger, EditorClasses, mneClasses,
-  mneCompileProjectOptions, EditorRun, mneConsoleClasses, mnSynHighlighterMultiProc,
+  mneCompilerProjectFrames, EditorRun, mneConsoleClasses, mnSynHighlighterMultiProc,
   mneConsoleForms;
 
 type
@@ -131,12 +131,12 @@ procedure TCustomProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject:
 var
   aFrame: TFrame;
 begin
-  aFrame := TCompilerProjectOptionsForm.Create(AOwner);
-  (aFrame as TCompilerProjectOptionsForm).FProject := AProject;
+  aFrame := TCompilerProjectFrame.Create(AOwner);
+  (aFrame as TCompilerProjectFrame).FProject := AProject;
   aFrame.Caption := 'Compiler';
   AddFrame(aFrame);
-  aFrame := TCompilerProjectOptionsForm.Create(AOwner);
-  (aFrame as TCompilerProjectOptionsForm).FProject := AProject;
+  aFrame := TCompilerProjectFrame.Create(AOwner);
+  (aFrame as TCompilerProjectFrame).FProject := AProject;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 end;

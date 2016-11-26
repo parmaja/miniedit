@@ -14,7 +14,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  EditorDebugger, gdbClasses, EditorRun, mneCompileProjectOptions, FileUtil,
+  EditorDebugger, gdbClasses, EditorRun, mneCompilerProjectFrames, FileUtil,
   SynHighlighterPas, SynHighlighterLFM;
 
 type
@@ -112,8 +112,8 @@ procedure TPasProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TE
 var
   aFrame: TFrame;
 begin
-  aFrame := TCompilerProjectOptionsForm.Create(AOwner);
-  (aFrame as TCompilerProjectOptionsForm).FProject := AProject;
+  aFrame := TCompilerProjectFrame.Create(AOwner);
+  (aFrame as TCompilerProjectFrame).FProject := AProject;
   aFrame.Caption := 'Compiler';
   AddFrame(aFrame);
   aFrame := TPasProjectFrame.Create(AOwner);

@@ -20,8 +20,7 @@ uses
   SynHighlighterHashEntries, EditorProfiles, SynHighlighterCSS,
   SynHighlighterSQL, SynHighlighterXML, SynHighlighterJScript,
   mnSynHighlighterXHTML, mnSynHighlighterMultiProc, HTMLProcessor, EditorDebugger,
-  EditorClasses, dbgpServers, mneClasses, mneCompilerTendencyFrames, EditorRun,
-  mnePHPProjectFrames;
+  EditorClasses, dbgpServers, mneClasses, mneCompilerTendencyFrames, EditorRun;
 
 type
 
@@ -134,13 +133,13 @@ begin
 end;
 
 procedure TPHPProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack);
-var
-  aFrame: TPHPProjectFrame;
+{var
+  aFrame: TPHPProjectFrame;}
 begin
-  aFrame := TPHPProjectFrame.Create(AOwner);
+  {aFrame := TPHPProjectFrame.Create(AOwner);
   aFrame.Project := AProject;
   aFrame.Caption := 'Options';
-  AddFrame(aFrame);
+  AddFrame(aFrame);}
 end;
 
 { TXHTMLFile }

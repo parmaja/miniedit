@@ -11,7 +11,8 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, SynEdit,
-  EditorEngine, mneClasses, Dialogs, StdCtrls, ExtCtrls, ComCtrls, Menus;
+  EditorEngine, EditorDebugger, mneClasses, Dialogs, StdCtrls, ExtCtrls,
+  ComCtrls, Menus;
 
 type
 
@@ -19,8 +20,13 @@ type
 
   TProjectForm = class(TForm)
     Button3: TButton;
+    Button4: TButton;
+    Label2: TLabel;
     Label6: TLabel;
     DescriptionEdit: TEdit;
+    Label7: TLabel;
+    Label9: TLabel;
+    MainEdit: TEdit;
     OverrideOptionsSheet: TTabSheet;
     Label1: TLabel;
     Label3: TLabel;
@@ -31,6 +37,9 @@ type
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     NameEdit: TEdit;
+    CompilerPanel: TPanel;
+    PauseChk: TCheckBox;
+    RunModeCbo: TComboBox;
     SaveDesktopChk: TCheckBox;
     SpecialExtEdit: TEdit;
     TitleEdit: TEdit;
@@ -41,6 +50,7 @@ type
     RootDirEdit: TEdit;
     SCMCbo: TComboBox;
     GeneralSheet: TTabSheet;
+    procedure Button4Click(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -63,7 +73,8 @@ function ShowProjectForm(vProject: TEditorProject): Boolean;
 
 implementation
 
-uses mneResources;
+uses
+  mneResources, SelectFiles;
 
 {$R *.lfm}
 
@@ -98,6 +109,14 @@ begin
   RootDirEdit.Text := Engine.BrowseFolder;
 end;
 
+procedure TProjectForm.Button4Click(Sender: TObject);
+var
+  s: string;
+begin
+  ShowSelectFile(FProject.RootDir, s);
+  MainEdit.Text := s;
+end;
+
 procedure TProjectForm.MenuItem3Click(Sender: TObject);
 begin
   SelectPathFolder;
@@ -111,6 +130,10 @@ begin
   FProject.RootDir := RootDirEdit.Text;
   FProject.SaveDesktop := SaveDesktopChk.Checked;
   FProject.SetSCMClass(TEditorSCM(SCMCbo.Items.Objects[SCMCbo.ItemIndex]));
+
+  FProject.Options.RunMode := TmneRunMode(RunModeCbo.ItemIndex);
+  FProject.Options.PauseConsole := PauseChk.Checked;
+  FProject.Options.MainFile := MainEdit.Text;
 end;
 
 procedure TProjectForm.RetrieveFrames;
@@ -145,6 +168,11 @@ begin
     SCMCbo.ItemIndex := Engine.SourceManagements.IndexOf(FProject.SCM.Name)
   else
     SCMCbo.ItemIndex := 0;
+
+  EnumRunMode(RunModeCbo.Items);
+  RunModeCbo.ItemIndex := ord(FProject.Options.RunMode);
+  PauseChk.Checked := FProject.Options.PauseConsole;
+  MainEdit.Text := FProject.Options.MainFile;
 end;
 
 procedure TProjectForm.Button3Click(Sender: TObject);

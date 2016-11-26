@@ -17,7 +17,7 @@ uses
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   mnSynHighlighterD, EditorDebugger, gdbClasses,
   EditorClasses, mneClasses, MsgBox,
-  mneCompileProjectOptions, EditorRun, mneConsoleClasses,
+  mneCompilerProjectFrames, EditorRun, mneConsoleClasses,
   mneConsoleForms;
 
 type
@@ -79,8 +79,8 @@ procedure TDProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEdi
 var
   aFrame: TFrame;
 begin
-  aFrame := TCompilerProjectOptionsForm.Create(AOwner);
-  (aFrame as TCompilerProjectOptionsForm).FProject := AProject;
+  aFrame := TCompilerProjectFrame.Create(AOwner);
+  (aFrame as TCompilerProjectFrame).FProject := AProject;
   aFrame.Caption := 'Compiler';
   AddFrame(aFrame);
   aFrame := TDProjectFrame.Create(AOwner);

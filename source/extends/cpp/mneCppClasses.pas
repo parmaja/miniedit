@@ -16,7 +16,7 @@ uses
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   mnSynHighlighterD, mnSynHighlighterCpp, EditorDebugger, EditorClasses, mneClasses, MsgBox,
-  mneCompileProjectOptions, EditorRun, mneConsoleClasses,
+  mneCompilerProjectFrames, EditorRun, mneConsoleClasses,
   mneConsoleForms;
 
 type
@@ -139,8 +139,8 @@ procedure TCppProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TE
 var
   aFrame: TFrame;
 begin
-  aFrame := TCompilerProjectOptionsForm.Create(AOwner);
-  (aFrame as TCompilerProjectOptionsForm).FProject := AProject;
+  aFrame := TCompilerProjectFrame.Create(AOwner);
+  (aFrame as TCompilerProjectFrame).FProject := AProject;
   aFrame.Caption := 'Compiler';
   AddFrame(aFrame);
   aFrame := TDProjectFrame.Create(AOwner);

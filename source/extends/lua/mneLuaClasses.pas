@@ -14,7 +14,7 @@ uses
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   FileUtil, mnSynHighlighterLua, EditorDebugger, EditorClasses, mneClasses,
-  mneCompileProjectOptions, EditorRun, mneConsoleClasses, LuaDBGServers,
+  mneCompilerProjectFrames, EditorRun, mneConsoleClasses, LuaDBGServers,
   mneConsoleForms;
 
 type
@@ -80,8 +80,8 @@ procedure TLuaProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TE
 var
   aFrame: TFrame;
 begin
-  aFrame := TCompilerProjectOptionsForm.Create(AOwner);
-  (aFrame as TCompilerProjectOptionsForm).FProject := AProject;
+  aFrame := TCompilerProjectFrame.Create(AOwner);
+  (aFrame as TCompilerProjectFrame).FProject := AProject;
   aFrame.Caption := 'Compiler';
   AddFrame(aFrame);
   aFrame := TLuaProjectFrame.Create(AOwner);

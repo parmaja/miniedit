@@ -45,11 +45,11 @@ uses
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
   SearchProgressForms, EditorDebugger, SelectList, IniFiles, mneAssociateForm,
   mneExtends, mneCppClasses, mneVerilogClasses, SynHighlighterVerilog,
-  mneCustomClasses, mnePHPProjectFrames, mnePasProjectFrames,
+  mneCustomClasses, mnePasProjectFrames,
   mnePASClasses, mneCSVClasses, mneDClasses,
   mneLuaClasses, LuaDBGServers, mneCompilerTendencyFrames, MsgBox, GUIMsgBox, Classes,
   PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses, gdbClasses,
-  mneCompileProjectOptions, mneManageRecentsForms,
+  mneCompilerProjectFrames, mneManageRecentsForms,
   mneTendencyOptions, mneCSVForms, mnUtils, mnConnections;
 
 {$R *.res}

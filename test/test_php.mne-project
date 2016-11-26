@@ -6,37 +6,11 @@
     <TendencyName>PHP</TendencyName>
     <Desktop Class="TEditorDesktop">
       <Breakpoints Class="TmneBreakpoints">
-        <Objects>
-          <Object Type="TmneBreakpoint">
-            <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
-            <LineNo>5</LineNo>
-          </Object>
-        </Objects>
       </Breakpoints>
       <Watches Class="TmneWatches">
-        <Objects>
-          <Object Type="TmneWatch">
-            <Name>$name</Name>
-          </Object>
-        </Objects>
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.php</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
-        <Items>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\web\projects\wp_metallic\wp-content\themes\wp_metallic\css\screen.css</FileName>
-            <CaretY>23</CaretY>
-            <TopLine>4</TopLine>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
-            <CaretY>10</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\test.py</FileName>
-          </Object>
-        </Items>
       </Files>
     </Desktop>
     <Options Class="TPHPProjectOptions">
