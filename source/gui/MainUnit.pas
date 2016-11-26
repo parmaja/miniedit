@@ -603,7 +603,7 @@ begin
 
   if (aWorkspace <> '') then
   begin
-    Engine.Startup;
+    Engine.Startup(GetKeyShiftState = [ssShift]);
   end;
   ShowFolderFiles := Engine.Options.ShowFolderFiles;
   SortFolderFiles := Engine.Options.SortFolderFiles;

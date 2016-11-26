@@ -227,9 +227,10 @@ type
   TAddClickCallBack = procedure(Name, Caption: string; OnClickEvent: TNotifyEvent; ShortCut: TShortCut = 0) of object;
 
   TFileGroupKind = (
-    fgkExecutable,//You can guess what is it :P
     fgkText, //Is it an Text Editor like SQL or PHP
-    fgkUneditable, // Can be editable
+    fgkUneditable, // Can't be editable
+    fgkExecutable,//You can guess what is it :P
+    fgkDebugee, //TODO
     fgkMain,//this can be the main file for project
     fgkResult,//Result file, generated, like: exe or .o or .hex
     fgkBrowsable,//When open file show it in the extension list
@@ -1072,6 +1073,7 @@ type
     function GetCurrentTendency: TEditorTendency;
     function GetTendency: TEditorTendency;
   protected
+    FSafeMode: Boolean;
     FInUpdateState: Integer;
     FNotifyObject: INotifyEngine; //TODO should be list
     property SearchEngine: TSynEditSearch read FSearchEngine;
@@ -1083,7 +1085,7 @@ type
     constructor Create; virtual;
     destructor Destroy; override;
 
-    procedure Startup;
+    procedure Startup(vSafeMode: Boolean = False);
     procedure LoadOptions;
     procedure SaveOptions;
     procedure Shutdown;
@@ -3363,15 +3365,17 @@ begin
   Result := CompareText(TFileGroup(Item1).Title, TFileGroup(Item2).Title);
 end;
 
-procedure TEditorEngine.Startup;
+procedure TEditorEngine.Startup(vSafeMode: Boolean);
 begin
-  FEngineLife := engnStarted;
+  FSafeMode := vSafeMode;
+  FEngineLife := engnStarting;
   Groups.Sort(@SortGroupsByTitle);
   DefaultProject.FileName := WorkSpace + 'mne-default-project.xml';
   LoadOptions;
   //here we will autoopen last project
   DefaultProject.LoadFromFile(DefaultProject.FileName);
   Session.Project := DefaultProject;
+  FEngineLife := engnStarted;
 end;
 
 procedure TEditorEngine.LoadOptions;
@@ -3474,6 +3478,7 @@ function TEditorEngine.EnvReplace(S: string; ForRoot: Boolean): string;
 var
   List: TStringList;
 begin
+  Result := '';
   if s <> '' then
   begin
     List := TStringList.Create;
@@ -3748,7 +3753,7 @@ procedure TEditorFile.Load(FileName: string);
 begin
   FileName := ExpandFileName(FileName);
   Name := FileName;
-  DoLoad(FileName);
+  DoLoad(FileName);//maybe safe loading
   IsEdited := False;
   IsNew := False;
   UpdateAge;
@@ -4950,23 +4955,25 @@ var
       EditorResource.DebugImages.Draw(Canvas, r.Left, r.Top, ImageIndex);
     end;
   end;
-
+var
+  aTendency: TEditorTendency;
 begin
+  aTendency := Engine.CurrentTendency;
   //inherited;
-  if Engine.Tendency.Debug <> nil then
+  if aTendency.Debug <> nil then
   begin
     lh := TSynEdit(SynEdit).LineHeight;
     iw := EditorResource.DebugImages.Width;
 
-    Engine.Tendency.Debug.Lock;
+    aTendency.Debug.Lock;
     try
-      for i := 0 to Engine.Tendency.Debug.Breakpoints.Count - 1 do
+      for i := 0 to aTendency.Debug.Breakpoints.Count - 1 do
       begin
-        if SameText(Engine.Tendency.Debug.Breakpoints[i].FileName, FEditorFile.Name) then//need improve
-          DrawIndicator(Engine.Tendency.Debug.Breakpoints[i].Line, DEBUG_IMAGE_BREAKPOINT);
+        if SameText(aTendency.Debug.Breakpoints[i].FileName, FEditorFile.Name) then//need improve
+          DrawIndicator(aTendency.Debug.Breakpoints[i].Line, DEBUG_IMAGE_BREAKPOINT);
       end;
     finally
-      Engine.Tendency.Debug.Unlock;
+      aTendency.Debug.Unlock;
     end;
 
     if (Engine.DebugLink.ExecutedControl = SynEdit) and (Engine.DebugLink.ExecutedLine >= 0) then
@@ -4998,46 +5005,49 @@ var
   aItem: TEditorDesktopFile;
   aFile: TEditorFile;
 begin
-  Engine.BeginUpdate;
-  try
-    Engine.Files.CloseAll;
-    for i := 0 to Files.Count - 1 do
-    begin
-      aItem := Files[i];
-      if FileExists(aItem.FileName) then
+  if Engine.FSafeMode and (FEngineLife >= engnStarted) then
+  begin
+    Engine.BeginUpdate;
+    try
+      Engine.Files.CloseAll;
+      for i := 0 to Files.Count - 1 do
       begin
-        aFile := Engine.Files.LoadFile(aItem.FileName, False);
-        if aFile <> nil then
-          aFile.Assign(aItem);
-      end;
-    end;
-    Engine.Files.SetActiveFile(Files.CurrentFile);
-    Engine.BrowseFolder := Files.CurrentFolder;
-
-    if (FProject.Tendency <> nil) and (Project.Tendency.Debug <> nil) then
-    begin
-      Project.Tendency.Debug.Lock;
-      try
-       Project.Tendency.Debug.Breakpoints.Clear;
-        for i := 0 to Breakpoints.Count - 1 do
+        aItem := Files[i];
+        if FileExists(aItem.FileName) then
         begin
-          Project.Tendency.Debug.Breakpoints.Add(Breakpoints[i].FileName, Breakpoints[i].LineNo);
+          aFile := Engine.Files.LoadFile(aItem.FileName, False);
+          if aFile <> nil then
+            aFile.Assign(aItem);
         end;
-
-        Project.Tendency.Debug.Watches.Clear;
-        for i := 0 to Watches.Count - 1 do
-        begin
-          Project.Tendency.Debug.Watches.Add(Watches[i].Name);
-        end;
-      finally
-        Project.Tendency.Debug.Unlock;
       end;
-      Engine.UpdateState([ecsDebug]);
+      Engine.Files.SetActiveFile(Files.CurrentFile);
+      Engine.BrowseFolder := Files.CurrentFolder;
+
+      if (FProject.Tendency <> nil) and (Project.Tendency.Debug <> nil) then
+      begin
+        Project.Tendency.Debug.Lock;
+        try
+         Project.Tendency.Debug.Breakpoints.Clear;
+          for i := 0 to Breakpoints.Count - 1 do
+          begin
+            Project.Tendency.Debug.Breakpoints.Add(Breakpoints[i].FileName, Breakpoints[i].LineNo);
+          end;
+
+          Project.Tendency.Debug.Watches.Clear;
+          for i := 0 to Watches.Count - 1 do
+          begin
+            Project.Tendency.Debug.Watches.Add(Watches[i].Name);
+          end;
+        finally
+          Project.Tendency.Debug.Unlock;
+        end;
+        Engine.UpdateState([ecsDebug]);
+      end;
+    finally
+      Engine.EndUpdate;
+      Files.Clear;
     end;
-  finally
-    Engine.EndUpdate;
-    Files.Clear;
-  end;
+  end
 end;
 
 procedure TEditorDesktop.Save;
