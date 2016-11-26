@@ -1341,11 +1341,14 @@ end;
 
 procedure TMainForm.ProjectOptionsActExecute(Sender: TObject);
 begin
-//  if Engine.Session.Active then
+  if Engine.Session.Active then
   begin
     if ShowProjectForm(Engine.Session.Project) then
       Engine.Session.Changed;
-  end;
+  end
+  else
+    if ShowProjectForm(Engine.DefaultProject) then
+      Engine.Session.Changed;
 end;
 
 procedure TMainForm.NewProjectActExecute(Sender: TObject);
@@ -1653,7 +1656,7 @@ var
   b: boolean;
 begin
   b := Engine.Session.Active;
-  ProjectOptionsAct.Enabled := b;
+  //ProjectOptionsAct.Enabled := b;
   SaveProjectAct.Enabled := b;
   SaveAsProjectAct.Enabled := b;
   AddFileToProjectAct.Enabled := b;

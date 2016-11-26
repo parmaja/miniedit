@@ -51,6 +51,7 @@ type
     SCMCbo: TComboBox;
     GeneralSheet: TTabSheet;
     procedure Button4Click(Sender: TObject);
+    procedure CancelBtnClick(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -117,6 +118,11 @@ begin
   MainEdit.Text := s;
 end;
 
+procedure TProjectForm.CancelBtnClick(Sender: TObject);
+begin
+
+end;
+
 procedure TProjectForm.MenuItem3Click(Sender: TObject);
 begin
   SelectPathFolder;
@@ -156,6 +162,8 @@ begin
 end;
 
 procedure TProjectForm.Retrieve;
+var
+  s: string;
 begin
   if FProject.Tendency <> nil then
     Caption := Caption + ' [' + FProject.Tendency.Name + ']';
@@ -165,7 +173,7 @@ begin
   RootDirEdit.Text := FProject.RootDir;
   SaveDesktopChk.Checked := FProject.SaveDesktop;
   if FProject.SCM <> nil then
-    SCMCbo.ItemIndex := Engine.SourceManagements.IndexOf(FProject.SCM.Name)
+    SCMCbo.ItemIndex := Engine.SourceManagements.IndexOf(FProject.SCM.Name) + 1
   else
     SCMCbo.ItemIndex := 0;
 
