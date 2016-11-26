@@ -1,4 +1,4 @@
-unit mneCompileProjectOptions;
+unit mneCompileProjectFrames;
 {$mode objfpc}{$H+}
 {**
  * Mini Edit
@@ -15,9 +15,9 @@ uses
 
 type
 
-  { TCompilerProjectOptionsForm }
+  { TCompilerProjectOptionsFrame }
 
-  TCompilerProjectOptionsForm = class(TFrame, IEditorOptions, IEditorProjectFrame)
+  TCompilerProjectOptionsFrame = class(TFrame, IEditorOptions, IEditorProjectFrame)
     Bevel1: TBevel;
     Button4: TButton;
     RunParamsEdit: TEdit;
@@ -53,9 +53,9 @@ implementation
 
 {$R *.lfm}
 
-{ TCompilerProjectOptionsForm }
+{ TCompilerProjectOptionsFrame }
 
-procedure TCompilerProjectOptionsForm.Button4Click(Sender: TObject);
+procedure TCompilerProjectOptionsFrame.Button4Click(Sender: TObject);
 var
   s: string;
 begin
@@ -63,17 +63,17 @@ begin
   MainEdit.Text := s;
 end;
 
-function TCompilerProjectOptionsForm.GetProject: TEditorProject;
+function TCompilerProjectOptionsFrame.GetProject: TEditorProject;
 begin
   Result := FProject;
 end;
 
-procedure TCompilerProjectOptionsForm.Bevel1ChangeBounds(Sender: TObject);
+procedure TCompilerProjectOptionsFrame.Bevel1ChangeBounds(Sender: TObject);
 begin
 
 end;
 
-procedure TCompilerProjectOptionsForm.Apply;
+procedure TCompilerProjectOptionsFrame.Apply;
 begin
   Options.RunMode := TmneRunMode(RunModeCbo.ItemIndex);
   Options.PauseConsole := PauseChk.Checked;
@@ -85,7 +85,7 @@ begin
   Options.Paths.Assign(PathsEdit.Lines);
 end;
 
-procedure TCompilerProjectOptionsForm.Retrieve;
+procedure TCompilerProjectOptionsFrame.Retrieve;
 begin
   Options := (FProject.Options as TCompilerProjectOptions);
 

@@ -1,4 +1,4 @@
-object CompilerProjectOptionsForm: TCompilerProjectOptionsForm
+object CompilerProjectOptionsFrame TCompilerProjectOptionsFrame
   Left = 0
   Height = 267
   Top = 0
