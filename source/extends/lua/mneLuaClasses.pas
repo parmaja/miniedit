@@ -72,7 +72,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mneLuaTendencyFrames, mneLuaProjectFrames;
+  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mneCompilerTendencyFrames, mneLuaProjectFrames;
 
 { TDProject }
 
@@ -217,9 +217,9 @@ end;
 
 procedure TLuaTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
-  aFrame: TLuaTendencyFrame;
+  aFrame: TCompilerTendencyFrame;
 begin
-  aFrame := TLuaTendencyFrame.Create(AOwner);
+  aFrame := TCompilerTendencyFrame.Create(AOwner);
   aFrame.FTendency := ATendency;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);

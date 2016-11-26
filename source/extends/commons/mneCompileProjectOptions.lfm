@@ -12,7 +12,7 @@ object CompilerProjectOptionsForm: TCompilerProjectOptionsForm
     Left = 68
     Height = 23
     Top = 36
-    Width = 140
+    Width = 248
     TabOrder = 0
   end
   object Label2: TLabel
@@ -24,7 +24,7 @@ object CompilerProjectOptionsForm: TCompilerProjectOptionsForm
     ParentColor = False
   end
   object Button4: TButton
-    Left = 211
+    Left = 320
     Height = 21
     Top = 37
     Width = 22
@@ -603,7 +603,7 @@ object CompilerProjectOptionsForm: TCompilerProjectOptionsForm
   object PathsLbl: TLabel
     Left = 6
     Height = 15
-    Top = 161
+    Top = 160
     Width = 29
     Caption = 'Paths'
     ParentColor = False
@@ -611,7 +611,7 @@ object CompilerProjectOptionsForm: TCompilerProjectOptionsForm
   object ExpandPathsChk: TCheckBox
     Left = 63
     Height = 19
-    Top = 159
+    Top = 158
     Width = 96
     Caption = 'Expand pathes'
     TabOrder = 3

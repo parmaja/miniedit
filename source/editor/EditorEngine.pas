@@ -2856,10 +2856,10 @@ end;
 
 function TEditorEngine.GetSCM: TEditorSCM;
 begin
-  if (Session.Project.SCM <> nil) then
+  if Session.Active and (Session.Project.SCM <> nil) then
     Result := Session.Project.SCM
   else
-    Result := nil;
+    Result := DefaultProject.SCM
 end;
 
 function TEditorEngine.GetCurrentTendency: TEditorTendency;

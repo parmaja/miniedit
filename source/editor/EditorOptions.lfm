@@ -19,9 +19,9 @@ object EditorOptionsForm: TEditorOptionsForm
     Height = 377
     Top = 3
     Width = 436
-    ActivePage = ColorTab
+    ActivePage = OptionsTab
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     object OptionsTab: TTabSheet
       Caption = 'Options'
@@ -227,10 +227,10 @@ object EditorOptionsForm: TEditorOptionsForm
         ParentColor = False
       end
       object TabsToSpacesChk: TCheckBox
-        Left = 21
+        Left = 173
         Height = 19
         Hint = 'Converts a tab character to the number of spaces in Tab Width'
-        Top = 165
+        Top = 312
         Width = 93
         Caption = 'Tabs to spaces'
         TabOrder = 15
@@ -1097,7 +1097,7 @@ object EditorOptionsForm: TEditorOptionsForm
     FileName = '*.mne-theme'
     Filter = 'theme|*.mne-theme'
     Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
-    left = 152
-    top = 284
+    left = 68
+    top = 225
   end
 end

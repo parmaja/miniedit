@@ -12,7 +12,7 @@ object PHPIniForm: TPHPIniForm
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poDesktopCenter
-  LCLVersion = '1.5'
+  LCLVersion = '1.7'
   object Label1: TLabel
     Left = 12
     Height = 13

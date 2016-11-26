@@ -20,7 +20,7 @@ uses
   SynHighlighterHashEntries, EditorProfiles, SynHighlighterCSS,
   SynHighlighterSQL, SynHighlighterXML, SynHighlighterJScript,
   mnSynHighlighterXHTML, mnSynHighlighterMultiProc, HTMLProcessor, EditorDebugger,
-  EditorClasses, dbgpServers, mneClasses, EditorRun,
+  EditorClasses, dbgpServers, mneClasses, mneCompilerTendencyFrames, EditorRun,
   mnePHPProjectFrames;
 
 type
@@ -110,9 +110,6 @@ type
 
   TPHPTendency = class(TEditorTendency)
   private
-    FHTMLHelpFile: string;
-    FPHPHelpFile: string;
-    FPHPPath: string;
   protected
     function CreateDebugger: TEditorDebugger; override;
     procedure Init; override;
@@ -122,15 +119,12 @@ type
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
     function CreateOptions: TEditorProjectOptions; override;
   published
-    property PHPPath: string read FPHPPath write FPHPPath;
-    property PHPHelpFile: string read FPHPHelpFile write FPHPHelpFile;
-    property HTMLHelpFile: string read FHTMLHelpFile write FHTMLHelpFile;
   end;
 
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, PHPProcessor, SynEditStrConst, mnePHPTendencyFrames;
+  IniFiles, mnStreams, mnUtils, PHPProcessor, SynEditStrConst;
 
 { TPHPProject }
 
@@ -304,11 +298,11 @@ end;
 
 procedure TPHPTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
-  aFrame: TPHPTendencyFrame;
+  aFrame: TCompilerTendencyFrame;
 begin
-  aFrame := TPHPTendencyFrame.Create(AOwner);
+  aFrame := TCompilerTendencyFrame.Create(AOwner);
   aFrame.FTendency := ATendency;
-  aFrame.Caption := 'Options';
+  aFrame.Caption := 'PHP Options';
   AddFrame(aFrame);
 end;
 

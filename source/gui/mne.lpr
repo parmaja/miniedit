@@ -46,11 +46,11 @@ uses
   SearchProgressForms, EditorDebugger, SelectList, IniFiles, mneAssociateForm,
   mneExtends, mneCppClasses, mneVerilogClasses, SynHighlighterVerilog,
   mneCustomClasses, mnePHPProjectFrames, mnePasProjectFrames,
-  mnePasTendencyFrames, mnePASClasses, mneCSVClasses, mneDClasses,
-  mneLuaClasses, LuaDBGServers, mneDTendencyFrames, MsgBox, GUIMsgBox, Classes,
+  mnePASClasses, mneCSVClasses, mneDClasses,
+  mneLuaClasses, LuaDBGServers, mneCompilerTendencyFrames, MsgBox, GUIMsgBox, Classes,
   PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses, gdbClasses,
-  mneCompileProjectOptions, mneManageRecentsForms, mneTendencyOptions,
-  mneCSVForms, mnUtils, mnConnections;
+  mneCompileProjectOptions, mneManageRecentsForms,
+  mneTendencyOptions, mneCSVForms, mnUtils, mnConnections;
 
 {$R *.res}
 

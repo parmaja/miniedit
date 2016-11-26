@@ -162,7 +162,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="42">
+    <Units Count="44">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -394,6 +394,20 @@
         <Filename Value="..\extends\lua\LuaDBGServers.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit41>
+      <Unit42>
+        <Filename Value="..\extends\commons\mneCompileProjectOptions.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CompilerProjectOptionsForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit42>
+      <Unit43>
+        <Filename Value="..\extends\commons\mneCompilerTendencyFrames.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="CompilerTendencyFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit43>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

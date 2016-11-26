@@ -55,7 +55,7 @@ object PHPProjectFrame: TPHPProjectFrame
   object PauseChk: TCheckBox
     Left = 261
     Height = 19
-    Top = 11
+    Top = 10
     Width = 99
     Anchors = [akTop, akRight]
     Caption = 'Pause after run'
