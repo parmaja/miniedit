@@ -3373,7 +3373,7 @@ begin
   DefaultProject.FileName := WorkSpace + 'mne-default-project.xml';
   LoadOptions;
   //here we will autoopen last project
-  DefaultProject.LoadFromFile(DefaultProject.FileName);
+  DefaultProject.SafeLoadFromFile(DefaultProject.FileName);
   Session.Project := DefaultProject;
   FEngineLife := engnStarted;
 end;
