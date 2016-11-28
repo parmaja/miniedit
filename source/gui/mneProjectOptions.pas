@@ -20,7 +20,11 @@ type
 
   TProjectForm = class(TForm)
     Button3: TButton;
+    Button4: TButton;
     DescriptionEdit: TEdit;
+    Label2: TLabel;
+    Label9: TLabel;
+    MainEdit: TEdit;
     OverrideOptionsSheet: TTabSheet;
     Label1: TLabel;
     Label3: TLabel;
@@ -40,6 +44,7 @@ type
     RootDirEdit: TEdit;
     SCMCbo: TComboBox;
     GeneralSheet: TTabSheet;
+    procedure Button4Click(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
@@ -98,6 +103,14 @@ begin
   RootDirEdit.Text := Engine.BrowseFolder;
 end;
 
+procedure TProjectForm.Button4Click(Sender: TObject);
+var
+  s: string;
+begin
+  ShowSelectFile(FProject.RootDir, s);
+  MainEdit.Text := s;
+end;
+
 procedure TProjectForm.MenuItem3Click(Sender: TObject);
 begin
   SelectPathFolder;
@@ -111,6 +124,7 @@ begin
   FProject.RootDir := RootDirEdit.Text;
   FProject.SaveDesktop := SaveDesktopChk.Checked;
   FProject.SetSCMClass(TEditorSCM(SCMCbo.Items.Objects[SCMCbo.ItemIndex]));
+  FProject.Options.MainFile := MainEdit.Text;
 end;
 
 procedure TProjectForm.RetrieveFrames;
@@ -147,6 +161,7 @@ begin
     SCMCbo.ItemIndex := Engine.SourceManagements.IndexOf(FProject.SCM.Name) + 1
   else
     SCMCbo.ItemIndex := 0;
+  MainEdit.Text := FProject.Options.MainFile;
 end;
 
 procedure TProjectForm.Button3Click(Sender: TObject);

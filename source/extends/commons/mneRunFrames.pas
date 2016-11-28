@@ -19,19 +19,14 @@ type
 
   TRunFrame = class(TFrame, IEditorOptions, IEditorProjectFrame)
     Button3: TButton;
-    Button4: TButton;
     CompilerEdit: TEdit;
     CompilerLabel: TLabel;
-    Label2: TLabel;
     Label7: TLabel;
-    Label9: TLabel;
-    MainEdit: TEdit;
     OpenDialog: TOpenDialog;
     PauseChk: TCheckBox;
     RunModeCbo: TComboBox;
     procedure Bevel1ChangeBounds(Sender: TObject);
     procedure Button3Click(Sender: TObject);
-    procedure Button4Click(Sender: TObject);
   private
   protected
     function GetProject: TEditorProject;
@@ -67,19 +62,10 @@ begin
   end;
 end;
 
-procedure TRunFrame.Button4Click(Sender: TObject);
-var
-  s: string;
-begin
-  ShowSelectFile(FProject.RootDir, s);
-  MainEdit.Text := s;
-end;
-
 procedure TRunFrame.Apply;
 begin
   FProject.Options.RunMode := TmneRunMode(RunModeCbo.ItemIndex);
   FProject.Options.RunPause := PauseChk.Checked;
-  FProject.Options.MainFile := MainEdit.Text;
 end;
 
 procedure TRunFrame.Retrieve;
@@ -87,7 +73,6 @@ begin
   EnumRunMode(RunModeCbo.Items);
   RunModeCbo.ItemIndex := ord(FProject.Options.RunMode);
   PauseChk.Checked := FProject.Options.RunPause;
-  MainEdit.Text := FProject.Options.MainFile;
 end;
 
 end.

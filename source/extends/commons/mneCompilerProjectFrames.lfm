@@ -596,7 +596,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
   object ExpandPathsChk1: TCheckBox
     Left = 10
     Height = 19
-    Top = 59
+    Top = 60
     Width = 217
     Caption = 'Auto include files from included path'
     TabOrder = 2
@@ -634,7 +634,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
     ParentColor = False
   end
   object OutputFileEdit: TEdit
-    Left = 68
+    Left = 72
     Height = 23
     Top = 7
     Width = 100
@@ -651,7 +651,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
   object RunParamsEdit: TEdit
     Left = 271
     Height = 23
-    Top = 9
+    Top = 7
     Width = 185
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 6
