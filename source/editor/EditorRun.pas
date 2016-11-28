@@ -348,9 +348,9 @@ begin
   FProcess.InheritHandles := True;
   FProcess.CurrentDirectory := ReplaceStr(AInfo.CurrentDirectory, '\', '/');
 
-  FProcess.Executable := ReplaceStr(AInfo.Command, '\', '/');
+  FProcess.Executable := ReplaceStr(AInfo.Run.Command, '\', '/');
   //Engine.SendOutout(AInfo.Params);//buggy
-  CommandToList(AInfo.Params, FProcess.Parameters);
+  CommandToList(AInfo.Run.Params, FProcess.Parameters);
 
   aOptions := [];
   if Info.Suspended then
@@ -392,13 +392,13 @@ var
   term: string;
 {$endif}
 begin
-  case Info.Mode of
+  case Info.Run.Mode of
     runConsole:
     begin
       if Info.DebugIt then
       begin
-        Info.Command := Info.GetCommandLine;
-        Info.Params := '';
+        Info.Run.Command := Info.GetCommandLine;
+        Info.Run.Params := '';
         Info.Suspended := True;
         CreateConsole(Info);
         FPool.Synchronize(@Attach);
@@ -408,10 +408,10 @@ begin
       begin
         {$ifdef windows}
         s := '/c "'+ Info.GetCommandLine + '"';
-        if Info.Pause then
+        if Info.Run.Pause then
           s := s + ' & pause';
-        Info.Params := s;
-        Info.Command := 'cmd';
+        Info.Run.Params := s;
+        Info.Run.Command := 'cmd';
         {$else}
 
         //s := GetEnvironmentVariable('SHELL');

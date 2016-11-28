@@ -162,7 +162,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="42">
+    <Units Count="43">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -394,6 +394,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
       </Unit41>
+      <Unit42>
+        <Filename Value="..\extends\commons\mneRunFrames.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="RunFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit42>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

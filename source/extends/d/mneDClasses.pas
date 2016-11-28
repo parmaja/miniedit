@@ -181,17 +181,17 @@ begin
     aParams := '';
     aRunItem := Engine.Session.Run.Add;
 
-    aRunItem.Info.Command := Info.Command;
-    if aRunItem.Info.Command = '' then
+    aRunItem.Info.Run.Command := Info.Command;
+    if aRunItem.Info.Run.Command = '' then
     begin
       {$ifdef windows}
-      aRunItem.Info.Command := 'gdc.exe';
+      aRunItem.Info.Run.Command := 'gdc.exe';
       {$else}
       aRunItem.Info.Command := 'gdc';
       {$endif}
     end;
 
-    aRunItem.Info.Mode := runOutput;
+    aRunItem.Info.Run.Mode := runOutput;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
@@ -201,14 +201,14 @@ begin
     if not FileExists(aPath) then
       raise EEditorException.Create('File not exists: ' + aParams);
 
-    aRunItem.Info.Params := aPath + #13;
+    aRunItem.Info.Run.Params := aPath + #13;
     if Info.OutputFile <> '' then
       //aRunItem.Info.Params := aRunItem.Info.Params + '-of' + Info.OutputFile + #13; //dmd
-      aRunItem.Info.Params := aRunItem.Info.Params + '-o' + Info.OutputFile + #13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-o' + Info.OutputFile + #13;
 
     if rnaDebug in Info.Actions then
     begin
-      aRunItem.Info.Params := aRunItem.Info.Params + '-g'#13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-g'#13;
     end;
 
     aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
@@ -225,28 +225,28 @@ begin
           raise EEditorException.Create('Path not exists: ' + aParams);
 
         //aRunItem.Info.Params := aRunItem.Info.Params + '-I' +aPath + #13;
-        aRunItem.Info.Params := aRunItem.Info.Params + '-B' +aPath + #13;
+        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-B' +aPath + #13;
       end;
     end;
 
     //aRunItem.Info.Params := aRunItem.Info.Params + '-v'#13;
 
     if Options.ConfigFile <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + '@' + Engine.EnvReplace(Options.ConfigFile) + #13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '@' + Engine.EnvReplace(Options.ConfigFile) + #13;
   end;
 
   if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Message := 'Running ' + Info.OutputFile;
-    aRunItem.Info.Mode := Info.Mode;
+    aRunItem.Info.Run.Mode := Info.Mode;
     aRunItem.Info.CurrentDirectory := Info.Root;
-    aRunItem.Info.Pause := Info.Pause;
+    aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.DebugIt := rnaDebug in Info.Actions;
     aRunItem.Info.Title := ExtractFileName(Info.OutputFile);;
-    aRunItem.Info.Command := Info.RunFile;
+    aRunItem.Info.Run.Command := Info.RunFile;
     if Options.RunParams <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.RunParams + #13;
   end;
 
   Engine.Session.Run.Start;

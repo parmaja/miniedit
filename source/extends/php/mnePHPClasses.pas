@@ -261,21 +261,21 @@ begin
   begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Message := 'Running';
-    aRunItem.Info.Mode := Info.Mode;
-    aRunItem.Info.Pause := Info.Pause;
+    aRunItem.Info.Run.Mode := Info.Mode;
+    aRunItem.Info.Run.Pause := Info.Pause;
 
-    aRunItem.Info.Command := Info.Command;
-    if aRunItem.Info.Command = '' then
+    aRunItem.Info.Run.Command := Info.Command;
+    if aRunItem.Info.Run.Command = '' then
     begin
       {$ifdef windows}
-      aRunItem.Info.Command := 'php.exe';
+      aRunItem.Info.Run.Command := 'php.exe';
       {$else linux}
       aRunItem.Info.Command := 'php';
       {$endif}
     end;
 
     if Info.MainFile <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + Info.MainFile + #13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Info.MainFile + #13;
 
     aRunItem.Info.Link := Info.Link;
     if aRunItem.Info.Link = '' then
@@ -284,7 +284,7 @@ begin
     aRunItem.Info.Link := Engine.EnvReplace(aRunItem.Info.Link);
 
     if Options.RunParams <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.RunParams + #13;
 
     Engine.Session.Run.Start;
   end;

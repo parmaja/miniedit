@@ -5,3 +5,4 @@ units
 *.bak
 /source/gui/*.lps
 /source/gui/mne.res
+/release

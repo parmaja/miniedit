@@ -266,6 +266,11 @@ type
     capDebugServer //PHP style need to start debug server
   );
 
+  TRunCommand = record
+
+  end;
+
+
   TEditorCapabilities = set of TEditorCapability;
 
   { TEditorTendency }
@@ -307,6 +312,7 @@ type
     property Debug: TEditorDebugger read FDebug write SetDebug;
     property IsDefault: Boolean read GetIsDefault;
   published
+    //RunCommnad: TRunCommand;
     property Command: string read FCommand write FCommand; //like php.exe or gdc.exe or fpc.exe
     property Require: string read FRequire write FRequire; //Require modules to pass to the compiler
 
@@ -358,12 +364,12 @@ type
 
   TEditorProjectOptions = class(TPersistent)
   private
-    FMainFile: string;
-    FPauseConsole: Boolean;
-    FRootUrl: string;
-    FRunMode: TmneRunMode;
     FRunParams: string;
+    FRunMode: TmneRunMode;
+    FRunPause: Boolean;
+    FMainFile: string;
     FOutputFile: string;
+    FRootUrl: string;
   public
     constructor Create; virtual;
     procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); virtual;
@@ -371,11 +377,11 @@ type
   published
     property RunMode: TmneRunMode read FRunMode write FRunMode;
     //PauseConsole do not end until use press any key or enter
-    property PauseConsole: Boolean read FPauseConsole write FPauseConsole;
-    property RootUrl: string read FRootUrl write FRootUrl;
+    property RunPause: Boolean read FRunPause write FRunPause;
+    property RunParams: string read FRunParams write FRunParams;
     property MainFile: string read FMainFile write FMainFile;
     property OutputFile: string read FOutputFile write FOutputFile;
-    property RunParams: string read FRunParams write FRunParams;
+    property RootUrl: string read FRootUrl write FRootUrl;
   end;
 
   TCompilerProjectOptions = class(TEditorProjectOptions)
@@ -2238,7 +2244,7 @@ begin
       end;
 
       p.Mode := Engine.Session.Project.Options.RunMode;
-      p.Pause := Engine.Session.Project.Options.PauseConsole;
+      p.Pause := Engine.Session.Project.Options.RunPause;
 
       if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
         p.MainFile := Engine.Files.Current.Name;

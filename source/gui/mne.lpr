@@ -49,7 +49,7 @@ uses
   mnePASClasses, mneCSVClasses, mneDClasses,
   mneLuaClasses, LuaDBGServers, mneCompilerTendencyFrames, MsgBox, GUIMsgBox, Classes,
   PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses, gdbClasses,
-  mneCompilerProjectFrames, mneManageRecentsForms,
+  mneCompilerProjectFrames, mneRunFrames, mneManageRecentsForms,
   mneTendencyOptions, mneCSVForms, mnUtils, mnConnections;
 
 {$R *.res}

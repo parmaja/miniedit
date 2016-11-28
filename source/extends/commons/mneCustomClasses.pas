@@ -231,17 +231,17 @@ begin
   begin
     aRunItem := Engine.Session.Run.Add;
 
-    aRunItem.Info.Command := Info.Command;
-    if aRunItem.Info.Command = '' then
-      aRunItem.Info.Command := 'dmd.exe';
+    aRunItem.Info.Run.Command := Info.Command;
+    if aRunItem.Info.Run.Command = '' then
+      aRunItem.Info.Run.Command := 'dmd.exe';
 
-    aRunItem.Info.Mode := runOutput;
+    aRunItem.Info.Run.Mode := runOutput;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
-    aRunItem.Info.Params := Info.MainFile + #13;
+    aRunItem.Info.Run.Params := Info.MainFile + #13;
     if Info.OutputFile <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + '-of' + Info.OutputFile + #13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-of' + Info.OutputFile + #13;
 
     aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
     //aRunItem.Info.Params := aRunItem.Info.Params + '-color=on' + #13; //not work :(
@@ -253,27 +253,27 @@ begin
       begin
         if Options.ExpandPaths then
           aPath := Engine.ExpandFile(aPath);
-        aRunItem.Info.Params := aRunItem.Info.Params + '-I' +aPath + #13;
+        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-I' +aPath + #13;
       end;
     end;
 
     //aRunItem.Info.Params := aRunItem.Info.Params + '-v'#13;
 
     if Options.ConfigFile <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + '@' + Engine.EnvReplace(Options.ConfigFile) + #13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '@' + Engine.EnvReplace(Options.ConfigFile) + #13;
   end;
 
   if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Message := 'Running ' + Info.OutputFile;
-    aRunItem.Info.Mode := Options.RunMode;
+    aRunItem.Info.Run.Mode := Options.RunMode;
     aRunItem.Info.CurrentDirectory := Info.Root;
-    aRunItem.Info.Pause := Options.PauseConsole;
+    aRunItem.Info.Run.Pause := Options.RunPause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
-    aRunItem.Info.Command := ChangeFileExt(Info.OutputFile, '.exe');
+    aRunItem.Info.Run.Command := ChangeFileExt(Info.OutputFile, '.exe');
     if Options.RunParams <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.RunParams + #13;
   end;
 
   Engine.Session.Run.Start;

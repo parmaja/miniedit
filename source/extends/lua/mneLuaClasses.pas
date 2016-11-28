@@ -178,25 +178,25 @@ begin
   begin
     aRunItem := Engine.Session.Run.Add;
 
-    aRunItem.Info.Command := Info.Command;
-    if aRunItem.Info.Command = '' then
+    aRunItem.Info.Run.Command := Info.Command;
+    if aRunItem.Info.Run.Command = '' then
     {$ifdef windows}
-      aRunItem.Info.Command := 'lua.exe';
+      aRunItem.Info.Run.Command := 'lua.exe';
     {$else}
       aRunItem.Info.Command := 'lua';
     {$endif}
 
-    aRunItem.Info.Mode := Info.Mode;
-    aRunItem.Info.Pause := Info.Pause;
+    aRunItem.Info.Run.Mode := Info.Mode;
+    aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aRunItem.Info.Message := 'Runing ' + Info.MainFile;
     if Require <> '' then
-        aRunItem.Info.Params := '-l '+ Require + #13;
+        aRunItem.Info.Run.Params := '-l '+ Require + #13;
     if rnaDebug in Info.Actions then
-        aRunItem.Info.Params := '-e '+ '"require(''mobdebug'').start()"' + #13; //using mobdebug
-    aRunItem.Info.Params := aRunItem.Info.Params + Info.MainFile + #13;
+        aRunItem.Info.Run.Params := '-e '+ '"require(''mobdebug'').start()"' + #13; //using mobdebug
+    aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Info.MainFile + #13;
   end
   else if rnaLint in Info.Actions then
   begin

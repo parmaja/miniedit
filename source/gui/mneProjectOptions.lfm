@@ -32,7 +32,6 @@ object ProjectForm: TProjectForm
     Cancel = True
     Caption = '&Cancel'
     ModalResult = 2
-    OnClick = CancelBtnClick
     TabOrder = 2
   end
   object PageControl: TPageControl
@@ -140,108 +139,17 @@ object ProjectForm: TProjectForm
         FocusControl = TitleEdit
         ParentColor = False
       end
-    end
-    object OverrideOptionsSheet: TTabSheet
-      Caption = 'Options'
-      ClientHeight = 268
-      ClientWidth = 455
-      object Label6: TLabel
-        Left = 10
-        Height = 13
-        Top = 20
-        Width = 71
-        Caption = 'Special file ext.'
-        FocusControl = SpecialExtEdit
-        ParentColor = False
-      end
-      object SpecialExtEdit: TEdit
-        Left = 116
-        Height = 21
-        Top = 15
-        Width = 287
-        TabOrder = 0
-      end
       object SaveDesktopChk: TCheckBox
         Left = 15
         Height = 19
-        Top = 51
+        Top = 188
         Width = 270
         Caption = 'Save Desktop, &Reopen last opend files in this project'
-        TabOrder = 1
+        TabOrder = 6
       end
-      object CompilerPanel: TPanel
-        Left = 5
-        Height = 162
-        Top = 91
-        Width = 441
-        BevelInner = bvRaised
-        BevelOuter = bvLowered
-        ClientHeight = 162
-        ClientWidth = 441
-        TabOrder = 2
-        object RunModeCbo: TComboBox
-          Left = 73
-          Height = 21
-          Top = 14
-          Width = 165
-          Anchors = [akTop, akLeft, akRight]
-          ItemHeight = 13
-          Style = csDropDownList
-          TabOrder = 0
-        end
-        object PauseChk: TCheckBox
-          Left = 249
-          Height = 19
-          Top = 15
-          Width = 92
-          Anchors = [akTop, akRight]
-          Caption = 'Pause after run'
-          TabOrder = 1
-        end
-        object Label7: TLabel
-          Left = 10
-          Height = 13
-          Top = 18
-          Width = 50
-          Caption = 'Run Mode'
-          ParentColor = False
-        end
-        object Label2: TLabel
-          Left = 10
-          Height = 13
-          Top = 45
-          Width = 39
-          Caption = 'Main file'
-          ParentColor = False
-        end
-        object MainEdit: TEdit
-          Left = 73
-          Height = 21
-          Top = 41
-          Width = 264
-          Anchors = [akTop, akLeft, akRight]
-          TabOrder = 2
-        end
-        object Button4: TButton
-          Left = 340
-          Height = 23
-          Top = 40
-          Width = 24
-          Anchors = [akTop, akRight]
-          Caption = '...'
-          OnClick = Button4Click
-          TabOrder = 3
-        end
-        object Label9: TLabel
-          Left = 10
-          Height = 13
-          Top = 62
-          Width = 297
-          Caption = 'If empty, we will take the current opened file, or pass the folder.'
-          ParentColor = False
-          WordWrap = True
-        end
-      end
+    end
+    object OverrideOptionsSheet: TTabSheet
+      Caption = 'Options'
     end
   end
   object PathPopupMenu: TPopupMenu

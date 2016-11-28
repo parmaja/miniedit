@@ -208,17 +208,17 @@ begin
   begin
     aRunItem := Engine.Session.Run.Add;
 
-    aRunItem.Info.Command := Info.Command;
-    if aRunItem.Info.Command = '' then
-      aRunItem.Info.Command := 'fpc.exe';
+    aRunItem.Info.Run.Command := Info.Command;
+    if aRunItem.Info.Run.Command = '' then
+      aRunItem.Info.Run.Command := 'fpc.exe';
 
-    aRunItem.Info.Mode := runOutput;
+    aRunItem.Info.Run.Mode := runOutput;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
-    aRunItem.Info.Params := Info.MainFile + #13;
+    aRunItem.Info.Run.Params := Info.MainFile + #13;
     if Info.OutputFile <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + '-o' + Info.OutputFile + #13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-o' + Info.OutputFile + #13;
 
     aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
 
@@ -236,29 +236,29 @@ begin
       end;
     end;
     if p <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + p + #13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + p + #13;
   end;
 
   if rnaDebug in Info.Actions then
   begin
-    aRunItem.Info.Params := aRunItem.Info.Params + '-gw'#13;
-    aRunItem.Info.Params := aRunItem.Info.Params + '-dDebug'#13;
+    aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-gw'#13;
+    aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-dDebug'#13;
   end
   else
-    aRunItem.Info.Params := aRunItem.Info.Params + '-dRelease'#13;
+    aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-dRelease'#13;
 
   if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Message := 'Running ' + Info.OutputFile;
-    aRunItem.Info.Mode := Info.Mode;
+    aRunItem.Info.Run.Mode := Info.Mode;
     aRunItem.Info.CurrentDirectory := Info.Root;
-    aRunItem.Info.Pause := Info.Pause;
+    aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.DebugIt := rnaDebug in Info.Actions;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);
-    aRunItem.Info.Command := Info.RunFile;
+    aRunItem.Info.Run.Command := Info.RunFile;
     if Options.RunParams <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.RunParams + #13;
   end;
 
   Engine.Session.Run.Start;

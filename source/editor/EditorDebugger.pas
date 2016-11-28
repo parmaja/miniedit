@@ -27,24 +27,30 @@ type
 
   TmneRunInfo = record
     Actions: TmneRunActions;
+
     Mode: TmneRunMode;
-    Root: string; //cur dir for the project
     Pause: Boolean;
-    Link: string; //URL to show in browser
     Command: string;
     MainFile: string; //file to compile
+
+    Root: string; //cur dir for the project
+    Link: string; //URL to show in browser
     OutputFile: string; //file to generate
     RunFile: string; //file to run
   end;
 
-  TmneCommandInfo = record
-    Title: string; //Console title
-    Message: string; //Message send to output before execute it
-    Mode: TmneRunMode;
+  TRunCommand = record
     Command: string;
     Params: string;
-    CurrentDirectory: string;
+    Mode: TmneRunMode;
     Pause: Boolean;
+  end;
+
+  TmneCommandInfo = record
+    Run: TRunCommand;
+    Title: string; //Console title
+    Message: string; //Message send to output before execute it
+    CurrentDirectory: string;
     Link: string; //URL to show in browser
     Suspended: Boolean; //For attach with debugger
     DebugIt: Boolean;
@@ -283,9 +289,9 @@ end;
 
 function TmneCommandInfo.GetCommandLine: string;
 begin
-  Result := Command;
-  if Params <> '' then
-    Result := Result + ' ' + StringReplace(Params, #13, ' ', [rfReplaceAll]);
+  Result := Run.Command;
+  if Run.Params <> '' then
+    Result := Result + ' ' + StringReplace(Run.Params, #13, ' ', [rfReplaceAll]);
 end;
 
 { TCallStackItems }

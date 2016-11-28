@@ -10,8 +10,8 @@ object CompilerProjectFrame: TCompilerProjectFrame
   DesignTop = 223
   inline PathsEdit: TSynEdit
     Left = 5
-    Height = 119
-    Top = 142
+    Height = 146
+    Top = 115
     Width = 451
     Anchors = [akTop, akLeft, akRight, akBottom]
     Constraints.MinHeight = 60
@@ -23,6 +23,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
     ParentFont = False
     TabOrder = 0
     TabStop = False
+    Gutter.Visible = False
     Gutter.Width = 19
     Gutter.MouseActions = <    
       item
@@ -579,7 +580,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
   object PathsLbl: TLabel
     Left = 7
     Height = 15
-    Top = 116
+    Top = 87
     Width = 29
     Caption = 'Paths'
     ParentColor = False
@@ -587,7 +588,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
   object ExpandPathsChk: TCheckBox
     Left = 64
     Height = 19
-    Top = 114
+    Top = 85
     Width = 96
     Caption = 'Expand pathes'
     TabOrder = 1
@@ -595,7 +596,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
   object ExpandPathsChk1: TCheckBox
     Left = 10
     Height = 19
-    Top = 88
+    Top = 59
     Width = 217
     Caption = 'Auto include files from included path'
     TabOrder = 2
@@ -603,7 +604,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
   object ExpandPathsChk2: TCheckBox
     Left = 10
     Height = 19
-    Top = 69
+    Top = 40
     Width = 203
     Caption = 'Auto include path from root folder'
     TabOrder = 3
@@ -611,7 +612,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
   object Label4: TLabel
     Left = 209
     Height = 15
-    Top = 114
+    Top = 85
     Width = 57
     Caption = 'Config File'
     ParentColor = False
@@ -619,7 +620,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
   object ConfigFileEdit: TEdit
     Left = 272
     Height = 23
-    Top = 110
+    Top = 81
     Width = 185
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 4
@@ -627,7 +628,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
   object Label5: TLabel
     Left = 7
     Height = 15
-    Top = 23
+    Top = 11
     Width = 57
     Caption = 'Output file'
     ParentColor = False
@@ -635,14 +636,14 @@ object CompilerProjectFrame: TCompilerProjectFrame
   object OutputFileEdit: TEdit
     Left = 68
     Height = 23
-    Top = 19
+    Top = 7
     Width = 100
     TabOrder = 5
   end
   object Label6: TLabel
     Left = 189
     Height = 15
-    Top = 23
+    Top = 11
     Width = 63
     Caption = 'Run Params'
     ParentColor = False
@@ -650,7 +651,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
   object RunParamsEdit: TEdit
     Left = 271
     Height = 23
-    Top = 21
+    Top = 9
     Width = 185
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 6
@@ -658,7 +659,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
   object Bevel1: TBevel
     Left = 10
     Height = 2
-    Top = 66
+    Top = 37
     Width = 441
     OnChangeBounds = Bevel1ChangeBounds
   end

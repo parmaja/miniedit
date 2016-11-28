@@ -171,17 +171,17 @@ begin
   begin
     aRunItem := Engine.Session.Run.Add;
 
-    aRunItem.Info.Command := Info.Command;
-    if aRunItem.Info.Command = '' then
-      aRunItem.Info.Command := 'iverilog'{$ifdef windows}+'.exe'{$endif};
+    aRunItem.Info.Run.Command := Info.Command;
+    if aRunItem.Info.Run.Command = '' then
+      aRunItem.Info.Run.Command := 'iverilog'{$ifdef windows}+'.exe'{$endif};
 
-    aRunItem.Info.Mode := runOutput;
+    aRunItem.Info.Run.Mode := runOutput;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
-    aRunItem.Info.Params := '-s' + Info.MainFile + #13;
+    aRunItem.Info.Run.Params := '-s' + Info.MainFile + #13;
     if Info.OutputFile <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + '-o' + Info.OutputFile + #13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-o' + Info.OutputFile + #13;
 
     aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
 
@@ -199,24 +199,24 @@ begin
       end;
     end;
     if p <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + '-I ' + p + #13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-I ' + p + #13;
 
     for i := 0 to Engine.Files.Count-1 do
       if Engine.Files[i].Extension='.v' then
-        aRunItem.Info.Params := aRunItem.Info.Params + Engine.Files[i].Name + #13;
+        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Engine.Files[i].Name + #13;
   end;
 
   if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Message := 'Running ' + Info.OutputFile;
-    aRunItem.Info.Mode := Info.Mode;
+    aRunItem.Info.Run.Mode := Info.Mode;
     aRunItem.Info.CurrentDirectory := Info.Root;
-    aRunItem.Info.Pause := Info.Pause;
+    aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);
-    aRunItem.Info.Command := Info.RunFile;
+    aRunItem.Info.Run.Command := Info.RunFile;
     if Options.RunParams <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.RunParams + #13;
   end;
 
   Engine.Session.Run.Start;

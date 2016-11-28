@@ -182,35 +182,35 @@ begin
   begin
     aRunItem := Engine.Session.Run.Add;
 
-    aRunItem.Info.Command := Info.Command;
-    if aRunItem.Info.Command = '' then
+    aRunItem.Info.Run.Command := Info.Command;
+    if aRunItem.Info.Run.Command = '' then
     begin
       {$ifdef windows}
-      aRunItem.Info.Command := 'python.exe';
+      aRunItem.Info.Run.Command := 'python.exe';
       {$else}
       aRunItem.Info.Command := 'python';
       {$endif}
     end;
 
-    aRunItem.Info.Mode := Info.Mode;
-    aRunItem.Info.Pause := Info.Pause;
+    aRunItem.Info.Run.Mode := Info.Mode;
+    aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aRunItem.Info.Message := 'Runing ' + Info.MainFile;
-    aRunItem.Info.Params := {'-m pyxdebug ' + }Info.MainFile + #13;
+    aRunItem.Info.Run.Params := {'-m pyxdebug ' + }Info.MainFile + #13;
   end
   else if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Message := 'Running ' + Info.OutputFile;
-    aRunItem.Info.Mode := Info.Mode;
+    aRunItem.Info.Run.Mode := Info.Mode;
     aRunItem.Info.CurrentDirectory := Info.Root;
-    aRunItem.Info.Pause := Options.PauseConsole;
+    aRunItem.Info.Run.Pause := Options.RunPause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
-    aRunItem.Info.Command := ChangeFileExt(Info.OutputFile, '.exe');
+    aRunItem.Info.Run.Command := ChangeFileExt(Info.OutputFile, '.exe');
     if Options.RunParams <> '' then
-      aRunItem.Info.Params := aRunItem.Info.Params + Options.RunParams + #13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.RunParams + #13;
   end;
 
   Engine.Session.Run.Start;
