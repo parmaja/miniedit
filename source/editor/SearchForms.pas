@@ -22,7 +22,7 @@ type
     CancelBtn: TButton;
     SearchCaseSensitiveChk: TCheckBox;
     SearchWholeWordsChk: TCheckBox;
-    SearchFromCursorChk: TCheckBox;
+    SearchFromStartChk: TCheckBox;
     SearchSelectedOnlyChk: TCheckBox;
     ReplaceWithEdit: TComboBox;
     ReplaceWithChk: TCheckBox;
@@ -51,7 +51,7 @@ uses EditorEngine;
 var
   FSearchText: string;
   FReplaceText: string;
-  FSearchOptions: TSynSearchOptions;
+  FSearchOptions: TSynSearchOptions = [];
 
 procedure SetTextSearch(ASearchText, AReplaceText: string; ASearchOptions: TSynSearchOptions);
 begin
@@ -110,7 +110,7 @@ begin
     Include(FSearchOptions, ssoMatchCase);
   if SearchWholeWordsChk.Checked then
     Include(FSearchOptions, ssoWholeWord);
-  if not SearchFromCursorChk.Checked then
+  if SearchFromStartChk.Checked then
     Include(FSearchOptions, ssoEntireScope);
   if SearchSelectedOnlyChk.Checked then
     Include(FSearchOptions, ssoSelectedOnly);
@@ -140,6 +140,12 @@ begin
       SearchTextEdit.Text := SynEdit.SelText
     else
       SearchTextEdit.Text := SynEdit.GetWordAtRowCol(SynEdit.CaretXY);
+
+    SearchDirectionGrp.ItemIndex := ord(ssoBackwards in FSearchOptions);
+    SearchCaseSensitiveChk.Checked := ssoMatchCase in FSearchOptions;
+    SearchWholeWordsChk.Checked := ssoWholeWord in FSearchOptions;
+    SearchFromStartChk.Checked := ssoEntireScope in FSearchOptions;
+    SearchSelectedOnlyChk.Checked := ssoSelectedOnly in FSearchOptions;
 
     if ShowModal = mrOK then
     begin

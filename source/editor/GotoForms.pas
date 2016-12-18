@@ -37,7 +37,10 @@ implementation
 procedure TGotoLineForm.NumberEditKeyPress(Sender: TObject; var Key: char);
 begin
   if Key = #13 then
+  begin
     Key := #0;
+    ModalResult := mrOK;
+  end;
 end;
 
 end.
