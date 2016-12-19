@@ -16,7 +16,7 @@ object EditorSetupForm: TEditorSetupForm
     Left = 17
     Height = 13
     Top = 18
-    Width = 331
+    Width = 269
     Caption = 'Please, type your workspace folder for save your options.'
     ParentColor = False
   end
@@ -24,7 +24,7 @@ object EditorSetupForm: TEditorSetupForm
     Left = 17
     Height = 13
     Top = 54
-    Width = 99
+    Width = 87
     Caption = 'Workspace Folder'
     ParentColor = False
   end
@@ -60,17 +60,17 @@ object EditorSetupForm: TEditorSetupForm
   end
   object WorkspaceEdit: TComboBox
     Left = 15
-    Height = 27
+    Height = 21
     Top = 74
     Width = 455
-    ItemHeight = 0
+    ItemHeight = 13
     TabOrder = 0
   end
   object Label3: TLabel
     Left = 16
     Height = 13
     Top = 136
-    Width = 418
+    Width = 346
     Caption = 'For portable use, You can use dot "." without quotes for local workspace.'
     ParentColor = False
   end
@@ -78,7 +78,7 @@ object EditorSetupForm: TEditorSetupForm
     Left = 16
     Height = 13
     Top = 152
-    Width = 270
+    Width = 222
     Caption = 'You need to restart ur application to take effect'
     ParentColor = False
     Visible = False

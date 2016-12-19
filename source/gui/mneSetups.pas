@@ -67,7 +67,7 @@ begin
   begin
     aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
     try
-      aIniFile.WriteString(SysPlatform, 'Workspace', ExcludeTrailingPathDelimiter(WorkspaceEdit.Text));
+      aIniFile.WriteString('options', 'Workspace', ExcludeTrailingPathDelimiter(WorkspaceEdit.Text));
     finally
       aIniFile.Free;
     end;
@@ -80,8 +80,9 @@ var
   aIniFile: TIniFile;
 begin
   WorkspaceEdit.Items.Add('.');
-  WorkspaceEdit.Items.Add('.' + DirectorySeparator + '.miniedit');
+  WorkspaceEdit.Items.Add('.' + DirectorySeparator + 'config');
   WorkspaceEdit.Items.Add('.' + DirectorySeparator + 'setting');
+  WorkspaceEdit.Items.Add('.' + DirectorySeparator + '.miniedit');
   {$ifdef windows}
   WorkspaceEdit.Items.Add('C:\workspace\miniedit');
   if DirectoryExists('D:\') then
@@ -91,11 +92,11 @@ begin
   WorkspaceEdit.Items.Add(GetUserDir);
   WorkspaceEdit.Items.Add('/usr/workspace/miniedit');
   {$endif}
-  WorkspaceEdit.Items.Add('$home' + DirectorySeparator + 'miniedit');
+  WorkspaceEdit.Items.Add('?home' + DirectorySeparator + 'miniedit');
   WorkspaceEdit.Items.Add(Application.Location);
   aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
   try
-    WorkspaceEdit.Text := aIniFile.ReadString(SysPlatform, 'Workspace', '');
+    WorkspaceEdit.Text := aIniFile.ReadString('options', 'Workspace', '');
   finally
     aIniFile.Free;
   end;

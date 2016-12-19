@@ -588,7 +588,7 @@ begin
   FMenuItemsList := TObjectList.Create(True);
   aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
   try
-    aWorkspace := aIniFile.ReadString(SysPlatform, 'Workspace', '');
+    aWorkspace := aIniFile.ReadString('options', 'Workspace', '');
     aWorkspace := IncludeTrailingPathDelimiter(Engine.EnvReplace(aWorkspace));
   finally
     aIniFile.Free;

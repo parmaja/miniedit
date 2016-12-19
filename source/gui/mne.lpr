@@ -60,26 +60,31 @@ function CheckSetup: Boolean;
 var
   aIniFile: TIniFile;
   aIni, aPath: string;
+  procedure Check;
+  begin
+    if FileExists(aIni) then
+    begin
+      aIniFile := TIniFile.Create(aIni);
+      try
+        aPath := aIniFile.ReadString('options', 'Workspace', '');
+        Result := aPath <> '';
+        if Result then
+          ForceDirectories(Engine.EnvReplace(IncludeTrailingPathDelimiter(aPath)));
+      finally
+        aIniFile.Free;
+      end;
+    end;
+  end;
 begin
   Result := False;
   aIni := ExtractFilePath(Application.ExeName) + 'setting.ini';
-  if FileExists(aIni) then
-  begin
-    aIniFile := TIniFile.Create(aIni);
-    try
-      aPath := aIniFile.ReadString(SysPlatform, 'Workspace', '');
-      //aPath := ExpandToPath(aPath, Application.Location);
-      //Result := DirectoryExists(aPath);
-      Result := aPath <> '';
-    finally
-      aIniFile.Free;
-    end;
-  end;
+  Check;
   if not Result then
   begin
     with TEditorSetupForm.Create(Application) do
     begin
       Result := ShowModal = mrOK;
+      Check;
       Free;
     end;
   end;
