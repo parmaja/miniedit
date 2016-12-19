@@ -24,9 +24,6 @@
       <Attributes pvaPreRelease="True"/>
       <StringTable ProductVersion="1.4.1.186"/>
     </VersionInfo>
-    <MacroValues Count="1">
-      <Macro2 Name="LCLWidgetType" Value="win32"/>
-    </MacroValues>
     <BuildModes Count="3">
       <Item1 Name="Debug" Default="True"/>
       <Item2 Name="Linux">
@@ -107,7 +104,7 @@
       </Item3>
       <SharedMatrixOptions Count="2">
         <Item1 ID="404340325604" Modes="linux" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
-        <Item2 ID="971028019367" Modes="Debug,Windows" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+        <Item2 ID="971028019367" Modes="Windows" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
       </SharedMatrixOptions>
     </BuildModes>
     <PublishOptions>
@@ -418,13 +415,12 @@
       <Filename Value="..\..\bin\mne"/>
     </Target>
     <SearchPaths>
-      <IncludeFiles Value="$(ProjOutDir);D:\dev\lazarus\ide\include\"/>
+      <IncludeFiles Value="$(ProjOutDir)"/>
       <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <Linking>
       <Debugging>
-        <UseValgrind Value="True"/>
         <UseExternalDbgSyms Value="True"/>
       </Debugging>
       <Options>

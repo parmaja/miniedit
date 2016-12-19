@@ -432,12 +432,12 @@ begin
         if term = 'xterm' then
             s := s + ' -fa "' + Engine.Options.Profile.Attributes.FontName+  '" -fs ' + IntToStr(Engine.Options.Profile.Attributes.FontSize);
         s := s + ' -e "'+Info.GetCommandLine;
-        if Info.Pause then
+        if Info.Run.Pause then
           s := s + '; read -rsp $''Press any key to continue'' -n1 key';
         s := s + '"';
-        Info.Params := s;
+        Info.Run.Params := s;
 
-        Info.Command := term;
+        Info.Run.Command := term;
 
         {$endif}
         //FOnWrite := @Engine.SendOutout;

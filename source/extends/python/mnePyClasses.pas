@@ -188,7 +188,7 @@ begin
       {$ifdef windows}
       aRunItem.Info.Run.Command := 'python.exe';
       {$else}
-      aRunItem.Info.Command := 'python';
+      aRunItem.Info.Run.Command := 'python';
       {$endif}
     end;
 

@@ -187,7 +187,7 @@ begin
       {$ifdef windows}
       aRunItem.Info.Run.Command := 'gdc.exe';
       {$else}
-      aRunItem.Info.Command := 'gdc';
+      aRunItem.Info.Run.Command := 'gdc';
       {$endif}
     end;
 

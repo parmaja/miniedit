@@ -270,7 +270,7 @@ begin
       {$ifdef windows}
       aRunItem.Info.Run.Command := 'php.exe';
       {$else linux}
-      aRunItem.Info.Command := 'php';
+      aRunItem.Info.Run.Command := 'php';
       {$endif}
     end;
 

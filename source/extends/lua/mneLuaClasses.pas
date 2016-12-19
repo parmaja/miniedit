@@ -183,7 +183,7 @@ begin
     {$ifdef windows}
       aRunItem.Info.Run.Command := 'lua.exe';
     {$else}
-      aRunItem.Info.Command := 'lua';
+      aRunItem.Info.Run.Command := 'lua';
     {$endif}
 
     aRunItem.Info.Run.Mode := Info.Mode;
