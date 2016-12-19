@@ -69,6 +69,7 @@ type
     MenuItem27: TMenuItem;
     OutputEdit: TSynEdit;
     FolderPanel: TPanel;
+    ToolButton8: TToolButton;
     WatchesGrid: TStringGrid;
     SearchGrid: TStringGrid;
     MessagesGrid: TStringGrid;
