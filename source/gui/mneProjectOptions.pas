@@ -147,8 +147,6 @@ begin
 end;
 
 procedure TProjectForm.Retrieve;
-var
-  s: string;
 begin
   if FProject.Tendency <> nil then
     Caption := Caption + ' [' + FProject.Tendency.Name + ']';
