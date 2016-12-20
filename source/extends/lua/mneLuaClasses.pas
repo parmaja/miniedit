@@ -164,14 +164,8 @@ end;
 
 procedure TLuaTendency.DoRun(Info: TmneRunInfo);
 var
-  Options: TLuaProjectOptions;
   aRunItem: TmneRunItem;
 begin
-  if (Engine.Session.Project.Options is TLuaProjectOptions) then
-    Options := (Engine.Session.Project.Options as TLuaProjectOptions)
-  else
-    Options := TLuaProjectOptions.Create;//Default options
-
   Engine.Session.Run.Clear;
 
   if rnaExecute in Info.Actions then

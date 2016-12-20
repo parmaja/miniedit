@@ -37,6 +37,7 @@ type
     procedure RevertDirectory(Directory: string); override;
     procedure RevertFile(FileName: string); override;
     procedure DiffFile(FileName: string); override;
+    procedure AddFile(FileName: string); override;
     procedure DiffToFile(FileName, ToFileName: string); override;
     property TortoiseProc: string read GetTortoiseProc;
     property TortoiseMerge: string read GetTortoiseMerge;
@@ -78,6 +79,11 @@ end;
 procedure TTGIT_SCM.DiffFile(FileName: string);
 begin
   Execute(TortoiseProc, '/command:diff /path:"' + FileName + '" /notempfile /closeonend');
+end;
+
+procedure TTGIT_SCM.AddFile(FileName: string);
+begin
+  Execute(TortoiseProc, '/command:add /path:"' + FileName + '" /notempfile /closeonend');
 end;
 
 procedure TTGIT_SCM.DiffToFile(FileName, ToFileName: string);

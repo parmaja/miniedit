@@ -220,62 +220,66 @@ var
   AOptions: TRunProjectOptions;
 begin
   AOptions := TRunProjectOptions.Create;//Default options
-  AOptions.Assign(RunOptions);
-  if (Engine.Session.Active) then
-    AOptions.Merge(Engine.Session.Project.RunOptions);
+  try
+    AOptions.Copy(RunOptions);
+    if (Engine.Session.Active) then
+      AOptions.Merge(Engine.Session.Project.RunOptions);
 
-  Engine.Session.Run.Clear;
+    Engine.Session.Run.Clear;
 
-  if rnaCompile in Info.Actions then
-  begin
-    aRunItem := Engine.Session.Run.Add;
-
-    aRunItem.Info.Run.Command := Info.Command;
-    if aRunItem.Info.Run.Command = '' then
-      aRunItem.Info.Run.Command := 'dmd.exe';
-
-    aRunItem.Info.Run.Mode := runOutput;
-    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
-    aRunItem.Info.CurrentDirectory := Info.Root;
-
-    aRunItem.Info.Run.Params := Info.MainFile + #13;
-    if Info.OutputFile <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-of' + Info.OutputFile + #13;
-
-    aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
-    //aRunItem.Info.Params := aRunItem.Info.Params + '-color=on' + #13; //not work :(
-
-    for i := 0 to AOptions.Paths.Count - 1 do
+    if rnaCompile in Info.Actions then
     begin
-      aPath := Trim(AOptions.Paths[i]);
-      if aPath <>'' then
+      aRunItem := Engine.Session.Run.Add;
+
+      aRunItem.Info.Run.Command := Info.Command;
+      if aRunItem.Info.Run.Command = '' then
+        aRunItem.Info.Run.Command := 'dmd.exe';
+
+      aRunItem.Info.Run.Mode := runOutput;
+      aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
+      aRunItem.Info.CurrentDirectory := Info.Root;
+
+      aRunItem.Info.Run.Params := Info.MainFile + #13;
+      if Info.OutputFile <> '' then
+        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-of' + Info.OutputFile + #13;
+
+      aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
+      //aRunItem.Info.Params := aRunItem.Info.Params + '-color=on' + #13; //not work :(
+
+      for i := 0 to AOptions.Paths.Count - 1 do
       begin
-        if AOptions.ExpandPaths then
-          aPath := Engine.ExpandFile(aPath);
-        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-I' +aPath + #13;
+        aPath := Trim(AOptions.Paths[i]);
+        if aPath <>'' then
+        begin
+          if AOptions.ExpandPaths then
+            aPath := Engine.ExpandFile(aPath);
+          aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-I' +aPath + #13;
+        end;
       end;
+
+      //aRunItem.Info.Params := aRunItem.Info.Params + '-v'#13;
+
+      if AOptions.ConfigFile <> '' then
+        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '@' + Engine.EnvReplace(AOptions.ConfigFile) + #13;
     end;
 
-    //aRunItem.Info.Params := aRunItem.Info.Params + '-v'#13;
+    if rnaExecute in Info.Actions then
+    begin
+      aRunItem := Engine.Session.Run.Add;
+      aRunItem.Info.Message := 'Running ' + Info.OutputFile;
+      aRunItem.Info.Run.Mode := AOptions.Mode;
+      aRunItem.Info.CurrentDirectory := Info.Root;
+      aRunItem.Info.Run.Pause := AOptions.Pause;
+      aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
+      aRunItem.Info.Run.Command := ChangeFileExt(Info.OutputFile, '.exe');
+      if AOptions.Params <> '' then
+        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + AOptions.Params + #13;
+    end;
 
-    if AOptions.ConfigFile <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '@' + Engine.EnvReplace(AOptions.ConfigFile) + #13;
-  end;
-
-  if rnaExecute in Info.Actions then
-  begin
-    aRunItem := Engine.Session.Run.Add;
-    aRunItem.Info.Message := 'Running ' + Info.OutputFile;
-    aRunItem.Info.Run.Mode := AOptions.Mode;
-    aRunItem.Info.CurrentDirectory := Info.Root;
-    aRunItem.Info.Run.Pause := AOptions.Pause;
-    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
-    aRunItem.Info.Run.Command := ChangeFileExt(Info.OutputFile, '.exe');
-    if AOptions.Params <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + AOptions.Params + #13;
-  end;
-
-  Engine.Session.Run.Start;
+    Engine.Session.Run.Start;
+  finally
+    FreeAndNil(AOptions)
+  end
 end;
 
 procedure TCustomTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);

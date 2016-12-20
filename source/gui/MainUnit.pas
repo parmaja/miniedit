@@ -54,6 +54,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    SCMAddFileAct: TAction;
     FileModeBtn: TntvImgBtn;
     FileCloseBtn: TntvImgBtn;
     BugSignBtn: TntvImgBtn;
@@ -61,6 +62,7 @@ type
     FolderCloseBtn1: TntvImgBtn;
     MenuItem28: TMenuItem;
     MenuItem29: TMenuItem;
+    SCMAddFileMnu: TMenuItem;
     RecentFoldersMnu: TMenuItem;
     ShowSpecialCharsAct: TAction;
     FileList: TListView;
@@ -374,6 +376,7 @@ type
     procedure CloseActExecute(Sender: TObject);
     procedure FileListDblClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
+    procedure SCMAddFileActExecute(Sender: TObject);
     procedure SearchGridDblClick(Sender: TObject);
     procedure SearchGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
     procedure SelectProjectTypeActExecute(Sender: TObject);
@@ -1085,6 +1088,12 @@ begin
     else
       Engine.Session.Save;
   end;
+end;
+
+procedure TMainForm.SCMAddFileActExecute(Sender: TObject);
+begin
+  if Engine.Files.Current <> nil then
+    Engine.SCM.AddFile(Engine.Files.Current.Name);
 end;
 
 procedure TMainForm.SearchGridDblClick(Sender: TObject);

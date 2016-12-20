@@ -19,7 +19,7 @@ object RunFrameOptions: TRunFrameOptions
     TabOrder = 0
   end
   object PauseChk: TCheckBox
-    Left = 306
+    Left = 314
     Height = 19
     Top = 60
     Width = 99
@@ -35,31 +35,32 @@ object RunFrameOptions: TRunFrameOptions
     Caption = 'Run Mode'
     ParentColor = False
   end
-  object CompilerEdit: TEdit
-    Left = 11
-    Height = 23
-    Top = 28
-    Width = 394
-    Anchors = [akTop, akLeft, akRight]
-    TabOrder = 2
-  end
   object Button3: TButton
-    Left = 410
+    Left = 407
     Height = 21
     Top = 29
     Width = 22
     Anchors = [akTop, akRight]
     Caption = '...'
     OnClick = Button3Click
-    TabOrder = 3
+    TabOrder = 2
   end
   object CompilerLabel: TLabel
     Left = 11
     Height = 15
     Top = 9
-    Width = 75
-    Caption = 'Compiler/Run'
+    Width = 44
+    Caption = 'Executer'
     ParentColor = False
+  end
+  object CommandEdit: TComboBox
+    Left = 11
+    Height = 23
+    Top = 28
+    Width = 390
+    Anchors = [akTop, akLeft, akRight]
+    ItemHeight = 15
+    TabOrder = 3
   end
   object OpenDialog: TOpenDialog
     left = 63

@@ -189,15 +189,9 @@ procedure TPasTendency.DoRun(Info: TmneRunInfo);
 var
   i: Integer;
   aPath: string;
-  Options: TPasProjectOptions;
   aRunItem: TmneRunItem;
   p: string;
 begin
-  if (Engine.Session.Project.Options is TPasProjectOptions) then
-    Options := (Engine.Session.Project.Options as TPasProjectOptions)
-  else
-    Options := TPasProjectOptions.Create;
-
   if rnaCompile in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;

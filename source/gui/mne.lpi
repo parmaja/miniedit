@@ -160,7 +160,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="44">
+    <Units Count="43">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -386,26 +386,19 @@
         <IsPartOfProject Value="True"/>
       </Unit40>
       <Unit41>
-        <Filename Value="..\extends\commons\mneCompilerTendencyFrames.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="CompilerTendencyFrame"/>
-        <HasResources Value="True"/>
-        <ResourceBaseClass Value="Frame"/>
-      </Unit41>
-      <Unit42>
         <Filename Value="..\extends\commons\mneRunFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="RunFrameOptions"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit42>
-      <Unit43>
+      </Unit41>
+      <Unit42>
         <Filename Value="..\extends\commons\mneCompilerProjectFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CompilerProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit43>
+      </Unit42>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

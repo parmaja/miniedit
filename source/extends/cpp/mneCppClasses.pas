@@ -219,14 +219,8 @@ var
   aParams: string;
   i: Integer;
   aPath: string;
-  Options: TCppProjectOptions;
   aRunItem: TmneRunItem;
 begin
-  if (Engine.Session.Project.Options is TCppProjectOptions) then
-    Options := (Engine.Session.Project.Options as TCppProjectOptions)
-  else
-    Options := TCppProjectOptions.Create;//Default options
-
   Engine.Session.Run.Clear;
 
   if rnaCompile in Info.Actions then

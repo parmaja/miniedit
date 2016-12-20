@@ -1557,6 +1557,9 @@ object MainForm: TMainForm
         Action = SCMUpdateFileAct
         OnClick = SCMUpdateFileActExecute
       end
+      object SCMAddFileMnu: TMenuItem
+        Action = SCMAddFileAct
+      end
       object DiffMnu: TMenuItem
         Action = SCMDiffFileAct
         OnClick = SCMDiffFileActExecute
@@ -2217,6 +2220,11 @@ object MainForm: TMainForm
       Caption = 'Show Special Chars'
       ImageIndex = 29
       OnExecute = ShowSpecialCharsActExecute
+    end
+    object SCMAddFileAct: TAction
+      Category = 'SCM'
+      Caption = 'Add File'
+      OnExecute = SCMAddFileActExecute
     end
   end
   object FolderMenu: TPopupMenu

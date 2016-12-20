@@ -238,14 +238,8 @@ end;
 
 procedure TPHPTendency.DoRun(Info: TmneRunInfo);
 var
-  Options: TPHPProjectOptions;
   aRunItem: TmneRunItem;
 begin
-  if (Engine.Session.Project.Options is TPHPProjectOptions) then
-    Options := (Engine.Session.Project.Options as TPHPProjectOptions)
-  else
-    Options := TPHPProjectOptions.Create;
-
   {if rnaCompile in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;

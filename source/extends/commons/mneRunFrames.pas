@@ -19,7 +19,7 @@ type
 
   TRunFrameOptions = class(TFrame, IEditorOptions)
     Button3: TButton;
-    CompilerEdit: TEdit;
+    CommandEdit: TComboBox;
     CompilerLabel: TLabel;
     Label7: TLabel;
     OpenDialog: TOpenDialog;
@@ -43,11 +43,11 @@ implementation
 procedure TRunFrameOptions.Button3Click(Sender: TObject);
 begin
   OpenDialog.Filter := 'EXE files|*.exe|All files|*.*';
-  OpenDialog.FileName := CompilerEdit.Text;
+  OpenDialog.FileName := CommandEdit.Text;
   OpenDialog.InitialDir := ExtractFilePath(OpenDialog.FileName);
   if OpenDialog.Execute then
   begin
-    CompilerEdit.Text := OpenDialog.FileName;
+    CommandEdit.Text := OpenDialog.FileName;
   end;
 end;
 
@@ -55,6 +55,7 @@ procedure TRunFrameOptions.Apply;
 begin
   Options.Mode := TmneRunMode(RunModeCbo.ItemIndex);
   Options.Pause := PauseChk.Checked;
+  Options.Command := CommandEdit.Text;
 end;
 
 procedure TRunFrameOptions.Retrieve;
@@ -62,6 +63,7 @@ begin
   EnumRunMode(RunModeCbo.Items);
   RunModeCbo.ItemIndex := ord(Options.Mode);
   PauseChk.Checked := Options.Pause;
+  CommandEdit.Text := Options.Command;
 end;
 
 end.

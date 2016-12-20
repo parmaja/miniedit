@@ -354,6 +354,7 @@ type
     procedure RevertFile(FileName: string); virtual; abstract;
     procedure DiffFile(FileName: string); virtual; abstract;
     procedure DiffToFile(FileName, ToFileName: string); virtual; abstract;
+    procedure AddFile(FileName: string); virtual; abstract;
   end;
 
   TEditorSCMClass = class of TEditorSCM;
@@ -379,6 +380,7 @@ type
     procedure SetPaths(AValue: TStrings);
     procedure Merge(AOptions: TRunProjectOptions);
     procedure Copy(AOptions: TRunProjectOptions);
+    procedure Assign(Source: TPersistent); override;
   published
     property Mode: TmneRunMode read FMode write FMode;
     property Pause: Boolean read FPause write FPause;
@@ -1644,6 +1646,14 @@ begin
   FPaths.Assign(AOptions.Paths);
 end;
 
+procedure TRunProjectOptions.Assign(Source: TPersistent);
+begin
+  if Source is TRunProjectOptions then
+    Copy(Source as TRunProjectOptions)
+  else
+    inherited Assign(Source);
+end;
+
 constructor TRunProjectOptions.Create;
 begin
   inherited;
@@ -2258,72 +2268,76 @@ begin
   inherited;
 end;
 
-procedure TEditorTendency.Run(RunActions: TmneRunActions);
+procedure TEditorTendency.Run(RunActions: TmneRunActions); //please check dublicate in  M:\home\pascal\projects\miniEdit\source\extends\commons\mneCustomClasses.pas#DoRun
 var
   p: TmneRunInfo;
+  AOptions: TRunProjectOptions;
 begin
-  p.Actions := RunActions;
-  if (Debug <> nil) and (Debug.Running) then
-  begin
-    if Engine.Session.Run.Active then
-      Engine.Session.Run.Show;
-    if rnaDebug in RunActions then
-      Debug.Action(dbaRun)
-    else
+  AOptions := TRunProjectOptions.Create;//Default options
+  try
+    AOptions.Copy(RunOptions);
+    if (Engine.Session.Active) then
+      AOptions.Merge(Engine.Session.Project.RunOptions);
+
+    p.Actions := RunActions;
+    if (Debug <> nil) and (Debug.Running) then
     begin
-      Debug.Action(dbaResume);
-    end;
-  end
-  else
-  begin
-    if Engine.Session.Run.Active then
-    begin
-      //Engine.Log('Already run'); //TODO
-      Engine.Session.Run.Show;
+      if Engine.Session.Run.Active then
+        Engine.Session.Run.Show;
+      if rnaDebug in RunActions then
+        Debug.Action(dbaRun)
+      else
+      begin
+        Debug.Action(dbaResume);
+      end;
     end
     else
     begin
-      if Debug.Active then
-        p.Actions := p.Actions + [rnaDebug];
-      if rnaCompile in RunActions then
-        Engine.SendAction(eaClearOutput);
-      p.Root := Engine.Session.GetRoot;
-      p.Command := Engine.EnvReplace(RunOptions.Command);
-
-      if (Engine.Session.Active) then
+      if Engine.Session.Run.Active then
       begin
-        p.MainFile := Engine.Session.Project.RunOptions.MainFile;//ExpandToPath(Engine.Session.Project.Options.MainFile, p.Root);
-        p.OutputFile := Engine.Session.Project.RunOptions.OutputFile;//ExpandToPath(Engine.Session.Project.Options.MainFile, p.Root);
-      end;
-
-      p.Mode := Engine.Session.Project.RunOptions.Mode;
-      p.Pause := Engine.Session.Project.RunOptions.Pause;
-
-      if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
-        p.MainFile := Engine.Files.Current.Name;
-
-      if (p.Root = '') then
-        p.Root := ExtractFileDir(p.MainFile);
-
-      if p.OutputFile = '' then
+        //Engine.Log('Already run'); //TODO
+        Engine.Session.Run.Show;
+      end
+      else
       begin
-        p.OutputFile := ExtractFileNameWithoutExt(p.MainFile);
-        {$ifdef windows}
-        p.OutputFile := p.OutputFile + '.exe';
-        {$endif}
-      end;
+        if Debug.Active then
+          p.Actions := p.Actions + [rnaDebug];
+        if rnaCompile in RunActions then
+          Engine.SendAction(eaClearOutput);
+        p.Root := Engine.Session.GetRoot;
+        p.Command := Engine.EnvReplace(RunOptions.Command);
 
-      p.RunFile := p.OutputFile;
-      if ExtractFilePath(p.RunFile) = '' then
-        p.RunFile := p.Root + p.RunFile;
+        p.Mode := AOptions.Mode;
+        p.Pause := AOptions.Pause;
 
-      if (p.MainFile <> '') then
-      begin
-        DoRun(p);
-        Engine.UpdateState([ecsDebug]);
+        if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
+          p.MainFile := Engine.Files.Current.Name;
+
+        if (p.Root = '') then
+          p.Root := ExtractFileDir(p.MainFile);
+
+        if p.OutputFile = '' then
+        begin
+          p.OutputFile := ExtractFileNameWithoutExt(p.MainFile);
+          {$ifdef windows}
+          p.OutputFile := p.OutputFile + '.exe';
+          {$endif}
+        end;
+
+        p.RunFile := p.OutputFile;
+        if ExtractFilePath(p.RunFile) = '' then
+          p.RunFile := p.Root + p.RunFile;
+
+        if (p.MainFile <> '') then
+        begin
+          DoRun(p);
+          Engine.UpdateState([ecsDebug]);
+        end;
       end;
     end;
-  end;
+  finally
+    FreeAndNil(AOptions)
+  end
 end;
 
 procedure TEditorTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
@@ -3555,10 +3569,11 @@ begin
 
       if Session.Active then
       begin
-        List.Add('Main=' + Session.Project.RunOptions.MainFile);
+        List.Add('Main=' + Session.Project.RunOptions.MainFile); //TODO:
         List.Add('MainFile=' + Session.Project.RunOptions.MainFile);
         List.Add('MainDir=' + ExtractFilePath(Session.Project.RunOptions.MainFile));
         List.Add('Output=' + Session.Project.RunOptions.OutputFile);
+
         List.Add('Project=' + Session.Project.FileName);
         List.Add('ProjectName=' + Session.Project.FileName);
         List.Add('ProjectDir=' + ExtractFilePath(Session.Project.FileName));

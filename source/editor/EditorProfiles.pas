@@ -315,6 +315,9 @@ begin
     SynEdit.BracketMatchColor.Foreground := Attributes.Highlighted.Foreground;
     SynEdit.BracketMatchColor.Background := Attributes.Highlighted.Background;
 
+    SynEdit.MouseLinkColor.Foreground := Attributes.Link.Foreground;
+    SynEdit.MouseLinkColor.Background := Attributes.Link.Background;
+
     SynEdit.MarkupManager.MarkupByClass[TSynEditMarkupWordGroup].MarkupInfo.FrameColor := Attributes.Selected.Background;
 
     SpecialChars := eoShowSpecialChars in SynEdit.Options; //Save it maybe set by MainForm

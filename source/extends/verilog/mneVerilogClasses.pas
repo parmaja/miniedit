@@ -158,15 +158,9 @@ procedure TVerilogTendency.DoRun(Info: TmneRunInfo);
 var
   i: Integer;
   aPath: string;
-  Options: TVerilogProjectOptions;
   aRunItem: TmneRunItem;
   p: string;
 begin
-  if (Engine.Session.Project.Options is TVerilogProjectOptions) then
-    Options := (Engine.Session.Project.Options as TVerilogProjectOptions)
-  else
-    Options := TVerilogProjectOptions.Create;
-
   if rnaCompile in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;

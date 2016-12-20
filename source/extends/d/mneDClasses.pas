@@ -166,14 +166,8 @@ var
   aParams: string;
   i: Integer;
   aPath: string;
-  Options: TDProjectOptions;
   aRunItem: TmneRunItem;
 begin
-  if (Engine.Session.Project.Options is TDProjectOptions) then
-    Options := (Engine.Session.Project.Options as TDProjectOptions)
-  else
-    Options := TDProjectOptions.Create;//Default options
-
   Engine.Session.Run.Clear;
 
   if rnaCompile in Info.Actions then
