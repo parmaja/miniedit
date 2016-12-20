@@ -186,12 +186,12 @@ begin
     aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
 
     p := '';
-    for i := 0 to Options.Paths.Count - 1 do
+    for i := 0 to RunOptions.Paths.Count - 1 do
     begin
-      aPath := Trim(Options.Paths[i]);
+      aPath := Trim(RunOptions.Paths[i]);
       if aPath <>'' then
       begin
-        if Options.ExpandPaths then
+        if RunOptions.ExpandPaths then
           aPath := Engine.ExpandFile(aPath);
         if p <> '' then
           p := p + PathSeparator;
@@ -215,8 +215,8 @@ begin
     aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);
     aRunItem.Info.Run.Command := Info.RunFile;
-    if Options.Params <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.Params + #13;
+    if RunOptions.Params <> '' then
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + RunOptions.Params + #13;
   end;
 
   Engine.Session.Run.Start;

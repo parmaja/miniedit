@@ -29,7 +29,7 @@ type
   private
   protected
   public
-    Options : TEditorProjectOptions;
+    Options : TRunProjectOptions;
     procedure Apply;
     procedure Retrieve;
   end;

@@ -196,7 +196,7 @@ begin
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aPath := Info.MainFile;
-    if Options.ExpandPaths then
+    if RunOptions.ExpandPaths then
       aPath := Engine.ExpandFile(aPath);
     if not FileExists(aPath) then
       raise EEditorException.Create('File not exists: ' + aParams);
@@ -214,12 +214,12 @@ begin
     aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
     //aRunItem.Info.Params := aRunItem.Info.Params + '-color=on' + #13; //not work :(
 
-    for i := 0 to Options.Paths.Count - 1 do
+    for i := 0 to RunOptions.Paths.Count - 1 do
     begin
-      aPath := Trim(Options.Paths[i]);
+      aPath := Trim(RunOptions.Paths[i]);
       if aPath <>'' then
       begin
-        if Options.ExpandPaths then
+        if RunOptions.ExpandPaths then
           aPath := Engine.ExpandFile(aPath);
         if not DirectoryExists(aPath) then
           raise EEditorException.Create('Path not exists: ' + aParams);
@@ -231,8 +231,8 @@ begin
 
     //aRunItem.Info.Params := aRunItem.Info.Params + '-v'#13;
 
-    if Options.ConfigFile <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '@' + Engine.EnvReplace(Options.ConfigFile) + #13;
+    if RunOptions.ConfigFile <> '' then
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '@' + Engine.EnvReplace(RunOptions.ConfigFile) + #13;
   end;
 
   if rnaExecute in Info.Actions then
@@ -245,8 +245,8 @@ begin
     aRunItem.Info.DebugIt := rnaDebug in Info.Actions;
     aRunItem.Info.Title := ExtractFileName(Info.OutputFile);;
     aRunItem.Info.Run.Command := Info.RunFile;
-    if Options.Params <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.Params + #13;
+    if RunOptions.Params <> '' then
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + RunOptions.Params + #13;
   end;
 
   Engine.Session.Run.Start;

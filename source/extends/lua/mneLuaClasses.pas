@@ -81,7 +81,7 @@ var
   aFrame: TFrame;
 begin
   aFrame := TRunFrameOptions.Create(AOwner);
-  (aFrame as TRunFrameOptions).Options := AProject.Options;
+  (aFrame as TRunFrameOptions).Options := AProject.RunOptions;
   aFrame.Caption := 'Run';
   AddFrame(aFrame);
   aFrame := TLuaProjectFrame.Create(AOwner);

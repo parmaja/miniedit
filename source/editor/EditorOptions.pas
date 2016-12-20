@@ -66,7 +66,6 @@ type
     SmartTabDeleteChk: TCheckBox;
     SmartTabsChk: TCheckBox;
     TabIndentChk: TCheckBox;
-    TabsToSpacesChk: TCheckBox;
     TabWidthEdit: TEdit;
     PageControl: TPageControl;
     OkBtn: TButton;
@@ -417,7 +416,6 @@ procedure TEditorOptionsForm.Retrieve;
 begin
   InChanging := True;
   try
-    TabsToSpacesChk.Checked := eoTabsToSpaces in FProfile.EditorOptions;
     CodeFoldingChk.Checked := FProfile.Attributes.CodeFolding;
 
     NoAntialiasingChk.Checked := FProfile.Attributes.FontNoAntialiasing;
@@ -488,7 +486,6 @@ begin
   SetFlag(eoEnhanceHomeKey, EnhanceHomeKeyChk.Checked);
   SetFlag(eoGroupUndo, GroupUndoChk.Checked);
   SetFlag(eoBracketHighlight, BracketHighlightChk.Checked);
-  SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
 
   FProfile.EditorOptions := aOptions;
   FProfile.ExtEditorOptions := aExtOptions;

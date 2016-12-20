@@ -206,11 +206,11 @@ begin
     aRunItem.Info.Message := 'Running ' + Info.OutputFile;
     aRunItem.Info.Run.Mode := Info.Mode;
     aRunItem.Info.CurrentDirectory := Info.Root;
-    aRunItem.Info.Run.Pause := Options.Pause;
+    aRunItem.Info.Run.Pause := RunOptions.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
     aRunItem.Info.Run.Command := ChangeFileExt(Info.OutputFile, '.exe');
-    if Options.Params <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.Params + #13;
+    if RunOptions.Params <> '' then
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + RunOptions.Params + #13;
   end;
 
   Engine.Session.Run.Start;

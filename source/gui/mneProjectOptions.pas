@@ -124,7 +124,7 @@ begin
   FProject.RootDir := RootDirEdit.Text;
   FProject.SaveDesktop := SaveDesktopChk.Checked;
   FProject.SetSCMClass(TEditorSCM(SCMCbo.Items.Objects[SCMCbo.ItemIndex]));
-  FProject.Options.MainFile := MainEdit.Text;
+  FProject.RunOptions.MainFile := MainEdit.Text;
 end;
 
 procedure TProjectForm.RetrieveFrames;
@@ -159,7 +159,7 @@ begin
     SCMCbo.ItemIndex := Engine.SourceManagements.IndexOf(FProject.SCM.Name) + 1
   else
     SCMCbo.ItemIndex := 0;
-  MainEdit.Text := FProject.Options.MainFile;
+  MainEdit.Text := FProject.RunOptions.MainFile;
 end;
 
 procedure TProjectForm.Button3Click(Sender: TObject);

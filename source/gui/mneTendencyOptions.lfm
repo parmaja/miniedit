@@ -50,10 +50,10 @@ object TendencyForm: TTendencyForm
       ClientWidth = 455
       object GroupBox1: TGroupBox
         Left = 11
-        Height = 144
+        Height = 86
         Top = 10
         Width = 323
-        ClientHeight = 126
+        ClientHeight = 68
         ClientWidth = 319
         TabOrder = 0
         object TabWidthEdit: TEdit
@@ -72,29 +72,6 @@ object TendencyForm: TTendencyForm
           Caption = 'Tab Width:'
           ParentColor = False
         end
-        object Label10: TLabel
-          Left = 18
-          Height = 13
-          Top = 76
-          Width = 93
-          Caption = 'Special for this files:'
-          ParentColor = False
-        end
-        object TabsSpecialEdit: TEdit
-          Left = 123
-          Height = 21
-          Top = 72
-          Width = 182
-          TabOrder = 1
-        end
-        object Label11: TLabel
-          Left = 14
-          Height = 13
-          Top = 104
-          Width = 87
-          Caption = 'Example: .php;.inc'
-          ParentColor = False
-        end
         object Label3: TLabel
           Left = 14
           Height = 13
@@ -111,7 +88,7 @@ object TendencyForm: TTendencyForm
           Anchors = [akTop, akLeft, akRight]
           ItemHeight = 13
           Style = csDropDownList
-          TabOrder = 2
+          TabOrder = 1
         end
       end
       object OverrideOptionsChk: TCheckBox

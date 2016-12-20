@@ -216,13 +216,13 @@ procedure TCustomTendency.DoRun(Info: TmneRunInfo);
 var
   i: Integer;
   aPath: string;
-  Options: TCustomProjectOptions;
   aRunItem: TmneRunItem;
+  AOptions: TRunProjectOptions;
 begin
-  if (Engine.Session.Project.Options is TCustomProjectOptions) then
-    Options := (Engine.Session.Project.Options as TCustomProjectOptions)
-  else
-    Options := TCustomProjectOptions.Create;//Default options
+  AOptions := TRunProjectOptions.Create;//Default options
+  AOptions.Assign(RunOptions);
+  if (Engine.Session.Active) then
+    AOptions.Merge(Engine.Session.Project.RunOptions);
 
   Engine.Session.Run.Clear;
 
@@ -245,12 +245,12 @@ begin
     aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
     //aRunItem.Info.Params := aRunItem.Info.Params + '-color=on' + #13; //not work :(
 
-    for i := 0 to Options.Paths.Count - 1 do
+    for i := 0 to AOptions.Paths.Count - 1 do
     begin
-      aPath := Trim(Options.Paths[i]);
+      aPath := Trim(AOptions.Paths[i]);
       if aPath <>'' then
       begin
-        if Options.ExpandPaths then
+        if AOptions.ExpandPaths then
           aPath := Engine.ExpandFile(aPath);
         aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-I' +aPath + #13;
       end;
@@ -258,21 +258,21 @@ begin
 
     //aRunItem.Info.Params := aRunItem.Info.Params + '-v'#13;
 
-    if Options.ConfigFile <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '@' + Engine.EnvReplace(Options.ConfigFile) + #13;
+    if AOptions.ConfigFile <> '' then
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '@' + Engine.EnvReplace(AOptions.ConfigFile) + #13;
   end;
 
   if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Message := 'Running ' + Info.OutputFile;
-    aRunItem.Info.Run.Mode := Options.Mode;
+    aRunItem.Info.Run.Mode := AOptions.Mode;
     aRunItem.Info.CurrentDirectory := Info.Root;
-    aRunItem.Info.Run.Pause := Options.Pause;
+    aRunItem.Info.Run.Pause := AOptions.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
     aRunItem.Info.Run.Command := ChangeFileExt(Info.OutputFile, '.exe');
-    if Options.Params <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.Params + #13;
+    if AOptions.Params <> '' then
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + AOptions.Params + #13;
   end;
 
   Engine.Session.Run.Start;

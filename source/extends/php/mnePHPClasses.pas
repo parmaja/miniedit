@@ -283,8 +283,8 @@ begin
 
     aRunItem.Info.Link := Engine.EnvReplace(aRunItem.Info.Link);
 
-    if Options.Params <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.Params + #13;
+    if RunOptions.Params <> '' then
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + RunOptions.Params + #13;
 
     Engine.Session.Run.Start;
   end;

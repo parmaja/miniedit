@@ -32,7 +32,7 @@ type
     PathsEdit: TSynEdit;
     procedure Bevel1ChangeBounds(Sender: TObject);
   private
-    Options: TEditorProjectOptions;
+    Options: TRunProjectOptions;
   protected
     function GetProject: TEditorProject;
   public
@@ -68,7 +68,6 @@ end;
 
 procedure TCompilerProjectFrame.Retrieve;
 begin
-  Options := (FProject.Options as TEditorProjectOptions);
   OutputFileEdit.Text := Options.OutputFile;
   RunParamsEdit.Text := Options.Params;
   ConfigFileEdit.Text := Options.ConfigFile;

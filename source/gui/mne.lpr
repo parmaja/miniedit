@@ -53,7 +53,6 @@ uses
   mneTendencyOptions, mneCSVForms, mnUtils, mnConnections;
 
 {$R *.res}
-{.$R miniedit.rc}
 {$i '..\lib\mne.inc'}
 
 function CheckSetup: Boolean;

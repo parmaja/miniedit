@@ -14,7 +14,6 @@ type
 
   TLuaProjectFrame = class(TFrame, IEditorOptions, IEditorProjectFrame)
   private
-    Options: TLuaProjectOptions;
   protected
     function GetProject: TEditorProject;
   public

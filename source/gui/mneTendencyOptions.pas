@@ -19,12 +19,9 @@ type
   { TTendencyForm }
 
   TTendencyForm = class(TForm)
-    Label11: TLabel;
     Label3: TLabel;
     IndentModeCbo: TComboBox;
-    TabsSpecialEdit: TEdit;
     GroupBox1: TGroupBox;
-    Label10: TLabel;
     Label9: TLabel;
     OkBtn: TButton;
     CancelBtn: TButton;
@@ -88,7 +85,6 @@ begin
   FTendency.OverrideEditorOptions := OverrideOptionsChk.Checked;
   FTendency.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
   FTendency.IndentMode := TIndentMode(IndentModeCbo.ItemIndex);
-  FTendency.TabsSpecialFiles := TabsSpecialEdit.Text;
   //SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
 end;
 
@@ -120,8 +116,6 @@ begin
   OverrideOptionsChk.Checked := FTendency.OverrideEditorOptions;
   TabWidthEdit.Text := IntToStr(FTendency.TabWidth);
   IndentModeCbo.ItemIndex := Ord(FTendency.IndentMode);
-  //TabsToSpacesChk.Checked := eoTabsToSpaces in FTendency.EditorOptions;
-  TabsSpecialEdit.Text := FTendency.TabsSpecialFiles;
 end;
 
 procedure TTendencyForm.PageControlChanging(Sender: TObject; var AllowChange: Boolean);

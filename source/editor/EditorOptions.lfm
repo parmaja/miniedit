@@ -127,7 +127,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object Label9: TLabel
         Left = 18
         Height = 13
-        Top = 316
+        Top = 314
         Width = 53
         Caption = 'Tab Width:'
         ParentColor = False
@@ -135,7 +135,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object TabWidthEdit: TEdit
         Left = 99
         Height = 21
-        Top = 311
+        Top = 309
         Width = 52
         TabOrder = 10
         Text = '4'
@@ -226,15 +226,6 @@ object EditorOptionsForm: TEditorOptionsForm
         Caption = 'Tabs in editors, Can be overriden by project type'
         ParentColor = False
       end
-      object TabsToSpacesChk: TCheckBox
-        Left = 173
-        Height = 19
-        Hint = 'Converts a tab character to the number of spaces in Tab Width'
-        Top = 312
-        Width = 93
-        Caption = 'Tabs to spaces'
-        TabOrder = 15
-      end
       object Label3: TLabel
         Left = 17
         Height = 13
@@ -251,7 +242,7 @@ object EditorOptionsForm: TEditorOptionsForm
         Anchors = [akTop, akLeft, akRight]
         ItemHeight = 13
         Style = csDropDownList
-        TabOrder = 16
+        TabOrder = 15
       end
     end
     object ColorTab: TTabSheet
