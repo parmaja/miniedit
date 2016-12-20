@@ -15,7 +15,7 @@ uses
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   FileUtil, mnSynHighlighterLua, EditorDebugger, EditorClasses, mneClasses,
   mneCompilerProjectFrames, EditorRun, mneConsoleClasses, LuaDBGServers,
-  mneConsoleForms;
+  mneConsoleForms, mneRunFrames;
 
 type
 
@@ -45,7 +45,7 @@ type
 
   { TLuaProjectOptions }
 
-  TLuaProjectOptions = class(TCompilerProjectOptions)
+  TLuaProjectOptions = class(TEditorProjectOptions)
   private
   public
     procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); override;
@@ -72,7 +72,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mneCompilerTendencyFrames, mneLuaProjectFrames;
+  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mneLuaProjectFrames;
 
 { TDProject }
 
@@ -80,9 +80,9 @@ procedure TLuaProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TE
 var
   aFrame: TFrame;
 begin
-  aFrame := TCompilerProjectFrame.Create(AOwner);
-  (aFrame as TCompilerProjectFrame).FProject := AProject;
-  aFrame.Caption := 'Compiler';
+  aFrame := TRunFrameOptions.Create(AOwner);
+  (aFrame as TRunFrameOptions).Options := AProject.Options;
+  aFrame.Caption := 'Run';
   AddFrame(aFrame);
   aFrame := TLuaProjectFrame.Create(AOwner);
   (aFrame as TLuaProjectFrame).FProject := AProject;
@@ -192,8 +192,8 @@ begin
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aRunItem.Info.Message := 'Runing ' + Info.MainFile;
-    if Require <> '' then
-        aRunItem.Info.Run.Params := '-l '+ Require + #13;
+    if RunOptions.Require <> '' then
+        aRunItem.Info.Run.Params := '-l '+ RunOptions.Require + #13;
     if rnaDebug in Info.Actions then
         aRunItem.Info.Run.Params := '-e '+ '"require(''mobdebug'').start()"' + #13; //using mobdebug
     aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Info.MainFile + #13;
@@ -217,10 +217,10 @@ end;
 
 procedure TLuaTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
-  aFrame: TCompilerTendencyFrame;
+  aFrame: TRunFrameOptions;
 begin
-  aFrame := TCompilerTendencyFrame.Create(AOwner);
-  aFrame.FTendency := ATendency;
+  aFrame := TRunFrameOptions.Create(AOwner);
+  aFrame.Options := ATendency.RunOptions;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 end;

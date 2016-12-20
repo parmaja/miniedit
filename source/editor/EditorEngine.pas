@@ -284,6 +284,7 @@ type
     FIndentMode: TIndentMode;
     FOverrideEditorOptions: Boolean;
     FRequire: string;
+    FRunOptions: TEditorProjectOptions;
     FTabsSpecialFiles: string;
     FTabWidth: Integer;
     function GetIsDefault: Boolean; virtual; //Keep it private
@@ -312,10 +313,7 @@ type
     property Debug: TEditorDebugger read FDebug write SetDebug;
     property IsDefault: Boolean read GetIsDefault;
   published
-    //RunCommnad: TRunCommand;
-    property Command: string read FCommand write FCommand; //like php.exe or gdc.exe or fpc.exe
-    property Require: string read FRequire write FRequire; //Require modules to pass to the compiler
-
+    property RunOptions: TEditorProjectOptions read FRunOptions;// write FRunOptions;
     //Override options
     property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False;
     property TabWidth: Integer read FTabWidth write FTabWidth default 4;
@@ -364,36 +362,33 @@ type
 
   TEditorProjectOptions = class(TPersistent)
   private
-    FRunParams: string;
-    FRunMode: TmneRunMode;
-    FRunPause: Boolean;
+    FCommand: string;
+    FParams: string;
+    FMode: TmneRunMode;
+    FPause: Boolean;
     FMainFile: string;
     FOutputFile: string;
+    FRequire: string;
     FRootUrl: string;
-  public
-    constructor Create; virtual;
-    procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); virtual;
-    procedure CreateProjectPanel(AOwner: TComponent; AProject: TEditorProject; var AFrame: TFrame); virtual;
-  published
-    property RunMode: TmneRunMode read FRunMode write FRunMode;
-    //PauseConsole do not end until use press any key or enter
-    property RunPause: Boolean read FRunPause write FRunPause;
-    property RunParams: string read FRunParams write FRunParams;
-    property MainFile: string read FMainFile write FMainFile;
-    property OutputFile: string read FOutputFile write FOutputFile;
-    property RootUrl: string read FRootUrl write FRootUrl;
-  end;
-
-  TCompilerProjectOptions = class(TEditorProjectOptions)
-  private
     FConfigFile: string;
     FExpandPaths: Boolean;
     FPaths: TStrings;
-    procedure SetPaths(AValue: TStrings);
+    FRunCommand: string;
   public
-    constructor Create; override;
+    constructor Create; virtual;
     destructor Destroy; override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); virtual;
+    procedure CreateProjectPanel(AOwner: TComponent; AProject: TEditorProject; var AFrame: TFrame); virtual;
+    procedure SetPaths(AValue: TStrings);
   published
+    property Mode: TmneRunMode read FMode write FMode;
+    property Pause: Boolean read FPause write FPause;
+    property Command: string read FRunCommand write FCommand;
+    property Params: string read FParams write FParams;
+    property Require: string read FRequire write FRequire;
+    property MainFile: string read FMainFile write FMainFile;
+    property OutputFile: string read FOutputFile write FOutputFile;
+    property RootUrl: string read FRootUrl write FRootUrl;
     property Paths: TStrings read FPaths write SetPaths;
     property ExpandPaths: Boolean read FExpandPaths write FExpandPaths;
     property ConfigFile: string read FConfigFile write FConfigFile;
@@ -1574,11 +1569,6 @@ end;
 
 { TEditorProjectOptions }
 
-constructor TEditorProjectOptions.Create;
-begin
-  inherited;
-end;
-
 procedure TEditorProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack);
 begin
 end;
@@ -1588,18 +1578,18 @@ begin
 
 end;
 
-procedure TCompilerProjectOptions.SetPaths(AValue: TStrings);
+procedure TEditorProjectOptions.SetPaths(AValue: TStrings);
 begin
   FPaths.Assign(AValue);
 end;
 
-constructor TCompilerProjectOptions.Create;
+constructor TEditorProjectOptions.Create;
 begin
   inherited;
   FPaths := TStringList.Create;
 end;
 
-destructor TCompilerProjectOptions.Destroy;
+destructor TEditorProjectOptions.Destroy;
 begin
   FreeAndNil(FPaths);
   inherited Destroy;
@@ -2195,12 +2185,14 @@ constructor TEditorTendency.Create;
 begin
   inherited;
   FGroups := TFileGroups.Create(False);//it already owned by Engine.Groups
+  FRunOptions := TEditorProjectOptions.Create;
   FTabWidth := 4;
   Init;
 end;
 
 destructor TEditorTendency.Destroy;
 begin
+  FreeAndNil(FRunOptions);
   FreeAndNil(FGroups);
   inherited;
 end;
@@ -2235,7 +2227,7 @@ begin
       if rnaCompile in RunActions then
         Engine.SendAction(eaClearOutput);
       p.Root := Engine.Session.GetRoot;
-      p.Command := Engine.EnvReplace(Command);
+      p.Command := Engine.EnvReplace(RunOptions.Command);
 
       if (Engine.Session.Active) then
       begin
@@ -2243,8 +2235,8 @@ begin
         p.OutputFile := Engine.Session.Project.Options.OutputFile;//ExpandToPath(Engine.Session.Project.Options.MainFile, p.Root);
       end;
 
-      p.Mode := Engine.Session.Project.Options.RunMode;
-      p.Pause := Engine.Session.Project.Options.RunPause;
+      p.Mode := Engine.Session.Project.Options.Mode;
+      p.Pause := Engine.Session.Project.Options.Pause;
 
       if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
         p.MainFile := Engine.Files.Current.Name;

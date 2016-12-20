@@ -17,7 +17,7 @@ uses
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   mnSynHighlighterD, mnSynHighlighterCpp, EditorDebugger, EditorClasses, mneClasses, MsgBox,
   mneCompilerProjectFrames, EditorRun, mneConsoleClasses,
-  mneConsoleForms;
+  mneConsoleForms, mneRunFrames;
 
 type
 
@@ -49,7 +49,7 @@ type
 
   { TDProjectOptions }
 
-  TCppProjectOptions = class(TCompilerProjectOptions)
+  TCppProjectOptions = class(TEditorProjectOptions)
   private
   public
     procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); override;
@@ -74,7 +74,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mneCompilerTendencyFrames, mneDProjectFrames, LCLProc;
+  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mneDProjectFrames, LCLProc;
 
 { TCppFile }
 
@@ -284,8 +284,8 @@ begin
     aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.Title := ExtractFileName(Info.OutputFile);;
     aRunItem.Info.Run.Command := Info.RunFile;
-    if Options.RunParams <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.RunParams + #13;
+    if Options.Params <> '' then
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.Params + #13;
   end;
 
   Engine.Session.Run.Start;
@@ -298,10 +298,10 @@ end;
 
 procedure TCppTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
-  aFrame: TCompilerTendencyFrame;
+  aFrame: TRunFrameOptions;
 begin
-  aFrame := TCompilerTendencyFrame.Create(AOwner);
-  aFrame.FTendency := ATendency;
+  aFrame := TRunFrameOptions.Create(AOwner);
+  aFrame.Options := ATendency.RunOptions;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 end;

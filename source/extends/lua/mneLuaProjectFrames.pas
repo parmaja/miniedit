@@ -13,8 +13,6 @@ type
   { TLuaProjectFrame }
 
   TLuaProjectFrame = class(TFrame, IEditorOptions, IEditorProjectFrame)
-    ExpandPathsChk1: TCheckBox;
-    ExpandPathsChk2: TCheckBox;
   private
     Options: TLuaProjectOptions;
   protected
@@ -42,7 +40,6 @@ end;
 
 procedure TLuaProjectFrame.Retrieve;
 begin
-  Options := (FProject.Options as TLuaProjectOptions);
 end;
 
 end.

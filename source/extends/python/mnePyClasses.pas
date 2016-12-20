@@ -21,7 +21,7 @@ uses
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   SynHighlighterPython, EditorDebugger, EditorClasses, mneClasses,
   mneCompilerProjectFrames, EditorRun, mneConsoleClasses, dbgpServers,
-  mneConsoleForms;
+  mneConsoleForms, mneRunFrames;
 
 type
 
@@ -51,7 +51,7 @@ type
 
   { TPyProjectOptions }
 
-  TPyProjectOptions = class(TCompilerProjectOptions)
+  TPyProjectOptions = class(TEditorProjectOptions)
   private
   public
     procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); override;
@@ -76,7 +76,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mneCompilerTendencyFrames, mnePyProjectFrames;
+  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mnePyProjectFrames;
 
 { TDProject }
 
@@ -206,11 +206,11 @@ begin
     aRunItem.Info.Message := 'Running ' + Info.OutputFile;
     aRunItem.Info.Run.Mode := Info.Mode;
     aRunItem.Info.CurrentDirectory := Info.Root;
-    aRunItem.Info.Run.Pause := Options.RunPause;
+    aRunItem.Info.Run.Pause := Options.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
     aRunItem.Info.Run.Command := ChangeFileExt(Info.OutputFile, '.exe');
-    if Options.RunParams <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.RunParams + #13;
+    if Options.Params <> '' then
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.Params + #13;
   end;
 
   Engine.Session.Run.Start;
@@ -223,10 +223,10 @@ end;
 
 procedure TPyTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
-  aFrame: TCompilerTendencyFrame;
+  aFrame: TRunFrameOptions;
 begin
-  aFrame := TCompilerTendencyFrame.Create(AOwner);
-  aFrame.FTendency := ATendency;
+  aFrame := TRunFrameOptions.Create(AOwner);
+  aFrame.Options := ATendency.RunOptions;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 end;

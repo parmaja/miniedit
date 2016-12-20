@@ -395,7 +395,7 @@
       <Unit42>
         <Filename Value="..\extends\commons\mneRunFrames.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="RunFrame"/>
+        <ComponentName Value="RunFrameOptions"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
       </Unit42>

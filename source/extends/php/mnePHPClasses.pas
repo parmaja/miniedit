@@ -20,7 +20,7 @@ uses
   SynHighlighterHashEntries, EditorProfiles, SynHighlighterCSS,
   SynHighlighterSQL, SynHighlighterXML, SynHighlighterJScript,
   mnSynHighlighterXHTML, mnSynHighlighterMultiProc, HTMLProcessor, EditorDebugger,
-  EditorClasses, dbgpServers, mneClasses, mneCompilerTendencyFrames, EditorRun;
+  EditorClasses, dbgpServers, mneClasses, mneRunFrames, EditorRun;
 
 type
 
@@ -283,8 +283,8 @@ begin
 
     aRunItem.Info.Link := Engine.EnvReplace(aRunItem.Info.Link);
 
-    if Options.RunParams <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.RunParams + #13;
+    if Options.Params <> '' then
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.Params + #13;
 
     Engine.Session.Run.Start;
   end;
@@ -297,10 +297,10 @@ end;
 
 procedure TPHPTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
-  aFrame: TCompilerTendencyFrame;
+  aFrame: TRunFrameOptions;
 begin
-  aFrame := TCompilerTendencyFrame.Create(AOwner);
-  aFrame.FTendency := ATendency;
+  aFrame := TRunFrameOptions.Create(AOwner);
+  aFrame.Options := ATendency.RunOptions;
   aFrame.Caption := 'PHP Options';
   AddFrame(aFrame);
 end;

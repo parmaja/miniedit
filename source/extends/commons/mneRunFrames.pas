@@ -15,9 +15,9 @@ uses
 
 type
 
-  { TRunFrame }
+  { TRunFrameOptions }
 
-  TRunFrame = class(TFrame, IEditorOptions, IEditorProjectFrame)
+  TRunFrameOptions = class(TFrame, IEditorOptions)
     Button3: TButton;
     CompilerEdit: TEdit;
     CompilerLabel: TLabel;
@@ -25,13 +25,11 @@ type
     OpenDialog: TOpenDialog;
     PauseChk: TCheckBox;
     RunModeCbo: TComboBox;
-    procedure Bevel1ChangeBounds(Sender: TObject);
     procedure Button3Click(Sender: TObject);
   private
   protected
-    function GetProject: TEditorProject;
   public
-    FProject: TEditorProject;
+    Options : TEditorProjectOptions;
     procedure Apply;
     procedure Retrieve;
   end;
@@ -40,18 +38,9 @@ implementation
 
 {$R *.lfm}
 
-{ TRunFrame }
+{ TRunFrameOptions }
 
-function TRunFrame.GetProject: TEditorProject;
-begin
-  Result := FProject;
-end;
-
-procedure TRunFrame.Bevel1ChangeBounds(Sender: TObject);
-begin
-end;
-
-procedure TRunFrame.Button3Click(Sender: TObject);
+procedure TRunFrameOptions.Button3Click(Sender: TObject);
 begin
   OpenDialog.Filter := 'EXE files|*.exe|All files|*.*';
   OpenDialog.FileName := CompilerEdit.Text;
@@ -62,17 +51,17 @@ begin
   end;
 end;
 
-procedure TRunFrame.Apply;
+procedure TRunFrameOptions.Apply;
 begin
-  FProject.Options.RunMode := TmneRunMode(RunModeCbo.ItemIndex);
-  FProject.Options.RunPause := PauseChk.Checked;
+  Options.Mode := TmneRunMode(RunModeCbo.ItemIndex);
+  Options.Pause := PauseChk.Checked;
 end;
 
-procedure TRunFrame.Retrieve;
+procedure TRunFrameOptions.Retrieve;
 begin
   EnumRunMode(RunModeCbo.Items);
-  RunModeCbo.ItemIndex := ord(FProject.Options.RunMode);
-  PauseChk.Checked := FProject.Options.RunPause;
+  RunModeCbo.ItemIndex := ord(Options.Mode);
+  PauseChk.Checked := Options.Pause;
 end;
 
 end.

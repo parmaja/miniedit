@@ -1,4 +1,4 @@
-object RunFrame: TRunFrame
+object RunFrameOptions: TRunFrameOptions
   Left = 0
   Height = 267
   Top = 0

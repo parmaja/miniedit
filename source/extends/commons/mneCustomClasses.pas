@@ -21,7 +21,7 @@ uses
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   FileUtil, mnSynHighlighterD, EditorDebugger, EditorClasses, mneClasses,
   mneCompilerProjectFrames, EditorRun, mneConsoleClasses, mnSynHighlighterMultiProc,
-  mneConsoleForms;
+  mneConsoleForms, mneRunFrames;
 
 type
 
@@ -65,7 +65,7 @@ type
 
   { TDProjectOptions }
 
-  TCustomProjectOptions = class(TCompilerProjectOptions)
+  TCustomProjectOptions = class(TEditorProjectOptions)
   private
   public
     procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); override;
@@ -81,7 +81,6 @@ type
     procedure Init; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
-    constructor Create; override;
     function CreateOptions: TEditorProjectOptions; override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
   published
@@ -90,7 +89,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, SynEditStrConst, mneCompilerTendencyFrames;
+  IniFiles, mnStreams, mnUtils, SynEditStrConst;
 
 { TSynCustomSyn }
 
@@ -267,29 +266,24 @@ begin
   begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Message := 'Running ' + Info.OutputFile;
-    aRunItem.Info.Run.Mode := Options.RunMode;
+    aRunItem.Info.Run.Mode := Options.Mode;
     aRunItem.Info.CurrentDirectory := Info.Root;
-    aRunItem.Info.Run.Pause := Options.RunPause;
+    aRunItem.Info.Run.Pause := Options.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
     aRunItem.Info.Run.Command := ChangeFileExt(Info.OutputFile, '.exe');
-    if Options.RunParams <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.RunParams + #13;
+    if Options.Params <> '' then
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.Params + #13;
   end;
 
   Engine.Session.Run.Start;
 end;
 
-constructor TCustomTendency.Create;
-begin
-  inherited Create;
-end;
-
 procedure TCustomTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
-  aFrame: TCompilerTendencyFrame;
+  aFrame: TRunFrameOptions;
 begin
-  aFrame := TCompilerTendencyFrame.Create(AOwner);
-  aFrame.FTendency := ATendency;
+  aFrame := TRunFrameOptions.Create(AOwner);
+  aFrame.Options := ATendency.RunOptions;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 end;

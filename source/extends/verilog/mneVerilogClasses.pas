@@ -55,7 +55,7 @@ type
 
   { TVerilogProjectOptions }
 
-  TVerilogProjectOptions = class(TCompilerProjectOptions)
+  TVerilogProjectOptions = class(TEditorProjectOptions)
   private
     FFileList: TStringList;
     function GetFileList: string;
@@ -215,8 +215,8 @@ begin
     aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);
     aRunItem.Info.Run.Command := Info.RunFile;
-    if Options.RunParams <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.RunParams + #13;
+    if Options.Params <> '' then
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.Params + #13;
   end;
 
   Engine.Session.Run.Start;

@@ -14,8 +14,8 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  EditorDebugger, gdbClasses, EditorRun, mneCompilerProjectFrames, FileUtil,
-  SynHighlighterPas, SynHighlighterLFM;
+  EditorDebugger, gdbClasses, EditorRun, mneCompilerProjectFrames, mneRunFrames,
+  FileUtil, SynHighlighterPas, SynHighlighterLFM;
 
 type
 
@@ -64,12 +64,11 @@ type
 
   { TPasProjectOptions }
 
-  TPasProjectOptions = class(TCompilerProjectOptions)
+  TPasProjectOptions = class(TEditorProjectOptions)
   private
     FUseCFG: Boolean;
   public
     constructor Create; override;
-    destructor Destroy; override;
     procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); override;
   published
     property UseCFG: Boolean read FUseCFG write FUseCFG default True;
@@ -93,7 +92,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, mnePasProjectFrames, mneCompilerTendencyFrames;
+  IniFiles, mnStreams, mnUtils, mnePasProjectFrames;
 
 { TPasProjectOptions }
 
@@ -101,11 +100,6 @@ constructor TPasProjectOptions.Create;
 begin
   inherited Create;
   FUseCFG := True;
-end;
-
-destructor TPasProjectOptions.Destroy;
-begin
-  inherited Destroy;
 end;
 
 procedure TPasProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack);
@@ -257,8 +251,8 @@ begin
     aRunItem.Info.DebugIt := rnaDebug in Info.Actions;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);
     aRunItem.Info.Run.Command := Info.RunFile;
-    if Options.RunParams <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.RunParams + #13;
+    if Options.Params <> '' then
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Options.Params + #13;
   end;
 
   Engine.Session.Run.Start;
@@ -266,10 +260,10 @@ end;
 
 procedure TPasTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
-  aFrame: TCompilerTendencyFrame;
+  aFrame: TRunFrameOptions;
 begin
-  aFrame := TCompilerTendencyFrame.Create(AOwner);
-  aFrame.FTendency := ATendency;
+  aFrame := TRunFrameOptions.Create(AOwner);
+  aFrame.Options := ATendency.RunOptions;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 end;
