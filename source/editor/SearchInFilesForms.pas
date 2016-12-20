@@ -11,13 +11,19 @@ interface
 uses
   Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
   StdCtrls, ExtCtrls, SynEdit, SynEditTypes, SynEditRegexSearch, SynEditMiscClasses,
-  SynEditSearch, SearchProgressForms, ComCtrls;
+  SynEditSearch, SearchProgressForms, ComCtrls, Menus, ntvImgBtns;
 
 type
   TSearchFoundEvent = procedure(Index: Integer; FileName: string; const Line: string; LineNo, Column, FoundLength: Integer) of object;
 
+  { TSearchInFilesForm }
+
   TSearchInFilesForm = class(TForm)
+    InsertBtn: TntvImgBtn;
     Label1: TLabel;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
+    DirPopupMenu: TPopupMenu;
     SearchTextEdit: TComboBox;
     SearchOptionsGrp: TGroupBox;
     FindBtn: TButton;
@@ -29,6 +35,8 @@ type
     Label2: TLabel;
     SearchFolderEdit: TComboBox;
     SearchFilesGrp: TRadioGroup;
+    procedure MenuItem1Click(Sender: TObject);
+    procedure MenuItem2Click(Sender: TObject);
     procedure ReplaceWithChkClick(Sender: TObject);
   private
     procedure UpdateReplace;
@@ -181,6 +189,17 @@ procedure TSearchInFilesForm.ReplaceWithChkClick(Sender: TObject);
 begin
   ReplaceWithEdit.Enabled := ReplaceWithChk.Checked;
   UpdateReplace;
+end;
+
+procedure TSearchInFilesForm.MenuItem1Click(Sender: TObject);
+begin
+  if Engine.Files.Current <> nil then
+    SearchFolderEdit.Text := ExtractFileDir(Engine.Files.Current.Name)
+end;
+
+procedure TSearchInFilesForm.MenuItem2Click(Sender: TObject);
+begin
+  SearchFolderEdit.Text := Engine.BrowseFolder;
 end;
 
 procedure TSearchInFilesForm.UpdateReplace;

@@ -215,6 +215,9 @@ var
 begin
   aFrame := TRunFrameOptions.Create(AOwner);
   aFrame.Options := ATendency.RunOptions;
+  aFrame.CommandEdit.Items.Add('lua ?file');
+  aFrame.CommandEdit.Items.Add('love ?filedir ?file');
+  aFrame.CommandEdit.Items.Add('lovec ?filedir ?file');
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 end;
@@ -299,7 +302,8 @@ begin
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
     Mapper.Add(VariableAttri, attVariable);
-    Mapper.Add(ProcessorAttri, attDirective);  end;
+    Mapper.Add(ProcessorAttri, attDirective);
+  end;
 end;
 
 initialization

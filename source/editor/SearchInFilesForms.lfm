@@ -2,11 +2,11 @@ object SearchInFilesForm: TSearchInFilesForm
   Left = 304
   Height = 186
   Top = 230
-  Width = 322
+  Width = 362
   BorderStyle = bsDialog
   Caption = 'Find text in files'
   ClientHeight = 186
-  ClientWidth = 322
+  ClientWidth = 362
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Position = poMainFormCenter
@@ -31,7 +31,7 @@ object SearchInFilesForm: TSearchInFilesForm
     Left = 106
     Height = 21
     Top = 6
-    Width = 210
+    Width = 250
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 13
     TabOrder = 0
@@ -40,10 +40,10 @@ object SearchInFilesForm: TSearchInFilesForm
     Left = 5
     Height = 65
     Top = 61
-    Width = 154
+    Width = 160
     Caption = 'Options'
     ClientHeight = 47
-    ClientWidth = 150
+    ClientWidth = 156
     TabOrder = 3
     object SearchCaseSensitiveChk: TCheckBox
       Left = 8
@@ -63,22 +63,22 @@ object SearchInFilesForm: TSearchInFilesForm
     end
   end
   object FindBtn: TButton
-    Left = 241
+    Left = 281
     Height = 27
     Top = 155
     Width = 75
-    Anchors = [akLeft, akBottom]
+    Anchors = [akRight, akBottom]
     Caption = 'Find'
     Default = True
     ModalResult = 1
     TabOrder = 6
   end
   object CancelBtn: TButton
-    Left = 164
+    Left = 204
     Height = 27
     Top = 155
     Width = 75
-    Anchors = [akLeft, akBottom]
+    Anchors = [akRight, akBottom]
     Cancel = True
     Caption = 'Cancel'
     ModalResult = 2
@@ -88,7 +88,7 @@ object SearchInFilesForm: TSearchInFilesForm
     Left = 105
     Height = 21
     Top = 34
-    Width = 211
+    Width = 251
     Anchors = [akTop, akLeft, akRight]
     Color = clBtnFace
     ItemHeight = 13
@@ -107,16 +107,16 @@ object SearchInFilesForm: TSearchInFilesForm
     Left = 55
     Height = 21
     Top = 131
-    Width = 262
+    Width = 267
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 13
     TabOrder = 5
   end
   object SearchFilesGrp: TRadioGroup
-    Left = 165
+    Left = 218
     Height = 65
     Top = 61
-    Width = 151
+    Width = 138
     Anchors = [akTop, akLeft, akRight]
     AutoFill = True
     Caption = 'Files'
@@ -129,12 +129,35 @@ object SearchInFilesForm: TSearchInFilesForm
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
     ClientHeight = 47
-    ClientWidth = 147
+    ClientWidth = 134
     ItemIndex = 0
     Items.Strings = (
       '&Project type files'
       '&All kown files'
     )
     TabOrder = 4
+  end
+  object InsertBtn: TntvImgBtn
+    Left = 324
+    Height = 18
+    Top = 132
+    Width = 28
+    Caption = '...'
+    ImageIndex = 0
+    PopupMenu = DirPopupMenu
+    AutoCheck = False
+  end
+  object DirPopupMenu: TPopupMenu
+    OwnerDraw = True
+    left = 128
+    top = 107
+    object MenuItem1: TMenuItem
+      Caption = 'Current File Folder'
+      OnClick = MenuItem1Click
+    end
+    object MenuItem2: TMenuItem
+      Caption = 'Work Folder'
+      OnClick = MenuItem2Click
+    end
   end
 end

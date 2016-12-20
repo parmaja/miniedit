@@ -2921,10 +2921,7 @@ end;
 
 function TEditorEngine.GetRoot: string;
 begin
-  if Session.Active then
-    Result := Session.GetRoot
-  else
-    Result := Application.Location;
+  Result := Session.GetRoot
 end;
 
 function TEditorEngine.GetSCM: TEditorSCM;

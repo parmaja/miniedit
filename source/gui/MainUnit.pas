@@ -379,6 +379,8 @@ type
     procedure SCMAddFileActExecute(Sender: TObject);
     procedure SearchGridDblClick(Sender: TObject);
     procedure SearchGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
+
+      procedure SearchGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SelectProjectTypeActExecute(Sender: TObject);
     procedure RefreshFilesActExecute(Sender: TObject);
     procedure RenameActExecute(Sender: TObject);
@@ -547,6 +549,7 @@ type
     procedure FollowFolder(vFolder: string; FocusIt: Boolean);
     procedure ShowMessagesList;
     procedure ShowWatchesList;
+    procedure ShowSearchGrid;
     procedure LoadAddons;
     property ShowFolderFiles: TShowFolderFiles read FShowFolderFiles write SetShowFolderFiles;
     property SortFolderFiles: TSortFolderFiles read FSortFolderFiles write SetSortFolderFiles;
@@ -1101,7 +1104,7 @@ var
   s: string;
   aLine, c, l: integer;
 begin
-  if SearchGrid.Row > 0 then
+  if SearchGrid.Row > 1 then
   begin
     Engine.Files.OpenFile(SearchGrid.Cells[1, SearchGrid.Row]);
     s := SearchGrid.Cells[2, SearchGrid.Row];
@@ -1144,28 +1147,16 @@ begin
   if (aRow > 0) then
   begin
     aCanvas := SearchGrid.Canvas;
-    if gdSelected in aState then
-    begin
-      aCanvas.Font.Color := clHighlightText;
-      aCanvas.Brush.Color := clHighlight;
-    end
-    else
-    begin
-      aCanvas.Font.Color := clWindowText;
-      aCanvas.Brush.Color := clWindow;
-    end;
     s := SearchGrid.Cells[aCol, aRow];
     w := aRect.Left + 2;
     h := aCanvas.TextHeight(s);
 
     if (aCol < 3) then
-    begin
-      aCanvas.TextOut(w, aRect.Top, s);
-    end
+      aCanvas.TextOut(w, aRect.Top, s)
     else
     begin
-      l := ptrint(SearchGrid.Rows[SearchGrid.Row].Objects[0]);
-      c := ptrint(SearchGrid.Rows[SearchGrid.Row].Objects[1]);
+      l := ptrint(SearchGrid.Rows[aRow].Objects[0]);
+      c := ptrint(SearchGrid.Rows[aRow].Objects[1]);
       bf := Copy(s, 1, c - 1);
       md := Copy(s, c, l);
       af := Copy(s, c + l, MaxInt);
@@ -1179,9 +1170,15 @@ begin
       w := w + aCanvas.TextWidth(md);
       aCanvas.Font.Style := [];
       aCanvas.TextOut(w, aRect.Top, af);
-      aCanvas.Refresh;
+      //aCanvas.Refresh;
     end;
   end;
+end;
+
+procedure TMainForm.SearchGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Key = VK_RETURN then
+    SearchGridDblClick(Sender);
 end;
 
 procedure TMainForm.SelectProjectTypeActExecute(Sender: TObject);
@@ -2400,6 +2397,19 @@ begin
 end;
 
 procedure TMainForm.OptionsChanged;
+
+  procedure CorrectGridColors(AGrid: TStringGrid);
+  begin
+    AGrid.FixedColor := ntvTheme.Painter.ActiveColor;
+    AGrid.TitleFont.Color := Engine.Options.Profile.Attributes.Default.Foreground;
+    AGrid.FixedGridLineColor := Engine.Options.Profile.Attributes.Panel.Background;
+    AGrid.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
+    AGrid.Font.Name := Engine.Options.Profile.Attributes.FontName;
+    AGrid.Font.Size := Engine.Options.Profile.Attributes.FontSize;
+    AGrid.SelectedColor := Engine.Options.Profile.Attributes.Selected.Background;
+    AGrid.FocusColor := Engine.Options.Profile.Attributes.Selected.Foreground;
+  end;
+
 begin
   {Color := Engine.Options.Profile.Attributes.Panel.Background;
   Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;}
@@ -2443,9 +2453,10 @@ begin
   FileList.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   FileList.Color := Engine.Options.Profile.Attributes.Default.Background;
 
-  SearchGrid.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
-  SearchGrid.Font.Name := Engine.Options.Profile.Attributes.FontName;
-  SearchGrid.Font.Size := Engine.Options.Profile.Attributes.FontSize;
+  CorrectGridColors(MessagesGrid);
+  CorrectGridColors(CallStackGrid);
+  CorrectGridColors(WatchesGrid);
+  CorrectGridColors(SearchGrid);
 
   OutputEdit.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   OutputEdit.Color := Engine.Options.Profile.Attributes.Default.Background;
@@ -2490,6 +2501,11 @@ end;
 procedure TMainForm.ShowWatchesList;
 begin
   MessagesTabs.ActiveControl := WatchesGrid;
+end;
+
+procedure TMainForm.ShowSearchGrid;
+begin
+  MessagesTabs.ActiveControl := SearchGrid;
 end;
 
 procedure TMainForm.LoadAddons;
@@ -2729,6 +2745,8 @@ begin
   UpdateMessagesPnl;
   MessagesTabs.ActiveControl := SearchGrid;
   ShowSearchInFilesForm(@SearchFoundEvent, aText, ExpandFileName(aFolder), Engine.Options.SearchFolderHistory, Engine.Options.SearchHistory, Engine.Options.ReplaceHistory);
+  ShowSearchGrid;
+  SearchGrid.SetFocus;
 end;
 
 procedure TMainForm.NextMessageActExecute(Sender: TObject);

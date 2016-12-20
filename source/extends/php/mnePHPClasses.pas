@@ -295,6 +295,7 @@ var
 begin
   aFrame := TRunFrameOptions.Create(AOwner);
   aFrame.Options := ATendency.RunOptions;
+  aFrame.CommandEdit.Items.Add('php');
   aFrame.Caption := 'PHP Options';
   AddFrame(aFrame);
 end;
