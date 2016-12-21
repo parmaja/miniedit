@@ -119,7 +119,7 @@ object EditorOptionsForm: TEditorOptionsForm
       object Label8: TLabel
         Left = 225
         Height = 13
-        Top = 237
+        Top = 236
         Width = 50
         Caption = 'Extra Line:'
         ParentColor = False

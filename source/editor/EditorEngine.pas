@@ -1706,6 +1706,7 @@ var
   Contents: string;
   Size: integer;
   Stream: TFileStream;
+  IndentMode: TIndentMode;
 begin
   try
     Stream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
@@ -1715,8 +1716,12 @@ begin
       SetString(Contents, nil, Size);
       Stream.Read(Pointer(Contents)^, Size);
       Mode := DetectFileMode(Contents);
-      if Tendency.IndentMode > idntNone then
-        Contents := ConvertIndents(Contents, SynEdit.TabWidth, Tendency.IndentMode);
+
+      IndentMode := Engine.Options.Profile.IndentMode;
+      if Tendency.OverrideEditorOptions then
+        IndentMode := Tendency.IndentMode;
+      if IndentMode > idntNone then
+        Contents := ConvertIndents(Contents, SynEdit.TabWidth, IndentMode);
       if IsNew then //there is no undo here
         SynEdit.Lines.Text := Contents
       else
@@ -1740,13 +1745,18 @@ end;
 procedure TTextEditorFile.DoSave(FileName: string);
 var
   aLines: TStringList;
+  IndentMode: TIndentMode;
 begin
-  if Tendency.IndentMode > idntNone then
+  IndentMode := Engine.Options.Profile.IndentMode;
+  if Tendency.OverrideEditorOptions then
+    IndentMode := Tendency.IndentMode;
+
+  if IndentMode > idntNone then
   begin
     //Ref: http://forum.lazarus.freepascal.org/index.php?topic=33500.msg217147#msg217147
     aLines := TStringList.Create;
     try
-      aLines.Text := ConvertIndents(SynEdit.Lines.Text, SynEdit.TabWidth, Tendency.IndentMode);
+      aLines.Text := ConvertIndents(SynEdit.Lines.Text, SynEdit.TabWidth, IndentMode);
       SaveAsMode(FileName, Mode, aLines);
     finally
       aLines.Free;
@@ -3564,6 +3574,14 @@ begin
       else
         List.Add('Root=' + GetRoot);
 
+      if Files.Current <> nil then
+      begin
+        List.Add('CurFile=' + Files.Current.Name);
+        List.Add('File=' + Files.Current.Name);
+        List.Add('FileName=' + ExtractFileName(Files.Current.Name));
+        List.Add('FileDir=' + Files.Current.Path);
+      end;
+
       if Session.Active then
       begin
         List.Add('Main=' + Session.Project.RunOptions.MainFile); //TODO:
@@ -3574,15 +3592,17 @@ begin
         List.Add('Project=' + Session.Project.FileName);
         List.Add('ProjectName=' + Session.Project.FileName);
         List.Add('ProjectDir=' + ExtractFilePath(Session.Project.FileName));
+      end
+      else
+      begin
+        if Files.Current <> nil then
+        begin
+          List.Add('Main=' + Files.Current.Name);
+          List.Add('MainFile=' + Files.Current.Name);
+          List.Add('MainDir=' + ExtractFilePath(Files.Current.Name));
+        end
       end;
 
-      if Files.Current <> nil then
-      begin
-        List.Add('CurFile=' + Files.Current.Name);
-        List.Add('File=' + Files.Current.Name);
-        List.Add('FileName=' + ExtractFileName(Files.Current.Name));
-        List.Add('FileDir=' + Files.Current.Path);
-      end;
       Result := VarReplace(S, List, sEnvVarChar);
     finally
       List.Free;
