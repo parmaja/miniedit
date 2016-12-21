@@ -396,8 +396,8 @@ object AboutForm: TAboutForm
   end
   object Button1: TButton
     Left = 385
-    Height = 23
-    Top = 302
+    Height = 25
+    Top = 299
     Width = 75
     Anchors = [akLeft, akBottom]
     Cancel = True

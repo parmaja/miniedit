@@ -12,7 +12,7 @@ object SelectFileForm: TSelectFileForm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poMainFormCenter
-  LCLVersion = '1.3'
+  LCLVersion = '1.7'
   object FilesList: TListView
     Left = 3
     Height = 287
@@ -32,29 +32,28 @@ object SelectFileForm: TSelectFileForm
     HideSelection = False
     ReadOnly = True
     RowSelect = True
-    SmallImages = EditorResource.SmallImages
     SortType = stText
     TabOrder = 1
     ViewStyle = vsReport
     OnDblClick = FilesListDblClick
   end
   object OkBtn: TButton
-    Left = 6
+    Left = 210
     Height = 26
     Top = 319
     Width = 75
-    Anchors = [akLeft, akBottom]
+    Anchors = [akRight, akBottom]
     Caption = '&Ok'
     Default = True
     OnClick = OkBtnClick
     TabOrder = 2
   end
   object CancelBtn: TButton
-    Left = 83
+    Left = 134
     Height = 26
     Top = 319
     Width = 75
-    Anchors = [akLeft, akBottom]
+    Anchors = [akRight, akBottom]
     Cancel = True
     Caption = '&Cancel'
     ModalResult = 2
