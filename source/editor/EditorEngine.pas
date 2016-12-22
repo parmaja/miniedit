@@ -3579,7 +3579,6 @@ begin
         List.Add('FileDir=' + Files.Current.Path);
       end;
 
-      MainFile := '';
       if Session.Active then
       begin
         List.Add('Project=' + Session.Project.FileName);
@@ -3588,8 +3587,12 @@ begin
 
         List.Add('Output=' + Session.Project.RunOptions.OutputFile);
 
-        MainFile := Session.Project.RunOptions.MainFile;
       end;
+
+      if Session.Project <> nil then
+        MainFile := Session.Project.RunOptions.MainFile
+      else
+        MainFile := '';
 
       if (MainFile = '') and (Files.Current <> nil) then
         MainFile := Files.Current.Name;

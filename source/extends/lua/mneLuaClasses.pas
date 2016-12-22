@@ -216,8 +216,8 @@ begin
   aFrame := TRunFrameOptions.Create(AOwner);
   aFrame.Options := ATendency.RunOptions;
   aFrame.CommandEdit.Items.Add('lua ?file');
-  aFrame.CommandEdit.Items.Add('love ?filedir ?file');
-  aFrame.CommandEdit.Items.Add('lovec ?filedir ?file');
+  aFrame.CommandEdit.Items.Add('love ?maindir ?main');
+  aFrame.CommandEdit.Items.Add('lovec ?maindir ?main');
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 end;
