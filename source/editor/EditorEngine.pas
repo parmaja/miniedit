@@ -5090,7 +5090,7 @@ var
   aItem: TEditorDesktopFile;
   aFile: TEditorFile;
 begin
-  if Engine.FSafeMode and (FEngineLife >= engnStarted) then
+  if not Engine.FSafeMode and (FEngineLife >= engnStarting) then
   begin
     Engine.BeginUpdate;
     try
