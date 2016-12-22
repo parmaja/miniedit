@@ -1407,6 +1407,13 @@ object MainForm: TMainForm
       object N7: TMenuItem
         Caption = '-'
       end
+      object MenuItem31: TMenuItem
+        Action = SetAsMainFileAc
+      end
+      object MenuItem30: TMenuItem
+        Action = SetAsRootFolderAct
+        Hint = 'set the current folder in panel as root/main folder'
+      end
       object MenuItem13: TMenuItem
         Action = SelectSCMTypeAct
       end
@@ -1926,7 +1933,7 @@ object MainForm: TMainForm
     end
     object SelectSCMTypeAct: TAction
       Category = 'Project'
-      Caption = 'Select SCM'
+      Caption = 'Set SCM'
       Hint = 'Source control managment type'
       OnExecute = SelectSCMTypeActExecute
     end
@@ -2227,6 +2234,16 @@ object MainForm: TMainForm
       Caption = 'Add File'
       OnExecute = SCMAddFileActExecute
     end
+    object SetAsMainFileAc: TAction
+      Category = 'File'
+      Caption = 'Set As Main file'
+      OnExecute = SetAsMainFileAcExecute
+    end
+    object SetAsRootFolderAct: TAction
+      Category = 'File'
+      Caption = 'Set As Main folder'
+      OnExecute = SetAsRootFolderActExecute
+    end
   end
   object FolderMenu: TPopupMenu
     Images = EditorResource.ToolbarImageList
@@ -2487,6 +2504,9 @@ object MainForm: TMainForm
       }
       ImageIndex = 30
       OnClick = OpenFolderActExecute
+    end
+    object MenuItem32: TMenuItem
+      Action = SetAsMainFileAc
     end
   end
   object StatusTimer: TTimer

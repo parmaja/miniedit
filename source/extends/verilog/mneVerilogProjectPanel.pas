@@ -47,13 +47,13 @@ var
   path: string;
   i: SizeInt;
 begin
-  OpenDialog1.InitialDir:=FProject.RootDir;
+  OpenDialog1.InitialDir:=Engine.GetRoot;
 
   if OpenDialog1.Execute then
   begin
     for i:=0 to OpenDialog1.Files.Count-1 do
     begin
-      path:=ExtractRelativepath(IncludeTrailingBackslash(FProject.RootDir),OpenDialog1.Files[i]);
+      path:=ExtractRelativepath(IncludeTrailingBackslash(Engine.GetRoot),OpenDialog1.Files[i]);
       ProjectFileList.Items.Add(path);
     end;
 

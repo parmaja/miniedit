@@ -54,6 +54,11 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    MenuItem32: TMenuItem;
+    SetAsRootFolderAct: TAction;
+    SetAsMainFileAc: TAction;
+    MenuItem30: TMenuItem;
+    MenuItem31: TMenuItem;
     SCMAddFileAct: TAction;
     FileModeBtn: TntvImgBtn;
     FileCloseBtn: TntvImgBtn;
@@ -407,6 +412,8 @@ type
     procedure CloseProjectActExecute(Sender: TObject);
     procedure OpenFolderActExecute(Sender: TObject);
     procedure MessagesActExecute(Sender: TObject);
+    procedure SetAsMainFileAcExecute(Sender: TObject);
+    procedure SetAsRootFolderActExecute(Sender: TObject);
     procedure ShowAllActExecute(Sender: TObject);
     procedure ShowRelatedActExecute(Sender: TObject);
     procedure ShowKnownActExecute(Sender: TObject);
@@ -1448,7 +1455,7 @@ begin
   begin
     aFile := (Sender as TMenuItem).Caption;
     if Engine.Session.Active then
-      aFile := ExpandToPath(aFile, Engine.Session.Project.RootDir);
+      aFile := ExpandToPath(aFile, Engine.Session.Project.RunOptions.MainFolder);
     Engine.Files.OpenFile(aFile);
   end;
 end;
@@ -1519,6 +1526,17 @@ end;
 procedure TMainForm.MessagesActExecute(Sender: TObject);
 begin
   UpdateMessagesPnl;
+end;
+
+procedure TMainForm.SetAsMainFileAcExecute(Sender: TObject);
+begin
+  if Engine.Files.Current <> nil then
+    Engine.Session.Project.RunOptions.MainFile := Engine.Files.Current.Name;
+end;
+
+procedure TMainForm.SetAsRootFolderActExecute(Sender: TObject);
+begin
+  Engine.Session.Project.RunOptions.MainFolder:= Folder;
 end;
 
 procedure TMainForm.ShowAllActExecute(Sender: TObject);

@@ -22,27 +22,27 @@ type
     Button3: TButton;
     Button4: TButton;
     DescriptionEdit: TEdit;
+    Label1: TLabel;
     Label2: TLabel;
+    Label8: TLabel;
     Label9: TLabel;
     MainEdit: TEdit;
-    OverrideOptionsSheet: TTabSheet;
-    Label1: TLabel;
+    GeneralOptionsSheet: TTabSheet;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
-    Label8: TLabel;
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     NameEdit: TEdit;
+    RootDirEdit: TEdit;
     SaveDesktopChk: TCheckBox;
+    SCMCbo: TComboBox;
     TitleEdit: TEdit;
     OkBtn: TButton;
     CancelBtn: TButton;
     PageControl: TPageControl;
     PathPopupMenu: TPopupMenu;
-    RootDirEdit: TEdit;
-    SCMCbo: TComboBox;
     GeneralSheet: TTabSheet;
     procedure Button4Click(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
@@ -81,8 +81,17 @@ begin
       FProject := vProject;
       Retrieve;
       RetrieveFrames;
-      PageControl.ActivePage := GeneralSheet;
-      ActiveControl := NameEdit;
+      if FProject is TDefaultProject then
+      begin
+        GeneralSheet.Visible := False;
+        PageControl.Pages[0].TabVisible := False;
+        PageControl.ActivePage := GeneralOptionsSheet;
+      end
+      else
+      begin
+        PageControl.ActivePage := GeneralSheet;
+        ActiveControl := NameEdit;
+      end;
       Result := ShowModal = mrOk;
       if Result then
       begin
@@ -107,7 +116,7 @@ procedure TProjectForm.Button4Click(Sender: TObject);
 var
   s: string;
 begin
-  ShowSelectFile(FProject.RootDir, s);
+  ShowSelectFile(FProject.RunOptions.MainFolder, s);
   MainEdit.Text := s;
 end;
 
@@ -121,7 +130,7 @@ begin
   FProject.Title := TitleEdit.Text;
   FProject.Name := NameEdit.Text;
   FProject.Description := DescriptionEdit.Text;
-  FProject.RootDir := RootDirEdit.Text;
+  FProject.RunOptions.MainFolder := RootDirEdit.Text;
   FProject.SaveDesktop := SaveDesktopChk.Checked;
   FProject.SetSCMClass(TEditorSCM(SCMCbo.Items.Objects[SCMCbo.ItemIndex]));
   FProject.RunOptions.MainFile := MainEdit.Text;
@@ -153,7 +162,7 @@ begin
   TitleEdit.Text := FProject.Title;
   NameEdit.Text := FProject.Name;
   DescriptionEdit.Text := FProject.Description;
-  RootDirEdit.Text := FProject.RootDir;
+  RootDirEdit.Text := FProject.RunOptions.MainFolder;
   SaveDesktopChk.Checked := FProject.SaveDesktop;
   if FProject.SCM <> nil then
     SCMCbo.ItemIndex := Engine.SourceManagements.IndexOf(FProject.SCM.Name) + 1
@@ -209,7 +218,7 @@ end;
 procedure TProjectForm.PageControlChanging(Sender: TObject; var AllowChange: Boolean);
 begin
   if not (csLoading in ComponentState) then //When createing the form when do not need to trigger
-    if (PageControl.ActivePage = GeneralSheet) or (PageControl.ActivePage = OverrideOptionsSheet) then
+    if (PageControl.ActivePage = GeneralSheet) or (PageControl.ActivePage = GeneralOptionsSheet) then
       Apply;
 end;
 

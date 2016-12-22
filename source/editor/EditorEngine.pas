@@ -364,6 +364,7 @@ type
   TRunProjectOptions = class(TPersistent)
   private
     FCommand: string;
+    FMainFolder: string;
     FParams: string;
     FMode: TmneRunMode;
     FPause: Boolean;
@@ -387,6 +388,7 @@ type
     property Command: string read FCommand write FCommand;
     property Params: string read FParams write FParams;
     property Require: string read FRequire write FRequire;
+    property MainFolder: string read FMainFolder write FMainFolder;
     property MainFile: string read FMainFile write FMainFile;
     property OutputFile: string read FOutputFile write FOutputFile;
     property RootUrl: string read FRootUrl write FRootUrl;
@@ -403,7 +405,6 @@ type
     FRunOptions: TRunProjectOptions;
     FTendencyName: string;
     FDescription: string;
-    FRootDir: string;
     FFileName: string;
     FName: string;
     FSaveDesktop: Boolean;
@@ -413,7 +414,6 @@ type
     FTitle: string;
     procedure SetTendency(AValue: TEditorTendency);
     procedure SetTendencyName(AValue: string);
-    procedure SetRootDir(AValue: string);
     procedure SetSCM(AValue: TEditorSCM);
   protected
     procedure RecreateOptions;
@@ -428,6 +428,7 @@ type
     procedure SetSCMClass(SCMClass: TEditorSCM);
     //Tendency here point to one of Engine.Tendencies so it is not owned by project
     property Tendency: TEditorTendency read FTendency write SetTendency;
+    property RunOptions: TRunProjectOptions read FRunOptions write FRunOptions;
   published
     property Name: string read FName write FName;
     property Title: string read FTitle write FTitle;
@@ -436,11 +437,14 @@ type
     property SCM: TEditorSCM read FSCM write SetSCM;
 
     property Description: string read FDescription write FDescription;
-    property RootDir: string read FRootDir write SetRootDir;
     property SaveDesktop: Boolean read FSaveDesktop write FSaveDesktop default True;
     property Desktop: TEditorDesktop read FDesktop stored FSaveDesktop;
     property Options: TEditorProjectOptions read FOptions write FOptions default nil;
-    property RunOptions: TRunProjectOptions read FRunOptions write FRunOptions;
+  end;
+
+  TRunProject = class(TEditorProject)
+  published
+    property RunOptions;
   end;
 
   {* Default project to used when no project opened
@@ -450,7 +454,6 @@ type
 
   TDefaultProject = class sealed(TEditorProject)
   public
-    destructor Destroy; override;
   end;
 
   { TDebugMarksPart }
@@ -1306,13 +1309,6 @@ begin
       S := S + #$D;
     Stream.WriteBuffer(Pointer(S)^, Length(S));
   end;
-end;
-
-{ TDefaultProject }
-
-destructor TDefaultProject.Destroy;
-begin
-  inherited Destroy;
 end;
 
 { TFileCategories }
@@ -3077,7 +3073,7 @@ end;
 
 function TEditorSession.New(Tendency: TEditorTendency): TEditorProject;
 begin
-  Result := TEditorProject.Create;
+  Result := TRunProject.Create;
   if Tendency <> nil then
     Result.TendencyName := Tendency.Name;
 end;
@@ -3213,9 +3209,9 @@ var
 begin
   if Active then
   begin
-    if (Project.RootDir <> '') then
+    if (Project.RunOptions.MainFolder <> '') then
     begin
-      r := Project.RootDir;
+      r := Project.RunOptions.MainFolder;
       r := ExpandToPath(r, ExtractFilePath(Project.FileName), '');
       Result := Engine.EnvReplace(r, true);
     end
@@ -3557,6 +3553,7 @@ end;
 function TEditorEngine.EnvReplace(S: string; ForRoot: Boolean): string;
 var
   List: TStringList;
+  MainFile: string;
 begin
   Result := '';
   if s <> '' then
@@ -3582,25 +3579,26 @@ begin
         List.Add('FileDir=' + Files.Current.Path);
       end;
 
+      MainFile := '';
       if Session.Active then
       begin
-        List.Add('Main=' + Session.Project.RunOptions.MainFile); //TODO:
-        List.Add('MainFile=' + Session.Project.RunOptions.MainFile);
-        List.Add('MainDir=' + ExtractFilePath(Session.Project.RunOptions.MainFile));
-        List.Add('Output=' + Session.Project.RunOptions.OutputFile);
-
         List.Add('Project=' + Session.Project.FileName);
         List.Add('ProjectName=' + Session.Project.FileName);
         List.Add('ProjectDir=' + ExtractFilePath(Session.Project.FileName));
-      end
-      else
+
+        List.Add('Output=' + Session.Project.RunOptions.OutputFile);
+
+        MainFile := Session.Project.RunOptions.MainFile;
+      end;
+
+      if (MainFile = '') and (Files.Current <> nil) then
+        MainFile := Files.Current.Name;
+
+      if MainFile <> '' then
       begin
-        if Files.Current <> nil then
-        begin
-          List.Add('Main=' + Files.Current.Name);
-          List.Add('MainFile=' + Files.Current.Name);
-          List.Add('MainDir=' + ExtractFilePath(Files.Current.Name));
-        end
+        List.Add('Main=' + MainFile);
+        List.Add('MainFile=' + MainFile);
+        List.Add('MainDir=' + ExtractFilePath(MainFile));
       end;
 
       Result := VarReplace(S, List, sEnvVarChar);
@@ -4706,12 +4704,6 @@ begin
     FTendency := AValue;
     RecreateOptions;
   end;
-end;
-
-procedure TEditorProject.SetRootDir(AValue: string);
-begin
-  if FRootDir <> AValue then
-    FRootDir := AValue;
 end;
 
 procedure TEditorProject.SetSCM(AValue: TEditorSCM);

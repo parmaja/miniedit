@@ -297,7 +297,7 @@ begin
         try
           for i:=0 to proj.Files.Count-1 do
           begin
-            f:=ConcatPaths([Engine.Session.Project.RootDir,proj.Files[i]]);
+            f:=ConcatPaths([Engine.GetRoot, proj.Files[i]]);
 
             if LowerCase(ExtractFileExt(f))='.v' then
             begin
