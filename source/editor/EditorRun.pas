@@ -287,10 +287,10 @@ end;
 
 procedure TmneRunItem.Attach;
 begin
-  if Engine.Tendency.Debug <> nil then
+  if Engine.CurrentTendency.Debug <> nil then
   begin
-    Engine.Tendency.Debug.Start;
-    Engine.Tendency.Debug.Attach(Process, True);
+    Engine.CurrentTendency.Debug.Start;
+    Engine.CurrentTendency.Debug.Attach(Process, True);
   end;
 end;
 

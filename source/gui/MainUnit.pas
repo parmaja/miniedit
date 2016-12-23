@@ -933,7 +933,7 @@ var
 begin
   try
     if Engine.Session.Active then
-      aGroups := Engine.Tendency.Groups
+      aGroups := Engine.Session.Project.Tendency.Groups
     else
       aGroups := Engine.Groups;
     G := TFileGroups.Create(False);
@@ -1957,7 +1957,7 @@ begin
       case ShowFolderFiles of
         sffRelated:
           if Engine.Session.Active then
-            Engine.Tendency.Groups.EnumExtensions(AExtensions)
+            Engine.Session.Project.Tendency.Groups.EnumExtensions(AExtensions)
           else
             Engine.Groups.EnumExtensions(AExtensions);
         sffKnown: Engine.Groups.EnumExtensions(AExtensions);

@@ -56,7 +56,7 @@ begin
     try
       FilterEdit.Text := LastFilter;
       FilterEdit.SelectAll;
-      EnumFileList(vRoot, Engine.Tendency.Groups.CreateFilter(False), Engine.Options.IgnoreNames, FFiles, 1000, 10, False, True);
+      EnumFileList(vRoot, Engine.CurrentTendency.Groups.CreateFilter(False), Engine.Options.IgnoreNames, FFiles, 1000, 10, False, True);
       ShowFiles;
       Result := ShowModal = mrOK;
       if Result then

@@ -982,7 +982,7 @@ type
     destructor Destroy; override;
     procedure Changed;
     procedure Load(FileName: string);
-    function New: TEditorProject;
+    function New: TEditorProject; deprecated;
     function New(Tendency: TEditorTendency): TEditorProject;
     procedure Open;
     procedure Close;
@@ -1141,7 +1141,6 @@ type
     //BrowseFolder: Current folder
     property BrowseFolder: string read FBrowseFolder write SetBrowseFolder;
     property DebugLink: TEditorDebugLink read FDebugLink;
-    property Tendency: TEditorTendency read GetTendency; //It get Project/Default tendency no for current file
     property CurrentTendency: TEditorTendency read GetCurrentTendency; //It get Project/File/Default tendency
     property DefaultProject: TDefaultProject read FDefaultProject;
     property SCM: TEditorSCM read GetSCM;
@@ -3068,7 +3067,7 @@ end;
 
 function TEditorSession.New: TEditorProject;
 begin
-  Result := New(Engine.Tendency);
+  Result := New(Engine.Session.Project.Tendency);
 end;
 
 function TEditorSession.New(Tendency: TEditorTendency): TEditorProject;

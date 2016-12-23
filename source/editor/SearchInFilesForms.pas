@@ -82,7 +82,7 @@ var
   aMasks: string;
 begin
   if SearchFilesGrp.ItemIndex = 0 then
-    aMasks := Engine.Tendency.Groups.CreateFilter(False)
+    aMasks := Engine.Session.Project.Tendency.Groups.CreateFilter(False)
   else
     aMasks := Engine.Groups.CreateFilter(False);
 
