@@ -51,7 +51,7 @@ end;
 
 procedure TBreakpointsForm.FormCreate(Sender: TObject);
 begin
-  FTendency := Engine.CurrentTendency;
+  FTendency := Engine.Tendency;
   FTendency.Debug.Lock;
   try
     Reload;

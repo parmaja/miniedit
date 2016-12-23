@@ -230,6 +230,7 @@ type
     fgkText, //Is it an Text Editor like SQL or PHP
     fgkUneditable, // Can't be editable
     fgkExecutable,//You can guess what is it :P
+    fgkShell,//TODO: Executable but very hot, override the main file or project tendency
     fgkDebugee, //TODO
     fgkMain,//this can be the main file for project
     fgkResult,//Result file, generated, like: exe or .o or .hex
@@ -982,8 +983,7 @@ type
     destructor Destroy; override;
     procedure Changed;
     procedure Load(FileName: string);
-    function New: TEditorProject; deprecated;
-    function New(Tendency: TEditorTendency): TEditorProject;
+    function New(Tendency: TEditorTendency = nil): TEditorProject;
     procedure Open;
     procedure Close;
     function Save(AProject: TEditorProject): Boolean;
@@ -1046,6 +1046,11 @@ type
     procedure EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
   end;
 
+  TEngineCache = record
+    MainFile: string;
+    MainGroup: TFileGroup;
+  end;
+
   { TEditorEngine }
 
   TEditorEngine = class(TObject)
@@ -1072,12 +1077,12 @@ type
     //Extenstion Cache
     //FExtenstionCache: TExtenstionCache; //TODO
     FEnvironment: TStringList;
+    FCache: TEngineCache;
     function GetSCM: TEditorSCM;
     function GetUpdating: Boolean;
     procedure SetBrowseFolder(const Value: string);
     function GetWorkSpace: string;
-    //procedure SetDefaultSCM(AValue: TEditorSCM);
-    function GetCurrentTendency: TEditorTendency;
+    function GetMainFileTendency: TEditorTendency;
     function GetTendency: TEditorTendency;
   protected
     FSafeMode: Boolean;
@@ -1141,7 +1146,7 @@ type
     //BrowseFolder: Current folder
     property BrowseFolder: string read FBrowseFolder write SetBrowseFolder;
     property DebugLink: TEditorDebugLink read FDebugLink;
-    property CurrentTendency: TEditorTendency read GetCurrentTendency; //It get Project/File/Default tendency
+    property Tendency: TEditorTendency read GetTendency; //It get Project/MainFile/File/Default tendency
     property DefaultProject: TDefaultProject read FDefaultProject;
     property SCM: TEditorSCM read GetSCM;
     function GetIsChanged: Boolean;
@@ -2315,6 +2320,8 @@ begin
         p.Mode := AOptions.Mode;
         p.Pause := AOptions.Pause;
 
+        p.MainFile := Engine.Session.Project.RunOptions.MainFile;
+
         if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
           p.MainFile := Engine.Files.Current.Name;
 
@@ -2937,19 +2944,21 @@ begin
     Result := DefaultProject.SCM
 end;
 
-function TEditorEngine.GetCurrentTendency: TEditorTendency;
+function TEditorEngine.GetTendency: TEditorTendency;
 begin
   if Session.Active and (Session.Project.Tendency <> nil) then
     Result := Session.Project.Tendency
-  else if (Engine.Files.Current <> nil) and (Engine.Files.Current.Tendency <> nil) then
-    Result := Engine.Files.Current.Tendency
   else
-    Result := DefaultProject.Tendency;
-end;
-
-function TEditorEngine.GetTendency: TEditorTendency;
-begin
-  Result := Session.Project.Tendency
+  begin
+    Result := GetMainFileTendency;
+    if Result = nil then
+    begin
+      if (Engine.Files.Current <> nil) and (Engine.Files.Current.Tendency <> nil) then
+        Result := Engine.Files.Current.Tendency
+      else
+        Result := DefaultProject.Tendency;
+    end
+  end
 end;
 
 function TEditorFiles.InternalOpenFile(FileName: string; AppendToRecent: Boolean): TEditorFile;
@@ -3065,11 +3074,6 @@ begin
   end;
 end;
 
-function TEditorSession.New: TEditorProject;
-begin
-  Result := New(Engine.Session.Project.Tendency);
-end;
-
 function TEditorSession.New(Tendency: TEditorTendency): TEditorProject;
 begin
   Result := TRunProject.Create;
@@ -3103,7 +3107,7 @@ begin
     aDialog.Filter := Engine.Groups.CreateFilter;
     aDialog.FilterIndex := 0;
     aDialog.InitialDir := Engine.BrowseFolder;
-    aDialog.DefaultExt := Engine.CurrentTendency.GetDefaultGroup.Extensions[0].Name;
+    aDialog.DefaultExt := Engine.Tendency.GetDefaultGroup.Extensions[0].Name;
     //aDialog.FileName := '*' + aDialog.DefaultExt;
     if aDialog.Execute then
     begin
@@ -3714,6 +3718,21 @@ begin
   Result := IncludeTrailingPathDelimiter(FWorkSpace);
 end;
 
+function TEditorEngine.GetMainFileTendency: TEditorTendency;
+begin
+  if (Session.Project <> nil) and (Session.Project.RunOptions.MainFile <> '') then
+  begin
+    if (not SameText(FCache.MainFile, Session.Project.RunOptions.MainFile)) then
+    begin
+      FCache.MainFile := Session.Project.RunOptions.MainFile;
+      FCache.MainGroup := Engine.Groups.FindExtension(ExtractFileExt(FCache.MainFile));
+    end;
+    Result := FCache.MainGroup.Category.Tendency;
+  end
+  else
+    Result := nil;
+end;
+
 procedure TEditorEngine.InternalChangedState(State: TEditorChangeStates);
 begin
   Inc(FInUpdateState);
@@ -3960,7 +3979,7 @@ begin
       if Group <> nil then
         aDialog.DefaultExt := Group.Extensions[0].Name
       else
-        aDialog.DefaultExt := Engine.CurrentTendency.GetDefaultGroup.Extensions[0].Name;
+        aDialog.DefaultExt := Engine.Tendency.GetDefaultGroup.Extensions[0].Name;
     end;
     aDialog.FileName := '*' + aDialog.DefaultExt;
 
@@ -4423,7 +4442,7 @@ begin
     if vGroup <> nil then
       aDefaultGroup := vGroup
     else
-      aDefaultGroup := Engine.CurrentTendency.GetDefaultGroup;
+      aDefaultGroup := Engine.Tendency.GetDefaultGroup;
     AddIt(aDefaultGroup);
     for i := 0 to Count - 1 do
     begin
@@ -5045,7 +5064,7 @@ var
 var
   aTendency: TEditorTendency;
 begin
-  aTendency := Engine.CurrentTendency;
+  aTendency := Engine.Tendency;
   //inherited;
   if aTendency.Debug <> nil then
   begin
