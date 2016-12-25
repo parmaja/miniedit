@@ -6,17 +6,6 @@ unit MainUnit;
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author    Zaher Dirkey <zaher at parmaja dot com>
  *}
-{
-
-SynEdit:
-    - Make PaintTransient in TCustomerHighlighter as virtual and called from DoOnPaintTransientEx like calling OnPaintTransient
-    - Need a retrieve the Range when call GetHighlighterAttriAtRowColEx
-    - "Reset" method in TSynHighlighterAttributes to reassign property to default such as fBackground := fBackgroundDefault it is usfull to load and reload properties from file (XML one)
-
-  MessageList TabStop must be False, can not Maximize window in startup the application (When it is take the focus)
-
-  //i should move Macro Recorder to Engine not in Category
-}
 interface
 
 uses
@@ -384,8 +373,7 @@ type
     procedure SCMAddFileActExecute(Sender: TObject);
     procedure SearchGridDblClick(Sender: TObject);
     procedure SearchGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
-
-      procedure SearchGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure SearchGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure SelectProjectTypeActExecute(Sender: TObject);
     procedure RefreshFilesActExecute(Sender: TObject);
     procedure RenameActExecute(Sender: TObject);
@@ -1111,20 +1099,20 @@ var
   s: string;
   aLine, c, l: integer;
 begin
-  if SearchGrid.Row > 1 then
+  if SearchGrid.Row > 0 then
   begin
     Engine.Files.OpenFile(SearchGrid.Cells[1, SearchGrid.Row]);
     s := SearchGrid.Cells[2, SearchGrid.Row];
     if s <> '' then
     begin
-      aLine := StrToIntDef(s, 0);
+      aLine := ptrint(SearchGrid.Rows[SearchGrid.Row].Objects[1]);
       if aLine > 0 then
       begin
         with Engine.Files.Current do
         if Control is TCustomSynEdit then
         begin
           l := ptrint(SearchGrid.Rows[SearchGrid.Row].Objects[0]);
-          c := ptrint(SearchGrid.Rows[SearchGrid.Row].Objects[1]);
+          c := ptrint(SearchGrid.Rows[SearchGrid.Row].Objects[2]);
           (Control as TCustomSynEdit).CaretY := aLine;
           if l > 0 then
           begin
@@ -1153,15 +1141,15 @@ var
 begin
   if (aRow > 0) then
   begin
-    aCanvas := SearchGrid.Canvas;
-    s := SearchGrid.Cells[aCol, aRow];
-    w := aRect.Left + 2;
-    h := aCanvas.TextHeight(s);
-
-    if (aCol < 3) then
-      aCanvas.TextOut(w, aRect.Top, s)
-    else
+    if (aCol > 2) then
     begin
+      aCanvas := SearchGrid.Canvas;
+      //s := StringReplace(SearchGrid.Cells[aCol, aRow], #9, '    ', [rfReplaceAll]);
+      s := SearchGrid.Cells[aCol, aRow];
+
+      w := aRect.Left + 2;
+      h := aCanvas.TextHeight(s);
+
       l := ptrint(SearchGrid.Rows[aRow].Objects[0]);
       c := ptrint(SearchGrid.Rows[aRow].Objects[1]);
       bf := Copy(s, 1, c - 1);
@@ -2028,6 +2016,8 @@ begin
       AExtensions.Free;
     end;
   finally
+    if FileList.Items.Count > 0 then
+      FileList.Items[0].Selected := True;
     FileList.Items.EndUpdate;
   end;
 end;
@@ -2735,11 +2725,13 @@ begin
   else
     SearchGrid.RowCount := SearchGrid.RowCount + 1;
   SearchGrid.Cells[1, SearchGrid.RowCount - 1] := FileName;
-  SearchGrid.Cells[2, SearchGrid.RowCount - 1] := IntToStr(LineNo);
+  SearchGrid.Cells[2, SearchGrid.RowCount - 1] := IntToStr(LineNo) + ', ' + IntToStr(Column);
 
   SearchGrid.Cells[3, SearchGrid.RowCount - 1] := Line;
+
   SearchGrid.Rows[SearchGrid.RowCount - 1].Objects[0] := TObject(PtrInt(FoundLength));
-  SearchGrid.Rows[SearchGrid.RowCount - 1].Objects[1] := TObject(PtrInt(Column));
+  SearchGrid.Rows[SearchGrid.RowCount - 1].Objects[1] := TObject(PtrInt(LineNo));
+  SearchGrid.Rows[SearchGrid.RowCount - 1].Objects[2] := TObject(PtrInt(Column));
 end;
 
 procedure TMainForm.FindInFilesActExecute(Sender: TObject);
@@ -2776,31 +2768,25 @@ procedure TMainForm.MoveListIndex(vForward: boolean);
 
   procedure DblClick(Grid: TStringGrid);
   begin
-    if vForward then
-    begin
-      if Grid.Row < Grid.RowCount - 1 then
-        Grid.Row := Grid.Row + 1;
-    end
-    else
-    begin
-      if Grid.Row > 0 then
-        Grid.Row := Grid.Row - 1;
-    end;
-    if Grid.Row > 0 then
-    begin
-      //Grid.MakeVisible(False); TODO
-    end;
     if Assigned(Grid.OnDblClick) then
+    begin
+      if vForward then
+      begin
+        if Grid.Row < Grid.RowCount - 1 then
+          Grid.Row := Grid.Row + 1;
+      end
+      else
+      begin
+        if Grid.Row > 0 then
+          Grid.Row := Grid.Row - 1;
+      end;
       Grid.OnDblClick(Grid);
+    end
   end;
 
 begin
-  case MessagesTabs.ItemIndex of
-    0: DblClick(MessagesGrid);
-    1: DblClick(WatchesGrid);
-    2: DblClick(SearchGrid);
-    3: DblClick(CallStackGrid);
-  end;
+  if MessagesTabs.ActiveControl is TStringGrid then
+    DblClick(MessagesTabs.ActiveControl as TStringGrid);
 end;
 
 procedure TMainForm.PriorMessageActExecute(Sender: TObject);
@@ -2857,10 +2843,29 @@ end;
 
 procedure TMainForm.SwitchFocusActExecute(Sender: TObject);
 begin
-  if FoldersAct.Checked and not FileList.Focused then
-    FileList.SetFocus
-  else if (Engine.Files.Current <> nil) then
-    Engine.Files.Current.Activate;
+  if FileList.Focused then
+  begin
+    if MessagesTabs.Visible then
+      MessagesTabs.ActivateControl
+    else if (Engine.Files.Current <> nil) then
+      Engine.Files.Current.Activate;
+  end
+  else if MessagesTabs.IsParentOf(ActiveControl) then
+  begin
+    if (Engine.Files.Current <> nil) then
+      Engine.Files.Current.Activate
+    else if FolderPanel.Visible then
+    begin
+      FileList.SetFocus;
+    end
+  end
+  else
+  begin
+    if FolderPanel.Visible then
+      FileList.SetFocus
+    else if MessagesTabs.Visible then
+      MessagesTabs.ActivateControl;
+  end
 end;
 
 procedure TMainForm.QuickSearchNextBtnClick(Sender: TObject);
