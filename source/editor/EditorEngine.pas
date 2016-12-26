@@ -527,7 +527,7 @@ type
     procedure Reload;
     procedure OpenInclude; virtual;
     function CanOpenInclude: Boolean; virtual;
-    function CheckChanged: Boolean;
+    function CheckChanged(Force: Boolean = False): Boolean;
     //
     procedure Activate; virtual;
     procedure GotoLine; virtual;
@@ -638,7 +638,7 @@ type
 
   TEditorFiles = class(TCollection)
   private
-    FCheckChanged: Boolean;
+    FCheckingChanged: Boolean;
     FCurrent: TEditorFile;
     function GetItems(Index: integer): TEditorFile;
     function GetCurrent: TEditorFile;
@@ -662,6 +662,8 @@ type
     procedure Open;
     procedure Save;
     procedure SaveAll;
+    procedure ReloadAll;
+    procedure CheckAll;
     procedure SaveAs;
     procedure Revert;
     procedure Refresh;
@@ -675,6 +677,7 @@ type
     procedure CheckChanged;
     procedure CloseAll;
     function GetEditedCount: integer;
+    property CheckingChanged: Boolean read FCheckingChanged write FCheckingChanged; //public to use it in SearchInFiles
     property Current: TEditorFile read GetCurrent write SetCurrent;
     property Items[Index: integer]: TEditorFile read GetItems; default;
   published
@@ -2447,15 +2450,13 @@ function TEditorEngine.SearchReplace(const FileName: string; const ALines: TStri
 var
   i: integer;
   nSearchLen, nReplaceLen, n, nChar: integer;
-  nInLine: integer;
+  count: integer;
   iResultOffset: integer;
   aLine, aReplaceText: string;
   Replaced: Boolean;
 begin
   if not Assigned(SearchEngine) then
-  begin
     raise ESynEditError.Create('No search engine has been assigned');
-  end;
 
   Result := 0;
   // can't search for or replace an empty string
@@ -2466,30 +2467,32 @@ begin
   // initialize the search engine
   //SearchEngine.Options := AOptions;
   SearchEngine.Pattern := ASearch;
+  if (ssoReplace in AOptions) then
+    SearchEngine.Replacement := AReplace;
   // search while the current search position is inside of the search range
   try
     while i < ALines.Count do
     begin
       aLine := ALines[i];
-      nInLine := SearchEngine.FindAll(aLine);
+      count := SearchEngine.FindAll(aLine);
       iResultOffset := 0;
       n := 0;
       // Operate on all results in this line.
       Replaced := False;
-      while nInLine > 0 do
+      while count > 0 do
       begin
         // An occurrence may have been replaced with a text of different length
         nChar := SearchEngine.Results[n] + iResultOffset;
         nSearchLen := SearchEngine.ResultLengths[n];
         Inc(n);
-        Dec(nInLine);
+        Dec(count);
 
         Inc(Result);
         OnFoundEvent(FileName, aLine, i + 1, nChar, nSearchLen);
 
         if (ssoReplace in AOptions) then
         begin
-          //aReplaceText := SearchEngine.Replace(ASearch, AReplace); //need to review
+          aReplaceText := SearchEngine.GetReplace(n);
           nReplaceLen := Length(aReplaceText);
           aLine := Copy(aLine, 1, nChar - 1) + aReplaceText + Copy(aLine, nChar + nSearchLen, MaxInt);
           if (nSearchLen <> nReplaceLen) then
@@ -2501,7 +2504,6 @@ begin
       end;
       if Replaced then
         ALines[i] := aLine;
-      // search next / previous line
       Inc(i);
     end;
   finally
@@ -2554,10 +2556,10 @@ var
   b: Boolean;
   aList: TObjectList;
 begin
-  if not FCheckChanged then
+  if not FCheckingChanged then
   begin
     Engine.BeginUpdate;
-    FCheckChanged := True;
+    FCheckingChanged := True;
     aList := TObjectList.Create(False);
     try
       for i := 0 to Count - 1 do
@@ -2576,7 +2578,7 @@ begin
         aList.Free;
       end;
     finally
-      FCheckChanged := False;
+      FCheckingChanged := False;
       Engine.EndUpdate;
     end;
   end;
@@ -3313,6 +3315,26 @@ begin
   end;
 end;
 
+procedure TEditorFiles.ReloadAll;
+var
+  i: integer;
+begin
+  for i := 0 to Count - 1 do
+  begin
+    Items[i].Reload;
+  end;
+end;
+
+procedure TEditorFiles.CheckAll;
+var
+  i: integer;
+begin
+  for i := 0 to Count - 1 do
+  begin
+    Items[i].CheckChanged(True);
+  end;
+end;
+
 procedure TEditorFiles.SaveAs;
 begin
   if Current <> nil then
@@ -4011,7 +4033,7 @@ begin
   end;
 end;
 
-function TEditorFile.CheckChanged: Boolean;
+function TEditorFile.CheckChanged(Force: Boolean): Boolean;
 var
   mr: TmsgChoice;
   n: Integer;
@@ -4023,7 +4045,10 @@ begin
     begin
       if ((FFileAge <> FileAge(Name)) or (FFileSize <> FileSize(Name)))  then
       begin
-        mr := MsgBox.Msg.YesNoCancel(Name + #13' was changed, update it?');
+        if Force then
+          mr := msgcYes
+        else
+          mr := MsgBox.Msg.YesNoCancel(Name + #13' was changed, update it?');
         if mr = msgcYes then
           Reload;
         if mr = msgcCancel then
@@ -4034,8 +4059,12 @@ begin
     end
     else
     begin
-      n := MsgBox.Msg.Ask(Name + #13' was not found, what do want?', [Choice('&Keep It', msgcYes), Choice('&Close', msgcCancel), Choice('Read only', msgcNo)], 0, 2);
-      if n = 0 then //Keep It
+      if Force then
+        n := -1 //nothing
+      else
+        n := MsgBox.Msg.Ask(Name + #13' was not found, what do want?', [Choice('&Keep It', msgcYes), Choice('&Close', msgcCancel), Choice('Read only', msgcNo)], 0, 2);
+      if n = -1 then //do nothing
+      else if n = 0 then //Keep It
         IsNew := True
       else if n = 2 then //Keep It
       begin

@@ -9,7 +9,7 @@ unit SearchInFilesForms;
 interface
 
 uses
-  Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs,
+  Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, MsgBox,
   StdCtrls, ExtCtrls, SynEdit, SynEditTypes, SynEditRegexSearch, SynEditMiscClasses,
   SynEditSearch, SearchProgressForms, ComCtrls, Menus, ntvImgBtns;
 
@@ -81,7 +81,7 @@ procedure TSearchInFilesForm.SearchInFiles;
 var
   aMasks: string;
 begin
-  if SearchFilesGrp.ItemIndex = 0 then
+  if Engine.Session.Active and (SearchFilesGrp.ItemIndex = 0) then
     aMasks := Engine.Session.Project.Tendency.Groups.CreateFilter(False)
   else
     aMasks := Engine.Groups.CreateFilter(False);
@@ -91,24 +91,34 @@ end;
 
 procedure TSearchInFilesForm.SearchReplaceText;
 begin
+  if ReplaceWithChk.Checked then
+    FSearchOptions := [ssoReplace, ssoReplaceAll];
+  if SearchCaseSensitiveChk.Checked then
+    Include(FSearchOptions, ssoMatchCase);
+  if SearchWholeWordsChk.Checked then
+    Include(FSearchOptions, ssoWholeWord);
+  FSearchText := SearchTextEdit.Text;
+  FReplaceText := ReplaceWithEdit.Text;
+  if (Engine.Files.Count > 0) and (ssoReplace in FSearchOptions) then
+  begin
+    Engine.Files.CheckingChanged := True; //stop auto check file age, we will reload them all
+    if MsgBox.Msg.Yes('Replace in files need to save all changed files, do you want to save it?') then
+      Engine.Files.SaveAll
+    else
+      Abort;
+  end;
   FProgressForm := TSearchProgressForm.Create(Application);
   try
     FProgressForm.Show;
-    FSearchText := SearchTextEdit.Text;
-    FReplaceText := ReplaceWithEdit.Text;
-    if SearchCaseSensitiveChk.Checked then
-      Include(FSearchOptions, ssoMatchCase);
-    if SearchWholeWordsChk.Checked then
-      Include(FSearchOptions, ssoWholeWord);
-
-    if ReplaceWithChk.Checked then
-      FSearchOptions := [ssoReplace, ssoReplaceAll];
-
     SearchInFiles;
     SetTextSearch(FSearchText, FReplaceText, FSearchOptions);// send text to normal text search
-    Engine.Files.CheckChanged;
   finally
     FreeAndNil(FProgressForm);
+    Engine.Files.CheckingChanged := False;
+  end;
+  if ssoReplace in FSearchOptions then
+  begin
+    Engine.Files.ReloadAll;
   end;
 end;
 
@@ -139,7 +149,6 @@ begin
     begin
       if SearchTextEdit.Text <> '' then
       begin
-        //FSearchList.Clear;
         SearchReplaceText;
 
         if SearchHistory <> nil then
