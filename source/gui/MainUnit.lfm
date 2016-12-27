@@ -546,6 +546,171 @@ object MainForm: TMainForm
     Align = alBottom
     Constraints.MinHeight = 60
     TabOrder = 4
+    object MessagesGrid: TStringGrid
+      Left = 1
+      Height = 105
+      Top = 21
+      Width = 879
+      Align = alClient
+      Flat = True
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
+      ParentColor = True
+      PopupMenu = MessagesPopup
+      RowCount = 1
+      TabOrder = 2
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnDblClick = MessagesGridDblClick
+      ColWidths = (
+        18
+        64
+        378
+        164
+        64
+      )
+      Cells = (
+        4
+        1
+        0
+        'Type'
+        2
+        0
+        'Message'
+        3
+        0
+        'File'
+        4
+        0
+        'Line'
+      )
+    end
+    object WatchesGrid: TStringGrid
+      Left = 1
+      Height = 105
+      Top = 21
+      Width = 879
+      Align = alClient
+      ColCount = 4
+      Columns = <      
+        item
+          Title.Caption = 'Variable'
+          Width = 140
+        end      
+        item
+          Title.Caption = 'Type'
+          Width = 60
+        end      
+        item
+          Title.Caption = 'Value'
+          Width = 300
+        end>
+      Flat = True
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
+      ParentColor = True
+      RowCount = 1
+      TabOrder = 3
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnKeyDown = WatchesGridKeyDown
+      ColWidths = (
+        18
+        140
+        60
+        300
+      )
+      Cells = (
+        1
+        1
+        0
+        'Variable'
+      )
+    end
+    object CallStackGrid: TStringGrid
+      Left = 1
+      Height = 105
+      Top = 21
+      Width = 879
+      Align = alClient
+      ColCount = 3
+      Columns = <      
+        item
+          Title.Caption = 'File'
+          Width = 300
+        end      
+        item
+          Title.Caption = 'Line'
+          Width = 60
+        end>
+      Flat = True
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
+      ParentColor = True
+      RowCount = 1
+      TabOrder = 4
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnKeyDown = WatchesGridKeyDown
+      ColWidths = (
+        18
+        300
+        60
+      )
+      Cells = (
+        1
+        1
+        0
+        'Variable'
+      )
+    end
+    object SearchGrid: TStringGrid
+      Left = 1
+      Height = 105
+      Top = 21
+      Width = 879
+      Align = alClient
+      ColCount = 4
+      Flat = True
+      MouseWheelOption = mwGrid
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking, goDblClickAutoSize, goSmoothScroll, goFixedRowNumbering, goCellHints, goRowHighlight]
+      ParentColor = True
+      PopupMenu = MessagesPopup
+      RowCount = 1
+      TabOrder = 0
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnDblClick = SearchGridDblClick
+      OnDrawCell = SearchGridDrawCell
+      OnKeyDown = SearchGridKeyDown
+      ColWidths = (
+        21
+        184
+        53
+        548
+      )
+      Cells = (
+        3
+        1
+        0
+        'File'
+        2
+        0
+        'Line'
+        3
+        0
+        'Result'
+      )
+    end
     inline OutputEdit: TSynEdit
       Left = 1
       Height = 105
@@ -1117,171 +1282,6 @@ object MainForm: TMainForm
           MarkupInfo.Foreground = clGray
         end
       end
-    end
-    object MessagesGrid: TStringGrid
-      Left = 1
-      Height = 105
-      Top = 21
-      Width = 879
-      Align = alClient
-      Flat = True
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
-      ParentColor = True
-      PopupMenu = MessagesPopup
-      RowCount = 1
-      TabOrder = 2
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnDblClick = MessagesGridDblClick
-      ColWidths = (
-        18
-        64
-        378
-        164
-        64
-      )
-      Cells = (
-        4
-        1
-        0
-        'Type'
-        2
-        0
-        'Message'
-        3
-        0
-        'File'
-        4
-        0
-        'Line'
-      )
-    end
-    object WatchesGrid: TStringGrid
-      Left = 1
-      Height = 105
-      Top = 21
-      Width = 879
-      Align = alClient
-      ColCount = 4
-      Columns = <      
-        item
-          Title.Caption = 'Variable'
-          Width = 140
-        end      
-        item
-          Title.Caption = 'Type'
-          Width = 60
-        end      
-        item
-          Title.Caption = 'Value'
-          Width = 300
-        end>
-      Flat = True
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
-      ParentColor = True
-      RowCount = 1
-      TabOrder = 3
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnKeyDown = WatchesGridKeyDown
-      ColWidths = (
-        18
-        140
-        60
-        300
-      )
-      Cells = (
-        1
-        1
-        0
-        'Variable'
-      )
-    end
-    object CallStackGrid: TStringGrid
-      Left = 1
-      Height = 105
-      Top = 21
-      Width = 879
-      Align = alClient
-      ColCount = 3
-      Columns = <      
-        item
-          Title.Caption = 'File'
-          Width = 300
-        end      
-        item
-          Title.Caption = 'Line'
-          Width = 60
-        end>
-      Flat = True
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
-      ParentColor = True
-      RowCount = 1
-      TabOrder = 4
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnKeyDown = WatchesGridKeyDown
-      ColWidths = (
-        18
-        300
-        60
-      )
-      Cells = (
-        1
-        1
-        0
-        'Variable'
-      )
-    end
-    object SearchGrid: TStringGrid
-      Left = 1
-      Height = 105
-      Top = 21
-      Width = 879
-      Align = alClient
-      ColCount = 4
-      Flat = True
-      MouseWheelOption = mwGrid
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking, goDblClickAutoSize, goSmoothScroll, goFixedRowNumbering, goCellHints, goRowHighlight]
-      ParentColor = True
-      PopupMenu = MessagesPopup
-      RowCount = 1
-      TabOrder = 0
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnDblClick = SearchGridDblClick
-      OnDrawCell = SearchGridDrawCell
-      OnKeyDown = SearchGridKeyDown
-      ColWidths = (
-        21
-        184
-        53
-        548
-      )
-      Cells = (
-        3
-        1
-        0
-        'File'
-        2
-        0
-        'Line'
-        3
-        0
-        'Result'
-      )
     end
   end
   object MessagesSpl: TntvSplitter

@@ -54,7 +54,7 @@ type
   public
   end;
 
-procedure ShowSearchInFilesForm(SearchFoundEvent: TSearchFoundEvent; SearchText, SearchFolder: string; SearchFolderHistory, SearchHistory, ReplaceHistory: TStringList);
+function ShowSearchInFilesForm(SearchFoundEvent: TSearchFoundEvent; SearchText, SearchFolder: string; SearchFolderHistory, SearchHistory, ReplaceHistory: TStringList): Boolean;
 
 implementation
 
@@ -122,7 +122,7 @@ begin
   end;
 end;
 
-procedure ShowSearchInFilesForm(SearchFoundEvent: TSearchFoundEvent; SearchText, SearchFolder: string; SearchFolderHistory, SearchHistory, ReplaceHistory: TStringList);
+function ShowSearchInFilesForm(SearchFoundEvent: TSearchFoundEvent; SearchText, SearchFolder: string; SearchFolderHistory, SearchHistory, ReplaceHistory: TStringList): Boolean;
 var
   aForm: TSearchInFilesForm;
   i: Integer;
@@ -145,7 +145,8 @@ begin
     SearchTextEdit.Text := SearchText;
     SearchFolderEdit.Text := SearchFolder;
 
-    if ShowModal = mrOK then
+    Result := ShowModal = mrOK;
+    if Result then
     begin
       if SearchTextEdit.Text <> '' then
       begin

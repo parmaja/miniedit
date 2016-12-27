@@ -2720,6 +2720,9 @@ procedure TMainForm.SearchFoundEvent(Index: Integer; FileName: string; const Lin
 begin
   if Index = 0 then
   begin
+    MessagesAct.Checked := True;
+    MessagesTabs.ActiveControl := SearchGrid;
+    UpdateMessagesPnl;
     SearchGrid.RowCount := 2;
   end
   else
@@ -2739,24 +2742,20 @@ var
   aText, aFolder: string;
 begin
   with Engine.Files do
-  if (Current <> nil) and (Current.Control is TCustomSynEdit) then
-  begin
-    if (Current.Control as TCustomSynEdit).SelAvail and ((Current.Control as TCustomSynEdit).BlockBegin.y = (Current.Control as TCustomSynEdit).BlockEnd.y) then
-      aText := (Current.Control as TCustomSynEdit).SelText
-    else
-      aText := (Current.Control as TCustomSynEdit).GetWordAtRowCol((Current.Control as TCustomSynEdit).CaretXY);
-  end;
+    if (Current <> nil) and (Current.Control is TCustomSynEdit) then
+    begin
+      if (Current.Control as TCustomSynEdit).SelAvail and ((Current.Control as TCustomSynEdit).BlockBegin.y = (Current.Control as TCustomSynEdit).BlockEnd.y) then
+        aText := (Current.Control as TCustomSynEdit).SelText
+      else
+        aText := (Current.Control as TCustomSynEdit).GetWordAtRowCol((Current.Control as TCustomSynEdit).CaretXY);
+    end;
 
   aFolder := Engine.GetRoot;
 
   if aFolder = '' then
     aFolder := Folder;
-  MessagesAct.Checked := True;
-  UpdateMessagesPnl;
-  MessagesTabs.ActiveControl := SearchGrid;
-  ShowSearchInFilesForm(@SearchFoundEvent, aText, ExpandFileName(aFolder), Engine.Options.SearchFolderHistory, Engine.Options.SearchHistory, Engine.Options.ReplaceHistory);
-  ShowSearchGrid;
-  SearchGrid.SetFocus;
+  if ShowSearchInFilesForm(@SearchFoundEvent, aText, ExpandFileName(aFolder), Engine.Options.SearchFolderHistory, Engine.Options.SearchHistory, Engine.Options.ReplaceHistory) then
+    SearchGrid.SetFocus;
 end;
 
 procedure TMainForm.NextMessageActExecute(Sender: TObject);
