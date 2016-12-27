@@ -218,7 +218,6 @@ type
     DrawDivider: Boolean;
     MaxUndo: Integer;
     ExtraLineSpacing: Integer;
-    TabsToSpaces: Boolean;
     TabWidth: Integer;
     IndentMode: TIndentMode;
     EditorOptions: TSynEditorOptions;
@@ -255,7 +254,7 @@ type
     property DrawDivider: Boolean read FInfo.DrawDivider write FInfo.DrawDivider default False; //TODO not yet
     //Can be overriden by project options
     property TabWidth: Integer read FInfo.TabWidth write FInfo.TabWidth default 4;
-    property IndentMode: TIndentMode read FInfo.IndentMode write FInfo.IndentMode default idntNone;
+    property IndentMode: TIndentMode read FInfo.IndentMode write FInfo.IndentMode default idntTabsToSpaces;
   end;
 
 implementation
@@ -349,6 +348,7 @@ begin
   ExtraLineSpacing := 0;
   MaxUndo := 1024;
   TabWidth := 4;
+  IndentMode := idntTabsToSpaces;
 end;
 
 procedure TEditorProfile.Reset;

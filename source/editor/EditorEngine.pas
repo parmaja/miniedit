@@ -318,7 +318,7 @@ type
     //Override options
     property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False;
     property TabWidth: Integer read FTabWidth write FTabWidth default 4;
-    property IndentMode: TIndentMode read FIndentMode write FIndentMode default idntNone;
+    property IndentMode: TIndentMode read FIndentMode write FIndentMode default idntTabsToSpaces;
     property EditorOptions: TSynEditorOptions read FEditorOptions write FEditorOptions;
     property RunOptions: TRunProjectOptions read FRunOptions;// write FRunOptions;
   end;
@@ -2271,6 +2271,7 @@ begin
   FGroups := TFileGroups.Create(False);//it already owned by Engine.Groups
   FRunOptions := TRunProjectOptions.Create;
   FTabWidth := 4;
+  FIndentMode := idntTabsToSpaces;
   Init;
 end;
 
