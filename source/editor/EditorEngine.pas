@@ -1432,12 +1432,10 @@ end;
 procedure TCodeFileCategory.DoExecuteCompletion(Sender: TObject);
 var
   aIdentifiers: THashedStringList;
-  Current, Token: string;
+  aCurrent, Token: string;
   i, r: integer;
+  aLine: Integer;
   aSynEdit: TCustomSynEdit;
-  aTokenType, aStart: integer;
-  P: TPoint;
-  Attri: TSynHighlighterAttributes;
   aFiles: TStringList;
 begin
   inherited;
@@ -1450,9 +1448,8 @@ begin
     aSynEdit := (Sender as TSynCompletion).TheForm.CurrentEditor as TCustomSynEdit;
     if (aSynEdit <> nil) and (Highlighter <> nil) then
     begin
-      P := aSynEdit.CaretXY;
-
-      aSynEdit.GetHighlighterAttriAtRowColEx(P, Current, aTokenType, aStart, Attri); //we need just aStart to not collect this id word
+      aLine := aSynEdit.CaretY;
+      aCurrent := aSynEdit.GetWordAtRowCol(aSynEdit.LogicalCaretXY);
 
       Completion.TheForm.Font.Size := aSynEdit.Font.Size;
       Completion.TheForm.Font.Color := aSynEdit.Font.Color;
@@ -1463,66 +1460,54 @@ begin
       Completion.TheForm.TextColor := aSynEdit.Font.Color;
       Completion.TheForm.DrawBorderColor := aSynEdit.Font.Color;
 
-      //Completion.AutoUseSingleIdent := True;
-      //CanExecute := False
-      {if aTokenType = Ord(CommentID) then
-        //Abort
-      else if aTokenType = Ord(StringID) then
-      begin
-        //EnumerateKeywords(Ord(tkSQL), sSQLKeywords, Highlighter.IdentChars, @DoAddCompletion);
-      end
-      else}
-      begin
-        //load keyowrds
-        aIdentifiers := THashedStringList.Create;
+      Completion.AutoUseSingleIdent := True;
 
-        //extract keywords from external files
-        if Engine.Options.CollectAutoComplete and (Engine.Session.GetRoot <> '') then
+      //load keyowrds
+      aIdentifiers := THashedStringList.Create;
+
+      //extract keywords from external files
+      if Engine.Options.CollectAutoComplete and (Engine.Session.GetRoot <> '') then
+      begin
+        if ((GetTickCount - Engine.Session.CachedAge) > (Engine.Options.CollectTimeout * 1000)) then
         begin
-          if ((GetTickCount - Engine.Session.CachedAge) > (Engine.Options.CollectTimeout * 1000)) then
-          begin
-            Engine.Session.CachedVariables.Clear;
-            Engine.Session.CachedIdentifiers.Clear;
-            aFiles := TStringList.Create;
-            try
-              EnumFileList(Engine.Session.GetRoot, GetExtensions, Engine.Options.IgnoreNames, aFiles, 1000, 3, True, Engine.Session.Active);//TODO check the root dir if no project opened
-              r := aFiles.IndexOf(Engine.Files.Current.Name);
-              if r >= 0 then
-                aFiles.Delete(r);
-              ExtractKeywords(aFiles, Engine.Session.CachedIdentifiers);
-            finally
-              aFiles.Free;
-            end;
+          Engine.Session.CachedVariables.Clear;
+          Engine.Session.CachedIdentifiers.Clear;
+          aFiles := TStringList.Create;
+          try
+            EnumFileList(Engine.Session.GetRoot, GetExtensions, Engine.Options.IgnoreNames, aFiles, 1000, 3, True, Engine.Session.Active);//TODO check the root dir if no project opened
+            r := aFiles.IndexOf(Engine.Files.Current.Name);
+            if r >= 0 then
+              aFiles.Delete(r);
+            ExtractKeywords(aFiles, Engine.Session.CachedIdentifiers);
+          finally
+            aFiles.Free;
           end;
-          aIdentifiers.AddStrings(Engine.Session.CachedIdentifiers);
-          Engine.Session.CachedAge := GetTickCount;
         end;
-        //add current file Identifiers
-        try
-          Highlighter.ResetRange;
-          for i := 0 to aSynEdit.Lines.Count - 1 do
+        aIdentifiers.AddStrings(Engine.Session.CachedIdentifiers);
+        Engine.Session.CachedAge := GetTickCount;
+      end;
+      //add current file Identifiers
+      try
+        Highlighter.ResetRange;
+        for i := 0 to aSynEdit.Lines.Count - 1 do
+        begin
+          Highlighter.SetLine(aSynEdit.Lines[i], 1);
+          while not Highlighter.GetEol do
           begin
-            Highlighter.SetLine(aSynEdit.Lines[i], 1);
-            while not Highlighter.GetEol do
+            Token := Highlighter.GetToken;
+            if (i <> aLine - 1) or (aCurrent <> Token) then
             begin
-              if (Highlighter.GetTokenPos <> (aStart - 1)) then
-              begin
-                if (Highlighter.GetTokenKind = IdentifierID) then
-                begin
-                  Token := Highlighter.GetToken;
-                  if aIdentifiers.IndexOf(Token) < 0 then
-                    aIdentifiers.Add(Token);
-                end;
-              end;
-              Highlighter.Next;
+              if (Highlighter.GetTokenKind = IdentifierID) and (aIdentifiers.IndexOf(Token) < 0) then
+                aIdentifiers.Add(Token);
             end;
+            Highlighter.Next;
           end;
-
-          for i := 0 to aIdentifiers.Count - 1 do
-            DoAddCompletion(aIdentifiers[i], IdentifierID);
-        finally
-          aIdentifiers.Free;
         end;
+
+        for i := 0 to aIdentifiers.Count - 1 do
+          DoAddCompletion(aIdentifiers[i], IdentifierID);
+      finally
+        aIdentifiers.Free;
       end;
     end;
     (Completion.ItemList as TStringList).Sort;
