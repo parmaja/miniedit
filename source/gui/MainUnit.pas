@@ -2182,11 +2182,14 @@ begin
 end;
 
 function TMainForm.GetCurrentColorText: string;
+var
+  aSynEdit: TCustomSynEdit;
 begin
   Result := '';
   if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomSynEdit) then
   begin
-    Result := Trim(GetWordAtRowColEx((Engine.Files.Current.Control as TCustomSynEdit), (Engine.Files.Current.Control as TCustomSynEdit).CaretXY, TSynWordBreakChars - ['#'], False));
+    aSynEdit := Engine.Files.Current.Control as TCustomSynEdit;
+    Result := Trim(aSynEdit.GetWordAtRowCol(aSynEdit.LogicalCaretXY));
     if Result <> '' then
     begin
       if Result[1] <> '#' then
@@ -2216,7 +2219,6 @@ var
       end;
     end;
   end;
-
 begin
   if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomSynEdit) then
   begin
@@ -2671,7 +2673,7 @@ begin
     if (Current <> nil) and (Current.Control is TCustomSynEdit) then
     begin
       if not (Current.Control as TCustomSynEdit).SelAvail then
-        s := Trim((Current.Control as TCustomSynEdit).GetWordAtRowCol((Current.Control as TCustomSynEdit).CaretXY))
+        s := Trim((Current.Control as TCustomSynEdit).GetWordAtRowCol((Current.Control as TCustomSynEdit).LogicalCaretXY))
       else
         s := (Current.Control as TCustomSynEdit).SelText;
       AddWatch(s);
@@ -2747,7 +2749,7 @@ begin
       if (Current.Control as TCustomSynEdit).SelAvail and ((Current.Control as TCustomSynEdit).BlockBegin.y = (Current.Control as TCustomSynEdit).BlockEnd.y) then
         aText := (Current.Control as TCustomSynEdit).SelText
       else
-        aText := (Current.Control as TCustomSynEdit).GetWordAtRowCol((Current.Control as TCustomSynEdit).CaretXY);
+        aText := (Current.Control as TCustomSynEdit).GetWordAtRowCol((Current.Control as TCustomSynEdit).LogicalCaretXY);
     end;
 
   aFolder := Engine.GetRoot;

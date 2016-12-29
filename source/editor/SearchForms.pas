@@ -139,8 +139,7 @@ begin
     if SynEdit.SelAvail and (SynEdit.BlockBegin.y = SynEdit.BlockEnd.y) then
       SearchTextEdit.Text := SynEdit.SelText
     else
-      SearchTextEdit.Text := SynEdit.GetWordAtRowCol(SynEdit.CaretXY);
-
+      SearchTextEdit.Text := SynEdit.GetWordAtRowCol(SynEdit.LogicalCaretXY);
     SearchDirectionGrp.ItemIndex := ord(ssoBackwards in FSearchOptions);
     SearchCaseSensitiveChk.Checked := ssoMatchCase in FSearchOptions;
     SearchWholeWordsChk.Checked := ssoWholeWord in FSearchOptions;

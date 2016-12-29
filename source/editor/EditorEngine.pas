@@ -1210,7 +1210,7 @@ procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; 
 procedure EnumRunMode(vItems: TStrings);
 procedure EnumIndentMode(vItems: TStrings);
 
-function GetWordAtRowColEx(SynEdit: TCustomSynEdit; XY: TPoint; BreakChars: TSynIdentChars; Select: boolean): string;
+function GetWordAtRowColEx(SynEdit: TCustomSynEdit; XY: TPoint; BreakChars: TSynIdentChars; Select: boolean): string; deprecated;
 
 {$ifdef DEBUG}
 procedure Nothing;
@@ -2001,10 +2001,10 @@ var
 begin
   if Tendency.Debug <> nil then
   begin
-    if not SynEdit.SelAvail then
-      v := Trim(GetWordAtRowColEx(SynEdit, SynEdit.PixelsToRowColumn(p), TSynWordBreakChars + [' ', #13, #10, #9] - ['.', '"', '''', '-', '>', '[', ']'], False))//todo get it from the synedit
+    if SynEdit.SelAvail then
+      v := SynEdit.SelText
     else
-      v := SynEdit.SelText;
+      v := Trim(SynEdit.GetWordAtRowCol(SynEdit.LogicalCaretXY));
     Result := (v <> '') and Tendency.Debug.Watches.GetValue(v, l, t, False);
     s := l;
   end
@@ -2019,7 +2019,7 @@ begin
   if Tendency.Debug <> nil then
   begin
     if not SynEdit.SelAvail then
-      v := Trim(SynEdit.GetWordAtRowCol(SynEdit.CaretXY))
+      v := Trim(SynEdit.GetWordAtRowCol(SynEdit.LogicalCaretXY))
     else
       v := SynEdit.SelText;
     Result := (v <> '') and Tendency.Debug.Watches.GetValue(v, l, t, False);

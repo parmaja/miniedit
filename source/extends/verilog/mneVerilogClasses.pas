@@ -277,7 +277,7 @@ begin
        Assigned(CurrentFile.SynEdit) and
        Assigned(CurrentFile.SynEdit.Highlighter) then
     begin                             
-      cr:=CurrentFile.SynEdit.CaretXY;
+      cr:=CurrentFile.SynEdit.CaretXY; //TODO: maybe LogicalCaretXY
       CurrentFile.SynEdit.CaretAtIdentOrString(cr, ai,ns);
 
       if (not ai) and
