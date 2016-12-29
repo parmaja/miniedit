@@ -68,7 +68,7 @@ object SearchInFilesForm: TSearchInFilesForm
     Top = 155
     Width = 75
     Anchors = [akRight, akBottom]
-    Caption = 'Find'
+    Caption = '&Find'
     Default = True
     ModalResult = 1
     TabOrder = 6

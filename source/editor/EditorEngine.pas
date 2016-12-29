@@ -903,7 +903,7 @@ type
     procedure EnumExtensions(vExtensions: TEditorElements);
     function FindExtension(vExtension: string; vKind: TFileGroupKinds = []): TFileGroup;
     //FullFilter return title of that filter for open/save dialog boxes
-    function CreateFilter(FullFilter:Boolean = True; FirstExtension: string = ''; vGroup: TFileGroup = nil; OnlyThisGroup: Boolean = true): string;
+    function CreateFilter(FullFilter: Boolean = True; FirstExtension: string = ''; vGroup: TFileGroup = nil; OnlyThisGroup: Boolean = true): string;
     procedure Add(vGroup: TFileGroup);
     procedure Add(FileClass: TEditorFileClass; const Name, Title: string; Category: TFileCategoryClass; Extensions: array of string; Kind: TFileGroupKinds = []; Style: TFileGroupStyles = []);
     property Items[Index: integer]: TFileGroup read GetItem; default;
@@ -4381,7 +4381,7 @@ end;
 
 { TFileCategories }
 
-function TFileGroups.CreateFilter(FullFilter:Boolean; FirstExtension: string; vGroup: TFileGroup; OnlyThisGroup: Boolean): string;
+function TFileGroups.CreateFilter(FullFilter: Boolean; FirstExtension: string; vGroup: TFileGroup; OnlyThisGroup: Boolean): string;
 var
   aSupported: string;
   procedure AddIt(AGroup: TFileGroup);

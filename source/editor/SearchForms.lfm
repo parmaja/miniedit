@@ -50,7 +50,7 @@ object SearchForm: TSearchForm
       Height = 30
       Top = 2
       Width = 140
-      Caption = 'C&ase sensitivity'
+      Caption = '&Case sensitivity'
       TabOrder = 0
     end
     object SearchWholeWordsChk: TCheckBox
@@ -97,9 +97,10 @@ object SearchForm: TSearchForm
     ClientWidth = 150
     ItemIndex = 0
     Items.Strings = (
-      '&Forward'
+      'F&orward'
       '&Backward'
     )
+    OnClick = SearchDirectionGrpClick
     TabOrder = 4
   end
   object FindBtn: TButton
@@ -108,7 +109,7 @@ object SearchForm: TSearchForm
     Top = 210
     Width = 75
     Anchors = [akRight, akBottom]
-    Caption = 'Find'
+    Caption = '&Find'
     Default = True
     ModalResult = 1
     TabOrder = 5
@@ -142,43 +143,15 @@ object SearchForm: TSearchForm
     OnClick = ReplaceWithChkClick
     TabOrder = 1
   end
-  object ReplaceGrp: TGroupBox
-    Left = 169
-    Height = 71
-    Top = 132
-    Width = 154
-    Caption = 'Replace'
-    ChildSizing.LeftRightSpacing = 5
-    ChildSizing.TopBottomSpacing = 2
-    ChildSizing.HorizontalSpacing = 5
-    ChildSizing.EnlargeHorizontal = crsHomogenousChildResize
-    ChildSizing.EnlargeVertical = crsHomogenousChildResize
-    ChildSizing.ShrinkHorizontal = crsScaleChilds
-    ChildSizing.ShrinkVertical = crsScaleChilds
-    ChildSizing.Layout = cclLeftToRightThenTopToBottom
-    ChildSizing.ControlsPerLine = 1
-    ClientHeight = 53
-    ClientWidth = 150
+  object AllBtn: TButton
+    Left = 10
+    Height = 27
+    Top = 210
+    Width = 75
+    Anchors = [akLeft, akBottom]
+    Caption = '&All'
+    ModalResult = 1
+    OnClick = AllBtnClick
     TabOrder = 7
-    object ReplaceAllChk: TCheckBox
-      Left = 5
-      Height = 25
-      Top = 2
-      Width = 140
-      Caption = 'Replace &All'
-      Checked = True
-      State = cbChecked
-      TabOrder = 0
-    end
-    object PromptOnReplaceChk: TCheckBox
-      Left = 5
-      Height = 24
-      Top = 27
-      Width = 140
-      Caption = '&Prompt on replace'
-      Checked = True
-      State = cbChecked
-      TabOrder = 1
-    end
   end
 end

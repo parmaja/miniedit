@@ -13,7 +13,11 @@ uses
   StdCtrls, ExtCtrls, SynEdit, SynEditTypes, SynEditRegexSearch, SynEditMiscClasses, SynEditSearch;
 
 type
+
+  { TSearchForm }
+
   TSearchForm = class(TForm)
+    AllBtn: TButton;
     Label1: TLabel;
     SearchTextEdit: TComboBox;
     SearchDirectionGrp: TRadioGroup;
@@ -26,11 +30,11 @@ type
     SearchSelectedOnlyChk: TCheckBox;
     ReplaceWithEdit: TComboBox;
     ReplaceWithChk: TCheckBox;
-    ReplaceGrp: TGroupBox;
-    ReplaceAllChk: TCheckBox;
-    PromptOnReplaceChk: TCheckBox;
+    procedure AllBtnClick(Sender: TObject);
     procedure ReplaceWithChkClick(Sender: TObject);
+    procedure SearchDirectionGrpClick(Sender: TObject);
   private
+    FAll: Boolean;
     procedure UpdateReplace;
     procedure SearchReplaceText(SynEdit: TSynEdit);
   public
@@ -95,9 +99,9 @@ begin
   if ReplaceWithChk.Checked then
   begin
     FSearchOptions := [ssoReplace];
-    if ReplaceAllChk.Checked then
-      FSearchOptions := FSearchOptions + [ssoReplaceAll];
-    if PromptOnReplaceChk.Checked then
+    if FAll then
+      FSearchOptions := FSearchOptions + [ssoReplaceAll]
+    else
       FSearchOptions := FSearchOptions + [ssoPrompt];
   end
   else
@@ -199,6 +203,17 @@ begin
   UpdateReplace;
 end;
 
+procedure TSearchForm.SearchDirectionGrpClick(Sender: TObject);
+begin
+
+end;
+
+procedure TSearchForm.AllBtnClick(Sender: TObject);
+begin
+  FAll := True;
+  ModalResult := mrOk;
+end;
+
 procedure TSearchForm.UpdateReplace;
 begin
   if ReplaceWithChk.Checked then
@@ -206,15 +221,14 @@ begin
     ReplaceWithEdit.Enabled := True;
     ReplaceWithEdit.Color := clWindow;
     ReplaceWithEdit.TabStop := True;
-//    ReplaceGrp.Visible := True;//not yet
-    ReplaceGrp.Visible := False;
+    AllBtn.Visible := True;
   end
   else
   begin
     ReplaceWithEdit.Enabled := False;
     ReplaceWithEdit.Color := clBtnFace;
     ReplaceWithEdit.TabStop := False;
-    ReplaceGrp.Visible := False;
+    AllBtn.Visible := False;
   end;
 end;
 
