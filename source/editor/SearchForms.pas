@@ -140,6 +140,15 @@ begin
       SearchTextEdit.Text := SynEdit.SelText
     else
       SearchTextEdit.Text := SynEdit.GetWordAtRowCol(SynEdit.LogicalCaretXY);
+
+    if SearchHistory.Count > 0 then
+    begin
+      if SearchTextEdit.Text = SearchHistory[0] then
+      begin
+        ReplaceWithEdit.Text := ReplaceHistory[0]
+      end
+    end;
+
     SearchDirectionGrp.ItemIndex := ord(ssoBackwards in FSearchOptions);
     SearchCaseSensitiveChk.Checked := ssoMatchCase in FSearchOptions;
     SearchWholeWordsChk.Checked := ssoWholeWord in FSearchOptions;

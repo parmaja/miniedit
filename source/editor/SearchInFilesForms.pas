@@ -143,6 +143,14 @@ begin
     UpdateReplace;
 
     SearchTextEdit.Text := SearchText;
+    if SearchHistory.Count > 0 then
+    begin
+      if SearchText = SearchHistory[0] then
+      begin
+        ReplaceWithEdit.Text := ReplaceHistory[0]
+      end
+    end;
+
     SearchFolderEdit.Text := SearchFolder;
 
     Result := ShowModal = mrOK;
