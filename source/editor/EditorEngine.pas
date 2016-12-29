@@ -1210,8 +1210,6 @@ procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; 
 procedure EnumRunMode(vItems: TStrings);
 procedure EnumIndentMode(vItems: TStrings);
 
-function GetWordAtRowColEx(SynEdit: TCustomSynEdit; XY: TPoint; BreakChars: TSynIdentChars; Select: boolean): string; deprecated;
-
 {$ifdef DEBUG}
 procedure Nothing;
 {$endif}
@@ -1878,6 +1876,21 @@ begin
     Shift     := [ssCtrl];
     Command   := ecDeleteWord;
   end;
+
+  //not work, idk how to do
+  with FSynEdit.Keystrokes.Add do
+  begin
+    Key       := VK_U;
+    Shift     := [ssCtrl];
+    Command   := ecUpperCaseBlock;
+  end;
+  with FSynEdit.Keystrokes.Add do
+  begin
+    Key       := VK_L;
+    Shift     := [ssCtrl];
+    Command   := ecLowerCaseBlock;
+  end;
+
   Engine.MacroRecorder.AddEditor(FSynEdit);
 end;
 
@@ -2788,41 +2801,6 @@ begin
   EnumFileList(Root, Masks, Ignore, @EnumFileListStringsCallback, Strings, vMaxCount, vMaxLevel, ReturnFullPath, Recursive);
 end;
 
-function GetWordAtRowColEx(SynEdit: TCustomSynEdit; XY: TPoint; BreakChars: TSynIdentChars; Select: boolean): string;
-var
-  Line: string;
-  Len, Stop: integer;
-begin
-  Result := '';
-  if (XY.Y >= 1) and (XY.Y <= SynEdit.Lines.Count) then
-  begin
-    Line := SynEdit.Lines[XY.Y - 1];
-    Len := Length(Line);
-    if Len <> 0 then
-    begin
-      if (XY.X > 1) and (XY.X <= Len) and (Line[XY.X] in BreakChars) then
-        XY.X := XY.X - 1;
-      if (XY.X >= 1) and (XY.X <= Len) and not (Line[XY.X] in BreakChars) then
-      begin
-        Stop := XY.X;
-        while (Stop <= Len) and not (Line[Stop] in BreakChars) do
-          Inc(Stop);
-        while (XY.X > 1) and not (Line[XY.X - 1] in BreakChars) do
-          Dec(XY.X);
-        if Stop > XY.X then
-        begin
-          Result := Copy(Line, XY.X, Stop - XY.X);
-          if Select then
-          begin
-            SynEdit.CaretXY := XY;
-            SynEdit.BlockBegin := XY;
-            SynEdit.BlockEnd := Point(XY.x + Length(Result), XY.y);
-          end;
-        end;
-      end;
-    end;
-  end;
-end;
 {$ifdef DEBUG}
 procedure Nothing;
 begin

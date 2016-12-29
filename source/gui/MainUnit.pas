@@ -2219,27 +2219,29 @@ var
       end;
     end;
   end;
+var
+  aSynEdit: TCustomSynEdit;
 begin
   if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomSynEdit) then
   begin
-    aWord := GetCurrentColorText;
+    aSynEdit := Engine.Files.Current.Control as TCustomSynEdit;
+    aSynEdit.SelectWord;
+    aWord := aSynEdit.SelText;
     if (aWord <> '') and (Length(aWord) > 1) then
     begin
       CheckIsUpper;
       aColor := RGBHexToColor(aWord);
       aDialog := TColorDialog.Create(Self);
-      //aDialog.Options := aDialog.Options + [cdFullOpen];
       try
         aDialog.Color := aColor;
         if aDialog.Execute then
         begin
           aWord := ColorToRGBHex(aDialog.Color);
-          GetWordAtRowColEx((Engine.Files.Current.Control as TCustomSynEdit), (Engine.Files.Current.Control as TCustomSynEdit).CaretXY, TSynWordBreakChars - ['#'], True);
           if aIsUpper then
             aWord := UpperCase(aWord)
           else
             aWord := LowerCase(aWord);
-          (Engine.Files.Current.Control as TCustomSynEdit).SelText := aWord;
+          aSynEdit.SelText := aWord;
         end;
       finally
         aDialog.Free;
