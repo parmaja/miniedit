@@ -1097,7 +1097,7 @@ end;
 procedure TMainForm.SearchGridDblClick(Sender: TObject);
 var
   s: string;
-  aLine, c, l: integer;
+  y, x, l: integer;
 begin
   if SearchGrid.Row > 0 then
   begin
@@ -1105,26 +1105,25 @@ begin
     s := SearchGrid.Cells[2, SearchGrid.Row];
     if s <> '' then
     begin
-      aLine := ptrint(SearchGrid.Rows[SearchGrid.Row].Objects[1]);
-      if aLine > 0 then
+      y := ptrint(SearchGrid.Rows[SearchGrid.Row].Objects[1]);
+      x := ptrint(SearchGrid.Rows[SearchGrid.Row].Objects[2]);
+      l := ptrint(SearchGrid.Rows[SearchGrid.Row].Objects[0]);
+      if y > 0 then
       begin
         with Engine.Files.Current do
         if Control is TCustomSynEdit then
         begin
-          l := ptrint(SearchGrid.Rows[SearchGrid.Row].Objects[0]);
-          c := ptrint(SearchGrid.Rows[SearchGrid.Row].Objects[2]);
-          (Control as TCustomSynEdit).CaretY := aLine;
           if l > 0 then
           begin
             with (Control as TCustomSynEdit) do
             begin
-              CaretX := c;
-              BlockBegin := Point(c, aLine);
-              BlockEnd := Point(c + l, aLine);
+              CaretXY := LogicalToPhysicalPos(Point(x, y));
+              BlockBegin := Point(LogicalCaretXY.x, LogicalCaretXY.y);
+              BlockEnd := Point(LogicalCaretXY.x + l, LogicalCaretXY.y);
             end;
           end
           else
-            (Control as TCustomSynEdit).CaretX := 0;
+            (Control as TCustomSynEdit).LogicalCaretXY := Point(1, y);
           (Control as TCustomSynEdit).SetFocus;
         end;
       end;
@@ -1144,8 +1143,8 @@ begin
     if (aCol > 2) then
     begin
       aCanvas := SearchGrid.Canvas;
-      //s := StringReplace(SearchGrid.Cells[aCol, aRow], #9, '    ', [rfReplaceAll]);
-      s := SearchGrid.Cells[aCol, aRow];
+      s := StringReplace(SearchGrid.Cells[aCol, aRow], #9, '    ', [rfReplaceAll]); //4 spaces
+      //s := SearchGrid.Cells[aCol, aRow];
 
       w := aRect.Left + 2;
       h := aCanvas.TextHeight(s);
@@ -2759,7 +2758,8 @@ begin
   if aFolder = '' then
     aFolder := Folder;
   if ShowSearchInFilesForm(@SearchFoundEvent, aText, ExpandFileName(aFolder), Engine.Options.SearchFolderHistory, Engine.Options.SearchHistory, Engine.Options.ReplaceHistory) then
-    SearchGrid.SetFocus;
+    if SearchGrid.CanFocus then
+      SearchGrid.SetFocus;
 end;
 
 procedure TMainForm.NextMessageActExecute(Sender: TObject);

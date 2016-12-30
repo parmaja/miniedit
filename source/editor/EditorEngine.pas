@@ -888,6 +888,8 @@ type
 
   TFileGroupClass = class of TFileGroup;
 
+  TCreateMaskProc = function(vGroup: TFileGroup): Boolean of object;
+
   { TFileGroups }
 
   TFileGroups = class(TEditorElements)
@@ -904,6 +906,7 @@ type
     function FindExtension(vExtension: string; vKind: TFileGroupKinds = []): TFileGroup;
     //FullFilter return title of that filter for open/save dialog boxes
     function CreateFilter(FullFilter: Boolean = True; FirstExtension: string = ''; vGroup: TFileGroup = nil; OnlyThisGroup: Boolean = true): string;
+    function CreateMask(CreateMaskProc: TCreateMaskProc): string;
     procedure Add(vGroup: TFileGroup);
     procedure Add(FileClass: TEditorFileClass; const Name, Title: string; Category: TFileCategoryClass; Extensions: array of string; Kind: TFileGroupKinds = []; Style: TFileGroupStyles = []);
     property Items[Index: integer]: TFileGroup read GetItem; default;
@@ -4380,6 +4383,45 @@ begin
 end;
 
 { TFileCategories }
+
+function TFileGroups.CreateMask(CreateMaskProc: TCreateMaskProc): string;
+  procedure AddIt(AGroup: TFileGroup);
+  var
+    i: integer;
+    s: string;
+    AExtensions: TStringList;
+  begin
+    if fgkBrowsable in AGroup.Kind then
+    begin
+      s := '';
+      AExtensions := TStringList.Create;
+      try
+        AGroup.EnumExtensions(AExtensions);
+
+        for i := 0 to AExtensions.Count - 1 do
+        begin
+          if s <> '' then
+            s := s + ';';
+          s := s + '*.' + AExtensions[i];
+          if Result <> '' then
+            Result := Result + ';';
+          Result := Result + '*.' + AExtensions[i];
+        end;
+      finally
+        AExtensions.Free;
+      end;
+    end;
+  end;
+var
+  i: integer;
+begin
+  Result := '';
+  for i := 0 to Count - 1 do
+  begin
+    if (CreateMaskProc = nil) or (CreateMaskProc(Items[i])) then
+      AddIt(Items[i]);
+  end;
+end;
 
 function TFileGroups.CreateFilter(FullFilter: Boolean; FirstExtension: string; vGroup: TFileGroup; OnlyThisGroup: Boolean): string;
 var

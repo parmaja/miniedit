@@ -11,7 +11,7 @@ interface
 uses
   Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, MsgBox,
   StdCtrls, ExtCtrls, SynEdit, SynEditTypes, SynEditRegexSearch, SynEditMiscClasses,
-  SynEditSearch, SearchProgressForms, ComCtrls, Menus, ntvImgBtns;
+  SynEditSearch, SearchProgressForms, EditorEngine, ComCtrls, Menus, ntvImgBtns;
 
 type
   TSearchFoundEvent = procedure(Index: Integer; FileName: string; const Line: string; LineNo, Column, FoundLength: Integer) of object;
@@ -39,6 +39,7 @@ type
     procedure MenuItem2Click(Sender: TObject);
     procedure ReplaceWithChkClick(Sender: TObject);
   private
+    function CreateMask(vGroup: TFileGroup): Boolean;
     procedure UpdateReplace;
     procedure FoundEvent(FileName: string; const Line: string; LineNo, Column, FoundLength: Integer);
     procedure SearchReplaceText;
@@ -58,7 +59,7 @@ function ShowSearchInFilesForm(SearchFoundEvent: TSearchFoundEvent; SearchText, 
 
 implementation
 
-uses EditorEngine, SearchForms;
+uses SearchForms;
 
 {$R *.lfm}
 
@@ -82,9 +83,9 @@ var
   aMasks: string;
 begin
   if Engine.Session.Active and (SearchFilesGrp.ItemIndex = 0) then
-    aMasks := Engine.Session.Project.Tendency.Groups.CreateFilter(False)
+    aMasks := Engine.Session.Project.Tendency.Groups.CreateMask(@CreateMask)
   else
-    aMasks := Engine.Groups.CreateFilter(False);
+    aMasks := Engine.Groups.CreateMask(@CreateMask);
 
   EnumFileList(IncludeTrailingPathDelimiter(SearchFolderEdit.Text), aMasks, Engine.Options.IgnoreNames, @DoSearchInFileCallback, Self, 1000, 3, True, True);
 end;
@@ -209,6 +210,11 @@ begin
   UpdateReplace;
 end;
 
+function TSearchInFilesForm.CreateMask(vGroup: TFileGroup): Boolean;
+begin
+  Result := vGroup.Category is TTextFileCategory;
+end;
+
 procedure TSearchInFilesForm.MenuItem1Click(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
@@ -227,12 +233,14 @@ begin
     ReplaceWithEdit.Enabled := True;
     ReplaceWithEdit.Color := clWindow;
     ReplaceWithEdit.TabStop := True;
+    FindBtn.Caption := 'R&eplace';
   end
   else
   begin
     ReplaceWithEdit.Enabled := False;
     ReplaceWithEdit.Color := clBtnFace;
     ReplaceWithEdit.TabStop := False;
+    FindBtn.Caption := '&Find';
   end;
 end;
 
