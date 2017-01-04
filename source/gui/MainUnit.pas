@@ -332,14 +332,6 @@ type
     SwitchFocusAct: TAction;
     SwitchFocus1: TMenuItem;
     N16: TMenuItem;
-    QuickFindPnl: TPanel;
-    Label2: TLabel;
-    CloseQuickSearchBtn: TSpeedButton;
-    QuickSearchPrevBtn: TBitBtn;
-    QuickSearchNextBtn: TBitBtn;
-    QuickSearchEdit: TEdit;
-    QuickFindAct: TAction;
-    QuickSearch: TMenuItem;
     procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
     procedure BrowserTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
@@ -471,13 +463,6 @@ type
     procedure MenuItem1Click(Sender: TObject);
     procedure SCMCompareToActExecute(Sender: TObject);
     procedure SwitchFocusActExecute(Sender: TObject);
-    procedure QuickSearchNextBtnClick(Sender: TObject);
-    procedure QuickSearchPrevBtnClick(Sender: TObject);
-    procedure QuickSearchEditChange(Sender: TObject);
-    procedure QuickSearchEditKeyPress(Sender: TObject; var Key: char);
-    procedure CloseQuickSearchBtnClick(Sender: TObject);
-    procedure QuickFindActExecute(Sender: TObject);
-    procedure QuickFindActUpdate(Sender: TObject);
     procedure WorkspaceMnuClick(Sender: TObject);
   private
     FMessages: TEditorMessages;
@@ -968,8 +953,6 @@ begin
     FileTabs.Items.EndUpdate;
   end;
   FileTabs.Visible := FileTabs.Items.Count > 0;
-  if Engine.Files.Current = nil then
-    QuickFindPnl.Visible := False;
   if (Engine.Session.Active) then
   begin
     if (Engine.Session.Project.Title <> '') then
@@ -2437,8 +2420,7 @@ begin
 
   FoldersSpl.Color := Engine.Options.Profile.Attributes.Panel.Background;
   MessagesSpl.Color := FoldersSpl.Color;
-
-
+  FileList.Font.Name := Engine.Options.Profile.Attributes.FontName;
 
   MessagesTabs.Color := Engine.Options.Profile.Attributes.Panel.Background;
   MessagesTabs.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
@@ -2869,65 +2851,6 @@ begin
     else if MessagesTabs.Visible then
       MessagesTabs.ActivateControl;
   end
-end;
-
-procedure TMainForm.QuickSearchNextBtnClick(Sender: TObject);
-begin
-  if (Engine.Files.Current.Control is TCustomSynEdit) then
-    if (QuickSearchEdit.Text <> '') then
-      (Engine.Files.Current.Control as TCustomSynEdit).SearchReplace(QuickSearchEdit.Text, '', []);
-end;
-
-procedure TMainForm.QuickSearchPrevBtnClick(Sender: TObject);
-begin
-  if (Engine.Files.Current.Control is TCustomSynEdit) then
-    if QuickSearchEdit.Text <> '' then
-      (Engine.Files.Current.Control as TCustomSynEdit).SearchReplace(QuickSearchEdit.Text, '', [ssoBackwards]);
-end;
-
-procedure TMainForm.QuickSearchEditChange(Sender: TObject);
-begin
-  if (Engine.Files.Current.Control is TCustomSynEdit) then
-  begin
-    if QuickSearchEdit.Text <> '' then
-      (Engine.Files.Current.Control as TCustomSynEdit).SearchReplace(QuickSearchEdit.Text, '', [ssoEntireScope]);
-    SearchForms.SetTextSearch(QuickSearchEdit.Text);
-  end;
-end;
-
-procedure TMainForm.QuickSearchEditKeyPress(Sender: TObject; var Key: char);
-begin
-  if (Engine.Files.Current.Control is TCustomSynEdit) then
-    if (Key = #13) and (QuickSearchEdit.Text <> '') then
-      (Engine.Files.Current.Control as TCustomSynEdit).SearchReplace(QuickSearchEdit.Text, '', []);
-end;
-
-procedure TMainForm.CloseQuickSearchBtnClick(Sender: TObject);
-begin
-  QuickFindAct.Execute;
-end;
-
-procedure TMainForm.QuickFindActExecute(Sender: TObject);
-begin
-  if (Engine.Files.Current.Control is TCustomSynEdit) then
-  begin
-    QuickFindPnl.Visible := QuickFindAct.Checked;
-    if QuickFindPnl.Visible then
-    begin
-      QuickSearchEdit.Text := SearchForms.GetTextSearch;
-      QuickSearchEdit.SetFocus;
-      QuickSearchEdit.SelectAll;
-    end;
-  end;
-end;
-
-procedure TMainForm.QuickFindActUpdate(Sender: TObject);
-begin
-  if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomSynEdit) then
-  begin
-    QuickFindAct.Enabled := Engine.Files.Count > 0;
-    QuickFindAct.Checked := QuickFindPnl.Visible;
-  end;
 end;
 
 procedure TMainForm.WorkspaceMnuClick(Sender: TObject);

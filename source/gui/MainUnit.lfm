@@ -253,110 +253,6 @@ object MainForm: TMainForm
       FullRepaint = False
       TabOrder = 0
       OnClick = EditorsPnlClick
-      object QuickFindPnl: TPanel
-        Left = 0
-        Height = 28
-        Top = 298
-        Width = 669
-        Align = alBottom
-        BevelInner = bvSpace
-        BevelOuter = bvLowered
-        ClientHeight = 28
-        ClientWidth = 669
-        TabOrder = 0
-        Visible = False
-        object Label2: TLabel
-          Left = 32
-          Height = 16
-          Top = 8
-          Width = 29
-          Caption = 'Find:'
-          ParentColor = False
-        end
-        object CloseQuickSearchBtn: TSpeedButton
-          Left = 7
-          Height = 15
-          Top = 7
-          Width = 16
-          Flat = True
-          Glyph.Data = {
-            76010000424D760100000000000036000000280000000A0000000A0000000100
-            1800000000004001000000000000000000000000000000000000FF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0000FF00FF000000
-            000000FF00FFFF00FFFF00FFFF00FF000000000000FF00FF0000FF00FF000000
-            000000000000FF00FFFF00FF000000000000000000FF00FF0000FF00FFFF00FF
-            000000000000000000000000000000000000FF00FFFF00FF0000FF00FFFF00FF
-            FF00FF000000000000000000000000FF00FFFF00FFFF00FF0000FF00FFFF00FF
-            FF00FF000000000000000000000000FF00FFFF00FFFF00FF0000FF00FFFF00FF
-            000000000000000000000000000000000000FF00FFFF00FF0000FF00FF000000
-            000000000000FF00FFFF00FF000000000000000000FF00FF0000FF00FF000000
-            000000FF00FFFF00FFFF00FFFF00FF000000000000FF00FF0000FF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF0000
-          }
-          Layout = blGlyphBottom
-          OnClick = CloseQuickSearchBtnClick
-        end
-        object QuickSearchNextBtn: TBitBtn
-          Left = 310
-          Height = 25
-          Top = 3
-          Width = 72
-          Caption = 'Next'
-          Glyph.Data = {
-            86010000424D86010000000000003600000028000000080000000E0000000100
-            1800000000005001000000000000000000000000000000000000FF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF800000FF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FFFF00FF800000800000FF00FFFF00FFFF00FFFF00FFFF
-            00FFFF00FF800000FF0000800000FF00FFFF00FFFF00FFFF00FFFF00FF800000
-            FF8000FF0000800000FF00FFFF00FFFF00FFFF00FF800000FF8000FF8000FF00
-            00800000FF00FFFF00FFFF00FF800000FFC184FF8000FF8000FF0000800000FF
-            00FFFF00FF800000FF8000FF8000FF8000FF0000800000FF00FFFF00FF800000
-            FFC184FF8000FFC184800000FF00FFFF00FFFF00FF800000FF8000FFC1848000
-            00FF00FFFF00FFFF00FFFF00FF800000FFC184800000FF00FFFF00FFFF00FFFF
-            00FFFF00FF800000800000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF800000
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FF
-          }
-          Layout = blGlyphRight
-          Margin = 8
-          OnClick = QuickSearchNextBtnClick
-          TabOrder = 1
-        end
-        object QuickSearchPrevBtn: TBitBtn
-          Left = 236
-          Height = 25
-          Top = 3
-          Width = 72
-          Caption = 'Previous'
-          Glyph.Data = {
-            86010000424D86010000000000003600000028000000080000000E0000000100
-            1800000000005001000000000000000000000000000000000000FF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FF800000FF00FFFF00FFFF00FFFF00FFFF00FFFF00FF800000800000FF
-            00FFFF00FFFF00FFFF00FFFF00FF800000FF0000800000FF00FFFF00FFFF00FF
-            FF00FF800000FF0000FF8000800000FF00FFFF00FFFF00FF800000FF0000FF80
-            00FF8000800000FF00FFFF00FF800000FF0000FF8000FF8000FFC184800000FF
-            00FFFF00FF800000FF0000FF8000FF8000FF8000800000FF00FFFF00FFFF00FF
-            800000FFC184FF8000FFC184800000FF00FFFF00FFFF00FFFF00FF800000FFC1
-            84FF8000800000FF00FFFF00FFFF00FFFF00FFFF00FF800000FFC184800000FF
-            00FFFF00FFFF00FFFF00FFFF00FFFF00FF800000800000FF00FFFF00FFFF00FF
-            FF00FFFF00FFFF00FFFF00FF800000FF00FFFF00FFFF00FFFF00FFFF00FFFF00
-            FFFF00FFFF00FFFF00FF
-          }
-          Margin = 8
-          OnClick = QuickSearchPrevBtnClick
-          TabOrder = 2
-        end
-        object QuickSearchEdit: TEdit
-          Left = 60
-          Height = 24
-          Top = 4
-          Width = 173
-          OnChange = QuickSearchEditChange
-          OnKeyPress = QuickSearchEditKeyPress
-          TabOrder = 0
-        end
-      end
       object FileTabs: TntvTabSet
         Left = 0
         Height = 23
@@ -371,7 +267,7 @@ object MainForm: TMainForm
         Align = alTop
         Caption = 'Files'
         PopupMenu = FilePopupMenu
-        TabOrder = 1
+        TabOrder = 0
       end
     end
     object FileHeaderPanel: TPanel
@@ -1508,11 +1404,6 @@ object MainForm: TMainForm
       object MenuItem17: TMenuItem
         Action = FindPreviousAct
       end
-      object QuickSearch: TMenuItem
-        Action = QuickFindAct
-        AutoCheck = True
-        OnClick = QuickFindActExecute
-      end
       object Replace1: TMenuItem
         Action = ReplaceAct
         OnClick = ReplaceActExecute
@@ -2063,14 +1954,6 @@ object MainForm: TMainForm
       Caption = 'Switch Focus'
       OnExecute = SwitchFocusActExecute
       ShortCut = 117
-    end
-    object QuickFindAct: TAction
-      Category = 'Edit'
-      AutoCheck = True
-      Caption = 'Quick Search'
-      OnExecute = QuickFindActExecute
-      OnUpdate = QuickFindActUpdate
-      ShortCut = 16465
     end
     object ShowRelatedAct: TAction
       Category = 'Files'
