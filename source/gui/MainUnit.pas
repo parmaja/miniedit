@@ -44,6 +44,8 @@ type
 
   TMainForm = class(TForm, INotifyEngine)
     MenuItem32: TMenuItem;
+    MenuItem34: TMenuItem;
+    MenuItem36: TMenuItem;
     SetAsRootFolderAct: TAction;
     SetAsMainFileAc: TAction;
     MenuItem30: TMenuItem;

@@ -1234,22 +1234,28 @@ object MainForm: TMainForm
       object MenuItem19: TMenuItem
         Action = DeleteAct
       end
-      object MenuItem21: TMenuItem
-        Caption = '-'
-      end
       object Revert1: TMenuItem
         Action = RevertAct
         OnClick = RevertActExecute
+      end
+      object MenuItem21: TMenuItem
+        Caption = '-'
       end
       object Close1: TMenuItem
         Action = CloseAllAct
         OnClick = CloseAllActExecute
       end
+      object N1: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem36: TMenuItem
+        Action = CopyFileNameAct
+      end
       object OpenFolder1: TMenuItem
         Action = OpenFolderAct
         OnClick = OpenFolderActExecute
       end
-      object N1: TMenuItem
+      object MenuItem34: TMenuItem
         Caption = '-'
       end
       object Exit1: TMenuItem
@@ -2118,12 +2124,12 @@ object MainForm: TMainForm
     end
     object SetAsMainFileAc: TAction
       Category = 'File'
-      Caption = 'Set As Main file'
+      Caption = 'Set as Main file'
       OnExecute = SetAsMainFileAcExecute
     end
     object SetAsRootFolderAct: TAction
       Category = 'File'
-      Caption = 'Set As Main folder'
+      Caption = 'Set as Main folder'
       OnExecute = SetAsRootFolderActExecute
     end
   end
