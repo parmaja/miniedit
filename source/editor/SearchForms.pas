@@ -73,12 +73,7 @@ procedure InternalSearchText(SynEdit: TSynEdit; Options: TSynSearchOptions);
 begin
   if SynEdit.SearchReplace(FSearchText, FReplaceText, Options) = 0 then
   begin
-//    MessageBeep(MB_ICONASTERISK);
-    if ssoBackwards in FSearchOptions then
-      SynEdit.BlockEnd := SynEdit.BlockBegin
-    else
-      SynEdit.BlockBegin := SynEdit.BlockEnd;
-    SynEdit.CaretXY := SynEdit.BlockBegin;
+    Engine.SendMessage('Phrase not found', true)
   end;
 end;
 
