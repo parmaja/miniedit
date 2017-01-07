@@ -160,7 +160,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="43">
+    <Units Count="44">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -399,6 +399,13 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
       </Unit42>
+      <Unit43>
+        <Filename Value="..\extends\fntgen\mneFontGenForm.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="FontGenFormForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit43>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -409,7 +416,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\extends\fntgen"/>
       <UnitOutputDirectory Value="..\..\units"/>
     </SearchPaths>
     <Linking>

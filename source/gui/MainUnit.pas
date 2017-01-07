@@ -44,6 +44,7 @@ type
 
   TMainForm = class(TForm, INotifyEngine)
     MenuItem32: TMenuItem;
+    MenuItem33: TMenuItem;
     MenuItem34: TMenuItem;
     MenuItem36: TMenuItem;
     SetAsRootFolderAct: TAction;
@@ -1753,12 +1754,13 @@ procedure TMainForm.UpdatePanel;
     FreeAndNil(FProjectFrame);
   end;
 begin
-  if Engine.Session.Active then
+  if Engine.Session.Active and (Engine.Session.Project <> nil) then
   begin
     if (FProjectFrame = nil) or ((FProjectFrame as IEditorProjectFrame).Project <> Engine.Session.Project) then
     begin
       if (FProjectFrame <> nil) then
         FreeFrame;
+
       Engine.Session.Project.Options.CreateProjectPanel(Self, Engine.Session.Project, FProjectFrame);
       if FProjectFrame <> nil then
       begin

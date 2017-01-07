@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <rtti version="1.0" author="MiniXML">
-  <Object Type="TEditorProject">
+  <Object Type="TRunProject">
     <Name>test</Name>
     <Title>PHP Test</Title>
     <TendencyName>PHP</TendencyName>
@@ -10,12 +10,17 @@
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
+        <CurrentFolder>D:\home\lua\projects\iyfct\</CurrentFolder>
       </Files>
     </Desktop>
     <Options Class="TPHPProjectOptions">
-      <RunMode>runOutput</RunMode>
-      <PauseConsole>True</PauseConsole>
     </Options>
+    <RunOptions Class="TRunProjectOptions">
+      <Mode>runConsole</Mode>
+      <Pause>False</Pause>
+      <Paths Class="TStringList">
+      </Paths>
+      <ExpandPaths>False</ExpandPaths>
+    </RunOptions>
   </Object>
 </rtti>

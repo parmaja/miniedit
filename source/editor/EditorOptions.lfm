@@ -19,9 +19,9 @@ object EditorOptionsForm: TEditorOptionsForm
     Height = 377
     Top = 3
     Width = 436
-    ActivePage = OptionsTab
+    ActivePage = ColorTab
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 0
     object OptionsTab: TTabSheet
       Caption = 'Options'
@@ -1076,12 +1076,11 @@ object EditorOptionsForm: TEditorOptionsForm
     Width = 28
     Height = 28
     DefaultExt = '.mne-theme'
-    FileName = 'M:\home\pascal\projects\miniEdit\bin'
     Filter = 'Theme (*.mne-theme)|*.mne-theme'
     InitialDir = 'M:\home\pascal\projects\miniEdit\'
     Options = [ofFileMustExist, ofEnableSizing, ofViewDetail]
-    left = 335
-    top = 290
+    left = 184
+    top = 277
   end
   object SaveDialog: TSaveDialog
     DefaultExt = '.mne-theme'
