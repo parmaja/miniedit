@@ -1,11 +1,11 @@
 object FontGenForm: TFontGenForm
   Left = 266
-  Height = 368
+  Height = 382
   Top = 191
   Width = 452
   BorderStyle = bsDialog
   Caption = 'Font Generator'
-  ClientHeight = 368
+  ClientHeight = 382
   ClientWidth = 452
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
@@ -15,7 +15,7 @@ object FontGenForm: TFontGenForm
   object OkBtn: TButton
     Left = 372
     Height = 27
-    Top = 335
+    Top = 349
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&Ok'
@@ -27,7 +27,7 @@ object FontGenForm: TFontGenForm
   object CancelBtn: TButton
     Left = 297
     Height = 27
-    Top = 335
+    Top = 349
     Width = 75
     Anchors = [akRight, akBottom]
     Cancel = True
@@ -565,27 +565,20 @@ object FontGenForm: TFontGenForm
   end
   object Bevel2: TBevel
     Left = 7
-    Height = 119
+    Height = 133
     Top = 215
     Width = 437
     Anchors = [akTop, akLeft, akRight, akBottom]
   end
-  object NoAntialiasingChk: TCheckBox
-    Left = 339
+  object AntialiasingChk: TCheckBox
+    Left = 356
     Height = 19
     Top = 38
-    Width = 90
+    Width = 73
     Anchors = [akTop, akRight]
-    Caption = 'No &Antialiasing'
-    OnChange = NoAntialiasingChkChange
+    Caption = '&Antialiasing'
+    OnChange = AntialiasingChkChange
     TabOrder = 4
-  end
-  object ExampleImage: TImage
-    Left = 11
-    Height = 110
-    Top = 219
-    Width = 428
-    Anchors = [akTop, akLeft, akRight, akBottom]
   end
   object ExampleEdit: TEdit
     Left = 69
@@ -606,13 +599,29 @@ object FontGenForm: TFontGenForm
   object CancelBtn1: TButton
     Left = 8
     Height = 27
-    Top = 335
+    Top = 349
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&Save'
     ModalResult = 2
     OnClick = CancelBtn1Click
     TabOrder = 6
+  end
+  object PaintBox1: TPaintBox
+    Left = 13
+    Height = 124
+    Top = 219
+    Width = 420
+    OnPaint = PaintBox1Paint
+  end
+  object Button1: TButton
+    Left = 366
+    Height = 25
+    Top = 80
+    Width = 75
+    Caption = 'Button1'
+    OnClick = Button1Click
+    TabOrder = 7
   end
   object FontDialog: TFontDialog
     Width = 28
@@ -621,7 +630,7 @@ object FontGenForm: TFontGenForm
     Font.Name = 'MS Sans Serif'
     MinFontSize = 0
     MaxFontSize = 0
-    Options = [fdEffects, fdFixedPitchOnly, fdNoStyleSel]
+    Options = []
     PreviewText = 'Hello World'
     left = 327
     top = 130
@@ -631,8 +640,8 @@ object FontGenForm: TFontGenForm
     FileName = '*.png'
     Filter = 'Font image|*.png'
     Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
-    left = 161
-    top = 91
+    left = 142
+    top = 66
   end
   object OpenDialog: TOpenDialog
     Width = 28

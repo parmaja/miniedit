@@ -23,13 +23,13 @@ type
   private
     FFontName: string;
     FFontSize: Integer;
-    FNoAntiAliasing: Boolean;
+    FAntiAliasing: Boolean;
   public
     constructor Create;
   published
     property FontName: string read FFontName write FFontName;
     property FontSize: Integer read FFontSize write FFontSize;
-    property NoAntiAliasing: Boolean read FNoAntiAliasing write FNoAntiAliasing;
+    property AntiAliasing: Boolean read FAntiAliasing write FAntiAliasing;
   end;
 
   { TFontGenForm }
@@ -37,24 +37,27 @@ type
   TFontGenForm = class(TForm)
     Bevel1: TBevel;
     Bevel2: TBevel;
+    Button1: TButton;
     CancelBtn1: TButton;
     ExampleEdit: TEdit;
     FontBtn: TButton;
     FontDialog: TFontDialog;
     FontLbl: TLabel;
-    ExampleImage: TImage;
     Label1: TLabel;
-    NoAntialiasingChk: TCheckBox;
+    AntialiasingChk: TCheckBox;
     OkBtn: TButton;
     CancelBtn: TButton;
     OpenDialog: TOpenDialog;
+    PaintBox1: TPaintBox;
     SaveDialog: TSaveDialog;
     SelectEdit: TSynEdit;
+    procedure Button1Click(Sender: TObject);
     procedure CancelBtn1Click(Sender: TObject);
     procedure FontBtnClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure NoAntialiasingChkChange(Sender: TObject);
+    procedure AntialiasingChkChange(Sender: TObject);
     procedure OkBtnClick(Sender: TObject);
+    procedure PaintBox1Paint(Sender: TObject);
   private
     InChanging: Boolean;
   protected
@@ -71,7 +74,58 @@ implementation
 {$R *.lfm}
 
 uses
-  EditorEngine;
+  EditorEngine, FPCanvas, FPImage, FPImgCanv, FPWritePNG, IntfGraphics;
+
+procedure PaintAliased(Canvas: TCanvas; x,y: integer; const TheText: string);
+var
+  w,h: integer;
+  IntfImg: TLazIntfImage;
+  Img: TPortableNetworkGraphic;
+  dy: Integer;
+  dx: Integer;
+  col: TFPColor;
+  FontColor: TColor;
+  c: TColor;
+begin
+  w:=0;
+  h:=0;
+  Canvas.GetTextSize(TheText,w,h);
+  if (w<=0) or (h<=0) then exit;
+  Img:=TPortableNetworkGraphic.Create;
+  IntfImg:=nil;
+  try
+    // paint text to a bitmap
+    Img.Masked:=true;
+    Img.SetSize(w,h);
+    Img.Canvas.Brush.Style:=bsSolid;
+    Img.Canvas.Brush.Color:=clWhite;
+    Img.Canvas.FillRect(0,0,w,h);
+    Img.Canvas.Font:=Canvas.Font;
+    Img.Canvas.TextOut(0,0,TheText);
+    // get memory image
+    IntfImg:=Img.CreateIntfImage;
+    // replace gray pixels
+    FontColor:=ColorToRGB(Canvas.Font.Color);
+    for dy:=0 to h-1 do begin
+      for dx:=0 to w-1 do begin
+        col:=IntfImg.Colors[dx,dy];
+        c:=FPColorToTColor(col);
+        if c<>FontColor then
+          IntfImg.Colors[dx,dy]:=colTransparent;
+      end;
+    end;
+    // create bitmap
+    Img.LoadFromIntfImage(IntfImg);
+    Img.Transparent := True;
+    Img.TransparentColor := clBlack;
+    Img.SaveToFile('d:\temp\myfont4.png');
+    // paint
+    Canvas.Draw(x,y,Img);
+  finally
+    IntfImg.Free;
+    Img.Free;
+  end;
+end;
 
 { TFontGenProfile }
 
@@ -104,8 +158,8 @@ end;
 procedure TFontGenForm.ChangeEdit;
 begin
   FontLbl.Caption := GenProfile.FontName + ' ' + IntToStr(GenProfile.FontSize) + ' pt';
-  RasterFont.Generate(GenProfile.FontName, GenProfile.FontSize);
-  ExampleImage.Picture.Assign(RasterFont.FontBitmap)
+  RasterFont.Generate(GenProfile.FontName, GenProfile.FontSize, GenProfile.AntiAliasing);
+  //ExampleImage.Picture.Assign(RasterFont.Image)
 end;
 
 procedure TFontGenForm.FormCreate(Sender: TObject);
@@ -115,11 +169,11 @@ begin
   SelectEdit.Font.Size := Engine.Options.Profile.Attributes.FontSize;
 end;
 
-procedure TFontGenForm.NoAntialiasingChkChange(Sender: TObject);
+procedure TFontGenForm.AntialiasingChkChange(Sender: TObject);
 begin
   if not InChanging then
   begin
-    GenProfile.NoAntialiasing := NoAntialiasingChk.Checked;
+    GenProfile.Antialiasing := AntialiasingChk.Checked;
     ChangeEdit;
   end;
 end;
@@ -146,9 +200,23 @@ begin
   end;
 end;
 
+procedure TFontGenForm.Button1Click(Sender: TObject);
+begin
+  PaintBox1.Canvas.Font.Color := clRed;
+  PaintBox1.Canvas.Brush.Color := clWhite;
+  PaintAliased(PaintBox1.Canvas, 0, 0, 'TEST TEST');
+  Paintit;
+end;
+
 procedure TFontGenForm.OkBtnClick(Sender: TObject);
 begin
   Apply;
+end;
+
+procedure TFontGenForm.PaintBox1Paint(Sender: TObject);
+begin
+  //PaintBox1.Canvas.Draw(0, 0, RasterFont.Image);
+
 end;
 
 type
