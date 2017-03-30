@@ -205,7 +205,6 @@ begin
   PaintBox1.Canvas.Font.Color := clRed;
   PaintBox1.Canvas.Brush.Color := clWhite;
   PaintAliased(PaintBox1.Canvas, 0, 0, 'TEST TEST');
-  Paintit;
 end;
 
 procedure TFontGenForm.OkBtnClick(Sender: TObject);
@@ -216,7 +215,6 @@ end;
 procedure TFontGenForm.PaintBox1Paint(Sender: TObject);
 begin
   //PaintBox1.Canvas.Draw(0, 0, RasterFont.Image);
-
 end;
 
 type

@@ -54,27 +54,35 @@ uses
 {$R *.res}
 {$i '..\lib\mne.inc'}
 
-function CheckSetup: Boolean;
+function InitEngine: Boolean;
 var
   aIniFile: TIniFile;
   aIni, aPath: string;
   procedure Check;
+  var
+    aWorkspace: string;
   begin
-    if FileExists(aIni) then
+    Result := FileExists(aIni);
+    if Result then
     begin
       aIniFile := TIniFile.Create(aIni);
       try
         aPath := aIniFile.ReadString('options', 'Workspace', '');
         Result := aPath <> '';
         if Result then
-          ForceDirectories(Engine.EnvReplace(IncludeTrailingPathDelimiter(aPath)));
+        begin
+          aWorkspace := aIniFile.ReadString('options', 'Workspace', '');
+          aWorkspace := IncludeTrailingPathDelimiter(Engine.EnvReplace(aWorkspace));
+          Engine.Workspace := ExpandToPath(aWorkspace, Application.Location);
+          Engine.Environment.Add('Workspace=' + aWorkspace);
+          ForceDirectories(Engine.Workspace);
+        end
       finally
         aIniFile.Free;
       end;
     end;
   end;
 begin
-  Result := False;
   aIni := ExtractFilePath(Application.ExeName) + 'setting.ini';
   Check;
   if not Result then
@@ -82,13 +90,13 @@ begin
     with TEditorSetupForm.Create(Application) do
     begin
       Result := ShowModal = mrOK;
-      Check;
       Free;
     end;
+    Check;
   end;
 end;
 
-function AnotherInstance: Boolean;
+function IsAnotherInstance: Boolean;
 var
   aClient: TSimpleIPCClient;
 begin
@@ -130,14 +138,14 @@ begin
 end;
 
 begin
-  if not AnotherInstance then
+  if not IsAnotherInstance then
   begin
     Application.Initialize;
     {$ifdef trunk} //version 1.7 or later
     {$else}
     Application.BidiMode := bdLeftToRight;
     {$endif trunk}
-    if CheckSetup then
+    if InitEngine then
     begin
       Run;
       Application.Run;

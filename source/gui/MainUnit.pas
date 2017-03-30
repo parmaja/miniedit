@@ -570,31 +570,17 @@ end;
 
 constructor TMainForm.Create(AOwner: TComponent);
 var
-  aIniFile: TIniFile;
   lFilePath: string;
-  aWorkspace: string;
 begin
   inherited;
   FMenuItemsList := TObjectList.Create(True);
-  aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
-  try
-    aWorkspace := aIniFile.ReadString('options', 'Workspace', '');
-    aWorkspace := IncludeTrailingPathDelimiter(Engine.EnvReplace(aWorkspace));
-  finally
-    aIniFile.Free;
-  end;
-  Engine.Workspace := ExpandToPath(aWorkspace, Application.Location);
-  Engine.Environment.Add('Workspace=' + aWorkspace);
-  //ForceDirectories(Engine.Workspace);
 
   Engine.Container := EditorsPnl;
 
   Engine.SetNotifyEngine(Self);
 
-  if (aWorkspace <> '') then
-  begin
-    Engine.Startup(GetKeyShiftState = [ssShift]);
-  end;
+  Engine.Startup(GetKeyShiftState = [ssShift]);
+
   ShowFolderFiles := Engine.Options.ShowFolderFiles;
   SortFolderFiles := Engine.Options.SortFolderFiles;
   FoldersAct.Checked := Engine.Options.ShowFolder;
