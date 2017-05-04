@@ -85,11 +85,11 @@ var
   aFrame: TFrame;
 begin
   aFrame := TCompilerProjectFrame.Create(AOwner);
-  (aFrame as TCompilerProjectFrame).FProject := AProject;
+  (aFrame as TCompilerProjectFrame).Project := AProject;
   aFrame.Caption := 'Compiler';
   AddFrame(aFrame);
   aFrame := TPyProjectFrame.Create(AOwner);
-  (aFrame as TPyProjectFrame).FProject := AProject;
+  (aFrame as TPyProjectFrame).Project := AProject;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 end;

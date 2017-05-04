@@ -32,11 +32,10 @@ type
     PathsEdit: TSynEdit;
     procedure Bevel1ChangeBounds(Sender: TObject);
   private
-    Options: TRunProjectOptions;
   protected
     function GetProject: TEditorProject;
   public
-    FProject: TEditorProject;
+    Project: TEditorProject;
     procedure Apply;
     procedure Retrieve;
   end;
@@ -49,7 +48,7 @@ implementation
 
 function TCompilerProjectFrame.GetProject: TEditorProject;
 begin
-  Result := FProject;
+  Result := Project;
 end;
 
 procedure TCompilerProjectFrame.Bevel1ChangeBounds(Sender: TObject);
@@ -59,20 +58,20 @@ end;
 
 procedure TCompilerProjectFrame.Apply;
 begin
-  Options.OutputFile := OutputFileEdit.Text;
-  Options.Params := RunParamsEdit.Text;
-  Options.ConfigFile := ConfigFileEdit.Text;
-  Options.ExpandPaths := ExpandPathsChk.Checked;
-  Options.Paths.Assign(PathsEdit.Lines);
+  Project.RunOptions.OutputFile := OutputFileEdit.Text;
+  Project.RunOptions.Params := RunParamsEdit.Text;
+  Project.RunOptions.ConfigFile := ConfigFileEdit.Text;
+  Project.RunOptions.ExpandPaths := ExpandPathsChk.Checked;
+  Project.RunOptions.Paths.Assign(PathsEdit.Lines);
 end;
 
 procedure TCompilerProjectFrame.Retrieve;
 begin
-  OutputFileEdit.Text := Options.OutputFile;
-  RunParamsEdit.Text := Options.Params;
-  ConfigFileEdit.Text := Options.ConfigFile;
-  ExpandPathsChk.Checked := Options.ExpandPaths;
-  PathsEdit.Lines.Assign(Options.Paths);
+  OutputFileEdit.Text := Project.RunOptions.OutputFile;
+  RunParamsEdit.Text := Project.RunOptions.Params;
+  ConfigFileEdit.Text := Project.RunOptions.ConfigFile;
+  ExpandPathsChk.Checked := Project.RunOptions.ExpandPaths;
+  PathsEdit.Lines.Assign(Project.RunOptions.Paths);
 end;
 
 end.

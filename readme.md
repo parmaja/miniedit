@@ -23,16 +23,16 @@ if you are editing multiple files, e.g. Python, PHP it can run this files into c
  * Tortoise SVN/GIT integrated in Windows, [TODO] RabbitVCS in Linux
  * Works in Windows and Linux 
  
-###Disadvantages
+### Disadvantages
   
  * Not good in auto complete
 
-###Contributing
+### Contributing
 
 Keep it as simple as possible.
 There is an addons to add menu items to file or main menu tools
 
-###Build
+### Build
 
 Miniedit is FreePascal/Lazarus project, to compile it need to install all packages that needed for the project
 
@@ -46,7 +46,7 @@ CMDBox package
 
     CMDLine\cmdbox.dpk
 
-####minilib packages
+#### minilib packages
 
     minilib\lib\MiniCommons.lpk
     minilib\xml\source\MiniXML.lpk
@@ -56,13 +56,13 @@ CMDBox package
     minilib\lazarus\lib\MiniLib.lpk
     minilib\lazarus\components\native\NativeLib.lpk
 
-####Build minilib project
+#### Build minilib project
 
 
-##miniEdit
+## miniEdit
 
-####Options
+#### Options
 
-###Project Options
+### Project Options
 
 Console: Run program in Terminal Console of system

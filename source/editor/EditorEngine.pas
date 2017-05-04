@@ -226,6 +226,7 @@ type
   TAddFrameCallBack = procedure(AFrame: TFrame) of object;
   TAddClickCallBack = procedure(Name, Caption: string; OnClickEvent: TNotifyEvent; ShortCut: TShortCut = 0) of object;
 
+
   TFileGroupKind = (
     fgkText, //Is it an Text Editor like SQL or PHP
     fgkUneditable, // Can't be editable

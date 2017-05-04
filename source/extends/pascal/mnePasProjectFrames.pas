@@ -12,13 +12,14 @@ type
 
   { TPasProjectFrame }
 
-  TPasProjectFrame = class(TFrame, IEditorOptions)
+  TPasProjectFrame = class(TFrame, IEditorOptions, IEditorProjectFrame)
     UseCFGFileChk: TCheckBox;
     procedure Button4Click(Sender: TObject);
   private
   protected
   public
     Project: TEditorProject;
+    function GetProject: TEditorProject;
     procedure Apply;
     procedure Retrieve;
   end;
@@ -31,6 +32,11 @@ implementation
 
 procedure TPasProjectFrame.Button4Click(Sender: TObject);
 begin
+end;
+
+function TPasProjectFrame.GetProject: TEditorProject;
+begin
+  Result := Project;
 end;
 
 procedure TPasProjectFrame.Apply;

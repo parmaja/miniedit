@@ -121,7 +121,7 @@ var
   aFrame: TFrame;
 begin
   aFrame := TCompilerProjectFrame.Create(AOwner);
-  (aFrame as TCompilerProjectFrame).FProject := AProject;
+  (aFrame as TCompilerProjectFrame).Project := AProject;
   aFrame.Caption := 'Compiler';
   AddFrame(aFrame);
 end;
@@ -129,7 +129,7 @@ end;
 procedure TVerilogProjectOptions.CreateProjectPanel(AOwner: TComponent; AProject: TEditorProject; var AFrame: TFrame);
 begin
   aFrame := TVerilogProjectPanel.Create(AOwner);
-  (aFrame as TVerilogProjectPanel).FProject := AProject;
+  (aFrame as TVerilogProjectPanel).Project := AProject;
   aFrame.Caption := 'Files';
 end;
 

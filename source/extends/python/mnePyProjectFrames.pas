@@ -16,11 +16,10 @@ type
     ExpandPathsChk1: TCheckBox;
     ExpandPathsChk2: TCheckBox;
   private
-    Options: TPyProjectOptions;
   protected
     function GetProject: TEditorProject;
   public
-    FProject: TEditorProject;
+    Project: TEditorProject;
     procedure Apply;
     procedure Retrieve;
   end;
@@ -33,7 +32,7 @@ implementation
 
 function TPyProjectFrame.GetProject: TEditorProject;
 begin
-  Result := FProject;
+  Result := Project;
 end;
 
 procedure TPyProjectFrame.Apply;
@@ -42,7 +41,6 @@ end;
 
 procedure TPyProjectFrame.Retrieve;
 begin
-  Options := (FProject.Options as TPyProjectOptions);
 end;
 
 end.

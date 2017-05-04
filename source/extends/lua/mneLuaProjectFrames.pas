@@ -17,7 +17,7 @@ type
   protected
     function GetProject: TEditorProject;
   public
-    FProject: TEditorProject;
+    Project: TEditorProject;
     procedure Apply;
     procedure Retrieve;
   end;
@@ -30,7 +30,7 @@ implementation
 
 function TLuaProjectFrame.GetProject: TEditorProject;
 begin
-  Result := FProject;
+  Result := Project;
 end;
 
 procedure TLuaProjectFrame.Apply;

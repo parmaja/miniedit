@@ -26,7 +26,7 @@ type
   protected
     function GetProject: TEditorProject;
   public
-    FProject: TEditorProject;
+    Project: TEditorProject;
     procedure Apply;
     procedure Retrieve;
   end;
@@ -73,12 +73,12 @@ end;
 
 function TVerilogProjectPanel.GetProject: TEditorProject;
 begin
-  Result := FProject;
+  Result := Project;
 end;
 
 procedure TVerilogProjectPanel.Apply;
 begin
-  with (FProject.Options as TVerilogProjectOptions) do
+  with (Project.Options as TVerilogProjectOptions) do
   begin                      
     Files.Assign(ProjectFileList.Items);
   end;
@@ -86,7 +86,7 @@ end;
 
 procedure TVerilogProjectPanel.Retrieve;
 begin
-  with (FProject.Options as TVerilogProjectOptions) do
+  with (Project.Options as TVerilogProjectOptions) do
   begin
     ProjectFileList.Items.Assign(Files);
   end;

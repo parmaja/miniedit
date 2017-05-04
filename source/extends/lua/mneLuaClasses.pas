@@ -85,7 +85,7 @@ begin
   aFrame.Caption := 'Run';
   AddFrame(aFrame);
   aFrame := TLuaProjectFrame.Create(AOwner);
-  (aFrame as TLuaProjectFrame).FProject := AProject;
+  (aFrame as TLuaProjectFrame).Project := AProject;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 end;
