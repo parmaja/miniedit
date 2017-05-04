@@ -37,6 +37,8 @@ type
   TmneRunItem = class;
   TmneRunPool = class;
 
+  TRunMessageType = (msgtTemp, msgtLog, msgtOutput);
+
   { TmneRunItem }
 
   TmneRunItem = class(TObject)
@@ -49,11 +51,11 @@ type
   protected
     FOnWrite: TmnOnWriteString;
     InternalString: string;
-    InternalTemporary: Boolean;
+    InternalMessageType: TRunMessageType;
     procedure InternalWrite; //This for sync it, it will send to FOnWriteString
-    procedure WriteString(S: string); //This assign it to consoles
+    procedure WriteOutput(S: string); //This assign it to consoles
     procedure InternalMessage; //This for sync it, it will send to FWriteString
-    procedure WriteMessage(S: string; Temporary: Boolean = False); //This assign it to consoles
+    procedure WriteMessage(S: string; vMessageType: TRunMessageType = msgtLog); //This assign it to consoles
   protected
     procedure CreateControl;
     procedure CreateConsole(AInfo: TmneCommandInfo);
@@ -300,7 +302,7 @@ begin
     FOnWrite(InternalString);
 end;
 
-procedure TmneRunItem.WriteString(S: string);
+procedure TmneRunItem.WriteOutput(S: string);
 begin
   InternalString := S;
   FPool.Synchronize(@InternalWrite);
@@ -310,16 +312,19 @@ end;
 procedure TmneRunItem.InternalMessage;
 begin
   //if not Engine.IsShutdown then //not safe to ingore it
-    Engine.SendMessage(InternalString, InternalTemporary);
+  case InternalMessageType of
+    msgtTemp: Engine.SendMessage(InternalString, True);
+    msgtLog: Engine.SendLog(InternalString);
+    msgtOutput: Engine.SendMessage(InternalString);
+  end
 end;
 
-procedure TmneRunItem.WriteMessage(S: string; Temporary: Boolean);
+procedure TmneRunItem.WriteMessage(S: string; vMessageType: TRunMessageType = msgtLog);
 begin
   InternalString := S;
-  InternalTemporary:= Temporary;
+  InternalMessageType := vMessageType;
   FPool.Synchronize(@InternalMessage);
   InternalString := '';
-  InternalTemporary := False;
 end;
 
 procedure TmneRunItem.Stop;
@@ -340,8 +345,8 @@ var
   ProcessObject: TmnProcessObject;
   aOptions: TProcessOptions;
 begin
-  if Assigned(FOnWrite) and (AInfo.Message <> '') then
-    WriteString(AInfo.Message + #13#10);
+  if (AInfo.Message <> '') then
+    WriteMessage(AInfo.Message + #13#10);
   WriteMessage(AInfo.Message + #13#10);
   FProcess := TProcess.Create(nil);
   FProcess.ConsoleTitle := Info.Title;
@@ -349,7 +354,7 @@ begin
   FProcess.CurrentDirectory := ReplaceStr(AInfo.CurrentDirectory, '\', '/');
 
   FProcess.Executable := ReplaceStr(AInfo.Run.Command, '\', '/');
-  //Engine.SendOutout(AInfo.Params);//buggy
+  WriteMessage(AInfo.Run.Params);
   CommandToList(AInfo.Run.Params, FProcess.Parameters);
 
   aOptions := [];
@@ -362,7 +367,7 @@ begin
     FProcess.ShowWindow := swoShowNormal;
     FProcess.StartupOptions:=[suoUseShowWindow];
     FProcess.PipeBufferSize := 0; //80 char in line
-    ProcessObject := TmnProcessObject.Create(FProcess, FPool, @WriteString);
+    ProcessObject := TmnProcessObject.Create(FProcess, FPool, @WriteOutput);
     try
       Status := ProcessObject.Read(strmOutput);
     finally
@@ -379,9 +384,8 @@ begin
     FProcess.Execute;
     //Status := ProcessObject.Read(strmOutput);
   end;
-  if Assigned(FOnWrite) then
-    WriteString(#13#10'End Status: ' + IntToStr(Status)+#13#10);
-  WriteMessage('Done', True);
+  WriteMessage(#13#10'End Status: ' + IntToStr(Status)+#13#10, msgtLog);
+  WriteMessage('Done', msgtTemp);
 end;
 
 procedure TmneRunItem.Execute;

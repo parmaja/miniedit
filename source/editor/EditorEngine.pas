@@ -315,6 +315,7 @@ type
 
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); virtual;
     function CreateOptions: TEditorProjectOptions; virtual;
+    procedure EnumRunCommands(Items: TStrings); virtual;
     function GetDefaultGroup: TFileGroup; virtual;
     //OSDepended: When save to file, the filename changed depend on the os system name
     procedure Prepare;
@@ -1046,7 +1047,7 @@ type
     function GetMessages(Name: string): TEditorMessages;
   end;
 
-  TEditorAction = (eaClearOutput);
+  TEditorAction = (eaClearOutput, eaClearLog);
 
   TOnFoundEvent = procedure(FileName: string; const Line: string; LineNo, Column, FoundLength: integer) of object;
   TOnEditorChangeState = procedure(State: TEditorChangeStates) of object;
@@ -1056,6 +1057,7 @@ type
   INotifyEngine = interface(IInterface)
     procedure EditorChangeState(State: TEditorChangeStates);
     procedure EngineAction(EngineAction: TEditorAction);
+    procedure EngineLog(S: string);
     procedure EngineOutput(S: string);
     //Temporary clear it after a period
     procedure EngineMessage(S: string; Temporary: Boolean = False);
@@ -1171,6 +1173,7 @@ type
     procedure RemoveNotifyEngine(ANotifyObject: INotifyEngine);
     property MacroRecorder: TSynMacroRecorder read FMacroRecorder;
     procedure SendOutout(S: string);
+    procedure SendLog(S: string);
     procedure SendMessage(S: string; Temporary: Boolean = False);
     procedure SendAction(EditorAction: TEditorAction);
 
@@ -2338,7 +2341,7 @@ begin
         if rnaCompile in RunActions then
           Engine.SendAction(eaClearOutput);
         p.Root := Engine.Session.GetRoot;
-        p.Command := Engine.EnvReplace(RunOptions.Command);
+        p.Command := Engine.EnvReplace(AOptions.Command);
 
         p.Mode := AOptions.Mode;
         p.Pause := AOptions.Pause;
@@ -2382,6 +2385,11 @@ end;
 function TEditorTendency.CreateOptions: TEditorProjectOptions;
 begin
   Result := TEditorProjectOptions.Create;
+end;
+
+procedure TEditorTendency.EnumRunCommands(Items: TStrings);
+begin
+
 end;
 
 function TEditorTendency.GetDefaultGroup: TFileGroup;
@@ -3594,9 +3602,9 @@ begin
         List.Add('Project=' + Session.Project.FileName);
         List.Add('ProjectName=' + Session.Project.FileName);
         List.Add('ProjectDir=' + ExtractFilePath(Session.Project.FileName));
+        List.Add('ProjectPath=' + ExtractFilePath(Session.Project.FileName));
 
         List.Add('Output=' + Session.Project.RunOptions.OutputFile);
-
       end;
 
       if Session.Project <> nil then
@@ -3612,6 +3620,7 @@ begin
         List.Add('Main=' + MainFile);
         List.Add('MainFile=' + MainFile);
         List.Add('MainDir=' + ExtractFilePath(MainFile));
+        List.Add('MainPath=' + ExtractFilePath(MainFile));
       end;
 
       Result := VarReplace(S, List, sEnvVarChar);
@@ -3649,6 +3658,12 @@ procedure TEditorEngine.SendOutout(S: string);
 begin
   if FNotifyObject <> nil then
     FNotifyObject.EngineOutput(S);
+end;
+
+procedure TEditorEngine.SendLog(S: string);
+begin
+  if FNotifyObject <> nil then
+    FNotifyObject.EngineLog(S);
 end;
 
 procedure TEditorEngine.SendMessage(S: string; Temporary: Boolean);

@@ -38,6 +38,7 @@ type
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
+    MainPathMnu: TMenuItem;
     NameEdit: TEdit;
     OverrideOptionsChk: TCheckBox;
     RootDirEdit: TEdit;
@@ -52,9 +53,11 @@ type
     GeneralSheet: TTabSheet;
     procedure Button4Click(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
+    procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure MainPathMnuClick(Sender: TObject);
     procedure PageControlChanging(Sender: TObject; var AllowChange: Boolean);
   private
     FProject: TEditorProject;
@@ -64,8 +67,8 @@ type
   public
     procedure SelectPathFolder;
     procedure ApplyFrames;
-    procedure Apply;
     procedure RetrieveFrames;
+    procedure Apply;
     procedure Retrieve;
   end;
 
@@ -118,6 +121,11 @@ begin
   RootDirEdit.Text := Engine.BrowseFolder;
 end;
 
+procedure TProjectForm.MenuItem2Click(Sender: TObject);
+begin
+  (PathPopupMenu.PopupComponent as TEdit).SelText := '?ProjectPath';
+end;
+
 procedure TProjectForm.Button4Click(Sender: TObject);
 var
   s: string;
@@ -152,6 +160,7 @@ end;
 
 procedure TProjectForm.Retrieve;
 begin
+
   if FProject.Tendency <> nil then
     Caption := Caption + ' [' + FProject.Tendency.Name + ']';
   TitleEdit.Text := FProject.Title;
@@ -230,6 +239,11 @@ begin
   finally
     SCMCbo.Items.EndUpdate;
   end;
+end;
+
+procedure TProjectForm.MainPathMnuClick(Sender: TObject);
+begin
+  (PathPopupMenu.PopupComponent as TEdit).SelText := '?MainPath';
 end;
 
 procedure TProjectForm.PageControlChanging(Sender: TObject; var AllowChange: Boolean);

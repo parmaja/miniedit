@@ -64,6 +64,7 @@ type
     constructor Create; override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
     function CreateOptions: TEditorProjectOptions; override;
+    procedure EnumRunCommands(Items: TStrings); override;
     function GetDefaultGroup: TFileGroup; override;
   published
 
@@ -72,7 +73,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mneLuaProjectFrames, lua;
+  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mneLuaProjectFrames, lua53;
 
 { TDProject }
 
@@ -82,6 +83,7 @@ var
 begin
   aFrame := TRunFrameOptions.Create(AOwner);
   (aFrame as TRunFrameOptions).Options := AProject.RunOptions;
+  AProject.Tendency.EnumRunCommands((aFrame as TRunFrameOptions).CommandEdit.Items);
   aFrame.Caption := 'Run';
   AddFrame(aFrame);
   aFrame := TLuaProjectFrame.Create(AOwner);
@@ -216,10 +218,7 @@ var
 begin
   aFrame := TRunFrameOptions.Create(AOwner);
   aFrame.Options := ATendency.RunOptions;
-  aFrame.CommandEdit.Items.Add('lua ?file');
-  aFrame.CommandEdit.Items.Add('lua -l "basic" ?file');
-  aFrame.CommandEdit.Items.Add('love ?maindir ?main');
-  aFrame.CommandEdit.Items.Add('lovec ?maindir ?main');
+  EnumRunCommands(aFrame.CommandEdit.Items);
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 end;
@@ -232,6 +231,16 @@ end;
 function TLuaTendency.CreateOptions: TEditorProjectOptions;
 begin
   Result := TLuaProjectOptions.Create;
+end;
+
+procedure TLuaTendency.EnumRunCommands(Items: TStrings);
+begin
+  inherited;
+  Items.Add('lua ?file');
+  Items.Add('lua -l "tyro" ?file');
+  Items.Add('love ?mainpath ?mainfile');
+  Items.Add('lovec ?mainpath ?mainfile');
+  Items.Add('lovec ?root ?mainfile');
 end;
 
 procedure TLuaTendency.Init;

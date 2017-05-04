@@ -9,17 +9,13 @@
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.php</CurrentFile>
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test-pas.pas</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test-pas.pas</FileName>
-            <CaretY>12</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
-            <CaretX>12</CaretX>
-            <CaretY>10</CaretY>
+            <CaretX>33</CaretX>
+            <CaretY>13</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.py</FileName>

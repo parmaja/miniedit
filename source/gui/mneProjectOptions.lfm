@@ -166,6 +166,7 @@ object ProjectForm: TProjectForm
         Top = 170
         Width = 326
         Anchors = [akTop, akLeft, akRight]
+        PopupMenu = PathPopupMenu
         TabOrder = 2
       end
       object Button4: TButton
@@ -241,8 +242,8 @@ object ProjectForm: TProjectForm
     end
   end
   object PathPopupMenu: TPopupMenu
-    left = 368
-    top = 189
+    left = 399
+    top = 101
     object MenuItem3: TMenuItem
       Caption = 'Select Folder'
       OnClick = MenuItem3Click
@@ -252,7 +253,12 @@ object ProjectForm: TProjectForm
       OnClick = MenuItem1Click
     end
     object MenuItem2: TMenuItem
-      Caption = 'Home'
+      Caption = 'Project Path'
+      OnClick = MenuItem2Click
+    end
+    object MainPathMnu: TMenuItem
+      Caption = 'Main Path'
+      OnClick = MainPathMnuClick
     end
   end
 end

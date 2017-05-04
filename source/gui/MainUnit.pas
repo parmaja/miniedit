@@ -47,6 +47,7 @@ type
     MenuItem33: TMenuItem;
     MenuItem34: TMenuItem;
     MenuItem36: TMenuItem;
+    LogEdit: TSynEdit;
     SetAsRootFolderAct: TAction;
     SetAsMainFileAc: TAction;
     MenuItem30: TMenuItem;
@@ -525,6 +526,7 @@ type
     procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
     procedure EditorChangeState(State: TEditorChangeStates);
     procedure EngineMessage(S: string; Temporary: Boolean = False);
+    procedure EngineLog(S: string);
     procedure EngineOutput(S: string);
     procedure EngineAction(EngineAction: TEditorAction);
     procedure EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
@@ -2038,6 +2040,11 @@ begin
   StatusTimer.Enabled := Temporary;
 end;
 
+procedure TMainForm.EngineLog(S: string);
+begin
+  LogEdit.Lines.Add(S);
+end;
+
 function TMainForm.ChooseTendency(var vTendency: TEditorTendency): Boolean;
 var
   aName: string;
@@ -2124,7 +2131,7 @@ begin
       end;
     end;
   end;
-  if n >= 0 then
+  if (FileList.Items.Count > 0) and (n >= 0) then
   begin
     FileList.ItemIndex := n;
     FileList.Items[FileList.ItemIndex].Focused := True;
@@ -2229,6 +2236,10 @@ begin
     begin
       FOutputBuffer := '';
       OutputEdit.Lines.Clear;
+    end;
+    eaClearLog :
+    begin
+      LogEdit.Lines.Clear;
     end;
   end;
 end;
@@ -2443,6 +2454,8 @@ begin
 
   OutputEdit.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   OutputEdit.Color := Engine.Options.Profile.Attributes.Default.Background;
+  LogEdit.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
+  LogEdit.Color := Engine.Options.Profile.Attributes.Default.Background;
 end;
 
 procedure TMainForm.UpdateWatches;
