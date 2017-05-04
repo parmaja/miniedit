@@ -11,7 +11,7 @@ object ProjectForm: TProjectForm
   Font.Name = 'MS Sans Serif'
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '1.7'
+  LCLVersion = '1.9.0.0'
   object OkBtn: TButton
     Left = 392
     Height = 25
@@ -97,6 +97,31 @@ object ProjectForm: TProjectForm
         FocusControl = TitleEdit
         ParentColor = False
       end
+      object SaveDesktopChk: TCheckBox
+        Left = 24
+        Height = 19
+        Top = 150
+        Width = 270
+        Caption = 'Save Desktop, &Reopen last opend files in this project'
+        TabOrder = 3
+      end
+      object Label8: TLabel
+        Left = 12
+        Height = 13
+        Top = 125
+        Width = 70
+        Caption = 'Source Control'
+        ParentColor = False
+      end
+      object SCMCbo: TComboBox
+        Left = 108
+        Height = 21
+        Top = 119
+        Width = 289
+        ItemHeight = 13
+        Style = csDropDownList
+        TabOrder = 4
+      end
     end
     object GeneralOptionsSheet: TTabSheet
       Caption = 'Options'
@@ -105,7 +130,7 @@ object ProjectForm: TProjectForm
       object Label1: TLabel
         Left = 8
         Height = 13
-        Top = 18
+        Top = 121
         Width = 274
         Caption = 'Roo&t path of your project useful when enumerate your files'
         ParentColor = False
@@ -113,7 +138,7 @@ object ProjectForm: TProjectForm
       object RootDirEdit: TEdit
         Left = 8
         Height = 21
-        Top = 35
+        Top = 138
         Width = 382
         PopupMenu = PathPopupMenu
         TabOrder = 0
@@ -121,7 +146,7 @@ object ProjectForm: TProjectForm
       object Button3: TButton
         Left = 400
         Height = 22
-        Top = 34
+        Top = 137
         Width = 22
         Caption = '...'
         OnClick = Button3Click
@@ -130,7 +155,7 @@ object ProjectForm: TProjectForm
       object Label2: TLabel
         Left = 8
         Height = 13
-        Top = 71
+        Top = 174
         Width = 39
         Caption = 'Main file'
         ParentColor = False
@@ -138,7 +163,7 @@ object ProjectForm: TProjectForm
       object MainEdit: TEdit
         Left = 64
         Height = 21
-        Top = 67
+        Top = 170
         Width = 326
         Anchors = [akTop, akLeft, akRight]
         TabOrder = 2
@@ -146,7 +171,7 @@ object ProjectForm: TProjectForm
       object Button4: TButton
         Left = 400
         Height = 23
-        Top = 66
+        Top = 169
         Width = 24
         Anchors = [akTop, akRight]
         Caption = '...'
@@ -156,42 +181,68 @@ object ProjectForm: TProjectForm
       object Label9: TLabel
         Left = 8
         Height = 13
-        Top = 91
+        Top = 194
         Width = 297
         Caption = 'If empty, we will take the current opened file, or pass the folder.'
         ParentColor = False
         WordWrap = True
       end
-      object SaveDesktopChk: TCheckBox
-        Left = 17
-        Height = 19
-        Top = 146
-        Width = 270
-        Caption = 'Save Desktop, &Reopen last opend files in this project'
+      object GroupBox1: TGroupBox
+        Left = 11
+        Height = 86
+        Top = 10
+        Width = 430
+        ClientHeight = 68
+        ClientWidth = 426
         TabOrder = 4
-      end
-      object Label8: TLabel
-        Left = 6
-        Height = 13
-        Top = 121
-        Width = 70
-        Caption = 'Source Control'
-        ParentColor = False
-      end
-      object SCMCbo: TComboBox
-        Left = 101
-        Height = 21
-        Top = 115
-        Width = 289
-        ItemHeight = 13
-        Style = csDropDownList
-        TabOrder = 5
+        object TabWidthEdit: TEdit
+          Left = 80
+          Height = 21
+          Top = 34
+          Width = 52
+          TabOrder = 0
+          Text = '4'
+        end
+        object Label10: TLabel
+          Left = 15
+          Height = 13
+          Top = 38
+          Width = 53
+          Caption = 'Tab Width:'
+          ParentColor = False
+        end
+        object Label6: TLabel
+          Left = 14
+          Height = 13
+          Top = 12
+          Width = 60
+          Caption = 'Indent Mode'
+          ParentColor = False
+        end
+        object IndentModeCbo: TComboBox
+          Left = 80
+          Height = 21
+          Top = 8
+          Width = 172
+          Anchors = [akTop, akLeft, akRight]
+          ItemHeight = 13
+          Style = csDropDownList
+          TabOrder = 1
+        end
+        object OverrideOptionsChk: TCheckBox
+          Left = 12
+          Height = 19
+          Top = -19
+          Width = 99
+          Caption = 'Override Options'
+          TabOrder = 2
+        end
       end
     end
   end
   object PathPopupMenu: TPopupMenu
-    left = 422
-    top = 128
+    left = 368
+    top = 189
     object MenuItem3: TMenuItem
       Caption = 'Select Folder'
       OnClick = MenuItem3Click

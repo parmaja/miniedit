@@ -10,7 +10,7 @@ object TendencyForm: TTendencyForm
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Position = poMainFormCenter
-  LCLVersion = '1.7'
+  LCLVersion = '1.9.0.0'
   object OkBtn: TButton
     Left = 392
     Height = 25
@@ -52,9 +52,9 @@ object TendencyForm: TTendencyForm
         Left = 11
         Height = 86
         Top = 10
-        Width = 323
+        Width = 430
         ClientHeight = 68
-        ClientWidth = 319
+        ClientWidth = 426
         TabOrder = 0
         object TabWidthEdit: TEdit
           Left = 80
@@ -84,7 +84,7 @@ object TendencyForm: TTendencyForm
           Left = 80
           Height = 21
           Top = 8
-          Width = 165
+          Width = 172
           Anchors = [akTop, akLeft, akRight]
           ItemHeight = 13
           Style = csDropDownList

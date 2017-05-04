@@ -273,10 +273,18 @@ type
   { TEditorProjectOptions }
 
   TEditorProjectOptions = class(TPersistent)
+  private
+    FIndentMode: TIndentMode;
+    FOverrideEditorOptions: Boolean;
+    FTabWidth: Integer;
   public
     constructor Create; virtual; //do delete it, need to override it
     procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); virtual;
     procedure CreateProjectPanel(AOwner: TComponent; AProject: TEditorProject; var AFrame: TFrame); virtual;
+  published
+    property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False;
+    property TabWidth: Integer read FTabWidth write FTabWidth default 4;
+    property IndentMode: TIndentMode read FIndentMode write FIndentMode default idntTabsToSpaces;
   end;
 
   { TEditorTendency }
@@ -286,9 +294,10 @@ type
     FDebug: TEditorDebugger;
     FEditorOptions: TSynEditorOptions;
     FGroups: TFileGroups;
+    FRunOptions: TRunProjectOptions;
+
     FIndentMode: TIndentMode;
     FOverrideEditorOptions: Boolean;
-    FRunOptions: TRunProjectOptions;
     FTabWidth: Integer;
     function GetIsDefault: Boolean; virtual; //Keep it private
     procedure SetDebug(AValue: TEditorDebugger);
@@ -320,6 +329,7 @@ type
     property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False;
     property TabWidth: Integer read FTabWidth write FTabWidth default 4;
     property IndentMode: TIndentMode read FIndentMode write FIndentMode default idntTabsToSpaces;
+
     property EditorOptions: TSynEditorOptions read FEditorOptions write FEditorOptions;
     property RunOptions: TRunProjectOptions read FRunOptions;// write FRunOptions;
   end;
@@ -1565,6 +1575,8 @@ end;
 constructor TEditorProjectOptions.Create;
 begin
   inherited Create;
+  FTabWidth := 4;
+  FIndentMode := idntTabsToSpaces;
 end;
 
 procedure TEditorProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack);

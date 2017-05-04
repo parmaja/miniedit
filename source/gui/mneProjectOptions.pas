@@ -22,8 +22,12 @@ type
     Button3: TButton;
     Button4: TButton;
     DescriptionEdit: TEdit;
+    GroupBox1: TGroupBox;
+    IndentModeCbo: TComboBox;
     Label1: TLabel;
+    Label10: TLabel;
     Label2: TLabel;
+    Label6: TLabel;
     Label8: TLabel;
     Label9: TLabel;
     MainEdit: TEdit;
@@ -35,9 +39,11 @@ type
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     NameEdit: TEdit;
+    OverrideOptionsChk: TCheckBox;
     RootDirEdit: TEdit;
     SaveDesktopChk: TCheckBox;
     SCMCbo: TComboBox;
+    TabWidthEdit: TEdit;
     TitleEdit: TEdit;
     OkBtn: TButton;
     CancelBtn: TButton;
@@ -68,7 +74,7 @@ function ShowProjectForm(vProject: TEditorProject): Boolean;
 implementation
 
 uses
-  mneResources, SelectFiles;
+  EditorProfiles, mneResources, SelectFiles;
 
 {$R *.lfm}
 
@@ -125,17 +131,6 @@ begin
   SelectPathFolder;
 end;
 
-procedure TProjectForm.Apply;
-begin
-  FProject.Title := TitleEdit.Text;
-  FProject.Name := NameEdit.Text;
-  FProject.Description := DescriptionEdit.Text;
-  FProject.RunOptions.MainFolder := RootDirEdit.Text;
-  FProject.SaveDesktop := SaveDesktopChk.Checked;
-  FProject.SetSCMClass(TEditorSCM(SCMCbo.Items.Objects[SCMCbo.ItemIndex]));
-  FProject.RunOptions.MainFile := MainEdit.Text;
-end;
-
 procedure TProjectForm.RetrieveFrames;
 var
   TabSheet: TTabSheet;
@@ -169,6 +164,28 @@ begin
   else
     SCMCbo.ItemIndex := 0;
   MainEdit.Text := FProject.RunOptions.MainFile;
+
+  //Add any new overrided options to cSynOverridedOptions in EditorProfiles unit
+  EnumIndentMode(IndentModeCbo.Items);
+  OverrideOptionsChk.Checked := FProject.Options.OverrideEditorOptions;
+  TabWidthEdit.Text := IntToStr(FProject.Options.TabWidth);
+  IndentModeCbo.ItemIndex := Ord(FProject.Options.IndentMode);
+end;
+
+procedure TProjectForm.Apply;
+begin
+  FProject.Title := TitleEdit.Text;
+  FProject.Name := NameEdit.Text;
+  FProject.Description := DescriptionEdit.Text;
+  FProject.RunOptions.MainFolder := RootDirEdit.Text;
+  FProject.SaveDesktop := SaveDesktopChk.Checked;
+  FProject.SetSCMClass(TEditorSCM(SCMCbo.Items.Objects[SCMCbo.ItemIndex]));
+  FProject.RunOptions.MainFile := MainEdit.Text;
+
+  //FProject.Options.EditorOptions := [];
+  FProject.Options.OverrideEditorOptions := OverrideOptionsChk.Checked;
+  FProject.Options.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
+  FProject.Options.IndentMode := TIndentMode(IndentModeCbo.ItemIndex);
 end;
 
 procedure TProjectForm.Button3Click(Sender: TObject);

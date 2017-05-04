@@ -72,7 +72,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mneLuaProjectFrames;
+  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mneLuaProjectFrames, lua;
 
 { TDProject }
 
