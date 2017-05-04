@@ -73,19 +73,10 @@ begin
 end;
 
 procedure TTendencyForm.Apply;
-  {procedure SetFlag(aOption: TSynEditorOption; aValue: boolean);
-  begin
-    if aValue then
-      FTendency.EditorOptions := FTendency.EditorOptions + [aOption]
-    else
-      FTendency.EditorOptions := FTendency.EditorOptions - [aOption];
-  end;}
 begin
-  FTendency.EditorOptions := [];
   FTendency.OverrideEditorOptions := OverrideOptionsChk.Checked;
   FTendency.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
   FTendency.IndentMode := TIndentMode(IndentModeCbo.ItemIndex);
-  //SetFlag(eoTabsToSpaces, TabsToSpacesChk.Checked);
 end;
 
 procedure TTendencyForm.RetrieveFrames;

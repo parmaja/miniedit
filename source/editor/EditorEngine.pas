@@ -292,7 +292,7 @@ type
   TEditorTendency = class(TEditorElement)
   private
     FDebug: TEditorDebugger;
-    FEditorOptions: TSynEditorOptions;
+    //FEditorOptions: TSynEditorOptions;
     FGroups: TFileGroups;
     FRunOptions: TRunProjectOptions;
 
@@ -330,7 +330,7 @@ type
     property TabWidth: Integer read FTabWidth write FTabWidth default 4;
     property IndentMode: TIndentMode read FIndentMode write FIndentMode default idntTabsToSpaces;
 
-    property EditorOptions: TSynEditorOptions read FEditorOptions write FEditorOptions;
+    //property EditorOptions: TSynEditorOptions read FEditorOptions write FEditorOptions;
     property RunOptions: TRunProjectOptions read FRunOptions;// write FRunOptions;
   end;
 
@@ -1912,9 +1912,14 @@ begin
 
     aProfile.AssignTo(SynEdit);
 
-    if (Tendency <> nil) and Tendency.OverrideEditorOptions then
+    if (Engine.Session.Project <> nil) and Engine.Session.Project.Options.OverrideEditorOptions then
     begin
-      SynEdit.Options := SynEdit.Options - cSynOverridedOptions + Tendency.EditorOptions;
+      SynEdit.TabWidth := Engine.Session.Project.Options.TabWidth;
+      SynEdit.BlockIndent := Engine.Session.Project.Options.TabWidth;
+    end
+    else if (Tendency <> nil) and Tendency.OverrideEditorOptions then
+    begin
+      //SynEdit.Options := SynEdit.Options - cSynOverridedOptions + Tendency.EditorOptions;
       SynEdit.TabWidth := Tendency.TabWidth;
       SynEdit.BlockIndent := Tendency.TabWidth;
     end;
