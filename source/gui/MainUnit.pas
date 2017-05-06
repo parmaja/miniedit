@@ -520,16 +520,16 @@ type
     procedure RunFile;
     procedure CompileFile;
     //
-    procedure Log(ACaption, AMsg: string); overload;
-    procedure Log(AMsg: string);
+    procedure LogError(ACaption, AMsg: string); overload;
+    procedure LogError(AMsg: string);
 
     procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
     procedure EditorChangeState(State: TEditorChangeStates);
     procedure EngineMessage(S: string; Temporary: Boolean = False);
     procedure EngineLog(S: string);
+    procedure EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
     procedure EngineOutput(S: string);
     procedure EngineAction(EngineAction: TEditorAction);
-    procedure EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
 
     procedure FollowFolder(vFolder: string; FocusIt: Boolean);
     procedure ShowMessagesList;
@@ -1608,6 +1608,7 @@ begin
   if Engine.Options.WindowMaxmized then
     WindowState := wsMaximized;
   //Color := clSkyBlue; for test propose
+  Engine.SendLog('MiniEdit started');
 end;
 
 procedure TMainForm.DBGLintActExecute(Sender: TObject);
@@ -2736,7 +2737,9 @@ begin
         aText := (Current.Control as TCustomSynEdit).SelText
       else
         aText := (Current.Control as TCustomSynEdit).GetWordAtRowCol((Current.Control as TCustomSynEdit).LogicalCaretXY);
-    end;
+    end
+    else
+      aText := '';
 
   aFolder := Engine.GetRoot;
 
@@ -2877,14 +2880,14 @@ begin
   end;
 end;
 
-procedure TMainForm.Log(ACaption, AMsg: string);
+procedure TMainForm.LogError(ACaption, AMsg: string);
 begin
   EngineError(0, ACaption, AMsg, '', 0);
 end;
 
-procedure TMainForm.Log(AMsg: string);
+procedure TMainForm.LogError(AMsg: string);
 begin
-  Log('', AMsg);
+  LogError('', AMsg);
 end;
 
 procedure TMainForm.EngineOutput(S: string);

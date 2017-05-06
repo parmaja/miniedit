@@ -1,24 +1,25 @@
 object SelectFileForm: TSelectFileForm
   Left = 502
-  Height = 348
+  Height = 314
   Top = 206
-  Width = 289
+  Width = 365
   BorderIcons = [biSystemMenu]
   Caption = 'Select file'
-  ClientHeight = 348
-  ClientWidth = 289
+  ClientHeight = 314
+  ClientWidth = 365
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poMainFormCenter
-  LCLVersion = '1.7'
+  LCLVersion = '1.9.0.0'
   object FilesList: TListView
     Left = 3
-    Height = 287
+    Height = 253
     Top = 29
-    Width = 282
+    Width = 358
     Anchors = [akTop, akLeft, akRight, akBottom]
+    AutoSort = False
     Columns = <    
       item
         Caption = 'File Name'
@@ -27,20 +28,21 @@ object SelectFileForm: TSelectFileForm
       item
         AutoSize = True
         Caption = 'Path'
-        Width = 78
+        Width = 39
       end>
     HideSelection = False
     ReadOnly = True
     RowSelect = True
+    SmallImages = EditorResource.FileImages
     SortType = stText
     TabOrder = 1
     ViewStyle = vsReport
     OnDblClick = FilesListDblClick
   end
   object OkBtn: TButton
-    Left = 210
+    Left = 286
     Height = 26
-    Top = 319
+    Top = 285
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&Ok'
@@ -49,9 +51,9 @@ object SelectFileForm: TSelectFileForm
     TabOrder = 2
   end
   object CancelBtn: TButton
-    Left = 134
+    Left = 210
     Height = 26
-    Top = 319
+    Top = 285
     Width = 75
     Anchors = [akRight, akBottom]
     Cancel = True
@@ -63,15 +65,14 @@ object SelectFileForm: TSelectFileForm
     Left = 3
     Height = 21
     Top = 5
-    Width = 282
+    Width = 358
     Anchors = [akTop, akLeft, akRight]
     OnChange = FilterEditChange
     OnKeyDown = FilterEditKeyDown
     TabOrder = 0
   end
   object Timer: TTimer
-    Enabled = False
-    Interval = 500
+    Interval = 300
     OnTimer = TimerTimer
     left = 96
     top = 79

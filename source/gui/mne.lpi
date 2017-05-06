@@ -38,7 +38,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\extends\fntgen"/>
             <UnitOutputDirectory Value="..\..\units\linux"/>
           </SearchPaths>
           <Linking>
@@ -67,7 +67,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\extends\fntgen"/>
             <UnitOutputDirectory Value="..\..\units\windows"/>
           </SearchPaths>
           <Parsing>

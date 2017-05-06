@@ -116,6 +116,8 @@ begin
   Extensions.Add('py', 6);
   Extensions.Add('lua', 7);
   Extensions.Add('mne-project', 8);
+  Extensions.Add('png', 9);
+  Extensions.Add('jpg', 9);
 end;
 
 procedure TEditorResource.DataModuleDestroy(Sender: TObject);

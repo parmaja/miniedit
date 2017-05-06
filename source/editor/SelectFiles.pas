@@ -54,9 +54,9 @@ begin
   with TSelectFileForm.Create(Application) do
   begin
     try
-      FilterEdit.Text := LastFilter;
+      //FilterEdit.Text := LastFilter;
       FilterEdit.SelectAll;
-      EnumFileList(vRoot, Engine.Tendency.Groups.CreateFilter(False), Engine.Options.IgnoreNames, FFiles, 1000, 10, False, True);
+      EnumFileList(vRoot, Engine.Groups.CreateFilter(False), Engine.Options.IgnoreNames, FFiles, 1000, 10, False, True);
       ShowFiles;
       Result := ShowModal = mrOK;
       if Result then
@@ -133,6 +133,10 @@ end;
 procedure TSelectFileForm.FilterEditChange(Sender: TObject);
 begin
   Timer.Enabled := False;
+  if Length(FilterEdit.Text) >= 3 then
+    Timer.Interval := 250
+  else
+    Timer.Interval := 500;
   Timer.Enabled := True;
 end;
 
@@ -142,7 +146,7 @@ begin
   if Shift = [] then
   begin
     case Key of
-      VK_DOWN, VK_UP:
+      VK_DOWN, VK_UP, VK_NEXT, VK_PRIOR, VK_HOME, VK_END:
         FilesList.SetFocus;
     end;
   end;
@@ -160,4 +164,3 @@ begin
 end;
 
 end.
-

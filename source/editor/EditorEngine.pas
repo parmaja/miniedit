@@ -1059,10 +1059,10 @@ type
     procedure EngineAction(EngineAction: TEditorAction);
     procedure EngineLog(S: string);
     procedure EngineOutput(S: string);
+    procedure EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
     //Temporary clear it after a period
     procedure EngineMessage(S: string; Temporary: Boolean = False);
     procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
-    procedure EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
   end;
 
   TEngineCache = record
@@ -2002,7 +2002,9 @@ begin
     Result := EvalByMouse(CursorPos, v, s, t);
     if Result then
       vHint := v + ':' + t + '=' + #13#10 + s;
-  end;
+  end
+  else
+    Result := False;
 end;
 
 function TTextEditorFile.GetGlance: string;
@@ -4329,9 +4331,9 @@ end;
 function TEditorFile.GetModeAsText: string;
 begin
   case Mode of
-    efmUnix: Result := 'Unix';
     efmWindows: Result := 'Windows';
     efmMac: Result := 'Mac';
+    else Result := 'Unix'; //efmUnix
   end;
 end;
 
@@ -4501,6 +4503,7 @@ var
   aDefaultGroup: TFileGroup;
 begin
   aSupported := '';
+  Result := '';
   if LeftStr(FirstExtension, 1) = '.' then
     FirstExtension := MidStr(FirstExtension, 2, MaxInt);
   if (vGroup <> nil) and OnlyThisGroup then

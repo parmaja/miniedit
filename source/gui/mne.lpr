@@ -83,6 +83,7 @@ var
     end;
   end;
 begin
+  Result := False;
   aIni := ExtractFilePath(Application.ExeName) + 'setting.ini';
   Check;
   if not Result then
