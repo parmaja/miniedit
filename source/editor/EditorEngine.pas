@@ -484,7 +484,7 @@ type
   end;
 
   TEditorFileMode = (efmUnix, efmWindows, efmMac);
-  TEditCapability = set of (ecpAllowCopy, ecpAllowPaste, ecpAllowCut);
+  TEditCapability = set of (ecpAllowCopy, ecpAllowPaste, ecpAllowCut, ecpAllowUndo, ecpAllowRedo);
 
   { TEditorFile }
 
@@ -4190,6 +4190,7 @@ end;
 function TEditorFile.GetCapability: TEditCapability;
 begin
   Result := [];
+  DoGetCapability(Result);
 end;
 
 function TEditorFile.GetIsText: Boolean;
