@@ -14,17 +14,18 @@ uses
 
 const
   OblongCursors: array[0..7] of TCursor = (crSizeNWSE, crSizeNS, crSizeNESW, crSizeWE, crSizeNWSE, crSizeNS, crSizeNESW, crSizeWE);
+  cHaftSize = 4;
 
 type
   TPointArray = array of TPoint;
 
   TElementStyle = set of (trtSnap, trtMove, trtSize);
 
-  TPage = class;
-  TPages = class;
+  TLayout = class;
+  TLayouts = class;
   TElement = class;
   TElementList = class;
-  TRelated = class;
+  TContainer = class;
 
   TBoardWriter = class(TWriter)
   public
@@ -45,16 +46,16 @@ type
     FStyle: TElementStyle;
     FHaftList: TPointArray;
     FHaftIndex: Integer;
-    FRelated: TRelated;
+    FContainer: TContainer;
     FModified: Integer;
     function GetSelected: Boolean;
     procedure SetSelected(const Value: Boolean);
     procedure SetModified(const Value: Boolean);
-    procedure SetRelated(const Value: TRelated);
+    procedure SetContainer(const Value: TContainer);
     function GetModified: Boolean;
   protected
-    function GetPageByPoint(vRelated: TRelated; X, Y: Integer): TPage; overload;
-    function GetPageByPoint(X, Y: Integer): TPage; overload;
+    function GetLayoutByPoint(vContainer: TContainer; X, Y: Integer): TLayout; overload;
+    function GetLayoutByPoint(X, Y: Integer): TLayout; overload;
 
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); virtual;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); virtual;
@@ -93,7 +94,7 @@ type
     property Selected: Boolean read GetSelected write SetSelected;
     property DesignX: Integer read FDesignX;
     property DesignY: Integer read FDesignY;
-    property Related: TRelated read FRelated write SetRelated;
+    property Container: TContainer read FContainer write SetContainer;
   end;
 
   TElementClass = class of TElement;
@@ -109,7 +110,7 @@ type
 
   TCustomBoard = class;
 
-  TRelated = class(TComponent)
+  TContainer = class(TComponent)
   private
     FElementList: TElementList;
     FClientRect: TRect;
@@ -128,8 +129,8 @@ type
     procedure Clear; virtual;
     procedure Refresh; virtual;
     procedure Change; virtual;
-    function GetPageByPoint(X, Y: Integer): TPage; virtual;
-    function GetPageByIndex(vIndex: Integer): TPage; virtual;
+    function GetLayoutByPoint(X, Y: Integer): TLayout; virtual;
+    function GetLayoutByIndex(vIndex: Integer): TLayout; virtual;
     procedure ExcludeClipRect(vCanvas: TCanvas); virtual;
     procedure InvalidateRect(const vRect: TRect); virtual;
     constructor Create(AOwner: TComponent); override;
@@ -151,35 +152,35 @@ type
     property Height: Integer read GetHeight;
   end;
 
-  TPage = class(TRelated)
+  TLayout = class(TContainer)
   private
-    FPages: TPages;
+    FLayouts: TLayouts;
     FEnabled: Boolean;
   protected
     procedure SetBoundRect(const Value: TRect); override;
   public
     procedure ExcludeClipRect(vCanvas: TCanvas); override;
-    function GetPageByIndex(vIndex: Integer): TPage; override;
-    function GetPageByPoint(X, Y: Integer): TPage; override;
+    function GetLayoutByIndex(vIndex: Integer): TLayout; override;
+    function GetLayoutByPoint(X, Y: Integer): TLayout; override;
     constructor Create(AOwner: TComponent); override;
     procedure PaintBackground(vCanvas: TCanvas); override;
   published
     property Enabled: Boolean read FEnabled write FEnabled default True;
   end;
 
-  TPageList = class(TObjectList)
+  TLayoutList = class(TObjectList)
   private
-    function GetItem(Index: Integer): TPage;
-    procedure SetItem(Index: Integer; AObject: TPage);
+    function GetItem(Index: Integer): TLayout;
+    procedure SetItem(Index: Integer; AObject: TLayout);
   public
-    property Items[Index: Integer]: TPage read GetItem write SetItem; default;
+    property Items[Index: Integer]: TLayout read GetItem write SetItem; default;
   end;
 
-  TPages = class(TRelated)
+  TLayouts = class(TContainer)
   private
-    FPageList: TPageList;
-    FPageHeight: Integer;
-    FPageWidth: Integer;
+    FLayoutList: TLayoutList;
+    FLayoutHeight: Integer;
+    FLayoutWidth: Integer;
     FCaption: String;
     FBkColor: TColor;
     procedure ReadBoards(Reader: TReader);
@@ -191,8 +192,8 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure Init; override;
-    function GetPageByPoint(X, Y: Integer): TPage; override;
-    function GetPageByIndex(vIndex: Integer): TPage; override;
+    function GetLayoutByPoint(X, Y: Integer): TLayout; override;
+    function GetLayoutByIndex(vIndex: Integer): TLayout; override;
     procedure Clear; override;
     procedure Assign(Source: TPersistent); override;
     procedure LoadFromStream(Stream: TStream); override;
@@ -204,9 +205,9 @@ type
     procedure PaintBackground(vCanvas: TCanvas); override;
     procedure ExcludeClipRect(vCanvas: TCanvas); override;
     procedure CombineRegion(var Rgn: HRGN); override;
-    property PageList: TPageList read FPageList;
-    property PageWidth: Integer read FPageWidth write FPageWidth;
-    property PageHeight: Integer read FPageHeight write FPageHeight;
+    property LayoutList: TLayoutList read FLayoutList;
+    property LayoutWidth: Integer read FLayoutWidth write FLayoutWidth;
+    property LayoutHeight: Integer read FLayoutHeight write FLayoutHeight;
     property BkColor: TColor read FBkColor write FBkColor stored False;
   published
     property Caption: String read FCaption write FCaption;
@@ -214,16 +215,16 @@ type
 
   TCustomBoard = class(TCustomControl)
   private
-    FRelated: TRelated;
-    FPages: TPages;
+    FContainer: TContainer;
+    FLayouts: TLayouts;
     HasHaft: Boolean;
-    FCashMode: Boolean;
+    FCacheMode: Boolean;
     FDesignElement: TElement;
     FBorderStyle: TBorderStyle;
     procedure SetDesignElement(const Value: TElement);
-    procedure SetRelated(const Value: TRelated);
+    procedure SetContainer(const Value: TContainer);
   protected
-    function GetPageByPoint(X, Y: Integer): TPage;
+    function GetLayoutByPoint(X, Y: Integer): TLayout;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
@@ -243,7 +244,7 @@ type
     procedure SwitchToSingle(vIndex: Integer);
     procedure SwitchToNormal;
     property DesignElement: TElement read FDesignElement write SetDesignElement;
-    property Related: TRelated read FRelated write SetRelated;
+    property Container: TContainer read FContainer write SetContainer;
   published
     property Align;
     property Anchors;
@@ -261,7 +262,7 @@ type
     property DragMode;
     property Enabled;
     property Visible;
-    property CashMode: Boolean read FCashMode write FCashMode default True;
+    property CacheMode: Boolean read FCacheMode write FCacheMode default False;
   end;
 
   TDesignerBoard = class(TCustomBoard)
@@ -382,7 +383,7 @@ procedure OutLineBitmap(Canvas: TCanvas; Bitmap: TBitmap; const vMasks: array of
 procedure DrawMaskBitmap(Canvas: TCanvas; Bitmap: TBitmap; const vMasks: array of TColor; const vColor: TColor; vLeft, vTop: Integer);
 
 procedure Register;
-procedure RegisterElements(const Page: String; TElements: array of TElementClass);
+procedure RegisterElements(const Layout: String; TElements: array of TElementClass);
 
 var
   ElementClasses: TList;
@@ -482,7 +483,7 @@ begin
   end;
 end;
 
-procedure RegisterElements(const Page: String; TElements: array of TElementClass);
+procedure RegisterElements(const Layout: String; TElements: array of TElementClass);
 var
   i: Integer;
 begin
@@ -493,22 +494,22 @@ begin
   end;
 end;
 
-{ TPages }
+{ TLayouts }
 
-procedure TPages.Allotment;
+procedure TLayouts.Allotment;
 var
   i: Integer;
   w, h: Integer;
   aRect: TRect;
 begin
-  w := PageWidth;
-  h := PageHeight;
+  w := LayoutWidth;
+  h := LayoutHeight;
   aRect := ClientRect;
   aRect.Right := aRect.Left + w;
   aRect.Bottom := aRect.Top + h;
   for i := 0 to 15 do
   begin
-    FPageList[i].BoundRect := aRect;
+    FLayoutList[i].BoundRect := aRect;
     OffsetRect(aRect, w, 0);
   end;
 
@@ -518,110 +519,79 @@ begin
   aRect.Bottom := aRect.Top + h;
   for i := 16 to 31 do
   begin
-    FPageList[i].BoundRect := aRect;
+    FLayoutList[i].BoundRect := aRect;
     OffsetRect(aRect, w, 0);
   end;
 end;
 
-procedure TPages.Assign(Source: TPersistent);
+procedure TLayouts.Assign(Source: TPersistent);
 begin
   inherited;
 
 end;
 
-procedure TPages.Clear;
+procedure TLayouts.Clear;
 var
   i: Integer;
 begin
-  for i := 0 to FPageList.Count - 1 do
+  for i := 0 to FLayoutList.Count - 1 do
   begin
-    FPageList[i].Clear;
+    FLayoutList[i].Clear;
   end;
   inherited;
 end;
 
-procedure TPages.CombineRegion(var Rgn: HRGN);
+procedure TLayouts.CombineRegion(var Rgn: HRGN);
 var
   i: Integer;
 begin
   inherited;
-  for i := 0 to FPageList.Count - 1 do
+  for i := 0 to FLayoutList.Count - 1 do
   begin
-    FPageList[i].CombineRegion(Rgn);
+    FLayoutList[i].CombineRegion(Rgn);
   end;
 end;
 
-constructor TPages.Create(AOwner: TComponent);
+constructor TLayouts.Create(AOwner: TComponent);
 begin
   inherited;
   BkColor := $00DEE9FA;
-  FPageList := TPageList.Create;
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
-  TPage.Create(Self);
+  FLayoutList := TLayoutList.Create;
+  TLayout.Create(Self);
+  TLayout.Create(Self);
 end;
 
-destructor TPages.Destroy;
+destructor TLayouts.Destroy;
 begin
-  FreeAndNil(FPageList);
+  FreeAndNil(FLayoutList);
   inherited;
 end;
 
-procedure TPages.ExcludeClipRect(vCanvas: TCanvas);
+procedure TLayouts.ExcludeClipRect(vCanvas: TCanvas);
 var
   i: Integer;
 begin
-  for i := 0 to FPageList.Count - 1 do
+  for i := 0 to FLayoutList.Count - 1 do
   begin
-    FPageList[i].ExcludeClipRect(vCanvas);
+    FLayoutList[i].ExcludeClipRect(vCanvas);
   end;
 end;
 
-function TPages.GetPageByIndex(vIndex: Integer): TPage;
+function TLayouts.GetLayoutByIndex(vIndex: Integer): TLayout;
 begin
-  Result := PageList[vIndex];
+  Result := LayoutList[vIndex];
 end;
 
-function TPages.GetPageByPoint(X, Y: Integer): TPage;
+function TLayouts.GetLayoutByPoint(X, Y: Integer): TLayout;
 var
   a, b: Integer;
 begin
-  a := (X - ClientRect.Left) div FPageWidth;
+  a := (X - ClientRect.Left) div FLayoutWidth;
   if a < 16 then
   begin
-    b := (Y - ClientRect.Top) div PageHeight;
+    b := (Y - ClientRect.Top) div LayoutHeight;
     if b < 2 then
-      Result := PageList[b * 16 + a]
+      Result := LayoutList[b * 16 + a]
     else
       Result := nil;
   end
@@ -629,27 +599,27 @@ begin
     Result := nil;
 end;
 
-function TPages.HitTest(X, Y: Integer; out vElement: TElement): Boolean;
+function TLayouts.HitTest(X, Y: Integer; out vElement: TElement): Boolean;
 var
   i: Integer;
 begin
   Result := inherited HitTest(X, Y, vElement);
   if not Result then
-    for i := 0 to FPageList.Count - 1 do
+    for i := 0 to FLayoutList.Count - 1 do
     begin
-      Result := FPageList[i].HitTest(X, Y, vElement);
+      Result := FLayoutList[i].HitTest(X, Y, vElement);
       if Result then
         break;
     end;
 end;
 
-procedure TPages.Init;
+procedure TLayouts.Init;
 begin
   inherited;
   Allotment;
 end;
 
-procedure TPages.LoadFromFile(vFileName: String);
+procedure TLayouts.LoadFromFile(vFileName: String);
 var
   aFile: TFileStream;
 begin
@@ -661,7 +631,7 @@ begin
   end;
 end;
 
-procedure TPages.LoadFromStream(Stream: TStream);
+procedure TLayouts.LoadFromStream(Stream: TStream);
 var
   aReader: TReader;
 begin
@@ -683,45 +653,45 @@ begin
   Refresh;
 end;
 
-procedure TPages.Paint(vCanvas: TCanvas);
+procedure TLayouts.Paint(vCanvas: TCanvas);
 var
   i: Integer;
 begin
-  for i := 0 to FPageList.Count - 1 do
+  for i := 0 to FLayoutList.Count - 1 do
   begin
-    FPageList[i].Paint(vCanvas);
+    FLayoutList[i].Paint(vCanvas);
   end;
   inherited;
 end;
 
-procedure TPages.PaintBackground(vCanvas: TCanvas);
+procedure TLayouts.PaintBackground(vCanvas: TCanvas);
 var
   i: Integer;
 begin
-  for i := 0 to FPageList.Count - 1 do
+  for i := 0 to FLayoutList.Count - 1 do
   begin
-    FPageList[i].PaintBackground(vCanvas);
+    FLayoutList[i].PaintBackground(vCanvas);
   end;
   inherited;
 end;
 
-procedure TPages.ReadBoards(Reader: TReader);
+procedure TLayouts.ReadBoards(Reader: TReader);
 var
-  aPage: TPage;
+  aLayout: TLayout;
   i: Integer;
 begin
   Reader.ReadListBegin;
   i := 0;
   while not Reader.EndOfList do
   begin
-    aPage := PageList[i];
-    Reader.ReadComponent(aPage);
+    aLayout := LayoutList[i];
+    Reader.ReadComponent(aLayout);
     Inc(i);
   end;
   Reader.ReadListEnd;
 end;
 
-procedure TPages.SaveToFile(vFileName: String);
+procedure TLayouts.SaveToFile(vFileName: String);
 var
   aFile: TFileStream;
 begin
@@ -733,7 +703,7 @@ begin
   end;
 end;
 
-procedure TPages.SaveToStream(Stream: TStream);
+procedure TLayouts.SaveToStream(Stream: TStream);
 var
   aWriter: TWriter;
 begin
@@ -742,12 +712,12 @@ begin
   aWriter.Free;
 end;
 
-procedure TPages.SetBoundRect(const Value: TRect);
+procedure TLayouts.SetBoundRect(const Value: TRect);
 var
   DX, DY: Integer;
 begin
   inherited;
-  FClientRect := Rect(0, 0, PageWidth * 16, PageHeight * 2);
+  FClientRect := Rect(0, 0, LayoutWidth * 16, LayoutHeight * 2);
   DX := Abs(FClientRect.Right - Value.Right);
   if DX <> 0 then
     DX := DX div 2;
@@ -758,26 +728,26 @@ begin
   Allotment;
 end;
 
-procedure TPages.WriteBoards(Writer: TWriter);
+procedure TLayouts.WriteBoards(Writer: TWriter);
 var
   i: Integer;
 begin
   Writer.WriteListBegin;
-  for i := 0 to FPageList.Count - 1 do
+  for i := 0 to FLayoutList.Count - 1 do
   begin
-    Writer.WriteComponent(FPageList[i]);
+    Writer.WriteComponent(FLayoutList[i]);
   end;
   Writer.WriteListEnd;
 end;
 
-{ TPageList }
+{ TLayoutList }
 
-function TPageList.GetItem(Index: Integer): TPage;
+function TLayoutList.GetItem(Index: Integer): TLayout;
 begin
-  Result := TPage(inherited Items[Index]);
+  Result := TLayout(inherited Items[Index]);
 end;
 
-procedure TPageList.SetItem(Index: Integer; AObject: TPage);
+procedure TLayoutList.SetItem(Index: Integer; AObject: TLayout);
 begin
   inherited Items[Index] := AObject;
 end;
@@ -803,12 +773,12 @@ constructor TCustomBoard.Create(ABoard: TComponent);
 begin
   inherited;
   ControlStyle := ControlStyle + [csOpaque];
-  FPages := TPages.Create(Self);
-  FRelated := FPages;
-  FRelated.Init;
+  FLayouts := TLayouts.Create(Self);
+  FContainer := FLayouts;
+  FContainer.Init;
   Width := 100;
   Height := 100;
-  FCashMode := True;
+  FCacheMode := False;
   NextElement := TRectangleElement;
 end;
 
@@ -829,15 +799,15 @@ begin
   //  PaintHaftList;
 end;
 
-function TCustomBoard.GetPageByPoint(X, Y: Integer): TPage;
+function TCustomBoard.GetLayoutByPoint(X, Y: Integer): TLayout;
 begin
-  Result := Related.GetPageByPoint(X, Y);
+  Result := Container.GetLayoutByPoint(X, Y);
 end;
 
 procedure TCustomBoard.Loaded;
 begin
   inherited;
-  Related.BoundRect := ClientRect;
+  Container.BoundRect := ClientRect;
 end;
 
 procedure TCustomBoard.MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -847,12 +817,12 @@ begin
   inherited;
   if NextElement <> nil then
   begin
-    DesignElement := NextElement.CreateBy(Related, X, Y);
+    DesignElement := NextElement.CreateBy(Container, X, Y);
     //NextElement := nil;
   end
   else if (DesignElement = nil) or not ((DesignElement.Captured) or (DesignElement.PtInHaft(X, Y))) then
   begin
-    Related.HitTest(X, Y, aElement);
+    Container.HitTest(X, Y, aElement);
     DesignElement := aElement;
   end;
   if DesignElement <> nil then
@@ -868,7 +838,7 @@ begin
   inherited;
   aElement := DesignElement;
   if (aElement = nil) or not ((aElement.Captured) or (aElement.PtInHaft(X, Y))) then
-    Related.HitTest(X, Y, aElement);
+    Container.HitTest(X, Y, aElement);
   if aElement <> nil then
     aElement.MouseMove(Shift, X, Y)
   else
@@ -896,7 +866,7 @@ begin
   aRect := Canvas.ClipRect;
   w := aRect.Right - aRect.Left;
   h := aRect.Bottom - aRect.Top;
-  if FCashMode and not EqualRect(ClientRect, aRect) then
+  if FCacheMode and not EqualRect(ClientRect, aRect) then
   begin
     aCanvas := TCanvas.Create;
     MemBitmap := CreateCompatibleBitmap(Canvas.Handle, w, h);
@@ -915,12 +885,12 @@ begin
     aCanvas := Canvas;
   end;
   RemoveHaftList(aCanvas);
-  if Related <> nil then
+  if Container <> nil then
   begin
-    Related.PaintBackground(aCanvas);
-    Related.Paint(aCanvas);
+    Container.PaintBackground(aCanvas);
+    Container.Paint(aCanvas);
   end;
-  Related.ExcludeClipRect(aCanvas);
+  Container.ExcludeClipRect(aCanvas);
   aCanvas.Brush.Color := clWindow;
   aCanvas.FillRect(aCanvas.ClipRect);
   if aBufferd then
@@ -955,28 +925,28 @@ begin
   inherited;
   if not (csLoading in ComponentState) then
   begin
-    if Related <> nil then
-      Related.BoundRect := ClientRect;
+    if Container <> nil then
+      Container.BoundRect := ClientRect;
   end;
 end;
 
-procedure TCustomBoard.SetRelated(const Value: TRelated);
+procedure TCustomBoard.SetContainer(const Value: TContainer);
 begin
-  FRelated := Value;
+  FContainer := Value;
   Refresh;
 end;
 
 procedure TCustomBoard.SwitchToNormal;
 begin
-  FRelated := FPages;
-  FRelated.BoundRect := ClientRect;
+  FContainer := FLayouts;
+  FContainer.BoundRect := ClientRect;
   Refresh;
 end;
 
 procedure TCustomBoard.SwitchToSingle(vIndex: Integer);
 begin
-  FRelated := Related.GetPageByIndex(vIndex);
-  FRelated.BoundRect := ClientRect;
+  FContainer := Container.GetLayoutByIndex(vIndex);
+  FContainer.BoundRect := ClientRect;
   Refresh;
 end;
 
@@ -1045,7 +1015,7 @@ end;
 
 procedure TElement.SetCursor(Shift: TShiftState; X, Y: Integer);
 begin
-  Related.Cursor := crDefault;
+  Container.Cursor := crDefault;
 end;
 
 procedure TElement.MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -1096,7 +1066,7 @@ end;
 
 procedure TElement.Refresh;
 begin
-  Related.Refresh;
+  Container.Refresh;
 end;
 
 { TCariesElement }
@@ -1261,10 +1231,10 @@ procedure TOblongElement.SetCursor(Shift: TShiftState; X, Y: Integer);
 begin
   if FHaftIndex >= 0 then
   begin
-    Related.Cursor := OblongCursors[FHaftIndex];
+    Container.Cursor := OblongCursors[FHaftIndex];
   end
   else
-    Related.Cursor := crDefault;
+    Container.Cursor := crDefault;
 end;
 
 function TOblongElement.CreateRegion: HRGN;
@@ -1290,17 +1260,17 @@ begin
   CorrectRect(FBoundRect);
 end;
 
-{ TRelated }
+{ TContainer }
 
 
-destructor TRelated.Destroy;
+destructor TContainer.Destroy;
 begin
   if FElementList.Count > 0 then
     FreeAndNil(FElementList);
   inherited;
 end;
 
-procedure TRelated.Paint(vCanvas: TCanvas);
+procedure TContainer.Paint(vCanvas: TCanvas);
 var
   i: Integer;
 begin
@@ -1310,7 +1280,7 @@ begin
   end;
 end;
 
-function TRelated.HitTest(X, Y: Integer; out vElement: TElement): Boolean;
+function TContainer.HitTest(X, Y: Integer; out vElement: TElement): Boolean;
 var
   i: Integer;
 begin
@@ -1327,13 +1297,13 @@ begin
   end;
 end;
 
-procedure TRelated.SetBoundRect(const Value: TRect);
+procedure TContainer.SetBoundRect(const Value: TRect);
 begin
   FBoundRect := Value;
   FClientRect := FBoundRect;
 end;
 
-function TRelated.GetCursor: TCursor;
+function TContainer.GetCursor: TCursor;
 begin
   if Board <> nil then
     Result := Board.Cursor
@@ -1341,19 +1311,19 @@ begin
     Result := crDefault;
 end;
 
-procedure TRelated.SetCursor(const Value: TCursor);
+procedure TContainer.SetCursor(const Value: TCursor);
 begin
   if Board <> nil then
     Board.Cursor := Value;
 end;
 
-procedure TRelated.Refresh;
+procedure TContainer.Refresh;
 begin
   if Board <> nil then
     Board.Refresh;
 end;
 
-procedure TRelated.InvalidateRect(const vRect: TRect);
+procedure TContainer.InvalidateRect(const vRect: TRect);
 begin
   if Board <> nil then
   begin
@@ -1361,7 +1331,7 @@ begin
   end;
 end;
 
-procedure TRelated.CombineRegion(var Rgn: HRGN);
+procedure TContainer.CombineRegion(var Rgn: HRGN);
 var
   i: Integer;
 begin
@@ -1383,12 +1353,12 @@ begin
   end;
 end;
 
-procedure TRelated.PaintBackground(vCanvas: TCanvas);
+procedure TContainer.PaintBackground(vCanvas: TCanvas);
 begin
 
 end;
 
-procedure TRelated.ReadElement(Reader: TReader);
+procedure TContainer.ReadElement(Reader: TReader);
 var
   aElement: TElement;
 begin
@@ -1405,7 +1375,7 @@ begin
   Reader.ReadListEnd;
 end;
 
-procedure TRelated.WriteElement(Writer: TWriter);
+procedure TContainer.WriteElement(Writer: TWriter);
 var
   i: Integer;
 begin
@@ -1417,7 +1387,7 @@ begin
   Writer.WriteListEnd;
 end;
 
-constructor TRelated.Create(AOwner: TComponent);
+constructor TContainer.Create(AOwner: TComponent);
 begin
   inherited Create(nil);
   FElementList := TElementList.Create;
@@ -1425,66 +1395,66 @@ begin
   begin
     if (AOwner is TCustomBoard) then
       Board := AOwner as TCustomBoard
-    else if (AOwner is TPages) then
-      Board := (AOwner as TPages).Board;
+    else if (AOwner is TLayouts) then
+      Board := (AOwner as TLayouts).Board;
   end;
 end;
 
-procedure TRelated.Change;
+procedure TContainer.Change;
 begin
   if Board <> nil then
     Board.Change;
 end;
 
-procedure TRelated.Clear;
+procedure TContainer.Clear;
 begin
   ElementList.Clear;
 end;
 
-function TRelated.GetHeight: Integer;
+function TContainer.GetHeight: Integer;
 begin
   Result := ClientRect.Bottom - ClientRect.Top;
 end;
 
-function TRelated.GetWidth: Integer;
+function TContainer.GetWidth: Integer;
 begin
   Result := ClientRect.Right - ClientRect.Left;
 end;
 
-function TRelated.GetPageByPoint(X, Y: Integer): TPage;
+function TContainer.GetLayoutByPoint(X, Y: Integer): TLayout;
 begin
   Result := nil;
 end;
 
-procedure TRelated.ExcludeClipRect(vCanvas: TCanvas);
+procedure TContainer.ExcludeClipRect(vCanvas: TCanvas);
 begin
 
 end;
 
-procedure TRelated.LoadFromStream(Stream: TStream);
+procedure TContainer.LoadFromStream(Stream: TStream);
 begin
 
 end;
 
-procedure TRelated.SaveToStream(Stream: TStream);
+procedure TContainer.SaveToStream(Stream: TStream);
 begin
 
 end;
 
-function TRelated.GetPageByIndex(vIndex: Integer): TPage;
+function TContainer.GetLayoutByIndex(vIndex: Integer): TLayout;
 begin
   Result := nil;
 end;
 
-procedure TRelated.LoadFromFile(vFileName: String);
+procedure TContainer.LoadFromFile(vFileName: String);
 begin
 end;
 
-procedure TRelated.SaveToFile(vFileName: String);
+procedure TContainer.SaveToFile(vFileName: String);
 begin
 end;
 
-procedure TRelated.Init;
+procedure TContainer.Init;
 begin
 end;
 
@@ -1493,7 +1463,7 @@ end;
 constructor TElement.CreateBy(AOwner: TComponent; X: Integer; Y: Integer);
 begin
   Create(AOwner);
-  if Related.Board.NextElement <> nil then
+  if Container.Board.NextElement <> nil then
   begin
     AfterCreate(X, Y, True);
     Invalidate;
@@ -1513,7 +1483,7 @@ begin
   GetRgnBox(aRgn, aRect);
   DeleteObject(aRgn);
   InflateRect(aRect, 3, 3);
-  Related.InvalidateRect(aRect);
+  Container.InvalidateRect(aRect);
 end;
 
 function TElement.PtInHaft(X, Y: Integer; out vHaftIndex: Integer): Boolean;
@@ -1524,23 +1494,23 @@ end;
 
 function TElement.PtToHaftRect(P: TPoint): TRect;
 begin
-  Result := Rect(P.X - 2, P.Y - 2, P.X + 2, P.Y + 2);
+  Result := Rect(P.X - cHaftSize, P.Y - cHaftSize, P.X + cHaftSize, P.Y + cHaftSize);
 end;
 
 function TElement.GetSelected: Boolean;
 begin
-  if Related.Board <> nil then
-    Result := Related.Board.DesignElement = Self
+  if Container.Board <> nil then
+    Result := Container.Board.DesignElement = Self
   else
     Result := False;
 end;
 
 procedure TElement.SetSelected(const Value: Boolean);
 begin
-  if Value and (Related.Board <> nil) then
-    Related.Board.DesignElement := Self
+  if Value and (Container.Board <> nil) then
+    Container.Board.DesignElement := Self
   else
-    Related.Board.DesignElement := nil;
+    Container.Board.DesignElement := nil;
 end;
 
 function TElement.PtInHaft(X, Y: Integer): Boolean;
@@ -1600,9 +1570,9 @@ constructor TElement.Create(AOwner: TComponent);
 begin
   inherited Create(nil);
   FStyle := [trtSnap, trtMove, trtSize];
-  Related := AOwner as TRelated;
-  if Related.Board <> nil then
-    if Related.Board.NextElement = nil then
+  Container := AOwner as TContainer;
+  if Container.Board <> nil then
+    if Container.Board.NextElement = nil then
     begin
       AfterCreate(0, 0, False);
       Invalidate;
@@ -1615,29 +1585,29 @@ begin
   Invalidate;
 end;
 
-function TElement.GetPageByPoint(X, Y: Integer): TPage;
+function TElement.GetLayoutByPoint(X, Y: Integer): TLayout;
 begin
-  Result := GetPageByPoint(Related, X, Y);
+  Result := GetLayoutByPoint(Container, X, Y);
 end;
 
-function TElement.GetPageByPoint(vRelated: TRelated; X, Y: Integer): TPage;
+function TElement.GetLayoutByPoint(vContainer: TContainer; X, Y: Integer): TLayout;
 begin
-  if vRelated.Board <> nil then
-    Result := vRelated.Board.GetPageByPoint(X, Y)
+  if vContainer.Board <> nil then
+    Result := vContainer.Board.GetLayoutByPoint(X, Y)
   else
     Result := nil;
 end;
 
-procedure TElement.SetRelated(const Value: TRelated);
+procedure TElement.SetContainer(const Value: TContainer);
 begin
-  if Value <> FRelated then
+  if Value <> FContainer then
   begin
-    if FRelated <> nil then
+    if FContainer <> nil then
     begin
-      FRelated.ElementList.Extract(Self);
+      FContainer.ElementList.Extract(Self);
     end;
-    FRelated := Value;
-    FRelated.ElementList.Add(Self);
+    FContainer := Value;
+    FContainer.ElementList.Add(Self);
   end;
 end;
 
@@ -1648,7 +1618,7 @@ end;
 
 procedure TElement.Change;
 begin
-  Related.Change;
+  Container.Change;
 end;
 
 function TElement.GetModified: Boolean;
@@ -1750,7 +1720,6 @@ end;
 procedure TPolygonElement.PaintHaftList(vCanvas: TCanvas);
 begin
   inherited;
-
 end;
 
 { TDebateElement }
@@ -1792,8 +1761,8 @@ end;
 
 constructor THeavyElement.Create(AOwner: TComponent);
 begin
-  if not (AOwner is TPage) then
-    raise Exception.Create('Must Create On Page')
+  if not (AOwner is TLayout) then
+    raise Exception.Create('Must Create On Layout')
   else
   begin
     inherited;
@@ -1803,13 +1772,13 @@ end;
 
 constructor THeavyElement.CreateBy(AOwner: TComponent; X: Integer; Y: Integer);
 var
-  aPage: TPage;
+  aLayout: TLayout;
 begin
-  if AOwner is TPage then
-    aPage := AOwner as TPage
+  if AOwner is TLayout then
+    aLayout := AOwner as TLayout
   else
-    aPage := GetPageByPoint(AOwner as TRelated, DesignX, DesignY);
-  inherited CreateBy(aPage, X, Y);
+    aLayout := GetLayoutByPoint(AOwner as TContainer, DesignX, DesignY);
+  inherited CreateBy(aLayout, X, Y);
 end;
 
 procedure THeavyElement.CreateHaftList;
@@ -1850,13 +1819,13 @@ end;
 
 procedure THeavyElement.EndModify;
 var
-  aPage: TPage;
+  aLayout: TLayout;
 begin
   Invalidate;
-  aPage := GetPageByPoint(DesignX, DesignY);
-  if aPage <> nil then
+  aLayout := GetLayoutByPoint(DesignX, DesignY);
+  if aLayout <> nil then
   begin
-    Related := aPage;
+    Container := aLayout;
   end;
   DesignRect := GetBounds;
   inherited;
@@ -1864,7 +1833,7 @@ end;
 
 function THeavyElement.GetBounds: TRect;
 begin
-  Result := Related.ClientRect;
+  Result := Container.ClientRect;
 end;
 
 function THeavyElement.HitTest(X, Y: Integer): Boolean;
@@ -1914,7 +1883,7 @@ end;
 
 procedure THeavyElement.SetCursor(Shift: TShiftState; X, Y: Integer);
 begin
-  Related.Cursor := crHandPoint;
+  Container.Cursor := crHandPoint;
 end;
 
 { TBoardReader }
@@ -1935,51 +1904,51 @@ begin
   end;
 end;
 
-{ TPage }
+{ TLayout }
 
-constructor TPage.Create(AOwner: TComponent);
+constructor TLayout.Create(AOwner: TComponent);
 begin
   inherited;
   FEnabled := True;
-  if AOwner is TPages then
+  if AOwner is TLayouts then
   begin
-    FPages := (AOwner as TPages);
-    Index := FPages.FPageList.Add(Self);
+    FLayouts := (AOwner as TLayouts);
+    Index := FLayouts.FLayoutList.Add(Self);
   end;
 end;
 
-procedure TPage.ExcludeClipRect(vCanvas: TCanvas);
+procedure TLayout.ExcludeClipRect(vCanvas: TCanvas);
 begin
   with BoundRect do
     Windows.ExcludeClipRect(vCanvas.Handle, Left, Top, Right, Bottom);
   inherited;
 end;
 
-function TPage.GetPageByIndex(vIndex: Integer): TPage;
+function TLayout.GetLayoutByIndex(vIndex: Integer): TLayout;
 begin
   Result := Self;
 end;
 
-function TPage.GetPageByPoint(X, Y: Integer): TPage;
+function TLayout.GetLayoutByPoint(X, Y: Integer): TLayout;
 begin
   Result := Self;
 end;
 
-procedure TPage.PaintBackground(vCanvas: TCanvas);
+procedure TLayout.PaintBackground(vCanvas: TCanvas);
 begin
   inherited;
-  vCanvas.Brush.Color := FPages.BkColor;
+  vCanvas.Brush.Color := FLayouts.BkColor;
   vCanvas.FillRect(BoundRect);
 end;
 
-{ TPage }
+{ TLayout }
 
-procedure TPage.SetBoundRect(const Value: TRect);
+procedure TLayout.SetBoundRect(const Value: TRect);
 var
   DX, DY: Integer;
 begin
   inherited;
-  FClientRect := Rect(0, 0, FPages.PageWidth, FPages.PageHeight);
+  FClientRect := Rect(0, 0, FLayouts.LayoutWidth, FLayouts.LayoutHeight);
   DX := Abs((FClientRect.Right - FClientRect.Left) - (Value.Right - Value.Left));
   if DX <> 0 then
     DX := DX div 2;
@@ -2008,26 +1977,26 @@ end;
 
 procedure TBridgeElement.EndModify;
 var
-  aPage: TPage;
+  aLayout: TLayout;
   TW, W, X, Y: Integer;
 begin
   Invalidate;
   W := FBoundRect.Right - FBoundRect.Left;
   X := FBoundRect.Left + (W) div 2;
   Y := FBoundRect.Top + (FBoundRect.Bottom - FBoundRect.Top) div 2;
-  aPage := GetPageByPoint(X, Y);
-  TW := aPage.BoundRect.Right - aPage.BoundRect.Left;
+  aLayout := GetLayoutByPoint(X, Y);
+  TW := aLayout.BoundRect.Right - aLayout.BoundRect.Left;
   w := w div TW * TW;
   //  FBoundRect.Left:=
   FBoundRect.Right := FBoundRect.Left + w;
-  if aPage.Index < 16 then
+  if aLayout.Index < 16 then
   begin
-    FBoundRect.Bottom := aPage.BoundRect.Bottom - 65;
+    FBoundRect.Bottom := aLayout.BoundRect.Bottom - 65;
     FBoundRect.Top := FBoundRect.Bottom - 10;
   end
   else
   begin
-    FBoundRect.Top := aPage.BoundRect.Top - 65;
+    FBoundRect.Top := aLayout.BoundRect.Top - 65;
     FBoundRect.Bottom := FBoundRect.Top - 10;
   end;
   inherited;
