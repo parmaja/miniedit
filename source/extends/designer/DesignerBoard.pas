@@ -192,7 +192,6 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure Init; override;
-    function GetLayoutByPoint(X, Y: Integer): TLayout; override;
     function GetLayoutByIndex(vIndex: Integer): TLayout; override;
     procedure Clear; override;
     procedure Assign(Source: TPersistent); override;
@@ -507,20 +506,9 @@ begin
   aRect := ClientRect;
   aRect.Right := aRect.Left + w;
   aRect.Bottom := aRect.Top + h;
-  for i := 0 to 15 do
+  for i := 0 to FLayoutList.Count - 1 do
   begin
     FLayoutList[i].BoundRect := aRect;
-    OffsetRect(aRect, w, 0);
-  end;
-
-  aRect := ClientRect;
-  aRect.Right := aRect.Left + w;
-  aRect.Top := aRect.Top + h;
-  aRect.Bottom := aRect.Top + h;
-  for i := 16 to 31 do
-  begin
-    FLayoutList[i].BoundRect := aRect;
-    OffsetRect(aRect, w, 0);
   end;
 end;
 
@@ -580,23 +568,6 @@ end;
 function TLayouts.GetLayoutByIndex(vIndex: Integer): TLayout;
 begin
   Result := LayoutList[vIndex];
-end;
-
-function TLayouts.GetLayoutByPoint(X, Y: Integer): TLayout;
-var
-  a, b: Integer;
-begin
-  a := (X - ClientRect.Left) div FLayoutWidth;
-  if a < 16 then
-  begin
-    b := (Y - ClientRect.Top) div LayoutHeight;
-    if b < 2 then
-      Result := LayoutList[b * 16 + a]
-    else
-      Result := nil;
-  end
-  else
-    Result := nil;
 end;
 
 function TLayouts.HitTest(X, Y: Integer; out vElement: TElement): Boolean;
