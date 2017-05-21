@@ -10,13 +10,15 @@ unit DesignerBoard;
 interface
 
 uses
-  Windows, Messages, SysUtils, Classes, Controls, Forms, Graphics, Contnrs, ImgList, StdCtrls, ExtCtrls;
+  Messages, SysUtils, Classes, Controls, Forms, Graphics, Contnrs, ImgList, StdCtrls, ExtCtrls;
 
 const
   OblongCursors: array[0..7] of TCursor = (crSizeNWSE, crSizeNS, crSizeNESW, crSizeWE, crSizeNWSE, crSizeNS, crSizeNESW, crSizeWE);
   cHaftSize = 4;
 
 type
+  //THafts = ()
+
   TPointArray = array of TPoint;
 
   TElementStyle = set of (trtSnap, trtMove, trtSize);
@@ -54,8 +56,6 @@ type
     procedure SetContainer(const Value: TContainer);
     function GetModified: Boolean;
   protected
-    function GetLayoutByPoint(vContainer: TContainer; X, Y: Integer): TLayout; overload;
-    function GetLayoutByPoint(X, Y: Integer): TLayout; overload;
 
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); virtual;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); virtual;
@@ -84,9 +84,9 @@ type
     procedure Modify(Shift: TShiftState; X, Y: Integer); virtual;
     procedure Paint(vCanvas: TCanvas; vRect: TRect); virtual;
     procedure PaintHaftList(vCanvas: TCanvas); virtual;
+    procedure PaintHaft(vCanvas: TCanvas; P: TPoint);
     function PtToHaftRect(P: TPoint): TRect;
     procedure CreateHaftList; virtual;
-    procedure PaintHaft(vCanvas: TCanvas; P: TPoint);
     procedure Move(DX, DY: Integer); virtual;
     function HitTest(X, Y: Integer): Boolean; virtual;
     property Style: TElementStyle read FStyle write FStyle;
@@ -113,7 +113,6 @@ type
   TContainer = class(TComponent)
   private
     FElementList: TElementList;
-    FClientRect: TRect;
     FBoundRect: TRect;
     function GetCursor: TCursor;
     procedure SetCursor(const Value: TCursor);
@@ -145,17 +144,19 @@ type
     procedure PaintBackground(vCanvas: TCanvas); virtual;
     procedure CombineRegion(var Rgn: HRGN); virtual;
     property ElementList: TElementList read FElementList;
-    property ClientRect: TRect read FClientRect;
     property BoundRect: TRect read FBoundRect write SetBoundRect;
     property Cursor: TCursor read GetCursor write SetCursor;
     property Width: Integer read GetWidth;
     property Height: Integer read GetHeight;
   end;
 
+  { TLayout }
+
   TLayout = class(TContainer)
   private
     FLayouts: TLayouts;
     FEnabled: Boolean;
+    FName: string;
   protected
     procedure SetBoundRect(const Value: TRect); override;
   public
@@ -164,6 +165,7 @@ type
     function GetLayoutByPoint(X, Y: Integer): TLayout; override;
     constructor Create(AOwner: TComponent); override;
     procedure PaintBackground(vCanvas: TCanvas); override;
+    property Name: string read FName write FName;
   published
     property Enabled: Boolean read FEnabled write FEnabled default True;
   end;
@@ -176,23 +178,21 @@ type
     property Items[Index: Integer]: TLayout read GetItem write SetItem; default;
   end;
 
+  { TLayouts }
+
   TLayouts = class(TContainer)
   private
     FLayoutList: TLayoutList;
-    FLayoutHeight: Integer;
-    FLayoutWidth: Integer;
     FCaption: String;
-    FBkColor: TColor;
+    FBackground: TColor;
     procedure ReadBoards(Reader: TReader);
     procedure WriteBoards(Writer: TWriter);
+    function GetItem(vIndex: Integer): TLayout;
+    procedure SetItem(vIndex: Integer; AValue: TLayout);
   protected
-    procedure SetBoundRect(const Value: TRect); override;
-    procedure Allotment;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
-    procedure Init; override;
-    function GetLayoutByIndex(vIndex: Integer): TLayout; override;
     procedure Clear; override;
     procedure Assign(Source: TPersistent); override;
     procedure LoadFromStream(Stream: TStream); override;
@@ -205,25 +205,21 @@ type
     procedure ExcludeClipRect(vCanvas: TCanvas); override;
     procedure CombineRegion(var Rgn: HRGN); override;
     property LayoutList: TLayoutList read FLayoutList;
-    property LayoutWidth: Integer read FLayoutWidth write FLayoutWidth;
-    property LayoutHeight: Integer read FLayoutHeight write FLayoutHeight;
-    property BkColor: TColor read FBkColor write FBkColor stored False;
+    property Background: TColor read FBackground write FBackground;
+    property Items[vIndex: Integer]: TLayout read GetItem write SetItem; default;
   published
     property Caption: String read FCaption write FCaption;
   end;
 
   TCustomBoard = class(TCustomControl)
   private
-    FContainer: TContainer;
+    FCurrentLayout: TContainer;
     FLayouts: TLayouts;
     HasHaft: Boolean;
-    FCacheMode: Boolean;
     FDesignElement: TElement;
-    FBorderStyle: TBorderStyle;
     procedure SetDesignElement(const Value: TElement);
-    procedure SetContainer(const Value: TContainer);
+    procedure SetCurrentLayout(const Value: TContainer);
   protected
-    function GetLayoutByPoint(X, Y: Integer): TLayout;
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
@@ -240,32 +236,31 @@ type
     constructor Create(ABoard: TComponent); override;
     destructor Destroy; override;
     procedure Loaded; override;
-    procedure SwitchToSingle(vIndex: Integer);
-    procedure SwitchToNormal;
     property DesignElement: TElement read FDesignElement write SetDesignElement;
-    property Container: TContainer read FContainer write SetContainer;
+    property CurrentLayout: TContainer read FCurrentLayout write SetCurrentLayout;
   published
     property Align;
     property Anchors;
     property AutoSize;
     property BiDiMode;
     property BorderWidth;
-    property BorderStyle: TBorderStyle read FBorderStyle write SetBorderStyle default bsSingle;
     property Caption;
     property Color;
     property Constraints;
-    property UseDockManager default True;
     property DockSite;
     property DragCursor;
     property DragKind;
     property DragMode;
     property Enabled;
     property Visible;
-    property CacheMode: Boolean read FCacheMode write FCacheMode default False;
   end;
 
   TDesignerBoard = class(TCustomBoard)
   end;
+
+//-----------------------------------
+
+  { TPolygonElement }
 
   TPolygonElement = class(TElement)
   private
@@ -286,10 +281,7 @@ type
     procedure Paint(vCanvas: TCanvas; vRect: TRect); override;
   end;
 
-  TWedgeElement = class(TElement)
-  public
-    procedure Paint(vCanvas: TCanvas; vRect: TRect); override;
-  end;
+  { TOblongElement }
 
   TOblongElement = class(TElement)
   private
@@ -319,6 +311,8 @@ type
     property Bottom: Integer read FBoundRect.Bottom write FBoundRect.Bottom;
   end;
 
+  { TEllipseElement }
+
   TEllipseElement = class(TOblongElement)
   public
     procedure AfterCreate(X, Y: Integer; Dummy: Boolean); override;
@@ -334,19 +328,15 @@ type
     property Color: TColor read FColor write FColor default clBlue;
   end;
 
-  TBridgeElement = class(TOblongElement)
-  private
-  protected
-    procedure EndModify; override;
-  public
-    procedure Paint(vCanvas: TCanvas; vRect: TRect); override;
-  end;
+  { TDebateElement }
 
   TDebateElement = class(TPolygonElement)
   public
     procedure AfterCreate(X, Y: Integer; Dummy: Boolean); override;
     procedure Paint(vCanvas: TCanvas; vRect: TRect); override;
   end;
+
+  { THeavyElement }
 
   THeavyElement = class(TElement)
   private
@@ -368,10 +358,14 @@ type
     procedure AfterCreate(X, Y: Integer; Dummy: Boolean); override;
   end;
 
+  { TCrownElement }
+
   TCrownElement = class(THeavyElement)
   public
     procedure DoPaint(vCanvas: TCanvas; vRect: TRect); override;
   end;
+
+  { TPyorrheaElement }
 
   TPyorrheaElement = class(THeavyElement)
   public
@@ -495,27 +489,9 @@ end;
 
 { TLayouts }
 
-procedure TLayouts.Allotment;
-var
-  i: Integer;
-  w, h: Integer;
-  aRect: TRect;
-begin
-  w := LayoutWidth;
-  h := LayoutHeight;
-  aRect := ClientRect;
-  aRect.Right := aRect.Left + w;
-  aRect.Bottom := aRect.Top + h;
-  for i := 0 to FLayoutList.Count - 1 do
-  begin
-    FLayoutList[i].BoundRect := aRect;
-  end;
-end;
-
 procedure TLayouts.Assign(Source: TPersistent);
 begin
   inherited;
-
 end;
 
 procedure TLayouts.Clear;
@@ -543,10 +519,16 @@ end;
 constructor TLayouts.Create(AOwner: TComponent);
 begin
   inherited;
-  BkColor := $00DEE9FA;
+  Background := $00DEE9FA;
   FLayoutList := TLayoutList.Create;
-  TLayout.Create(Self);
-  TLayout.Create(Self);
+  with TLayout.Create(Self) do
+  begin
+    FName := 'Top';
+  end;
+  with TLayout.Create(Self) do
+  begin
+    FName := 'Bottom';
+  end;
 end;
 
 destructor TLayouts.Destroy;
@@ -565,11 +547,6 @@ begin
   end;
 end;
 
-function TLayouts.GetLayoutByIndex(vIndex: Integer): TLayout;
-begin
-  Result := LayoutList[vIndex];
-end;
-
 function TLayouts.HitTest(X, Y: Integer; out vElement: TElement): Boolean;
 var
   i: Integer;
@@ -582,12 +559,6 @@ begin
       if Result then
         break;
     end;
-end;
-
-procedure TLayouts.Init;
-begin
-  inherited;
-  Allotment;
 end;
 
 procedure TLayouts.LoadFromFile(vFileName: String);
@@ -620,7 +591,6 @@ begin
     aReader.EndReferences;
     aReader.Free;
   end;
-  Allotment;
   Refresh;
 end;
 
@@ -628,11 +598,11 @@ procedure TLayouts.Paint(vCanvas: TCanvas);
 var
   i: Integer;
 begin
+  inherited;
   for i := 0 to FLayoutList.Count - 1 do
   begin
     FLayoutList[i].Paint(vCanvas);
   end;
-  inherited;
 end;
 
 procedure TLayouts.PaintBackground(vCanvas: TCanvas);
@@ -662,6 +632,16 @@ begin
   Reader.ReadListEnd;
 end;
 
+function TLayouts.GetItem(vIndex: Integer): TLayout;
+begin
+  Result := FLayoutList[vIndex];
+end;
+
+procedure TLayouts.SetItem(vIndex: Integer; AValue: TLayout);
+begin
+  FLayoutList[vIndex] := AValue;
+end;
+
 procedure TLayouts.SaveToFile(vFileName: String);
 var
   aFile: TFileStream;
@@ -681,22 +661,6 @@ begin
   aWriter := TBoardWriter.Create(Stream, 4096);
   aWriter.WriteComponent(self);
   aWriter.Free;
-end;
-
-procedure TLayouts.SetBoundRect(const Value: TRect);
-var
-  DX, DY: Integer;
-begin
-  inherited;
-  FClientRect := Rect(0, 0, LayoutWidth * 16, LayoutHeight * 2);
-  DX := Abs(FClientRect.Right - Value.Right);
-  if DX <> 0 then
-    DX := DX div 2;
-  DY := Abs(FClientRect.Bottom - Value.Bottom);
-  if DY <> 0 then
-    DY := DY div 2;
-  OffsetRect(FClientRect, DX, DY);
-  Allotment;
 end;
 
 procedure TLayouts.WriteBoards(Writer: TWriter);
@@ -744,12 +708,12 @@ constructor TCustomBoard.Create(ABoard: TComponent);
 begin
   inherited;
   ControlStyle := ControlStyle + [csOpaque];
+  DoubleBuffered := False;
   FLayouts := TLayouts.Create(Self);
-  FContainer := FLayouts;
-  FContainer.Init;
+  FLayouts.Init;
+  FCurrentLayout := FLayouts[0];
   Width := 100;
   Height := 100;
-  FCacheMode := False;
   NextElement := TRectangleElement;
 end;
 
@@ -770,15 +734,10 @@ begin
   //  PaintHaftList;
 end;
 
-function TCustomBoard.GetLayoutByPoint(X, Y: Integer): TLayout;
-begin
-  Result := Container.GetLayoutByPoint(X, Y);
-end;
-
 procedure TCustomBoard.Loaded;
 begin
   inherited;
-  Container.BoundRect := ClientRect;
+  CurrentLayout.BoundRect := ClientRect;
 end;
 
 procedure TCustomBoard.MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
@@ -788,12 +747,12 @@ begin
   inherited;
   if NextElement <> nil then
   begin
-    DesignElement := NextElement.CreateBy(Container, X, Y);
+    DesignElement := NextElement.CreateBy(CurrentLayout, X, Y);
     //NextElement := nil;
   end
   else if (DesignElement = nil) or not ((DesignElement.Captured) or (DesignElement.PtInHaft(X, Y))) then
   begin
-    Container.HitTest(X, Y, aElement);
+    CurrentLayout.HitTest(X, Y, aElement);
     DesignElement := aElement;
   end;
   if DesignElement <> nil then
@@ -809,7 +768,7 @@ begin
   inherited;
   aElement := DesignElement;
   if (aElement = nil) or not ((aElement.Captured) or (aElement.PtInHaft(X, Y))) then
-    Container.HitTest(X, Y, aElement);
+    CurrentLayout.HitTest(X, Y, aElement);
   if aElement <> nil then
     aElement.MouseMove(Shift, X, Y)
   else
@@ -826,53 +785,14 @@ end;
 //BasePaint
 
 procedure TCustomBoard.Paint;
-var
-  MemDC: HDC;
-  MemBitmap, OldBitmap: HBITMAP;
-  aBufferd: Boolean;
-  w, h: Integer;
-  aCanvas: TCanvas;
-  aRect: TRect;
 begin
-  aRect := Canvas.ClipRect;
-  w := aRect.Right - aRect.Left;
-  h := aRect.Bottom - aRect.Top;
-  if FCacheMode and not EqualRect(ClientRect, aRect) then
-  begin
-    aCanvas := TCanvas.Create;
-    MemBitmap := CreateCompatibleBitmap(Canvas.Handle, w, h);
-    MemDC := CreateCompatibleDC(Canvas.Handle);
-    OldBitmap := SelectObject(MemDC, MemBitmap);
-    SetWindowOrgEx(MemDc, aRect.Left, aRect.Top, nil);
-    aBufferd := True;
-    aCanvas.Handle := MemDC;
-  end
-  else
-  begin
-    MemBitmap := 0;
-    MemDC := 0;
-    OldBitmap := 0;
-    aBufferd := False;
-    aCanvas := Canvas;
-  end;
-  RemoveHaftList(aCanvas);
-  if Container <> nil then
-  begin
-    Container.PaintBackground(aCanvas);
-    Container.Paint(aCanvas);
-  end;
-  Container.ExcludeClipRect(aCanvas);
-  aCanvas.Brush.Color := clWindow;
-  aCanvas.FillRect(aCanvas.ClipRect);
-  if aBufferd then
-  begin
-    BitBlt(Canvas.Handle, aRect.Left, aRect.Top, w, h, MemDC, aRect.Left, aRect.Top, SRCCOPY);
-    aCanvas.Handle := 0;
-    SelectObject(MemDC, OldBitmap);
-    DeleteDC(MemDC);
-    DeleteObject(MemBitmap);
-    aCanvas.Free;
-  end;
+  //aRect := Canvas.ClipRect;
+  Canvas.Brush.Color := clWindow;
+  //Canvas.FillRect(ClientRect);
+  RemoveHaftList(Canvas);
+  FLayouts.PaintBackground(Canvas);
+  FLayouts.Paint(Canvas);
+  //FLayouts.ExcludeClipRect(Canvas);
   AddHaftList(Canvas);
 end;
 
@@ -894,30 +814,16 @@ end;
 procedure TCustomBoard.Resize;
 begin
   inherited;
+  FLayouts.BoundRect := ClientRect;
   if not (csLoading in ComponentState) then
   begin
-    if Container <> nil then
-      Container.BoundRect := ClientRect;
+    FLayouts.BoundRect := ClientRect;
   end;
 end;
 
-procedure TCustomBoard.SetContainer(const Value: TContainer);
+procedure TCustomBoard.SetCurrentLayout(const Value: TContainer);
 begin
-  FContainer := Value;
-  Refresh;
-end;
-
-procedure TCustomBoard.SwitchToNormal;
-begin
-  FContainer := FLayouts;
-  FContainer.BoundRect := ClientRect;
-  Refresh;
-end;
-
-procedure TCustomBoard.SwitchToSingle(vIndex: Integer);
-begin
-  FContainer := Container.GetLayoutByIndex(vIndex);
-  FContainer.BoundRect := ClientRect;
+  FCurrentLayout := Value;
   Refresh;
 end;
 
@@ -1059,14 +965,6 @@ begin
   inherited;
   vCanvas.Brush.Color := clGreen;
   vCanvas.Polygon(Polygon);
-end;
-
-{ TWedgeElement }
-
-procedure TWedgeElement.Paint(vCanvas: TCanvas; vRect: TRect);
-begin
-  inherited;
-
 end;
 
 { TOblongElement }
@@ -1247,7 +1145,7 @@ var
 begin
   for i := 0 to ElementList.Count - 1 do
   begin
-    ElementList[i].Paint(vCanvas, ClientRect);
+    ElementList[i].Paint(vCanvas, BoundRect);
   end;
 end;
 
@@ -1271,7 +1169,6 @@ end;
 procedure TContainer.SetBoundRect(const Value: TRect);
 begin
   FBoundRect := Value;
-  FClientRect := FBoundRect;
 end;
 
 function TContainer.GetCursor: TCursor;
@@ -1384,12 +1281,12 @@ end;
 
 function TContainer.GetHeight: Integer;
 begin
-  Result := ClientRect.Bottom - ClientRect.Top;
+  Result := BoundRect.Bottom - BoundRect.Top;
 end;
 
 function TContainer.GetWidth: Integer;
 begin
-  Result := ClientRect.Right - ClientRect.Left;
+  Result := BoundRect.Right - BoundRect.Left;
 end;
 
 function TContainer.GetLayoutByPoint(X, Y: Integer): TLayout;
@@ -1556,19 +1453,6 @@ begin
   Invalidate;
 end;
 
-function TElement.GetLayoutByPoint(X, Y: Integer): TLayout;
-begin
-  Result := GetLayoutByPoint(Container, X, Y);
-end;
-
-function TElement.GetLayoutByPoint(vContainer: TContainer; X, Y: Integer): TLayout;
-begin
-  if vContainer.Board <> nil then
-    Result := vContainer.Board.GetLayoutByPoint(X, Y)
-  else
-    Result := nil;
-end;
-
 procedure TElement.SetContainer(const Value: TContainer);
 begin
   if Value <> FContainer then
@@ -1633,7 +1517,7 @@ begin
   inherited;
   vCanvas.Brush.Color := Color;
   vCanvas.Brush.Style := bsSolid;
-  vCanvas.Rectangle(vRect);
+  vCanvas.Rectangle(FBoundRect);
 end;
 
 { TPolygonElement }
@@ -1748,7 +1632,7 @@ begin
   if AOwner is TLayout then
     aLayout := AOwner as TLayout
   else
-    aLayout := GetLayoutByPoint(AOwner as TContainer, DesignX, DesignY);
+    aLayout := (AOwner as TContainer).Board.FLayouts[0];//TODO use Current layout
   inherited CreateBy(aLayout, X, Y);
 end;
 
@@ -1793,18 +1677,18 @@ var
   aLayout: TLayout;
 begin
   Invalidate;
-  aLayout := GetLayoutByPoint(DesignX, DesignY);
+{  aLayout := GetLayoutByPoint(DesignX, DesignY);
   if aLayout <> nil then
   begin
     Container := aLayout;
-  end;
+  end;}
   DesignRect := GetBounds;
   inherited;
 end;
 
 function THeavyElement.GetBounds: TRect;
 begin
-  Result := Container.ClientRect;
+  Result := Container.BoundRect;
 end;
 
 function THeavyElement.HitTest(X, Y: Integer): Boolean;
@@ -1908,25 +1792,17 @@ end;
 procedure TLayout.PaintBackground(vCanvas: TCanvas);
 begin
   inherited;
-  vCanvas.Brush.Color := FLayouts.BkColor;
-  vCanvas.FillRect(BoundRect);
+  vCanvas.Brush.Color := FLayouts.Background;
+  vCanvas.Brush.Style := bsSolid;
+  vCanvas.FillRect(Board.ClientRect);
 end;
 
 { TLayout }
 
 procedure TLayout.SetBoundRect(const Value: TRect);
-var
-  DX, DY: Integer;
 begin
   inherited;
-  FClientRect := Rect(0, 0, FLayouts.LayoutWidth, FLayouts.LayoutHeight);
-  DX := Abs((FClientRect.Right - FClientRect.Left) - (Value.Right - Value.Left));
-  if DX <> 0 then
-    DX := DX div 2;
-  DY := Abs((FClientRect.Bottom - FClientRect.Top) - (Value.Bottom - Value.Top));
-  if DY <> 0 then
-    DY := DY div 2;
-  OffsetRect(FClientRect, Value.Left + DX, Value.Top + DY);
+  FBoundRect := Value;
 end;
 
 { TCrownElement }
@@ -1944,48 +1820,11 @@ begin
   end;
 end;
 
-{ TBridgeElement }
-
-procedure TBridgeElement.EndModify;
-var
-  aLayout: TLayout;
-  TW, W, X, Y: Integer;
-begin
-  Invalidate;
-  W := FBoundRect.Right - FBoundRect.Left;
-  X := FBoundRect.Left + (W) div 2;
-  Y := FBoundRect.Top + (FBoundRect.Bottom - FBoundRect.Top) div 2;
-  aLayout := GetLayoutByPoint(X, Y);
-  TW := aLayout.BoundRect.Right - aLayout.BoundRect.Left;
-  w := w div TW * TW;
-  //  FBoundRect.Left:=
-  FBoundRect.Right := FBoundRect.Left + w;
-  if aLayout.Index < 16 then
-  begin
-    FBoundRect.Bottom := aLayout.BoundRect.Bottom - 65;
-    FBoundRect.Top := FBoundRect.Bottom - 10;
-  end
-  else
-  begin
-    FBoundRect.Top := aLayout.BoundRect.Top - 65;
-    FBoundRect.Bottom := FBoundRect.Top - 10;
-  end;
-  inherited;
-end;
-
-procedure TBridgeElement.Paint(vCanvas: TCanvas; vRect: TRect);
-begin
-  inherited;
-  vCanvas.Brush.Color := clGray;
-  vCanvas.Rectangle(FBoundRect);
-end;
-
 { TSingleBoard }
 
 initialization
   ElementClasses := TList.Create;
   RegisterElements('', [TEllipseElement]);
-  RegisterElements('', [TBridgeElement]);
   RegisterElements('', [TRectangleElement]);
   RegisterElements('', [TCrownElement]);
   RegisterElements('', [TPyorrheaElement]);
