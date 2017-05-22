@@ -10,7 +10,9 @@ unit DesignerBoard;
 interface
 
 uses
-  Messages, SysUtils, Classes, Controls, Forms, Graphics, Contnrs, ImgList, StdCtrls, ExtCtrls;
+  Messages, SysUtils, Classes, Controls, LCLIntf,
+  Forms, Graphics, Contnrs, ImgList,
+  StdCtrls, ExtCtrls;
 
 const
   OblongCursors: array[0..7] of TCursor = (crSizeNWSE, crSizeNS, crSizeNESW, crSizeWE, crSizeNWSE, crSizeNS, crSizeNESW, crSizeWE);
@@ -29,15 +31,7 @@ type
   TElementList = class;
   TContainer = class;
 
-  TBoardWriter = class(TWriter)
-  public
-  end;
-
-  TBoardReader = class(TReader)
-  protected
-    function Error(const Message: String): Boolean; override;
-  public
-  end;
+  { TElement }
 
   TElement = class(TComponent)
   private
@@ -61,11 +55,11 @@ type
     procedure MouseDown(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); virtual;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); virtual;
     procedure BeginModify; virtual;
+    procedure Modifing; virtual;
     procedure EndModify; virtual;
     procedure Change; virtual;
+    function GetClientRect: TRect; virtual;
   public
-    procedure CombineRegion(var Rgn: HRGN); virtual;
-    function CreateRegion: HRGN; virtual;
     constructor Create(AOwner: TComponent); overload; override;
     constructor CreateBy(AOwner: TComponent; X: Integer = 0; Y: Integer = 0); overload; virtual;
     procedure AfterConstruction; override;
@@ -142,7 +136,6 @@ type
     function HitTest(X, Y: Integer; out vElement: TElement): Boolean; virtual;
     procedure Paint(vCanvas: TCanvas); virtual;
     procedure PaintBackground(vCanvas: TCanvas); virtual;
-    procedure CombineRegion(var Rgn: HRGN); virtual;
     property ElementList: TElementList read FElementList;
     property BoundRect: TRect read FBoundRect write SetBoundRect;
     property Cursor: TCursor read GetCursor write SetCursor;
@@ -195,15 +188,12 @@ type
     destructor Destroy; override;
     procedure Clear; override;
     procedure Assign(Source: TPersistent); override;
-    procedure LoadFromStream(Stream: TStream); override;
-    procedure SaveToStream(Stream: TStream); override;
     procedure LoadFromFile(vFileName: String); override;
     procedure SaveToFile(vFileName: String); override;
     function HitTest(X, Y: Integer; out vElement: TElement): Boolean; override;
     procedure Paint(vCanvas: TCanvas); override;
     procedure PaintBackground(vCanvas: TCanvas); override;
     procedure ExcludeClipRect(vCanvas: TCanvas); override;
-    procedure CombineRegion(var Rgn: HRGN); override;
     property LayoutList: TLayoutList read FLayoutList;
     property Background: TColor read FBackground write FBackground;
     property Items[vIndex: Integer]: TLayout read GetItem write SetItem; default;
@@ -211,11 +201,12 @@ type
     property Caption: String read FCaption write FCaption;
   end;
 
+  { TCustomBoard }
+
   TCustomBoard = class(TCustomControl)
   private
     FCurrentLayout: TContainer;
     FLayouts: TLayouts;
-    HasHaft: Boolean;
     FDesignElement: TElement;
     procedure SetDesignElement(const Value: TElement);
     procedure SetCurrentLayout(const Value: TContainer);
@@ -224,11 +215,10 @@ type
     procedure MouseMove(Shift: TShiftState; X, Y: Integer); override;
     procedure MouseUp(Button: TMouseButton; Shift: TShiftState; X, Y: Integer); override;
     procedure Paint; override;
+
     procedure Resize; override;
     procedure DoEnter; override;
     procedure DoExit; override;
-    procedure RemoveHaftList(vCanvas: TCanvas);
-    procedure AddHaftList(vCanvas: TCanvas);
     procedure Change; virtual;
     procedure Reset; virtual;
   public
@@ -239,13 +229,13 @@ type
     property DesignElement: TElement read FDesignElement write SetDesignElement;
     property CurrentLayout: TContainer read FCurrentLayout write SetCurrentLayout;
   published
+    property Color default clWindow;
     property Align;
     property Anchors;
     property AutoSize;
     property BiDiMode;
     property BorderWidth;
     property Caption;
-    property Color;
     property Constraints;
     property DockSite;
     property DragCursor;
@@ -266,7 +256,6 @@ type
   private
     Polygon: TPointArray;
   public
-    function CreateRegion: HRGN; override;
     procedure AfterCreate(X, Y: Integer; Dummy: Boolean); override;
     procedure Move(DX, DY: Integer); override;
     function HitTest(X, Y: Integer): Boolean; override;
@@ -293,7 +282,6 @@ type
     procedure EndModify; override;
   public
     procedure Loaded; override;
-    function CreateRegion: HRGN; override;
     procedure CreateHaftList; override;
     function PtInHaft(X, Y: Integer; out vHaftIndex: Integer): Boolean; override;
     procedure SetCursor(Shift: TShiftState; X, Y: Integer); override;
@@ -345,7 +333,6 @@ type
     DesignRect: TRect;
   public
     procedure Move(DX, DY: Integer); override;
-    function CreateRegion: HRGN; override;
     procedure CreateHaftList; override;
     function PtInHaft(X, Y: Integer; out vHaftIndex: Integer): Boolean; override;
     procedure SetCursor(Shift: TShiftState; X, Y: Integer); override;
@@ -357,23 +344,6 @@ type
     constructor CreateBy(AOwner: TComponent; X: Integer = 0; Y: Integer = 0); override;
     procedure AfterCreate(X, Y: Integer; Dummy: Boolean); override;
   end;
-
-  { TCrownElement }
-
-  TCrownElement = class(THeavyElement)
-  public
-    procedure DoPaint(vCanvas: TCanvas; vRect: TRect); override;
-  end;
-
-  { TPyorrheaElement }
-
-  TPyorrheaElement = class(THeavyElement)
-  public
-    procedure DoPaint(vCanvas: TCanvas; vRect: TRect); override;
-  end;
-
-procedure OutLineBitmap(Canvas: TCanvas; Bitmap: TBitmap; const vMasks: array of TColor; const vColor: TColor; vLeft, vTop: Integer);
-procedure DrawMaskBitmap(Canvas: TCanvas; Bitmap: TBitmap; const vMasks: array of TColor; const vColor: TColor; vLeft, vTop: Integer);
 
 procedure Register;
 procedure RegisterElements(const Layout: String; TElements: array of TElementClass);
@@ -389,73 +359,6 @@ uses
 procedure Register;
 begin
   RegisterComponents('Native', [TDesignerBoard]);
-end;
-
-procedure DrawMaskBitmap(Canvas: TCanvas; Bitmap: TBitmap; const vMasks: array of TColor; const vColor: TColor; vLeft, vTop: Integer);
-var
-  BmpMask: TBitmap;
-  i: Integer;
-begin
-  if Length(vMasks) = 0 then
-    raise Exception.Create('Why u call this function , For noting ???!!!');
-
-  BmpMask := TBitmap.Create;
-  BmpMask.Handle := CreateBitmap(Bitmap.Width, Bitmap.Height, 1, 1, nil);
-
-  SetBkColor(Bitmap.Canvas.Handle, ColorToRgb(vMasks[0]));
-  BitBlt(BmpMask.Canvas.Handle, 0, 0, Bitmap.Width, Bitmap.Height, Bitmap.Canvas.Handle, 0, 0, SRCCOPY);
-
-  for i := 1 to Length(vMasks) - 1 do
-  begin
-    SetBkColor(Bitmap.Canvas.Handle, ColorToRgb(vMasks[i]));
-    BitBlt(BmpMask.Canvas.Handle, 0, 0, Bitmap.Width, Bitmap.Height, Bitmap.Canvas.Handle, 0, 0, SRCPAINT);
-  end;
-
-  SetTextColor(Canvas.Handle, ColorToRgb(clWhite));
-  SetBkColor(Canvas.Handle, ColorToRgb(vColor));
-  BitBlt(Canvas.Handle, vLeft, vTop, Bitmap.Width, Bitmap.Height, BmpMask.Canvas.Handle, 0, 0, SRCAND);
-  BmpMask.Free;
-end;
-
-procedure OutLineBitmap(Canvas: TCanvas; Bitmap: TBitmap; const vMasks: array of TColor; const vColor: TColor; vLeft, vTop: Integer);
-var
-  BmpMask: TBitmap;
-  BmpOutLine: TBitmap;
-  i: Integer;
-begin
-  if Length(vMasks) = 0 then
-    raise Exception.Create('Why u call this function , For noting ???!!!');
-
-  BmpMask := TBitmap.Create;
-  BmpMask.Handle := CreateBitmap(Bitmap.Width, Bitmap.Height, 1, 1, nil);
-
-  SetBkColor(Bitmap.Canvas.Handle, ColorToRgb(vMasks[0]));
-  BitBlt(BmpMask.Canvas.Handle, 0, 0, Bitmap.Width, Bitmap.Height, Bitmap.Canvas.Handle, 0, 0, SRCCOPY);
-
-  for i := 1 to Length(vMasks) - 1 do
-  begin
-    SetBkColor(Bitmap.Canvas.Handle, ColorToRgb(vMasks[i]));
-    BitBlt(BmpMask.Canvas.Handle, 0, 0, Bitmap.Width, Bitmap.Height, Bitmap.Canvas.Handle, 0, 0, SRCPAINT);
-  end;
-
-  BmpOutLine := TBitmap.Create;
-  BmpOutLine.Handle := CreateBitmap(Bitmap.Width, Bitmap.Height, 1, 1, nil);
-
-  BitBlt(BmpOutLine.Canvas.Handle, -2, -2, Bitmap.Width, Bitmap.Height, BmpMask.Canvas.Handle, 0, 0, SRCPAINT);
-  BitBlt(BmpOutLine.Canvas.Handle, 0, -2, Bitmap.Width, Bitmap.Height, BmpMask.Canvas.Handle, 0, 0, SRCPAINT);
-  BitBlt(BmpOutLine.Canvas.Handle, +2, -2, Bitmap.Width, Bitmap.Height, BmpMask.Canvas.Handle, 0, 0, SRCPAINT);
-  BitBlt(BmpOutLine.Canvas.Handle, +2, 0, Bitmap.Width, Bitmap.Height, BmpMask.Canvas.Handle, 0, 0, SRCPAINT);
-  BitBlt(BmpOutLine.Canvas.Handle, +2, +2, Bitmap.Width, Bitmap.Height, BmpMask.Canvas.Handle, 0, 0, SRCPAINT);
-  BitBlt(BmpOutLine.Canvas.Handle, 0, +2, Bitmap.Width, Bitmap.Height, BmpMask.Canvas.Handle, 0, 0, SRCPAINT);
-  BitBlt(BmpOutLine.Canvas.Handle, -2, +2, Bitmap.Width, Bitmap.Height, BmpMask.Canvas.Handle, 0, 0, SRCPAINT);
-  BitBlt(BmpOutLine.Canvas.Handle, -2, 0, Bitmap.Width, Bitmap.Height, BmpMask.Canvas.Handle, 0, 0, SRCPAINT);
-  BitBlt(BmpOutLine.Canvas.Handle, 0, 0, Bitmap.Width, Bitmap.Height, BmpMask.Canvas.Handle, 0, 0, SRCINVERT);
-
-  SetTextColor(Canvas.Handle, ColorToRgb(clWhite));
-  SetBkColor(Canvas.Handle, ColorToRgb(vColor));
-  BitBlt(Canvas.Handle, vLeft, vTop, Bitmap.Width, Bitmap.Height, BmpOutLine.Canvas.Handle, 0, 0, SRCAND);
-  BmpOutLine.Free;
-  BmpMask.Free;
 end;
 
 procedure CorrectRect(var vRect: TRect);
@@ -505,17 +408,6 @@ begin
   inherited;
 end;
 
-procedure TLayouts.CombineRegion(var Rgn: HRGN);
-var
-  i: Integer;
-begin
-  inherited;
-  for i := 0 to FLayoutList.Count - 1 do
-  begin
-    FLayoutList[i].CombineRegion(Rgn);
-  end;
-end;
-
 constructor TLayouts.Create(AOwner: TComponent);
 begin
   inherited;
@@ -525,10 +417,10 @@ begin
   begin
     FName := 'Top';
   end;
-  with TLayout.Create(Self) do
+  {with TLayout.Create(Self) do
   begin
     FName := 'Bottom';
-  end;
+  end;}
 end;
 
 destructor TLayouts.Destroy;
@@ -573,27 +465,6 @@ begin
   end;
 end;
 
-procedure TLayouts.LoadFromStream(Stream: TStream);
-var
-  aReader: TReader;
-begin
-  if Board <> nil then
-  begin
-    Board.NextElement := nil;
-    Board.DesignElement := nil;
-  end;
-  Clear;
-  if Stream <> nil then
-  begin
-    aReader := TBoardReader.Create(Stream, 4096);
-    aReader.BeginReferences;
-    aReader.ReadComponent(self);
-    aReader.EndReferences;
-    aReader.Free;
-  end;
-  Refresh;
-end;
-
 procedure TLayouts.Paint(vCanvas: TCanvas);
 var
   i: Integer;
@@ -609,11 +480,11 @@ procedure TLayouts.PaintBackground(vCanvas: TCanvas);
 var
   i: Integer;
 begin
+  inherited;
   for i := 0 to FLayoutList.Count - 1 do
   begin
     FLayoutList[i].PaintBackground(vCanvas);
   end;
-  inherited;
 end;
 
 procedure TLayouts.ReadBoards(Reader: TReader);
@@ -654,15 +525,6 @@ begin
   end;
 end;
 
-procedure TLayouts.SaveToStream(Stream: TStream);
-var
-  aWriter: TWriter;
-begin
-  aWriter := TBoardWriter.Create(Stream, 4096);
-  aWriter.WriteComponent(self);
-  aWriter.Free;
-end;
-
 procedure TLayouts.WriteBoards(Writer: TWriter);
 var
   i: Integer;
@@ -689,31 +551,21 @@ end;
 
 { TCustomBoard }
 
-procedure TCustomBoard.AddHaftList(vCanvas: TCanvas);
-begin
-  if not HasHaft then
-  begin
-    if DesignElement <> nil then
-      DesignElement.PaintHaftList(vCanvas);
-    HasHaft := True;
-  end;
-end;
-
 procedure TCustomBoard.Change;
 begin
-
 end;
 
 constructor TCustomBoard.Create(ABoard: TComponent);
 begin
   inherited;
-  ControlStyle := ControlStyle + [csOpaque];
+  //ControlStyle := ControlStyle + [csOpaque];
   DoubleBuffered := False;
   FLayouts := TLayouts.Create(Self);
   FLayouts.Init;
   FCurrentLayout := FLayouts[0];
   Width := 100;
   Height := 100;
+  Color := clWindow;
   NextElement := TRectangleElement;
 end;
 
@@ -786,29 +638,19 @@ end;
 
 procedure TCustomBoard.Paint;
 begin
+  inherited;
+  Canvas.Brush.Color := Color;
+  Canvas.Brush.Style := bsSolid;
+  Canvas.FillRect(ClientRect);
   //aRect := Canvas.ClipRect;
   Canvas.Brush.Color := clWindow;
   //Canvas.FillRect(ClientRect);
-  RemoveHaftList(Canvas);
   FLayouts.PaintBackground(Canvas);
   FLayouts.Paint(Canvas);
-  //FLayouts.ExcludeClipRect(Canvas);
-  AddHaftList(Canvas);
-end;
-
-procedure TCustomBoard.RemoveHaftList(vCanvas: TCanvas);
-begin
-  if HasHaft then
-  begin
-    if DesignElement <> nil then
-      DesignElement.PaintHaftList(vCanvas);
-    HasHaft := False;
-  end;
 end;
 
 procedure TCustomBoard.Reset;
 begin
-
 end;
 
 procedure TCustomBoard.Resize;
@@ -854,7 +696,6 @@ end;
 
 procedure TElement.CreateHaftList;
 begin
-  inherited;
 end;
 
 function TElement.HitTest(X, Y: Integer): Boolean;
@@ -872,6 +713,7 @@ end;
 procedure TElement.Modify(Shift: TShiftState; X, Y: Integer);
 begin
   Move(X - FDesignX, Y - FDesignY);
+  Modifing;
 end;
 
 procedure TElement.MouseMove(Shift: TShiftState; X, Y: Integer);
@@ -908,6 +750,7 @@ end;
 
 procedure TElement.Move(DX, DY: Integer);
 begin
+
 end;
 
 procedure TElement.Paint(vCanvas: TCanvas; vRect: TRect);
@@ -923,12 +766,7 @@ end;
 procedure TElement.PaintHaftList(vCanvas: TCanvas);
 var
   i: Integer;
-  NewPen, OldPen: HPEN;
-  OldRop2: Integer;
 begin
-  OldRop2 := SetROP2(vCanvas.Handle, R2_NOT);
-  NewPen := CreatePen(BS_SOLID, 1, ColorToRgb(clBtnShadow));
-  OldPen := SelectObject(vCanvas.Handle, NewPen);
   CreateHaftList;
   inherited;
   vCanvas.Brush.Color := clBlack;
@@ -936,9 +774,6 @@ begin
   begin
     PaintHaft(vCanvas, FHaftList[i]);
   end;
-  SelectObject(vCanvas.Handle, OldPen);
-  DeleteObject(NewPen);
-  SetROP2(vCanvas.Handle, OldRop2);
 end;
 
 procedure TElement.Refresh;
@@ -1106,15 +941,9 @@ begin
     Container.Cursor := crDefault;
 end;
 
-function TOblongElement.CreateRegion: HRGN;
-begin
-  Result := CreateRectRgn(Left, Top, Right, Bottom);
-end;
-
 procedure TOblongElement.BeginModify;
 begin
   inherited;
-
 end;
 
 procedure TOblongElement.EndModify;
@@ -1146,6 +975,7 @@ begin
   for i := 0 to ElementList.Count - 1 do
   begin
     ElementList[i].Paint(vCanvas, BoundRect);
+    ElementList[i].PaintHaftList(vCanvas)
   end;
 end;
 
@@ -1195,17 +1025,7 @@ procedure TContainer.InvalidateRect(const vRect: TRect);
 begin
   if Board <> nil then
   begin
-    Windows.InvalidateRect(Board.Handle, @vRect, False);
-  end;
-end;
-
-procedure TContainer.CombineRegion(var Rgn: HRGN);
-var
-  i: Integer;
-begin
-  for i := 0 to ElementList.Count - 1 do
-  begin
-    ElementList[i].CombineRegion(Rgn);
+    InvalidateFrame(Board.Handle, @vRect, False, 0);
   end;
 end;
 
@@ -1213,17 +1033,12 @@ procedure TCustomBoard.SetDesignElement(const Value: TElement);
 begin
   if FDesignElement <> Value then
   begin
-    if FDesignElement <> nil then
-      RemoveHaftList(Canvas);
     FDesignElement := Value;
-    if FDesignElement <> nil then
-      AddHaftList(Canvas);
   end;
 end;
 
 procedure TContainer.PaintBackground(vCanvas: TCanvas);
 begin
-
 end;
 
 procedure TContainer.ReadElement(Reader: TReader);
@@ -1343,15 +1158,8 @@ begin
 end;
 
 procedure TElement.Invalidate;
-var
-  aRgn: HRGN;
-  aRect: TRect;
 begin
-  aRgn := CreateRegion;
-  GetRgnBox(aRgn, aRect);
-  DeleteObject(aRgn);
-  InflateRect(aRect, 3, 3);
-  Container.InvalidateRect(aRect);
+  Container.Refresh;
 end;
 
 function TElement.PtInHaft(X, Y: Integer; out vHaftIndex: Integer): Boolean;
@@ -1388,20 +1196,6 @@ begin
   Result := PtInHaft(X, Y, i);
 end;
 
-procedure TElement.CombineRegion(var Rgn: HRGN);
-var
-  aRgn: HRGN;
-begin
-  aRgn := CreateRegion;
-  CombineRgn(Rgn, Rgn, aRgn, RGN_DIFF);
-  DeleteObject(aRgn);
-end;
-
-function TElement.CreateRegion: HRGN;
-begin
-  Result := NULLREGION;
-end;
-
 procedure TElement.SetModified(const Value: Boolean);
 begin
   if Value then
@@ -1428,6 +1222,11 @@ begin
   Invalidate;
 end;
 
+procedure TElement.Modifing;
+begin
+  Invalidate;
+end;
+
 procedure TElement.EndModify;
 begin
   Change;
@@ -1438,7 +1237,7 @@ constructor TElement.Create(AOwner: TComponent);
 begin
   inherited Create(nil);
   FStyle := [trtSnap, trtMove, trtSize];
-  Container := AOwner as TContainer;
+  Container := AOwner as TContainer; //do not use FContainer
   if Container.Board <> nil then
     if Container.Board.NextElement = nil then
     begin
@@ -1474,6 +1273,11 @@ end;
 procedure TElement.Change;
 begin
   Container.Change;
+end;
+
+function TElement.GetClientRect: TRect;
+begin
+  Result := Rect(0, 0, 0, 0);
 end;
 
 function TElement.GetModified: Boolean;
@@ -1528,21 +1332,8 @@ begin
   FHaftList := Copy(Polygon, 0, Length(Polygon));
 end;
 
-function TPolygonElement.CreateRegion: HRGN;
-begin
-  Result := CreatePolygonRgn((@Polygon[0])^, Length(Polygon), ALTERNATE);
-end;
-
 function TPolygonElement.HitTest(X, Y: Integer): Boolean;
-var
-  rgn: HRGN;
 begin
-  rgn := CreateRegion;
-  if PtInRegion(rgn, X, Y) then
-    Result := True
-  else
-    Result := False;
-  DeleteObject(rgn);
 end;
 
 procedure TPolygonElement.AfterCreate(X, Y: Integer; Dummy: Boolean);
@@ -1661,12 +1452,6 @@ begin
   end;
 end;
 
-function THeavyElement.CreateRegion: HRGN;
-begin
-  with DesignRect do
-    Result := CreateRectRgn(Left, Top, Right, Bottom);
-end;
-
 procedure THeavyElement.DoPaint(vCanvas: TCanvas; vRect: TRect);
 begin
 
@@ -1741,24 +1526,6 @@ begin
   Container.Cursor := crHandPoint;
 end;
 
-{ TBoardReader }
-
-function TBoardReader.Error(const Message: String): Boolean;
-begin
-  Result := True;
-end;
-
-{ TCrown2Element }
-
-procedure TPyorrheaElement.DoPaint(vCanvas: TCanvas; vRect: TRect);
-begin
-  inherited;
-  with DesignRect do
-  begin
-    //    OutLineBitmap(vCanvas, aBitmap, [clRed], clRed, Left, Top);
-  end;
-end;
-
 { TLayout }
 
 constructor TLayout.Create(AOwner: TComponent);
@@ -1775,7 +1542,7 @@ end;
 procedure TLayout.ExcludeClipRect(vCanvas: TCanvas);
 begin
   with BoundRect do
-    Windows.ExcludeClipRect(vCanvas.Handle, Left, Top, Right, Bottom);
+    LCLIntf.ExcludeClipRect(vCanvas.Handle, Left, Top, Right, Bottom);
   inherited;
 end;
 
@@ -1792,9 +1559,6 @@ end;
 procedure TLayout.PaintBackground(vCanvas: TCanvas);
 begin
   inherited;
-  vCanvas.Brush.Color := FLayouts.Background;
-  vCanvas.Brush.Style := bsSolid;
-  vCanvas.FillRect(Board.ClientRect);
 end;
 
 { TLayout }
@@ -1805,30 +1569,12 @@ begin
   FBoundRect := Value;
 end;
 
-{ TCrownElement }
-
-procedure TCrownElement.DoPaint(vCanvas: TCanvas; vRect: TRect);
-var
-  aBitmap: TBitmap;
-begin
-  inherited;
-  with DesignRect do
-  begin
-    aBitmap := TBitmap.Create;
-    OutLineBitmap(vCanvas, aBitmap, [clLime, clBlue, clFuchsia], clBlue, Left, Top);
-    aBitmap.Free;
-  end;
-end;
-
 { TSingleBoard }
 
 initialization
   ElementClasses := TList.Create;
   RegisterElements('', [TEllipseElement]);
   RegisterElements('', [TRectangleElement]);
-  RegisterElements('', [TCrownElement]);
-  RegisterElements('', [TPyorrheaElement]);
-
 finalization
   FreeAndNil(ElementClasses);
 end.
