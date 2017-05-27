@@ -13,28 +13,18 @@ uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
   LCLintf, LCLType, ExtCtrls,
   Dialogs, EditorEngine, EditorClasses, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit,
-  DesignerBoard;
+  DesignerBoard, mneBoardForms;
 
 type
-
-  { TBoardPanel }
-
-  TBoardPanel = class(TPanel)
-  protected
-  public
-    Board: TDesignerBoard;
-    constructor Create(TheOwner: TComponent); override;
-    destructor Destroy; override;
-  end;
 
   { TBoardFile }
 
   TBoardFile = class(TEditorFile, IFileEditor)
   private
-    FContents: TBoardPanel;
-    function GetContents: TBoardPanel;
+    FContents: TBoardForm;
+    function GetContents: TBoardForm;
   protected
-    property Contents: TBoardPanel read GetContents;
+    property Contents: TBoardForm read GetContents;
     function GetControl: TWinControl; override;
     function GetIsReadonly: Boolean; override;
     procedure DoLoad(FileName: string); override;
@@ -55,31 +45,13 @@ type
 
 implementation
 
-{ TBoardPanel }
-
-constructor TBoardPanel.Create(TheOwner: TComponent);
-begin
-  inherited Create(TheOwner);
-  Caption := '';
-  Board := TDesignerBoard.Create(Self);
-  Board.Parent := Self;
-  Board.Align := alClient;
-  //Board.Center := True;
-  BevelOuter := bvNone;
-end;
-
-destructor TBoardPanel.Destroy;
-begin
-  inherited Destroy;
-end;
-
 { TBoardFile }
 
-function TBoardFile.GetContents: TBoardPanel;
+function TBoardFile.GetContents: TBoardForm;
 begin
   if FContents = nil then
   begin
-    FContents := TBoardPanel.Create(Engine.Container);
+    FContents := TBoardForm.Create(Engine.Container);
     FContents.Parent := Engine.Container;
     FContents.Align := alClient;
   end;
