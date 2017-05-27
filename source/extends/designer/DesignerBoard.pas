@@ -12,24 +12,40 @@ interface
 uses
   Messages, SysUtils, Classes, Controls, LCLIntf,
   Forms, Graphics, Contnrs, ImgList,
-  StdCtrls, ExtCtrls;
+  StdCtrls, ExtCtrls,
+  mnClasses;
 
 const
   OblongCursors: array[0..7] of TCursor = (crSizeNWSE, crSizeNS, crSizeNESW, crSizeWE, crSizeNWSE, crSizeNS, crSizeNESW, crSizeWE);
   cHaftSize = 4;
 
 type
-  //THafts = ()
-
   TPointArray = array of TPoint;
-
-  TElementStyle = set of (trtSnap, trtMove, trtSize);
 
   TLayout = class;
   TLayouts = class;
   TElement = class;
-  TElementList = class;
+  TElements = class;
   TContainer = class;
+
+  { THaft }
+
+  THaft = class(TObject)
+  private
+    function PtToHaftRect(P: TPoint): TRect;
+  protected
+    Point: TPoint;
+    procedure Paint(vCanvas: TCanvas); virtual;
+    function HitTest(P: TPoint): Boolean; virtual;
+  end;
+
+  THafts = class(specialize GItems<THaft>)
+  private
+  public
+    function Add(x, y: Integer): THaft;
+    procedure Paint(vCanvas: TCanvas); virtual;
+    function HitTest(P: TPoint; out vHaftIndex: Integer): Boolean;
+  end;
 
   { TElement }
 
@@ -39,8 +55,7 @@ type
     FDesignX: Integer;
     FDesignY: Integer;
     FColor: TColor;
-    FStyle: TElementStyle;
-    FHaftList: TPointArray;
+    FHafts: THafts;
     FHaftIndex: Integer;
     FContainer: TContainer;
     FModified: Integer;
@@ -59,6 +74,7 @@ type
     procedure EndModify; virtual;
     procedure Change; virtual;
     function GetClientRect: TRect; virtual;
+    procedure CreateHaftList; virtual;
   public
     constructor Create(AOwner: TComponent); overload; override;
     constructor CreateBy(AOwner: TComponent; X: Integer = 0; Y: Integer = 0); overload; virtual;
@@ -77,23 +93,19 @@ type
     procedure SetCursor(Shift: TShiftState; X, Y: Integer); virtual;
     procedure Modify(Shift: TShiftState; X, Y: Integer); virtual;
     procedure Paint(vCanvas: TCanvas; vRect: TRect); virtual;
-    procedure PaintHaftList(vCanvas: TCanvas); virtual;
-    procedure PaintHaft(vCanvas: TCanvas; P: TPoint);
-    function PtToHaftRect(P: TPoint): TRect;
-    procedure CreateHaftList; virtual;
     procedure Move(DX, DY: Integer); virtual;
     function HitTest(X, Y: Integer): Boolean; virtual;
-    property Style: TElementStyle read FStyle write FStyle;
     property Color: TColor read FColor write FColor;
     property Selected: Boolean read GetSelected write SetSelected;
     property DesignX: Integer read FDesignX;
     property DesignY: Integer read FDesignY;
     property Container: TContainer read FContainer write SetContainer;
+    property Hafts: THafts read FHafts;
   end;
 
   TElementClass = class of TElement;
 
-  TElementList = class(TObjectList)
+  TElements = class(TObjectList)
   private
     function GetItem(Index: Integer): TElement;
     procedure SetItem(Index: Integer; const Value: TElement);
@@ -106,7 +118,7 @@ type
 
   TContainer = class(TComponent)
   private
-    FElementList: TElementList;
+    FElementList: TElements;
     FBoundRect: TRect;
     function GetCursor: TCursor;
     procedure SetCursor(const Value: TCursor);
@@ -129,14 +141,10 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     procedure Init; virtual;
-    procedure LoadFromStream(Stream: TStream); virtual;
-    procedure SaveToStream(Stream: TStream); virtual;
-    procedure LoadFromFile(vFileName: String); virtual;
-    procedure SaveToFile(vFileName: String); virtual;
     function HitTest(X, Y: Integer; out vElement: TElement): Boolean; virtual;
     procedure Paint(vCanvas: TCanvas); virtual;
     procedure PaintBackground(vCanvas: TCanvas); virtual;
-    property ElementList: TElementList read FElementList;
+    property ElementList: TElements read FElementList;
     property BoundRect: TRect read FBoundRect write SetBoundRect;
     property Cursor: TCursor read GetCursor write SetCursor;
     property Width: Integer read GetWidth;
@@ -188,8 +196,6 @@ type
     destructor Destroy; override;
     procedure Clear; override;
     procedure Assign(Source: TPersistent); override;
-    procedure LoadFromFile(vFileName: String); override;
-    procedure SaveToFile(vFileName: String); override;
     function HitTest(X, Y: Integer; out vElement: TElement): Boolean; override;
     procedure Paint(vCanvas: TCanvas); override;
     procedure PaintBackground(vCanvas: TCanvas); override;
@@ -258,10 +264,8 @@ type
   public
     procedure AfterCreate(X, Y: Integer; Dummy: Boolean); override;
     procedure Move(DX, DY: Integer); override;
-    function HitTest(X, Y: Integer): Boolean; override;
     procedure Paint(vCanvas: TCanvas; vRect: TRect); override;
     procedure CreateHaftList; override;
-    procedure PaintHaftList(vCanvas: TCanvas); override;
   end;
 
   TCariesElement = class(TPolygonElement)
@@ -283,7 +287,6 @@ type
   public
     procedure Loaded; override;
     procedure CreateHaftList; override;
-    function PtInHaft(X, Y: Integer; out vHaftIndex: Integer): Boolean; override;
     procedure SetCursor(Shift: TShiftState; X, Y: Integer); override;
     function HitTest(X, Y: Integer): Boolean; override;
 
@@ -334,7 +337,6 @@ type
   public
     procedure Move(DX, DY: Integer); override;
     procedure CreateHaftList; override;
-    function PtInHaft(X, Y: Integer; out vHaftIndex: Integer): Boolean; override;
     procedure SetCursor(Shift: TShiftState; X, Y: Integer); override;
     function HitTest(X, Y: Integer): Boolean; override;
     procedure EndModify; override;
@@ -388,6 +390,62 @@ begin
     ElementClasses.Add(TElements[i]);
     RegisterClass(TElements[i]);
   end;
+end;
+
+{ THafts }
+
+function THafts.Add(x, y: Integer): THaft;
+begin
+  Result := THaft.Create;
+  Result.Point.x := x;
+  Result.Point.y := y;
+  inherited Add(Result);
+end;
+
+procedure THafts.Paint(vCanvas: TCanvas);
+var
+  i: Integer;
+begin
+  inherited;
+  vCanvas.Brush.Color := clBlack;
+  for i := 0 to Count - 1 do
+  begin
+    Items[i].Paint(vCanvas);
+  end;
+end;
+
+function THafts.HitTest(P: TPoint; out vHaftIndex: Integer): Boolean;
+var
+  i: Integer;
+begin
+  vHaftIndex := -1;
+  Result := False;
+  for i := 0 to Count - 1 do
+  begin
+    if Items[i].HitTest(P) then
+    begin
+      vHaftIndex := i;
+      Result := True;
+      break;
+    end;
+  end;
+end;
+
+{ THaft }
+
+procedure THaft.Paint(vCanvas: TCanvas);
+begin
+  vCanvas.Rectangle(PtToHaftRect(Point));
+end;
+
+function THaft.HitTest(P: TPoint): Boolean;
+begin
+  Result := PtInRect(PtToHaftRect(Point), P);
+end;
+
+function THaft.PtToHaftRect(P: TPoint): TRect;
+begin
+  Result := Rect(P.X - cHaftSize, P.Y - cHaftSize, P.X + cHaftSize, P.Y + cHaftSize);
 end;
 
 { TLayouts }
@@ -453,18 +511,6 @@ begin
     end;
 end;
 
-procedure TLayouts.LoadFromFile(vFileName: String);
-var
-  aFile: TFileStream;
-begin
-  aFile := TFileStream.Create(vFileName, fmOpenRead);
-  try
-    LoadFromStream(aFile);
-  finally
-    aFile.Free;
-  end;
-end;
-
 procedure TLayouts.Paint(vCanvas: TCanvas);
 var
   i: Integer;
@@ -513,18 +559,6 @@ begin
   FLayoutList[vIndex] := AValue;
 end;
 
-procedure TLayouts.SaveToFile(vFileName: String);
-var
-  aFile: TFileStream;
-begin
-  aFile := TFileStream.Create(vFileName, fmCreate);
-  try
-    SaveToStream(aFile);
-  finally
-    aFile.Free;
-  end;
-end;
-
 procedure TLayouts.WriteBoards(Writer: TWriter);
 var
   i: Integer;
@@ -558,7 +592,7 @@ end;
 constructor TCustomBoard.Create(ABoard: TComponent);
 begin
   inherited;
-  //ControlStyle := ControlStyle + [csOpaque];
+  ControlStyle := ControlStyle + [csOpaque];
   DoubleBuffered := False;
   FLayouts := TLayouts.Create(Self);
   FLayouts.Init;
@@ -577,13 +611,13 @@ end;
 procedure TCustomBoard.DoEnter;
 begin
   inherited;
-  //PaintHaftList;
+  Invalidate;
 end;
 
 procedure TCustomBoard.DoExit;
 begin
   inherited;
-  //  PaintHaftList;
+  Invalidate;
 end;
 
 procedure TCustomBoard.Loaded;
@@ -600,7 +634,7 @@ begin
   if NextElement <> nil then
   begin
     DesignElement := NextElement.CreateBy(CurrentLayout, X, Y);
-    //NextElement := nil;
+    NextElement := nil;
   end
   else if (DesignElement = nil) or not ((DesignElement.Captured) or (DesignElement.PtInHaft(X, Y))) then
   begin
@@ -611,8 +645,6 @@ begin
     DesignElement.MouseDown(Button, Shift, X, Y);
 end;
 
-//BaseMouseMove
-
 procedure TCustomBoard.MouseMove(Shift: TShiftState; X, Y: Integer);
 var
   aElement: TElement;
@@ -621,6 +653,7 @@ begin
   aElement := DesignElement;
   if (aElement = nil) or not ((aElement.Captured) or (aElement.PtInHaft(X, Y))) then
     CurrentLayout.HitTest(X, Y, aElement);
+
   if aElement <> nil then
     aElement.MouseMove(Shift, X, Y)
   else
@@ -642,9 +675,7 @@ begin
   Canvas.Brush.Color := Color;
   Canvas.Brush.Style := bsSolid;
   Canvas.FillRect(ClientRect);
-  //aRect := Canvas.ClipRect;
   Canvas.Brush.Color := clWindow;
-  //Canvas.FillRect(ClientRect);
   FLayouts.PaintBackground(Canvas);
   FLayouts.Paint(Canvas);
 end;
@@ -669,19 +700,18 @@ begin
   Refresh;
 end;
 
-{ TElementList }
+{ TElements }
 
-function TElementList.GetItem(Index: Integer): TElement;
+function TElements.GetItem(Index: Integer): TElement;
 begin
   Result := TElement(inherited Items[Index]);
 end;
 
-procedure TElementList.MouseMove(Shift: TShiftState; X, Y: Integer);
+procedure TElements.MouseMove(Shift: TShiftState; X, Y: Integer);
 begin
-
 end;
 
-procedure TElementList.SetItem(Index: Integer; const Value: TElement);
+procedure TElements.SetItem(Index: Integer; const Value: TElement);
 begin
   inherited Items[Index] := Value;
 end;
@@ -758,24 +788,6 @@ begin
 
 end;
 
-procedure TElement.PaintHaft(vCanvas: TCanvas; P: TPoint);
-begin
-  vCanvas.Rectangle(PtToHaftRect(P));
-end;
-
-procedure TElement.PaintHaftList(vCanvas: TCanvas);
-var
-  i: Integer;
-begin
-  CreateHaftList;
-  inherited;
-  vCanvas.Brush.Color := clBlack;
-  for i := 0 to Length(FHaftList) - 1 do
-  begin
-    PaintHaft(vCanvas, FHaftList[i]);
-  end;
-end;
-
 procedure TElement.Refresh;
 begin
   Container.Refresh;
@@ -807,23 +819,18 @@ end;
 procedure TOblongElement.CreateHaftList;
 begin
   inherited;
-  Setlength(FHaftList, 8);
-  FHaftList[0].X := Left;
-  FHaftList[0].Y := Top;
-  FHaftList[1].X := Left + Width div 2;
-  FHaftList[1].Y := Top;
-  FHaftList[2].X := Right;
-  FHaftList[2].Y := Top;
-  FHaftList[3].X := Right;
-  FHaftList[3].Y := Top + Height div 2;
-  FHaftList[4].X := Right;
-  FHaftList[4].Y := Bottom;
-  FHaftList[5].X := Left + Width div 2;
-  FHaftList[5].Y := Bottom;
-  FHaftList[6].X := Left;
-  FHaftList[6].Y := Bottom;
-  FHaftList[7].X := Left;
-  FHaftList[7].Y := Top + Height div 2;
+  FHafts.Clear;
+  with FHafts do
+  begin
+    Add(Left, Top);
+    Add(Left + Width div 2, Top);
+    Add(Right, Top);
+    Add(Right, Top + Height div 2);
+    Add(Right, Bottom);
+    Add(Left + Width div 2, Bottom);
+    Add(Left, Bottom);
+    Add(Left, Top + Height div 2);
+  end;
 end;
 
 function TOblongElement.HitTest(X, Y: Integer): Boolean;
@@ -865,7 +872,6 @@ end;
 procedure TOblongElement.Move(DX, DY: Integer);
 begin
   inherited;
-  Invalidate;
   case FHaftIndex of
     -1:
     begin
@@ -909,26 +915,6 @@ begin
     end;
   end;
   Invalidate;
-end;
-
-function TOblongElement.PtInHaft(X, Y: Integer; out vHaftIndex: Integer): Boolean;
-var
-  i: Integer;
-  aRect: TRect;
-begin
-  vHaftIndex := -1;
-  Result := False;
-  CreateHaftList;
-  for i := 0 to Length(FHaftList) - 1 do
-  begin
-    aRect := PtToHaftRect(FHaftList[i]);
-    if PtInRect(aRect, Point(X, Y)) then
-    begin
-      vHaftIndex := i;
-      Result := True;
-      break;
-    end;
-  end;
 end;
 
 procedure TOblongElement.SetCursor(Shift: TShiftState; X, Y: Integer);
@@ -975,7 +961,7 @@ begin
   for i := 0 to ElementList.Count - 1 do
   begin
     ElementList[i].Paint(vCanvas, BoundRect);
-    ElementList[i].PaintHaftList(vCanvas)
+    ElementList[i].Hafts.Paint(vCanvas);
   end;
 end;
 
@@ -1073,7 +1059,7 @@ end;
 constructor TContainer.Create(AOwner: TComponent);
 begin
   inherited Create(nil);
-  FElementList := TElementList.Create;
+  FElementList := TElements.Create;
   if (AOwner <> nil) then
   begin
     if (AOwner is TCustomBoard) then
@@ -1114,27 +1100,9 @@ begin
 
 end;
 
-procedure TContainer.LoadFromStream(Stream: TStream);
-begin
-
-end;
-
-procedure TContainer.SaveToStream(Stream: TStream);
-begin
-
-end;
-
 function TContainer.GetLayoutByIndex(vIndex: Integer): TLayout;
 begin
   Result := nil;
-end;
-
-procedure TContainer.LoadFromFile(vFileName: String);
-begin
-end;
-
-procedure TContainer.SaveToFile(vFileName: String);
-begin
 end;
 
 procedure TContainer.Init;
@@ -1164,13 +1132,7 @@ end;
 
 function TElement.PtInHaft(X, Y: Integer; out vHaftIndex: Integer): Boolean;
 begin
-  Result := False;
-  vHaftIndex := -1;
-end;
-
-function TElement.PtToHaftRect(P: TPoint): TRect;
-begin
-  Result := Rect(P.X - cHaftSize, P.Y - cHaftSize, P.X + cHaftSize, P.Y + cHaftSize);
+  Result := Hafts.HitTest(Point(x, y), vHaftIndex);
 end;
 
 function TElement.GetSelected: Boolean;
@@ -1224,6 +1186,7 @@ end;
 
 procedure TElement.Modifing;
 begin
+  CreateHaftList;
   Invalidate;
 end;
 
@@ -1236,7 +1199,7 @@ end;
 constructor TElement.Create(AOwner: TComponent);
 begin
   inherited Create(nil);
-  FStyle := [trtSnap, trtMove, trtSize];
+  FHafts := THafts.Create;
   Container := AOwner as TContainer; //do not use FContainer
   if Container.Board <> nil then
     if Container.Board.NextElement = nil then
@@ -1267,11 +1230,13 @@ end;
 
 destructor TElement.Destroy;
 begin
+  FreeAndNil(FHafts);
   inherited;
 end;
 
 procedure TElement.Change;
 begin
+  CreateHaftList;
   Container.Change;
 end;
 
@@ -1327,13 +1292,14 @@ end;
 { TPolygonElement }
 
 procedure TPolygonElement.CreateHaftList;
+var
+  i: Integer;
 begin
   inherited;
-  FHaftList := Copy(Polygon, 0, Length(Polygon));
-end;
-
-function TPolygonElement.HitTest(X, Y: Integer): Boolean;
-begin
+  for i := 0 to Length(Polygon) -1 do
+  begin
+    FHafts.Add(Polygon[i].x, Polygon[i].y);
+  end
 end;
 
 procedure TPolygonElement.AfterCreate(X, Y: Integer; Dummy: Boolean);
@@ -1348,7 +1314,6 @@ var
   i: Integer;
 begin
   inherited;
-  Invalidate;
   for i := 0 to Length(Polygon) - 1 do
   begin
     Inc(Polygon[i].X, DX);
@@ -1358,12 +1323,6 @@ begin
 end;
 
 procedure TPolygonElement.Paint(vCanvas: TCanvas; vRect: TRect);
-begin
-  inherited;
-
-end;
-
-procedure TPolygonElement.PaintHaftList(vCanvas: TCanvas);
 begin
   inherited;
 end;
@@ -1430,25 +1389,16 @@ end;
 procedure THeavyElement.CreateHaftList;
 begin
   inherited;
-  Setlength(FHaftList, 8);
   with DesignRect do
   begin
-    FHaftList[0].X := Left;
-    FHaftList[0].Y := Top;
-    FHaftList[1].X := Left + (Right - Left) div 2;
-    FHaftList[1].Y := Top;
-    FHaftList[2].X := Right;
-    FHaftList[2].Y := Top;
-    FHaftList[3].X := Right;
-    FHaftList[3].Y := Top + (Bottom - Top) div 2;
-    FHaftList[4].X := Right;
-    FHaftList[4].Y := Bottom;
-    FHaftList[5].X := Left + (Right - Left) div 2;
-    FHaftList[5].Y := Bottom;
-    FHaftList[6].X := Left;
-    FHaftList[6].Y := Bottom;
-    FHaftList[7].X := Left;
-    FHaftList[7].Y := Top + (Bottom - Top) div 2;
+    FHafts.Add(Left, Top);
+    FHafts.Add(Left + (Right - Left) div 2, Top);
+    FHafts.Add(Right, Top);
+    FHafts.Add(Right, Top + (Bottom - Top) div 2);
+    FHafts.Add(Right, Bottom);
+    FHafts.Add(Left + (Right - Left) div 2, Bottom);
+    FHafts.Add(Left, Bottom);
+    FHafts.Add(Left, Top + (Bottom - Top) div 2);
   end;
 end;
 
@@ -1499,26 +1449,6 @@ begin
   end
   else
     DoPaint(vCanvas, vRect);
-end;
-
-function THeavyElement.PtInHaft(X, Y: Integer; out vHaftIndex: Integer): Boolean;
-var
-  i: Integer;
-  aRect: TRect;
-begin
-  vHaftIndex := -1;
-  Result := False;
-  CreateHaftList;
-  for i := 0 to Length(FHaftList) - 1 do
-  begin
-    aRect := PtToHaftRect(FHaftList[i]);
-    if PtInRect(aRect, Point(X, Y)) then
-    begin
-      vHaftIndex := i;
-      Result := True;
-      break;
-    end;
-  end;
 end;
 
 procedure THeavyElement.SetCursor(Shift: TShiftState; X, Y: Integer);
