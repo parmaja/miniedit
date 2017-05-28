@@ -220,6 +220,7 @@ type
   TEditorElements = class(specialize GNamedItems<TEditorElement>)
   private
   public
+    Images: TImageList; //temp for SelectList, todo
     function IndexOf(vName: string): Integer;
   end;
 

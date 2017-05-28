@@ -49,6 +49,8 @@ begin
       Caption := ACaption;
       FStyle := Style;
       Elements := vElements;
+      if Elements.Images <> nil then
+        ItemsList.SmallImages := Elements.Images;
       ShowItems(vName);
       Result := (ShowModal = mrOK) and (ItemsList.Selected <> nil);
       if Result then
@@ -67,6 +69,8 @@ begin
       Caption := ACaption;
       FStyle := Style;
       Elements := vElements;
+      if Elements.Images <> nil then
+        ItemsList.SmallImages := Elements.Images;
       ShowItems('');
       Result := (ShowModal = mrOK) and (ItemsList.Selected <> nil);
       if Result then

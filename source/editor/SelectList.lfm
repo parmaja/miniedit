@@ -11,7 +11,7 @@ object SelectListForm: TSelectListForm
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Position = poMainFormCenter
-  LCLVersion = '0.9.31'
+  LCLVersion = '1.9.0.0'
   object ItemsList: TListView
     Left = 3
     Height = 220
@@ -26,12 +26,11 @@ object SelectListForm: TSelectListForm
       item
         AutoSize = True
         Caption = 'Description'
-        Width = 329
+        Width = 75
       end>
     HideSelection = False
     ReadOnly = True
     RowSelect = True
-    SmallImages = EditorResource.SmallImages
     SortType = stText
     TabOrder = 0
     ViewStyle = vsReport
@@ -59,4 +58,4 @@ object SelectListForm: TSelectListForm
     ModalResult = 2
     TabOrder = 2
   end
-end
+end

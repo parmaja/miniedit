@@ -12,9 +12,9 @@ unit mneBoardForms;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Grids, ExtCtrls, StdCtrls,
-  FileUtil, LCLType, Graphics, Menus, Buttons, ComCtrls, EditorEngine, IniFiles,
-  MsgBox, ntvBoard;
+  Classes, SysUtils, Forms, Controls, Grids, ExtCtrls, StdCtrls, FileUtil,
+  LCLType, Graphics, Menus, Buttons, ComCtrls, EditorEngine, SelectList,
+  IniFiles, MsgBox, ntvBoard;
 
 type
 
@@ -22,16 +22,19 @@ type
 
   TBoardForm = class(TFrame, IEditorControl)
     DesignImages: TImageList;
+    ComponentsImages: TImageList;
     DesignToolBar: TToolBar;
     ToolButton1: TToolButton;
     RectBtn: TToolButton;
     PolygnBtn: TToolButton;
+    ToolButton2: TToolButton;
     ToolButton4: TToolButton;
     procedure CoolBar1Change(Sender: TObject);
     procedure DesignToolBarClick(Sender: TObject);
     procedure PolygnBtnClick(Sender: TObject);
     procedure RectBtnClick(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
+    procedure ToolButton2Click(Sender: TObject);
   private
     FOnChanged: TNotifyEvent;
   protected
@@ -61,7 +64,7 @@ end;
 
 procedure TBoardForm.PolygnBtnClick(Sender: TObject);
 begin
-  FBoard.NextElement := TPolygonElement;
+  FBoard.NextElement := TCircleElement;
 end;
 
 procedure TBoardForm.RectBtnClick(Sender: TObject);
@@ -72,6 +75,33 @@ end;
 procedure TBoardForm.ToolButton1Click(Sender: TObject);
 begin
   FBoard.NextElement := nil;
+end;
+
+procedure EnumFilesCallback(AObject: TObject; const FileName: string; Count, Level:Integer; IsDirectory: Boolean; var Resume: Boolean);
+var
+  Elements: TEditorElements;
+  Item: TEditorElement;
+begin
+  Elements := (AObject as TEditorElements);
+  Item := TEditorElement.Create;
+  Item.Name := ExtractFileName(FileName);
+  Item.Title := ExtractFileName(FileName);
+  Elements.Add(Item);
+end;
+
+procedure TBoardForm.ToolButton2Click(Sender: TObject);
+var
+  Elements: TEditorElements;
+  i: Integer;
+begin
+  Elements := TEditorElements.Create;
+  try
+    Elements.Images := ComponentsImages;
+    EnumFileList(Application.Location + 'components\', '*.png', '', @EnumFilesCallback, Elements, 1000, 1, true, false);
+    ShowSelectList('Components', Elements , [slfUseNameTitle], i);
+  finally
+    Elements.Free;
+  end;
 end;
 
 procedure TBoardForm.Changed;
