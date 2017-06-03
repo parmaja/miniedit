@@ -80,25 +80,30 @@ end;
 
 procedure EnumFilesCallback(AObject: TObject; const FileName: string; Count, Level:Integer; IsDirectory: Boolean; var Resume: Boolean);
 var
-  Elements: TEditorElements;
-  Item: TEditorElement;
+  Elements: TComponentElements;
+  Item: TComponentElement;
+  Path: string;
 begin
-  Elements := (AObject as TEditorElements);
-  Item := TEditorElement.Create;
-  Item.Name := FileName;
-  Item.Title := ExtractFileName(FileName);
+  Path := IncludeTrailingPathDelimiter(FileName);
+  Elements := (AObject as TComponentElements);
+  Item := TComponentElement.Create;
+  Item.Info.LoadFromFile(Path + 'component.properties');
+  Item.ImageFile := Path + Item.Info.Values['Image'];
+  Item.Name := Item.Info.Values['Name'];
+  Item.Title := Item.Info.Values['Title'];
   Elements.Add(Item);
 end;
 
 procedure TBoardForm.ToolButton2Click(Sender: TObject);
 var
-  Elements: TEditorElements;
+  Elements: TComponentElements;
   i: Integer;
 begin
-  Elements := TEditorElements.Create;
+  Elements := TComponentElements.Create;
   try
     EnumFileList(Application.Location + 'components\', '*.*', '', @EnumFilesCallback, Elements, 0, 1, true, [fftDir]);
-    ShowSelectComponent('Components', Elements , [slfUseNameTitle], i);
+    ShowSelectComponent('Components', Elements, i);
+    //FBoard.NextElement := TPortableNetworkGraphic;
   finally
     Elements.Free;
   end;
