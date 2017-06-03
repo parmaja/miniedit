@@ -220,7 +220,6 @@ type
   TEditorElements = class(specialize GNamedItems<TEditorElement>)
   private
   public
-    Images: TImageList; //temp for SelectList, todo
     function IndexOf(vName: string): Integer;
   end;
 
@@ -1222,8 +1221,9 @@ procedure EnumFiles(Folder, Filter: string; FileList: TStringList);
 type
   TFileFindTypes = set of (fftDir, fftFile);
 
-function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount, vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean; Types: TFileFindTypes = [fftFile]): Boolean;
-procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean);
+function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean; Types: TFileFindTypes = [fftFile]): Boolean;
+procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean);
+procedure EnumDirList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean);
 
 procedure EnumRunMode(vItems: TStrings);
 procedure EnumIndentMode(vItems: TStrings);
@@ -1492,7 +1492,7 @@ begin
           Engine.Session.CachedIdentifiers.Clear;
           aFiles := TStringList.Create;
           try
-            EnumFileList(Engine.Session.GetRoot, GetExtensions, Engine.Options.IgnoreNames, aFiles, 1000, 3, True, Engine.Session.Active);//TODO check the root dir if no project opened
+            EnumFileList(Engine.Session.GetRoot, GetExtensions, Engine.Options.IgnoreNames, aFiles, 1000, 3, Engine.Session.Active);//TODO check the root dir if no project opened
             r := aFiles.IndexOf(Engine.Files.Current.Name);
             if r >= 0 then
               aFiles.Delete(r);
@@ -2719,7 +2719,7 @@ begin
   FindClose(SearchRec);
 end;
 
-function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount, vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean; Types: TFileFindTypes): Boolean;
+function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean; Types: TFileFindTypes): Boolean;
 var
   Resume: Boolean;
   IgnoreList: TStringList;
@@ -2756,8 +2756,8 @@ var
       end;
     end;
 
-    if (vMaxLevel = 0) or (vLevel < vMaxLevel) then
-      if Resume and Recursive then
+    if ((vMaxLevel = 0) or (vLevel <= vMaxLevel)) or (fftDir in Types) then
+      if Resume then
         if FindFirst(Root + Path + '*', faDirectory, sr) = 0 then
         begin
           repeat
@@ -2773,11 +2773,13 @@ var
                   f := Root + IncludePathSeparator(Path) + sr.Name
                 else
                   f := IncludePathSeparator(Path) + sr.Name;
-                Callback(AObject, f, aCount, vLevel, True, Resume);
+                if fftDir in Types then
+                  Callback(AObject, f, aCount, vLevel, True, Resume);
                 if not Resume then
                   break;
               end;
-              DoFind(Root, IncludePathSeparator(Path + sr.Name), vLevel);
+              if (vMaxLevel = 0) or (vLevel < vMaxLevel) then
+                DoFind(Root, IncludePathSeparator(Path + sr.Name), vLevel);
             end;
           until (FindNext(sr) <> 0);
         end;
@@ -2813,9 +2815,14 @@ begin
   TStringList(AObject).Add(FileName);
 end;
 
-procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath, Recursive: Boolean);
+procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean);
 begin
-  EnumFileList(Root, Masks, Ignore, @EnumFileListStringsCallback, Strings, vMaxCount, vMaxLevel, ReturnFullPath, Recursive);
+  EnumFileList(Root, Masks, Ignore, @EnumFileListStringsCallback, Strings, vMaxCount, vMaxLevel, ReturnFullPath);
+end;
+
+procedure EnumDirList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean);
+begin
+  EnumFileList(Root, Masks, Ignore, @EnumFileListStringsCallback, Strings, vMaxCount, vMaxLevel, ReturnFullPath, [fftDir]);
 end;
 
 {$ifdef DEBUG}

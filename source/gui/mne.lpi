@@ -161,7 +161,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="49">
+    <Units Count="50">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -430,6 +430,13 @@
         <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvBoard.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit48>
+      <Unit49>
+        <Filename Value="..\extends\designer\mneSelectComponents.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="SelectComponentForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit49>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

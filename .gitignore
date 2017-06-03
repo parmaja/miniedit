@@ -1,6 +1,7 @@
 .svn
 .git
-bin
+bin/*.exe
+bin/*.dbg
 units
 *.bak
 /source/gui/*.lps

@@ -87,7 +87,7 @@ begin
   else
     aMasks := Engine.Groups.CreateMask(@CreateMask);
 
-  EnumFileList(IncludeTrailingPathDelimiter(SearchFolderEdit.Text), aMasks, Engine.Options.IgnoreNames, @DoSearchInFileCallback, Self, 1000, 3, True, True);
+  EnumFileList(IncludeTrailingPathDelimiter(SearchFolderEdit.Text), aMasks, Engine.Options.IgnoreNames, @DoSearchInFileCallback, Self, 1000, 3, True);
 end;
 
 procedure TSearchInFilesForm.SearchReplaceText;

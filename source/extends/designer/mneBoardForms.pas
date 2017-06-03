@@ -13,8 +13,8 @@ interface
 
 uses
   Classes, SysUtils, Forms, Controls, Grids, ExtCtrls, StdCtrls, FileUtil,
-  LCLType, Graphics, Menus, Buttons, ComCtrls, EditorEngine, SelectList,
-  IniFiles, MsgBox, ntvBoard;
+  LCLType, Graphics, Menus, Buttons, ComCtrls, ValEdit, EditorEngine,
+  SelectList, mneSelectComponents, IniFiles, MsgBox, ntvBoard;
 
 type
 
@@ -35,6 +35,7 @@ type
     procedure RectBtnClick(Sender: TObject);
     procedure ToolButton1Click(Sender: TObject);
     procedure ToolButton2Click(Sender: TObject);
+    procedure ValueListEditor1Click(Sender: TObject);
   private
     FOnChanged: TNotifyEvent;
   protected
@@ -84,7 +85,7 @@ var
 begin
   Elements := (AObject as TEditorElements);
   Item := TEditorElement.Create;
-  Item.Name := ExtractFileName(FileName);
+  Item.Name := FileName;
   Item.Title := ExtractFileName(FileName);
   Elements.Add(Item);
 end;
@@ -96,12 +97,16 @@ var
 begin
   Elements := TEditorElements.Create;
   try
-    Elements.Images := ComponentsImages;
-    EnumFileList(Application.Location + 'components\', '*.png', '', @EnumFilesCallback, Elements, 1000, 1, true, false);
-    ShowSelectList('Components', Elements , [slfUseNameTitle], i);
+    EnumFileList(Application.Location + 'components\', '*.*', '', @EnumFilesCallback, Elements, 0, 1, true, [fftDir]);
+    ShowSelectComponent('Components', Elements , [slfUseNameTitle], i);
   finally
     Elements.Free;
   end;
+end;
+
+procedure TBoardForm.ValueListEditor1Click(Sender: TObject);
+begin
+
 end;
 
 procedure TBoardForm.Changed;
