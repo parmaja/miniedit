@@ -23,35 +23,33 @@ object BoardForm: TBoardForm
     ParentShowHint = False
     ShowHint = True
     TabOrder = 0
-    OnClick = DesignToolBarClick
-    object ToolButton1: TToolButton
+    object SelectBtn: TToolButton
       Left = 1
       Top = 0
       Caption = 'Select'
       Grouped = True
       ImageIndex = 0
       Indeterminate = True
-      OnClick = ToolButton1Click
       Style = tbsCheck
     end
     object RectBtn: TToolButton
       Left = 1
       Top = 28
+      AllowAllUp = True
       Caption = 'Rectangle'
       Grouped = True
       ImageIndex = 1
       Indeterminate = True
-      OnClick = RectBtnClick
       Style = tbsCheck
     end
-    object PolygnBtn: TToolButton
+    object CircleBtn: TToolButton
       Left = 1
       Top = 56
+      AllowAllUp = True
       Caption = 'Polygn'
       Grouped = True
       ImageIndex = 2
       Indeterminate = True
-      OnClick = PolygnBtnClick
       Style = tbsCheck
     end
     object ToolButton4: TToolButton
@@ -65,6 +63,7 @@ object BoardForm: TBoardForm
       Left = 1
       Top = 89
       Caption = 'ToolButton2'
+      Grouped = True
       ImageIndex = 3
       OnClick = ToolButton2Click
     end

@@ -13,7 +13,7 @@ uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
   LCLintf, LCLType, ExtCtrls,
   Dialogs, EditorEngine, EditorClasses, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit,
-  DesignerBoard, mneBoardForms;
+  mneBoardForms;
 
 type
 

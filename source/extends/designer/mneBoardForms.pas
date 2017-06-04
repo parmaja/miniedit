@@ -14,7 +14,8 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Grids, ExtCtrls, StdCtrls, FileUtil,
   LCLType, Graphics, Menus, Buttons, ComCtrls, ValEdit, EditorEngine,
-  SelectList, mneSelectComponents, IniFiles, MsgBox, ntvBoard;
+  SelectList, mneSelectComponents, mneBoardComponents, IniFiles, MsgBox,
+  ntvBoard;
 
 type
 
@@ -24,23 +25,19 @@ type
     DesignImages: TImageList;
     ComponentsImages: TImageList;
     DesignToolBar: TToolBar;
-    ToolButton1: TToolButton;
+    SelectBtn: TToolButton;
     RectBtn: TToolButton;
-    PolygnBtn: TToolButton;
+    CircleBtn: TToolButton;
     ToolButton2: TToolButton;
     ToolButton4: TToolButton;
-    procedure CoolBar1Change(Sender: TObject);
-    procedure DesignToolBarClick(Sender: TObject);
-    procedure PolygnBtnClick(Sender: TObject);
-    procedure RectBtnClick(Sender: TObject);
-    procedure ToolButton1Click(Sender: TObject);
     procedure ToolButton2Click(Sender: TObject);
-    procedure ValueListEditor1Click(Sender: TObject);
   private
     FOnChanged: TNotifyEvent;
   protected
     FBoard: TntvBoard;
+    NewComponentIndex: Integer;
     procedure Changed;
+    procedure GetCreateElement(Sender: TObject; X, Y: Integer; var vElement: TElement);
   public
     constructor Create(TheOwner: TComponent); override;
     property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
@@ -53,78 +50,40 @@ implementation
 
 { TBoardForm }
 
-procedure TBoardForm.CoolBar1Change(Sender: TObject);
-begin
-
-end;
-
-procedure TBoardForm.DesignToolBarClick(Sender: TObject);
-begin
-
-end;
-
-procedure TBoardForm.PolygnBtnClick(Sender: TObject);
-begin
-  FBoard.NextElement := TCircleElement;
-end;
-
-procedure TBoardForm.RectBtnClick(Sender: TObject);
-begin
-  FBoard.NextElement := TRectangleElement;
-end;
-
-procedure TBoardForm.ToolButton1Click(Sender: TObject);
-begin
-  FBoard.NextElement := nil;
-end;
-
-procedure EnumFilesCallback(AObject: TObject; const FileName: string; Count, Level:Integer; IsDirectory: Boolean; var Resume: Boolean);
-var
-  Elements: TComponentElements;
-  Item: TComponentElement;
-  Path: string;
-begin
-  Path := IncludeTrailingPathDelimiter(FileName);
-  Elements := (AObject as TComponentElements);
-  Item := TComponentElement.Create;
-  Item.Info.LoadFromFile(Path + 'component.properties');
-  Item.ImageFile := Path + Item.Info.Values['Image'];
-  Item.Name := Item.Info.Values['Name'];
-  Item.Title := Item.Info.Values['Title'];
-  Elements.Add(Item);
-end;
-
 procedure TBoardForm.ToolButton2Click(Sender: TObject);
-var
-  Elements: TComponentElements;
-  i: Integer;
 begin
-  Elements := TComponentElements.Create;
-  try
-    EnumFileList(Application.Location + 'components\', '*.*', '', @EnumFilesCallback, Elements, 0, 1, true, [fftDir]);
-    ShowSelectComponent('Components', Elements, i);
-    //FBoard.NextElement := TPortableNetworkGraphic;
-  finally
-    Elements.Free;
-  end;
-end;
-
-procedure TBoardForm.ValueListEditor1Click(Sender: TObject);
-begin
-
+  if not ShowSelectComponent('Components', BoardComponents, NewComponentIndex) then
+    NewComponentIndex := -1;
 end;
 
 procedure TBoardForm.Changed;
 begin
+end;
 
+procedure TBoardForm.GetCreateElement(Sender: TObject; X, Y: Integer; var vElement: TElement);
+begin
+  if NewComponentIndex >=0 then
+  begin
+    vElement := TComponentElement.Create(FBoard.CurrentLayout, X, Y);
+    (vElement as TComponentElement).Component := BoardComponents[NewComponentIndex];
+    (vElement as TComponentElement).CorrectSize;
+    NewComponentIndex := -1;
+  end
+  else if RectBtn.Down then
+    vElement := TRectangleElement.Create(FBoard.CurrentLayout, X, Y)
+  else if CircleBtn.Down then
+    vElement := TCircleElement.Create(FBoard.CurrentLayout, X, Y);
+  SelectBtn.Down := True;
 end;
 
 constructor TBoardForm.Create(TheOwner: TComponent);
 begin
   inherited;
+  NewComponentIndex := -1;
   FBoard := TntvBoard.Create(Self);
   FBoard.Parent := Self;
   FBoard.Align := alClient;
+  FBoard.OnGetCreateElement := @GetCreateElement;
 end;
 
 function TBoardForm.GetMainControl: TWinControl;
@@ -133,4 +92,3 @@ begin
 end;
 
 end.
-

@@ -1,0 +1,90 @@
+object SelectComponentForm: TSelectComponentForm
+  Left = 415
+  Height = 400
+  Top = 219
+  Width = 456
+  BorderIcons = [biSystemMenu]
+  Caption = 'Select item'
+  ClientHeight = 400
+  ClientWidth = 456
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Position = poMainFormCenter
+  LCLVersion = '1.9.0.0'
+  object OkBtn: TButton
+    Left = 377
+    Height = 26
+    Top = 370
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = '&Ok'
+    Default = True
+    OnClick = OkBtnClick
+    TabOrder = 0
+  end
+  object CancelBtn: TButton
+    Left = 299
+    Height = 26
+    Top = 370
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Cancel = True
+    Caption = '&Cancel'
+    ModalResult = 2
+    TabOrder = 1
+  end
+  object ItemsList: TStringGrid
+    Left = 3
+    Height = 336
+    Top = 31
+    Width = 449
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    AutoFillColumns = True
+    ColCount = 2
+    Columns = <    
+      item
+        MinSize = 64
+        SizePriority = 0
+        Title.Caption = 'Title'
+      end    
+      item
+        Title.Caption = 'Title'
+        Width = 384
+      end>
+    DefaultRowHeight = 64
+    ExtendedSelect = False
+    FixedCols = 0
+    FixedRows = 0
+    Flat = True
+    MouseWheelOption = mwGrid
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking, goDblClickAutoSize, goSmoothScroll, goFixedRowNumbering, goCellHints, goRowHighlight]
+    ParentColor = True
+    RowCount = 1
+    TabOrder = 2
+    TitleFont.CharSet = ANSI_CHARSET
+    TitleFont.Height = -13
+    TitleFont.Name = 'Tahoma'
+    TitleFont.Pitch = fpVariable
+    TitleFont.Quality = fqDraft
+    OnDblClick = ItemsListDblClick
+    OnDrawCell = ItemsListDrawCell
+    ColWidths = (
+      64
+      384
+    )
+    Cells = (
+      1
+      0
+      0
+      'Preview'
+    )
+  end
+  object FilterEdit: TEdit
+    Left = 3
+    Height = 21
+    Top = 5
+    Width = 449
+    Anchors = [akTop, akLeft, akRight]
+    TabOrder = 3
+  end
+end

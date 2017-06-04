@@ -412,30 +412,30 @@
         <IsPartOfProject Value="True"/>
       </Unit44>
       <Unit45>
-        <Filename Value="..\extends\designer\DesignerBoard.pas"/>
+        <Filename Value="..\extends\designer\mneBoardClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit45>
       <Unit46>
-        <Filename Value="..\extends\designer\mneBoardClasses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit46>
-      <Unit47>
         <Filename Value="..\extends\designer\mneBoardForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="BoardForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit47>
-      <Unit48>
+      </Unit46>
+      <Unit47>
         <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvBoard.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit48>
-      <Unit49>
+      </Unit47>
+      <Unit48>
         <Filename Value="..\extends\designer\mneSelectComponents.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SelectComponentForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit48>
+      <Unit49>
+        <Filename Value="..\extends\designer\mneBoardComponents.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit49>
     </Units>
   </ProjectOptions>
@@ -448,7 +448,7 @@
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
       <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\extends\fntgen;..\extends\designer;..\..\..\..\lib\minilib\lazarus\components\native"/>
-      <UnitOutputDirectory Value="..\..\units"/>
+      <UnitOutputDirectory Value="..\..\units\debug"/>
     </SearchPaths>
     <Linking>
       <Debugging>

@@ -44,13 +44,14 @@ uses
   mneBreakpoints in 'mneBreakpoints.pas' {BreakpointsForm},
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
   SearchProgressForms, EditorDebugger, SelectList, IniFiles, mneAssociateForm,
-  mneExtends, DesignerBoard, mneBoardClasses, mneBoardForms,
-  mneSelectComponents, mneFontGenForm, mneCppClasses, mneVerilogClasses,
-  SynHighlighterVerilog, mneCustomClasses, mnePasProjectFrames, mnePASClasses,
-  mneCSVClasses, mneDClasses, mneLuaClasses, LuaDBGServers, MsgBox, GUIMsgBox,
-  Classes, PHPUtils, ntvThemes, ntvBoard, mneSetups, mneSettings, EditorClasses,
-  gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneManageRecentsForms,
-  mneTendencyOptions, mneCSVForms, mnUtils, mnConnections;
+  mneExtends, mneBoardClasses, mneBoardForms,
+  mneSelectComponents, mneBoardComponents, mneFontGenForm, mneCppClasses,
+  mneVerilogClasses, SynHighlighterVerilog, mneCustomClasses,
+  mnePasProjectFrames, mnePASClasses, mneCSVClasses, mneDClasses, mneLuaClasses,
+  LuaDBGServers, MsgBox, GUIMsgBox, Classes, PHPUtils, ntvThemes, ntvBoard,
+  mneSetups, mneSettings, EditorClasses, gdbClasses, mneCompilerProjectFrames,
+  mneRunFrames, mneManageRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils,
+  mnConnections;
 
 {$R *.res}
 {$i '..\lib\mne.inc'}
