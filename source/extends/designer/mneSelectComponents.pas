@@ -85,7 +85,7 @@ var
   i, c, t: Integer;
   procedure AddItem(Name, Title: string);
   begin
-    ItemsList.Cells[0, c] := Name;
+    ItemsList.Cells[0, c] := '';
     ItemsList.Cells[1, c] := Title;
 
     if SameText(vSelect, Name) then
@@ -126,6 +126,8 @@ begin
     aCanvas := ItemsList.Canvas;
     Element := Elements[aRow];
     Element.CheckImage;
+    aRect.Left := aRect.Left + (((aRect.Right - aRect.Left) - Element.Image.Width) div 2);
+    aRect.Top := aRect.Top + (((aRect.Bottom - aRect.Top) - Element.Image.Height) div 2);
     aCanvas.Draw(aRect.Left, aRect.Top, Element.Image);
   end;
 end;

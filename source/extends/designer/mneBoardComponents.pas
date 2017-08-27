@@ -48,7 +48,7 @@ type
     procedure AfterCreate(X, Y: Integer; Dummy: Boolean); override;
     procedure CorrectSize; override;
     destructor Destroy; override;
-    procedure Paint(vCanvas: TCanvas; vRect: TRect); override;
+    procedure Paint(vCanvas: TCanvas); override;
   end;
 
 function BoardComponents: TBoardComponents;
@@ -79,11 +79,16 @@ begin
   inherited;
 end;
 
-procedure TComponentElement.Paint(vCanvas: TCanvas; vRect: TRect);
+procedure TComponentElement.Paint(vCanvas: TCanvas);
+var
+  aRect: TRect;
 begin
   inherited;
   Component.CheckImage;
-  vCanvas.Draw(BoundRect.Left, BoundRect.Top, Component.Image);
+  aRect := BoundRect;
+  aRect.Left := aRect.Left + (((aRect.Right - aRect.Left) - Component.Image.Width) div 2);
+  aRect.Top := aRect.Top + (((aRect.Bottom - aRect.Top) - Component.Image.Height) div 2);
+  vCanvas.Draw(aRect.Left, aRect.Top, Component.Image);
 end;
 
 { TBoardComponent }

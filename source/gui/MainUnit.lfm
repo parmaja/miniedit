@@ -3001,7 +3001,7 @@ object MainForm: TMainForm
     end
   end
   object IPCServer: TSimpleIPCServer
-    Active = False
+    Active = True
     ServerID = 'Parmaja.MiniEdit'
     ThreadTimeOut = 50
     Global = True

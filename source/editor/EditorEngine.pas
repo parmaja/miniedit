@@ -2682,7 +2682,7 @@ end;
 destructor TEditorEngine.Destroy;
 begin
   SetNotifyEngine(nil);
-  if FEngineLife <= engnStarted then
+  if (FEngineLife >= engnStarting) and (FEngineLife <= engnShutdowning) then
     Shutdown;
   FreeAndNil(FDebugLink);
   FreeAndNil(FFiles);
@@ -3528,7 +3528,7 @@ procedure TEditorEngine.Shutdown;
 var
   i: Integer;
 begin
-  if FEngineLife < engnShutdowned then
+  if (FEngineLife > engnNone) and (FEngineLife < engnShutdowned) then
   begin
     if Session.Active and (Session.Project.FileName <> '') then
       Session.Save;
