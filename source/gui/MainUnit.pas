@@ -353,6 +353,7 @@ type
     procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
     procedure FormShow(Sender: TObject);
     procedure IPCServerMessage(Sender: TObject);
+    procedure IPCServerMessageQueued(Sender: TObject);
     procedure MenuItem22Click(Sender: TObject);
     procedure MenuItem23Click(Sender: TObject);
     procedure MenuItem24Click(Sender: TObject);
@@ -835,6 +836,11 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TMainForm.IPCServerMessageQueued(Sender: TObject);
+begin
+  IPCServer.PeekMessage(IPCServer.ThreadTimeOut, True); //not sure if it a bug in FPC
 end;
 
 procedure TMainForm.MenuItem22Click(Sender: TObject);

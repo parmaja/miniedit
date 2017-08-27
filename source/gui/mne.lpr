@@ -144,10 +144,7 @@ begin
   if not IsAnotherInstance then
   begin
     Application.Initialize;
-    {$ifdef trunk} //version 1.7 or later
-    {$else}
     Application.BidiMode := bdLeftToRight;
-    {$endif trunk}
     if InitEngine then
     begin
       Run;

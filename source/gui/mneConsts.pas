@@ -12,7 +12,7 @@ interface
 const
   sApplicationName = 'MiniEdit';
   sApplicationTitle = 'Mini Edit';
-  sApplicationID = 'Parmaja.' + sApplicationName;
+  sApplicationID = 'parmaja_miniedit';
 
 implementation
 
