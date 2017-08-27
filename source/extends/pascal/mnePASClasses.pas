@@ -192,10 +192,9 @@ var
   aRunItem: TmneRunItem;
   p: string;
 begin
+  aRunItem := Engine.Session.Run.Add;
   if rnaCompile in Info.Actions then
   begin
-    aRunItem := Engine.Session.Run.Add;
-
     aRunItem.Info.Run.Command := Info.Command;
     if aRunItem.Info.Run.Command = '' then
       aRunItem.Info.Run.Command := 'fpc.exe';
