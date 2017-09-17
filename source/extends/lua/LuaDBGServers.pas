@@ -305,7 +305,7 @@ type
     procedure DoExecute;
     procedure Process; override;
   public
-    constructor Create(vConnector: TmnConnector; Socket: TmnCustomSocket); override;
+    constructor Create(vOwner: TmnConnections; Socket: TmnCustomSocket); override;
     destructor Destroy; override;
     procedure Stop; override;
     property Key: string read FKey;
@@ -510,7 +510,7 @@ begin
   Result := RunCount > 0;
 end;
 
-constructor TLuaDBGConnection.Create(vConnector: TmnConnector; Socket: TmnCustomSocket);
+constructor TLuaDBGConnection.Create(vOwner: TmnConnections; Socket: TmnCustomSocket);
 begin
   inherited;
   FLocalSpool := TLuaDBGConnectionSpool.Create;

@@ -571,41 +571,6 @@ end;
 
 { TMainNotifyEngine }
 
-constructor TMainForm.Create(AOwner: TComponent);
-var
-  lFilePath: string;
-begin
-  inherited;
-  FMenuItemsList := TObjectList.Create(True);
-
-  Engine.Container := EditorsPnl;
-
-  Engine.SetNotifyEngine(Self);
-
-  Engine.Startup(GetKeyShiftState = [ssShift]);
-
-  ShowFolderFiles := Engine.Options.ShowFolderFiles;
-  SortFolderFiles := Engine.Options.SortFolderFiles;
-  FoldersAct.Checked := Engine.Options.ShowFolder;
-  MessagesAct.Checked := Engine.Options.ShowMessages;
-  BrowserPnl.Width := Engine.Options.FoldersWidth;
-  //MessagesTabs.Height := Engine.Options.MessagesHeight;
-  with MessagesTabs, BoundsRect do
-    BoundsRect := Rect(Left, Bottom - Engine.Options.MessagesHeight, Right, Bottom);
-  MessagesTabs.Visible := False;
-  MessagesSpl.Visible := False;
-  UpdateFoldersPnl;
-  UpdateMessagesPnl;
-  // Open any files passed in the command line
-  if (ParamCount > 0) and not (SameText(ParamStr(1), '/dde')) then
-  begin
-    lFilePath := DequoteStr(ParamStr(1));
-    Folder := ExtractFilePath(lFilePath);
-    // The filename is expanded, if necessary, in EditorEngine.TEditorFiles.InternalOpenFile
-    Engine.Files.OpenFile(lFilePath);
-  end;
-end;
-
 procedure TMainForm.UpdateFoldersPnl;
 begin
   FoldersSpl.Visible := FoldersAct.Checked;
@@ -778,22 +743,6 @@ begin
       Folder := aFolder;
   finally
     Engine.EndUpdate;
-  end;
-end;
-
-procedure TMainForm.FormShow(Sender: TObject);
-begin
-  if (ParamCount = 0) then
-  begin
-    if Engine.Options.AutoOpenProject then
-    begin
-      if FileExists(Engine.Options.LastProject) then
-        Engine.Session.Load(Engine.Options.LastProject)
-      else
-        Folder := Engine.Options.LastFolder;
-    end
-    else
-        Folder := Engine.Options.LastFolder;
   end;
 end;
 
@@ -1213,32 +1162,6 @@ begin
   Engine.Files.SaveAll;
 end;
 
-procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
-begin
-  if WindowState <> wsMaximized then
-    Engine.Options.BoundRect := BoundsRect;
-
-  Engine.Options.WindowMaxmized := WindowState = wsMaximized;
-
-
-  Engine.Options.ShowFolder := FoldersAct.Checked;
-  Engine.Options.ShowFolderFiles := ShowFolderFiles;
-  Engine.Options.SortFolderFiles := SortFolderFiles;
-  Engine.Options.ShowMessages := MessagesAct.Checked;
-  Engine.Options.MessagesHeight := MessagesTabs.Height;
-  Engine.Options.FoldersWidth := BrowserPnl.Width;
-  if Engine.Session.Active then
-    Engine.Options.LastProject := Engine.Session.Project.FileName
-  else
-      Engine.Options.LastProject := '';
-  Engine.Options.LastFolder := Engine.BrowseFolder;
-  Engine.Session.Close;
-  Engine.RemoveNotifyEngine(Self);
-
-  Engine.Shutdown;
-  //HtmlHelp(Application.Handle, nil, HH_CLOSE_ALL, 0);
-end;
-
 procedure TMainForm.NewActExecute(Sender: TObject);
 begin
   Engine.Files.New(Engine.Tendency.GetDefaultGroup);
@@ -1595,6 +1518,41 @@ begin
   Engine.Files.Current.Mode := efmMac;
 end;
 
+constructor TMainForm.Create(AOwner: TComponent);
+var
+  lFilePath: string;
+begin
+  inherited;
+  FMenuItemsList := TObjectList.Create(True);
+
+  Engine.Container := EditorsPnl;
+
+  Engine.SetNotifyEngine(Self);
+
+  Engine.Startup(GetKeyShiftState = [ssShift]);
+
+  ShowFolderFiles := Engine.Options.ShowFolderFiles;
+  SortFolderFiles := Engine.Options.SortFolderFiles;
+  FoldersAct.Checked := Engine.Options.ShowFolder;
+  MessagesAct.Checked := Engine.Options.ShowMessages;
+  BrowserPnl.Width := Engine.Options.FoldersWidth;
+  //MessagesTabs.Height := Engine.Options.MessagesHeight;
+  with MessagesTabs, BoundsRect do
+    BoundsRect := Rect(Left, Bottom - Engine.Options.MessagesHeight, Right, Bottom);
+  MessagesTabs.Visible := False;
+  MessagesSpl.Visible := False;
+  UpdateFoldersPnl;
+  UpdateMessagesPnl;
+  // Open any files passed in the command line
+  if (ParamCount > 0) and not (SameText(ParamStr(1), '/dde')) then
+  begin
+    lFilePath := DequoteStr(ParamStr(1));
+    Folder := ExtractFilePath(lFilePath);
+    // The filename is expanded, if necessary, in EditorEngine.TEditorFiles.InternalOpenFile
+    Engine.Files.OpenFile(lFilePath);
+  end;
+end;
+
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
   Application.OnException := @CatchErr;
@@ -1608,13 +1566,54 @@ begin
   IPCServer.StartServer;
   LoadAddons;
 
-  if Engine.Options.BoundRect.Right - Engine.Options.BoundRect.Left > 10 then   //Safe width
-    BoundsRect := Engine.Options.BoundRect;
-
-  if Engine.Options.WindowMaxmized then
-    WindowState := wsMaximized;
   //Color := clSkyBlue; for test propose
   Engine.SendLog('MiniEdit started');
+end;
+
+procedure TMainForm.FormShow(Sender: TObject);
+begin
+  if Engine.Options.WindowMaxmized then //in Show instead of Create cause for take the current monitor
+    WindowState := wsMaximized
+  else if Engine.Options.BoundRect.Right - Engine.Options.BoundRect.Left > 10 then   //Safe load width
+    BoundsRect := Engine.Options.BoundRect;
+
+  if (ParamCount = 0) then
+  begin
+    if Engine.Options.AutoOpenProject then
+    begin
+      if FileExists(Engine.Options.LastProject) then
+        Engine.Session.Load(Engine.Options.LastProject)
+      else
+        Folder := Engine.Options.LastFolder;
+    end
+    else
+        Folder := Engine.Options.LastFolder;
+  end;
+end;
+
+procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
+begin
+  Engine.Options.WindowMaxmized := WindowState = wsMaximized;
+
+  if WindowState <> wsMaximized then
+    Engine.Options.BoundRect := BoundsRect;
+
+  Engine.Options.ShowFolder := FoldersAct.Checked;
+  Engine.Options.ShowFolderFiles := ShowFolderFiles;
+  Engine.Options.SortFolderFiles := SortFolderFiles;
+  Engine.Options.ShowMessages := MessagesAct.Checked;
+  Engine.Options.MessagesHeight := MessagesTabs.Height;
+  Engine.Options.FoldersWidth := BrowserPnl.Width;
+  if Engine.Session.Active then
+    Engine.Options.LastProject := Engine.Session.Project.FileName
+  else
+      Engine.Options.LastProject := '';
+  Engine.Options.LastFolder := Engine.BrowseFolder;
+  Engine.Session.Close;
+  Engine.RemoveNotifyEngine(Self);
+
+  Engine.Shutdown;
+  //HtmlHelp(Application.Handle, nil, HH_CLOSE_ALL, 0);
 end;
 
 procedure TMainForm.DBGLintActExecute(Sender: TObject);
