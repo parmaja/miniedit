@@ -353,48 +353,6 @@ begin
   DataGrid.Cells[0, 0] := '';
 end;
 
-procedure TCSVForm.OldSave(FileName: string);
-var
-  aFile: TFileStream;
-  r, c:Integer;
-  s: string;
-  ansi: RawByteString;
-begin
-  FFileName := FileName;
-  aFile := TFileStream.Create(FileName, fmCreate or fmOpenWrite);
-  try
-    if CSVOptions.HeaderLine = hdrNormal then
-      r := 0
-    else
-      r := 1;
-    while r < DataGrid.RowCount do
-    begin
-      s := '';
-      for c := 1 to DataGrid.ColCount - 1 do
-      begin
-        if c > 1 then
-          s := s + CSVOptions.DelimiterChar;
-        s := s + DataGrid.Cells[c, r];
-      end;
-
-      s := s + CSVOptions.EndOfLine;
-      if CSVOptions.ANSIContents then
-      begin
-        ansi := s; //TODO
-        SetCodePage(ansi, SystemAnsiCodePage, true);
-        aFile.WriteBuffer(Pointer(ansi)^, length(ansi));
-      end
-      else
-        aFile.WriteBuffer(Pointer(S)^, length(s));
-      r := r + 1;
-    end;
-  finally
-    aFile.Free;
-  end;
-  if IsConfigFileExists then
-    SaveConfigFile;
-end;
-
 procedure TCSVForm.Save(FileName: string);
 var
   aFile: TFileStream;
