@@ -94,7 +94,6 @@ type
     procedure ClearGrid;
     procedure FillGrid(SQLCMD: TmncCommand; Title: String);
     procedure Load(FileName: string);
-    procedure OldSave(FileName: string);
     procedure Save(FileName: string);
     constructor Create(TheOwner: TComponent); override;
     function GetMainControl: TWinControl;
