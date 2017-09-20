@@ -92,9 +92,10 @@ type
     procedure SaveConfigFile;
     property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
     procedure ClearGrid;
-    procedure Load(FileName: string);
-    procedure Save(FileName: string);
     procedure FillGrid(SQLCMD: TmncCommand; Title: String);
+    procedure Load(FileName: string);
+    procedure OldSave(FileName: string);
+    procedure Save(FileName: string);
     constructor Create(TheOwner: TComponent); override;
     function GetMainControl: TWinControl;
   end;
@@ -102,7 +103,7 @@ type
 implementation
 
 uses
-  CSVOptionsForms;
+  mnUtils, CSVOptionsForms;
 
 {$R *.lfm}
 
@@ -352,20 +353,24 @@ begin
   DataGrid.Cells[0, 0] := '';
 end;
 
-procedure TCSVForm.Save(FileName: string);
+procedure TCSVForm.OldSave(FileName: string);
 var
   aFile: TFileStream;
   r, c:Integer;
   s: string;
-  ansi: ansistring;
+  ansi: RawByteString;
 begin
   FFileName := FileName;
   aFile := TFileStream.Create(FileName, fmCreate or fmOpenWrite);
   try
-    for r := 0 to DataGrid.RowCount -1 do
+    if CSVOptions.HeaderLine = hdrNormal then
+      r := 0
+    else
+      r := 1;
+    while r < DataGrid.RowCount do
     begin
       s := '';
-      for c := 1 to DataGrid.ColCount -1 do
+      for c := 1 to DataGrid.ColCount - 1 do
       begin
         if c > 1 then
           s := s + CSVOptions.DelimiterChar;
@@ -376,13 +381,61 @@ begin
       if CSVOptions.ANSIContents then
       begin
         ansi := s; //TODO
+        SetCodePage(ansi, SystemAnsiCodePage, true);
         aFile.WriteBuffer(Pointer(ansi)^, length(ansi));
       end
       else
         aFile.WriteBuffer(Pointer(S)^, length(s));
+      r := r + 1;
     end;
   finally
     aFile.Free;
+  end;
+  if IsConfigFileExists then
+    SaveConfigFile;
+end;
+
+procedure TCSVForm.Save(FileName: string);
+var
+  aFile: TFileStream;
+  csvCnn: TmncCSVConnection;
+  csvSes: TmncCSVSession;
+  csvCMD: TmncCSVCommand;
+  c, r: Integer;
+begin
+  FFileName := FileName;
+  csvCnn := TmncCSVConnection.Create;
+  csvSes := TmncCSVSession.Create(csvCnn);
+  try
+    csvSes.CSVOptions := CSVOptions;
+    csvCnn.Connect;
+    csvSes.Start;
+    aFile := TFileStream.Create(FileName, fmCreate or fmOpenWrite);
+    csvCMD := TmncCSVCommand.Create(csvSes, aFile, csvmWrite);
+    try
+      //adding header, even if we will not save it
+      for c := 1 to DataGrid.ColCount - 1 do
+      begin
+        csvCMD.Columns.Add(DataGrid.Cells[c, 0], dtString);
+      end;
+      csvCMD.Prepare; //generate Params and save header
+      r := 1; //first row of data
+      while r < DataGrid.RowCount do
+      begin
+        for c := 1 to DataGrid.ColCount - 1 do
+        begin
+          csvCMD.Params.Items[c - 1].Value := DataGrid.Cells[c, r];
+        end;
+        csvCMD.Execute;
+        r := r+ 1;
+      end;
+
+    finally
+      aFile.Free;
+    end
+  finally
+    csvSes.Free;
+    csvCnn.Free;
   end;
   if IsConfigFileExists then
     SaveConfigFile;
@@ -424,12 +477,12 @@ begin
         csvSes.CSVOptions := CSVOptions;
         csvCnn.Connect;
         csvSes.Start;
-        aFile := TFileStream.Create(FileName, fmOpenRead);
+        aFile := TFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
         csvCMD := TmncCSVCommand.Create(csvSes, aFile, csvmRead);
         csvCMD.EmptyLine := elSkip;
         try
-          csvCMD.Execute;
-          FillGrid(csvCMD, 'File: ' + FileName);
+          if csvCMD.Execute then //not empty, or eof
+            FillGrid(csvCMD, 'File: ' + FileName);
         finally
           aFile.Free;
           csvCMD.Free;
