@@ -48,9 +48,9 @@ uses
   mneBoardComponents, mneFontGenForm, mneCppClasses, mneVerilogClasses,
   SynHighlighterVerilog, mneCustomClasses, mnePasProjectFrames, mnePASClasses,
   mneCSVClasses, mneDClasses, mneLuaClasses, LuaDBGServers, MsgBox, GUIMsgBox,
-  Classes, PHPUtils, ntvThemes, ntvBoard, mneSetups, mneSettings, EditorClasses,
+  Classes, PHPUtils, mneSetups, mneSettings, EditorClasses,
   gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneManageRecentsForms,
-  mneTendencyOptions, mneCSVForms, mnUtils, mnStreams, mncCSV, mnConnections;
+  mneTendencyOptions, mneCSVForms, mnUtils, mnStreams, mncCSV;
 
 {$R *.res}
 {$i '..\lib\mne.inc'}
@@ -139,7 +139,6 @@ begin
   Application.CreateForm(TEditorResource, EditorResource);
   Application.CreateForm(TMainForm, MainForm);
 end;
-
 begin
   if not IsAnotherInstance then
   begin

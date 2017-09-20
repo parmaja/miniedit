@@ -162,7 +162,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="52">
+    <Units Count="49">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -372,80 +372,68 @@
         <IsPartOfProject Value="True"/>
       </Unit36>
       <Unit37>
-        <Filename Value="..\..\..\..\lib\minilib\socket\source\mnConnections.pas"/>
+        <Filename Value="..\extends\lua\mneLuaClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit37>
       <Unit38>
-        <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvThemes.pas"/>
+        <Filename Value="..\extends\lua\LuaDBGServers.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit38>
       <Unit39>
-        <Filename Value="..\extends\lua\mneLuaClasses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit39>
-      <Unit40>
-        <Filename Value="..\extends\lua\LuaDBGServers.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit40>
-      <Unit41>
         <Filename Value="..\extends\commons\mneRunFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="RunFrameOptions"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit41>
-      <Unit42>
+      </Unit39>
+      <Unit40>
         <Filename Value="..\extends\commons\mneCompilerProjectFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CompilerProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit42>
-      <Unit43>
+      </Unit40>
+      <Unit41>
         <Filename Value="..\extends\fntgen\mneFontGenForm.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FontGenForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit43>
-      <Unit44>
+      </Unit41>
+      <Unit42>
         <Filename Value="mneConsts.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit44>
-      <Unit45>
+      </Unit42>
+      <Unit43>
         <Filename Value="..\extends\designer\mneBoardClasses.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit45>
-      <Unit46>
+      </Unit43>
+      <Unit44>
         <Filename Value="..\extends\designer\mneBoardForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="BoardForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit46>
-      <Unit47>
-        <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvBoard.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit47>
-      <Unit48>
+      </Unit44>
+      <Unit45>
         <Filename Value="..\extends\designer\mneSelectComponents.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SelectComponentForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit48>
-      <Unit49>
+      </Unit45>
+      <Unit46>
         <Filename Value="..\extends\designer\mneBoardComponents.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit49>
-      <Unit50>
+      </Unit46>
+      <Unit47>
         <Filename Value="..\..\..\..\lib\minilib\lib\mnStreams.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit50>
-      <Unit51>
+      </Unit47>
+      <Unit48>
         <Filename Value="..\..\..\..\lib\minilib\connection\src\mncCSV.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit51>
+      </Unit48>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -456,7 +444,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\extends\fntgen;..\extends\designer"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\extends\fntgen;..\extends\designer;..\..\..\..\lib\minilib\connection\src;..\..\..\..\lib\minilib\lib"/>
       <UnitOutputDirectory Value="..\..\units\debug"/>
     </SearchPaths>
     <Linking>

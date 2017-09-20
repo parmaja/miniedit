@@ -94,7 +94,7 @@ type
     procedure ClearGrid;
     procedure Load(FileName: string);
     procedure Save(FileName: string);
-    procedure FillGrid(SQLCMD: TmncCommand; Title: String; Append: Boolean = False);
+    procedure FillGrid(SQLCMD: TmncCommand; Title: String);
     constructor Create(TheOwner: TComponent); override;
     function GetMainControl: TWinControl;
   end;
@@ -453,7 +453,7 @@ begin
     DataGrid.Columns[1].Alignment := taRightJustify;}
 end;
 
-procedure TCSVForm.FillGrid(SQLCMD: TmncCommand; Title: String; Append: Boolean);
+procedure TCSVForm.FillGrid(SQLCMD: TmncCommand; Title: String);
 
   function GetTextWidth(Text: String): Integer;
   begin
@@ -488,6 +488,7 @@ var
   end;
 var
   Steps: Integer;
+  HaveHeader: Boolean;
 begin
   StopBtn.Enabled := True;
   Steps := 100;
@@ -505,27 +506,20 @@ begin
     FCancel := False;
 
     cols := SQLCMD.Columns.Count;
+    HaveHeader := cols > 0;
+    if not HaveHeader then
+    begin
+      cols := SQLCMD.Fields.Count;
+    end;
     setLength(max, cols + 1);
     setLength(IsNumbers, cols + 1);
 
-    if Append then
-    begin
-      startCol := 0;
-      DataGrid.Col := startCol;
-      c := DataGrid.RowCount;
-      for i := 0 to cols - 1 do
-      begin
-        s := SQLCMD.Columns[i].Name;
-        max[i + 1] := length(s);
-        IsNumbers[i] := SQLCMD.Columns[i].IsNumber;
-      end;
-    end
-    else
-    begin
-      startCol := DataGrid.ColCount - 1;
-      DataGrid.ColCount := startCol + cols + 1; //1 for fixed col
-      DataGrid.Col := startCol;
+    startCol := DataGrid.ColCount - 1;
+    DataGrid.ColCount := startCol + cols + 1; //1 for fixed col
+    DataGrid.Col := startCol;
 
+    if HaveHeader then
+    begin
       for i := 0 to cols - 1 do
       begin
         s := SQLCMD.Columns[i].Name;
@@ -534,11 +528,10 @@ begin
         b := SQLCMD.Columns[i].IsNumber;
         IsNumbers[i] := b;
       end;
-      c := 1;
-      if FInteractive then
-        CalcWidths;
-      CalcWidths;
     end;
+    c := 1;
+    CalcWidths;
+
     if FInteractive then
       Application.ProcessMessages;
 
@@ -651,6 +644,7 @@ end;
 
 procedure TCSVForm.DataGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
 begin
+  DataGrid.Canvas.Font.Assign(DataGrid.Font);
   DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   if (aRow < DataGrid.FixedRows) or (aCol < DataGrid.FixedCols) then
   begin
