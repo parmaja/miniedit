@@ -19,11 +19,13 @@ type
 
   TEditorSettingForm = class(TForm)
     AutoOpenProjectChk: TCheckBox;
+    CodePagesCbo: TComboBox;
     IgnoreNamesEdit: TEdit;
     Label1: TLabel;
     Label11: TLabel;
     Label12: TLabel;
     Label4: TLabel;
+    Label5: TLabel;
     OkBtn: TButton;
     CancelBtn: TButton;
     PageControl: TPageControl;
@@ -55,6 +57,9 @@ type
 function ShowSettingForm(Engine: TEditorEngine): Boolean;
 
 implementation
+
+uses
+  LConvEncoding;
 
 var
   CurrentPage: Integer;
@@ -120,6 +125,7 @@ begin
     end;
   end;
   IgnoreNamesEdit.Text := FEngine.Options.IgnoreNames;
+  GetSupportedEncodings(CodePagesCbo.Items);
 end;
 
 

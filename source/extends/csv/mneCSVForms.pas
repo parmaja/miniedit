@@ -479,7 +479,7 @@ var
   i, c, w: Integer;
   s: String;
   b: Boolean;
-  str: utf8string;
+  str: string;
   startCol: integer;
   cols: Integer;
   max: array of integer;
@@ -511,7 +511,7 @@ begin
     else
       Caption := 'Data: ' + Title;
 
-    FetchedLbl.Caption := 'Fetched:';
+    FetchedLbl.Caption := 'Fetched: ';
     max := nil;
     FCancel := False;
 

@@ -139,9 +139,12 @@ begin
   Application.CreateForm(TEditorResource, EditorResource);
   Application.CreateForm(TMainForm, MainForm);
 end;
+
 begin
   if not IsAnotherInstance then
   begin
+    //DefaultSystemCodePage := 1252;
+    DefaultSystemCodePage := widestringmanager.GetStandardCodePageProc(scpAnsi); //I fix it temporary that needed for AnsiToUtf8;
     Application.Initialize;
     Application.BidiMode := bdLeftToRight;
     if InitEngine then

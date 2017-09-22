@@ -12,7 +12,7 @@ object EditorSettingForm: TEditorSettingForm
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '1.7'
+  LCLVersion = '1.9.0.0'
   object OkBtn: TButton
     Left = 347
     Height = 26
@@ -124,6 +124,22 @@ object EditorSettingForm: TEditorSettingForm
         Caption = 'Auto Complete'
         ParentColor = False
       end
+      object Label5: TLabel
+        Left = 8
+        Height = 13
+        Top = 165
+        Width = 73
+        Caption = 'Ansi CodePage'
+        ParentColor = False
+      end
+      object CodePagesCbo: TComboBox
+        Left = 94
+        Height = 21
+        Top = 161
+        Width = 161
+        ItemHeight = 13
+        TabOrder = 5
+      end
     end
     object TabSheet4: TTabSheet
       Caption = 'Extensions'
@@ -163,7 +179,7 @@ object EditorSettingForm: TEditorSettingForm
         TitleFont.Name = 'MS Sans Serif'
         ColWidths = (
           129
-          272
+          255
         )
       end
       object IgnoreNamesEdit: TEdit
