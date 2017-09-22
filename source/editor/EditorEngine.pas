@@ -737,6 +737,8 @@ type
     FRecentFiles: TStringList;
     FRecentProjects: TStringList;
     FProjects: TStringList;
+    function GetAnsiCodePage: Integer;
+    procedure SetAnsiCodePage(AValue: Integer);
     procedure SetRecentFiles(const Value: TStringList);
     procedure SetRecentFolders(AValue: TStringList);
     procedure SetRecentProjects(const Value: TStringList);
@@ -775,6 +777,7 @@ type
     property MessagesHeight: integer read FMessagesHeight write FMessagesHeight default 100;
     property FoldersWidth: integer read FFoldersWidth write FFoldersWidth default 180;
     property AutoStartDebugServer: Boolean read FAutoStartDebugServer write FAutoStartDebugServer default False;
+    property AnsiCodePage: Integer read GetAnsiCodePage write SetAnsiCodePage;
     property WindowMaxmized: Boolean read FWindowMaxmized write FWindowMaxmized default False;
     property WindowTop: Integer read FBoundRect.Top write FBoundRect.Top;
     property WindowLeft: Integer read FBoundRect.Left write FBoundRect.Left;
@@ -4412,6 +4415,16 @@ procedure TEditorOptions.SetRecentFiles(const Value: TStringList);
 begin
   if FRecentFiles <> Value then
     FRecentFiles.Assign(Value);
+end;
+
+function TEditorOptions.GetAnsiCodePage: Integer;
+begin
+  Result := SystemAnsiCodePage;
+end;
+
+procedure TEditorOptions.SetAnsiCodePage(AValue: Integer);
+begin
+  SystemAnsiCodePage := AValue;
 end;
 
 procedure TEditorOptions.SetRecentFolders(AValue: TStringList);

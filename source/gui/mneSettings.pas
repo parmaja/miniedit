@@ -65,6 +65,86 @@ var
   CurrentPage: Integer;
 
 {$R *.lfm}
+type
+  TCodePageEntry = record
+    cp: TSystemCodePage;
+    name: PAnsiChar;
+  end;
+const
+  CodePageNames: array[0..71] of TCodePageEntry = (
+    (cp: 37; name: 'ibm037'),
+    (cp: 437; name: 'ibm437'),
+    (cp: 500; name: 'IBM500'),
+    (cp: 708; name: 'asmo-708'),
+    (cp: 720; name: 'DOS-720'),
+    (cp: 737; name: 'ibm737'),
+    (cp: 775; name: 'ibm775'),
+    (cp: 850; name: 'ibm850'),
+    (cp: 852; name: 'ibm852'),
+    (cp: 855; name: 'IBM855'),
+    (cp: 857; name: 'ibm857'),
+    (cp: 858; name: 'ibm00858'),
+    (cp: 860; name: 'IBM860'),
+    (cp: 861; name: 'ibm861'),
+    (cp: 862; name: 'DOS-862'),
+    (cp: 863; name: 'IBM863'),
+    (cp: 864; name: 'IBM864'),
+    (cp: 865; name: 'IBM865'),
+    (cp: 866; name: 'cp866'),
+    (cp: 869; name: 'ibm869'),
+    (cp: 870; name: 'IBM870'),
+    (cp: 874; name: 'windows-874'),
+    (cp: 875; name: 'cp875'),
+    (cp: 1026; name: 'ibm1026'),
+    (cp: 1047; name: 'ibm01047'),
+    (cp: 1140; name: 'ibm01140'),
+    (cp: 1141; name: 'IBM01141'),
+    (cp: 1142; name: 'IBM01142'),
+    (cp: 1143; name: 'IBM01143'),
+    (cp: 1144; name: 'IBM01144'),
+    (cp: 1145; name: 'ibm01145'),
+    (cp: 1146; name: 'ibm01146'),
+    (cp: 1147; name: 'ibm01147'),
+    (cp: 1148; name: 'IBM01148'),
+    (cp: 1149; name: 'IBM01149'),
+    (cp: 1200; name: 'utf-16'),
+    (cp: 1201; name: 'unicodefffe'),
+    (cp: 1250; name: 'windows-1250'),
+    (cp: 1251; name: 'windows-1251'),
+    (cp: 1252; name: 'windows-1252'),
+    (cp: 1253; name: 'windows-1253'),
+    (cp: 1254; name: 'windows-1254'),
+    (cp: 1255; name: 'windows-1255'),
+    (cp: 1256; name: 'windows-1256'),
+    (cp: 1257; name: 'windows-1257'),
+    (cp: 1258; name: 'windows-1258'),
+    (cp: 20273; name: 'ibm273'),
+    (cp: 20277; name: 'ibm277'),
+    (cp: 20278; name: 'ibm278'),
+    (cp: 20280; name: 'ibm280'),
+    (cp: 20284; name: 'ibm284'),
+    (cp: 20285; name: 'IBM285'),
+    (cp: 20290; name: 'IBM290'),
+    (cp: 20297; name: 'IBM297'),
+    (cp: 20420; name: 'ibm420'),
+    (cp: 20423; name: 'ibm423'),
+    (cp: 20424; name: 'IBM424'),
+    (cp: 20871; name: 'ibm871'),
+    (cp: 20880; name: 'ibm880'),
+    (cp: 20905; name: 'ibm905'),
+    (cp: 20924; name: 'IBM00924'),
+    (cp: 28591; name: 'iso-8859-1'),
+    (cp: 28592; name: 'iso-8859-2'),
+    (cp: 28593; name: 'iso-8859-3'),
+    (cp: 28594; name: 'iso-8859-4'),
+    (cp: 28595; name: 'iso-8859-5'),
+    (cp: 28596; name: 'iso-8859-6'),
+    (cp: 28597; name: 'iso-8859-7'),
+    (cp: 28598; name: 'iso-8859-8'),
+    (cp: 28599; name: 'iso-8859-9'),
+    (cp: 28603; name: 'iso-8859-13'),
+    (cp: 28605; name: 'iso-8859-15')
+  );
 
 function ShowSettingForm(Engine: TEditorEngine): Boolean;
 begin
@@ -99,6 +179,7 @@ begin
     end;
   end;
   FEngine.Options.IgnoreNames := IgnoreNamesEdit.Text;
+  FEngine.Options.AnsiCodePage := CodePageNames[CodePagesCbo.ItemIndex].cp;
 end;
 
 procedure TEditorSettingForm.Retrieve;
@@ -125,7 +206,11 @@ begin
     end;
   end;
   IgnoreNamesEdit.Text := FEngine.Options.IgnoreNames;
-  GetSupportedEncodings(CodePagesCbo.Items);
+  for i := 0 to Length(CodePageNames) - 1 do
+    CodePagesCbo.Items.Add(CodePageNames[i].name);
+  i := CodePagesCbo.Items.IndexOf(CodePageToCodePageName(FEngine.Options.AnsiCodePage));
+  if i >= 0 then
+    CodePagesCbo.ItemIndex := i;
 end;
 
 

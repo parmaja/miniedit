@@ -16,7 +16,17 @@
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test-no-header.csv</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
+        <Items>
+          <Object Type="TEditorDesktopFile">
+            <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
+            <CaretY>10</CaretY>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>M:\home\pascal\projects\miniEdit\test\test-no-header.csv</FileName>
+          </Object>
+        </Items>
       </Files>
     </Desktop>
     <Options Class="TPHPProjectOptions">
