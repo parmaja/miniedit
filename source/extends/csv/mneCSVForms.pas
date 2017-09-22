@@ -146,6 +146,7 @@ procedure TCSVForm.ConfigFileBtnClick(Sender: TObject);
 begin
   SaveConfigFile;
   RefreshControls;
+  Engine.UpdateState([ecsFolder]);
 end;
 
 procedure TCSVForm.DataGridColRowMoved(Sender: TObject; IsColumn: Boolean; sIndex, tIndex: Integer);
@@ -184,6 +185,7 @@ procedure TCSVForm.DelConfigFileBtnClick(Sender: TObject);
 begin
   DeleteFile(FFileName + '.conf');
   RefreshControls;
+  Engine.UpdateState([ecsFolder]);
 end;
 
 procedure TCSVForm.MenuItem1Click(Sender: TObject);

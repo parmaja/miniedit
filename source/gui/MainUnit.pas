@@ -1912,10 +1912,12 @@ var
 
 var
   aFiles: TStringList;
+  SaveSelected: Integer;
 begin
   FolderPathLbl.Caption := Folder;
   FolderPathLbl.Hint := Folder;
   FileList.Items.BeginUpdate;
+  SaveSelected := FileList.ItemIndex;
   try
     FileList.Clear;
 
@@ -1997,7 +1999,12 @@ begin
     end;
   finally
     if FileList.Items.Count > 0 then
-      FileList.Items[0].Selected := True;
+    begin
+      if (SaveSelected >= 0) and (SaveSelected < FileList.Items.Count) then
+        FileList.ItemIndex := SaveSelected
+      else
+        FileList.Items[0].Selected := True;
+    end;
     FileList.Items.EndUpdate;
   end;
 end;

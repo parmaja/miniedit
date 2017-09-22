@@ -2,9 +2,9 @@ object CSVForm: TCSVForm
   Left = 0
   Height = 240
   Top = 0
-  Width = 695
+  Width = 677
   ClientHeight = 240
-  ClientWidth = 695
+  ClientWidth = 677
   Color = clDefault
   ParentColor = False
   TabOrder = 0
@@ -14,18 +14,18 @@ object CSVForm: TCSVForm
     Left = 0
     Height = 26
     Top = 0
-    Width = 695
+    Width = 677
     Align = alTop
     BevelOuter = bvNone
     ClientHeight = 26
-    ClientWidth = 695
+    ClientWidth = 677
     TabOrder = 1
     object FetchedLbl: TLabel
       Left = 292
       Height = 26
       Top = 0
-      Width = 74
-      Align = alLeft
+      Width = 282
+      Align = alClient
       Alignment = taRightJustify
       AutoSize = False
       Caption = 'Fetched: '
@@ -33,18 +33,18 @@ object CSVForm: TCSVForm
       ParentColor = False
     end
     object FetchCountLbl: TLabel
-      Left = 366
+      Left = 574
       Height = 26
       Top = 0
-      Width = 279
-      Align = alClient
+      Width = 53
+      Align = alRight
       AutoSize = False
       Caption = '0'
       Layout = tlCenter
       ParentColor = False
     end
     object StopBtn2: TButton
-      Left = 239
+      Left = 60
       Height = 26
       Top = 0
       Width = 53
@@ -54,7 +54,7 @@ object CSVForm: TCSVForm
       TabOrder = 1
     end
     object StopBtn: TButton
-      Left = 645
+      Left = 627
       Height = 26
       Top = 0
       Width = 50
@@ -74,7 +74,7 @@ object CSVForm: TCSVForm
       TabOrder = 4
     end
     object DelConfigFileBtn: TButton
-      Left = 60
+      Left = 113
       Height = 26
       Top = 0
       Width = 93
@@ -85,7 +85,7 @@ object CSVForm: TCSVForm
       Visible = False
     end
     object SaveConfigFileBtn: TButton
-      Left = 153
+      Left = 206
       Height = 26
       Top = 0
       Width = 86
@@ -99,7 +99,7 @@ object CSVForm: TCSVForm
     Left = 0
     Height = 214
     Top = 26
-    Width = 695
+    Width = 677
     Align = alClient
     AlternateColor = 14408667
     AutoEdit = False
