@@ -161,7 +161,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="49">
+    <Units Count="50">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -433,6 +433,10 @@
         <Filename Value="..\..\..\..\lib\minilib\connection\src\mncCSV.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit48>
+      <Unit49>
+        <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvThemes.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit49>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -443,7 +447,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\extends\fntgen;..\extends\designer;..\..\..\..\lib\minilib\connection\src;..\..\..\..\lib\minilib\lib"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\extends\fntgen;..\extends\designer;..\..\..\..\lib\minilib\connection\src;..\..\..\..\lib\minilib\lib;..\..\..\..\lib\minilib\lazarus\components\native"/>
       <UnitOutputDirectory Value="..\..\units\debug"/>
     </SearchPaths>
     <Linking>

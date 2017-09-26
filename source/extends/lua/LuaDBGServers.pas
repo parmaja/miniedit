@@ -305,7 +305,7 @@ type
     procedure DoExecute;
     procedure Process; override;
   public
-    constructor Create(vOwner: TmnConnections; Socket: TmnCustomSocket); override;
+    constructor Create(vOwner: TmnConnections; vStream: TmnConnectionStream); override;
     destructor Destroy; override;
     procedure Stop; override;
     property Key: string read FKey;
@@ -313,10 +313,12 @@ type
   published
   end;
 
+  { TmnDBGListener }
+
   TmnDBGListener = class(TmnListener)
   private
   protected
-    function CreateConnection(vSocket: TmnCustomSocket): TmnServerConnection; override;
+    function DoCreateConnection(vStream: TmnConnectionStream): TmnConnection; override;
   public
     constructor Create;
     destructor Destroy; override;
@@ -510,7 +512,7 @@ begin
   Result := RunCount > 0;
 end;
 
-constructor TLuaDBGConnection.Create(vOwner: TmnConnections; Socket: TmnCustomSocket);
+constructor TLuaDBGConnection.Create(vOwner: TmnConnections; vStream: TmnConnectionStream);
 begin
   inherited;
   FLocalSpool := TLuaDBGConnectionSpool.Create;
@@ -773,9 +775,9 @@ end;
 
 { TmnDBGListener }
 
-function TmnDBGListener.CreateConnection(vSocket: TmnCustomSocket): TmnServerConnection;
+function TmnDBGListener.DoCreateConnection(vStream: TmnConnectionStream): TmnConnection;
 begin
-  Result := TLuaDBGConnection.Create(Self, vSocket);
+  Result := TLuaDBGConnection.Create(Self, vStream);
 end;
 
 constructor TmnDBGListener.Create;
