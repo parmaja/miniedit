@@ -2740,21 +2740,24 @@ var
       if FindFirst(Root + Path + '*'{Files}, faAnyFile, sr) = 0 then
       begin
         repeat
-          if (sr.Name = '') or
-            ((IgnoreList <> nil) and (IgnoreList.IndexOf(sr.Name) >= 0)) or
-            not ((MaskList = nil) or (MaskList.Matches(sr.Name))) then
-              continue;
-          if ReturnFullPath then
-            f := Root + IncludePathSeparator(Path) + sr.Name
-          else
-            f := IncludePathSeparator(Path) + sr.Name;
-          Callback(AObject, f, aCount, vLevel, False, Resume);
-          if (vMaxCount > 0) and (aCount > vMaxCount) then
-            Resume := False;
-            //raise Exception.Create('Too many files');
-          if not Resume then
-            break;
-          aCount := aCount + 1;
+          if (sr.Attr and faDirectory) = 0 then //not a dir/it is a file
+          begin
+            if (sr.Name = '') or
+              ((IgnoreList <> nil) and (IgnoreList.IndexOf(sr.Name) >= 0)) or
+              not ((MaskList = nil) or (MaskList.Matches(sr.Name))) then
+                continue;
+            if ReturnFullPath then
+              f := Root + IncludePathSeparator(Path) + sr.Name
+            else
+              f := IncludePathSeparator(Path) + sr.Name;
+            Callback(AObject, f, aCount, vLevel, False, Resume);
+            if (vMaxCount > 0) and (aCount > vMaxCount) then
+              Resume := False;
+              //raise Exception.Create('Too many files');
+            if not Resume then
+              break;
+            aCount := aCount + 1;
+          end;
         until (FindNext(sr) <> 0);
       end;
     end;
