@@ -48,9 +48,11 @@ type
 
   TDProjectOptions = class(TEditorProjectOptions)
   private
+    FCompilerType: Integer;
   public
     procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); override;
   published
+    property CompilerType: Integer read FCompilerType write FCompilerType default 0;
   end;
 
   { TDTendency }
@@ -185,7 +187,7 @@ begin
       {$endif}
     end;
 
-    aRunItem.Info.Run.Mode := runOutput;
+    aRunItem.Info.Run.Silent := True;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
@@ -233,7 +235,6 @@ begin
   begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Message := 'Running ' + Info.OutputFile;
-    aRunItem.Info.Run.Mode := Info.Mode;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.DebugIt := rnaDebug in Info.Actions;

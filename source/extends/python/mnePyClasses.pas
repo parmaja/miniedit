@@ -186,7 +186,6 @@ begin
       {$endif}
     end;
 
-    aRunItem.Info.Run.Mode := Info.Mode;
     aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
@@ -198,7 +197,6 @@ begin
   begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Message := 'Running ' + Info.OutputFile;
-    aRunItem.Info.Run.Mode := Info.Mode;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Run.Pause := RunOptions.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;

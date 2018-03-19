@@ -169,7 +169,7 @@ begin
     if aRunItem.Info.Run.Command = '' then
       aRunItem.Info.Run.Command := 'iverilog'{$ifdef windows}+'.exe'{$endif};
 
-    aRunItem.Info.Run.Mode := runOutput;
+    aRunItem.Info.Run.Silent := True;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
@@ -204,7 +204,6 @@ begin
   begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Message := 'Running ' + Info.OutputFile;
-    aRunItem.Info.Run.Mode := Info.Mode;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);

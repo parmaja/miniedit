@@ -13,8 +13,10 @@ type
   { TDProjectFrame }
 
   TDProjectFrame = class(TFrame, IEditorOptions)
+    DCompilerCbo: TComboBox;
     ExpandPathsChk1: TCheckBox;
     ExpandPathsChk2: TCheckBox;
+    Label1: TLabel;
   private
     Options: TDProjectOptions;
   protected
@@ -32,11 +34,17 @@ implementation
 
 procedure TDProjectFrame.Apply;
 begin
+  Options.CompilerType := DCompilerCbo.ItemIndex;
 end;
 
 procedure TDProjectFrame.Retrieve;
 begin
+  DCompilerCbo.Clear;
+  DCompilerCbo.Items.Add('DMD');
+  DCompilerCbo.Items.Add('GDC');
+  DCompilerCbo.Items.Add('LDC');
   Options := (Project.Options as TDProjectOptions);
+  DCompilerCbo.ItemIndex := Options.CompilerType;
 end;
 
 end.

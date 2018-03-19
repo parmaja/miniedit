@@ -380,7 +380,6 @@ type
     FCommand: string;
     FMainFolder: string;
     FParams: string;
-    FMode: TmneRunMode;
     FPause: Boolean;
     FMainFile: string;
     FOutputFile: string;
@@ -397,7 +396,6 @@ type
     procedure Copy(AOptions: TRunProjectOptions);
     procedure Assign(Source: TPersistent); override;
   published
-    property Mode: TmneRunMode read FMode write FMode;
     property Pause: Boolean read FPause write FPause;
     property Command: string read FCommand write FCommand;
     property Params: string read FParams write FParams;
@@ -1229,7 +1227,6 @@ function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCal
 procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean);
 procedure EnumDirList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean);
 
-procedure EnumRunMode(vItems: TStrings);
 procedure EnumIndentMode(vItems: TStrings);
 
 {$ifdef DEBUG}
@@ -1624,16 +1621,7 @@ procedure TRunProjectOptions.Merge(AOptions: TRunProjectOptions);
       Result := v;
   end;
 
-  function iif(v, s: TmneRunMode): TmneRunMode;
-  begin
-    if ord(s) > 0 then
-      Result := s
-    else
-      Result := v;
-  end;
-
 begin
-  FMode := AOptions.Mode;
   FCommand := iif(FCommand, AOptions.Command);
   FParams := iif(FParams, AOptions.Params);
   FPause := iif(FPause, AOptions.Pause);
@@ -1648,7 +1636,6 @@ end;
 
 procedure TRunProjectOptions.Copy(AOptions: TRunProjectOptions);
 begin
-  FMode := AOptions.Mode;
   FCommand := AOptions.Command;
   FParams := AOptions.Params;
   FPause := AOptions.Pause;
@@ -2355,7 +2342,6 @@ begin
         p.Root := Engine.Session.GetRoot;
         p.Command := Engine.EnvReplace(AOptions.Command);
 
-        p.Mode := AOptions.Mode;
         p.Pause := AOptions.Pause;
 
         p.MainFile := Engine.Session.Project.RunOptions.MainFile;
@@ -2843,15 +2829,6 @@ begin
   //nothing, just nothing
 end;
 {$endif}
-
-procedure EnumRunMode(vItems: TStrings);
-begin
-  vItems.Clear;
-  vItems.Add('Console');
-  vItems.Add('Output');
-  vItems.Add('Box');
-  vItems.Add('Browser');
-end;
 
 procedure EnumIndentMode(vItems: TStrings);
 begin

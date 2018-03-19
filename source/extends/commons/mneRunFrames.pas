@@ -21,10 +21,8 @@ type
     Button3: TButton;
     CommandEdit: TComboBox;
     CompilerLabel: TLabel;
-    Label7: TLabel;
     OpenDialog: TOpenDialog;
     PauseChk: TCheckBox;
-    RunModeCbo: TComboBox;
     procedure Button3Click(Sender: TObject);
   private
   protected
@@ -53,15 +51,12 @@ end;
 
 procedure TRunFrameOptions.Apply;
 begin
-  Options.Mode := TmneRunMode(RunModeCbo.ItemIndex);
   Options.Pause := PauseChk.Checked;
   Options.Command := CommandEdit.Text;
 end;
 
 procedure TRunFrameOptions.Retrieve;
 begin
-  EnumRunMode(RunModeCbo.Items);
-  RunModeCbo.ItemIndex := ord(Options.Mode);
   PauseChk.Checked := Options.Pause;
   CommandEdit.Text := Options.Command;
 end;

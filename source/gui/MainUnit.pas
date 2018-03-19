@@ -375,7 +375,6 @@ type
     procedure SaveActExecute(Sender: TObject);
     procedure SaveAllActExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
-    procedure NewActExecute(Sender: TObject);
     procedure FolderOpenAllActExecute(Sender: TObject);
     procedure FolderOpenActExecute(Sender: TObject);
     procedure FindActExecute(Sender: TObject);
@@ -1161,11 +1160,6 @@ begin
   Engine.Files.SaveAll;
 end;
 
-procedure TMainForm.NewActExecute(Sender: TObject);
-begin
-
-end;
-
 procedure TMainForm.FolderOpenAllActExecute(Sender: TObject);
 var
   i: integer;
@@ -1174,7 +1168,7 @@ begin
   try
     for i := 0 to FileList.Items.Count - 1 do
     begin
-      if PtrUInt(FileList.Items[i].Data) = 1 then
+      if FileList.Items[i].Data <> nil then
         Engine.Files.OpenFile(Folder + FileList.Items[i].Caption);
     end;
   finally

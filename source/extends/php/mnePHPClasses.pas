@@ -255,7 +255,6 @@ begin
   begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Message := 'Running';
-    aRunItem.Info.Run.Mode := Info.Mode;
     aRunItem.Info.Run.Pause := Info.Pause;
 
     aRunItem.Info.Run.Command := Info.Command;

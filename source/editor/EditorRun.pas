@@ -361,8 +361,19 @@ begin
   if Info.Suspended then
     aOptions := [poRunSuspended];
 
-  if Assigned(FOnWrite) then
+  if not Info.Run.Silent then
   begin
+    FProcess.Options :=  aOptions + [poWaitOnExit];
+    FProcess.ShowWindow := swoShow;
+    FProcess.StartupOptions:=[suoUseShowWindow]; //<- need it in linux to show window
+    FProcess.CloseInput;
+    FProcess.Execute;
+    //Status := ProcessObject.Read(strmOutput);
+  end
+  else
+  begin
+    if not Assigned(FOnWrite) then
+      raise Exception.Create('You need to assign OnWrite');
     FProcess.Options :=  aOptions + [poUsePipes, poStderrToOutPut];
     FProcess.ShowWindow := swoShowNormal;
     FProcess.StartupOptions:=[suoUseShowWindow];
@@ -374,15 +385,6 @@ begin
       FreeAndNil(FProcess);
       FreeAndNil(ProcessObject);
     end;
-  end
-  else
-  begin
-    FProcess.Options :=  aOptions + [poWaitOnExit];
-    FProcess.ShowWindow := swoShow;
-    FProcess.StartupOptions:=[suoUseShowWindow]; //<- need it in linux to show window
-    FProcess.CloseInput;
-    FProcess.Execute;
-    //Status := ProcessObject.Read(strmOutput);
   end;
   WriteMessage(#13#10'End Status: ' + IntToStr(Status)+#13#10, msgtLog);
   WriteMessage('Done', msgtTemp);
@@ -396,73 +398,55 @@ var
   term: string;
 {$endif}
 begin
-  case Info.Run.Mode of
-    runConsole:
-    begin
-      if Info.DebugIt then
-      begin
-        Info.Run.Command := Info.GetCommandLine;
-        Info.Run.Params := '';
-        Info.Suspended := True;
-        CreateConsole(Info);
-        FPool.Synchronize(@Attach);
-        Process.Resume;
-      end
-      else
-      begin
-        {$ifdef windows}
-        s := '/c "'+ Info.GetCommandLine + '"';
-        if Info.Run.Pause then
-          s := s + ' & pause';
-        Info.Run.Params := s;
-        Info.Run.Command := 'cmd';
-        {$else}
+  if Info.DebugIt then
+  begin
+    Info.Run.Command := Info.GetCommandLine;
+    Info.Run.Params := '';
+    Info.Suspended := True;
+    CreateConsole(Info);
+    FPool.Synchronize(@Attach);
+    Process.Resume;
+  end
+  else
+  begin
+    {$ifdef windows}
+    s := '/c "'+ Info.GetCommandLine + '"';
+    if Info.Run.Pause then
+      s := s + ' & pause';
+    Info.Run.Params := s;
+    Info.Run.Command := 'cmd';
+    {$else}
 
-        //s := GetEnvironmentVariable('SHELL');
-        term := GetEnvironmentVariable('COLORTERM');
-        if term = '' then
-           term := GetEnvironmentVariable('TERM');
-        if term = '' then
-           term := 'xterm';
+    //s := GetEnvironmentVariable('SHELL');
+    term := GetEnvironmentVariable('COLORTERM');
+    if term = '' then
+       term := GetEnvironmentVariable('TERM');
+    if term = '' then
+       term := 'xterm';
 
-        //xterm -e "lua lua-test.lua && bash"
-        //xterm -e "lua lua-test.lua && read -rsp $''Press any key to continue'' -n1 key"
+    //xterm -e "lua lua-test.lua && bash"
+    //xterm -e "lua lua-test.lua && read -rsp $''Press any key to continue'' -n1 key"
 
 
-        if Info.Title <> '' then
-            s := '-title "' + Info.Title + '"'
-        else
-            s := '';
-        if term = 'xterm' then
-            s := s + ' -fa "' + Engine.Options.Profile.Attributes.FontName+  '" -fs ' + IntToStr(Engine.Options.Profile.Attributes.FontSize);
-        s := s + ' -e "'+Info.GetCommandLine;
-        if Info.Run.Pause then
-          s := s + '; read -rsp $''Press any key to continue'' -n1 key';
-        s := s + '"';
-        Info.Run.Params := s;
+    if Info.Title <> '' then
+        s := '-title "' + Info.Title + '"'
+    else
+        s := '';
+    if term = 'xterm' then
+        s := s + ' -fa "' + Engine.Options.Profile.Attributes.FontName+  '" -fs ' + IntToStr(Engine.Options.Profile.Attributes.FontSize);
+    s := s + ' -e "'+Info.GetCommandLine;
+    if Info.Run.Pause then
+      s := s + '; read -rsp $''Press any key to continue'' -n1 key';
+    s := s + '"';
+    Info.Run.Params := s;
 
-        Info.Run.Command := term;
+    Info.Run.Command := term;
 
-        {$endif}
-        //FOnWrite := @Engine.SendOutout;
-        CreateConsole(Info);
-      end;
-    end;
-    runOutput:
-    begin
+    {$endif}
+    //FOnWrite := @Engine.SendOutout;
+    if Info.Run.Silent then
       FOnWrite := @Engine.SendOutout;
-      CreateConsole(Info);
-    end;
-    runBox:
-    begin
-      FPool.Synchronize(FPool, @CreateControl);
-      CreateConsole(Info);
-      //not free myself the thread will do
-    end;
-    runBrowser:
-    begin
-      OpenURL(Info.Link);
-    end;
+    CreateConsole(Info);
   end;
 end;
 

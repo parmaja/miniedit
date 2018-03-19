@@ -21,14 +21,12 @@ type
 
   TmneRunAction = (rnaCompile, rnaLint, rnaExecute, rnaDebug, rnaLink);
   TmneRunActions = set of TmneRunAction;
-  TmneRunMode = (runConsole, runOutput, runBox, runBrowser);
 
   { TmneRunInfo }
 
   TmneRunInfo = record
     Actions: TmneRunActions;
 
-    Mode: TmneRunMode;
     Pause: Boolean;
     Command: string;
     MainFile: string; //file to compile
@@ -42,8 +40,8 @@ type
   TRunCommand = record
     Command: string;
     Params: string;
-    Mode: TmneRunMode;
     Pause: Boolean;
+    Silent: Boolean;
   end;
 
   TmneCommandInfo = record

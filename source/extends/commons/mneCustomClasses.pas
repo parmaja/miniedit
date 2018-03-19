@@ -232,10 +232,7 @@ begin
       aRunItem := Engine.Session.Run.Add;
 
       aRunItem.Info.Run.Command := Info.Command;
-      if aRunItem.Info.Run.Command = '' then
-        aRunItem.Info.Run.Command := 'dmd.exe';
-
-      aRunItem.Info.Run.Mode := runOutput;
+      aRunItem.Info.Run.Silent := True;
       aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
       aRunItem.Info.CurrentDirectory := Info.Root;
 
@@ -267,7 +264,6 @@ begin
     begin
       aRunItem := Engine.Session.Run.Add;
       aRunItem.Info.Message := 'Running ' + Info.OutputFile;
-      aRunItem.Info.Run.Mode := AOptions.Mode;
       aRunItem.Info.CurrentDirectory := Info.Root;
       aRunItem.Info.Run.Pause := AOptions.Pause;
       aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;

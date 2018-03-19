@@ -173,8 +173,6 @@ begin
   if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
-
-    aRunItem.Info.Run.Mode := Info.Mode;
     aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
