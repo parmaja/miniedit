@@ -98,8 +98,10 @@ type
 
   TmneRun = class(TObject)
   private
+    FEditorTendency: TEditorDebugTendency;
     FPool: TmneRunPool;
     function GetActive: Boolean;
+    procedure SetEditorTendency(AValue: TEditorDebugTendency);
   protected
     procedure PoolTerminated(Sender: TObject);
   public
@@ -112,6 +114,7 @@ type
     procedure Stop;
     property Active: Boolean read GetActive;
     property Pool: TmneRunPool read FPool;
+    property Tendency: TEditorDebugTendency read FEditorTendency write SetEditorTendency;
   end;
 
 implementation
@@ -204,6 +207,12 @@ end;
 function TmneRun.GetActive: Boolean;
 begin
   Result := FPool <> nil;
+end;
+
+procedure TmneRun.SetEditorTendency(AValue: TEditorDebugTendency);
+begin
+  if FEditorTendency =AValue then Exit;
+  FEditorTendency :=AValue;
 end;
 
 procedure TmneRun.PoolTerminated(Sender: TObject);
@@ -443,7 +452,6 @@ begin
     Info.Run.Command := term;
 
     {$endif}
-    //FOnWrite := @Engine.SendOutout;
     if Info.Run.Silent then
       FOnWrite := @Engine.SendOutout;
     CreateConsole(Info);

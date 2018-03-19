@@ -196,33 +196,6 @@ type
     property Files: TEditorDesktopFiles read FFiles;
   end;
 
-  { TEditorElement }
-
-  TEditorElement = class(TPersistent)
-  private
-  protected
-    FName: string;
-    FTitle: string;
-    FDescription: string;
-    FImageIndex: integer;
-    function GetDescription: string; virtual;
-  public
-    constructor Create; virtual;
-
-    property Name: string read FName write FName;
-    property Title: string read FTitle write FTitle;
-    property Description: string read GetDescription write FDescription;
-    property ImageIndex: integer read FImageIndex write FImageIndex;
-  end;
-
-  { TEditorElements }
-
-  TEditorElements = class(specialize TmnNamedObjectList<TEditorElement>)
-  private
-  public
-    function IndexOf(vName: string): Integer;
-  end;
-
   TAddFrameCallBack = procedure(AFrame: TFrame) of object;
   TAddClickCallBack = procedure(Name, Caption: string; OnClickEvent: TNotifyEvent; ShortCut: TShortCut = 0) of object;
 
@@ -290,9 +263,8 @@ type
 
   { TEditorTendency }
 
-  TEditorTendency = class(TEditorElement)
+  TEditorTendency = class(TEditorDebugTendency)
   private
-    FDebug: TEditorDebugger;
     //FEditorOptions: TSynEditorOptions;
     FGroups: TFileGroups;
     FRunOptions: TRunProjectOptions;
@@ -301,7 +273,6 @@ type
     FOverrideEditorOptions: Boolean;
     FTabWidth: Integer;
     function GetIsDefault: Boolean; virtual; //Keep it private
-    procedure SetDebug(AValue: TEditorDebugger);
   protected
     IsPrepared: Boolean;
     FCapabilities: TEditorCapabilities;
@@ -324,7 +295,6 @@ type
     //
     property Capabilities: TEditorCapabilities read FCapabilities;
     property Groups: TFileGroups read FGroups;
-    property Debug: TEditorDebugger read FDebug write SetDebug;
     property IsDefault: Boolean read GetIsDefault;
   published
     //Override options
@@ -1104,6 +1074,7 @@ type
     procedure SetBrowseFolder(const Value: string);
     function GetWorkSpace: string;
     function GetMainFileTendency: TEditorTendency;
+    function GetCurrentTendency: TEditorTendency;
     function GetTendency: TEditorTendency;
   protected
     FSafeMode: Boolean;
@@ -1168,6 +1139,7 @@ type
     property BrowseFolder: string read FBrowseFolder write SetBrowseFolder;
     property DebugLink: TEditorDebugLink read FDebugLink;
     property Tendency: TEditorTendency read GetTendency; //It get Project/MainFile/File/Default tendency
+    property CurrentTendency: TEditorTendency read GetCurrentTendency; //It get Debug/MainFile/File/Default tendency
     property DefaultProject: TDefaultProject read FDefaultProject;
     property SCM: TEditorSCM read GetSCM;
     function GetIsChanged: Boolean;
@@ -2125,24 +2097,6 @@ begin
   inherited Create;
 end;
 
-{ TEditorElements }
-
-function TEditorElements.IndexOf(vName: string): Integer;
-var
-  i: integer;
-begin
-  Result := -1;
-  if vName <> '' then
-    for i := 0 to Count - 1 do
-    begin
-      if SameText(Items[i].Name, vName) then
-      begin
-        Result := i;
-        break;
-      end;
-    end;
-end;
-
 { TSourceManagements }
 
 function TSourceManagements.GetItem(Index: integer): TEditorSCM;
@@ -2162,19 +2116,6 @@ begin
   RegisterClass(vEditorSCM);
   aItem := vEditorSCM.Create;
   inherited Add(aItem);
-end;
-
-{ TEditorElement }
-
-function TEditorElement.GetDescription: string;
-begin
-  Result := FDescription;
-end;
-
-constructor TEditorElement.Create;
-begin
-  inherited Create;
-  FImageIndex := -1;
 end;
 
 { TDefaultTendency }
@@ -2248,13 +2189,6 @@ begin
     Debug.Stop;
   end;
   FreeAndNil(FDebug);
-end;
-
-procedure TEditorTendency.SetDebug(AValue: TEditorDebugger);
-begin
-  if FDebug =AValue then
-    Exit;
-  FDebug :=AValue;
 end;
 
 function TEditorTendency.GetIsDefault: Boolean;
@@ -2936,6 +2870,22 @@ begin
     Result := Session.Project.SCM
   else
     Result := DefaultProject.SCM
+end;
+
+function TEditorEngine.GetCurrentTendency: TEditorTendency;
+begin
+  Result := nil;
+  if Session.Run.Active and (Session.Run.Tendency <> nil) then
+    Result := Session.Run.Tendency as TEditorTendency;
+  if Result = nil then
+    Result := GetMainFileTendency;
+  if Result = nil then
+  begin
+    if (Engine.Files.Current <> nil) and (Engine.Files.Current.Tendency <> nil) then
+      Result := Engine.Files.Current.Tendency
+    else
+      Result := DefaultProject.Tendency;
+  end;
 end;
 
 function TEditorEngine.GetTendency: TEditorTendency;

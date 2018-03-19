@@ -169,7 +169,7 @@ begin
   RootDirEdit.Text := FProject.RunOptions.MainFolder;
   SaveDesktopChk.Checked := FProject.SaveDesktop;
   if FProject.SCM <> nil then
-    SCMCbo.ItemIndex := Engine.SourceManagements.IndexOf(FProject.SCM.Name) + 1
+    SCMCbo.ItemIndex := Engine.SourceManagements.IndexOfName(FProject.SCM.Name) + 1
   else
     SCMCbo.ItemIndex := 0;
   MainEdit.Text := FProject.RunOptions.MainFile;

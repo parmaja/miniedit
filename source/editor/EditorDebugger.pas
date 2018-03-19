@@ -238,6 +238,14 @@ type
     property Watches: TEditorWatches read FWatches;
   end;
 
+  TEditorDebugTendency = class(TEditorElement)
+  private
+  protected
+    FDebug: TEditorDebugger;
+    procedure SetDebug(AValue: TEditorDebugger);
+  public
+    property Debug: TEditorDebugger read FDebug write SetDebug;
+  end;
 
   { TDebugManager }
 
@@ -533,6 +541,12 @@ begin
   inherited Destroy;
 end;
 
+procedure TEditorDebugTendency.SetDebug(AValue: TEditorDebugger);
+begin
+  if FDebug =AValue then
+    Exit;
+  FDebug :=AValue;
+end;
 
 initialization
 finalization

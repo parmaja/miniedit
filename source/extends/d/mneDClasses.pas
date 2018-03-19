@@ -17,7 +17,7 @@ uses
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   mnSynHighlighterD, EditorDebugger, gdbClasses,
   EditorClasses, mneClasses, MsgBox,
-  mneCompilerProjectFrames, EditorRun, mneConsoleClasses,
+  mneCompilerProjectFrames, mneDTendencyFrames, EditorRun, mneConsoleClasses,
   mneConsoleForms, mneRunFrames;
 
 type
@@ -59,6 +59,7 @@ type
 
   TDTendency = class(TEditorTendency)
   private
+    FCompilerType: Integer;
   protected
     function CreateDebugger: TEditorDebugger; override;
     procedure Init; override;
@@ -68,6 +69,7 @@ type
     function CreateOptions: TEditorProjectOptions; override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
   published
+    property CompilerType: Integer read FCompilerType write FCompilerType default 0;
   end;
 
 implementation
@@ -85,6 +87,7 @@ begin
   (aFrame as TCompilerProjectFrame).Project := AProject;
   aFrame.Caption := 'Compiler';
   AddFrame(aFrame);
+
   aFrame := TDProjectFrame.Create(AOwner);
   (aFrame as TDProjectFrame).Project := AProject;
   aFrame.Caption := 'Options';
@@ -180,11 +183,15 @@ begin
     aRunItem.Info.Run.Command := Info.Command;
     if aRunItem.Info.Run.Command = '' then
     begin
-      {$ifdef windows}
-      aRunItem.Info.Run.Command := 'gdc.exe';
-      {$else}
-      aRunItem.Info.Run.Command := 'gdc';
-      {$endif}
+      case CompilerType of
+        0: aRunItem.Info.Run.Command := 'dmd.exe';
+        1:
+        {$ifdef windows}
+        aRunItem.Info.Run.Command := 'gdc.exe';
+        {$else}
+        aRunItem.Info.Run.Command := 'gdc';
+        {$endif}
+      end;
     end;
 
     aRunItem.Info.Run.Silent := True;
@@ -198,13 +205,19 @@ begin
       raise EEditorException.Create('File not exists: ' + aParams);
 
     aRunItem.Info.Run.Params := aPath + #13;
+
     if Info.OutputFile <> '' then
-      //aRunItem.Info.Params := aRunItem.Info.Params + '-of' + Info.OutputFile + #13; //dmd
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-o' + Info.OutputFile + #13;
+      case CompilerType of
+        0: aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-of' + Info.OutputFile + #13; //dmd
+        1: aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-o' + Info.OutputFile + #13; //gdc
+      end;
 
     if rnaDebug in Info.Actions then
     begin
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-g'#13;
+      case CompilerType of
+        0: aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-g'#13;
+        1: aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-g'#13;
+      end;
     end;
 
     aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
@@ -220,8 +233,10 @@ begin
         if not DirectoryExists(aPath) then
           raise EEditorException.Create('Path not exists: ' + aParams);
 
-        //aRunItem.Info.Params := aRunItem.Info.Params + '-I' +aPath + #13;
-        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-B' +aPath + #13;
+        case CompilerType of
+          0: aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-I' +aPath + #13;
+          1: aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-B' +aPath + #13;
+        end;
       end;
     end;
 
@@ -255,11 +270,17 @@ end;
 procedure TDTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
   aFrame: TRunFrameOptions;
+  aTendencyFrame: TDTendencyFrame;
 begin
   aFrame := TRunFrameOptions.Create(AOwner);
   aFrame.Options := ATendency.RunOptions;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
+
+  aTendencyFrame := TDTendencyFrame.Create(AOwner);
+  aTendencyFrame.Tendency := ATendency;
+  aTendencyFrame.Caption := 'D Options';
+  AddFrame(aTendencyFrame);
 end;
 
 function TDTendency.CreateDebugger: TEditorDebugger;

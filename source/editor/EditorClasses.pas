@@ -41,7 +41,46 @@ uses
     IFormEditor = interface
     end;
 
+    { TEditorElement }
+
+    TEditorElement = class(TPersistent)
+    private
+    protected
+      FName: string;
+      FTitle: string;
+      FDescription: string;
+      FImageIndex: integer;
+      function GetDescription: string; virtual;
+    public
+      constructor Create; virtual;
+
+      property Name: string read FName write FName;
+      property Title: string read FTitle write FTitle;
+      property Description: string read GetDescription write FDescription;
+      property ImageIndex: integer read FImageIndex write FImageIndex;
+    end;
+
+    { TEditorElements }
+
+    TEditorElements = class(specialize TmnNamedObjectList<TEditorElement>)
+    private
+    public
+    end;
+
 implementation
+
+{ TEditorElement }
+
+function TEditorElement.GetDescription: string;
+begin
+  Result := FDescription;
+end;
+
+constructor TEditorElement.Create;
+begin
+  inherited Create;
+  FImageIndex := -1;
+end;
 
 end.
 
