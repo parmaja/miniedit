@@ -34,7 +34,7 @@ type
 
   { TBoardComponents }
 
-  TBoardComponents = class(specialize GNamedItems<TBoardComponent>)
+  TBoardComponents = class(specialize TmnNamedObjectList<TBoardComponent>)
   private
   public
   end;

@@ -1,9 +1,9 @@
 object MainForm: TMainForm
-  Left = 353
+  Left = 320
   Height = 557
-  Top = 171
+  Top = 124
   Width = 881
-  ActiveControl = LogEdit
+  ActiveControl = OutputEdit
   AllowDropFiles = True
   Caption = 'Mini Edit'
   ClientHeight = 537
@@ -51,8 +51,10 @@ object MainForm: TMainForm
       Wrapable = False
       object BackBtn: TToolButton
         Left = 1
+        Hint = 'New file'
         Top = 0
-        Action = NewAct
+        Caption = 'New'
+        ImageIndex = 0
       end
       object ForwardBtn: TToolButton
         Left = 76
@@ -447,45 +449,6 @@ object MainForm: TMainForm
     Align = alBottom
     Constraints.MinHeight = 60
     TabOrder = 4
-    object CallStackGrid: TStringGrid
-      Left = 1
-      Height = 105
-      Top = 21
-      Width = 879
-      Align = alClient
-      ColCount = 3
-      Columns = <      
-        item
-          Title.Caption = 'File'
-          Width = 300
-        end      
-        item
-          Title.Caption = 'Line'
-          Width = 60
-        end>
-      Flat = True
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
-      ParentColor = True
-      RowCount = 1
-      TabOrder = 4
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnKeyDown = WatchesGridKeyDown
-      ColWidths = (
-        18
-        300
-        60
-      )
-      Cells = (
-        1
-        1
-        0
-        'Variable'
-      )
-    end
     object WatchesGrid: TStringGrid
       Left = 1
       Height = 105
@@ -522,6 +485,45 @@ object MainForm: TMainForm
         140
         60
         300
+      )
+      Cells = (
+        1
+        1
+        0
+        'Variable'
+      )
+    end
+    object CallStackGrid: TStringGrid
+      Left = 1
+      Height = 105
+      Top = 21
+      Width = 879
+      Align = alClient
+      ColCount = 3
+      Columns = <      
+        item
+          Title.Caption = 'File'
+          Width = 300
+        end      
+        item
+          Title.Caption = 'Line'
+          Width = 60
+        end>
+      Flat = True
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
+      ParentColor = True
+      RowCount = 1
+      TabOrder = 4
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnKeyDown = WatchesGridKeyDown
+      ColWidths = (
+        18
+        300
+        60
       )
       Cells = (
         1
@@ -569,47 +571,6 @@ object MainForm: TMainForm
         3
         0
         'Result'
-      )
-    end
-    object MessagesGrid: TStringGrid
-      Left = 1
-      Height = 105
-      Top = 21
-      Width = 879
-      Align = alClient
-      Flat = True
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
-      ParentColor = True
-      PopupMenu = MessagesPopup
-      RowCount = 1
-      TabOrder = 2
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnDblClick = MessagesGridDblClick
-      ColWidths = (
-        18
-        64
-        378
-        164
-        64
-      )
-      Cells = (
-        4
-        1
-        0
-        'Type'
-        2
-        0
-        'Message'
-        3
-        0
-        'File'
-        4
-        0
-        'Line'
       )
     end
     inline LogEdit: TSynEdit
@@ -1184,6 +1145,47 @@ object MainForm: TMainForm
           MarkupInfo.Foreground = clGray
         end
       end
+    end
+    object MessagesGrid: TStringGrid
+      Left = 1
+      Height = 105
+      Top = 21
+      Width = 879
+      Align = alClient
+      Flat = True
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
+      ParentColor = True
+      PopupMenu = MessagesPopup
+      RowCount = 1
+      TabOrder = 2
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnDblClick = MessagesGridDblClick
+      ColWidths = (
+        18
+        64
+        378
+        164
+        64
+      )
+      Cells = (
+        4
+        1
+        0
+        'Type'
+        2
+        0
+        'Message'
+        3
+        0
+        'File'
+        4
+        0
+        'Line'
+      )
     end
     inline OutputEdit: TSynEdit
       Left = 1
@@ -1781,12 +1783,8 @@ object MainForm: TMainForm
     object file1: TMenuItem
       Caption = '&File'
       Hint = 'Exit|Quits the application'
-      object NewMnu: TMenuItem
-        Action = NewAct
-        OnClick = NewActExecute
-      end
       object NewAsMnu: TMenuItem
-        Action = NewAsAct
+        Action = NewAct
       end
       object OpenMnu: TMenuItem
         Action = OpenAct
@@ -2228,13 +2226,6 @@ object MainForm: TMainForm
       Hint = 'Save current file as new file'
       OnExecute = SaveAsActExecute
     end
-    object NewAct: TAction
-      Category = 'File'
-      Caption = 'New'
-      Hint = 'New file'
-      ImageIndex = 0
-      OnExecute = NewActExecute
-    end
     object OpenAct: TAction
       Category = 'File'
       Caption = '&Open'
@@ -2563,10 +2554,10 @@ object MainForm: TMainForm
       Caption = 'Refresh'
       OnExecute = RefreshFilesActExecute
     end
-    object NewAsAct: TAction
+    object NewAct: TAction
       Category = 'File'
-      Caption = 'New as'
-      OnExecute = NewAsActExecute
+      Caption = 'New'
+      OnExecute = NewActExecute
     end
     object SortByNamesAct: TAction
       Category = 'Files'
@@ -2752,42 +2743,6 @@ object MainForm: TMainForm
     end
     object OpenFileFolder: TMenuItem
       Caption = 'Open File Folder'
-      Bitmap.Data = {
-        36040000424D3604000000000000360000002800000010000000100000000100
-        2000000000000004000064000000640000000000000000000000FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00000000FF000000FF000000FF000000FF000000FF000000FF000000FFFF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF000000
-        00FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00000000FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00000000FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00000000FF000000FF000000FF000000FF0000
-        00FF000000FF000000FF000000FF000000FFFF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00000000FF9CFFFFFF00CFFFFF00CFFFFF00CFFFFF00CF
-        FFFF000000FF00CFFFFF00CFFFFF00CFFFFF000000FFFF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00000000FF9CFFFFFF00CFFFFF00CFFFFF000000FF0000
-        00FF000000FF000000FF000000FF00CFFFFF000000FFFF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00000000FF9CFFFFFF00CFFFFF00CFFFFF00CFFFFF0000
-        00FF000000FF000000FF00CFFFFF00CFFFFF000000FFFF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00000000FF9CFFFFFF00CFFFFF00CFFFFF00CFFFFF00CF
-        FFFF000000FF00CFFFFF00CFFFFF00CFFFFF000000FFFF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00000000FF9CFFFFFF00CFFFFF00CFFFFF00CFFFFF00CF
-        FFFF00CFFFFF00CFFFFF00CFFFFF00CFFFFF000000FFFF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00000000FF9CFFFFFF9CFFFFFF9CFFFFFF9CFFFFFF9CFF
-        FFFF9CFFFFFF9CFFFFFF9CFFFFFF9CFFFFFF000000FFFF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00000000FF9CFFFFFF9CFFFFFF9CFFFFFF9CFFFFFF0000
-        00FF000000FF000000FF000000FF000000FFFF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00000000FF000000FF000000FF000000FFFF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-      }
       ImageIndex = 30
       OnClick = OpenFileFolderClick
     end
@@ -3013,6 +2968,7 @@ object MainForm: TMainForm
     top = 270
   end
   object ApplicationProperties: TApplicationProperties
+    CaptureExceptions = False
     OnActivate = ApplicationPropertiesActivate
     OnShowHint = ApplicationPropertiesShowHint
     left = 66

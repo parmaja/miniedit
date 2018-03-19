@@ -47,7 +47,7 @@ type
 
   TdbgpActionClass = class of TdbgpAction;
 
-  TdbgpSpool = class(specialize GItems<TdbgpAction>)
+  TdbgpSpool = class(specialize TmnObjectList<TdbgpAction>)
   private
   public
   end;
@@ -236,7 +236,7 @@ type
   published
   end;
 
-  TdbgpWatches = class(specialize GItems<TdbgpWatch>)
+  TdbgpWatches = class(specialize TmnObjectList<TdbgpWatch>)
   private
     FServer: TdbgpServer;
     CurrentHandle: integer;
@@ -269,7 +269,7 @@ type
     property Line: integer read FLine write FLine;
   end;
 
-  TdbgpBreakpoints = class(specialize GItems<TdbgpBreakpoint>)
+  TdbgpBreakpoints = class(specialize TmnObjectList<TdbgpBreakpoint>)
   private
     CurrentHandle: integer;
     FServer: TdbgpServer;

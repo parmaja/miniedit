@@ -63,7 +63,7 @@ type
 
   { TAddons }
 
-  TAddons = class(specialize GItems<TAddonItem>)
+  TAddons = class(specialize TmnObjectList<TAddonItem>)
   private
   public
     function Add(Category, Name: string; vAddon: IAddon): TAddonItem; overload;

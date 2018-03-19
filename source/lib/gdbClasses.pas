@@ -37,7 +37,7 @@ type
 
   { TGDBBreakPointList }
 
-  TGDBBreakPointList = class(specialize GItems<TGDBBreakPointItem>)
+  TGDBBreakPointList = class(specialize TmnObjectList<TGDBBreakPointItem>)
   private
   protected
   public
@@ -77,7 +77,7 @@ type
 
   { TGDBWatchList }
 
-  TGDBWatchList = class(specialize GNamedItems<TGDBWatchItem>)
+  TGDBWatchList = class(specialize TmnNamedObjectList<TGDBWatchItem>)
   private
   protected
   public

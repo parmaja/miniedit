@@ -46,7 +46,7 @@ type
 
   TLuaDBGActionClass = class of TLuaDBGAction;
 
-  TLuaDBGSpool = class(specialize GItems<TLuaDBGAction>)
+  TLuaDBGSpool = class(specialize TmnObjectList<TLuaDBGAction>)
   private
   public
   end;
@@ -235,7 +235,7 @@ type
   published
   end;
 
-  TLuaDBGWatches = class(specialize GItems<TLuaDBGWatch>)
+  TLuaDBGWatches = class(specialize TmnObjectList<TLuaDBGWatch>)
   private
     FServer: TLuaDBGServer;
     CurrentHandle: integer;
@@ -268,7 +268,7 @@ type
     property Line: integer read FLine write FLine;
   end;
 
-  TLuaDBGBreakpoints = class(specialize GItems<TLuaDBGBreakpoint>)
+  TLuaDBGBreakpoints = class(specialize TmnObjectList<TLuaDBGBreakpoint>)
   private
     CurrentHandle: integer;
     FServer: TLuaDBGServer;

@@ -83,7 +83,7 @@ type
 
   { TCallStackItems }
 
-  TCallStackItems = class(specialize GItems<TCallStackItem>)
+  TCallStackItems = class(specialize TmnObjectList<TCallStackItem>)
   private
   protected
   public

@@ -81,29 +81,26 @@ begin
     Bmp := TBitmap.Create;
     PanelImages.GetFullBitmap(Bmp);
     Img := Bmp.RawImage;
-    //PanelImages.GetFullRawImage(m, img);
     p := PRGBAQuad(img.Data);
     c := img.DataSize div SizeOf(p^);
     i := 0;
     while i < c do
     begin
-      //stupid idea, but the mask will work with it
-      //if p^.Green = 0 then //we should check if masked
-      begin
-        p^.Blue := new;
-        p^.Green := new;
-        p^.Red := new;
-      end;
+      p^.Red := new;
+      p^.Green := new;
+      p^.Blue := new;
       inc(p);
       inc(i);
     end;
     PanelImages.Clear;
-    PanelImages.AddMasked(Bmp, clFuchsia);
+    PanelImages.AddMasked(Bmp, clBlue);
+    //Bmp.TransparentColor := clFuchsia;
+    //Bmp.Transparent := True;
+    //PanelImages.AddSliced(Bmp, Bmp.Width div PanelImages.Width, Bmp.Height div PanelImages.Height);
   finally
     PanelImages.EndUpdate;
   end;
 end;
-
 
 {$R *.lfm}
 

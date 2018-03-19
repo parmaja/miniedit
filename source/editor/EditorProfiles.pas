@@ -120,7 +120,7 @@ type
     CodeFolding: Boolean;
   end;
 
-  TGlobalAttributeList = specialize GItems<TGlobalAttribute>;
+  TGlobalAttributeList = specialize TmnObjectList<TGlobalAttribute>;
 
   TGlobalAttributes = class(TComponent)
   private

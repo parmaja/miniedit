@@ -103,7 +103,7 @@ type
     MenuItem15: TMenuItem;
     MenuItem16: TMenuItem;
     NewAsMnu: TMenuItem;
-    NewAsAct: TAction;
+    NewAct: TAction;
     MenuItem13: TMenuItem;
     MessagesSpl: TntvSplitter;
     SelectSCMTypeAct: TAction;
@@ -132,7 +132,6 @@ type
     IPCServer: TSimpleIPCServer;
     veiw1: TMenuItem;
     Help1: TMenuItem;
-    NewMnu: TMenuItem;
     OpenMnu: TMenuItem;
     SaveMnu: TMenuItem;
     N1: TMenuItem;
@@ -153,7 +152,6 @@ type
     SaveAct: TAction;
     OpenAct: TAction;
     SaveAsAct: TAction;
-    NewAct: TAction;
     Saveas1: TMenuItem;
     GeneralOptionsAct: TAction;
     N6: TMenuItem;
@@ -358,7 +356,7 @@ type
     procedure MenuItem23Click(Sender: TObject);
     procedure MenuItem24Click(Sender: TObject);
     procedure MessagesGridDblClick(Sender: TObject);
-    procedure NewAsActExecute(Sender: TObject);
+    procedure NewActExecute(Sender: TObject);
     procedure OpenActExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FileTabsClick(Sender: TObject);
@@ -843,7 +841,7 @@ begin
   end;
 end;
 
-procedure TMainForm.NewAsActExecute(Sender: TObject);
+procedure TMainForm.NewActExecute(Sender: TObject);
 var
   G: TFileGroups;
   E: Integer;
@@ -862,6 +860,7 @@ begin
         if not (fgkUneditable in aGroups[i].Kind) then
           G.Add(aGroups[i]);
       end;
+      //from old Engine.Files.New(Engine.Tendency.GetDefaultGroup);
       if ShowSelectList('Select file type', G, [slfUseNameTitle], E) then
         Engine.Files.New(G[E]);
     finally
@@ -1164,7 +1163,7 @@ end;
 
 procedure TMainForm.NewActExecute(Sender: TObject);
 begin
-  Engine.Files.New(Engine.Tendency.GetDefaultGroup);
+
 end;
 
 procedure TMainForm.FolderOpenAllActExecute(Sender: TObject);

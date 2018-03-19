@@ -102,7 +102,7 @@ type
 
   { TEditorExtensions }
 
-  TEditorExtensions = class(specialize GNamedItems<TEditorExtension>)
+  TEditorExtensions = class(specialize TmnNamedObjectList<TEditorExtension>)
   private
   public
     procedure Add(Name:string; ImageIndex: Integer = -1);
@@ -217,7 +217,7 @@ type
 
   { TEditorElements }
 
-  TEditorElements = class(specialize GNamedItems<TEditorElement>)
+  TEditorElements = class(specialize TmnNamedObjectList<TEditorElement>)
   private
   public
     function IndexOf(vName: string): Integer;
@@ -279,6 +279,7 @@ type
     FTabWidth: Integer;
   public
     constructor Create; virtual; //do delete it, need to override it
+    destructor Destroy; override;
     procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); virtual;
     procedure CreateProjectPanel(AOwner: TComponent; AProject: TEditorProject; var AFrame: TFrame); virtual;
   published
@@ -794,7 +795,7 @@ type
 
   { TMapper }
 
-  TMapper = class(specialize GNamedItems<TMap>)
+  TMapper = class(specialize TmnNamedObjectList<TMap>)
   private
   public
     function Add(Attribute: TSynHighlighterAttributes; AttType: TAttributeType): TMap;
@@ -852,7 +853,7 @@ type
 
   { TFileCategories }
 
-  TFileCategories = class(specialize GNamedItems<TFileCategory>)
+  TFileCategories = class(specialize TmnNamedObjectList<TFileCategory>)
   public
     function FindByClass(CategoryClass: TFileCategoryClass): TFileCategory;
     function Add(vCategory: TFileCategory): Integer;
@@ -965,7 +966,7 @@ type
 
   { TEditorFormList }
 
-  TEditorFormList = class(specialize GItems<TEditorFormItem>)
+  TEditorFormList = class(specialize TmnObjectList<TEditorFormItem>)
   private
   public
     function Find(ObjectClass: TClass): TEditorFormItem;
@@ -1036,7 +1037,7 @@ type
     property Text: string read FText write FText;
   end;
 
-  TEditorMessages = class(specialize GItems<TEditorMessage>)
+  TEditorMessages = class(specialize TmnObjectList<TEditorMessage>)
   private
     FName: string;
   public
@@ -1044,7 +1045,7 @@ type
     property Name: string read FName write FName;
   end;
 
-  TEditorMessagesList = class(specialize GNamedItems<TEditorMessages>)
+  TEditorMessagesList = class(specialize TmnNamedObjectList<TEditorMessages>)
   private
   public
     function GetMessages(Name: string): TEditorMessages;
@@ -1584,6 +1585,11 @@ begin
   inherited Create;
   FTabWidth := 4;
   FIndentMode := idntTabsToSpaces;
+end;
+
+destructor TEditorProjectOptions.Destroy;
+begin
+  inherited Destroy;
 end;
 
 procedure TEditorProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack);
@@ -4847,6 +4853,8 @@ end;
 procedure TEditorProject.Loaded(Failed: Boolean);
 begin
   inherited;
+  if (Tendency = nil) then
+    TendencyName := 'Default'; //fix if TendencyName is empty
 {  if not Failed and FSaveDesktop then
     Desktop.Load;}
 end;

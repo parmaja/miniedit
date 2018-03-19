@@ -74,7 +74,7 @@ type
 
   { TmneRunItems }
 
-  TmneRunItems = class(specialize GItems<TmneRunItem>);
+  TmneRunItems = class(specialize TmnObjectList<TmneRunItem>);
 
   { TmneRunPool }
 
