@@ -191,8 +191,9 @@ type
     procedure Save;
     property Project: TEditorProject read FProject;
   published
-    property Breakpoints: TmneBreakpoints read FBreakpoints;
-    property Watches: TmneWatches read FWatches;
+    property Breakpoints: TmneBreakpoints read FBreakpoints; //for saving loading Breakpoints
+    property Watches: TmneWatches read FWatches; //same
+
     property Files: TEditorDesktopFiles read FFiles;
   end;
 
