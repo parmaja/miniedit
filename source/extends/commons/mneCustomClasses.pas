@@ -272,7 +272,7 @@ begin
         aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + AOptions.Params + #13;
     end;
 
-    Engine.Session.Run.Start;
+    Engine.Session.Run.Start(Self);
   finally
     FreeAndNil(AOptions)
   end

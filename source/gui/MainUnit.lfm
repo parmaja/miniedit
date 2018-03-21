@@ -2948,8 +2948,8 @@ object MainForm: TMainForm
     end
   end
   object OutputPopup: TPopupMenu
-    left = 512
-    top = 95
+    left = 388
+    top = 334
     object MenuItem1: TMenuItem
       Caption = 'Clear'
       OnClick = MenuItem1Click

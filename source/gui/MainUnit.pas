@@ -1649,8 +1649,13 @@ begin
   ProjectOpenFolderAct.Enabled := b;
   SCMMnu.Visible := Engine.SCM <> nil;
   if Engine.SCM <> nil then
-    SCMMnu.Caption := Engine.SCM.Name;
-  TypePnl.Caption := Engine.Tendency.Name;
+    SCMMnu.Caption := Engine.SCM.Name
+  else
+    SCMMnu.Caption := '';
+  if Engine.Session.Active and (Engine.Session.Project.Tendency <> nil) then
+    TypePnl.Caption := Engine.Session.Project.Tendency.Name
+  else
+    TypePnl.Caption := '';
 
   UpdateMenu;
   UpdateMenuItems;
@@ -2468,24 +2473,26 @@ procedure TMainForm.UpdateWatches;
 var
   i: integer;
   aIndex: integer;
+  aTendency: TEditorTendency;
 begin
   //todo not good idea, we should refresh without clear the grid
-  if Engine.CurrentTendency.Debug <> nil then
+  aTendency := Engine.Tendency;
+  if aTendency.Debug <> nil then
   begin
     aIndex := WatchesGrid.Row;
     WatchesGrid.BeginUpdate;
     try
-      WatchesGrid.RowCount := Engine.CurrentTendency.Debug.Watches.Count + 1;
-      Engine.CurrentTendency.Debug.Lock;
+      WatchesGrid.RowCount := aTendency.Debug.Watches.Count + 1;
+      aTendency.Debug.Lock;
       try
-        for i := 0 to Engine.CurrentTendency.Debug.Watches.Count - 1 do
+        for i := 0 to aTendency.Debug.Watches.Count - 1 do
         begin
-          WatchesGrid.Cells[1, i + 1] := Engine.CurrentTendency.Debug.Watches[i].Name;
-          WatchesGrid.Cells[2, i + 1] := Engine.CurrentTendency.Debug.Watches[i].VarType;
-          WatchesGrid.Cells[3, i + 1] := Engine.CurrentTendency.Debug.Watches[i].Value;
+          WatchesGrid.Cells[1, i + 1] := aTendency.Debug.Watches[i].Name;
+          WatchesGrid.Cells[2, i + 1] := aTendency.Debug.Watches[i].VarType;
+          WatchesGrid.Cells[3, i + 1] := aTendency.Debug.Watches[i].Value;
         end;
       finally
-        Engine.CurrentTendency.Debug.Unlock;
+        aTendency.Debug.Unlock;
       end;
     finally
       if (aIndex > 0) and (aIndex <= WatchesGrid.RowCount) then
@@ -2615,15 +2622,15 @@ var
 begin
   if (Engine.Files.Current <> nil) and (Engine.Files.Current.Tendency.Debug <> nil) then
   begin
-    if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomSynEdit) and (ActiveControl = Engine.Files.Current.Control) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
+    if (Engine.Files.Current.Control is TCustomSynEdit) and (ActiveControl = Engine.Files.Current.Control) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
       with Engine.Files.Current do
       begin
         aLine := (Control as TCustomSynEdit).CaretY;
-        Engine.CurrentTendency.Debug.Lock;
+        Engine.Files.Current.Tendency.Debug.Lock;
         try
-          Engine.CurrentTendency.Debug.Breakpoints.Toggle(Name, aLine);
+          Engine.Files.Current.Tendency.Debug.Breakpoints.Toggle(Name, aLine);
         finally
-          Engine.CurrentTendency.Debug.Unlock;
+          Engine.Files.Current.Tendency.Debug.Unlock;
         end;
         (Control as TCustomSynEdit).InvalidateLine(aLine);
       end;
@@ -2793,7 +2800,7 @@ end;
 procedure TMainForm.MenuItem1Click(Sender: TObject);
 begin
   FOutputBuffer := '';//TODO bad bad bad
-  OutputEdit.Lines.Clear;
+  (Sender as TSynEdit).Lines.Clear;
 end;
 
 procedure TMainForm.EngineState;

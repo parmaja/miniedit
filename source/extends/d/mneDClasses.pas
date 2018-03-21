@@ -259,7 +259,7 @@ begin
       aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + RunOptions.Params + #13;
   end;
 
-  Engine.Session.Run.Start;
+  Engine.Session.Run.Start(Self);
 end;
 
 constructor TDTendency.Create;

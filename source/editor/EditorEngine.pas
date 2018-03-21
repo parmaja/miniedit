@@ -147,6 +147,8 @@ type
     FFileName: string;
     FLineNo: Integer;
   public
+    ID: integer;
+    Handle: integer;
   published
     property FileName: string read FFileName write FFileName;
     property LineNo: Integer read FLineNo write FLineNo;
@@ -166,6 +168,8 @@ type
   private
     FName: string;
   public
+    ID: integer;
+    Handle: integer;
   published
     property Name: string read FName write FName;
   end;
@@ -367,7 +371,7 @@ type
     procedure Copy(AOptions: TRunProjectOptions);
     procedure Assign(Source: TPersistent); override;
   published
-    property Pause: Boolean read FPause write FPause;
+    property Pause: Boolean read FPause write FPause default true;
     property Command: string read FCommand write FCommand;
     property Params: string read FParams write FParams;
     property Require: string read FRequire write FRequire;
@@ -1633,6 +1637,7 @@ constructor TRunProjectOptions.Create;
 begin
   inherited;
   FPaths := TStringList.Create;
+  FPause := True;
 end;
 
 destructor TRunProjectOptions.Destroy;
@@ -2875,11 +2880,7 @@ end;
 
 function TEditorEngine.GetCurrentTendency: TEditorTendency;
 begin
-  Result := nil;
-  if Session.Run.Active and (Session.Run.Tendency <> nil) then
-    Result := Session.Run.Tendency as TEditorTendency;
-  if Result = nil then
-    Result := GetMainFileTendency;
+  Result := GetMainFileTendency;
   if Result = nil then
   begin
     if (Engine.Files.Current <> nil) and (Engine.Files.Current.Tendency <> nil) then
@@ -2891,7 +2892,7 @@ end;
 
 function TEditorEngine.GetTendency: TEditorTendency;
 begin
-  if Session.Active and (Session.Project.Tendency <> nil) then
+  if Session.Active and (Session.Project.Tendency <> nil) and (not Session.Project.Tendency.IsDefault) then
     Result := Session.Project.Tendency
   else
   begin
@@ -2999,7 +3000,7 @@ begin
     Result.NewContent;
     Result.Edit;
     Current := Result;
-    Engine.UpdateState([ecsChanged, ecsState, ecsRefresh]);
+    Engine.UpdateState([ecsChanged, ecsDebug, ecsState, ecsRefresh]);
   finally
     Engine.EndUpdate;
   end;
@@ -3012,7 +3013,7 @@ begin
     Result := TControlEditorFile.Create(Engine.Files);
     (Result as TControlEditorFile).Control := Control;
     Result.Name := Name;
-    Engine.UpdateState([ecsChanged, ecsState, ecsRefresh]);
+    Engine.UpdateState([ecsChanged, ecsDebug, ecsState, ecsRefresh]);
     Current := Result;
   finally
     EndUpdate;
@@ -3066,7 +3067,7 @@ begin
         end;
         if aFile <> nil then
           Current := aFile;
-        Engine.UpdateState([ecsChanged, ecsState, ecsRefresh]);
+        Engine.UpdateState([ecsChanged, ecsDebug, ecsState, ecsRefresh]);
       finally
         Engine.EndUpdate;
       end;
@@ -3310,6 +3311,7 @@ begin
     FCurrent := Value;
     if not Engine.Updating then
       FCurrent.Show;
+    Engine.UpdateState([ecsDebug, ecsRefresh]);
   end;
 end;
 
@@ -3330,7 +3332,7 @@ begin
         OldCurrent := Current;
         Current := aCurrent;
         if vRefresh and (OldCurrent <> Current) then
-          Engine.UpdateState([ecsState, ecsRefresh]);
+          Engine.UpdateState([ecsState, ecsDebug, ecsRefresh]);
       end;
     finally
       Engine.EndUpdate;
@@ -3651,9 +3653,11 @@ begin
       Engine.UpdateState([ecsChanged]);
     end;
     if Result <> nil then
+    begin
       Current := Result;
+    end;
   finally
-    Engine.UpdateState([ecsState, ecsRefresh]);
+    Engine.UpdateState([ecsState, ecsDebug, ecsRefresh]);
   end;
 end;
 
@@ -5096,7 +5100,7 @@ var
 var
   aTendency: TEditorTendency;
 begin
-  aTendency := Engine.Tendency;
+  aTendency := FEditorFile.Tendency; //from file Tendency
   //inherited;
   if aTendency.Debug <> nil then
   begin

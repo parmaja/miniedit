@@ -125,12 +125,11 @@ type
   protected
     function GetItems(Index: Integer): TDebugBreakpointInfo; virtual; abstract;
   public
-    procedure Toggle(FileName: string; LineNo: Integer); virtual; abstract;
-    function IsExists(FileName: string; LineNo: Integer): boolean; virtual; abstract;
-    procedure Add(FileName: string; LineNo: Integer); virtual; abstract;
-    procedure Remove(FileName: string; Line: Integer); virtual; overload; abstract;
-    procedure Remove(Handle: Integer); virtual; overload; abstract;
-
+    procedure Toggle(FileName: string; LineNo: Integer); virtual;
+    function IsExists(FileName: string; LineNo: Integer): boolean; virtual;
+    procedure Add(FileName: string; LineNo: Integer); virtual;
+    procedure Remove(FileName: string; Line: Integer); virtual; overload;
+    procedure Remove(Handle: Integer); virtual; overload;
     property Items[Index: Integer]: TDebugBreakpointInfo read GetItems; default;
   end;
 
@@ -209,7 +208,6 @@ type
     FBreakpoints: TEditorBreakPoints;
     FWatches: TEditorWatches;
     FKey: string;
-    //FLink: TEditorDebugLink;
     function GetActive: Boolean;
     function GetRunning: boolean;
     procedure SetActive(AValue: boolean);
@@ -273,6 +271,33 @@ begin
   if FDebugManager = nil then
     FDebugManager := TDebugManager.Create;
   Result := FDebugManager;
+end;
+
+{ TEditorBreakPoints }
+
+procedure TEditorBreakPoints.Toggle(FileName: string; LineNo: Integer);
+begin
+
+end;
+
+function TEditorBreakPoints.IsExists(FileName: string; LineNo: Integer): boolean;
+begin
+
+end;
+
+procedure TEditorBreakPoints.Add(FileName: string; LineNo: Integer);
+begin
+
+end;
+
+procedure TEditorBreakPoints.Remove(FileName: string; Line: Integer);
+begin
+
+end;
+
+procedure TEditorBreakPoints.Remove(Handle: Integer);
+begin
+
 end;
 
 { TDebugManager }

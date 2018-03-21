@@ -98,23 +98,23 @@ type
 
   TmneRun = class(TObject)
   private
-    FEditorTendency: TEditorDebugTendency;
     FPool: TmneRunPool;
+    FTendency: TEditorDebugTendency;
     function GetActive: Boolean;
-    procedure SetEditorTendency(AValue: TEditorDebugTendency);
   protected
     procedure PoolTerminated(Sender: TObject);
+    procedure Finish;
   public
     constructor Create;
     destructor Destroy; override;
     function Add(AItemClass: TmneRunItemClass = nil): TmneRunItem; //Return same as parameter
     procedure Clear;
-    procedure Start;
+    procedure Start(ATendency: TEditorDebugTendency);
     procedure Show;
     procedure Stop;
     property Active: Boolean read GetActive;
     property Pool: TmneRunPool read FPool;
-    property Tendency: TEditorDebugTendency read FEditorTendency write SetEditorTendency;
+    property Tendency: TEditorDebugTendency read FTendency;
   end;
 
 implementation
@@ -209,16 +209,16 @@ begin
   Result := FPool <> nil;
 end;
 
-procedure TmneRun.SetEditorTendency(AValue: TEditorDebugTendency);
-begin
-  if FEditorTendency =AValue then Exit;
-  FEditorTendency :=AValue;
-end;
-
 procedure TmneRun.PoolTerminated(Sender: TObject);
 begin
   FPool := nil;
   Engine.UpdateState([ecsDebug]);
+  Finish;
+end;
+
+procedure TmneRun.Finish;
+begin
+  FTendency := nil;
 end;
 
 constructor TmneRun.Create;
@@ -232,8 +232,9 @@ begin
   inherited Destroy;
 end;
 
-procedure TmneRun.Start;
+procedure TmneRun.Start(ATendency: TEditorDebugTendency);
 begin
+  FTendency := ATendency;
   if FPool = nil then
     raise Exception.Create('There is no thread Pool');
   FPool.Start;
@@ -251,6 +252,7 @@ begin
   begin
     FPool.Stop;
   end;
+  Finish;
 end;
 
 function TmneRun.Add(AItemClass: TmneRunItemClass): TmneRunItem;
@@ -384,7 +386,7 @@ begin
     if not Assigned(FOnWrite) then
       raise Exception.Create('You need to assign OnWrite');
     FProcess.Options :=  aOptions + [poUsePipes, poStderrToOutPut];
-    FProcess.ShowWindow := swoShowNormal;
+    FProcess.ShowWindow := swoHIDE;
     FProcess.StartupOptions:=[suoUseShowWindow];
     FProcess.PipeBufferSize := 0; //80 char in line
     ProcessObject := TmnProcessObject.Create(FProcess, FPool, @WriteOutput);

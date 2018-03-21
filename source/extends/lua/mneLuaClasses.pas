@@ -197,7 +197,7 @@ begin
   begin
   end;
 
-  Engine.Session.Run.Start;
+  Engine.Session.Run.Start(Self);
 end;
 
 function TLuaTendency.GetDefaultGroup: TFileGroup;

@@ -279,7 +279,7 @@ begin
     if RunOptions.Params <> '' then
       aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + RunOptions.Params + #13;
 
-    Engine.Session.Run.Start;
+    Engine.Session.Run.Start(Self);
   end;
 end;
 

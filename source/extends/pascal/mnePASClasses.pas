@@ -224,15 +224,15 @@ begin
     end;
     if p <> '' then
       aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + p + #13;
-  end;
 
-  if rnaDebug in Info.Actions then
-  begin
-    aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-gw'#13;
-    aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-dDebug'#13;
-  end
-  else
-    aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-dRelease'#13;
+    if rnaDebug in Info.Actions then
+    begin
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-gw'#13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-dDebug'#13;
+    end
+    else
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-dRelease'#13;
+  end;
 
   if rnaExecute in Info.Actions then
   begin
@@ -247,7 +247,7 @@ begin
       aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + RunOptions.Params + #13;
   end;
 
-  Engine.Session.Run.Start;
+  Engine.Session.Run.Start(Self);
 end;
 
 procedure TPasTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
