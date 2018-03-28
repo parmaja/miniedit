@@ -43,6 +43,11 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    ChangeExtAct: TAction;
+    MainFileAct: TAction;
+    MenuItem35: TMenuItem;
+    ChangeExtMnu: TMenuItem;
+    ResetMainFileAct: TAction;
     MenuItem32: TMenuItem;
     MenuItem33: TMenuItem;
     MenuItem34: TMenuItem;
@@ -69,6 +74,7 @@ type
     MenuItem27: TMenuItem;
     OutputEdit: TSynEdit;
     FolderPanel: TPanel;
+    MainFileBtn: TToolButton;
     ToolButton8: TToolButton;
     WatchesGrid: TStringGrid;
     SearchGrid: TStringGrid;
@@ -102,7 +108,7 @@ type
     MenuItem14: TMenuItem;
     MenuItem15: TMenuItem;
     MenuItem16: TMenuItem;
-    NewAsMnu: TMenuItem;
+    NewMnu: TMenuItem;
     NewAct: TAction;
     MenuItem13: TMenuItem;
     MessagesSpl: TntvSplitter;
@@ -166,7 +172,6 @@ type
     SaveAllAct: TAction;
     AboutAct: TAction;
     KeywordAct: TAction;
-    KeywordMnu: TMenuItem;
     About2: TMenuItem;
     DBGRunAct: TAction;
     DBGLintAct: TAction;
@@ -184,7 +189,6 @@ type
     EditMnu: TMenuItem;
     Find1: TMenuItem;
     Findnext1: TMenuItem;
-    HelpIndexAct: TAction;
     HelpIndex1: TMenuItem;
     EditorOptionsAct: TAction;
     N3: TMenuItem;
@@ -248,7 +252,7 @@ type
     EditorOptions2: TMenuItem;
     GotoLineAct: TAction;
     GotoLine1: TMenuItem;
-    GotoFolder1: TMenuItem;
+    SelectFolderMnu: TMenuItem;
     ReplaceAct: TAction;
     Replace1: TMenuItem;
     RevertAct: TAction;
@@ -285,7 +289,7 @@ type
     ResumeMnu: TMenuItem;
     DBGStepOutAct: TAction;
     DBGStepOutAct1: TMenuItem;
-    ToolButton6: TToolButton;
+    RunBtn: TToolButton;
     N5: TMenuItem;
     AddWatch1: TMenuItem;
     WatchesPopupMenu: TPopupMenu;
@@ -338,6 +342,7 @@ type
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
     procedure BrowserTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure CallStackListDblClick(Sender: TObject);
+    procedure ChangeExtActExecute(Sender: TObject);
     procedure DBGCompileActExecute(Sender: TObject);
     procedure DeleteActExecute(Sender: TObject);
     procedure EditorPopupMenuPopup(Sender: TObject);
@@ -352,6 +357,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure IPCServerMessage(Sender: TObject);
     procedure IPCServerMessageQueued(Sender: TObject);
+    procedure MainFileActExecute(Sender: TObject);
     procedure MenuItem22Click(Sender: TObject);
     procedure MenuItem23Click(Sender: TObject);
     procedure MenuItem24Click(Sender: TObject);
@@ -365,6 +371,7 @@ type
     procedure CloseActExecute(Sender: TObject);
     procedure FileListDblClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
+    procedure ResetMainFileActExecute(Sender: TObject);
     procedure SCMAddFileActExecute(Sender: TObject);
     procedure SearchGridDblClick(Sender: TObject);
     procedure SearchGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
@@ -429,7 +436,7 @@ type
     procedure OpenIncludeActUpdate(Sender: TObject);
     procedure GotoLineActUpdate(Sender: TObject);
     procedure GotoLineActExecute(Sender: TObject);
-    procedure GotoFolder1Click(Sender: TObject);
+    procedure SelectFolderMnuClick(Sender: TObject);
     procedure ReplaceActExecute(Sender: TObject);
     procedure RevertActExecute(Sender: TObject);
     procedure FileListKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
@@ -659,6 +666,22 @@ begin
   end;
 end;
 
+procedure TMainForm.ChangeExtActExecute(Sender: TObject);
+var
+  s: string;
+begin
+  if Engine.Files.Current <> nil then
+  begin
+    s := Engine.Files.Current.Extension;
+    if LeftStr(s, 1) = '.' then
+      s := MidStr(s, 2, MaxInt);
+    if MsgBox.Msg.Input(s, 'Please enter new file type for ' + s) then
+    begin
+      Engine.Files.Current.Extension := s;
+    end;
+  end;
+end;
+
 procedure TMainForm.DBGCompileActExecute(Sender: TObject);
 begin
   CompileFile;
@@ -789,6 +812,12 @@ begin
   IPCServer.PeekMessage(IPCServer.ThreadTimeOut, True); //not sure if it a bug in FPC
 end;
 
+procedure TMainForm.MainFileActExecute(Sender: TObject);
+begin
+  if Engine.Session.Project.RunOptions.MainFile <> '' then
+    Engine.Files.OpenFile(Engine.Session.Project.RunOptions.MainFile);
+end;
+
 procedure TMainForm.MenuItem22Click(Sender: TObject);
 begin
   if Engine.Session.Active then
@@ -860,7 +889,7 @@ begin
           G.Add(aGroups[i]);
       end;
       //from old Engine.Files.New(Engine.Tendency.GetDefaultGroup);
-      if ShowSelectList('Select file type', G, [slfUseNameTitle], E) then
+      if ShowSelectList('Select file type', G, [slfSearch, slfUseNameTitle], E) then
         Engine.Files.New(G[E]);
     finally
       G.Free;
@@ -1015,6 +1044,15 @@ begin
   end;
 end;
 
+procedure TMainForm.ResetMainFileActExecute(Sender: TObject);
+begin
+  if Engine.Session.Project.RunOptions.MainFile <> '' then
+  begin
+    Engine.Session.Project.RunOptions.MainFile := '';
+    Engine.UpdateState([ecsRefresh]);
+  end;
+end;
+
 procedure TMainForm.SCMAddFileActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
@@ -1128,9 +1166,9 @@ var
 begin
   if Engine.Files.Current <> nil then
   begin
-    s := Engine.Files.Current.NakeName;
-    if MsgBox.Msg.Input(s, 'Please enter new name for ' + Engine.Files.Current.NakeName) then
-      Engine.Files.Current.Rename(s);
+    s := Engine.Files.Current.PureName;
+    if MsgBox.Msg.Input(s, 'Please enter new name for ' + s) then
+      Engine.Files.Current.PureName := s;
   end;
 end;
 
@@ -1205,11 +1243,12 @@ end;
 
 procedure TMainForm.KeywordActExecute(Sender: TObject);
 begin
-  //  DoHtmlHelp;
+
 end;
 
 procedure TMainForm.HelpIndexActExecute(Sender: TObject);
 begin
+
 end;
 
 procedure TMainForm.EditorOptionsActExecute(Sender: TObject);
@@ -1414,7 +1453,10 @@ end;
 procedure TMainForm.SetAsMainFileAcExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
+  begin
     Engine.Session.Project.RunOptions.MainFile := Engine.Files.Current.Name;
+    Engine.UpdateState([ecsRefresh]);
+  end;
 end;
 
 procedure TMainForm.SetAsRootFolderActExecute(Sender: TObject);
@@ -1560,7 +1602,7 @@ begin
   LoadAddons;
 
   //Color := clSkyBlue; for test propose
-  Engine.SendLog('MiniEdit started');
+  //Engine.SendLog('MiniEdit started');
 end;
 
 procedure TMainForm.FormShow(Sender: TObject);
@@ -1702,7 +1744,8 @@ begin
   if Engine.Files.Current <> nil then
   begin
     FMenuItemsList.Clear;
-    Engine.Files.Current.Group.Category.EnumMenuItems(@AddMenuItem);
+    if Engine.Files.Current.Group <> nil then
+      Engine.Files.Current.Group.Category.EnumMenuItems(@AddMenuItem);
   end;
 
   with Engine.CurrentTendency do
@@ -1746,7 +1789,7 @@ procedure TMainForm.UpdatePanel;
     FreeAndNil(FProjectFrame);
   end;
 begin
-  if Engine.Session.Active and (Engine.Session.Project <> nil) then
+  if Engine.Session.Active then
   begin
     if (FProjectFrame = nil) or ((FProjectFrame as IEditorProjectFrame).Project <> Engine.Session.Project) then
     begin
@@ -2007,7 +2050,7 @@ begin
   end;
 end;
 
-procedure TMainForm.GotoFolder1Click(Sender: TObject);
+procedure TMainForm.SelectFolderMnuClick(Sender: TObject);
 var
   aFolder: string;
 begin
@@ -2372,6 +2415,8 @@ begin
   FileHeaderPanel.Visible := Engine.Files.Count > 0;
   if FileHeaderPanel.Visible then
     FileHeaderPanel.Refresh;
+  MainFileAct.Caption := Engine.Session.Project.RunOptions.MainFile;
+  MainFileAct.Visible := MainFileAct.Caption <> '';
 end;
 
 procedure TMainForm.UpdateCallStack;

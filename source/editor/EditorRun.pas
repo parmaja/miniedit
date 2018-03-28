@@ -358,7 +358,6 @@ var
 begin
   if (AInfo.Message <> '') then
     WriteMessage(AInfo.Message + #13#10);
-  WriteMessage(AInfo.Message + #13#10);
   FProcess := TProcess.Create(nil);
   FProcess.ConsoleTitle := Info.Title;
   FProcess.InheritHandles := True;
@@ -397,7 +396,8 @@ begin
       FreeAndNil(ProcessObject);
     end;
   end;
-  WriteMessage(#13#10'End Status: ' + IntToStr(Status)+#13#10, msgtLog);
+  WriteMessage(#13#10'Exit Status: ' + IntToStr(Status), msgtLog);
+  WriteMessage('', msgtLog);
   WriteMessage('Done', msgtTemp);
 end;
 

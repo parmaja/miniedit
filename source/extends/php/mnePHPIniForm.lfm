@@ -11,8 +11,8 @@ object PHPIniForm: TPHPIniForm
   Font.Name = 'MS Sans Serif'
   OnClose = FormClose
   OnCreate = FormCreate
-  Position = poDesktopCenter
-  LCLVersion = '1.7'
+  Position = poMainFormCenter
+  LCLVersion = '1.9.0.0'
   object Label1: TLabel
     Left = 12
     Height = 13

@@ -10,8 +10,8 @@ object EditorSetupForm: TEditorSetupForm
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   OnCreate = FormCreate
-  Position = poDesktopCenter
-  LCLVersion = '1.7'
+  Position = poWorkAreaCenter
+  LCLVersion = '1.9.0.0'
   object Label1: TLabel
     Left = 17
     Height = 13

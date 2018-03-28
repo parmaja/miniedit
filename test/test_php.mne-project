@@ -8,7 +8,7 @@
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.d</CurrentFile>
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test-pas.pas</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
@@ -21,12 +21,11 @@
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test.d</FileName>
-            <CaretX>30</CaretX>
             <CaretY>8</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test-pas.pas</FileName>
-            <CaretY>16</CaretY>
+            <CaretY>13</CaretY>
           </Object>
         </Items>
       </Files>

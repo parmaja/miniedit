@@ -190,7 +190,7 @@ begin
       {$else}
         aRunItem.Info.Run.Command := 'lua';
       {$endif}
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Info.MainFile + #13;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + ' "' + Info.MainFile + '"' + #13;
     end
   end
   else if rnaLint in Info.Actions then
@@ -234,11 +234,11 @@ end;
 procedure TLuaTendency.EnumRunCommands(Items: TStrings);
 begin
   inherited;
-  Items.Add('lua ?file');
-  Items.Add('lua -l "tyro" ?file');
-  Items.Add('love ?mainpath ?mainfile');
-  Items.Add('lovec ?mainpath ?mainfile');
-  Items.Add('lovec ?root ?mainfile');
+  Items.Add('lua "?file"');
+  Items.Add('lua -l "tyro" "?file"');
+  Items.Add('love "?mainpath" "?mainfile"');
+  Items.Add('lovec "?mainpath" "?mainfile"');
+  Items.Add('lovec "?root" "?mainfile"');
 end;
 
 procedure TLuaTendency.Init;

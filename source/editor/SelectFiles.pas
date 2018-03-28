@@ -140,8 +140,7 @@ begin
   Timer.Enabled := True;
 end;
 
-procedure TSelectFileForm.FilterEditKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
+procedure TSelectFileForm.FilterEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if Shift = [] then
   begin

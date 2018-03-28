@@ -399,6 +399,7 @@ type
     FTendency: TEditorTendency;
     FSCM: TEditorSCM;
     FTitle: string;
+    function GetIsActive: Boolean;
     procedure SetTendency(AValue: TEditorTendency);
     procedure SetTendencyName(AValue: string);
     procedure SetSCM(AValue: TEditorSCM);
@@ -416,6 +417,7 @@ type
     //Tendency here point to one of Engine.Tendencies so it is not owned by project
     property Tendency: TEditorTendency read FTendency write SetTendency;
     property RunOptions: TRunProjectOptions read FRunOptions write FRunOptions;
+    property IsActive: Boolean read GetIsActive;
   published
     property Name: string read FName write FName;
     property Title: string read FTitle write FTitle;
@@ -475,6 +477,7 @@ type
     function GetCapability: TEditCapability;
     function GetIsText: Boolean;
     function GetNakeName: string;
+    function GetPureName: string;
     function GetExtension: string;
     function GetPath: string;
     function GetTendency: TEditorTendency;
@@ -483,6 +486,9 @@ type
     procedure SetIsNew(AValue: Boolean);
     function GetModeAsText: string;
     procedure SetMode(const Value: TEditorFileMode);
+    procedure SetExtension(AValue: string);
+    procedure SetNakeName(AValue: string);
+    procedure SetPureName(AValue: string);
   protected
     procedure GroupChanged; virtual;
     function GetIsReadonly: Boolean; virtual;
@@ -542,8 +548,9 @@ type
     property ModeAsText: string read GetModeAsText;
     property IsText: Boolean read GetIsText;
     property Name: string read FName write FName;
-    property NakeName: string read GetNakeName;
-    property Extension: string read GetExtension;
+    property NakeName: string read GetNakeName write SetNakeName; //no path with ext
+    property PureName: string read GetPureName write SetPureName; //no path no ext
+    property Extension: string read GetExtension write SetExtension;
     property Path: string read GetPath;
     property Tendency: TEditorTendency read GetTendency;
     property Related: string read FRelated write FRelated;
@@ -1145,7 +1152,7 @@ type
     property DebugLink: TEditorDebugLink read FDebugLink;
     property Tendency: TEditorTendency read GetTendency; //It get Project/MainFile/File/Default tendency
     property CurrentTendency: TEditorTendency read GetCurrentTendency; //It get Debug/MainFile/File/Default tendency
-    property DefaultProject: TDefaultProject read FDefaultProject;
+    property DefaultProject: TDefaultProject read FDefaultProject; //used when there is no project action, it is assigned to project, but not active
     property SCM: TEditorSCM read GetSCM;
     function GetIsChanged: Boolean;
     procedure SetNotifyEngine(ANotifyObject: INotifyEngine);
@@ -1890,7 +1897,7 @@ begin
 
     aProfile.AssignTo(SynEdit);
 
-    if (Engine.Session.Project <> nil) and Engine.Session.Project.Options.OverrideEditorOptions then
+    if (Engine.Session.Active) and Engine.Session.Project.Options.OverrideEditorOptions then
     begin
       SynEdit.TabWidth := Engine.Session.Project.Options.TabWidth;
       SynEdit.BlockIndent := Engine.Session.Project.Options.TabWidth;
@@ -2872,10 +2879,10 @@ end;
 
 function TEditorEngine.GetSCM: TEditorSCM;
 begin
-  if Session.Active and (Session.Project.SCM <> nil) then
+  if Session.Active then
     Result := Session.Project.SCM
   else
-    Result := DefaultProject.SCM
+    Result := nil;
 end;
 
 function TEditorEngine.GetCurrentTendency: TEditorTendency;
@@ -3417,10 +3424,15 @@ begin
   FEngineLife := engnStarting;
   Groups.Sort(@SortGroupsByTitle);
   DefaultProject.FileName := WorkSpace + 'mne-default-project.xml';
-  LoadOptions;
-  //here we will autoopen last project
-  DefaultProject.SafeLoadFromFile(DefaultProject.FileName);
-  Session.Project := DefaultProject;
+  try
+    LoadOptions;
+    //here we will autoopen last project
+    DefaultProject.SafeLoadFromFile(DefaultProject.FileName);
+    Session.Project := DefaultProject;
+  except
+    on E: Exception do
+      Engine.SendLog(E.Message);
+  end;
   FEngineLife := engnStarted;
 end;
 
@@ -3559,7 +3571,7 @@ begin
         List.Add('Output=' + Session.Project.RunOptions.OutputFile);
       end;
 
-      if Session.Project <> nil then
+      if Session.Active then
         MainFile := Session.Project.RunOptions.MainFile
       else
         MainFile := '';
@@ -3875,6 +3887,8 @@ end;
 procedure TEditorFile.Rename(ToNakeName: string);
 var
   p: string;
+  aExt: string;
+  aGroup: TFileGroup;
 begin
   Engine.BeginUpdate;
   try
@@ -3886,6 +3900,12 @@ begin
         Engine.RemoveRecentFile(Name);
         Name := p + ToNakeName;
         Engine.ProcessRecentFile(Name);
+
+        aExt := Extension;
+        if LeftStr(aExt, 1) = '.' then
+          aExt := MidStr(aExt, 2, MaxInt);
+        aGroup := Engine.Groups.FindExtension(aExt);
+        Group := aGroup;
       end;
     end
     else
@@ -4165,9 +4185,24 @@ begin
   Result := ExtractFilePath(Name);
 end;
 
+function TEditorFile.GetPureName: string;
+begin
+  Result := ExtractFileNameWithoutExt(NakeName);
+end;
+
 function TEditorFile.GetTendency: TEditorTendency;
 begin
-  Result := Group.Category.Tendency;
+  if Group <> nil then
+    Result := Group.Category.Tendency
+  else
+    Result := Engine.DefaultProject.Tendency;
+end;
+
+procedure TEditorFile.SetExtension(AValue: string);
+begin
+  if LeftStr(AValue, 1) <> '.' then
+    AValue := '.' + AValue;
+  Rename(PureName + AValue);
 end;
 
 function TEditorFile.GetControl: TWinControl;
@@ -4300,8 +4335,20 @@ begin
   end;
 end;
 
+procedure TEditorFile.SetNakeName(AValue: string);
+begin
+  Rename(AValue);
+end;
+
+procedure TEditorFile.SetPureName(AValue: string);
+begin
+  Rename(AValue + Extension);
+end;
+
 procedure TEditorFile.GroupChanged;
 begin
+  Tendency.Prepare; //Prepare its objects like debuggers
+  Assign(Engine.Options.Profile);
 end;
 
 procedure TEditorFile.DoStatusChange(Sender: TObject; Changes: TSynStatusChanges);
@@ -4761,6 +4808,11 @@ begin
   end;
 end;
 
+function TEditorProject.GetIsActive: Boolean;
+begin
+   Result := (Self <> nil) and not (Self is TDefaultProject)
+end;
+
 procedure TEditorProject.SetSCM(AValue: TEditorSCM);
 begin
   if FSCM =AValue then exit;
@@ -4904,8 +4956,6 @@ function TFileGroup.CreateEditorFile(vFiles: TEditorFiles): TEditorFile;
 begin
   Result := FFileClass.Create(vFiles);
   Result.Group := Self;
-  Result.Tendency.Prepare; //Prepare its objects like debuggers
-  Result.Assign(Engine.Options.Profile);
 end;
 
 { TFileGroups }

@@ -1,7 +1,7 @@
 object SelectListForm: TSelectListForm
-  Left = 415
+  Left = 474
   Height = 256
-  Top = 219
+  Top = 215
   Width = 456
   ActiveControl = ItemsList
   BorderIcons = [biSystemMenu]
@@ -14,8 +14,8 @@ object SelectListForm: TSelectListForm
   LCLVersion = '1.9.0.0'
   object ItemsList: TListView
     Left = 3
-    Height = 220
-    Top = 4
+    Height = 195
+    Top = 29
     Width = 449
     Anchors = [akTop, akLeft, akRight, akBottom]
     Columns = <    
@@ -32,7 +32,7 @@ object SelectListForm: TSelectListForm
     ReadOnly = True
     RowSelect = True
     SortType = stText
-    TabOrder = 0
+    TabOrder = 1
     ViewStyle = vsReport
     OnDblClick = ItemsListDblClick
   end
@@ -45,7 +45,7 @@ object SelectListForm: TSelectListForm
     Caption = '&Ok'
     Default = True
     OnClick = OkBtnClick
-    TabOrder = 1
+    TabOrder = 2
   end
   object CancelBtn: TButton
     Left = 299
@@ -56,6 +56,30 @@ object SelectListForm: TSelectListForm
     Cancel = True
     Caption = '&Cancel'
     ModalResult = 2
-    TabOrder = 2
+    TabOrder = 3
+  end
+  object SearchEdit: TEdit
+    Left = 59
+    Height = 21
+    Top = 4
+    Width = 393
+    OnKeyDown = SearchEditKeyDown
+    OnKeyUp = SearchEditKeyUp
+    TabOrder = 0
+  end
+  object Label1: TLabel
+    Left = 8
+    Height = 13
+    Top = 8
+    Width = 34
+    Caption = 'Search'
+    ParentColor = False
+  end
+  object SearchTimer: TTimer
+    Enabled = False
+    Interval = 100
+    OnTimer = SearchTimerTimer
+    left = 175
+    top = 65
   end
 end

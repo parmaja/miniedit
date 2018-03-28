@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Height = 557
   Top = 124
   Width = 881
-  ActiveControl = OutputEdit
+  ActiveControl = LogEdit
   AllowDropFiles = True
   Caption = 'Mini Edit'
   ClientHeight = 537
@@ -71,7 +71,7 @@ object MainForm: TMainForm
         Top = 0
         Action = SaveAllAct
       end
-      object ToolButton6: TToolButton
+      object RunBtn: TToolButton
         Left = 474
         Top = 0
         Action = DBGRunAct
@@ -104,6 +104,12 @@ object MainForm: TMainForm
         Caption = 'ToolButton8'
         ImageIndex = 28
         Style = tbsSeparator
+      end
+      object MainFileBtn: TToolButton
+        Left = 549
+        Top = 0
+        Action = MainFileAct
+        AutoSize = True
       end
     end
   end
@@ -290,7 +296,7 @@ object MainForm: TMainForm
         Height = 21
         Hint = 'File name'
         Top = 2
-        Width = 553
+        Width = 560
         Align = alClient
         AutoSize = False
         Layout = tlCenter
@@ -320,10 +326,10 @@ object MainForm: TMainForm
         AutoCheck = False
       end
       object FileModeBtn: TntvImgBtn
-        Left = 555
+        Left = 562
         Height = 21
         Top = 2
-        Width = 80
+        Width = 73
         Caption = 'Unix'
         ImageIndex = 0
         Align = alRight
@@ -571,6 +577,47 @@ object MainForm: TMainForm
         3
         0
         'Result'
+      )
+    end
+    object MessagesGrid: TStringGrid
+      Left = 1
+      Height = 105
+      Top = 21
+      Width = 879
+      Align = alClient
+      Flat = True
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
+      ParentColor = True
+      PopupMenu = MessagesPopup
+      RowCount = 1
+      TabOrder = 2
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnDblClick = MessagesGridDblClick
+      ColWidths = (
+        18
+        64
+        378
+        164
+        64
+      )
+      Cells = (
+        4
+        1
+        0
+        'Type'
+        2
+        0
+        'Message'
+        3
+        0
+        'File'
+        4
+        0
+        'Line'
       )
     end
     inline LogEdit: TSynEdit
@@ -1103,7 +1150,7 @@ object MainForm: TMainForm
           Command = emcStartDragMove
         end>
       Options = [eoAutoIndent, eoBracketHighlight, eoGroupUndo, eoHideRightMargin, eoScrollPastEol, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces]
-      MouseOptions = [emUseMouseActions, emAltSetsColumnMode, emDragDropEditing, emRightMouseMovesCursor, emShowCtrlMouseLinks, emCtrlWheelZoom]
+      MouseOptions = [emUseMouseActions, emAltSetsColumnMode, emDragDropEditing, emRightMouseMovesCursor, emShowCtrlMouseLinks]
       VisibleSpecialChars = [vscSpace, vscTabAtLast]
       ReadOnly = True
       RightEdge = 360
@@ -1145,47 +1192,6 @@ object MainForm: TMainForm
           MarkupInfo.Foreground = clGray
         end
       end
-    end
-    object MessagesGrid: TStringGrid
-      Left = 1
-      Height = 105
-      Top = 21
-      Width = 879
-      Align = alClient
-      Flat = True
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
-      ParentColor = True
-      PopupMenu = MessagesPopup
-      RowCount = 1
-      TabOrder = 2
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnDblClick = MessagesGridDblClick
-      ColWidths = (
-        18
-        64
-        378
-        164
-        64
-      )
-      Cells = (
-        4
-        1
-        0
-        'Type'
-        2
-        0
-        'Message'
-        3
-        0
-        'File'
-        4
-        0
-        'Line'
-      )
     end
     inline OutputEdit: TSynEdit
       Left = 1
@@ -1783,7 +1789,7 @@ object MainForm: TMainForm
     object file1: TMenuItem
       Caption = '&File'
       Hint = 'Exit|Quits the application'
-      object NewAsMnu: TMenuItem
+      object NewMnu: TMenuItem
         Action = NewAct
       end
       object OpenMnu: TMenuItem
@@ -1806,6 +1812,9 @@ object MainForm: TMainForm
       end
       object MenuItem18: TMenuItem
         Action = RenameAct
+      end
+      object ChangeExtMnu: TMenuItem
+        Action = ChangeExtAct
       end
       object MenuItem19: TMenuItem
         Action = DeleteAct
@@ -1886,6 +1895,9 @@ object MainForm: TMainForm
       end
       object MenuItem31: TMenuItem
         Action = SetAsMainFileAc
+      end
+      object MenuItem35: TMenuItem
+        Action = ResetMainFileAct
       end
       object MenuItem30: TMenuItem
         Action = SetAsRootFolderAct
@@ -2138,12 +2150,8 @@ object MainForm: TMainForm
     object Help1: TMenuItem
       Caption = '&Help'
       object HelpIndex1: TMenuItem
-        Action = HelpIndexAct
+        Caption = 'Help Index'
         OnClick = HelpIndexActExecute
-      end
-      object KeywordMnu: TMenuItem
-        Action = KeywordAct
-        OnClick = KeywordActExecute
       end
       object About2: TMenuItem
         Caption = '-'
@@ -2198,11 +2206,6 @@ object MainForm: TMainForm
       Category = 'Help'
       Caption = 'Keyword'
       OnExecute = KeywordActExecute
-    end
-    object HelpIndexAct: TAction
-      Category = 'Help'
-      Caption = 'Help Index'
-      OnExecute = HelpIndexActExecute
     end
     object SaveAllAct: TAction
       Category = 'File'
@@ -2398,7 +2401,7 @@ object MainForm: TMainForm
     end
     object SelectSCMTypeAct: TAction
       Category = 'Project'
-      Caption = 'Set SCM'
+      Caption = 'Select SCM'
       Hint = 'Source control managment type'
       OnExecute = SelectSCMTypeActExecute
     end
@@ -2692,7 +2695,7 @@ object MainForm: TMainForm
       OnExecute = SCMAddFileActExecute
     end
     object SetAsMainFileAc: TAction
-      Category = 'File'
+      Category = 'Project'
       Caption = 'Set as Main file'
       OnExecute = SetAsMainFileAcExecute
     end
@@ -2700,6 +2703,20 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'Set as Main folder'
       OnExecute = SetAsRootFolderActExecute
+    end
+    object ResetMainFileAct: TAction
+      Category = 'Project'
+      Caption = 'Reset Main File'
+      OnExecute = ResetMainFileActExecute
+    end
+    object MainFileAct: TAction
+      OnExecute = MainFileActExecute
+      Visible = False
+    end
+    object ChangeExtAct: TAction
+      Category = 'File'
+      Caption = 'Change File Type'
+      OnExecute = ChangeExtActExecute
     end
   end
   object FolderMenu: TPopupMenu
@@ -2726,12 +2743,12 @@ object MainForm: TMainForm
     object MenuItem28: TMenuItem
       Caption = '-'
     end
+    object SelectFolderMnu: TMenuItem
+      Caption = 'Select Folder'
+      OnClick = SelectFolderMnuClick
+    end
     object RecentFoldersMnu: TMenuItem
       Caption = 'Recents'
-    end
-    object GotoFolder1: TMenuItem
-      Caption = 'Go to Folder'
-      OnClick = GotoFolder1Click
     end
     object MenuItem23: TMenuItem
       Caption = 'Go to File Folder'
