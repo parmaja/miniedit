@@ -1653,11 +1653,8 @@ end;
 
 procedure TMainForm.DBGLintActExecute(Sender: TObject);
 begin
-  if (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
-  begin
-    SaveAllAct.Execute;
-    //    RunInternal(True);
-  end;
+  SaveAllAct.Execute;
+  Engine.CurrentTendency.Run([rnaLint]);
 end;
 
 procedure TMainForm.EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer);
@@ -2844,8 +2841,11 @@ end;
 
 procedure TMainForm.MenuItem1Click(Sender: TObject);
 begin
-  FOutputBuffer := '';//TODO bad bad bad
-  (Sender as TSynEdit).Lines.Clear;
+  if OutputPopup.PopupComponent is TSynEdit then
+  begin
+    FOutputBuffer := ''; //TODO bad bad bad
+    (OutputPopup.PopupComponent as TSynEdit).Lines.Clear;
+  end;
 end;
 
 procedure TMainForm.EngineState;

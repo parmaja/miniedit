@@ -72,6 +72,7 @@ var
   c, i: integer;
   new: Byte;
 begin
+  exit;//TODO there is bug in it
   PanelImages.BeginUpdate;
   try
     if Style = thsLight then

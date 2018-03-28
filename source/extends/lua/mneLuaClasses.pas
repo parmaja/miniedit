@@ -195,6 +195,26 @@ begin
   end
   else if rnaLint in Info.Actions then
   begin
+    aRunItem := Engine.Session.Run.Add;
+    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
+    aRunItem.Info.CurrentDirectory := Info.Root;
+    aRunItem.Info.Message := 'Runing ' + Info.MainFile;
+    aRunItem.Info.Run.Silent := True;
+    if RunOptions.Require <> '' then
+        aRunItem.Info.Run.Params := '-l '+ RunOptions.Require + #13;
+    if rnaDebug in Info.Actions then
+        aRunItem.Info.Run.Params := '-e '+ '"require(''mobdebug'').start()"' + #13; //using mobdebug
+
+    aRunItem.Info.Run.Command := Info.Command;
+    if Info.Command = '' then
+    begin
+      {$ifdef windows}
+        aRunItem.Info.Run.Command := 'luac.exe';
+      {$else}
+        aRunItem.Info.Run.Command := 'luac';
+      {$endif}
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + ' "' + Info.MainFile + '"' + #13;
+    end
   end;
 
   Engine.Session.Run.Start(Self);

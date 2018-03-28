@@ -375,7 +375,7 @@ begin
   begin
     FProcess.Options :=  aOptions + [poWaitOnExit];
     FProcess.ShowWindow := swoShow;
-    FProcess.StartupOptions:=[suoUseShowWindow]; //<- need it in linux to show window
+    FProcess.StartupOptions := [suoUseShowWindow]; //<- need it in linux to show window
     FProcess.CloseInput;
     FProcess.Execute;
     //Status := ProcessObject.Read(strmOutput);

@@ -1224,9 +1224,9 @@ function Engine: TEditorEngine;
 
 const
 {$ifdef WINDOWS}
-  SysPlatform = 'WINDOWS';
+  SysPlatform = 'windows';
 {$else}
-  SysPlatform = 'LINUX';
+  SysPlatform = 'linux';
 {$endif}
 
 implementation
