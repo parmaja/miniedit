@@ -78,24 +78,30 @@ const
   READ_BYTES = 1024;
 var
   C, Count, L: DWORD;
-  FirstTime: Boolean;
   aStream: TInputPipeStream;
+  function ReadNow: DWORD;
+  begin
+    //if (Process.Output.NumBytesAvailable > 0) then
+      Result := aStream.Read(FBuffer[1 + L], READ_BYTES)
+    //else
+      //Result := 0;
+  end;
 begin
-  FirstTime := True;
   Count := 0;
   C := 0;
     try
       Process.Execute;
+
       if ReadStream = strmOutput then
         aStream := Process.Output
       else
         aStream := Process.Stderr;
 
-      while not IsTerminated and (FirstTime or Process.Running or (C > 0)) do
+      while (aStream <> nil) and not IsTerminated do
       begin
         L := Length(FBuffer);
         Setlength(FBuffer, L + READ_BYTES);
-        C := aStream.Read(FBuffer[1 + L], READ_BYTES);
+        C := ReadNow;
         if Assigned(OnWrite) then
         begin
           SetLength(FBuffer, L + C);
@@ -113,12 +119,8 @@ begin
         else
           Sleep(100);
 
-        if not Assigned(OnWrite) then
-        begin
-          //SetLength(FBuffer, L + C);
-        end;
-
-        FirstTime := False;
+        if not (Process.Running or (C > 0)) then
+          break;
       end;
 
       Process.WaitOnExit;
@@ -163,23 +165,30 @@ end;
 
 procedure TmnConsoleThread.Read;
 var
-  C: DWORD;
   T: string;
   aBuffer: array[0..79] of AnsiChar;
+  function ReadNow(out C: DWORD): Boolean;
+  begin
+    if (Process.Output.NumBytesAvailable > 0) then
+      C := Process.Output.Read(aBuffer, SizeOf(aBuffer))
+    else
+      C := 0;
+    Result := C > 0;
+  end;
+var
+  C: DWORD;
 begin
   aBuffer := '';
   while Process.Running do
   begin
-    repeat
-      //if (Process.Output.NumBytesAvailable > 0) then
-      C := Process.Output.Read(aBuffer, SizeOf(aBuffer));
-      if C > 0 then
+//    repeat
+      if ReadNow(C) then
       begin
         SetString(T, aBuffer, C);
         if T <> '' then
           WriteString(T);
       end;
-    until C = 0;
+    //until C = 0;
   end;
   WriteString('------exit--------');
 end;

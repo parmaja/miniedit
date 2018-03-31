@@ -254,7 +254,7 @@ begin
   if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
-    aRunItem.Info.Message := 'Running';
+    aRunItem.Info.StatusMessage := 'Running';
     aRunItem.Info.Run.Pause := Info.Pause;
 
     aRunItem.Info.Run.Command := Info.Command;
@@ -269,12 +269,6 @@ begin
 
     if Info.MainFile <> '' then
       aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Info.MainFile + #13;
-
-    aRunItem.Info.Link := Info.Link;
-    if aRunItem.Info.Link = '' then
-      aRunItem.Info.Link := Info.MainFile;
-
-    aRunItem.Info.Link := Engine.EnvReplace(aRunItem.Info.Link);
 
     if RunOptions.Params <> '' then
       aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + RunOptions.Params + #13;

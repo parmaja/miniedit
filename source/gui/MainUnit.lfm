@@ -1722,7 +1722,8 @@ object MainForm: TMainForm
           ClickDir = cdDown
           Command = emcStartDragMove
         end>
-      Options = [eoAutoIndent, eoBracketHighlight, eoGroupUndo, eoHideRightMargin, eoScrollPastEol, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces]
+      Options = [eoBracketHighlight, eoGroupUndo, eoHideRightMargin, eoNoCaret, eoScrollPastEol, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces, eoRightMouseMovesCursor]
+      MouseOptions = [emRightMouseMovesCursor]
       VisibleSpecialChars = [vscSpace, vscTabAtLast]
       ReadOnly = True
       RightEdge = 360
@@ -2662,7 +2663,7 @@ object MainForm: TMainForm
       Hint = 'Reset or break executing'
       ImageIndex = 26
       OnExecute = DBGResetActExecute
-      ShortCut = 16497
+      ShortCut = 32888
     end
     object DBGAddWatchAct: TAction
       Category = 'Debug'

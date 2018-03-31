@@ -9,9 +9,9 @@ object RunFrameOptions: TRunFrameOptions
   DesignLeft = 363
   DesignTop = 223
   object PauseChk: TCheckBox
-    Left = 17
+    Left = 41
     Height = 19
-    Top = 55
+    Top = 86
     Width = 156
     Caption = 'Pause after run in console'
     TabOrder = 0
@@ -42,6 +42,14 @@ object RunFrameOptions: TRunFrameOptions
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 15
     TabOrder = 2
+  end
+  object ConsoleChk: TCheckBox
+    Left = 41
+    Height = 19
+    Top = 62
+    Width = 63
+    Caption = 'Console'
+    TabOrder = 3
   end
   object OpenDialog: TOpenDialog
     left = 63

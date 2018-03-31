@@ -190,13 +190,13 @@ begin
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
-    aRunItem.Info.Message := 'Runing ' + Info.MainFile;
+    aRunItem.Info.StatusMessage := 'Runing ' + Info.MainFile;
     aRunItem.Info.Run.Params := {'-m pyxdebug ' + }Info.MainFile + #13;
   end
   else if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
-    aRunItem.Info.Message := 'Running ' + Info.OutputFile;
+    aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Run.Pause := RunOptions.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;

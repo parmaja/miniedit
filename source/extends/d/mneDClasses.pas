@@ -220,7 +220,7 @@ begin
       end;
     end;
 
-    aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
+    aRunItem.Info.StatusMessage := 'Compiling ' + Info.OutputFile;
     //aRunItem.Info.Params := aRunItem.Info.Params + '-color=on' + #13; //not work :(
 
     for i := 0 to RunOptions.Paths.Count - 1 do
@@ -249,10 +249,10 @@ begin
   if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
-    aRunItem.Info.Message := 'Running ' + Info.OutputFile;
+    aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Run.Pause := Info.Pause;
-    aRunItem.Info.DebugIt := rnaDebug in Info.Actions;
+    aRunItem.Info.StartDebug := rnaDebug in Info.Actions;
     aRunItem.Info.Title := ExtractFileName(Info.OutputFile);;
     aRunItem.Info.Run.Command := Info.RunFile;
     if RunOptions.Params <> '' then
@@ -299,6 +299,9 @@ begin
   FTitle := 'D Lang';
   FDescription := 'D Files, *.D, *.inc';
   FName := 'D';
+  {$ifdef windows}
+  OutputExtension := '.exe';
+  {$endif}
   FImageIndex := -1;
   AddGroup('cfg', 'cfg');
   AddGroup('ini', 'ini');

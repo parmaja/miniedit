@@ -37,7 +37,7 @@ procedure ShowBreakpointsForm();
 implementation
 
 uses
-  mneResources;
+  EditorClasses, mneResources;
 
 {$R *.lfm}
 

@@ -77,7 +77,7 @@ function ShowProjectForm(vProject: TEditorProject): Boolean;
 implementation
 
 uses
-  EditorProfiles, mneResources, SelectFiles;
+  EditorClasses, EditorProfiles, mneResources, SelectFiles;
 
 {$R *.lfm}
 

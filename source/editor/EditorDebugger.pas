@@ -19,20 +19,20 @@ uses
 type
   EDebugException = class(Exception);
 
-  TmneRunAction = (rnaCompile, rnaLint, rnaExecute, rnaDebug, rnaLink);
+  TmneRunAction = (rnaCompile, rnaLint, rnaLink, rnaExecute, rnaDebug, rnaShow, rnaKill);
   TmneRunActions = set of TmneRunAction;
 
   { TmneRunInfo }
 
   TmneRunInfo = record
     Actions: TmneRunActions;
-
+    Console: Boolean;
     Pause: Boolean;
     Command: string;
-    MainFile: string; //file to compile
 
     Root: string; //cur dir for the project
-    Link: string; //URL to show in browser
+
+    MainFile: string; //file to compile
     OutputFile: string; //file to generate
     RunFile: string; //file to run
   end;
@@ -42,16 +42,16 @@ type
     Params: string;
     Pause: Boolean;
     Silent: Boolean;
+    Console: Boolean;
   end;
 
   TmneCommandInfo = record
     Run: TRunCommand;
     Title: string; //Console title
-    Message: string; //Message send to output before execute it
+    StatusMessage: string; //Message send to output before execute it
     CurrentDirectory: string;
-    Link: string; //URL to show in browser
     Suspended: Boolean; //For attach with debugger
-    DebugIt: Boolean;
+    StartDebug: Boolean;
     function GetCommandLine: string;
   end;
 

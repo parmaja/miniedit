@@ -182,6 +182,9 @@ begin
   FName := 'Pascal';
   FTitle := 'Pascal project';
   FDescription := 'Pascal/FPC/Lazarus Files, *.pas, *.pp *.inc';
+  {$ifdef windows}
+  OutputExtension := '.exe';
+  {$endif}
   FImageIndex := -1;
 end;
 
@@ -207,7 +210,7 @@ begin
     if Info.OutputFile <> '' then
       aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-o' + Info.OutputFile + #13;
 
-    aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
+    aRunItem.Info.StatusMessage := 'Compiling ' + Info.OutputFile;
 
     p := '-Fu';
     for i := 0 to RunOptions.Paths.Count - 1 do
@@ -237,10 +240,10 @@ begin
   if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
-    aRunItem.Info.Message := 'Running ' + Info.OutputFile;
+    aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Run.Pause := Info.Pause;
-    aRunItem.Info.DebugIt := rnaDebug in Info.Actions;
+    aRunItem.Info.StartDebug := rnaDebug in Info.Actions;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);
     aRunItem.Info.Run.Command := Info.RunFile;
     if RunOptions.Params <> '' then

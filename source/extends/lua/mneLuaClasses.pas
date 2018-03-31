@@ -172,15 +172,17 @@ begin
 
   if rnaExecute in Info.Actions then
   begin
+    Engine.SendAction(eaClearOutput);
+
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
-    aRunItem.Info.Message := 'Runing ' + Info.MainFile;
+    aRunItem.Info.StatusMessage := 'Runing ' + Info.MainFile;
     if RunOptions.Require <> '' then
-        aRunItem.Info.Run.Params := '-l '+ RunOptions.Require + #13;
+        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params  + '-l '+ RunOptions.Require + #13;
     if rnaDebug in Info.Actions then
-        aRunItem.Info.Run.Params := '-e '+ '"require(''mobdebug'').start()"' + #13; //using mobdebug
+        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-e '+ '"require(''mobdebug'').start()"' + #13; //using mobdebug
 
     aRunItem.Info.Run.Command := Info.Command;
     if Info.Command = '' then
@@ -193,31 +195,42 @@ begin
       aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + ' "' + Info.MainFile + '"' + #13;
     end
   end
-  else if rnaLint in Info.Actions then
+  else if (rnaLint in Info.Actions) or (rnaCompile in Info.Actions) then
   begin
+    Engine.SendAction(eaClearOutput);
+
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
-    aRunItem.Info.Message := 'Runing ' + Info.MainFile;
     aRunItem.Info.Run.Silent := True;
-    if RunOptions.Require <> '' then
-        aRunItem.Info.Run.Params := '-l '+ RunOptions.Require + #13;
-    if rnaDebug in Info.Actions then
-        aRunItem.Info.Run.Params := '-e '+ '"require(''mobdebug'').start()"' + #13; //using mobdebug
+    aRunItem.Info.Run.Console := False;
 
-    aRunItem.Info.Run.Command := Info.Command;
-    if Info.Command = '' then
+    if (rnaCompile in Info.Actions) then
     begin
+      aRunItem.Info.StatusMessage := 'Compiling ' + Info.MainFile;
+      if Info.OutputFile <> '' then
+        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-o "'+ Info.OutputFile + '"' + #13;
+    end
+    else
+    begin
+      aRunItem.Info.StatusMessage := 'Linting ' + Info.MainFile;
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-p '+ #13;
+    end;
+
+    //aRunItem.Info.Run.Command := Info.LintCommand;
+    //if Info.Command = '' then
+    //begin
       {$ifdef windows}
         aRunItem.Info.Run.Command := 'luac.exe';
       {$else}
         aRunItem.Info.Run.Command := 'luac';
       {$endif}
       aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + ' "' + Info.MainFile + '"' + #13;
-    end
+    //end
   end;
 
-  Engine.Session.Run.Start(Self);
+  if Engine.Session.Run.Active then //if there is items ready to run
+    Engine.Session.Run.Start(Self);
 end;
 
 function TLuaTendency.GetDefaultGroup: TFileGroup;
@@ -256,8 +269,8 @@ begin
   inherited;
   Items.Add('lua "?file"');
   Items.Add('lua -l "tyro" "?file"');
-  Items.Add('love "?mainpath" "?mainfile"');
-  Items.Add('lovec "?mainpath" "?mainfile"');
+  Items.Add('love ?mainpath "?mainfile"');
+  Items.Add('lovec ?mainpath "?mainfile"');
   Items.Add('lovec "?root" "?mainfile"');
 end;
 
@@ -267,6 +280,7 @@ begin
   Title := 'Lua Lang';
   FDescription := 'Lua Files, *.lua';
   FName := 'Lua';
+  OutputExtension := '.luac';
   FImageIndex := -1;
   AddGroup('cfg', 'cfg');
   AddGroup('ini', 'ini');

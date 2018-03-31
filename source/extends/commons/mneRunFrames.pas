@@ -23,6 +23,7 @@ type
     CompilerLabel: TLabel;
     OpenDialog: TOpenDialog;
     PauseChk: TCheckBox;
+    ConsoleChk: TCheckBox;
     procedure Button3Click(Sender: TObject);
   private
   protected
@@ -52,12 +53,14 @@ end;
 procedure TRunFrameOptions.Apply;
 begin
   Options.Pause := PauseChk.Checked;
+  Options.Console := ConsoleChk.Checked;
   Options.Command := CommandEdit.Text;
 end;
 
 procedure TRunFrameOptions.Retrieve;
 begin
   PauseChk.Checked := Options.Pause;
+  ConsoleChk.Checked := Options.Console;
   CommandEdit.Text := Options.Command;
 end;
 

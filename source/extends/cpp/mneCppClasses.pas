@@ -246,7 +246,7 @@ begin
     if Info.OutputFile <> '' then
       aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-of' + Info.OutputFile + #13;
 
-    aRunItem.Info.Message := 'Compiling ' + Info.OutputFile;
+    aRunItem.Info.StatusMessage := 'Compiling ' + Info.OutputFile;
     //aRunItem.Info.Params := aRunItem.Info.Params + '-color=on' + #13; //not work :(
 
     for i := 0 to RunOptions.Paths.Count - 1 do
@@ -272,7 +272,7 @@ begin
   if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
-    aRunItem.Info.Message := 'Running ' + Info.OutputFile;
+    aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.Title := ExtractFileName(Info.OutputFile);;

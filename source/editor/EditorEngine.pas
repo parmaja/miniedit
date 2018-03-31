@@ -31,20 +31,6 @@ uses
   mnUtils, LCLType, EditorClasses, EditorRun;
 
 type
-  TEditorChangeStates = set of (
-    ecsChanged,
-    ecsState,
-    ecsRefresh,
-    ecsRecents, //Recent files, folders, projects changes
-    ecsOptions,
-    ecsDebug,
-    ecsShow,
-    ecsEdit,
-    ecsFolder,
-    ecsProject,
-    ecsProjectLoaded
-  ); //ecsShow bring to front
-
   TSynCompletionType = (ctCode, ctHint, ctParams);
 
   TEditorEngine = class;
@@ -272,6 +258,7 @@ type
   private
     //FEditorOptions: TSynEditorOptions;
     FGroups: TFileGroups;
+    FOutputExtension: string;
     FRunOptions: TRunProjectOptions;
 
     FIndentMode: TIndentMode;
@@ -301,6 +288,7 @@ type
     property Capabilities: TEditorCapabilities read FCapabilities;
     property Groups: TFileGroups read FGroups;
     property IsDefault: Boolean read GetIsDefault;
+    property OutputExtension: string read FOutputExtension write FOutputExtension;
   published
     //Override options
     property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False;
@@ -353,6 +341,7 @@ type
   TRunProjectOptions = class(TPersistent)
   private
     FCommand: string;
+    FConsole: Boolean;
     FMainFolder: string;
     FParams: string;
     FPause: Boolean;
@@ -372,6 +361,7 @@ type
     procedure Assign(Source: TPersistent); override;
   published
     property Pause: Boolean read FPause write FPause default true;
+    property Console: Boolean read FConsole write FConsole default true;
     property Command: string read FCommand write FCommand;
     property Params: string read FParams write FParams;
     property Require: string read FRequire write FRequire;
@@ -1031,23 +1021,8 @@ type
     function GetMessages(Name: string): TEditorMessages;
   end;
 
-  TEditorAction = (eaClearOutput, eaClearLog);
-
   TOnFoundEvent = procedure(FileName: string; const Line: string; LineNo, Column, FoundLength: integer) of object;
   TOnEditorChangeState = procedure(State: TEditorChangeStates) of object;
-
-  { INotifyEngine }
-
-  INotifyEngine = interface(IInterface)
-    procedure EditorChangeState(State: TEditorChangeStates);
-    procedure EngineAction(EngineAction: TEditorAction);
-    procedure EngineLog(S: string);
-    procedure EngineOutput(S: string);
-    procedure EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
-    //Temporary clear it after a period
-    procedure EngineMessage(S: string; Temporary: Boolean = False);
-    procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
-  end;
 
   TEngineCache = record
     MainFile: string;
@@ -1158,9 +1133,7 @@ type
     procedure SetNotifyEngine(ANotifyObject: INotifyEngine);
     procedure RemoveNotifyEngine(ANotifyObject: INotifyEngine);
     property MacroRecorder: TSynMacroRecorder read FMacroRecorder;
-    procedure SendOutout(S: string);
-    procedure SendLog(S: string);
-    procedure SendMessage(S: string; Temporary: Boolean = False);
+    procedure SendMessage(S: string; vMessageType: TNotifyMessageType; Temporary: Boolean = False);
     procedure SendAction(EditorAction: TEditorAction);
 
     property Environment: TStringList read FEnvironment write FEnvironment;
@@ -1645,6 +1618,7 @@ begin
   inherited;
   FPaths := TStringList.Create;
   FPause := True;
+  FConsole := True;
 end;
 
 destructor TRunProjectOptions.Destroy;
@@ -2264,21 +2238,25 @@ begin
     p.Actions := RunActions;
     if (Debug <> nil) and (Debug.Running) then
     begin
-      if Engine.Session.Run.Active then
+      if rnaKill in RunActions then
+        Engine.CurrentTendency.Debug.Action(dbaReset)
+      else if Engine.Session.Run.Active then
         Engine.Session.Run.Show;
+
       if rnaDebug in RunActions then
         Debug.Action(dbaRun)
       else
-      begin
         Debug.Action(dbaResume);
-      end;
     end
     else
     begin
       if Engine.Session.Run.Active then
       begin
         //Engine.Log('Already run'); //TODO
-        Engine.Session.Run.Show;
+        if rnaKill in RunActions then
+          Engine.Session.Run.Stop
+        else
+          Engine.Session.Run.Show;
       end
       else
       begin
@@ -2290,6 +2268,7 @@ begin
         p.Command := Engine.EnvReplace(AOptions.Command);
 
         p.Pause := AOptions.Pause;
+        p.Console := AOptions.Console;
 
         p.MainFile := Engine.Session.Project.RunOptions.MainFile;
 
@@ -2302,9 +2281,7 @@ begin
         if p.OutputFile = '' then
         begin
           p.OutputFile := ExtractFileNameWithoutExt(p.MainFile);
-          {$ifdef windows}
-          p.OutputFile := p.OutputFile + '.exe';
-          {$endif}
+          p.OutputFile := p.OutputFile + OutputExtension;
         end;
 
         p.RunFile := p.OutputFile;
@@ -3431,7 +3408,7 @@ begin
     Session.Project := DefaultProject;
   except
     on E: Exception do
-      Engine.SendLog(E.Message);
+      Engine.SendMessage(E.Message, msgtLog);
   end;
   FEngineLife := engnStarted;
 end;
@@ -3618,22 +3595,10 @@ begin
   FNotifyObject := nil; //TODO if list we should remove it
 end;
 
-procedure TEditorEngine.SendOutout(S: string);
+procedure TEditorEngine.SendMessage(S: string; vMessageType: TNotifyMessageType; Temporary: Boolean);
 begin
   if FNotifyObject <> nil then
-    FNotifyObject.EngineOutput(S);
-end;
-
-procedure TEditorEngine.SendLog(S: string);
-begin
-  if FNotifyObject <> nil then
-    FNotifyObject.EngineLog(S);
-end;
-
-procedure TEditorEngine.SendMessage(S: string; Temporary: Boolean);
-begin
-  if FNotifyObject <> nil then
-    FNotifyObject.EngineMessage(S, Temporary);
+    FNotifyObject.EngineMessage(S, vMessageType, Temporary);
 end;
 
 procedure TEditorEngine.SendAction(EditorAction: TEditorAction);

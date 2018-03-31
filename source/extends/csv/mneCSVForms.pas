@@ -102,7 +102,7 @@ type
 implementation
 
 uses
-  mnUtils, CSVOptionsForms;
+  mnUtils, CSVOptionsForms, EditorClasses;
 
 {$R *.lfm}
 

@@ -13,7 +13,7 @@ interface
 uses
   Forms, SysUtils, StrUtils, Classes, SyncObjs, contnrs,
   mnUtils, ConsoleProcess, process,
-  mnStreams, mneConsoleForms, EditorDebugger, mnClasses, mnXMLUtils;
+  mnStreams, mneConsoleForms, EditorClasses, EditorDebugger, mnClasses, mnXMLUtils;
 
 {$i '..\lib\mne.inc'}
 
@@ -37,8 +37,6 @@ type
   TmneRunItem = class;
   TmneRunPool = class;
 
-  TRunMessageType = (msgtTemp, msgtLog, msgtOutput);
-
   { TmneRunItem }
 
   TmneRunItem = class(TObject)
@@ -49,15 +47,14 @@ type
     FControl: TConsoleForm;
     FPool: TmneRunPool;
   protected
-    FOnWrite: TmnOnWriteString;
+    FCatchOutput: Boolean;
     InternalString: string;
-    InternalMessageType: TRunMessageType;
-    procedure InternalWrite; //This for sync it, it will send to FOnWriteString
-    procedure WriteOutput(S: string); //This assign it to consoles
+    InternalMessageType: TNotifyMessageType;
     procedure InternalMessage; //This for sync it, it will send to FWriteString
-    procedure WriteMessage(S: string; vMessageType: TRunMessageType = msgtLog); //This assign it to consoles
+    procedure WriteOutput(S: string); //This assign it to consoles
+    procedure WriteMessage(S: string; vMessageType: TNotifyMessageType = msgtLog); //This assign it to consoles
   protected
-    procedure CreateControl;
+    //procedure CreateControl;
     procedure CreateConsole(AInfo: TmneCommandInfo);
     procedure Attach; //To Sync
   public
@@ -277,7 +274,7 @@ begin
   FreeAndNil(FPool);
 end;
 
-procedure TmneRunItem.CreateControl;
+{procedure TmneRunItem.CreateControl;
 begin
   FControl := TConsoleForm.Create(Application);
   FControl.Parent := Engine.Container;
@@ -294,9 +291,9 @@ begin
   FControl.CMDBox.TextColor(Engine.Options.Profile.Attributes.Default.Foreground);
   FControl.CMDBox.TextBackground(Engine.Options.Profile.Attributes.Default.Background);
   FControl.CMDBox.Write('Ready!'+#13#10);
-  FOnWrite := @FControl.WriteText;
+  //FOnWrite := @FControl.WriteText;
   Engine.UpdateState([ecsRefresh]);
-end;
+end;}
 
 procedure TmneRunItem.Attach;
 begin
@@ -307,30 +304,21 @@ begin
   end;
 end;
 
-procedure TmneRunItem.InternalWrite;
-begin
-  if Assigned(FOnWrite) then
-    FOnWrite(InternalString);
-end;
-
 procedure TmneRunItem.WriteOutput(S: string);
 begin
   InternalString := S;
-  FPool.Synchronize(@InternalWrite);
+  InternalMessageType := msgtOutput;
+  FPool.Synchronize(@InternalMessage);
   InternalString := '';
 end;
 
 procedure TmneRunItem.InternalMessage;
 begin
   //if not Engine.IsShutdown then //not safe to ingore it
-  case InternalMessageType of
-    msgtTemp: Engine.SendMessage(InternalString, True);
-    msgtLog: Engine.SendLog(InternalString);
-    msgtOutput: Engine.SendMessage(InternalString);
-  end
+  Engine.SendMessage(InternalString, InternalMessageType);
 end;
 
-procedure TmneRunItem.WriteMessage(S: string; vMessageType: TRunMessageType = msgtLog);
+procedure TmneRunItem.WriteMessage(S: string; vMessageType: TNotifyMessageType = msgtLog);
 begin
   InternalString := S;
   InternalMessageType := vMessageType;
@@ -356,49 +344,56 @@ var
   ProcessObject: TmnProcessObject;
   aOptions: TProcessOptions;
 begin
-  if (AInfo.Message <> '') then
-    WriteMessage(AInfo.Message + #13#10);
+  if (AInfo.StatusMessage <> '') then
+  begin
+    WriteMessage(AInfo.StatusMessage, msgtStatus);
+    WriteMessage(AInfo.StatusMessage + #13#10);
+  end;
+
   FProcess := TProcess.Create(nil);
   FProcess.ConsoleTitle := Info.Title;
   FProcess.InheritHandles := True;
   FProcess.CurrentDirectory := ReplaceStr(AInfo.CurrentDirectory, '\', '/');
+  FProcess.StartupOptions := [suoUseShowWindow]; //<- need it in linux to show window
 
   FProcess.Executable := ReplaceStr(AInfo.Run.Command, '\', '/');
   WriteMessage(AInfo.Run.Params);
   CommandToList(AInfo.Run.Params, FProcess.Parameters);
 
+
   aOptions := [];
   if Info.Suspended then
     aOptions := [poRunSuspended];
 
-  if not Info.Run.Silent then
+  if FCatchOutput then
   begin
-    FProcess.Options :=  aOptions + [poWaitOnExit];
-    FProcess.ShowWindow := swoShow;
-    FProcess.StartupOptions := [suoUseShowWindow]; //<- need it in linux to show window
-    FProcess.CloseInput;
-    FProcess.Execute;
-    //Status := ProcessObject.Read(strmOutput);
-  end
-  else
-  begin
-    if not Assigned(FOnWrite) then
-      raise Exception.Create('You need to assign OnWrite');
+    if Info.Run.Silent then
+    begin
+      FProcess.ShowWindow := swoHide;
+      //FProcess.CloseInput;
+    end
+    else
+      FProcess.ShowWindow := swoShow;
     FProcess.Options :=  aOptions + [poUsePipes, poStderrToOutPut];
-    FProcess.ShowWindow := swoHIDE;
-    FProcess.StartupOptions:=[suoUseShowWindow];
-    FProcess.PipeBufferSize := 0; //80 char in line
     ProcessObject := TmnProcessObject.Create(FProcess, FPool, @WriteOutput);
+    //FProcess.PipeBufferSize := 0; //80 char in line
     try
       Status := ProcessObject.Read(strmOutput);
     finally
       FreeAndNil(FProcess);
       FreeAndNil(ProcessObject);
     end;
+  end
+  else
+  begin
+    FProcess.Options :=  aOptions + [poWaitOnExit];
+    FProcess.ShowWindow := swoShow;
+    //FProcess.CloseInput;
+    FProcess.Execute;
   end;
   WriteMessage(#13#10'Exit Status: ' + IntToStr(Status), msgtLog);
   WriteMessage('', msgtLog);
-  WriteMessage('Done', msgtTemp);
+  WriteMessage('Done', msgtStatus);
 end;
 
 procedure TmneRunItem.Execute;
@@ -409,7 +404,7 @@ var
   term: string;
 {$endif}
 begin
-  if Info.DebugIt then
+  if Info.StartDebug then
   begin
     Info.Run.Command := Info.GetCommandLine;
     Info.Run.Params := '';
@@ -418,7 +413,7 @@ begin
     FPool.Synchronize(@Attach);
     Process.Resume;
   end
-  else
+  else if Info.Run.Console then
   begin
     {$ifdef windows}
     s := '/c "'+ Info.GetCommandLine + '"';
@@ -427,18 +422,14 @@ begin
     Info.Run.Params := s;
     Info.Run.Command := 'cmd';
     {$else}
-
     //s := GetEnvironmentVariable('SHELL');
     term := GetEnvironmentVariable('COLORTERM');
     if term = '' then
        term := GetEnvironmentVariable('TERM');
     if term = '' then
        term := 'xterm';
-
     //xterm -e "lua lua-test.lua && bash"
     //xterm -e "lua lua-test.lua && read -rsp $''Press any key to continue'' -n1 key"
-
-
     if Info.Title <> '' then
         s := '-title "' + Info.Title + '"'
     else
@@ -450,14 +441,19 @@ begin
       s := s + '; read -rsp $''Press any key to continue'' -n1 key';
     s := s + '"';
     Info.Run.Params := s;
-
     Info.Run.Command := term;
-
     {$endif}
     if Info.Run.Silent then
-      FOnWrite := @Engine.SendOutout;
+      FCatchOutput := True;
     CreateConsole(Info);
-  end;
+  end
+  else
+  begin
+    //Info.Run.Command := Info.GetCommandLine;
+    if Info.Run.Silent then
+      FCatchOutput := True;
+    CreateConsole(Info);
+  end
 end;
 
 end.

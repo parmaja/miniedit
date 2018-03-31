@@ -530,10 +530,8 @@ type
 
     procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
     procedure EditorChangeState(State: TEditorChangeStates);
-    procedure EngineMessage(S: string; Temporary: Boolean = False);
-    procedure EngineLog(S: string);
+    procedure EngineMessage(S: string; vMessageType: TNotifyMessageType; Temporary: Boolean = False);
     procedure EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
-    procedure EngineOutput(S: string);
     procedure EngineAction(EngineAction: TEditorAction);
 
     procedure FollowFolder(vFolder: string; FocusIt: Boolean);
@@ -2085,15 +2083,23 @@ begin
     OptionsChanged;
 end;
 
-procedure TMainForm.EngineMessage(S: string; Temporary: Boolean);
+procedure TMainForm.EngineMessage(S: string; vMessageType: TNotifyMessageType; Temporary: Boolean);
 begin
-  MessageLabel.Caption := Trim(S);
-  StatusTimer.Enabled := Temporary;
-end;
-
-procedure TMainForm.EngineLog(S: string);
-begin
-  LogEdit.Lines.Add(S);
+  case vMessageType of
+    msgtStatus: MessageLabel.Caption := Trim(S);
+    msgtEndStatus:
+    begin
+      MessageLabel.Caption := Trim(S);
+      StatusTimer.Enabled := Temporary;
+    end;
+    msgtOutput:
+    begin
+      FOutputBuffer := FOutputBuffer + S;//TODO baaad
+      OutputEdit.Text := FOutputBuffer;
+      OutputEdit.CaretY := OutputEdit.Lines.Count;
+    end;
+    msgtLog: LogEdit.Lines.Add(S);
+  end;
 end;
 
 function TMainForm.ChooseTendency(var vTendency: TEditorTendency): Boolean;
@@ -2361,10 +2367,11 @@ end;
 
 procedure TMainForm.DBGResetActExecute(Sender: TObject);
 begin
-  if Engine.CurrentTendency.Debug <> nil then
+  Engine.CurrentTendency.Run([rnaKill]);
+  {if Engine.CurrentTendency.Debug <> nil then
     Engine.CurrentTendency.Debug.Action(dbaReset)
   else
-    Engine.Session.Run.Stop;
+    Engine.Session.Run.Stop;}
 end;
 
 procedure TMainForm.DBGExecuteActExecute(Sender: TObject);
@@ -2863,7 +2870,7 @@ begin
       StatePnl.Caption := 'S'
   end
   else
-    StatePnl.Caption := '';
+    StatePnl.Caption := '-';
 end;
 
 procedure TMainForm.SCMCompareToActExecute(Sender: TObject);
@@ -2945,13 +2952,6 @@ end;
 procedure TMainForm.LogError(AMsg: string);
 begin
   LogError('', AMsg);
-end;
-
-procedure TMainForm.EngineOutput(S: string);
-begin
-  FOutputBuffer := FOutputBuffer + S;//TODO baaad
-  OutputEdit.Text := FOutputBuffer;
-  OutputEdit.CaretY := OutputEdit.Lines.Count;
 end;
 
 procedure TMainForm.CatchErr(Sender: TObject; e: exception);

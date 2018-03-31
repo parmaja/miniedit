@@ -46,7 +46,8 @@ function ShowTendencyForm(vTendency: TEditorTendency): Boolean;
 
 implementation
 
-uses mneResources;
+uses
+    EditorClasses, mneResources;
 
 {$R *.lfm}
 

@@ -11,7 +11,7 @@ unit EditorClasses;
 interface
 
 uses
-  Classes, SysUtils, Contnrs, mnClasses;
+  Classes, SysUtils, Contnrs, mnClasses, SynEdit;
 
   type
     IFileEditor = interface
@@ -65,6 +65,33 @@ uses
     TEditorElements = class(specialize TmnNamedObjectList<TEditorElement>)
     private
     public
+    end;
+
+    TEditorChangeStates = set of (
+      ecsChanged,
+      ecsState,
+      ecsRefresh,
+      ecsRecents, //Recent files, folders, projects changes
+      ecsOptions,
+      ecsDebug,
+      ecsShow,
+      ecsEdit,
+      ecsFolder,
+      ecsProject,
+      ecsProjectLoaded
+    ); //ecsShow bring to front
+
+    TNotifyMessageType = (msgtStatus, msgtEndStatus, msgtLog, msgtOutput);
+    TEditorAction = (eaClearOutput, eaClearLog);
+
+    { INotifyEngine }
+
+    INotifyEngine = interface(IInterface)
+      procedure EditorChangeState(State: TEditorChangeStates);
+      procedure EngineAction(EngineAction: TEditorAction);
+      procedure EngineMessage(S: string; vMessageType: TNotifyMessageType; Temporary: Boolean = False);
+      procedure EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
+      procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
     end;
 
 implementation

@@ -128,6 +128,9 @@ type
 
 implementation
 
+uses
+  EditorClasses;
+
 { TGDBWatchList }
 
 function TGDBWatchList.Add(Name: string; VarType: string): Integer;
@@ -326,13 +329,13 @@ procedure TGDBDebug.ReceiveProcess(S: ansistring);
 begin
   //if LeftStr(S, 2) = '→→' then
     //Engine.SendOutout('Set line to :');
-  Engine.SendOutout(S);
+  Engine.SendMessage(S, msgtLog);
 end;
 
 procedure TGDBDebug.WriteProcess(S: ansistring);
 begin
   S := S+#13#10;
-  Engine.SendOutout(S);
+  Engine.SendMessage(S, msgtLog);
   FGDBProcess.Input.WriteBuffer(S[1], Length(S));
 end;
 
