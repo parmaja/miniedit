@@ -179,6 +179,7 @@ begin
   begin
     aParams := '';
     aRunItem := Engine.Session.Run.Add;
+    aRunItem.Info.Run.Silent := True;
 
     aRunItem.Info.Run.Command := Info.Command;
     if aRunItem.Info.Run.Command = '' then
@@ -249,11 +250,12 @@ begin
   if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
+    aRunItem.Info.Run.Pause := Info.Pause;
+    aRunItem.Info.Run.Console := Info.Console;
     aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
     aRunItem.Info.CurrentDirectory := Info.Root;
-    aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.StartDebug := rnaDebug in Info.Actions;
-    aRunItem.Info.Title := ExtractFileName(Info.OutputFile);;
+    aRunItem.Info.Title := ExtractFileName(Info.OutputFile);
     aRunItem.Info.Run.Command := Info.RunFile;
     if RunOptions.Params <> '' then
       aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + RunOptions.Params + #13;

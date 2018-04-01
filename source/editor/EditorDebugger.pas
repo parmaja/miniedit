@@ -22,10 +22,17 @@ type
   TmneRunAction = (rnaCompile, rnaLint, rnaLink, rnaExecute, rnaDebug, rnaShow, rnaKill);
   TmneRunActions = set of TmneRunAction;
 
-  { TmneRunInfo }
+  TRunCommand = record
+    Command: string;
+    Params: string;
+    Pause: Boolean;
+    Silent: Boolean;
+    Console: Boolean;
+  end;
 
   TmneRunInfo = record
     Actions: TmneRunActions;
+
     Console: Boolean;
     Pause: Boolean;
     Command: string;
@@ -35,14 +42,6 @@ type
     MainFile: string; //file to compile
     OutputFile: string; //file to generate
     RunFile: string; //file to run
-  end;
-
-  TRunCommand = record
-    Command: string;
-    Params: string;
-    Pause: Boolean;
-    Silent: Boolean;
-    Console: Boolean;
   end;
 
   TmneCommandInfo = record

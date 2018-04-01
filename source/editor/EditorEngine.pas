@@ -659,6 +659,7 @@ type
     procedure FindPrevious;
     procedure CheckChanged;
     procedure CloseAll;
+    procedure CloseOthers;
     function GetEditedCount: integer;
     property CheckingChanged: Boolean read FCheckingChanged write FCheckingChanged; //public to use it in SearchInFiles
     property Current: TEditorFile read GetCurrent write SetCurrent;
@@ -1582,6 +1583,7 @@ begin
   FCommand := iif(FCommand, AOptions.Command);
   FParams := iif(FParams, AOptions.Params);
   FPause := iif(FPause, AOptions.Pause);
+  FConsole := iif(FPause, AOptions.Console);
   FMainFile := iif(FMainFile, AOptions.MainFile);
   FOutputFile := iif(FOutputFile, AOptions.OutputFile);
   FRequire := iif(FRequire, AOptions.Require);
@@ -1596,6 +1598,7 @@ begin
   FCommand := AOptions.Command;
   FParams := AOptions.Params;
   FPause := AOptions.Pause;
+  FConsole := AOptions.Console;
   FMainFile := AOptions.MainFile;
   FOutputFile := AOptions.OutputFile;
   FRequire := AOptions.Require;
@@ -2540,6 +2543,27 @@ begin
   try
     while Engine.Files.Count > 0 do
       Engine.Files[0].Close;
+  finally
+    Engine.EndUpdate;
+  end;
+end;
+
+procedure TEditorFiles.CloseOthers;
+var
+  i: Integer;
+  aCur: TEditorFile;
+begin
+  Engine.BeginUpdate;
+  try
+    aCur := Engine.Files.Current;
+    i := 0;
+    while Engine.Files.Count > i do
+    begin
+      if aCur = Engine.Files[i] then
+        i := i + 1
+      else
+        Engine.Files[i].Close;
+    end;
   finally
     Engine.EndUpdate;
   end;
@@ -3532,20 +3556,10 @@ begin
 
       if Files.Current <> nil then
       begin
-        List.Add('CurFile=' + Files.Current.Name);
         List.Add('File=' + Files.Current.Name);
-        List.Add('FileName=' + ExtractFileName(Files.Current.Name));
-        List.Add('FileDir=' + Files.Current.Path);
-      end;
-
-      if Session.Active then
-      begin
-        List.Add('Project=' + Session.Project.FileName);
-        List.Add('ProjectName=' + Session.Project.FileName);
-        List.Add('ProjectDir=' + ExtractFilePath(Session.Project.FileName));
-        List.Add('ProjectPath=' + ExtractFilePath(Session.Project.FileName));
-
-        List.Add('Output=' + Session.Project.RunOptions.OutputFile);
+        List.Add('FileName=' + Files.Current.NakeName);
+        List.Add('FilePureName=' + Files.Current.PureName);
+        List.Add('FilePath=' + Files.Current.Path);
       end;
 
       if Session.Active then
@@ -3560,8 +3574,17 @@ begin
       begin
         List.Add('Main=' + MainFile);
         List.Add('MainFile=' + MainFile);
-        List.Add('MainDir=' + ExtractFilePath(MainFile));
+        List.Add('MainFileName=' + ExtractFileName(MainFile));
+        List.Add('MainFilePureName=' + ExtractFileNameWithoutExt(MainFile));
         List.Add('MainPath=' + ExtractFilePath(MainFile));
+      end;
+
+      if Session.Active then
+      begin
+        List.Add('Project=' + Session.Project.FileName);
+        List.Add('ProjectName=' + Session.Project.FileName);
+        List.Add('ProjectPath=' + ExtractFilePath(Session.Project.FileName));
+        List.Add('OutputName=' + Session.Project.RunOptions.OutputFile); //TODO need to guess
       end;
 
       Result := VarReplace(S, List, sEnvVarChar);
@@ -3597,20 +3620,23 @@ end;
 
 procedure TEditorEngine.SendMessage(S: string; vMessageType: TNotifyMessageType; Temporary: Boolean);
 begin
-  if FNotifyObject <> nil then
-    FNotifyObject.EngineMessage(S, vMessageType, Temporary);
+  if not IsShutdown then
+    if FNotifyObject <> nil then
+      FNotifyObject.EngineMessage(S, vMessageType, Temporary);
 end;
 
 procedure TEditorEngine.SendAction(EditorAction: TEditorAction);
 begin
-  if FNotifyObject <> nil then
-    FNotifyObject.EngineAction(EditorAction);
+  if not IsShutdown then
+    if FNotifyObject <> nil then
+      FNotifyObject.EngineAction(EditorAction);
 end;
 
 procedure TEditorEngine.DoChangedState(State: TEditorChangeStates);
 begin
-  if FNotifyObject <> nil then
-    FNotifyObject.EditorChangeState(State);
+  if not IsShutdown then
+    if FNotifyObject <> nil then
+      FNotifyObject.EditorChangeState(State);
 end;
 
 procedure TEditorEngine.UpdateState(State: TEditorChangeStates);

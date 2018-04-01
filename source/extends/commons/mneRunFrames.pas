@@ -21,6 +21,8 @@ type
     Button3: TButton;
     CommandEdit: TComboBox;
     CompilerLabel: TLabel;
+    Label1: TLabel;
+    Label2: TLabel;
     OpenDialog: TOpenDialog;
     PauseChk: TCheckBox;
     ConsoleChk: TCheckBox;
@@ -65,3 +67,18 @@ begin
 end;
 
 end.
+
+
+{
+Root
+CurFile
+File
+FileName
+FilePath
+Project
+ProjectName
+ProjectPath
+Main
+MainFile
+MainPath
+}

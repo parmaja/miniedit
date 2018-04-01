@@ -176,6 +176,7 @@ begin
 
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Run.Pause := Info.Pause;
+    aRunItem.Info.Run.Console := Info.Console;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.StatusMessage := 'Runing ' + Info.MainFile;

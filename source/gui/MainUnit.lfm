@@ -51,10 +51,8 @@ object MainForm: TMainForm
       Wrapable = False
       object BackBtn: TToolButton
         Left = 1
-        Hint = 'New file'
         Top = 0
-        Caption = 'New'
-        ImageIndex = 0
+        Action = NewAct
       end
       object ForwardBtn: TToolButton
         Left = 76
@@ -1831,6 +1829,9 @@ object MainForm: TMainForm
         Action = CloseAllAct
         OnClick = CloseAllActExecute
       end
+      object MenuItem38: TMenuItem
+        Action = CloseOthersAct
+      end
       object N1: TMenuItem
         Caption = '-'
       end
@@ -2719,6 +2720,11 @@ object MainForm: TMainForm
       Caption = 'Change File Type'
       OnExecute = ChangeExtActExecute
     end
+    object CloseOthersAct: TAction
+      Category = 'File'
+      Caption = 'Close Others'
+      OnExecute = CloseOthersActExecute
+    end
   end
   object FolderMenu: TPopupMenu
     Images = EditorResource.ToolbarImageList
@@ -2949,6 +2955,9 @@ object MainForm: TMainForm
     end
     object MenuItem32: TMenuItem
       Action = SetAsMainFileAc
+    end
+    object MenuItem37: TMenuItem
+      Action = CloseOthersAct
     end
   end
   object StatusTimer: TTimer

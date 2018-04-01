@@ -43,10 +43,13 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    CloseOthersAct: TAction;
     ChangeExtAct: TAction;
     MainFileAct: TAction;
     MenuItem35: TMenuItem;
     ChangeExtMnu: TMenuItem;
+    MenuItem37: TMenuItem;
+    MenuItem38: TMenuItem;
     ResetMainFileAct: TAction;
     MenuItem32: TMenuItem;
     MenuItem33: TMenuItem;
@@ -343,6 +346,7 @@ type
     procedure BrowserTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure CallStackListDblClick(Sender: TObject);
     procedure ChangeExtActExecute(Sender: TObject);
+    procedure CloseOthersActExecute(Sender: TObject);
     procedure DBGCompileActExecute(Sender: TObject);
     procedure DeleteActExecute(Sender: TObject);
     procedure EditorPopupMenuPopup(Sender: TObject);
@@ -680,6 +684,11 @@ begin
   end;
 end;
 
+procedure TMainForm.CloseOthersActExecute(Sender: TObject);
+begin
+  Engine.Files.CloseOthers;
+end;
+
 procedure TMainForm.DBGCompileActExecute(Sender: TObject);
 begin
   CompileFile;
@@ -886,6 +895,7 @@ begin
         if not (fgkUneditable in aGroups[i].Kind) then
           G.Add(aGroups[i]);
       end;
+      //E := G.IndexOfName()
       //from old Engine.Files.New(Engine.Tendency.GetDefaultGroup);
       if ShowSelectList('Select file type', G, [slfSearch, slfUseNameTitle], E) then
         Engine.Files.New(G[E]);
