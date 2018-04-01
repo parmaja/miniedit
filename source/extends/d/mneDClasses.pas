@@ -60,6 +60,7 @@ type
   TDTendency = class(TEditorTendency)
   private
     FCompilerType: Integer;
+    FUseCfg: boolean;
   protected
     function CreateDebugger: TEditorDebugger; override;
     procedure Init; override;
@@ -70,6 +71,7 @@ type
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
   published
     property CompilerType: Integer read FCompilerType write FCompilerType default 0;
+    property UseCfg: boolean read FUseCfg write FUseCfg default false;
   end;
 
 implementation
@@ -207,6 +209,11 @@ begin
 
     aRunItem.Info.Run.Params := aPath + #13;
 
+    if RunOptions.ConfigFile <> '' then
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '@' + Engine.EnvReplace(RunOptions.ConfigFile) + #13
+    else if UseCfg then
+      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '@' + ExtractFileNameWithoutExt(ExtractFileName(Info.MainFile))+'.cfg' + #13;
+
     if Info.OutputFile <> '' then
       case CompilerType of
         0: aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-of' + Info.OutputFile + #13; //dmd
@@ -243,8 +250,6 @@ begin
 
     //aRunItem.Info.Params := aRunItem.Info.Params + '-v'#13;
 
-    if RunOptions.ConfigFile <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '@' + Engine.EnvReplace(RunOptions.ConfigFile) + #13;
   end;
 
   if rnaExecute in Info.Actions then

@@ -1720,7 +1720,7 @@ object MainForm: TMainForm
           ClickDir = cdDown
           Command = emcStartDragMove
         end>
-      Options = [eoBracketHighlight, eoGroupUndo, eoHideRightMargin, eoNoCaret, eoScrollPastEol, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces, eoRightMouseMovesCursor]
+      Options = [eoBracketHighlight, eoGroupUndo, eoHideRightMargin, eoScrollPastEol, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces, eoRightMouseMovesCursor]
       MouseOptions = [emRightMouseMovesCursor]
       VisibleSpecialChars = [vscSpace, vscTabAtLast]
       ReadOnly = True

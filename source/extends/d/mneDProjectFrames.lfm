@@ -14,6 +14,7 @@ object DProjectFrame: TDProjectFrame
     Top = 71
     Width = 217
     Caption = 'Auto include files from included path'
+    OnChange = ExpandPathsChk1Change
     TabOrder = 0
   end
   object ExpandPathsChk2: TCheckBox

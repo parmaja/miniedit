@@ -17,6 +17,7 @@ type
     ExpandPathsChk1: TCheckBox;
     ExpandPathsChk2: TCheckBox;
     Label1: TLabel;
+    procedure ExpandPathsChk1Change(Sender: TObject);
   private
     Options: TDProjectOptions;
   protected
@@ -31,6 +32,11 @@ implementation
 {$R *.lfm}
 
 { TDProjectFrame }
+
+procedure TDProjectFrame.ExpandPathsChk1Change(Sender: TObject);
+begin
+
+end;
 
 procedure TDProjectFrame.Apply;
 begin

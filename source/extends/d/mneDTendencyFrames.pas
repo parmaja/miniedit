@@ -17,6 +17,7 @@ type
     ExpandPathsChk1: TCheckBox;
     ExpandPathsChk2: TCheckBox;
     Label1: TLabel;
+    UseMainCfgChk: TCheckBox;
   private
   protected
   public
@@ -37,6 +38,7 @@ uses
 procedure TDTendencyFrame.Apply;
 begin
   (Tendency as TDTendency).CompilerType := DCompilerCbo.ItemIndex;
+  (Tendency as TDTendency).UseCfg := UseMainCfgChk.Checked;
 end;
 
 procedure TDTendencyFrame.Retrieve;
@@ -46,6 +48,7 @@ begin
   DCompilerCbo.Items.Add('GDC');
   DCompilerCbo.Items.Add('LDC');
   DCompilerCbo.ItemIndex := (Tendency as TDTendency).CompilerType;
+  UseMainCfgChk.Checked := (Tendency as TDTendency).UseCfg;
 end;
 
 end.

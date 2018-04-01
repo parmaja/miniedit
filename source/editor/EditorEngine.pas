@@ -338,19 +338,22 @@ type
 
   { TRunProjectOptions }
 
+  TRunProjectInfo = record
+    Command: string;
+    Console: Boolean;
+    MainFolder: string;
+    Params: string;
+    Pause: Boolean;
+    MainFile: string;
+    OutputFile: string;
+    Require: string;
+    ConfigFile: string;
+    ExpandPaths: Boolean;
+  end;
+
   TRunProjectOptions = class(TPersistent)
   private
-    FCommand: string;
-    FConsole: Boolean;
-    FMainFolder: string;
-    FParams: string;
-    FPause: Boolean;
-    FMainFile: string;
-    FOutputFile: string;
-    FRequire: string;
-    FRootUrl: string;
-    FConfigFile: string;
-    FExpandPaths: Boolean;
+    FInfo: TRunProjectInfo;
     FPaths: TStrings;
   public
     constructor Create; virtual;
@@ -360,18 +363,17 @@ type
     procedure Copy(AOptions: TRunProjectOptions);
     procedure Assign(Source: TPersistent); override;
   published
-    property Pause: Boolean read FPause write FPause default true;
-    property Console: Boolean read FConsole write FConsole default true;
-    property Command: string read FCommand write FCommand;
-    property Params: string read FParams write FParams;
-    property Require: string read FRequire write FRequire;
-    property MainFolder: string read FMainFolder write FMainFolder;
-    property MainFile: string read FMainFile write FMainFile;
-    property OutputFile: string read FOutputFile write FOutputFile;
-    property RootUrl: string read FRootUrl write FRootUrl;
+    property Pause: Boolean read FInfo.Pause write FInfo.Pause default true;
+    property Console: Boolean read FInfo.Console write FInfo.Console default true;
+    property Command: string read FInfo.Command write FInfo.Command;
+    property Params: string read FInfo.Params write FInfo.Params;
+    property Require: string read FInfo.Require write FInfo.Require;
+    property MainFolder: string read FInfo.MainFolder write FInfo.MainFolder;
+    property MainFile: string read FInfo.MainFile write FInfo.MainFile;
+    property OutputFile: string read FInfo.OutputFile write FInfo.OutputFile;
+    property ExpandPaths: Boolean read FInfo.ExpandPaths write FInfo.ExpandPaths;
+    property ConfigFile: string read FInfo.ConfigFile write FInfo.ConfigFile;
     property Paths: TStrings read FPaths write SetPaths;
-    property ExpandPaths: Boolean read FExpandPaths write FExpandPaths;
-    property ConfigFile: string read FConfigFile write FConfigFile;
   end;
 
   { TEditorProject }
@@ -1580,31 +1582,21 @@ procedure TRunProjectOptions.Merge(AOptions: TRunProjectOptions);
   end;
 
 begin
-  FCommand := iif(FCommand, AOptions.Command);
-  FParams := iif(FParams, AOptions.Params);
-  FPause := iif(FPause, AOptions.Pause);
-  FConsole := iif(FPause, AOptions.Console);
-  FMainFile := iif(FMainFile, AOptions.MainFile);
-  FOutputFile := iif(FOutputFile, AOptions.OutputFile);
-  FRequire := iif(FRequire, AOptions.Require);
-  FRootUrl := iif(FRootUrl, AOptions.RootUrl);
-  FConfigFile := iif(FConfigFile, AOptions.ConfigFile);
-  FExpandPaths := iif(FExpandPaths, AOptions.ExpandPaths);
+  FInfo.Command := iif(FInfo.Command, AOptions.Command);
+  FInfo.Params := iif(FInfo.Params, AOptions.Params);
+  FInfo.Pause := iif(FInfo.Pause, AOptions.Pause);
+  FInfo.Console := iif(FInfo.Pause, AOptions.Console);
+  FInfo.MainFile := iif(FInfo.MainFile, AOptions.MainFile);
+  FInfo.OutputFile := iif(FInfo.OutputFile, AOptions.OutputFile);
+  FInfo.Require := iif(FInfo.Require, AOptions.Require);
+  FInfo.ConfigFile := iif(FInfo.ConfigFile, AOptions.ConfigFile);
+  FInfo.ExpandPaths := iif(FInfo.ExpandPaths, AOptions.ExpandPaths);
   FPaths.AddStrings(AOptions.Paths);
 end;
 
 procedure TRunProjectOptions.Copy(AOptions: TRunProjectOptions);
 begin
-  FCommand := AOptions.Command;
-  FParams := AOptions.Params;
-  FPause := AOptions.Pause;
-  FConsole := AOptions.Console;
-  FMainFile := AOptions.MainFile;
-  FOutputFile := AOptions.OutputFile;
-  FRequire := AOptions.Require;
-  FRootUrl := AOptions.RootUrl;
-  FConfigFile := AOptions.ConfigFile;
-  FExpandPaths := AOptions.ExpandPaths;
+  FInfo := AOptions.FInfo;
   FPaths.Assign(AOptions.Paths);
 end;
 
@@ -1620,8 +1612,8 @@ constructor TRunProjectOptions.Create;
 begin
   inherited;
   FPaths := TStringList.Create;
-  FPause := True;
-  FConsole := True;
+  FInfo.Pause := True;
+  FInfo.Console := True;
 end;
 
 destructor TRunProjectOptions.Destroy;

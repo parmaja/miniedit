@@ -354,10 +354,12 @@ begin
   FProcess.ConsoleTitle := Info.Title;
   FProcess.InheritHandles := True;
   FProcess.CurrentDirectory := ReplaceStr(AInfo.CurrentDirectory, '\', '/');
+  WriteMessage('Directory: ' + FProcess.CurrentDirectory);
   FProcess.StartupOptions := [suoUseShowWindow]; //<- need it in linux to show window
 
   FProcess.Executable := ReplaceStr(AInfo.Run.Command, '\', '/');
-  WriteMessage(AInfo.Run.Params);
+  WriteMessage('Executable: ' + FProcess.Executable);
+  WriteMessage('Params: ' + ReplaceStr(AInfo.Run.Params, #13, ' '));
   CommandToList(AInfo.Run.Params, FProcess.Parameters);
 
 

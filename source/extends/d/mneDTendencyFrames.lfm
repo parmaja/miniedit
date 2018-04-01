@@ -41,4 +41,12 @@ object DTendencyFrame: TDTendencyFrame
     Caption = 'Compiler Type'
     ParentColor = False
   end
+  object UseMainCfgChk: TCheckBox
+    Left = 25
+    Height = 19
+    Top = 94
+    Width = 334
+    Caption = 'Use cfg file with same name of main file, example: main.cfg'
+    TabOrder = 3
+  end
 end
