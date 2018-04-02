@@ -1103,7 +1103,8 @@ type
     property Updating: Boolean read GetUpdating;
     procedure EndUpdate;
 
-    function EnvReplace(S: string; ForRoot: Boolean = False): string;
+    function EnvReplace(S: string; NoRoot: Boolean = False): string; //NoRoot root can be recucrly or not needed
+    procedure EnvList(List: TStringList; NoRoot: Boolean = False);
     function ExpandFile(FileName: string): string;
     function GetRoot: string;
     property Extenstion: string read FExtenstion write FExtenstion;
@@ -3156,17 +3157,14 @@ function TEditorSession.GetRoot: string;
 var
   r: string;
 begin
-  if Active then
+  if (Engine.Session.Project <> nil) and (Engine.Session.Project.RunOptions.MainFolder <> '') then
   begin
-    if (Project.RunOptions.MainFolder <> '') then
-    begin
-      r := Project.RunOptions.MainFolder;
-      r := ExpandToPath(r, ExtractFilePath(Project.FileName), '');
-      Result := Engine.EnvReplace(r, true);
-    end
-    else
-      Result := ExtractFilePath(Project.FileName);
+    r := Engine.Session.Project.RunOptions.MainFolder;
+    r := ExpandToPath(r, ExtractFilePath(Engine.Session.Project.FileName), '');
+    Result := Engine.EnvReplace(r, true);
   end
+  else if (Engine.Session.Project <> nil) and (Engine.Session.Project.RunOptions.MainFile <> '') then
+    Result := ExtractFilePath(Engine.Session.Project.RunOptions.MainFile)
   else if Engine.Files.Current <> nil then
     Result := ExtractFilePath(Engine.Files.Current.Name)
   else if Engine.BrowseFolder <> '' then
@@ -3525,64 +3523,65 @@ begin
   Result := FUpdateCount > 0;
 end;
 
-function TEditorEngine.EnvReplace(S: string; ForRoot: Boolean): string;
+function TEditorEngine.EnvReplace(S: string; NoRoot: Boolean): string;
 var
   List: TStringList;
-  MainFile: string;
 begin
   Result := '';
   if s <> '' then
   begin
     List := TStringList.Create;
     try
-      List.Assign(Environment);
-      if ForRoot then
-      begin
-        if Session.Active then
-          List.Add('Root=' + ExtractFilePath(Session.Project.FileName))
-        else
-          List.Add('Root=' + Application.Location)
-      end
-      else
-        List.Add('Root=' + GetRoot);
-
-      if Files.Current <> nil then
-      begin
-        List.Add('File=' + Files.Current.Name);
-        List.Add('FileName=' + Files.Current.NakeName);
-        List.Add('FilePureName=' + Files.Current.PureName);
-        List.Add('FilePath=' + Files.Current.Path);
-      end;
-
-      if Session.Active then
-        MainFile := Session.Project.RunOptions.MainFile
-      else
-        MainFile := '';
-
-      if (MainFile = '') and (Files.Current <> nil) then
-        MainFile := Files.Current.Name;
-
-      if MainFile <> '' then
-      begin
-        List.Add('Main=' + MainFile);
-        List.Add('MainFile=' + MainFile);
-        List.Add('MainFileName=' + ExtractFileName(MainFile));
-        List.Add('MainFilePureName=' + ExtractFileNameWithoutExt(MainFile));
-        List.Add('MainPath=' + ExtractFilePath(MainFile));
-      end;
-
-      if Session.Active then
-      begin
-        List.Add('Project=' + Session.Project.FileName);
-        List.Add('ProjectName=' + Session.Project.FileName);
-        List.Add('ProjectPath=' + ExtractFilePath(Session.Project.FileName));
-        List.Add('OutputName=' + Session.Project.RunOptions.OutputFile); //TODO need to guess
-      end;
-
+      EnvList(List, NoRoot);
       Result := VarReplace(S, List, sEnvVarChar);
     finally
       List.Free;
     end;
+  end;
+end;
+
+procedure TEditorEngine.EnvList(List: TStringList; NoRoot: Boolean);
+var
+  MainFile: string;
+begin
+  List.Assign(Environment);
+  if not NoRoot then
+  begin
+    List.Add('Root=' + GetRoot);
+    List.Add('Directory=' + GetRoot);
+  end;
+
+  if Files.Current <> nil then
+  begin
+    List.Add('File=' + Files.Current.Name);
+    List.Add('FileName=' + Files.Current.NakeName);
+    List.Add('FilePureName=' + Files.Current.PureName);
+    List.Add('FilePath=' + Files.Current.Path);
+  end;
+
+  if Session.Active then
+    MainFile := Session.Project.RunOptions.MainFile
+  else
+    MainFile := '';
+
+  if (MainFile = '') and (Files.Current <> nil) then
+    MainFile := Files.Current.Name;
+
+  if MainFile <> '' then
+  begin
+    List.Add('Main=' + MainFile);
+    List.Add('MainFile=' + MainFile);
+    List.Add('MainFileName=' + ExtractFileName(MainFile));
+    List.Add('MainFilePureName=' + ExtractFileNameWithoutExt(MainFile));
+    List.Add('MainPath=' + ExtractFilePath(MainFile));
+  end;
+
+  if Session.Active then
+  begin
+    List.Add('Project=' + Session.Project.FileName);
+    List.Add('ProjectName=' + Session.Project.FileName);
+    List.Add('ProjectPath=' + ExtractFilePath(Session.Project.FileName));
+    List.Add('OutputName=' + Session.Project.RunOptions.OutputFile); //TODO need to guess
   end;
 end;
 

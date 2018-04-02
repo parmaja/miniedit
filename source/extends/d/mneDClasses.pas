@@ -212,7 +212,10 @@ begin
     if RunOptions.ConfigFile <> '' then
       aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '@' + Engine.EnvReplace(RunOptions.ConfigFile) + #13
     else if UseCfg then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '@' + ExtractFileNameWithoutExt(ExtractFileName(Info.MainFile))+'.cfg' + #13;
+    begin
+      if FileExists(ChangeFileExt(Info.MainFile, '.cfg')) then
+        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '@' + ExtractFileNameWithoutExt(ExtractFileName(Info.MainFile))+'.cfg' + #13;
+    end;
 
     if Info.OutputFile <> '' then
       case CompilerType of

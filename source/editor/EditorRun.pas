@@ -393,7 +393,7 @@ begin
     //FProcess.CloseInput;
     FProcess.Execute;
   end;
-  WriteMessage(#13#10'Exit Status: ' + IntToStr(Status), msgtLog);
+  WriteMessage(#13#10'Exit: ' + IntToStr(Status), msgtLog);
   WriteMessage('', msgtLog);
   WriteMessage('Done', msgtStatus);
 end;
