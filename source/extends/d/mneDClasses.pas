@@ -332,7 +332,7 @@ begin
       p := PosBackword(t, '(');
       if p > 0 then
       begin
-        aErr.FileName := ExpandFileName(Engine.Session.Run.CurrentDirectory +  Trim(MidStr(t, 1, p - 1)));
+        aErr.FileName := ExpandToPath(Trim(MidStr(t, 1, p - 1)), Engine.Session.Run.CurrentDirectory);
         t := MidStr(t, p + 1, MaxInt);
         aErr.Line := StrToIntDef(t, 0);
       end;
