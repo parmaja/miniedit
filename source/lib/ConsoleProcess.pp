@@ -1,13 +1,15 @@
 unit ConsoleProcess;
+
 {$mode objfpc}{$H+}
 
 interface
 
 uses
-  Classes, SysUtils, process, Pipes;
+  Classes, SysUtils, process, pipes,
+  mnStreams;
 
 type
-  TmnOnWriteString = procedure(S: string) of object;
+  TmnOnWriteString = procedure(S: String) of object;
 
   { TmnProcessObject }
 
@@ -15,13 +17,14 @@ type
 
   TmnProcessObject = class(TObject)
   protected
-    FBuffer: string;
+    FBuffer: String;
   public
     Process: TProcess;
     Thread: TThread;
     OnWrite: TmnOnWriteString;
     function IsTerminated: Boolean;
-    function Read(ReadStream: TmnProcessReadStream = strmOutput): Integer;
+    function ReadBuffer(vStream: TInputPipeStream): Integer;
+    function ReadStream(vStream: TInputPipeStream): Integer;
     procedure FlushBuffer;
     constructor Create(AProcess: TProcess; AThread: TThread; AOnWrite: TmnOnWriteString);
   end;
@@ -32,9 +35,9 @@ type
   private
     FOnWriteString: TmnOnWriteString;
   protected
-    Buffer: string;
+    Buffer: String;
     procedure DoOnWriteString; virtual; //To Sync
-    procedure WriteString(S: string);
+    procedure WriteString(S: String);
   public
     Process: TProcess;
     Status: Integer;
@@ -73,35 +76,61 @@ begin
   Result := (Thread <> nil) and THackThread(Thread).Terminated;
 end;
 
-function TmnProcessObject.Read(ReadStream: TmnProcessReadStream): Integer;
+function TmnProcessObject.ReadStream(vStream: TInputPipeStream): Integer;
+var
+  aWrapper: TmnWrapperStream;
+  b: Boolean;
+begin
+  if vStream <> nil then
+  begin
+    try
+      aWrapper := TmnWrapperStream.Create(vStream, False);
+      aWrapper.EndOfLine := #13;
+
+      while not IsTerminated do
+      begin
+        b := aWrapper.ReadLine(FBuffer);
+        if Assigned(OnWrite) then
+        begin
+          FBuffer := FBuffer + #13;
+          if Thread <> nil then
+            Thread.Synchronize(Thread, @FlushBuffer)
+          else
+            FlushBuffer;
+        end;
+
+        if not (Process.Running or b) then
+          break;
+      end;
+      Process.WaitOnExit;
+      Result := Process.ExitStatus;
+    aWrapper.Free;
+  except
+    on e: Exception do
+    begin
+      if Process.Running and IsTerminated then
+        Process.Terminate(0);
+    end;
+  end;
+  end;
+end;
+
+function TmnProcessObject.ReadBuffer(vStream: TInputPipeStream): Integer;
 const
   READ_BYTES = 1024;
 var
   C, Count, L: DWORD;
-  aStream: TInputPipeStream;
-  function ReadNow: DWORD;
-  begin
-    //if (Process.Output.NumBytesAvailable > 0) then
-      Result := aStream.Read(FBuffer[1 + L], READ_BYTES)
-    //else
-      //Result := 0;
-  end;
 begin
-  Count := 0;
-  C := 0;
+  if (vStream <> nil) then
+  begin
+    Count := 0;
+    C := 0;
     try
-      Process.Execute;
-
-      if ReadStream = strmOutput then
-        aStream := Process.Output
-      else
-        aStream := Process.Stderr;
-
-      while (aStream <> nil) and not IsTerminated do
+      while not IsTerminated do
       begin
         L := Length(FBuffer);
         Setlength(FBuffer, L + READ_BYTES);
-        C := ReadNow;
+        C := vStream.Read(FBuffer[1 + L], READ_BYTES);
         if Assigned(OnWrite) then
         begin
           SetLength(FBuffer, L + C);
@@ -127,12 +156,13 @@ begin
 
       Result := Process.ExitStatus;
     except
-      on e : Exception do
+      on e: Exception do
       begin
         if Process.Running and IsTerminated then
           Process.Terminate(0);
       end;
     end;
+  end;
 end;
 
 { TmnConsoleThread }
@@ -143,7 +173,7 @@ begin
     FOnWriteString(Buffer);
 end;
 
-procedure TmnConsoleThread.WriteString(S: string);
+procedure TmnConsoleThread.WriteString(S: String);
 begin
   Buffer := S;
   Synchronize(@DoOnWriteString);
@@ -153,7 +183,7 @@ end;
 
 constructor TmnConsoleThread.Create(AProcess: TProcess; AOnWriteString: TmnOnWriteString);
 begin
-  inherited Create(true);
+  inherited Create(True);
   Process := AProcess;
   FOnWriteString := AOnWriteString;
 end;
@@ -165,8 +195,9 @@ end;
 
 procedure TmnConsoleThread.Read;
 var
-  T: string;
+  T: String;
   aBuffer: array[0..79] of AnsiChar;
+
   function ReadNow(out C: DWORD): Boolean;
   begin
     if (Process.Output.NumBytesAvailable > 0) then
@@ -175,19 +206,20 @@ var
       C := 0;
     Result := C > 0;
   end;
+
 var
   C: DWORD;
 begin
   aBuffer := '';
   while Process.Running do
   begin
-//    repeat
-      if ReadNow(C) then
-      begin
-        SetString(T, aBuffer, C);
-        if T <> '' then
-          WriteString(T);
-      end;
+    //    repeat
+    if ReadNow(C) then
+    begin
+      SetString(T, aBuffer, C);
+      if T <> '' then
+        WriteString(T);
+    end;
     //until C = 0;
   end;
   WriteString('------exit--------');
@@ -199,4 +231,3 @@ begin
 end;
 
 end.
-

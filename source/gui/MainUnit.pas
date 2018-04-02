@@ -1,5 +1,6 @@
 unit MainUnit;
-{$mode objfpc}{$H+}
+{$mode objfpc}
+{$M+}{$H+}
 {**
  * Mini Edit
  *
@@ -24,7 +25,7 @@ uses
   {$endif}
   ntvTabSets, EditorRun, Registry, SynEditPlugins,
   synhighlighterunixshellscript, SynHighlighterPas, SynHighlighterMulti,
-  mnStreams,
+  mnStreams, mnClasses,
   //Addons
   {$ifdef Windows}
   mneAssociateForm,
@@ -35,6 +36,16 @@ uses
   mnUtils, ntvTabs, ntvPageControls;
 
 type
+  TOutputLine = class(TObject)
+  public
+    Info: TErrorInfo;
+  end;
+
+  TOutputs = class(specialize TmnObjectList<TOutputLine>)
+  private
+  public
+  end;
+
   TTabSetDragObject = class(TDragObject)
   public
     TabIndex: integer;
@@ -333,8 +344,6 @@ type
     NextMessage1: TMenuItem;
     PriorMessage1: TMenuItem;
     N15: TMenuItem;
-    OutputPopup: TPopupMenu;
-    MenuItem1: TMenuItem;
     StatePnl: TPanel;
     SCMCompareToAct: TAction;
     CompareToMnu: TMenuItem;
@@ -353,6 +362,7 @@ type
     procedure EditorsPnlClick(Sender: TObject);
     procedure FetchCallStackBtnClick(Sender: TObject);
     procedure FileCloseBtnClick(Sender: TObject);
+    procedure FileListData(Sender: TObject; Item: TListItem);
     procedure FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure FindPreviousActExecute(Sender: TObject);
     procedure FolderCloseBtnClick(Sender: TObject);
@@ -371,6 +381,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure FileTabsClick(Sender: TObject);
     procedure NextActExecute(Sender: TObject);
+    procedure OutputEditDblClick(Sender: TObject);
     procedure PriorActExecute(Sender: TObject);
     procedure CloseActExecute(Sender: TObject);
     procedure FileListDblClick(Sender: TObject);
@@ -473,7 +484,6 @@ type
     procedure FindInFilesActExecute(Sender: TObject);
     procedure NextMessageActExecute(Sender: TObject);
     procedure PriorMessageActExecute(Sender: TObject);
-    procedure MenuItem1Click(Sender: TObject);
     procedure SCMCompareToActExecute(Sender: TObject);
     procedure SwitchFocusActExecute(Sender: TObject);
     procedure WorkspaceMnuClick(Sender: TObject);
@@ -524,7 +534,7 @@ type
     procedure MoveListIndex(vForward: boolean);
   protected
     FProjectFrame: TFrame;
-    FOutputBuffer: string; //TODO stupid idea
+    FOutputs: TOutputs;
     FMenuItemsList: TObjectList;
     procedure RunFile;
     procedure CompileFile;
@@ -534,7 +544,7 @@ type
 
     procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
     procedure EditorChangeState(State: TEditorChangeStates);
-    procedure EngineMessage(S: string; vMessageType: TNotifyMessageType; Temporary: Boolean = False);
+    procedure EngineMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);
     procedure EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
     procedure EngineAction(EngineAction: TEditorAction);
 
@@ -726,6 +736,11 @@ end;
 procedure TMainForm.FileCloseBtnClick(Sender: TObject);
 begin
   CloseAct.Execute;
+end;
+
+procedure TMainForm.FileListData(Sender: TObject; Item: TListItem);
+begin
+
 end;
 
 procedure TMainForm.ApplicationPropertiesActivate(Sender: TObject);
@@ -993,6 +1008,26 @@ end;
 procedure TMainForm.NextActExecute(Sender: TObject);
 begin
   Engine.Files.Next;
+end;
+
+procedure TMainForm.OutputEditDblClick(Sender: TObject);
+var
+  aLine: TOutputLine;
+begin
+  if OutputEdit.LogicalCaretXY.Y <= OutputEdit.Lines.Count then //y based on 1
+  begin
+    aLine := FOutputs[OutputEdit.LogicalCaretXY.Y - 1];
+    if aLine.Info.FileName <> '' then
+    begin
+      Engine.Files.OpenFile(aLine.Info.FileName);
+      with Engine.Files.Current do
+      if Control is TCustomSynEdit then
+      begin
+        (Control as TCustomSynEdit).LogicalCaretXY := Point(1, aLine.Info.Line);
+        (Control as TCustomSynEdit).SetFocus;
+      end;
+    end;
+  end;
 end;
 
 procedure TMainForm.PriorActExecute(Sender: TObject);
@@ -1566,6 +1601,7 @@ var
   lFilePath: string;
 begin
   inherited;
+  FOutputs := TOutputs.Create;
   FMenuItemsList := TObjectList.Create(True);
 
   Engine.Container := EditorsPnl;
@@ -2093,22 +2129,58 @@ begin
     OptionsChanged;
 end;
 
-procedure TMainForm.EngineMessage(S: string; vMessageType: TNotifyMessageType; Temporary: Boolean);
+procedure AddOutput(Sender: Pointer; Index: Integer; S: string; var Resume: Boolean);
+var
+  aLine: TOutputLine;
+begin
+  with TObject(Sender) as TMainForm do
+  begin
+    if (Index = 0) and (FOutputs.Count > 0) then
+    begin
+      aLine := FOutputs.Last;
+      aLine.Info.Message := aLine.Info.Message + S;
+    end
+    else
+    begin
+      aLine := TOutputLine.Create;
+      aLine.Info.Message := S;
+      FOutputs.Add(aLine);
+    end;
+
+    if (Index = 0) and (OutputEdit.Lines.Count > 0) then
+      OutputEdit.Lines[OutputEdit.Lines.Count -1] := OutputEdit.Lines[OutputEdit.Lines.Count -1] + S
+    else
+      OutputEdit.Lines.Add(S);
+  end;
+end;
+
+procedure TMainForm.EngineMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);
+var
+  aLine: TOutputLine;
 begin
   case vMessageType of
-    msgtStatus: MessageLabel.Caption := Trim(S);
+    msgtStatus:
+      MessageLabel.Caption := Trim(S);
     msgtEndStatus:
     begin
       MessageLabel.Caption := Trim(S);
-      StatusTimer.Enabled := Temporary;
+      StatusTimer.Enabled := True;
     end;
     msgtOutput:
     begin
-      FOutputBuffer := FOutputBuffer + S;//TODO baaad
-      OutputEdit.Text := FOutputBuffer;
+      StrToStringsCallback(s, self, @AddOutput, [#13], [], false, [], []);
       OutputEdit.CaretY := OutputEdit.Lines.Count;
     end;
-    msgtLog: LogEdit.Lines.Add(S);
+    msgtError:
+    begin
+      aLine := TOutputLine.Create;
+      aLine.Info := vError;
+      FOutputs.Add(aLine);
+      OutputEdit.Lines.Add(S);
+      OutputEdit.CaretY := OutputEdit.Lines.Count;
+    end;
+    msgtLog:
+      LogEdit.Lines.Add(S);
   end;
 end;
 
@@ -2150,6 +2222,7 @@ end;
 destructor TMainForm.Destroy;
 begin
   FreeAndNil(FMenuItemsList);
+  FreeAndNil(FOutputs);
   Application.OnException := nil;
   inherited;
 end;
@@ -2301,7 +2374,7 @@ begin
   case EngineAction of
     eaClearOutput :
     begin
-      FOutputBuffer := '';
+      FOutputs.Clear;
       OutputEdit.Lines.Clear;
     end;
     eaClearLog :
@@ -2760,7 +2833,13 @@ end;
 
 procedure TMainForm.Clear1Click(Sender: TObject);
 begin
-  if MessagesPopup.PopupComponent is TListView then
+  if MessagesPopup.PopupComponent is TSynEdit then
+  begin
+    (MessagesPopup.PopupComponent as TSynEdit).Lines.Clear;
+    if (MessagesPopup.PopupComponent as TSynEdit) = OutputEdit then
+      FOutputs.Clear;
+  end
+  else if MessagesPopup.PopupComponent is TListView then
     (MessagesPopup.PopupComponent as TListView).Clear
   else if MessagesPopup.PopupComponent is TStringGrid then
     (MessagesPopup.PopupComponent as TStringGrid).RowCount := 1;
@@ -2856,14 +2935,6 @@ begin
   MoveListIndex(False);
 end;
 
-procedure TMainForm.MenuItem1Click(Sender: TObject);
-begin
-  if OutputPopup.PopupComponent is TSynEdit then
-  begin
-    FOutputBuffer := ''; //TODO bad bad bad
-    (OutputPopup.PopupComponent as TSynEdit).Lines.Clear;
-  end;
-end;
 
 procedure TMainForm.EngineState;
 begin

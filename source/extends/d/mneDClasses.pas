@@ -69,6 +69,7 @@ type
     constructor Create; override;
     function CreateOptions: TEditorProjectOptions; override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
+    procedure SendMessage(S: string; vMessageType: TNotifyMessageType); override; //Please handle errors format in RunItems
   published
     property CompilerType: Integer read FCompilerType write FCompilerType default 0;
     property UseCfg: boolean read FUseCfg write FUseCfg default false;
@@ -198,6 +199,7 @@ begin
     end;
 
     aRunItem.Info.Run.Silent := True;
+    aRunItem.MessageType := msgtError;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
@@ -269,7 +271,7 @@ begin
       aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + RunOptions.Params + #13;
   end;
 
-  Engine.Session.Run.Start(Self);
+  Engine.Session.Run.Start(Self, Info.Root);
 end;
 
 constructor TDTendency.Create;
@@ -291,6 +293,59 @@ begin
   aTendencyFrame.Tendency := ATendency;
   aTendencyFrame.Caption := 'D Options';
   AddFrame(aTendencyFrame);
+end;
+
+function PosForward(S: string; vChar: string): Integer;
+begin
+  Result := PosEx(vChar, S);
+end;
+
+function PosBackword(S: string; vChar: Char): Integer;
+var
+  i: Integer;
+begin
+  Result := -1;
+  for i := Length(S) downto 1 do
+  begin
+    if S[i] = vChar then
+    begin
+      Result := i;
+      break;
+    end;
+  end;
+end;
+
+procedure TDTendency.SendMessage(S: string; vMessageType: TNotifyMessageType);
+var
+  aErr: TErrorInfo;
+  p: Integer;
+  m, t : string;
+begin
+  aErr := Default(TErrorInfo);
+  if vMessageType = msgtError then
+  begin
+    p := PosForward(S, '):');
+    if p > 0 then
+    begin
+      t := MidStr(S, 1, p - 1);
+      m := Trim(MidStr(S, p + 2, MaxInt));
+      p := PosBackword(t, '(');
+      if p > 0 then
+      begin
+        aErr.FileName := ExpandFileName(Engine.Session.Run.CurrentDirectory +  Trim(MidStr(t, 1, p - 1)));
+        t := MidStr(t, p + 1, MaxInt);
+        aErr.Line := StrToIntDef(t, 0);
+      end;
+      p := PosForward(m, ':');
+      if p > 0 then
+      begin
+        aErr.Name := Trim(MidStr(m, 1, p - 1));
+        m := Trim(MidStr(m, p + 1, MaxInt));
+      end;
+      aErr.Message := m;
+    end;
+  end;
+  Engine.SendMessage(S, vMessageType, aErr);
 end;
 
 function TDTendency.CreateDebugger: TEditorDebugger;

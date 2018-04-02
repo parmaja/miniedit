@@ -235,12 +235,15 @@ type
     property Watches: TEditorWatches read FWatches;
   end;
 
+  { TEditorDebugTendency }
+
   TEditorDebugTendency = class(TEditorElement)
   private
   protected
     FDebug: TEditorDebugger;
     procedure SetDebug(AValue: TEditorDebugger);
   public
+    procedure SendMessage(S: string; vMessageType: TNotifyMessageType); virtual; abstract;
     property Debug: TEditorDebugger read FDebug write SetDebug;
   end;
 

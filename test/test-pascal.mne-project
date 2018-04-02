@@ -3,36 +3,27 @@
   <Object Type="TRunProject">
     <Name>test-pascal</Name>
     <TendencyName>Pascal</TendencyName>
+    <SCM Class="TTGIT_SCM">
+    </SCM>
     <Desktop Class="TEditorDesktop">
       <Breakpoints Class="TmneBreakpoints">
       </Breakpoints>
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
+        <CurrentFile>D:\home\d\sard\src\test.d</CurrentFile>
+        <CurrentFolder>D:\home\d\sard\src\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\test-pas.pas</FileName>
+            <FileName>D:\home\d\sard\src\main.d</FileName>
+            <CaretX>31</CaretX>
+            <CaretY>92</CaretY>
+            <TopLine>79</TopLine>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>D:\home\d\sard\src\test.d</FileName>
+            <CaretX>66</CaretX>
             <CaretY>13</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\test.py</FileName>
-            <CaretX>23</CaretX>
-            <CaretY>4</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\7.bmp</FileName>
-            <CaretX>0</CaretX>
-            <CaretY>0</CaretY>
-            <TopLine>0</TopLine>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\lina 2.d</FileName>
-            <CaretX>20</CaretX>
-            <CaretY>8</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <CaretX>5</CaretX>
           </Object>
         </Items>
       </Files>
@@ -40,11 +31,11 @@
     <Options Class="TPasProjectOptions">
     </Options>
     <RunOptions Class="TRunProjectOptions">
-      <Mode>runConsole</Mode>
       <Pause>False</Pause>
+      <MainFile>D:\home\d\sard\src\test.d</MainFile>
+      <ExpandPaths>False</ExpandPaths>
       <Paths Class="TStringList">
       </Paths>
-      <ExpandPaths>False</ExpandPaths>
     </RunOptions>
   </Object>
 </rtti>

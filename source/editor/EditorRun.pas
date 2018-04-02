@@ -42,6 +42,7 @@ type
   TmneRunItem = class(TObject)
   private
     FBreakOnFail: Boolean;
+    FMessageType: TNotifyMessageType;
   protected
     FProcess: TProcess;
     FControl: TConsoleForm;
@@ -65,6 +66,7 @@ type
     constructor Create(APool: TmneRunPool);
     property BreakOnFail: Boolean read FBreakOnFail write FBreakOnFail;
     property Process: TProcess read FProcess;
+    property MessageType: TNotifyMessageType read FMessageType write FMessageType;
   end;
 
   TmneRunItemClass = class of TmneRunItem;
@@ -97,21 +99,24 @@ type
   private
     FPool: TmneRunPool;
     FTendency: TEditorDebugTendency;
+    FCurrentDirectory: string;
     function GetActive: Boolean;
   protected
     procedure PoolTerminated(Sender: TObject);
+    procedure SendMessage(S: string; vMessageType: TNotifyMessageType);
     procedure Finish;
   public
     constructor Create;
     destructor Destroy; override;
     function Add(AItemClass: TmneRunItemClass = nil): TmneRunItem; //Return same as parameter
     procedure Clear;
-    procedure Start(ATendency: TEditorDebugTendency);
+    procedure Start(ATendency: TEditorDebugTendency; vCurrentDirectory: string = ''); //move vCurrentDirectory to RunItem
     procedure Show;
     procedure Stop;
     property Active: Boolean read GetActive;
     property Pool: TmneRunPool read FPool;
     property Tendency: TEditorDebugTendency read FTendency;
+    property CurrentDirectory: string read FCurrentDirectory write FCurrentDirectory;
   end;
 
 implementation
@@ -213,9 +218,18 @@ begin
   Finish;
 end;
 
+procedure TmneRun.SendMessage(S: string; vMessageType: TNotifyMessageType);
+begin
+  if FTendency <> nil then
+    FTendency.SendMessage(S, vMessageType)
+  else
+    Engine.SendMessage(S, vMessageType);
+end;
+
 procedure TmneRun.Finish;
 begin
   FTendency := nil;
+  FCurrentDirectory := '';
 end;
 
 constructor TmneRun.Create;
@@ -229,8 +243,9 @@ begin
   inherited Destroy;
 end;
 
-procedure TmneRun.Start(ATendency: TEditorDebugTendency);
+procedure TmneRun.Start(ATendency: TEditorDebugTendency; vCurrentDirectory: string);
 begin
+  FCurrentDirectory := vCurrentDirectory;
   FTendency := ATendency;
   if FPool = nil then
     raise Exception.Create('There is no thread Pool');
@@ -307,7 +322,7 @@ end;
 procedure TmneRunItem.WriteOutput(S: string);
 begin
   InternalString := S;
-  InternalMessageType := msgtOutput;
+  InternalMessageType := MessageType;
   FPool.Synchronize(@InternalMessage);
   InternalString := '';
 end;
@@ -315,7 +330,7 @@ end;
 procedure TmneRunItem.InternalMessage;
 begin
   //if not Engine.IsShutdown then //not safe to ingore it
-  Engine.SendMessage(InternalString, InternalMessageType);
+  FPool.FRun.SendMessage(InternalString, InternalMessageType);
 end;
 
 procedure TmneRunItem.WriteMessage(S: string; vMessageType: TNotifyMessageType = msgtLog);
@@ -337,6 +352,7 @@ begin
   inherited Create;
   BreakOnFail := True;
   FPool := APool;
+  FMessageType := msgtOutput;
 end;
 
 procedure TmneRunItem.CreateConsole(AInfo: TmneCommandInfo);
@@ -380,7 +396,8 @@ begin
     ProcessObject := TmnProcessObject.Create(FProcess, FPool, @WriteOutput);
     //FProcess.PipeBufferSize := 0; //80 char in line
     try
-      Status := ProcessObject.Read(strmOutput);
+      FProcess.Execute;
+      Status := ProcessObject.ReadStream(FProcess.Output);
     finally
       FreeAndNil(FProcess);
       FreeAndNil(ProcessObject);

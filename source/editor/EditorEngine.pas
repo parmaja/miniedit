@@ -276,6 +276,7 @@ type
     constructor Create; override;
     destructor Destroy; override;
     procedure Run(RunActions: TmneRunActions);
+    procedure SendMessage(S: string; vMessageType: TNotifyMessageType); override;
 
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); virtual;
     function CreateOptions: TEditorProjectOptions; virtual;
@@ -1137,7 +1138,8 @@ type
     procedure SetNotifyEngine(ANotifyObject: INotifyEngine);
     procedure RemoveNotifyEngine(ANotifyObject: INotifyEngine);
     property MacroRecorder: TSynMacroRecorder read FMacroRecorder;
-    procedure SendMessage(S: string; vMessageType: TNotifyMessageType; Temporary: Boolean = False);
+    procedure SendMessage(S: string; vMessageType: TNotifyMessageType);
+    procedure SendMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);
     procedure SendAction(EditorAction: TEditorAction);
 
     property Environment: TStringList read FEnvironment write FEnvironment;
@@ -2151,6 +2153,11 @@ end;
 
 procedure TEditorTendency.DoRun(Info: TmneRunInfo);
 begin
+end;
+
+procedure TEditorTendency.SendMessage(S: string; vMessageType: TNotifyMessageType);
+begin
+  Engine.SendMessage(S, vMessageType);
 end;
 
 procedure TEditorTendency.Prepare;
@@ -3609,11 +3616,18 @@ begin
   FNotifyObject := nil; //TODO if list we should remove it
 end;
 
-procedure TEditorEngine.SendMessage(S: string; vMessageType: TNotifyMessageType; Temporary: Boolean);
+procedure TEditorEngine.SendMessage(S: string; vMessageType: TNotifyMessageType);
+var
+  aError: TErrorInfo;
+begin
+  SendMessage(S, vMessageType, aError);
+end;
+
+procedure TEditorEngine.SendMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);
 begin
   if not IsShutdown then
     if FNotifyObject <> nil then
-      FNotifyObject.EngineMessage(S, vMessageType, Temporary);
+      FNotifyObject.EngineMessage(S, vMessageType, vError);
 end;
 
 procedure TEditorEngine.SendAction(EditorAction: TEditorAction);

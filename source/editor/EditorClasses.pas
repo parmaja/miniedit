@@ -81,16 +81,23 @@ uses
       ecsProjectLoaded
     ); //ecsShow bring to front
 
-    TNotifyMessageType = (msgtStatus, msgtEndStatus, msgtLog, msgtOutput);
+    TNotifyMessageType = (msgtStatus, msgtEndStatus, msgtLog, msgtOutput, msgtError);
     TEditorAction = (eaClearOutput, eaClearLog);
+
+    TErrorInfo = record
+      ID: Integer;
+      Line: Integer;
+      Name: string;
+      FileName: string;
+      Message: string;
+    end;
 
     { INotifyEngine }
 
     INotifyEngine = interface(IInterface)
       procedure EditorChangeState(State: TEditorChangeStates);
       procedure EngineAction(EngineAction: TEditorAction);
-      procedure EngineMessage(S: string; vMessageType: TNotifyMessageType; Temporary: Boolean = False);
-      procedure EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
+      procedure EngineMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);
       procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
     end;
 

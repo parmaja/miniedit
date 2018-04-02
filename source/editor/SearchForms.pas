@@ -74,7 +74,7 @@ procedure InternalSearchText(SynEdit: TSynEdit; Options: TSynSearchOptions);
 begin
   if SynEdit.SearchReplace(FSearchText, FReplaceText, Options) = 0 then
   begin
-    Engine.SendMessage('Phrase not found', msgtStatus, true)
+    Engine.SendMessage('Phrase not found', msgtEndStatus)
   end;
 end;
 

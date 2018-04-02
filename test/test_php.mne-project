@@ -34,9 +34,9 @@
     </Options>
     <RunOptions Class="TRunProjectOptions">
       <Pause>False</Pause>
+      <ExpandPaths>False</ExpandPaths>
       <Paths Class="TStringList">
       </Paths>
-      <ExpandPaths>False</ExpandPaths>
     </RunOptions>
   </Object>
 </rtti>
