@@ -32,8 +32,9 @@ uses
   {$endif}
   mnePHPIniForm, mneConsoleForms,
   //end of addons
-  mneTendencyOptions, IniFiles, mnFields, simpleipc,
-  mnUtils, ntvTabs, ntvPageControls;
+  mneTendencyOptions, IniFiles, mnFields, simpleipc, mnUtils, ntvTabs,
+  ntvPageControls, SynEditMiscClasses, SynEditMarkupSpecialLine,
+  SynHighlighterAny;
 
 type
   TOutputLine = class(TObject)
@@ -89,6 +90,7 @@ type
     OutputEdit: TSynEdit;
     FolderPanel: TPanel;
     MainFileBtn: TToolButton;
+    SynAnySyn1: TSynAnySyn;
     ToolButton8: TToolButton;
     WatchesGrid: TStringGrid;
     SearchGrid: TStringGrid;
@@ -376,12 +378,17 @@ type
     procedure MenuItem23Click(Sender: TObject);
     procedure MenuItem24Click(Sender: TObject);
     procedure MessagesGridDblClick(Sender: TObject);
+
+      procedure MessagesGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure NewActExecute(Sender: TObject);
     procedure OpenActExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FileTabsClick(Sender: TObject);
     procedure NextActExecute(Sender: TObject);
+    procedure OutputEditChangeUpdating(ASender: TObject; AnUpdating: Boolean);
     procedure OutputEditDblClick(Sender: TObject);
+
+    procedure OutputEditSpecialLineMarkup(Sender: TObject; Line: integer; var Special: boolean; Markup: TSynSelectedColor);
     procedure PriorActExecute(Sender: TObject);
     procedure CloseActExecute(Sender: TObject);
     procedure FileListDblClick(Sender: TObject);
@@ -539,13 +546,10 @@ type
     procedure RunFile;
     procedure CompileFile;
     //
-    procedure LogError(ACaption, AMsg: string); overload;
-    procedure LogError(AMsg: string);
-
     procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
     procedure EditorChangeState(State: TEditorChangeStates);
     procedure EngineMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);
-    procedure EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer); overload;
+    procedure AddError(vError: TErrorInfo); overload;
     procedure EngineAction(EngineAction: TEditorAction);
 
     procedure FollowFolder(vFolder: string; FocusIt: Boolean);
@@ -553,6 +557,7 @@ type
     procedure ShowWatchesList;
     procedure ShowSearchGrid;
     procedure LoadAddons;
+    procedure ShowFileAtLine(vFileName: string; vLine: Integer);
     property ShowFolderFiles: TShowFolderFiles read FShowFolderFiles write SetShowFolderFiles;
     property SortFolderFiles: TSortFolderFiles read FSortFolderFiles write SetSortFolderFiles;
   public
@@ -867,26 +872,23 @@ end;
 procedure TMainForm.MessagesGridDblClick(Sender: TObject);
 var
   s: string;
+  aFile: string;
   aLine: integer;
 begin
-  if MessagesGrid.Row > 0 then
+  if MessagesGrid.Row > 1 then
   begin
-    Engine.Files.OpenFile(MessagesGrid.Cells[2, MessagesGrid.Row]);
-    s := MessagesGrid.Cells[3, MessagesGrid.Row];
-    if s <> '' then
-    begin
-      aLine := StrToIntDef(s, 0);
-      if aLine > 0 then
-      with Engine.Files do
-      begin
-        if (Current <> nil) and (Current.Control is TCustomSynEdit) then
-        begin
-          (Current.Control as TCustomSynEdit).CaretY := aLine;
-          (Current.Control as TCustomSynEdit).CaretX := 0;
-          (Current.Control as TCustomSynEdit).SelectLine;
-          (Current.Control as TCustomSynEdit).SetFocus;
-        end;
-      end;
+    aFile := MessagesGrid.Cells[3, MessagesGrid.Row];
+    aLine := StrToIntDef(MessagesGrid.Cells[4, MessagesGrid.Row], 0);
+    ShowFileAtLine(aFile, aLine);
+  end;
+end;
+
+procedure TMainForm.MessagesGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+begin
+  if Shift = [] then
+  begin
+    case Key of
+      VK_RETURN: MessagesGridDblClick(Sender);
     end;
   end;
 end;
@@ -1010,23 +1012,30 @@ begin
   Engine.Files.Next;
 end;
 
+procedure TMainForm.OutputEditChangeUpdating(ASender: TObject; AnUpdating: Boolean);
+begin
+  (ASender as TSynEdit).InvalidateLine((ASender as TSynEdit).CaretY)
+end;
+
 procedure TMainForm.OutputEditDblClick(Sender: TObject);
 var
   aLine: TOutputLine;
 begin
-  if OutputEdit.LogicalCaretXY.Y <= OutputEdit.Lines.Count then //y based on 1
+  if OutputEdit.CaretY <= OutputEdit.Lines.Count then //y based on 1
   begin
     aLine := FOutputs[OutputEdit.LogicalCaretXY.Y - 1];
     if aLine.Info.FileName <> '' then
-    begin
-      Engine.Files.OpenFile(aLine.Info.FileName);
-      with Engine.Files.Current do
-      if Control is TCustomSynEdit then
-      begin
-        (Control as TCustomSynEdit).LogicalCaretXY := Point(1, aLine.Info.Line);
-        (Control as TCustomSynEdit).SetFocus;
-      end;
-    end;
+      ShowFileAtLine(aLine.Info.FileName, aLine.Info.Line);
+  end;
+end;
+
+procedure TMainForm.OutputEditSpecialLineMarkup(Sender: TObject; Line: integer; var Special: boolean; Markup: TSynSelectedColor);
+begin
+  if not Engine.IsShutdown then
+  begin
+    Special := (Sender as TSynEdit).CaretY = Line;
+    if Special then
+      Markup.BackAlpha := 50;//Engine.Options.Profile.Attributes.Active.Background;;
   end;
 end;
 
@@ -1701,13 +1710,14 @@ begin
   Engine.CurrentTendency.Run([rnaLint]);
 end;
 
-procedure TMainForm.EngineError(Error: integer; ACaption, Msg, FileName: string; LineNo: integer);
+procedure TMainForm.AddError(vError: TErrorInfo);
 begin
   MessagesGrid.RowCount := MessagesGrid.RowCount + 1;
-  MessagesGrid.Cells[1, MessagesGrid.RowCount - 1] := IntToStr(Error);
-  MessagesGrid.Cells[2, MessagesGrid.RowCount - 1] := msg;
-  MessagesGrid.Cells[3, MessagesGrid.RowCount - 1] := FileName;
-  MessagesGrid.Cells[4, MessagesGrid.RowCount - 1] := IntToStr(LineNo);
+  //MessagesGrid.Cells[1, MessagesGrid.RowCount - 1] := IntToStr(vError.ID);
+  MessagesGrid.Cells[1, MessagesGrid.RowCount - 1] := vError.Name;
+  MessagesGrid.Cells[2, MessagesGrid.RowCount - 1] := vError.Message;
+  MessagesGrid.Cells[3, MessagesGrid.RowCount - 1] := vError.FileName;
+  MessagesGrid.Cells[4, MessagesGrid.RowCount - 1] := IntToStr(vError.Line);
 end;
 
 procedure TMainForm.AboutActExecute(Sender: TObject);
@@ -1793,7 +1803,7 @@ begin
   begin
     MessagesTabs.PageItem[WatchesGrid].Visible := capDebug in Capabilities;
     MessagesTabs.PageItem[CallStackGrid].Visible := capTrace in Capabilities;
-    MessagesTabs.PageItem[MessagesGrid].Visible := capErrors in Capabilities;
+    //MessagesTabs.PageItem[MessagesGrid].Visible := capErrors in Capabilities;
   end;
 end;
 
@@ -2178,6 +2188,8 @@ begin
       FOutputs.Add(aLine);
       OutputEdit.Lines.Add(S);
       OutputEdit.CaretY := OutputEdit.Lines.Count;
+      if (vError.FileName <> '') then
+        AddError(vError);
     end;
     msgtLog:
       LogEdit.Lines.Add(S);
@@ -2542,10 +2554,11 @@ procedure TMainForm.OptionsChanged;
     AGrid.TitleFont.Color := Engine.Options.Profile.Attributes.Default.Foreground;
     AGrid.FixedGridLineColor := Engine.Options.Profile.Attributes.Panel.Background;
     AGrid.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
-    AGrid.Font.Name := Engine.Options.Profile.Attributes.FontName;
-    AGrid.Font.Size := Engine.Options.Profile.Attributes.FontSize;
+    {AGrid.Font.Name := Engine.Options.Profile.Attributes.FontName;
+    AGrid.Font.Size := Engine.Options.Profile.Attributes.FontSize;}
     AGrid.SelectedColor := Engine.Options.Profile.Attributes.Selected.Background;
-    AGrid.FocusColor := Engine.Options.Profile.Attributes.Selected.Foreground;
+    AGrid.FocusColor := Engine.Options.Profile.Attributes.Selected.Background;
+    AGrid.FocusRectVisible := False;
   end;
 
 begin
@@ -2701,6 +2714,21 @@ begin
     end;
   finally
     //MainMenu.Items.EndUpdate;
+  end;
+end;
+
+procedure TMainForm.ShowFileAtLine(vFileName: string; vLine: Integer);
+begin
+  Engine.Files.OpenFile(vFileName);
+  with Engine.Files do
+  begin
+    if vLine > 0 then
+      if (Current <> nil) and (Current.Control is TCustomSynEdit) then
+      begin
+        (Current.Control as TCustomSynEdit).LogicalCaretXY := Point(0, vLine);
+        (Current.Control as TCustomSynEdit).SelectLine;
+        (Current.Control as TCustomSynEdit).SetFocus;
+      end;
   end;
 end;
 
@@ -3023,16 +3051,6 @@ begin
     else //msgcCancel
       ReplaceAction := raCancel;
   end;
-end;
-
-procedure TMainForm.LogError(ACaption, AMsg: string);
-begin
-  EngineError(0, ACaption, AMsg, '', 0);
-end;
-
-procedure TMainForm.LogError(AMsg: string);
-begin
-  LogError('', AMsg);
 end;
 
 procedure TMainForm.CatchErr(Sender: TObject; e: exception);

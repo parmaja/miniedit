@@ -1,9 +1,9 @@
 object MainForm: TMainForm
-  Left = 320
+  Left = 380
   Height = 557
-  Top = 124
+  Top = 114
   Width = 882
-  ActiveControl = OutputEdit
+  ActiveControl = MessagesGrid
   AllowDropFiles = True
   Caption = 'Mini Edit'
   ClientHeight = 537
@@ -1026,130 +1026,6 @@ object MainForm: TMainForm
         end
       end
     end
-    object MessagesGrid: TStringGrid
-      Left = 1
-      Height = 105
-      Top = 21
-      Width = 880
-      Align = alClient
-      Flat = True
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
-      ParentColor = True
-      PopupMenu = MessagesPopup
-      RowCount = 1
-      TabOrder = 2
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnDblClick = MessagesGridDblClick
-      ColWidths = (
-        18
-        64
-        378
-        164
-        64
-      )
-      Cells = (
-        4
-        1
-        0
-        'Type'
-        2
-        0
-        'Message'
-        3
-        0
-        'File'
-        4
-        0
-        'Line'
-      )
-    end
-    object WatchesGrid: TStringGrid
-      Left = 1
-      Height = 105
-      Top = 21
-      Width = 880
-      Align = alClient
-      ColCount = 4
-      Columns = <      
-        item
-          Title.Caption = 'Variable'
-          Width = 140
-        end      
-        item
-          Title.Caption = 'Type'
-          Width = 60
-        end      
-        item
-          Title.Caption = 'Value'
-          Width = 300
-        end>
-      Flat = True
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
-      ParentColor = True
-      RowCount = 1
-      TabOrder = 3
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnKeyDown = WatchesGridKeyDown
-      ColWidths = (
-        18
-        140
-        60
-        300
-      )
-      Cells = (
-        1
-        1
-        0
-        'Variable'
-      )
-    end
-    object CallStackGrid: TStringGrid
-      Left = 1
-      Height = 105
-      Top = 21
-      Width = 880
-      Align = alClient
-      ColCount = 3
-      Columns = <      
-        item
-          Title.Caption = 'File'
-          Width = 300
-        end      
-        item
-          Title.Caption = 'Line'
-          Width = 60
-        end>
-      Flat = True
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
-      ParentColor = True
-      RowCount = 1
-      TabOrder = 4
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnKeyDown = WatchesGridKeyDown
-      ColWidths = (
-        18
-        300
-        60
-      )
-      Cells = (
-        1
-        1
-        0
-        'Variable'
-      )
-    end
     object SearchGrid: TStringGrid
       Left = 1
       Height = 105
@@ -1191,6 +1067,45 @@ object MainForm: TMainForm
         'Result'
       )
     end
+    object CallStackGrid: TStringGrid
+      Left = 1
+      Height = 105
+      Top = 21
+      Width = 880
+      Align = alClient
+      ColCount = 3
+      Columns = <      
+        item
+          Title.Caption = 'File'
+          Width = 300
+        end      
+        item
+          Title.Caption = 'Line'
+          Width = 60
+        end>
+      Flat = True
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
+      ParentColor = True
+      RowCount = 1
+      TabOrder = 4
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnKeyDown = WatchesGridKeyDown
+      ColWidths = (
+        18
+        300
+        60
+      )
+      Cells = (
+        1
+        1
+        0
+        'Variable'
+      )
+    end
     inline OutputEdit: TSynEdit
       Left = 1
       Height = 105
@@ -1230,6 +1145,7 @@ object MainForm: TMainForm
           Button = mbRight
           Command = emcContextMenu
         end>
+      Highlighter = SynAnySyn1
       Keystrokes = <      
         item
           Command = ecUp
@@ -1720,8 +1636,8 @@ object MainForm: TMainForm
           ClickDir = cdDown
           Command = emcStartDragMove
         end>
-      Options = [eoBracketHighlight, eoGroupUndo, eoHideRightMargin, eoScrollPastEol, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces, eoRightMouseMovesCursor, eoDoubleClickSelectsLine]
-      MouseOptions = [emRightMouseMovesCursor, emDoubleClickSelectsLine]
+      Options = [eoGroupUndo, eoHideRightMargin, eoScrollPastEol, eoRightMouseMovesCursor]
+      MouseOptions = [emRightMouseMovesCursor]
       VisibleSpecialChars = [vscSpace, vscTabAtLast]
       ReadOnly = True
       RightEdge = 360
@@ -1745,6 +1661,8 @@ object MainForm: TMainForm
       LineHighlightColor.Foreground = clNone
       TabWidth = 2
       WantTabs = False
+      OnChangeUpdating = OutputEditChangeUpdating
+      OnSpecialLineMarkup = OutputEditSpecialLineMarkup
       inline SynGutterPartList1: TSynGutterPartList
         object SynGutterLineNumber1: TSynGutterLineNumber
           Width = 17
@@ -1763,6 +1681,93 @@ object MainForm: TMainForm
           MarkupInfo.Foreground = clGray
         end
       end
+    end
+    object WatchesGrid: TStringGrid
+      Left = 1
+      Height = 105
+      Top = 21
+      Width = 880
+      Align = alClient
+      ColCount = 4
+      Columns = <      
+        item
+          Title.Caption = 'Variable'
+          Width = 140
+        end      
+        item
+          Title.Caption = 'Type'
+          Width = 60
+        end      
+        item
+          Title.Caption = 'Value'
+          Width = 300
+        end>
+      Flat = True
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
+      ParentColor = True
+      RowCount = 1
+      TabOrder = 3
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnKeyDown = WatchesGridKeyDown
+      ColWidths = (
+        18
+        140
+        60
+        300
+      )
+      Cells = (
+        1
+        1
+        0
+        'Variable'
+      )
+    end
+    object MessagesGrid: TStringGrid
+      Left = 1
+      Height = 105
+      Top = 21
+      Width = 880
+      Align = alClient
+      DefaultRowHeight = 20
+      Flat = True
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect, goDblClickAutoSize, goSmoothScroll]
+      ParentColor = True
+      PopupMenu = MessagesPopup
+      RowCount = 1
+      TabOrder = 2
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnDblClick = MessagesGridDblClick
+      OnKeyDown = MessagesGridKeyDown
+      ColWidths = (
+        18
+        64
+        378
+        164
+        64
+      )
+      Cells = (
+        4
+        1
+        0
+        'Type'
+        2
+        0
+        'Message'
+        3
+        0
+        'File'
+        4
+        0
+        'Line'
+      )
     end
   end
   object MessagesSpl: TntvSplitter
@@ -2887,8 +2892,8 @@ object MainForm: TMainForm
     end
   end
   object WatchesPopupMenu: TPopupMenu
-    left = 105
-    top = 430
+    left = 304
+    top = 288
     object Add1: TMenuItem
       Caption = 'Add'
       OnClick = Add1Click
@@ -2967,8 +2972,8 @@ object MainForm: TMainForm
     top = 198
   end
   object MessagesPopup: TPopupMenu
-    left = 229
-    top = 435
+    left = 251
+    top = 230
     object Clear1: TMenuItem
       Caption = 'Clear'
       OnClick = Clear1Click
@@ -2992,5 +2997,17 @@ object MainForm: TMainForm
     OnShowHint = ApplicationPropertiesShowHint
     left = 66
     top = 155
+  end
+  object SynAnySyn1: TSynAnySyn
+    Enabled = False
+    Comments = []
+    DetectPreprocessor = False
+    IdentifierChars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz'
+    Markup = False
+    Entity = False
+    DollarVariables = False
+    ActiveDot = False
+    left = 245
+    top = 440
   end
 end
