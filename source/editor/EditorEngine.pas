@@ -23,7 +23,7 @@ interface
 
 uses
   Messages, SysUtils, Forms, StrUtils, Dialogs, Variants, Classes, Controls, LCLIntf,
-  Graphics, Contnrs, Types, IniFiles, EditorOptions, EditorProfiles,
+  Graphics, Contnrs, Types, IniFiles, EditorOptions, EditorColors, EditorProfiles,
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
@@ -490,8 +490,8 @@ type
     procedure DoGetCapability(var vCapability: TEditCapability); virtual;
   protected
     procedure Edit;
-    procedure DoEdit(Sender: TObject);
-    procedure DoStatusChange(Sender: TObject; Changes: TSynStatusChanges);
+    procedure DoEdit(Sender: TObject); virtual;
+    procedure DoStatusChange(Sender: TObject; Changes: TSynStatusChanges); virtual;
     procedure UpdateAge; virtual;
     procedure NewContent; virtual;
     procedure DoLoad(FileName: string); virtual; abstract;
@@ -507,14 +507,14 @@ type
     procedure Delete; //only name not with the path
 
     procedure SaveFile(Extension: string = ''; AsNewFile: Boolean = False); virtual;
-    procedure Show; virtual;
+    procedure Show; virtual; //Need to activate it after show to focus editor
+    procedure Activate; virtual;
     procedure Close;
     procedure Reload;
     procedure OpenInclude; virtual;
     function CanOpenInclude: Boolean; virtual;
     function CheckChanged(Force: Boolean = False): Boolean;
     //
-    procedure Activate; virtual;
     procedure GotoLine; virtual;
     procedure Find; virtual;
     procedure FindNext; virtual;
@@ -575,7 +575,9 @@ type
 
   TTextEditorFile = class(TEditorFile, ITextEditor)
   private
+    FHighlightLine: Integer;
     FSynEdit: TSynEdit;
+    procedure SetHighlightLine(AValue: Integer);
   protected
     LastGotoLine: Integer;
     function GetIsReadonly: Boolean; override;
@@ -584,7 +586,8 @@ type
     procedure DoLoad(FileName: string); override;
     procedure DoSave(FileName: string); override;
     procedure GroupChanged; override;
-
+    procedure DoEdit(Sender: TObject); override;
+    procedure DoStatusChange(Sender: TObject; Changes: TSynStatusChanges); override;
     procedure DoGutterClickEvent(Sender: TObject; X, Y, Line: integer; Mark: TSynEditMark);
     procedure DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
     procedure DoGetCapability(var vCapability: TEditCapability); override;
@@ -599,7 +602,6 @@ type
     procedure FindPrevious; override;
     procedure Replace; override;
     procedure Refresh; override;
-    procedure Show; override;
     function GetHint(HintControl: TControl; CursorPos: TPoint; out vHint: string): Boolean; override;
     function GetGlance: string; override;
     function EvalByMouse(p: TPoint; out v, s, t: string): boolean;
@@ -615,6 +617,7 @@ type
     procedure SetLine(Line: Integer); override;
     procedure GotoLine; override;
     property SynEdit: TSynEdit read FSynEdit;
+    property HighlightLine: Integer read FHighlightLine write SetHighlightLine;
   end;
 
   TSourceEditorFile = class(TTextEditorFile, IExecuteEditor, IWatchEditor)
@@ -725,7 +728,8 @@ type
     procedure Apply; virtual;
     procedure Load(vWorkspace: string);
     procedure Save(vWorkspace: string);
-    procedure Show;
+    procedure OptionsShow;
+    procedure ColorsShow;
 
     property BoundRect: TRect read FBoundRect write FBoundRect; //not saved yet
     property RecentFiles: TStringList read FRecentFiles write SetRecentFiles;
@@ -1199,6 +1203,7 @@ procedure Nothing;
 const
   cFallbackGroup = 'txt';
 
+function IsShutdown: Boolean;
 function Engine: TEditorEngine;
 
 const
@@ -1221,6 +1226,14 @@ type
 var
   FEngineLife: TEngineLife  = engnNone;
   FEngine: TEditorEngine = nil;
+
+function IsShutdown: Boolean;
+begin
+  if FEngine <> nil then
+    Result := FEngine.IsShutdown
+  else
+    Result := True;
+end;
 
 function Engine: TEditorEngine;
 begin
@@ -1645,6 +1658,16 @@ end;
 
 { TTextEditorFile }
 
+procedure TTextEditorFile.SetHighlightLine(AValue: Integer);
+begin
+  if FHighlightLine <> AValue then
+  begin
+    SynEdit.InvalidateLine(FHighlightLine);
+    FHighlightLine :=AValue;
+    SynEdit.InvalidateLine(FHighlightLine);
+  end;
+end;
+
 function TTextEditorFile.GetIsReadonly: Boolean;
 begin
   Result := SynEdit.ReadOnly;
@@ -1747,6 +1770,19 @@ begin
   end;
 end;
 
+procedure TTextEditorFile.DoEdit(Sender: TObject);
+begin
+  inherited;
+  HighlightLine := -1;
+end;
+
+procedure TTextEditorFile.DoStatusChange(Sender: TObject; Changes: TSynStatusChanges);
+begin
+  if ([scReadOnly, scCaretX, scCaretY, scLeftChar, scTopLine, scSelection] * Changes) <> [] then
+    HighlightLine := -1;
+  inherited;
+end;
+
 procedure TTextEditorFile.DoGutterClickEvent(Sender: TObject; X, Y, Line: integer; Mark: TSynEditMark);
 var
   aLine: integer;
@@ -1768,6 +1804,15 @@ procedure TTextEditorFile.DoSpecialLineMarkup(Sender: TObject; Line: integer; va
 var
   aColor: TColor;
 begin
+  if FHighlightLine = Line then
+  begin
+    Special := True;
+    //aColor := Engine.Options.Profile.Attributes.Default.Background;
+    //Markup.BackAlpha := 100;
+    Markup.Foreground := Engine.Options.Profile.Attributes.Active.Foreground;
+    Markup.Background := Engine.Options.Profile.Attributes.Active.Background;
+  end;
+
   if (Engine.DebugLink.ExecutedControl = Sender) then
   begin
     if Engine.DebugLink.ExecutedLine = Line then
@@ -1810,6 +1855,7 @@ constructor TTextEditorFile.Create(ACollection: TCollection);
 begin
   inherited;
   { There is more assigns in TEditorFile.SetGroup and TEditorProfile.Assign}
+  FHighlightLine := -1;
   FSynEdit := TSynEdit.Create(Engine.Container);
   FSynEdit.OnChange := @DoEdit;
   FSynEdit.OnStatusChange := @DoStatusChange;
@@ -1940,11 +1986,6 @@ procedure TTextEditorFile.Refresh;
 begin
   inherited;
   SynEdit.Refresh;
-end;
-
-procedure TTextEditorFile.Show;
-begin
-  inherited;
 end;
 
 function TTextEditorFile.GetHint(HintControl: TControl; CursorPos: TPoint; out vHint: string): Boolean;
@@ -3315,7 +3356,10 @@ begin
   begin
     FCurrent := Value;
     if not Engine.Updating then
+    begin
       FCurrent.Show;
+      FCurrent.Activate;
+    end;
     Engine.UpdateState([ecsDebug, ecsRefresh]);
   end;
 end;
@@ -3376,11 +3420,36 @@ begin
   Result := (Project <> nil) and not (Project is TDefaultProject);
 end;
 
-procedure TEditorOptions.Show;
+procedure TEditorOptions.OptionsShow;
 var
   aSelect: string;
 begin
   with TEditorOptionsForm.Create(Application) do
+  begin
+    Engine.BeginUpdate;
+    try
+      if (Engine.Files.Current <> nil) then
+        aSelect := Engine.Files.Current.GetLanguageName //just to select a language in the combobox
+      else
+        aSelect := '';
+      if Execute(Profile, aSelect) then
+      begin
+        Apply;
+        Engine.SaveOptions;
+      end;
+      Engine.UpdateState([ecsOptions]);
+    finally
+      Engine.EndUpdate;
+      Free;
+    end;
+  end;
+end;
+
+procedure TEditorOptions.ColorsShow;
+var
+  aSelect: string;
+begin
+  with TEditorColorsForm.Create(Application) do
   begin
     Engine.BeginUpdate;
     try
@@ -3620,6 +3689,7 @@ procedure TEditorEngine.SendMessage(S: string; vMessageType: TNotifyMessageType)
 var
   aError: TErrorInfo;
 begin
+  aError := Default(TErrorInfo);
   SendMessage(S, vMessageType, aError);
 end;
 
@@ -3946,7 +4016,7 @@ begin
     Control.Visible := True;
     Control.Show;
     Control.BringToFront;
-    Activate;
+    //Activate;//no no, bad when return back from another app to miniedit
   end;
 end;
 
