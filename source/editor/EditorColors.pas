@@ -36,6 +36,8 @@ type
     BackgroundCbo: TColorBox;
     BackgroundChk: TCheckBox;
     Bevel1: TBevel;
+    Button3: TButton;
+    Button4: TButton;
     CategoryCbo: TComboBox;
     FontBtn: TButton;
     FontDialog: TFontDialog;
@@ -55,6 +57,8 @@ type
     SaveBtn: TButton;
     SaveDialog: TSaveDialog;
     procedure BackgroundCboChange(Sender: TObject);
+    procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
     procedure ForegroundCboChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure LoadBtnClick(Sender: TObject);
@@ -196,6 +200,26 @@ end;
 procedure TEditorColorsForm.BackgroundCboChange(Sender: TObject);
 begin
   if not InChanging then
+  begin
+    if BackgroundChk.Enabled then
+      BackgroundChk.Checked := True;
+    ApplyAttribute;
+  end;
+end;
+
+procedure TEditorColorsForm.Button3Click(Sender: TObject);
+begin
+  if ForegroundCbo.PickCustomColor then
+  begin
+    if ForegroundChk.Enabled then
+      ForegroundChk.Checked := True;
+    ApplyAttribute;
+  end;
+end;
+
+procedure TEditorColorsForm.Button4Click(Sender: TObject);
+begin
+  if BackgroundCbo.PickCustomColor then
   begin
     if BackgroundChk.Enabled then
       BackgroundChk.Checked := True;

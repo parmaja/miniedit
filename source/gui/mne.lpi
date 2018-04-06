@@ -169,7 +169,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="50">
+    <Units Count="51">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -445,6 +445,13 @@
         <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvThemes.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit49>
+      <Unit50>
+        <Filename Value="..\editor\EditorColors.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="EditorColorsForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit50>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

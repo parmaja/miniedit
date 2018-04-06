@@ -55,13 +55,19 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    EditorColorsAct: TAction;
+    CreateFolderAct: TAction;
     CloseOthersAct: TAction;
     ChangeExtAct: TAction;
     MainFileAct: TAction;
+    MenuItem1: TMenuItem;
     MenuItem35: TMenuItem;
     ChangeExtMnu: TMenuItem;
     MenuItem37: TMenuItem;
     MenuItem38: TMenuItem;
+    EditorColorsMnu: TMenuItem;
+    MenuItem40: TMenuItem;
+    MenuItem41: TMenuItem;
     ResetMainFileAct: TAction;
     MenuItem32: TMenuItem;
     MenuItem33: TMenuItem;
@@ -230,7 +236,7 @@ type
     ReopenProjectMnu: TMenuItem;
     CloseProjectAct: TAction;
     CloseProject1: TMenuItem;
-    OpenFolderAct: TAction;
+    ExploreFolderAct: TAction;
     OpenFolder1: TMenuItem;
     ToolButton2: TToolButton;
     MessagesAct: TAction;
@@ -244,7 +250,7 @@ type
     ManageAct: TAction;
     Manage1: TMenuItem;
     OpenFolder2: TMenuItem;
-    ProjectOpenFolderAct: TAction;
+    ProjectExploreFolderAct: TAction;
     OpenIncludeAct: TAction;
     OpenInclude1: TMenuItem;
     CopyAct: TAction;
@@ -273,7 +279,7 @@ type
     Replace1: TMenuItem;
     RevertAct: TAction;
     Revert1: TMenuItem;
-    OpenFileFolder: TMenuItem;
+    ExploreFileFolderMnu: TMenuItem;
     OpenColorAct: TAction;
     Open2: TMenuItem;
     OpenColor1: TMenuItem;
@@ -358,8 +364,10 @@ type
     procedure CallStackListDblClick(Sender: TObject);
     procedure ChangeExtActExecute(Sender: TObject);
     procedure CloseOthersActExecute(Sender: TObject);
+    procedure CreateFolderActExecute(Sender: TObject);
     procedure DBGCompileActExecute(Sender: TObject);
     procedure DeleteActExecute(Sender: TObject);
+    procedure EditorColorsActExecute(Sender: TObject);
     procedure EditorPopupMenuPopup(Sender: TObject);
     procedure EditorsPnlClick(Sender: TObject);
     procedure FetchCallStackBtnClick(Sender: TObject);
@@ -421,7 +429,7 @@ type
     procedure SaveProjectActExecute(Sender: TObject);
     procedure SelectFileActExecute(Sender: TObject);
     procedure CloseProjectActExecute(Sender: TObject);
-    procedure OpenFolderActExecute(Sender: TObject);
+    procedure ExploreFolderActExecute(Sender: TObject);
     procedure MessagesActExecute(Sender: TObject);
     procedure SetAsMainFileAcExecute(Sender: TObject);
     procedure SetAsRootFolderActExecute(Sender: TObject);
@@ -443,7 +451,7 @@ type
     procedure DBGLintActExecute(Sender: TObject);
     procedure AboutActExecute(Sender: TObject);
     procedure SaveAsProjectActExecute(Sender: TObject);
-    procedure ProjectOpenFolderActExecute(Sender: TObject);
+    procedure ProjectExploreFolderActExecute(Sender: TObject);
     procedure ManageActExecute(Sender: TObject);
     procedure CloseAllActExecute(Sender: TObject);
     procedure OpenIncludeActExecute(Sender: TObject);
@@ -462,7 +470,7 @@ type
     procedure ReplaceActExecute(Sender: TObject);
     procedure RevertActExecute(Sender: TObject);
     procedure FileListKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
-    procedure OpenFileFolderClick(Sender: TObject);
+    procedure ExploreFileFolderMnuClick(Sender: TObject);
     procedure OpenColorActUpdate(Sender: TObject);
     procedure OpenColorActExecute(Sender: TObject);
     procedure SCMCommitActExecute(Sender: TObject);
@@ -538,7 +546,7 @@ type
     function GetCurrentColorText: string;
     function GetFolder: string;
     procedure DeleteCurrentWatch;
-    procedure MoveListIndex(vForward: boolean);
+    procedure MoveListIndex(vDirection: Integer);
   protected
     FProjectFrame: TFrame;
     FOutputs: TOutputs;
@@ -704,6 +712,18 @@ begin
   Engine.Files.CloseOthers;
 end;
 
+procedure TMainForm.CreateFolderActExecute(Sender: TObject);
+var
+  s: string;
+begin
+  s := '';
+  if MsgBox.Msg.Input(s, 'Enter name for new folder') and (s <> '') then
+  begin
+    CreateDir(Folder + s);
+    UpdateFolder;
+  end;
+end;
+
 procedure TMainForm.DBGCompileActExecute(Sender: TObject);
 begin
   CompileFile;
@@ -716,6 +736,11 @@ begin
     if not MsgBox.Msg.No('Are you sure want delete ' + Engine.Files.Current.NakeName) then
       Engine.Files.Current.Delete;
   end;
+end;
+
+procedure TMainForm.EditorColorsActExecute(Sender: TObject);
+begin
+  Engine.Options.ColorsShow;
 end;
 
 procedure TMainForm.EditorPopupMenuPopup(Sender: TObject);
@@ -871,11 +896,10 @@ end;
 
 procedure TMainForm.MessagesGridDblClick(Sender: TObject);
 var
-  s: string;
   aFile: string;
   aLine: integer;
 begin
-  if MessagesGrid.Row > 1 then
+  if MessagesGrid.Row > 0 then
   begin
     aFile := MessagesGrid.Cells[3, MessagesGrid.Row];
     aLine := StrToIntDef(MessagesGrid.Cells[4, MessagesGrid.Row], 0);
@@ -1031,11 +1055,14 @@ end;
 
 procedure TMainForm.OutputEditSpecialLineMarkup(Sender: TObject; Line: integer; var Special: boolean; Markup: TSynSelectedColor);
 begin
-  if not Engine.IsShutdown then
+  if not IsShutdown then
   begin
     Special := (Sender as TSynEdit).CaretY = Line;
     if Special then
-      Markup.BackAlpha := 50;//Engine.Options.Profile.Attributes.Active.Background;;
+    begin
+      Markup.Foreground := Engine.Options.Profile.Attributes.Active.Foreground;;
+      Markup.Background := Engine.Options.Profile.Attributes.Active.Background;;
+    end;
   end;
 end;
 
@@ -1305,7 +1332,7 @@ end;
 
 procedure TMainForm.EditorOptionsActExecute(Sender: TObject);
 begin
-  Engine.Options.Show;
+  Engine.Options.OptionsShow;
 end;
 
 procedure TMainForm.SelectSCMTypeActExecute(Sender: TObject);
@@ -1475,7 +1502,7 @@ begin
   Engine.Session.Close;
 end;
 
-procedure TMainForm.OpenFolderActExecute(Sender: TObject);
+procedure TMainForm.ExploreFolderActExecute(Sender: TObject);
 var
   s: string;
 begin
@@ -1739,7 +1766,7 @@ begin
   SaveAsProjectAct.Enabled := b;
   AddFileToProjectAct.Enabled := b;
   CloseProjectAct.Enabled := b;
-  ProjectOpenFolderAct.Enabled := b;
+  ProjectExploreFolderAct.Enabled := b;
   SCMMnu.Visible := Engine.SCM <> nil;
   if Engine.SCM <> nil then
     SCMMnu.Caption := Engine.SCM.Name
@@ -1870,7 +1897,7 @@ begin
     Engine.Session.SaveAs;
 end;
 
-procedure TMainForm.ProjectOpenFolderActExecute(Sender: TObject);
+procedure TMainForm.ProjectExploreFolderActExecute(Sender: TObject);
 begin
 {  if Engine.Session.IsOpened then
     ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Session.Project.FileName + '"'), nil, SW_SHOW);}
@@ -2292,7 +2319,7 @@ begin
   end;
 end;
 
-procedure TMainForm.OpenFileFolderClick(Sender: TObject);
+procedure TMainForm.ExploreFileFolderMnuClick(Sender: TObject);
 var
   s: string;
 begin
@@ -2388,6 +2415,7 @@ begin
     begin
       FOutputs.Clear;
       OutputEdit.Lines.Clear;
+      MessagesGrid.RowCount := 1;
     end;
     eaClearLog :
     begin
@@ -2557,8 +2585,8 @@ procedure TMainForm.OptionsChanged;
     {AGrid.Font.Name := Engine.Options.Profile.Attributes.FontName;
     AGrid.Font.Size := Engine.Options.Profile.Attributes.FontSize;}
     AGrid.SelectedColor := Engine.Options.Profile.Attributes.Selected.Background;
-    AGrid.FocusColor := Engine.Options.Profile.Attributes.Selected.Background;
-    AGrid.FocusRectVisible := False;
+    AGrid.FocusColor := Engine.Options.Profile.Attributes.Active.ForeColor;
+    //AGrid.FocusRectVisible := False;
   end;
 
 begin
@@ -2722,13 +2750,16 @@ begin
   Engine.Files.OpenFile(vFileName);
   with Engine.Files do
   begin
-    if vLine > 0 then
-      if (Current <> nil) and (Current.Control is TCustomSynEdit) then
-      begin
-        (Current.Control as TCustomSynEdit).LogicalCaretXY := Point(0, vLine);
-        (Current.Control as TCustomSynEdit).SelectLine;
-        (Current.Control as TCustomSynEdit).SetFocus;
-      end;
+    if Current is TTextEditorFile then
+      if vLine > 0 then
+        if (Current <> nil) and (Current.Control is TCustomSynEdit) then
+        begin
+          (Current.Control as TCustomSynEdit).LogicalCaretXY := Point(0, vLine);
+//          (Current.Control as TCustomSynEdit).SelectLine;
+          (Current.Control as TCustomSynEdit).EnsureCursorPosVisible;
+          (Current as TTextEditorFile).HighlightLine := vLine; //after changing
+          (Current.Control as TCustomSynEdit).SetFocus;
+        end;
   end;
 end;
 
@@ -2866,6 +2897,7 @@ begin
     (MessagesPopup.PopupComponent as TSynEdit).Lines.Clear;
     if (MessagesPopup.PopupComponent as TSynEdit) = OutputEdit then
       FOutputs.Clear;
+    MessagesGrid.RowCount := 1;
   end
   else if MessagesPopup.PopupComponent is TListView then
     (MessagesPopup.PopupComponent as TListView).Clear
@@ -2930,21 +2962,21 @@ end;
 
 procedure TMainForm.NextMessageActExecute(Sender: TObject);
 begin
-  MoveListIndex(True);
+  MoveListIndex(+1);
 end;
 
-procedure TMainForm.MoveListIndex(vForward: boolean);
+procedure TMainForm.MoveListIndex(vDirection: Integer);
 
   procedure DblClick(Grid: TStringGrid);
   begin
     if Assigned(Grid.OnDblClick) then
     begin
-      if vForward then
+      if vDirection > 0 then
       begin
         if Grid.Row < Grid.RowCount - 1 then
           Grid.Row := Grid.Row + 1;
       end
-      else
+      else if vDirection < 0 then
       begin
         if Grid.Row > 0 then
           Grid.Row := Grid.Row - 1;
@@ -2954,13 +2986,17 @@ procedure TMainForm.MoveListIndex(vForward: boolean);
   end;
 
 begin
-  if MessagesTabs.ActiveControl is TStringGrid then
-    DblClick(MessagesTabs.ActiveControl as TStringGrid);
+  if not (MessagesTabs.ActiveControl is TStringGrid) then
+  begin
+    MessagesTabs.ActiveControl := MessagesGrid;
+    vDirection := 0;
+  end;
+  DblClick(MessagesTabs.ActiveControl as TStringGrid);
 end;
 
 procedure TMainForm.PriorMessageActExecute(Sender: TObject);
 begin
-  MoveListIndex(False);
+  MoveListIndex(-1);
 end;
 
 

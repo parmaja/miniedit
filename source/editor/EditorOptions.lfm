@@ -1,11 +1,11 @@
 object EditorOptionsForm: TEditorOptionsForm
   Left = 368
-  Height = 413
+  Height = 330
   Top = 116
   Width = 423
   BorderStyle = bsDialog
   Caption = 'Editor Options'
-  ClientHeight = 413
+  ClientHeight = 330
   ClientWidth = 423
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
@@ -16,7 +16,7 @@ object EditorOptionsForm: TEditorOptionsForm
   object OkBtn: TButton
     Left = 338
     Height = 27
-    Top = 383
+    Top = 300
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&OK'
@@ -28,7 +28,7 @@ object EditorOptionsForm: TEditorOptionsForm
   object CancelBtn: TButton
     Left = 262
     Height = 27
-    Top = 383
+    Top = 300
     Width = 75
     Anchors = [akRight, akBottom]
     Cancel = True
@@ -39,7 +39,7 @@ object EditorOptionsForm: TEditorOptionsForm
   object RevertBtn: TButton
     Left = 6
     Height = 27
-    Top = 383
+    Top = 300
     Width = 78
     Anchors = [akLeft, akBottom]
     Caption = 'Revert'
@@ -128,17 +128,17 @@ object EditorOptionsForm: TEditorOptionsForm
     TabOrder = 11
   end
   object LineSpacingEdit: TEdit
-    Left = 289
+    Left = 352
     Height = 21
-    Top = 229
+    Top = 223
     Width = 52
     TabOrder = 12
     Text = '0'
   end
   object Label8: TLabel
-    Left = 218
+    Left = 281
     Height = 13
-    Top = 232
+    Top = 226
     Width = 50
     Caption = 'Extra Line:'
     ParentColor = False
@@ -146,7 +146,7 @@ object EditorOptionsForm: TEditorOptionsForm
   object Label9: TLabel
     Left = 11
     Height = 13
-    Top = 310
+    Top = 277
     Width = 53
     Caption = 'Tab Width:'
     ParentColor = False
@@ -154,7 +154,7 @@ object EditorOptionsForm: TEditorOptionsForm
   object TabWidthEdit: TEdit
     Left = 92
     Height = 21
-    Top = 305
+    Top = 272
     Width = 52
     TabOrder = 13
     Text = '4'
@@ -162,7 +162,7 @@ object EditorOptionsForm: TEditorOptionsForm
   object GutterGrp: TGroupBox
     Left = 207
     Height = 124
-    Top = 98
+    Top = 93
     Width = 206
     Anchors = [akTop, akLeft, akRight]
     Caption = 'Gutter'
@@ -240,7 +240,7 @@ object EditorOptionsForm: TEditorOptionsForm
   object Label10: TLabel
     Left = 9
     Height = 13
-    Top = 256
+    Top = 223
     Width = 228
     Caption = 'Tabs in editors, Can be overriden by project type'
     ParentColor = False
@@ -248,7 +248,7 @@ object EditorOptionsForm: TEditorOptionsForm
   object Label3: TLabel
     Left = 10
     Height = 13
-    Top = 283
+    Top = 250
     Width = 60
     Caption = 'Indent Mode'
     ParentColor = False
@@ -256,7 +256,7 @@ object EditorOptionsForm: TEditorOptionsForm
   object IndentModeCbo: TComboBox
     Left = 92
     Height = 21
-    Top = 279
+    Top = 246
     Width = 144
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 13

@@ -822,6 +822,24 @@ object EditorColorsForm: TEditorColorsForm
       end
     end
   end
+  object Button3: TButton
+    Left = 345
+    Height = 22
+    Top = 74
+    Width = 22
+    Caption = '...'
+    OnClick = Button3Click
+    TabOrder = 15
+  end
+  object Button4: TButton
+    Left = 345
+    Height = 22
+    Top = 101
+    Width = 22
+    Caption = '...'
+    OnClick = Button4Click
+    TabOrder = 16
+  end
   object FontDialog: TFontDialog
     Width = 28
     Height = 28

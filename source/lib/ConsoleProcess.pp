@@ -85,14 +85,13 @@ begin
   begin
     try
       aWrapper := TmnWrapperStream.Create(vStream, False);
-      aWrapper.EndOfLine := #13;
+      aWrapper.EndOfLine := #13#10;
 
       while not IsTerminated do
       begin
-        b := aWrapper.ReadLine(FBuffer);
+        b := aWrapper.ReadLine(FBuffer, False);
         if Assigned(OnWrite) then
         begin
-          FBuffer := FBuffer + #13;
           if Thread <> nil then
             Thread.Synchronize(Thread, @FlushBuffer)
           else

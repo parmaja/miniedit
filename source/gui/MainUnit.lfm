@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Height = 557
   Top = 114
   Width = 882
-  ActiveControl = MessagesGrid
+  ActiveControl = SearchGrid
   AllowDropFiles = True
   Caption = 'Mini Edit'
   ClientHeight = 537
@@ -428,6 +428,12 @@ object MainForm: TMainForm
         Control = MessagesGrid
       end    
       item
+        Caption = 'Search'
+        Name = 'SearchTab'
+        AutoWidth = True
+        Control = SearchGrid
+      end    
+      item
         Caption = 'Watches'
         Name = 'WatchesTab'
         AutoWidth = True
@@ -438,12 +444,6 @@ object MainForm: TMainForm
         Name = 'CallStackTab'
         AutoWidth = True
         Control = CallStackGrid
-      end    
-      item
-        Caption = 'Search'
-        Name = 'SearchTab'
-        AutoWidth = True
-        Control = SearchGrid
       end    
       item
         Caption = 'Log'
@@ -1026,45 +1026,92 @@ object MainForm: TMainForm
         end
       end
     end
-    object SearchGrid: TStringGrid
+    object WatchesGrid: TStringGrid
       Left = 1
       Height = 105
       Top = 21
       Width = 880
       Align = alClient
       ColCount = 4
+      Columns = <      
+        item
+          Title.Caption = 'Variable'
+          Width = 140
+        end      
+        item
+          Title.Caption = 'Type'
+          Width = 60
+        end      
+        item
+          Title.Caption = 'Value'
+          Width = 300
+        end>
       Flat = True
-      MouseWheelOption = mwGrid
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking, goDblClickAutoSize, goSmoothScroll, goFixedRowNumbering, goCellHints, goRowHighlight]
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
       ParentColor = True
-      PopupMenu = MessagesPopup
       RowCount = 1
-      TabOrder = 0
+      TabOrder = 3
       TitleFont.CharSet = ANSI_CHARSET
       TitleFont.Height = -13
       TitleFont.Name = 'Tahoma'
       TitleFont.Pitch = fpVariable
       TitleFont.Quality = fqDraft
-      OnDblClick = SearchGridDblClick
-      OnDrawCell = SearchGridDrawCell
-      OnKeyDown = SearchGridKeyDown
+      OnKeyDown = WatchesGridKeyDown
       ColWidths = (
-        21
-        184
-        53
-        548
+        18
+        140
+        60
+        300
       )
       Cells = (
-        3
+        1
         1
         0
-        'File'
+        'Variable'
+      )
+    end
+    object MessagesGrid: TStringGrid
+      Left = 1
+      Height = 105
+      Top = 21
+      Width = 880
+      Align = alClient
+      DefaultRowHeight = 20
+      Flat = True
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goRowSelect, goDblClickAutoSize, goSmoothScroll, goSelectionActive, goRowHighlight]
+      ParentColor = True
+      PopupMenu = MessagesPopup
+      RowCount = 1
+      TabOrder = 2
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      UseXORFeatures = True
+      OnDblClick = MessagesGridDblClick
+      OnKeyDown = MessagesGridKeyDown
+      ColWidths = (
+        18
+        64
+        378
+        164
+        64
+      )
+      Cells = (
+        4
+        1
+        0
+        'Type'
         2
         0
-        'Line'
+        'Message'
         3
         0
-        'Result'
+        'File'
+        4
+        0
+        'Line'
       )
     end
     object CallStackGrid: TStringGrid
@@ -1104,6 +1151,47 @@ object MainForm: TMainForm
         1
         0
         'Variable'
+      )
+    end
+    object SearchGrid: TStringGrid
+      Left = 1
+      Height = 105
+      Top = 21
+      Width = 880
+      Align = alClient
+      ColCount = 4
+      Flat = True
+      MouseWheelOption = mwGrid
+      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking, goDblClickAutoSize, goSmoothScroll, goFixedRowNumbering, goCellHints, goRowHighlight]
+      ParentColor = True
+      PopupMenu = MessagesPopup
+      RowCount = 1
+      TabOrder = 0
+      TitleFont.CharSet = ANSI_CHARSET
+      TitleFont.Height = -13
+      TitleFont.Name = 'Tahoma'
+      TitleFont.Pitch = fpVariable
+      TitleFont.Quality = fqDraft
+      OnDblClick = SearchGridDblClick
+      OnDrawCell = SearchGridDrawCell
+      OnKeyDown = SearchGridKeyDown
+      ColWidths = (
+        21
+        184
+        53
+        548
+      )
+      Cells = (
+        3
+        1
+        0
+        'File'
+        2
+        0
+        'Line'
+        3
+        0
+        'Result'
       )
     end
     inline OutputEdit: TSynEdit
@@ -1682,93 +1770,6 @@ object MainForm: TMainForm
         end
       end
     end
-    object WatchesGrid: TStringGrid
-      Left = 1
-      Height = 105
-      Top = 21
-      Width = 880
-      Align = alClient
-      ColCount = 4
-      Columns = <      
-        item
-          Title.Caption = 'Variable'
-          Width = 140
-        end      
-        item
-          Title.Caption = 'Type'
-          Width = 60
-        end      
-        item
-          Title.Caption = 'Value'
-          Width = 300
-        end>
-      Flat = True
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
-      ParentColor = True
-      RowCount = 1
-      TabOrder = 3
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnKeyDown = WatchesGridKeyDown
-      ColWidths = (
-        18
-        140
-        60
-        300
-      )
-      Cells = (
-        1
-        1
-        0
-        'Variable'
-      )
-    end
-    object MessagesGrid: TStringGrid
-      Left = 1
-      Height = 105
-      Top = 21
-      Width = 880
-      Align = alClient
-      DefaultRowHeight = 20
-      Flat = True
-      Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goRowSelect, goDblClickAutoSize, goSmoothScroll]
-      ParentColor = True
-      PopupMenu = MessagesPopup
-      RowCount = 1
-      TabOrder = 2
-      TitleFont.CharSet = ANSI_CHARSET
-      TitleFont.Height = -13
-      TitleFont.Name = 'Tahoma'
-      TitleFont.Pitch = fpVariable
-      TitleFont.Quality = fqDraft
-      OnDblClick = MessagesGridDblClick
-      OnKeyDown = MessagesGridKeyDown
-      ColWidths = (
-        18
-        64
-        378
-        164
-        64
-      )
-      Cells = (
-        4
-        1
-        0
-        'Type'
-        2
-        0
-        'Message'
-        3
-        0
-        'File'
-        4
-        0
-        'Line'
-      )
-    end
   end
   object MessagesSpl: TntvSplitter
     Cursor = crVSplit
@@ -1840,12 +1841,15 @@ object MainForm: TMainForm
       object N1: TMenuItem
         Caption = '-'
       end
+      object OpenFolder1: TMenuItem
+        Action = ExploreFolderAct
+        OnClick = ExploreFolderActExecute
+      end
+      object MenuItem1: TMenuItem
+        Action = CreateFolderAct
+      end
       object MenuItem36: TMenuItem
         Action = CopyFileNameAct
-      end
-      object OpenFolder1: TMenuItem
-        Action = OpenFolderAct
-        OnClick = OpenFolderActExecute
       end
       object MenuItem34: TMenuItem
         Caption = '-'
@@ -1884,8 +1888,8 @@ object MainForm: TMainForm
         OnClick = ManageActExecute
       end
       object OpenFolder2: TMenuItem
-        Action = ProjectOpenFolderAct
-        OnClick = ProjectOpenFolderActExecute
+        Action = ProjectExploreFolderAct
+        OnClick = ProjectExploreFolderActExecute
       end
       object N4: TMenuItem
         Caption = '-'
@@ -2133,7 +2137,7 @@ object MainForm: TMainForm
       end
     end
     object ToolsMnu: TMenuItem
-      Caption = 'Tools'
+      Caption = 'Options'
       OnClick = ToolsMnuClick
       object OptionsMnu: TMenuItem
         Action = GeneralOptionsAct
@@ -2143,8 +2147,14 @@ object MainForm: TMainForm
         Action = EditorOptionsAct
         OnClick = EditorOptionsActExecute
       end
+      object EditorColorsMnu: TMenuItem
+        Action = EditorColorsAct
+      end
       object TypeOptionsForMnu: TMenuItem
         Action = TypesOptionsAct
+      end
+      object MenuItem41: TMenuItem
+        Caption = '-'
       end
       object WorkspaceMnu: TMenuItem
         Caption = 'Setup Workpsace'
@@ -2348,7 +2358,7 @@ object MainForm: TMainForm
       ShortCut = 114
     end
     object EditorOptionsAct: TAction
-      Category = 'Edit'
+      Category = 'View'
       Caption = 'Editor Options'
       ImageIndex = 14
       OnExecute = EditorOptionsActExecute
@@ -2371,10 +2381,10 @@ object MainForm: TMainForm
       ImageIndex = 4
       OnExecute = SaveProjectActExecute
     end
-    object ProjectOpenFolderAct: TAction
+    object ProjectExploreFolderAct: TAction
       Category = 'Project'
-      Caption = 'Open Folder'
-      OnExecute = ProjectOpenFolderActExecute
+      Caption = 'Explore Folder'
+      OnExecute = ProjectExploreFolderActExecute
     end
     object SaveAsProjectAct: TAction
       Category = 'Project'
@@ -2422,11 +2432,11 @@ object MainForm: TMainForm
       Caption = 'Type Options'
       OnExecute = TypeOptionsActExecute
     end
-    object OpenFolderAct: TAction
+    object ExploreFolderAct: TAction
       Category = 'File'
-      Caption = 'Open Folder'
+      Caption = 'Explore Folder'
       Hint = 'Open the folder of current file in Exeplorer '
-      OnExecute = OpenFolderActExecute
+      OnExecute = ExploreFolderActExecute
     end
     object MessagesAct: TAction
       Category = 'View'
@@ -2521,13 +2531,13 @@ object MainForm: TMainForm
       Category = 'View'
       Caption = 'Next Message'
       OnExecute = NextMessageActExecute
-      ShortCut = 16503
+      ShortCut = 32887
     end
     object PriorMessageAct: TAction
       Category = 'View'
       Caption = 'Prior Message'
       OnExecute = PriorMessageActExecute
-      ShortCut = 16502
+      ShortCut = 32886
     end
     object SCMCompareToAct: TAction
       Category = 'SCM'
@@ -2730,6 +2740,17 @@ object MainForm: TMainForm
       Caption = 'Close Others'
       OnExecute = CloseOthersActExecute
     end
+    object CreateFolderAct: TAction
+      Category = 'File'
+      Caption = 'Create Folder'
+      OnExecute = CreateFolderActExecute
+    end
+    object EditorColorsAct: TAction
+      Category = 'View'
+      Caption = 'Colors Options'
+      ImageIndex = 31
+      OnExecute = EditorColorsActExecute
+    end
   end
   object FolderMenu: TPopupMenu
     Images = EditorResource.ToolbarImageList
@@ -2770,10 +2791,10 @@ object MainForm: TMainForm
       Caption = 'Go to Project Folder'
       OnClick = MenuItem22Click
     end
-    object OpenFileFolder: TMenuItem
-      Caption = 'Open File Folder'
+    object ExploreFileFolderMnu: TMenuItem
+      Caption = 'Explore Folder'
       ImageIndex = 30
-      OnClick = OpenFileFolderClick
+      OnClick = ExploreFileFolderMnuClick
     end
     object MenuItem2: TMenuItem
       Caption = '-'
@@ -2890,6 +2911,9 @@ object MainForm: TMainForm
       Action = EditorOptionsAct
       OnClick = EditorOptionsActExecute
     end
+    object MenuItem40: TMenuItem
+      Action = EditorColorsAct
+    end
   end
   object WatchesPopupMenu: TPopupMenu
     left = 304
@@ -2918,7 +2942,7 @@ object MainForm: TMainForm
       OnClick = CopyFileNameActExecute
     end
     object OpenFolder3: TMenuItem
-      Action = OpenFolderAct
+      Action = ExploreFolderAct
       Bitmap.Data = {
         36040000424D3604000000000000360000002800000010000000100000000100
         2000000000000004000064000000640000000000000000000000FF00FF00FF00
@@ -2956,7 +2980,7 @@ object MainForm: TMainForm
         FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
       }
       ImageIndex = 30
-      OnClick = OpenFolderActExecute
+      OnClick = ExploreFolderActExecute
     end
     object MenuItem32: TMenuItem
       Action = SetAsMainFileAc
@@ -2972,8 +2996,8 @@ object MainForm: TMainForm
     top = 198
   end
   object MessagesPopup: TPopupMenu
-    left = 251
-    top = 230
+    left = 135
+    top = 432
     object Clear1: TMenuItem
       Caption = 'Clear'
       OnClick = Clear1Click

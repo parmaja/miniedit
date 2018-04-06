@@ -49,8 +49,9 @@ uses
   SynHighlighterVerilog, mneCustomClasses, mnePasProjectFrames, mnePASClasses,
   mneCSVClasses, mneDClasses, mneLuaClasses, LuaDBGServers, MsgBox, GUIMsgBox,
   Classes, PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses,
-  gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneManageRecentsForms,
-  mneTendencyOptions, mneCSVForms, mnUtils, mnStreams, mncCSV;
+  EditorColors, gdbClasses, mneCompilerProjectFrames, mneRunFrames,
+  mneManageRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils, mnStreams,
+  mncCSV;
 
 {$R *.res}
 {$i '..\lib\mne.inc'}
