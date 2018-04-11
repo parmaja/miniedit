@@ -31,19 +31,19 @@ type
     attModified,
     attText,
     attEmbedText,
-    attKeyword,
     attQuotedString,
     attDocument,
     attComment,
     attSymbol,
-    attStandard,
     attNumber,
     attDirective,
+    attKeyword,
+    attStandard, //common functions
     attIdentifier,
     attVariable,
     attDataType,
-    attDataName,
-    attValue
+    attDataName //object, namespace
+    //attDataValue
    );
 
   TIndentMode = (idntNone, idntTabsToSpaces, idntSpacesToTabs);
@@ -127,12 +127,16 @@ type
     FInfo: TGlobalAttributesInfo;
     FDataName: TGlobalAttribute;
     FDataType: TGlobalAttribute;
-    FDirective: TGlobalAttribute;
+    //FDataValue: TGlobalAttribute;
 
     FDocument: TGlobalAttribute;
     FQuotedString: TGlobalAttribute;
-    FIdentifier: TGlobalAttribute;
     FKeyword: TGlobalAttribute;
+    FIdentifier: TGlobalAttribute;
+    FDirective: TGlobalAttribute;
+    FVariable: TGlobalAttribute;
+    FStandard: TGlobalAttribute;
+
 
     FNumber: TGlobalAttribute;
     FSelected: TGlobalAttribute;
@@ -145,9 +149,6 @@ type
     FSymbol: TGlobalAttribute;
     FPanel: TGlobalAttribute;
     FLink: TGlobalAttribute;
-    FValue: TGlobalAttribute;
-    FVariable: TGlobalAttribute;
-    FStandard: TGlobalAttribute;
 
     FDefault: TGlobalAttribute;
     FText: TGlobalAttribute;
@@ -190,7 +191,7 @@ type
     property Identifier: TGlobalAttribute read FIdentifier;
     property Variable: TGlobalAttribute read FVariable;
     property Standard: TGlobalAttribute read FStandard;
-    property Value: TGlobalAttribute read FValue;
+    //property DataValue: TGlobalAttribute read FDataValue;
     property DataType: TGlobalAttribute read FDataType;
     property DataName: TGlobalAttribute read FDataName;
     property Document: TGlobalAttribute read FDocument;
@@ -461,7 +462,7 @@ begin
   Add(FVariable, attVariable, 'Variable', clBlack, clWhite, []);
   Add(FDataType, attDataType, 'Type', $002F7ADF, clWhite, []);
   Add(FDataName, attDataName, 'Name', $000B590F, clWhite, []);
-  Add(FValue, attValue, 'Value', clGreen, clWhite, []);
+  //Add(FDataValue, attDataValue, 'Value', clGreen, clWhite, []);
   Correct;
 end;
 

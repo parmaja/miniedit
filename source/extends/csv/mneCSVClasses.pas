@@ -145,7 +145,7 @@ begin
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(ConstantAttri, attDataName);
     Mapper.Add(ObjectAttri, attIdentifier);
-    Mapper.Add(EntityAttri, attValue);
+    Mapper.Add(EntityAttri, attQuotedString);
     Mapper.Add(DotAttri, attIdentifier);
     Mapper.Add(VariableAttri, attVariable);
     Mapper.Add(NumberAttri, attNumber);

@@ -19,7 +19,7 @@ uses
   SynHighlighterPython;
 
 type
-  TSQLFile = class(TTextEditorFile)
+  TSQLFile = class(TSourceEditorFile)
   protected
   public
   end;
@@ -40,7 +40,7 @@ type
   public
   end;
 
-  TXMLFile = class(TTextEditorFile)
+  TXMLFile = class(TSourceEditorFile)
   public
     procedure NewContent; override;
   end;
@@ -253,7 +253,7 @@ begin
   with Highlighter as TSynStdSQLSyn do
   begin
     Mapper.Add(CommentAttri, attComment);
-    Mapper.Add(DataTypeAttri, attDataType);
+    Mapper.Add(TypeAttri, attDataType);
     Mapper.Add(ObjectAttri, attDataName);
     Mapper.Add(FunctionAttri, attStandard);
     Mapper.Add(IdentifierAttri, attIdentifier);

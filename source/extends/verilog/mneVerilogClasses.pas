@@ -267,7 +267,7 @@ var
   st: TStringList;
   cr: TPoint;
 begin
-  if (Engine.Session.Active) then
+  if (Engine.Session.Active) and (Engine.Files.Current <> nil) and (Engine.Session.Project.Options is TVerilogProjectOptions) then
   begin
     CurrentFile := Engine.Files.Current as TTextEditorFile;
     proj:= Engine.Session.Project.Options as TVerilogProjectOptions;

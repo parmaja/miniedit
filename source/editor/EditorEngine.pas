@@ -3750,7 +3750,7 @@ begin
   if Current <> nil then
   begin
     if MsgBox.Msg.Yes('Revert file ' + Current.Name) then
-      Current.Load(Current.Name);
+      Current.Reload;
   end;
 end;
 
@@ -4785,7 +4785,7 @@ begin
       begin
         FMapper := TMapper.Create;
         InitMappers;
-        if FHighlighter.AttrCount <> Mapper.Count then
+        if FHighlighter.AttrCount < Mapper.Count then
           raise Exception.Create('Mapper count not equal to AttrCount for: ' + FHighlighter.ClassName + ' ' + IntToStr(FHighlighter.AttrCount) + ', Mapper: ' + IntToStr(Mapper.Count));
       end;
       //Apply(FHighlighter, Engine.Options.Profile.Attributes);

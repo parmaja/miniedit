@@ -527,9 +527,9 @@ begin
   begin
     Mapper.Add(WhitespaceAttri, attDefault);
     Mapper.Add(CommentAttri, attComment);
-    Mapper.Add(KeywordAttri, attKeyword);
     Mapper.Add(DocumentAttri, attDocument);
-    Mapper.Add(ValueAttri, attValue);
+    Mapper.Add(KeywordAttri, attKeyword);
+    Mapper.Add(TypeAttri, attDataType);
     Mapper.Add(FunctionAttri, attStandard);
     Mapper.Add(IdentifierAttri, attIdentifier);
     Mapper.Add(TextAttri, attText);

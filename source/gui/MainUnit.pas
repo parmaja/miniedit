@@ -1560,7 +1560,7 @@ end;
 
 procedure TMainForm.ShowSpecialCharsActExecute(Sender: TObject);
 begin
-   if (Engine.Files.Current <> nil) and (Engine.Files.Current is TSourceEditorFile) then
+   if (Engine.Files.Current <> nil) and (Engine.Files.Current is TTextEditorFile) then
    begin
      ShowSpecialCharsAct.Checked := not ShowSpecialCharsAct.Checked;
      if ShowSpecialCharsAct.Checked then
