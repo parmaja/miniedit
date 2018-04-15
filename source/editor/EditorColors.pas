@@ -213,6 +213,7 @@ begin
   begin
     if ForegroundChk.Enabled then
       ForegroundChk.Checked := True;
+    ForegroundCbo.ItemIndex := 0;
     ApplyAttribute;
   end;
 end;
@@ -223,6 +224,7 @@ begin
   begin
     if BackgroundChk.Enabled then
       BackgroundChk.Checked := True;
+    BackgroundCbo.ItemIndex := 0;
     ApplyAttribute;
   end;
 end;

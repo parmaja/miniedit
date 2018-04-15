@@ -108,6 +108,7 @@ object MainForm: TMainForm
         Top = 0
         Action = MainFileAct
         AutoSize = True
+        PopupMenu = MainFilePopupMnu
       end
     end
   end
@@ -1831,12 +1832,15 @@ object MainForm: TMainForm
       object MenuItem21: TMenuItem
         Caption = '-'
       end
-      object Close1: TMenuItem
-        Action = CloseAllAct
-        OnClick = CloseAllActExecute
-      end
       object MenuItem38: TMenuItem
         Action = CloseOthersAct
+      end
+      object Close1: TMenuItem
+        Action = CloseAllFilesAct
+        OnClick = CloseAllFilesActExecute
+      end
+      object MenuItem43: TMenuItem
+        Action = CloseAllAct
       end
       object N1: TMenuItem
         Caption = '-'
@@ -2262,11 +2266,11 @@ object MainForm: TMainForm
       OnExecute = SaveActExecute
       ShortCut = 16467
     end
-    object CloseAllAct: TAction
+    object CloseAllFilesAct: TAction
       Category = 'File'
-      Caption = 'Close All'
+      Caption = 'Close All files'
       Hint = 'Close file'
-      OnExecute = CloseAllActExecute
+      OnExecute = CloseAllFilesActExecute
     end
     object GeneralOptionsAct: TAction
       Category = 'View'
@@ -2737,7 +2741,7 @@ object MainForm: TMainForm
     end
     object CloseOthersAct: TAction
       Category = 'File'
-      Caption = 'Close Others'
+      Caption = 'Close other files'
       OnExecute = CloseOthersActExecute
     end
     object CreateFolderAct: TAction
@@ -2750,6 +2754,12 @@ object MainForm: TMainForm
       Caption = 'Colors Options'
       ImageIndex = 31
       OnExecute = EditorColorsActExecute
+    end
+    object CloseAllAct: TAction
+      Category = 'File'
+      Caption = 'Close All'
+      Hint = 'Close all files and project'
+      OnExecute = CloseAllActExecute
     end
   end
   object FolderMenu: TPopupMenu
@@ -3033,5 +3043,16 @@ object MainForm: TMainForm
     ActiveDot = False
     left = 245
     top = 440
+  end
+  object MainFilePopupMnu: TPopupMenu
+    left = 452
+    top = 129
+    object MenuItem39: TMenuItem
+      Action = ResetMainFileAct
+    end
+    object MenuItem42: TMenuItem
+      Caption = 'Explore Folder'
+      OnClick = MenuItem42Click
+    end
   end
 end

@@ -176,7 +176,7 @@ end;
 
 procedure TSelectListForm.SearchEditKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  if Key > VK_SPACE then
+  //if Key > VK_SPACE then
     SearchTimer.Enabled := True;
 end;
 

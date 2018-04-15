@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<rtti version="1.0" author="MiniXML">
+  <Object Type="TGlobalAttributes">
+    <Default Class="TGlobalAttribute">
+      <BackColor>2763306</BackColor>
+      <ForeColor>clWhite</ForeColor>
+    </Default>
+    <Link Class="TGlobalAttribute">
+      <BackColor>2758927</BackColor>
+      <ForeColor>clWhite</ForeColor>
+      <Options>gaoDefaultBackground,gaoDefaultForeground</Options>
+    </Link>
+    <Panel Class="TGlobalAttribute">
+      <BackColor>6118749</BackColor>
+      <ForeColor>clWhite</ForeColor>
+    </Panel>
+    <Selected Class="TGlobalAttribute">
+      <BackColor>13280646</BackColor>
+      <ForeColor>clBlack</ForeColor>
+    </Selected>
+    <Highlighted Class="TGlobalAttribute">
+    </Highlighted>
+    <Active Class="TGlobalAttribute">
+      <BackColor>7691082</BackColor>
+      <ForeColor>clWhite</ForeColor>
+    </Active>
+    <Gutter Class="TGlobalAttribute">
+      <BackColor>3947580</BackColor>
+      <ForeColor>clWhite</ForeColor>
+    </Gutter>
+    <Separator Class="TGlobalAttribute">
+      <BackColor>3552822</BackColor>
+      <ForeColor>clBlack</ForeColor>
+    </Separator>
+    <Modified Class="TGlobalAttribute">
+      <BackColor>clGreen</BackColor>
+      <ForeColor>clYellow</ForeColor>
+    </Modified>
+    <Keyword Class="TGlobalAttribute">
+      <BackColor>2758927</BackColor>
+      <ForeColor>16760733</ForeColor>
+      <Options>gaoDefaultBackground</Options>
+    </Keyword>
+    <Symbol Class="TGlobalAttribute">
+      <BackColor>2758927</BackColor>
+      <ForeColor>16772561</ForeColor>
+      <Options>gaoDefaultBackground</Options>
+    </Symbol>
+    <Number Class="TGlobalAttribute">
+      <BackColor>2758927</BackColor>
+      <ForeColor>1040362</ForeColor>
+      <Options>gaoDefaultBackground</Options>
+    </Number>
+    <Directive Class="TGlobalAttribute">
+      <BackColor>2758927</BackColor>
+      <ForeColor>4276694</ForeColor>
+      <Options>gaoDefaultBackground</Options>
+    </Directive>
+    <Identifier Class="TGlobalAttribute">
+      <BackColor>2758927</BackColor>
+      <ForeColor>clWhite</ForeColor>
+      <Options>gaoDefaultBackground</Options>
+    </Identifier>
+    <Variable Class="TGlobalAttribute">
+      <BackColor>2758927</BackColor>
+      <ForeColor>clSkyBlue</ForeColor>
+      <Options>gaoDefaultBackground</Options>
+    </Variable>
+    <Standard Class="TGlobalAttribute">
+      <BackColor>2758927</BackColor>
+      <ForeColor>4107007</ForeColor>
+      <Options>gaoDefaultBackground</Options>
+    </Standard>
+    <DataType Class="TGlobalAttribute">
+      <BackColor>2758927</BackColor>
+      <ForeColor>6974179</ForeColor>
+      <Options>gaoDefaultBackground</Options>
+    </DataType>
+    <DataName Class="TGlobalAttribute">
+      <BackColor>2758927</BackColor>
+      <ForeColor>1491229</ForeColor>
+      <Options>gaoDefaultBackground</Options>
+    </DataName>
+    <Document Class="TGlobalAttribute">
+      <BackColor>2758927</BackColor>
+      <ForeColor>10540718</ForeColor>
+      <Options>gaoDefaultBackground</Options>
+    </Document>
+    <Text Class="TGlobalAttribute">
+      <BackColor>2758927</BackColor>
+      <ForeColor>clWhite</ForeColor>
+      <Options>gaoDefaultBackground,gaoDefaultForeground</Options>
+    </Text>
+    <EmbedText Class="TGlobalAttribute">
+      <BackColor>2758927</BackColor>
+      <ForeColor>clWhite</ForeColor>
+      <Options>gaoDefaultBackground,gaoDefaultForeground</Options>
+    </EmbedText>
+    <Comment Class="TGlobalAttribute">
+      <BackColor>2758927</BackColor>
+      <ForeColor>12885388</ForeColor>
+      <Options>gaoDefaultBackground</Options>
+    </Comment>
+    <QuotedString Class="TGlobalAttribute">
+      <BackColor>2758927</BackColor>
+      <ForeColor>1491229</ForeColor>
+      <Options>gaoDefaultBackground</Options>
+    </QuotedString>
+    <FontName>Consolas</FontName>
+    <FontSize>11</FontSize>
+    <FontNoAntialiasing>False</FontNoAntialiasing>
+    <CodeFolding>True</CodeFolding>
+  </Object>
+</rtti>

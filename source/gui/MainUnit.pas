@@ -55,6 +55,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    CloseAllAct: TAction;
     EditorColorsAct: TAction;
     CreateFolderAct: TAction;
     CloseOthersAct: TAction;
@@ -66,8 +67,12 @@ type
     MenuItem37: TMenuItem;
     MenuItem38: TMenuItem;
     EditorColorsMnu: TMenuItem;
+    MenuItem39: TMenuItem;
     MenuItem40: TMenuItem;
     MenuItem41: TMenuItem;
+    MainFilePopupMnu: TPopupMenu;
+    MenuItem42: TMenuItem;
+    MenuItem43: TMenuItem;
     ResetMainFileAct: TAction;
     MenuItem32: TMenuItem;
     MenuItem33: TMenuItem;
@@ -216,7 +221,7 @@ type
     N3: TMenuItem;
     EditorOptions1: TMenuItem;
     N4: TMenuItem;
-    CloseAllAct: TAction;
+    CloseAllFilesAct: TAction;
     Close1: TMenuItem;
     ProjectOptionsMnu: TMenuItem;
     ProjectOptionsAct: TAction;
@@ -363,6 +368,7 @@ type
     procedure BrowserTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure CallStackListDblClick(Sender: TObject);
     procedure ChangeExtActExecute(Sender: TObject);
+    procedure CloseAllActExecute(Sender: TObject);
     procedure CloseOthersActExecute(Sender: TObject);
     procedure CreateFolderActExecute(Sender: TObject);
     procedure DBGCompileActExecute(Sender: TObject);
@@ -385,6 +391,7 @@ type
     procedure MenuItem22Click(Sender: TObject);
     procedure MenuItem23Click(Sender: TObject);
     procedure MenuItem24Click(Sender: TObject);
+    procedure MenuItem42Click(Sender: TObject);
     procedure MessagesGridDblClick(Sender: TObject);
 
       procedure MessagesGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -453,7 +460,7 @@ type
     procedure SaveAsProjectActExecute(Sender: TObject);
     procedure ProjectExploreFolderActExecute(Sender: TObject);
     procedure ManageActExecute(Sender: TObject);
-    procedure CloseAllActExecute(Sender: TObject);
+    procedure CloseAllFilesActExecute(Sender: TObject);
     procedure OpenIncludeActExecute(Sender: TObject);
     procedure CopyActUpdate(Sender: TObject);
     procedure PasteActUpdate(Sender: TObject);
@@ -551,6 +558,7 @@ type
     FProjectFrame: TFrame;
     FOutputs: TOutputs;
     FMenuItemsList: TObjectList;
+    procedure ExploreFolder(AFolder: string);
     procedure RunFile;
     procedure CompileFile;
     //
@@ -705,6 +713,13 @@ begin
       Engine.Files.Current.Extension := s;
     end;
   end;
+end;
+
+procedure TMainForm.CloseAllActExecute(Sender: TObject);
+begin
+  Engine.Session.Close;
+  Engine.Files.CloseAll;
+  ResetMainFileAct.Execute;
 end;
 
 procedure TMainForm.CloseOthersActExecute(Sender: TObject);
@@ -892,6 +907,11 @@ procedure TMainForm.MenuItem24Click(Sender: TObject);
 begin
   if FileList.Selected <> nil then
     Clipbrd.Clipboard.AsText := Folder + FileList.Selected.Caption;
+end;
+
+procedure TMainForm.MenuItem42Click(Sender: TObject);
+begin
+  ExploreFolder(Engine.Session.Project.RunOptions.MainFile);
 end;
 
 procedure TMainForm.MessagesGridDblClick(Sender: TObject);
@@ -1503,18 +1523,10 @@ begin
 end;
 
 procedure TMainForm.ExploreFolderActExecute(Sender: TObject);
-var
-  s: string;
 begin
   if Engine.Files.Current <> nil then
   begin
-    s := '';
-{$ifdef WINDOWS}
-    //ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Files.Current.Name + '"'), nil, SW_SHOW);
-    RunCommand('Explorer', ['/select,"' + Engine.Files.Current.Name + '"'], s);
-{$else}
-    RunCommand('xdg-open', [Engine.Files.Current.Path], s);
-{$endif}
+    ExploreFolder(Engine.Files.Current.Name);
   end;
 end;
 
@@ -1899,8 +1911,8 @@ end;
 
 procedure TMainForm.ProjectExploreFolderActExecute(Sender: TObject);
 begin
-{  if Engine.Session.IsOpened then
-    ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Session.Project.FileName + '"'), nil, SW_SHOW);}
+  if Engine.Session.Active then
+    ExploreFolder(Engine.Session.Project.Path);
 end;
 
 procedure TMainForm.ManageActExecute(Sender: TObject);
@@ -1911,7 +1923,7 @@ begin
   end;
 end;
 
-procedure TMainForm.CloseAllActExecute(Sender: TObject);
+procedure TMainForm.CloseAllFilesActExecute(Sender: TObject);
 begin
   Engine.Files.CloseAll;
 end;
@@ -2320,17 +2332,10 @@ begin
 end;
 
 procedure TMainForm.ExploreFileFolderMnuClick(Sender: TObject);
-var
-  s: string;
 begin
   if FileList.Selected <> nil then
   begin
-      s := '';
-  {$ifdef WINDOWS}
-      RunCommand('Explorer', ['/select,"' + Folder + FileList.Selected.Caption + '"'], s);
-  {$else}
-      RunCommand('xdg-open', [Folder], s);
-  {$endif}
+    ExploreFolder(Folder + FileList.Selected.Caption);
   end;
 end;
 
@@ -2592,7 +2597,8 @@ procedure TMainForm.OptionsChanged;
 begin
   {Color := Engine.Options.Profile.Attributes.Panel.Background;
   Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;}
-
+  EditorsPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
+  EditorsPnl.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
 
   if IsDarkColor(Engine.Options.Profile.Attributes.Panel.Background) then
     EditorResource.Switch(thsDark)
@@ -2994,11 +3000,23 @@ begin
   DblClick(MessagesTabs.ActiveControl as TStringGrid);
 end;
 
+procedure TMainForm.ExploreFolder(AFolder: string);
+var
+  s: string;
+begin
+  s := '';
+{$ifdef WINDOWS}
+  //ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Files.Current.Name + '"'), nil, SW_SHOW);
+  RunCommand('Explorer', ['/select,"' + Engine.Files.Current.Name + '"'], s);
+{$else}
+  RunCommand('xdg-open', [Engine.Files.Current.Path], s);
+{$endif}
+end;
+
 procedure TMainForm.PriorMessageActExecute(Sender: TObject);
 begin
   MoveListIndex(-1);
 end;
-
 
 procedure TMainForm.EngineState;
 begin

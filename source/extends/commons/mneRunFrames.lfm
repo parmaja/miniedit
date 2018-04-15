@@ -57,7 +57,7 @@ object RunFrameOptions: TRunFrameOptions
     Top = 136
     Width = 365
     AutoSize = False
-    Caption = '?Root, '#13#10'?File, ?FileName, ?FilePath, '#13#10'?Project, ?ProjectName, ?ProjectPath, '#13#10'?Main, ?MainFile, ?MainPath'
+    Caption = '?Root, '#13#10'?File, ?FileName, ?FilePath, '#13#10'?Project, ?ProjectFile, ?ProjectPath, '#13#10'?Main, ?MainFile, ?MainPath'
     ParentColor = False
     WordWrap = True
   end

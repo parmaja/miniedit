@@ -44,14 +44,14 @@ uses
   mneBreakpoints in 'mneBreakpoints.pas' {BreakpointsForm},
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
   SearchProgressForms, EditorDebugger, SelectList, IniFiles, mneAssociateForm,
-  mneExtends, mneBoardClasses, mneBoardForms, mneSelectComponents,
-  mneBoardComponents, mneFontGenForm, mneCppClasses, mneVerilogClasses,
-  SynHighlighterVerilog, mneCustomClasses, mnePasProjectFrames, mnePASClasses,
-  mneCSVClasses, mneDClasses, mneLuaClasses, LuaDBGServers, MsgBox, GUIMsgBox,
-  Classes, PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses,
-  EditorColors, gdbClasses, mneCompilerProjectFrames, mneRunFrames,
-  mneManageRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils, mnStreams,
-  mncCSV;
+  mneExtends, sqlvManager, mneDBClasses, mneBoardClasses, mneBoardForms,
+  mneSelectComponents, mneBoardComponents, mneFontGenForm, mneCppClasses,
+  mneVerilogClasses, SynHighlighterVerilog, mneCustomClasses,
+  mnePasProjectFrames, mnePASClasses, mneCSVClasses, mneDClasses, mneLuaClasses,
+  LuaDBGServers, MsgBox, GUIMsgBox, Classes, PHPUtils, ntvThemes, mneSetups,
+  mneSettings, EditorClasses, EditorColors, gdbClasses,
+  mneCompilerProjectFrames, mneRunFrames, mneManageRecentsForms,
+  mneTendencyOptions, mneCSVForms, mnUtils, mnStreams, mncCSV;
 
 {$R *.res}
 {$i '..\lib\mne.inc'}
@@ -147,6 +147,7 @@ begin
     //DefaultSystemCodePage := 1252;
     DefaultSystemCodePage := widestringmanager.GetStandardCodePageProc(scpAnsi); //I fix it temporary that needed for AnsiToUtf8;
     Application.Initialize;
+    Application.Title := 'miniEdit';
     Application.BidiMode := bdLeftToRight;
     if InitEngine then
     begin

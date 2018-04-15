@@ -18,6 +18,9 @@ unit EditorEngine;
         Group: object Have multiple extension externsions that all same type, Group.Name is not an extension
           Extensions (pas, pp, inc)
 
+
+Portable Notes:
+  Main folder related to project folder, Project folder related to Project File folder
 }
 interface
 
@@ -393,6 +396,7 @@ type
     FSCM: TEditorSCM;
     FTitle: string;
     function GetIsActive: Boolean;
+    function GetPath: string;
     procedure SetTendency(AValue: TEditorTendency);
     procedure SetTendencyName(AValue: string);
     procedure SetSCM(AValue: TEditorSCM);
@@ -406,6 +410,7 @@ type
     destructor Destroy; override;
     procedure LoadFromFile(FileName: string); override;
     property FileName: string read FFileName write FFileName;
+    property Path: string read GetPath;
     procedure SetSCMClass(SCMClass: TEditorSCM);
     //Tendency here point to one of Engine.Tendencies so it is not owned by project
     property Tendency: TEditorTendency read FTendency write SetTendency;
@@ -975,6 +980,7 @@ type
     FCachedVariables: THashedStringList;
     FCachedAge: QWord;
     function GetActive: Boolean;
+    function GetMainFolder: string;
     procedure SetProject(const Value: TEditorProject);
     procedure SetInternalProject(const Value: TEditorProject);
     procedure SetRun(AValue: TmneRun);
@@ -997,6 +1003,7 @@ type
     property Project: TEditorProject read FProject write SetProject;
     //Session Options is depend on the system used not shared between OSs
     property Options: TEditorSessionOptions read FOptions;
+    property MainFolder: string read GetMainFolder;
     property IsChanged: Boolean read FIsChanged;
     //Process the project running if it is null, process should nil it after finish
     property Run: TmneRun read FRun write SetRun;
@@ -2314,7 +2321,7 @@ begin
         p.Pause := AOptions.Pause;
         p.Console := AOptions.Console;
 
-        p.MainFile := Engine.Session.Project.RunOptions.MainFile;
+        p.MainFile := Engine.ExpandFile(Engine.Session.Project.RunOptions.MainFile);
 
         if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
           p.MainFile := Engine.Files.Current.Name;
@@ -2646,6 +2653,7 @@ begin
   Tendencies.Add(aDefaultTendency);
 
   FDefaultProject := TDefaultProject.Create;
+  FDefaultProject.FileName := WorkSpace;//no file name just path
   FDefaultProject.Name := 'Default';
 
   FDefaultProject.Tendency := aDefaultTendency;
@@ -3098,7 +3106,8 @@ begin
   aDialog := TOpenDialog.Create(nil);
   try
     aDialog.Title := 'Open file';
-    aDialog.Options := aDialog.Options + [ofHideReadOnly, ofFileMustExist, ofAllowMultiSelect];
+    //aDialog.Options := aDialog.Options + [ofHideReadOnly, ofFileMustExist, ofAllowMultiSelect];
+    aDialog.Options := aDialog.Options + [ofEnableSizing, ofNoChangeDir, ofAllowMultiSelect]; //-ofAutoPreview
     aDialog.Filter := Engine.Groups.CreateFilter;
     aDialog.FilterIndex := 0;
     aDialog.InitialDir := Engine.BrowseFolder;
@@ -3205,14 +3214,14 @@ function TEditorSession.GetRoot: string;
 var
   r: string;
 begin
-  if (Engine.Session.Project <> nil) and (Engine.Session.Project.RunOptions.MainFolder <> '') then
+  if (Engine.Session.Active) and (Engine.Session.Project.RunOptions.MainFolder <> '') then
+    Result := GetMainFolder
+  else if (Engine.Session.Active) and (Engine.Session.Project.RunOptions.MainFile <> '') then
   begin
-    r := Engine.Session.Project.RunOptions.MainFolder;
-    r := ExpandToPath(r, ExtractFilePath(Engine.Session.Project.FileName), '');
-    Result := Engine.EnvReplace(r, true);
+    r := Engine.Session.Project.RunOptions.MainFile;
+    r := ExpandToPath(r, Engine.Session.Project.Path);
+    Result := ExtractFilePath(Engine.EnvReplace(r, true));
   end
-  else if (Engine.Session.Project <> nil) and (Engine.Session.Project.RunOptions.MainFile <> '') then
-    Result := ExtractFilePath(Engine.Session.Project.RunOptions.MainFile)
   else if Engine.Files.Current <> nil then
     Result := ExtractFilePath(Engine.Files.Current.Name)
   else if Engine.BrowseFolder <> '' then
@@ -3636,7 +3645,10 @@ begin
   end;
 
   if Session.Active then
-    MainFile := Session.Project.RunOptions.MainFile
+  begin
+    MainFile := Session.Project.RunOptions.MainFile;
+    MainFile := ExpandToPath(MainFile, Session.Project.Path);
+  end
   else
     MainFile := '';
 
@@ -3655,15 +3667,18 @@ begin
   if Session.Active then
   begin
     List.Add('Project=' + Session.Project.FileName);
-    List.Add('ProjectName=' + Session.Project.FileName);
-    List.Add('ProjectPath=' + ExtractFilePath(Session.Project.FileName));
+    List.Add('ProjectFile=' + Session.Project.FileName);
+    List.Add('ProjectPath=' + Session.Project.Path);
     List.Add('OutputName=' + Session.Project.RunOptions.OutputFile); //TODO need to guess
   end;
 end;
 
 function TEditorEngine.ExpandFile(FileName: string): string;
 begin
-  Result := ExpandFileName(ExpandToPath(FileName, Session.GetRoot));
+  if FileName <> '' then
+    Result := ExpandFileName(ExpandToPath(FileName, Session.GetRoot))
+  else
+    Result := '';
 end;
 
 function TEditorEngine.GetIsChanged: Boolean;
@@ -3774,7 +3789,7 @@ end;
 
 function TEditorEngine.GetMainFileTendency: TEditorTendency;
 begin
-  if (Session.Project <> nil) and (Session.Project.RunOptions.MainFile <> '') then
+  if (Session.Active) and (Session.Project.RunOptions.MainFile <> '') then
   begin
     if (not SameText(FCache.MainFile, Session.Project.RunOptions.MainFile)) then
     begin
@@ -4877,6 +4892,28 @@ end;
 function TEditorProject.GetIsActive: Boolean;
 begin
    Result := (Self <> nil) and not (Self is TDefaultProject)
+end;
+
+function TEditorSession.GetMainFolder: string;
+var
+  r: string;
+begin
+  if (Project.RunOptions.MainFolder <> '') then
+  begin
+    r := Project.RunOptions.MainFolder;
+    r := Engine.EnvReplace(r, true);
+    Result := ExpandToPath(r, Project.Path);
+  end
+  else
+    Result := Project.Path;
+end;
+
+function TEditorProject.GetPath: string;
+var
+  s: string;
+begin
+  s := ExpandToPath(FileName, Application.Location); //to make it protable
+  Result := ExtractFilePath(s);
 end;
 
 procedure TEditorProject.SetSCM(AValue: TEditorSCM);
