@@ -206,9 +206,9 @@ begin
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
-    aRunItem.Info.Run.Params := Info.MainFile + #13;
+    aRunItem.Info.Run.AddParam(Info.MainFile);
     if Info.OutputFile <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-o' + Info.OutputFile + #13;
+      aRunItem.Info.Run.AddParam('-o' + Info.OutputFile);
 
     aRunItem.Info.StatusMessage := 'Compiling ' + Info.OutputFile;
 
@@ -226,15 +226,15 @@ begin
       end;
     end;
     if p <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + p + #13;
+      aRunItem.Info.Run.AddParam(p);
 
     if rnaDebug in Info.Actions then
     begin
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-gw'#13;
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-dDebug'#13;
+      aRunItem.Info.Run.AddParam('-gw');
+      aRunItem.Info.Run.AddParam('-dDebug');
     end
     else
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-dRelease'#13;
+      aRunItem.Info.Run.AddParam('-dRelease');
   end;
 
   if rnaExecute in Info.Actions then
@@ -246,8 +246,8 @@ begin
     aRunItem.Info.StartDebug := rnaDebug in Info.Actions;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);
     aRunItem.Info.Run.Command := Info.RunFile;
-    if RunOptions.Params <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + RunOptions.Params + #13;
+    aRunItem.Info.Run.AddParam(RunOptions.Params);
+    aRunItem.Info.Run.AddParam(Engine.Session.Project.RunOptions.Params);
   end;
 
   Engine.Session.Run.Start(Self);

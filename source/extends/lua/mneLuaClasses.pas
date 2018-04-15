@@ -181,9 +181,9 @@ begin
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.StatusMessage := 'Runing ' + Info.MainFile;
     if RunOptions.Require <> '' then
-        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params  + '-l '+ RunOptions.Require + #13;
+        aRunItem.Info.Run.AddParam('-l '+ RunOptions.Require);
     if rnaDebug in Info.Actions then
-        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-e '+ '"require(''mobdebug'').start()"' + #13; //using mobdebug
+        aRunItem.Info.Run.AddParam('-e '+ '"require(''mobdebug'').start()"'); //using mobdebug
 
     aRunItem.Info.Run.Command := Info.Command;
     if Info.Command = '' then
@@ -193,7 +193,7 @@ begin
       {$else}
         aRunItem.Info.Run.Command := 'lua';
       {$endif}
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + ' "' + Info.MainFile + '"' + #13;
+      aRunItem.Info.Run.AddParam(' "' + Info.MainFile + '"');
     end
   end
   else if (rnaLint in Info.Actions) or (rnaCompile in Info.Actions) then
@@ -210,12 +210,12 @@ begin
     begin
       aRunItem.Info.StatusMessage := 'Compiling ' + Info.MainFile;
       if Info.OutputFile <> '' then
-        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-o "'+ Info.OutputFile + '"' + #13;
+        aRunItem.Info.Run.AddParam('-o "'+ Info.OutputFile + '"');
     end
     else
     begin
       aRunItem.Info.StatusMessage := 'Linting ' + Info.MainFile;
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-p '+ #13;
+      aRunItem.Info.Run.AddParam('-p ');
     end;
 
     //aRunItem.Info.Run.Command := Info.LintCommand;
@@ -226,7 +226,7 @@ begin
       {$else}
         aRunItem.Info.Run.Command := 'luac';
       {$endif}
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + ' "' + Info.MainFile + '"' + #13;
+      aRunItem.Info.Run.AddParam(' "' + Info.MainFile + '"');
     //end
   end;
 

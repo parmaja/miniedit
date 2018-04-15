@@ -22,12 +22,15 @@ type
   TmneRunAction = (rnaCompile, rnaLint, rnaLink, rnaExecute, rnaDebug, rnaShow, rnaKill);
   TmneRunActions = set of TmneRunAction;
 
+  { TRunCommand }
+
   TRunCommand = record
     Command: string;
     Params: string;
     Pause: Boolean;
     Silent: Boolean;
     Console: Boolean;
+    procedure AddParam(AParam: string);
   end;
 
   TmneRunInfo = record
@@ -273,6 +276,18 @@ begin
   if FDebugManager = nil then
     FDebugManager := TDebugManager.Create;
   Result := FDebugManager;
+end;
+
+{ TRunCommand }
+
+procedure TRunCommand.AddParam(AParam: string);
+begin
+  if AParam <> '' then
+  begin
+    if Params <> '' then
+      Params := Params + #13;
+    Params := Params + AParam;
+  end;
 end;
 
 { TEditorBreakPoints }

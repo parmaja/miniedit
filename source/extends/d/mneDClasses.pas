@@ -171,7 +171,6 @@ end;
 
 procedure TDTendency.DoRun(Info: TmneRunInfo);
 var
-  aParams: string;
   i: Integer;
   aPath: string;
   aRunItem: TmneRunItem;
@@ -180,7 +179,6 @@ begin
 
   if rnaCompile in Info.Actions then
   begin
-    aParams := '';
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Run.Silent := True;
 
@@ -207,34 +205,34 @@ begin
     if RunOptions.ExpandPaths then
       aPath := Engine.ExpandFile(aPath);
     if not FileExists(aPath) then
-      raise EEditorException.Create('File not exists: ' + aParams);
+      raise EEditorException.Create('File not exists: ' + aPath);
 
-    aRunItem.Info.Run.Params := aPath + #13;
+    aRunItem.Info.Run.AddParam(aPath);
 
     if RunOptions.ConfigFile <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '@' + Engine.EnvReplace(RunOptions.ConfigFile) + #13
+      aRunItem.Info.Run.AddParam('@' + Engine.EnvReplace(RunOptions.ConfigFile))
     else if UseCfg then
     begin
       if FileExists(ChangeFileExt(Info.MainFile, '.cfg')) then
-        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '@' + ExtractFileNameWithoutExt(ExtractFileName(Info.MainFile))+'.cfg' + #13;
+        aRunItem.Info.Run.AddParam('@' + ExtractFileNameWithoutExt(ExtractFileName(Info.MainFile))+'.cfg');
     end;
 
     if Info.OutputFile <> '' then
       case CompilerType of
-        0: aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-of' + Info.OutputFile + #13; //dmd
-        1: aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-o' + Info.OutputFile + #13; //gdc
+        0: aRunItem.Info.Run.AddParam('-of' + Info.OutputFile); //dmd
+        1: aRunItem.Info.Run.AddParam('-o' + Info.OutputFile); //gdc
       end;
 
     if rnaDebug in Info.Actions then
     begin
       case CompilerType of
-        0: aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-g'#13;
-        1: aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-g'#13;
+        0: aRunItem.Info.Run.AddParam('-g');
+        1: aRunItem.Info.Run.AddParam('-g');
       end;
     end;
 
     aRunItem.Info.StatusMessage := 'Compiling ' + Info.OutputFile;
-    //aRunItem.Info.Params := aRunItem.Info.Params + '-color=on' + #13; //not work :(
+    //aRunItem.Info.AddParam('-color=on'); //not work :(
 
     for i := 0 to RunOptions.Paths.Count - 1 do
     begin
@@ -244,16 +242,16 @@ begin
         if RunOptions.ExpandPaths then
           aPath := Engine.ExpandFile(aPath);
         if not DirectoryExists(aPath) then
-          raise EEditorException.Create('Path not exists: ' + aParams);
+          raise EEditorException.Create('Path not exists: ' + aPath);
 
         case CompilerType of
-          0: aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-I' +aPath + #13;
-          1: aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-B' +aPath + #13;
+          0: aRunItem.Info.Run.AddParam('-I' + aPath);
+          1: aRunItem.Info.Run.AddParam('-B' + aPath);
         end;
       end;
     end;
 
-    //aRunItem.Info.Params := aRunItem.Info.Params + '-v'#13;
+    //aRunItem.Info.AddParam('-v');
 
   end;
 
@@ -267,8 +265,8 @@ begin
     aRunItem.Info.StartDebug := rnaDebug in Info.Actions;
     aRunItem.Info.Title := ExtractFileName(Info.OutputFile);
     aRunItem.Info.Run.Command := Info.RunFile;
-    if RunOptions.Params <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + RunOptions.Params + #13;
+    aRunItem.Info.Run.AddParam(RunOptions.Params);
+    aRunItem.Info.Run.AddParam(Engine.Session.Project.RunOptions.Params);
   end;
 
   Engine.Session.Run.Start(Self, Info.Root);

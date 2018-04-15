@@ -236,12 +236,12 @@ begin
       aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
       aRunItem.Info.CurrentDirectory := Info.Root;
 
-      aRunItem.Info.Run.Params := Info.MainFile + #13;
+      aRunItem.Info.Run.AddParam(Info.MainFile);
       if Info.OutputFile <> '' then
-        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-of' + Info.OutputFile + #13;
+        aRunItem.Info.Run.AddParam('-of' + Info.OutputFile);
 
       aRunItem.Info.StatusMessage := 'Compiling ' + Info.OutputFile;
-      //aRunItem.Info.Params := aRunItem.Info.Params + '-color=on' + #13; //not work :(
+      //aRunItem.Info.AddParam('-color=on'); //not work :(
 
       for i := 0 to AOptions.Paths.Count - 1 do
       begin
@@ -250,14 +250,14 @@ begin
         begin
           if AOptions.ExpandPaths then
             aPath := Engine.ExpandFile(aPath);
-          aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-I' +aPath + #13;
+          aRunItem.Info.Run.AddParam('-I' + aPath);
         end;
       end;
 
-      //aRunItem.Info.Params := aRunItem.Info.Params + '-v'#13;
+      //aRunItem.Info.AddParam('-v');
 
       if AOptions.ConfigFile <> '' then
-        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '@' + Engine.EnvReplace(AOptions.ConfigFile) + #13;
+        aRunItem.Info.Run.AddParam('@' + Engine.EnvReplace(AOptions.ConfigFile));
     end;
 
     if rnaExecute in Info.Actions then
@@ -268,8 +268,8 @@ begin
       aRunItem.Info.Run.Pause := AOptions.Pause;
       aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
       aRunItem.Info.Run.Command := ChangeFileExt(Info.OutputFile, '.exe');
-      if AOptions.Params <> '' then
-        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + AOptions.Params + #13;
+      aRunItem.Info.Run.AddParam(AOptions.Params);
+      aRunItem.Info.Run.AddParam(Engine.Session.Project.RunOptions.Params);
     end;
 
     Engine.Session.Run.Start(Self);

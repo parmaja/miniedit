@@ -35,7 +35,6 @@ implementation
 
 procedure TDProjectFrame.ExpandPathsChk1Change(Sender: TObject);
 begin
-
 end;
 
 procedure TDProjectFrame.Apply;

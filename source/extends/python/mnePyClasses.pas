@@ -191,7 +191,8 @@ begin
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aRunItem.Info.StatusMessage := 'Runing ' + Info.MainFile;
-    aRunItem.Info.Run.Params := {'-m pyxdebug ' + }Info.MainFile + #13;
+    //{'-m pyxdebug ' + }
+    aRunItem.Info.Run.AddParam(Info.MainFile);
   end
   else if rnaExecute in Info.Actions then
   begin
@@ -201,8 +202,7 @@ begin
     aRunItem.Info.Run.Pause := RunOptions.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
     aRunItem.Info.Run.Command := ChangeFileExt(Info.OutputFile, '.exe');
-    if RunOptions.Params <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + RunOptions.Params + #13;
+    aRunItem.Info.Run.AddParam(RunOptions.Params);
   end;
 
   Engine.Session.Run.Start(Self);

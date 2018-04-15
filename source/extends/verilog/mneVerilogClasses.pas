@@ -173,9 +173,9 @@ begin
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
-    aRunItem.Info.Run.Params := '-s' + Info.MainFile + #13;
+    aRunItem.Info.Run.AddParam('-s' + Info.MainFile);
     if Info.OutputFile <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-o' + Info.OutputFile + #13;
+      aRunItem.Info.Run.AddParam('-o' + Info.OutputFile);
 
     aRunItem.Info.StatusMessage := 'Compiling ' + Info.OutputFile;
 
@@ -193,11 +193,11 @@ begin
       end;
     end;
     if p <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + '-I ' + p + #13;
+      aRunItem.Info.Run.AddParam('-I ' + p);
 
     for i := 0 to Engine.Files.Count-1 do
       if Engine.Files[i].Extension='.v' then
-        aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Engine.Files[i].Name + #13;
+        aRunItem.Info.Run.AddParam(Engine.Files[i].Name);
   end;
 
   if rnaExecute in Info.Actions then
@@ -208,8 +208,8 @@ begin
     aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);
     aRunItem.Info.Run.Command := Info.RunFile;
-    if RunOptions.Params <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + RunOptions.Params + #13;
+    aRunItem.Info.Run.AddParam(RunOptions.Params);
+    aRunItem.Info.Run.AddParam(Engine.Session.Project.RunOptions.Params);
   end;
 
   Engine.Session.Run.Start(Self);

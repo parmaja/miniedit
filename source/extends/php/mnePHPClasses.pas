@@ -268,10 +268,10 @@ begin
     end;
 
     if Info.MainFile <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + Info.MainFile + #13;
+      aRunItem.Info.Run.AddParam(Info.MainFile);
 
-    if RunOptions.Params <> '' then
-      aRunItem.Info.Run.Params := aRunItem.Info.Run.Params + RunOptions.Params + #13;
+    aRunItem.Info.Run.AddParam(RunOptions.Params);
+    aRunItem.Info.Run.AddParam(Engine.Session.Project.RunOptions.Params);
 
     Engine.Session.Run.Start(Self);
   end;
