@@ -2321,7 +2321,7 @@ begin
         p.Pause := AOptions.Pause;
         p.Console := AOptions.Console;
 
-        p.MainFile := Engine.ExpandFile(Engine.Session.Project.RunOptions.MainFile);
+        p.MainFile := Engine.ExpandFile(Engine.Session.Project.RunOptions.MainFile); //TODO: here need to care about expand file to be similar to env variable
 
         if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
           p.MainFile := Engine.Files.Current.Name;
@@ -2329,11 +2329,17 @@ begin
         if (p.Root = '') then
           p.Root := ExtractFileDir(p.MainFile);
 
+        p.OutputFile := Engine.ExpandFile(Engine.Session.Project.RunOptions.OutputFile);
+        if p.OutputFile = '' then
+          p.OutputFile := Engine.ExpandFile(RunOptions.OutputFile); //not sure about it i am thinking to remove it, but ok right now, but it will cuz a bug in the future, nevermind...
+
         if p.OutputFile = '' then
         begin
           p.OutputFile := ExtractFileNameWithoutExt(p.MainFile);
           p.OutputFile := p.OutputFile + OutputExtension;
-        end;
+        end
+        else if ExtractFileExt(p.OutputFile) = '' then //usefull to make exe name os undepended
+            p.OutputFile := p.OutputFile + OutputExtension;
 
         p.RunFile := p.OutputFile;
         if ExtractFilePath(p.RunFile) = '' then
