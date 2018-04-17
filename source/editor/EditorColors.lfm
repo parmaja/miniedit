@@ -82,6 +82,7 @@ object EditorColorsForm: TEditorColorsForm
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 16
     OnChange = BackgroundCboChange
+    PopupMenu = ColorPopupMenu
     TabOrder = 3
   end
   object ForegroundCbo: TColorBox
@@ -93,6 +94,7 @@ object EditorColorsForm: TEditorColorsForm
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 16
     OnChange = ForegroundCboChange
+    PopupMenu = ColorPopupMenu
     TabOrder = 4
   end
   object AttributeCbo: TComboBox
@@ -822,22 +824,24 @@ object EditorColorsForm: TEditorColorsForm
       end
     end
   end
-  object Button3: TButton
+  object ForegroundBtn: TButton
     Left = 345
     Height = 22
     Top = 74
     Width = 22
     Caption = '...'
-    OnClick = Button3Click
+    OnClick = ForegroundBtnClick
+    PopupMenu = ColorPopupMenu
     TabOrder = 15
   end
-  object Button4: TButton
+  object BackgroundBtn: TButton
     Left = 345
     Height = 22
     Top = 101
     Width = 22
     Caption = '...'
-    OnClick = Button4Click
+    OnClick = BackgroundBtnClick
+    PopupMenu = ColorPopupMenu
     TabOrder = 16
   end
   object FontDialog: TFontDialog
@@ -869,5 +873,17 @@ object EditorColorsForm: TEditorColorsForm
     Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
     left = 99
     top = 260
+  end
+  object ColorPopupMenu: TPopupMenu
+    left = 218
+    top = 176
+    object MenuItem1: TMenuItem
+      Caption = 'Copy Color'
+      OnClick = MenuItem1Click
+    end
+    object MenuItem2: TMenuItem
+      Caption = 'Paste Color'
+      OnClick = MenuItem2Click
+    end
   end
 end

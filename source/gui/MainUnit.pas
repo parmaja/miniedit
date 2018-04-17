@@ -945,9 +945,9 @@ var
   aGroups: TFileGroups;
 begin
   try
-    if Engine.Session.Active then
+{    if Engine.Session.Active then
       aGroups := Engine.Session.Project.Tendency.Groups
-    else
+    else}
       aGroups := Engine.Groups;
     G := TFileGroups.Create(False);
     try

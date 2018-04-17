@@ -487,7 +487,7 @@ end;
 
 function TEditorDebugger.GetActive: Boolean;
 begin
-  Result := dbsActive in GetState;
+  Result := (Self <> nil) and (dbsActive in GetState);
 end;
 
 function TEditorDebugger.GetKey: string;

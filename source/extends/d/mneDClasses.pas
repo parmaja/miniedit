@@ -250,9 +250,7 @@ begin
         end;
       end;
     end;
-
     //aRunItem.Info.AddParam('-v');
-
   end;
 
   if rnaExecute in Info.Actions then

@@ -10,7 +10,7 @@ unit EditorColors;
 interface
 
 uses
-  Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls,
+  Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, Clipbrd,
   Registry, ExtCtrls, Buttons, ImgList, Menus, ColorBox, SynEdit, SynGutter, SynEditMarkupWordGroup,
   SynEditHighlighter, SynEditMiscClasses, SynEditKeyCmds, Classes, SysUtils, typinfo,
   EditorProfiles, SynGutterBase, SynEditMarks, mnStreams, Types;
@@ -36,8 +36,8 @@ type
     BackgroundCbo: TColorBox;
     BackgroundChk: TCheckBox;
     Bevel1: TBevel;
-    Button3: TButton;
-    Button4: TButton;
+    ForegroundBtn: TButton;
+    BackgroundBtn: TButton;
     CategoryCbo: TComboBox;
     FontBtn: TButton;
     FontDialog: TFontDialog;
@@ -47,8 +47,11 @@ type
     Label11: TLabel;
     Label12: TLabel;
     LoadBtn: TButton;
+    MenuItem1: TMenuItem;
+    MenuItem2: TMenuItem;
     NoAntialiasingChk: TCheckBox;
     OpenDialog: TOpenDialog;
+    ColorPopupMenu: TPopupMenu;
     ResetBtn: TButton;
     RevertBtn: TButton;
     OkBtn: TButton;
@@ -57,11 +60,13 @@ type
     SaveBtn: TButton;
     SaveDialog: TSaveDialog;
     procedure BackgroundCboChange(Sender: TObject);
-    procedure Button3Click(Sender: TObject);
-    procedure Button4Click(Sender: TObject);
+    procedure ForegroundBtnClick(Sender: TObject);
+    procedure BackgroundBtnClick(Sender: TObject);
     procedure ForegroundCboChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure LoadBtnClick(Sender: TObject);
+    procedure MenuItem1Click(Sender: TObject);
+    procedure MenuItem2Click(Sender: TObject);
     procedure NoAntialiasingChkChange(Sender: TObject);
     procedure DefaultBackgroundCboSelect(Sender: TObject);
     procedure DefaultForegroundCboSelect(Sender: TObject);
@@ -183,6 +188,36 @@ begin
   end;
 end;
 
+procedure TEditorColorsForm.MenuItem1Click(Sender: TObject);
+begin
+  if (ColorPopupMenu.PopupComponent = ForegroundCbo) or (ColorPopupMenu.PopupComponent = ForegroundBtn) then
+    Clipboard.AsText := ColorToString(ForegroundCbo.Selected)
+  else if (ColorPopupMenu.PopupComponent = BackgroundCbo) or (ColorPopupMenu.PopupComponent = BackgroundBtn) then
+    Clipboard.AsText := ColorToString(BackgroundCbo.Selected);
+end;
+
+procedure TEditorColorsForm.MenuItem2Click(Sender: TObject);
+var
+  aColor: TColor;
+begin
+  if (ColorPopupMenu.PopupComponent = ForegroundCbo) or (ColorPopupMenu.PopupComponent = ForegroundBtn) then
+  begin
+    aColor := StringToColor(Clipboard.AsText);
+    if aColor <> clNone then
+    begin
+      ForegroundCbo.Selected := aColor;
+    end;
+  end
+  else if (ColorPopupMenu.PopupComponent = BackgroundCbo) or (ColorPopupMenu.PopupComponent = BackgroundBtn) then
+  begin
+    aColor := StringToColor(Clipboard.AsText);
+    if aColor <> clNone then
+    begin
+      BackgroundCbo.Selected := aColor;
+    end;
+  end;
+end;
+
 procedure TEditorColorsForm.ForegroundCboChange(Sender: TObject);
 begin
   if not InChanging then
@@ -207,7 +242,7 @@ begin
   end;
 end;
 
-procedure TEditorColorsForm.Button3Click(Sender: TObject);
+procedure TEditorColorsForm.ForegroundBtnClick(Sender: TObject);
 begin
   if ForegroundCbo.PickCustomColor then
   begin
@@ -218,7 +253,7 @@ begin
   end;
 end;
 
-procedure TEditorColorsForm.Button4Click(Sender: TObject);
+procedure TEditorColorsForm.BackgroundBtnClick(Sender: TObject);
 begin
   if BackgroundCbo.PickCustomColor then
   begin
