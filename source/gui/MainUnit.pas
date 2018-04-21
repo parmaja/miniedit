@@ -2594,6 +2594,8 @@ procedure TMainForm.OptionsChanged;
     //AGrid.FocusRectVisible := False;
   end;
 
+var
+  i: Integer;
 begin
   {Color := Engine.Options.Profile.Attributes.Panel.Background;
   Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;}
@@ -2644,8 +2646,19 @@ begin
 
   OutputEdit.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   OutputEdit.Color := Engine.Options.Profile.Attributes.Default.Background;
+  for i := 0 to LogEdit.Gutter.Parts.Count - 1 do
+  begin
+    OutputEdit.Gutter.Parts.Part[i].MarkupInfo.Foreground := Engine.Options.Profile.Attributes.Gutter.Foreground;
+    OutputEdit.Gutter.Parts.Part[i].MarkupInfo.Background := Engine.Options.Profile.Attributes.Gutter.Background;
+  end;
+
   LogEdit.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   LogEdit.Color := Engine.Options.Profile.Attributes.Default.Background;
+  for i := 0 to LogEdit.Gutter.Parts.Count - 1 do
+  begin
+    LogEdit.Gutter.Parts.Part[i].MarkupInfo.Foreground := Engine.Options.Profile.Attributes.Gutter.Foreground;
+    LogEdit.Gutter.Parts.Part[i].MarkupInfo.Background := Engine.Options.Profile.Attributes.Gutter.Background;
+  end;
 end;
 
 procedure TMainForm.UpdateWatches;

@@ -80,6 +80,10 @@ type
   published
   end;
 
+  TMySynEdit = class(TSynEdit)
+  public
+
+  end;
 
   { TEditorExtension }
 
@@ -1771,7 +1775,7 @@ begin
         Width := EditorResource.DebugImages.Width + DEBUG_IMAGE_MARGINES;
       end;
 
-    FSynEdit.Gutter.SeparatorPart(0).Index := FSynEdit.Gutter.Parts.Count - 1;//TODO, what is this?
+    FSynEdit.Gutter.SeparatorPart(0).Index := FSynEdit.Gutter.Parts.Count - 1;//To make this part last one
 
     FGroup.Category.InitEdit(FSynEdit);
   end;
@@ -1863,7 +1867,7 @@ begin
   inherited;
   { There is more assigns in TEditorFile.SetGroup and TEditorProfile.Assign}
   FHighlightLine := -1;
-  FSynEdit := TSynEdit.Create(Engine.Container);
+  FSynEdit := TMySynEdit.Create(Engine.Container);
   FSynEdit.OnChange := @DoEdit;
   FSynEdit.OnStatusChange := @DoStatusChange;
   FSynEdit.OnGutterClick := @DoGutterClickEvent;
@@ -2989,9 +2993,10 @@ begin
       aExt := Copy(aExt, 2, MaxInt);
 
     Result := CreateEditorFile(aExt);
-    Result.Load(lFileName);
+    if Result <> nil then
+      Result.Load(lFileName);
   end;
-  if AppendToRecent then
+  if (Result <> nil) and AppendToRecent then
     Engine.ProcessRecentFile(lFileName);
 end;
 
@@ -3001,10 +3006,15 @@ var
 begin
   aGroup := Engine.Groups.FindExtension(vExtension);
 
+  {if aGroup = nil then
+    raise EEditorException.Create('Cannot open this file type: ' + vExtension);}
   if aGroup = nil then
-    raise EEditorException.Create('Cannot open this file type: ' + vExtension);
-
-  Result := aGroup.CreateEditorFile(Self);
+  begin
+    Engine.SendMessage('Cannot open this file type: ' + vExtension, msgtLog);
+    Result := nil;
+  end
+  else
+    Result := aGroup.CreateEditorFile(Self);
 end;
 
 procedure TEditorOptions.Load(vWorkspace: string);
@@ -3938,7 +3948,14 @@ procedure TEditorFile.Load(FileName: string);
 begin
   FileName := ExpandFileName(FileName);
   Name := FileName;
-  DoLoad(FileName);//maybe safe loading
+  try
+    DoLoad(FileName);//maybe safe loading
+  except
+    on E: Exception do
+    begin
+      Engine.SendMessage('Can not load :' + FileName + ' : ' + E.Message, msgtLog);
+    end;
+  end;
   IsEdited := False;
   IsNew := False;
   UpdateAge;

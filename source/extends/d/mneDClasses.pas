@@ -230,8 +230,6 @@ begin
         1: aRunItem.Info.Run.AddParam('-g');
       end;
     end;
-
-    aRunItem.Info.StatusMessage := 'Compiling ' + Info.OutputFile;
     //aRunItem.Info.AddParam('-color=on'); //not work :(
 
     for i := 0 to RunOptions.Paths.Count - 1 do
@@ -251,6 +249,7 @@ begin
       end;
     end;
     //aRunItem.Info.AddParam('-v');
+    aRunItem.Info.StatusMessage := 'Compiling ' + Info.OutputFile;
   end;
 
   if rnaExecute in Info.Actions then

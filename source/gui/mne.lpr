@@ -50,7 +50,7 @@ uses
   mnePasProjectFrames, mnePASClasses, mneCSVClasses, mneDClasses, mneLuaClasses,
   LuaDBGServers, MsgBox, GUIMsgBox, Classes, PHPUtils, ntvThemes, mneSetups,
   mneSettings, EditorClasses, EditorColors, gdbClasses,
-  mneCompilerProjectFrames, mneRunFrames, mneManageRecentsForms,
+  mneCompilerProjectFrames, mneRunFrames, mneClasses, mneManageRecentsForms,
   mneTendencyOptions, mneCSVForms, mnUtils, mnStreams, mncCSV;
 
 {$R *.res}

@@ -13,7 +13,6 @@ type
   { TPasProjectFrame }
 
   TPasProjectFrame = class(TFrame, IEditorOptions, IEditorProjectFrame)
-    UseCFGFileChk: TCheckBox;
     procedure Button4Click(Sender: TObject);
   private
   protected
@@ -43,7 +42,6 @@ procedure TPasProjectFrame.Apply;
 begin
   with (Project.Options as TPasProjectOptions) do
   begin
-    UseCFG := UseCFGFileChk.Checked;
   end;
 end;
 
@@ -51,7 +49,6 @@ procedure TPasProjectFrame.Retrieve;
 begin
   with (Project.Options as TPasProjectOptions) do
   begin
-    UseCFGFileChk.Checked := UseCFG;
   end;
 end;
 

@@ -11,19 +11,18 @@
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>D:\home\d\sard\src\test.d</CurrentFile>
-        <CurrentFolder>D:\home\d\sard\src\</CurrentFolder>
+        <CurrentFile>D:\home\lua\projects\iyfct\tunnel.lua</CurrentFile>
+        <CurrentFolder>D:\home\lua\projects\iyfct\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
-            <FileName>D:\home\d\sard\src\main.d</FileName>
-            <CaretX>31</CaretX>
-            <CaretY>92</CaretY>
-            <TopLine>79</TopLine>
+            <FileName>D:\home\lua\projects\iyfct\main.lua</FileName>
+            <CaretY>272</CaretY>
+            <TopLine>251</TopLine>
           </Object>
           <Object Type="TEditorDesktopFile">
-            <FileName>D:\home\d\sard\src\test.d</FileName>
-            <CaretX>66</CaretX>
-            <CaretY>13</CaretY>
+            <FileName>D:\home\lua\projects\iyfct\tunnel.lua</FileName>
+            <CaretX>68</CaretX>
+            <CaretY>12</CaretY>
           </Object>
         </Items>
       </Files>
@@ -32,7 +31,6 @@
     </Options>
     <RunOptions Class="TRunProjectOptions">
       <Pause>False</Pause>
-      <MainFile>D:\home\d\sard\src\test.d</MainFile>
       <ExpandPaths>False</ExpandPaths>
       <Paths Class="TStringList">
       </Paths>

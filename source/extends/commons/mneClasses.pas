@@ -28,11 +28,15 @@ type
   public
   end;
 
-  TINIFile = class(TTextEditorFile)
+  TINIConfigFile = class(TTextEditorFile)
   public
   end;
 
-  TCFGFile = class(TTextEditorFile)
+  TCFGConfigFile = class(TTextEditorFile)
+  public
+  end;
+
+  TYamlConfigFile = class(TTextEditorFile)
   public
   end;
 
@@ -75,6 +79,15 @@ type
   { TCFGFileCategory }
 
   TCFGFileCategory = class(TTextFileCategory)
+  protected
+    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    procedure InitMappers; override;
+  public
+  end;
+
+  { TYamlFileCategory }
+
+  TYamlFileCategory = class(TTextFileCategory)
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
@@ -203,6 +216,28 @@ begin
           Highlighter.Next;
         end;
     end;
+  end;
+end;
+
+{ TYamlFileCategory }
+
+function TYamlFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+begin
+  Result := TSynApacheSyn.Create(nil);
+end;
+
+procedure TYamlFileCategory.InitMappers;
+begin
+  with Highlighter as TSynApacheSyn do
+  begin
+    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(TextAttri, attText);
+    Mapper.Add(SectionAttri, attDirective);
+    Mapper.Add(KeyAttri, attKeyword);
+    Mapper.Add(NumberAttri, attNumber);
+    Mapper.Add(SpaceAttri, attDefault);
+    Mapper.Add(StringAttri, attQuotedString);
+    Mapper.Add(SymbolAttri, attSymbol);
   end;
 end;
 
@@ -369,14 +404,17 @@ initialization
     Categories.Add(TINIFileCategory.Create(DefaultProject.Tendency, 'ini'));
     Categories.Add(TXMLFileCategory.Create(DefaultProject.Tendency, 'xml'));
     Categories.Add(TCFGFileCategory.Create(DefaultProject.Tendency, 'CFG'));
+    Categories.Add(TYamlFileCategory.Create(DefaultProject.Tendency, 'Yaml'));
     Categories.Add(TMDFileCategory.Create(DefaultProject.Tendency, 'md'));
 
     Groups.Add(TTXTFile, 'txt', 'Text', TTXTFileCategory, ['txt', 'text'], []);
+    Groups.Add(TTXTFile, 'motd', 'motd', TTXTFileCategory, ['motd'], []);
     Groups.Add(TTXTFile, 'md', 'MarkDown', TMDFileCategory, ['md'], []);
     Groups.Add(TSQLFile, 'sql', 'SQL', TSQLFileCategory, ['sql'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TApacheFile, 'htaccess', 'htaccess', TApacheFileCategory, ['htaccess', 'conf'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TXMLFile, 'xml', 'XML', TXMLFileCategory, ['xml'], [fgkBrowsable]);
-    Groups.Add(TINIFile, 'ini', 'INI', TINIFileCategory, ['ini'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TCFGFile, 'cfg', 'Config', TCFGFileCategory, ['cfg', 'conf'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TINIConfigFile, 'ini', 'INI', TINIFileCategory, ['ini'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TCFGConfigFile, 'cfg', 'Config', TCFGFileCategory, ['cfg', 'conf'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TYamlConfigFile, 'yaml', 'YAML', TYamlFileCategory, ['yaml'], [fgkAssociated, fgkBrowsable]);
   end;
 end.

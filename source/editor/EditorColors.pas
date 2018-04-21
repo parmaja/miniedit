@@ -44,6 +44,7 @@ type
     FontLbl: TLabel;
     ForegroundCbo: TColorBox;
     ForegroundChk: TCheckBox;
+    ExampleLbl: TLabel;
     Label11: TLabel;
     Label12: TLabel;
     LoadBtn: TButton;
@@ -52,6 +53,7 @@ type
     NoAntialiasingChk: TCheckBox;
     OpenDialog: TOpenDialog;
     ColorPopupMenu: TPopupMenu;
+    PanelPnl: TPanel;
     ResetBtn: TButton;
     RevertBtn: TButton;
     OkBtn: TButton;
@@ -60,6 +62,7 @@ type
     SaveBtn: TButton;
     SaveDialog: TSaveDialog;
     procedure BackgroundCboChange(Sender: TObject);
+    procedure ExampleLblClick(Sender: TObject);
     procedure ForegroundBtnClick(Sender: TObject);
     procedure BackgroundBtnClick(Sender: TObject);
     procedure ForegroundCboChange(Sender: TObject);
@@ -76,6 +79,7 @@ type
     procedure CategoryCboSelect(Sender: TObject);
     procedure KeyListEditing(Sender: TObject; Item: TListItem; var AllowEdit: boolean);
     procedure OkBtnClick(Sender: TObject);
+    procedure PanelPnlClick(Sender: TObject);
     procedure ResetBtnClick(Sender: TObject);
     procedure RevertBtnClick(Sender: TObject);
 
@@ -242,6 +246,11 @@ begin
   end;
 end;
 
+procedure TEditorColorsForm.ExampleLblClick(Sender: TObject);
+begin
+  PanelPnlClick(Sender);
+end;
+
 procedure TEditorColorsForm.ForegroundBtnClick(Sender: TObject);
 begin
   if ForegroundCbo.PickCustomColor then
@@ -304,6 +313,17 @@ end;
 procedure TEditorColorsForm.OkBtnClick(Sender: TObject);
 begin
   ModalResult := mrOk;
+end;
+
+procedure TEditorColorsForm.PanelPnlClick(Sender: TObject);
+var
+  G: TGlobalAttribute;
+begin
+  G := FProfile.Attributes.Find(attPanel);
+  if G = nil then
+    G := FProfile.Attributes.Default;
+  AttributeCbo.ItemIndex := G.Index;
+  RetrieveAttribute;
 end;
 
 procedure TEditorColorsForm.ResetBtnClick(Sender: TObject);
@@ -552,6 +572,8 @@ begin
   FProfile.Attributes.Correct;
   aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
 
+  PanelPnl.Color := FProfile.Attributes.Panel.BackColor;
+  ExampleLbl.Font.Color := FProfile.Attributes.Panel.ForeColor;
   if (SampleEdit.Highlighter = nil) or (SampleEdit.Highlighter.ClassType <> aFileCategory.Highlighter.ClassType) then
   begin
     SampleEdit.Highlighter.Free;

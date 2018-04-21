@@ -22,10 +22,9 @@
       <MinorVersionNr Value="4"/>
       <RevisionNr Value="1"/>
       <BuildNr Value="202"/>
-      <Language Value=""/>
       <CharSet Value="04B0"/>
       <Attributes pvaPreRelease="True"/>
-      <StringTable ProductVersion="1.4.1.186"/>
+      <StringTable CompanyName="PARMAJA" FileDescription="mini Edit IDE" InternalName="MiniEdit" ProductName="MiniEdit" ProductVersion="1.4.1.186"/>
     </VersionInfo>
     <BuildModes Count="3">
       <Item1 Name="Debug" Default="True"/>
@@ -172,7 +171,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item11>
     </RequiredPackages>
-    <Units Count="54">
+    <Units Count="55">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -470,6 +469,10 @@
         <Filename Value="..\extends\sard\mneSARDClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit53>
+      <Unit54>
+        <Filename Value="..\extends\commons\mneClasses.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit54>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -500,6 +503,7 @@
         <ShowTriedFiles Value="True"/>
         <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
       </Verbosity>
+      <WriteFPCLogo Value="False"/>
       <CompilerMessages>
         <IgnoredMessages idx5024="True" idx5023="True"/>
       </CompilerMessages>

@@ -19,6 +19,9 @@
       <ForeColor>clBlack</ForeColor>
     </Selected>
     <Highlighted Class="TGlobalAttribute">
+      <BackColor>clWhite</BackColor>
+      <ForeColor>clRed</ForeColor>
+      <Options>gaoDefaultBackground</Options>
     </Highlighted>
     <Active Class="TGlobalAttribute">
       <BackColor>7691082</BackColor>
@@ -98,7 +101,7 @@
     </EmbedText>
     <Comment Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>12885388</ForeColor>
+      <ForeColor>12946341</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Comment>
     <QuotedString Class="TGlobalAttribute">

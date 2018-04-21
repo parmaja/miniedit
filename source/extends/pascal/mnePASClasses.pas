@@ -66,18 +66,17 @@ type
 
   TPasProjectOptions = class(TEditorProjectOptions)
   private
-    FUseCFG: Boolean;
   public
     constructor Create; override;
     procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); override;
   published
-    property UseCFG: Boolean read FUseCFG write FUseCFG default True;
   end;
 
   { TPasTendency }
 
   TPasTendency = class(TEditorTendency)
   private
+    FUseCFG: Boolean;
     FCompiler: string;
   protected
     function CreateDebugger: TEditorDebugger; override;
@@ -87,6 +86,7 @@ type
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
     function CreateOptions: TEditorProjectOptions; override;
     property Compiler: string read FCompiler write FCompiler;
+    property UseCFG: Boolean read FUseCFG write FUseCFG default True;
   end;
 
 implementation
@@ -99,7 +99,6 @@ uses
 constructor TPasProjectOptions.Create;
 begin
   inherited Create;
-  FUseCFG := True;
 end;
 
 procedure TPasProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack);
@@ -182,6 +181,7 @@ begin
   FName := 'Pascal';
   FTitle := 'Pascal project';
   FDescription := 'Pascal/FPC/Lazarus Files, *.pas, *.pp *.inc';
+  FUseCFG := True;
   {$ifdef windows}
   OutputExtension := '.exe';
   {$endif}
@@ -210,9 +210,14 @@ begin
     if Info.OutputFile <> '' then
       aRunItem.Info.Run.AddParam('-o' + Info.OutputFile);
 
-    aRunItem.Info.StatusMessage := 'Compiling ' + Info.OutputFile;
+    if RunOptions.ConfigFile <> '' then
+      aRunItem.Info.Run.AddParam('@' + Engine.EnvReplace(RunOptions.ConfigFile))
+    else if UseCfg then
+    begin
+      if FileExists(ChangeFileExt(Info.MainFile, '.cfg')) then
+        aRunItem.Info.Run.AddParam('@' + ExtractFileNameWithoutExt(ExtractFileName(Info.MainFile))+'.cfg');
+    end;
 
-    p := '-Fu';
     for i := 0 to RunOptions.Paths.Count - 1 do
     begin
       aPath := Trim(RunOptions.Paths[i]);
@@ -226,7 +231,7 @@ begin
       end;
     end;
     if p <> '' then
-      aRunItem.Info.Run.AddParam(p);
+      aRunItem.Info.Run.AddParam('-Fu'+p);
 
     if rnaDebug in Info.Actions then
     begin
@@ -235,6 +240,8 @@ begin
     end
     else
       aRunItem.Info.Run.AddParam('-dRelease');
+
+    aRunItem.Info.StatusMessage := 'Compiling ' + Info.OutputFile;
   end;
 
   if rnaExecute in Info.Actions then

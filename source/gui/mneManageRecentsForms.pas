@@ -12,9 +12,12 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Menus, Dialogs, ComCtrls, StdCtrls, mneClasses;
+  Menus, Dialogs, ComCtrls, StdCtrls, mneClasses, Types;
 
 type
+
+  { TManageProjectsForm }
+
   TManageProjectsForm = class(TForm)
     PageControl: TPageControl;
     TabSheet1: TTabSheet;
@@ -41,6 +44,8 @@ type
     procedure AddtoProjects1Click(Sender: TObject);
     procedure MoveUpBtnClick(Sender: TObject);
     procedure MoveDownBtnClick(Sender: TObject);
+
+    procedure ProjectsListMeasureItem(Control: TWinControl; Index: Integer; var AHeight: Integer);
   private
     procedure EnumRecentFile;
     procedure EnumRecentProjects;
@@ -270,6 +275,11 @@ begin
     EnumProjects;
     ProjectsList.ItemIndex := i + 1;
   end;
+end;
+
+procedure TManageProjectsForm.ProjectsListMeasureItem(Control: TWinControl; Index: Integer; var AHeight: Integer);
+begin
+  AHeight := AHeight + 10;
 end;
 
 procedure TManageProjectsForm.ChangeToIndex(ListBox: TlistBox; Index: integer);
