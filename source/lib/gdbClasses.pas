@@ -21,11 +21,15 @@ directory .
 break "test.d:1"
 run
 next
+
+
+http://wiki.freepascal.org/Debugging_-_GDB_tricks
 }
 interface
 
 uses
-  Classes, SysUtils, mnClasses, process, ConsoleProcess, EditorEngine, EditorDebugger;
+  Classes, SysUtils, mnClasses, syncobjs, process,
+  mnStreams, ConsoleProcess, EditorEngine, EditorDebugger;
 
 type
   TGDBDebug = class;
@@ -44,7 +48,6 @@ type
     function Add(FileName: string; Line: integer): Integer; overload;
     function IndexOf(FileName: string; LineNo: integer): Integer;
   end;
-
 
   { TGDBBreakPoints }
 
@@ -101,18 +104,106 @@ type
     function GetValue(vName: string; out vValue: Variant; out vType: string; EvalIt: Boolean): boolean; override;
   end;
 
+
+  { TgdbAction }
+
+  TgdbAction = class(TDebugCommand)
+  private
+  protected
+    FTransactionID: integer;
+    procedure CheckError(ARespond: TStringList);
+    procedure Execute(ARespond: TStringList); virtual; abstract;
+  public
+  end;
+
+  TdbgActionClass = class of TgdbAction;
+
+  { TgdbSpool }
+
+  TgdbSpool = class(specialize TmnObjectList<TgdbAction>)
+  private
+  public
+    procedure Added(Action: TgdbAction); override;
+  end;
+
+  { TgdbInit }
+
+  TgdbInit = class(TgdbAction)
+  protected
+    procedure Created; override;
+  public
+    function GetCommand: string; override;
+    procedure Execute(Respond: TStringList); override;
+  end;
+
+  { TgdbFeatureSet }
+
+  TgdbFeatureSet = class(TgdbAction)
+  protected
+    FName: string;
+    FValue: string;
+    procedure Execute(Respond: TStringList); override;
+  public
+    constructor CreateBy(vName, vValue: string);
+    function GetCommand: string; override;
+  end;
+
+  { TgdbCommandSet }
+
+  TgdbCommand = class(TgdbAction)
+  protected
+    FName: string;
+    FValue: string;
+    procedure Execute(Respond: TStringList); override;
+  public
+    constructor CreateBy(vName: string; vValue: string = '');
+    function GetCommand: string; override;
+    function GetData: string; override;
+  end;
+
+  { TgdbRun }
+
+  TgdbRun = class(TgdbAction)
+  public
+    function GetCommand: string; override;
+    procedure Execute(Respond: TStringList); override;
+  end;
+
+  { TgdbContinue }
+
+  TgdbContinue = class(TgdbAction)
+  public
+    function GetCommand: string; override;
+    procedure Execute(Respond: TStringList); override;
+  end;
+
   { TGDBDebug }
 
   TGDBDebug = class(TEditorDebugger)
   protected
+    FActive: Boolean;
     FGDBProcess: TProcess;
-    FConsoleThread: TmnConsoleThread;
+    FRunCount: Integer;
+    FSpool: TgdbSpool;
+    //FConsoleThread: TmnConsoleThread;
+    FTransactionID: integer;
+    ReadStream: TmnWrapperStream;
     function CreateBreakPoints: TEditorBreakPoints; override;
     function CreateWatches: TEditorWatches; override;
     procedure ReceiveProcess(S: ansistring);
     procedure WriteProcess(S: ansistring);
     property GDBProcess: TProcess read FGDBProcess;
+
+    function ReadRespond: TStringList;
+    function NewTransactionID: integer;
+    function SendCommand(Command: string; Data: string): integer;
+    function PopAction: TgdbAction;
+    procedure DoExecute;
+    property Spool: TgdbSpool read FSpool;
+    procedure Execute;
   public
+    constructor Create;
+    destructor Destroy; override;
     procedure Start; override;
     procedure Attach(SubProcess: TProcess; Resume: Boolean); override;
     procedure Stop; override;
@@ -130,6 +221,104 @@ implementation
 
 uses
   EditorClasses;
+
+{ TgdbContinue }
+
+function TgdbContinue.GetCommand: string;
+begin
+  Result := 'continue';
+end;
+
+procedure TgdbContinue.Execute(Respond: TStringList);
+begin
+
+end;
+
+{ TgdbCommand }
+
+procedure TgdbCommand.Execute(Respond: TStringList);
+begin
+
+end;
+
+constructor TgdbCommand.CreateBy(vName, vValue: string);
+begin
+  Create;
+  FName := vName;
+  FValue:= vValue;
+end;
+
+function TgdbCommand.GetCommand: string;
+begin
+  Result :=  FName;
+end;
+
+function TgdbCommand.GetData: string;
+begin
+  Result := FValue;
+end;
+
+{ TgdbSpool }
+
+procedure TgdbSpool.Added(Action: TgdbAction);
+begin
+  inherited Added(Action);
+end;
+
+{ TgdbRun }
+
+function TgdbRun.GetCommand: string;
+begin
+
+end;
+
+procedure TgdbRun.Execute(Respond: TStringList);
+begin
+
+end;
+
+{ TgdbFeatureSet }
+
+procedure TgdbFeatureSet.Execute(Respond: TStringList);
+begin
+
+end;
+
+constructor TgdbFeatureSet.CreateBy(vName, vValue: string);
+begin
+  Create;
+  FName := vName;
+  FValue:= vValue;
+end;
+
+function TgdbFeatureSet.GetCommand: string;
+begin
+  // 'set prompt gdb:';
+  Result := 'set ' + FName + ' '+ FValue;
+end;
+
+{ TgdbInit }
+
+procedure TgdbInit.Created;
+begin
+  inherited Created;
+  Flags := Flags - [dafSend];
+end;
+
+function TgdbInit.GetCommand: string;
+begin
+  Result := '';
+end;
+
+procedure TgdbInit.Execute(Respond: TStringList);
+begin
+end;
+
+{ TgdbAction }
+
+procedure TgdbAction.CheckError(ARespond: TStringList);
+begin
+end;
 
 { TGDBWatchList }
 
@@ -334,9 +523,136 @@ end;
 
 procedure TGDBDebug.WriteProcess(S: ansistring);
 begin
-  S := S+#13#10;
-  Engine.SendMessage(S, msgtLog);
+  S := S + #13#10;
+  //Engine.SendMessage(S, msgtLog);
   FGDBProcess.Input.WriteBuffer(S[1], Length(S));
+end;
+
+function TGDBDebug.ReadRespond: TStringList;
+var
+  s: string;
+begin
+  Result := TStringList.Create;
+  while ReadStream.ReadLine(S, true, #13#10) do
+  begin
+    Result.Add(s);
+    if trim(s) = '(gdb)' then
+      break;
+  end;
+end;
+
+function TGDBDebug.NewTransactionID: integer;
+begin
+  Inc(FTransactionID);
+  Result := FTransactionID;
+end;
+
+function TGDBDebug.SendCommand(Command: string; Data: string): integer;
+var
+  s: string;
+begin
+  Result := NewTransactionID;
+  s := Command;
+  if Data <> '' then
+    s := s + ' ' + Data;
+  WriteProcess(s);
+{$IFDEF SAVELOG}
+  SaveLog(s);
+{$ENDIF}
+end;
+
+function TGDBDebug.PopAction: TgdbAction;
+//var
+//  aAction: TgdbAction;
+//  i: integer;
+begin
+  if FSpool.Count = 0 then
+  begin
+    InterLockedIncrement(FRunCount);
+//    DebugManager.Event.WaitFor(INFINITE); //wait the ide to make resume
+    InterLockedDecrement(FRunCount);
+
+    {DebugManager.Lock.Enter;
+    try
+      i := 0;
+      while i < Server.Spool.Count do
+      begin
+        aAction := Server.Spool.Extract(Server.Spool[i]) as TgdbAction;
+        //        if aAction.Key = Key then
+        FLocalSpool.Add(aAction);
+        //        else
+        //        inc(i);
+      end;
+    finally
+      DebugManager.Lock.Leave;
+    end;}
+  end;
+  Result := nil;
+  while {not Terminated and }((FSpool.Count > 0) and (Result = nil)) do
+  begin
+    Result := FSpool[0];
+    Result.Prepare;
+  end;
+end;
+
+procedure TGDBDebug.DoExecute;
+var
+  aAction: TgdbAction;
+  aRespond: TStringList;
+  aCommand: string;
+  aKeep: Boolean;
+begin
+  ReadStream := TmnWrapperStream.Create(GDBProcess.Output, False);
+  aAction := PopAction;
+  if aAction <> nil then
+  begin
+    if not aAction.Enabled then
+      FSpool.Remove(aAction)
+    else
+      try
+        aCommand := aAction.GetCommand;
+        if (dafSend in aAction.Flags) and (aCommand <> '') then
+          aAction.FTransactionID := SendCommand(aCommand, aAction.GetData);
+        if aAction.Accept {and not Terminated} then
+        begin
+          aRespond := ReadRespond;
+          try
+            aAction.Execute(aRespond);
+          finally
+            FreeAndNil(aRespond);
+          end;
+        end;
+      finally
+        if not aAction.Stay then
+        begin
+          aKeep := (aAction.Event <> nil) or aAction.KeepAlive;
+          if aAction.Event <> nil then
+            aAction.Event.SetEvent;
+          if aKeep then
+            FSpool.Extract(aAction)
+          else
+            FSpool.Remove(aAction);
+        end;
+      end;
+  end;
+end;
+
+procedure TGDBDebug.Execute;
+begin
+  DoExecute;
+end;
+
+constructor TGDBDebug.Create;
+begin
+  inherited;
+  FSpool := TgdbSpool.Create;
+end;
+
+destructor TGDBDebug.Destroy;
+begin
+  FreeAndNil(FSpool);
+  FreeAndNil(ReadStream);
+  inherited Destroy;
 end;
 
 procedure TGDBDebug.Start;
@@ -350,28 +666,34 @@ begin
     {$else}
     FGDBProcess.Executable := 'gdb';
     {$endif}
-    FGDBProcess.Parameters.Add('-q');//"Quiet". Do not print the introductory and copyright messages.
+    //FGDBProcess.Parameters.Add('-q');//"Quiet". Do not print the introductory and copyright messages.
     FGDBProcess.Parameters.Add('-n');//Do not execute commands found in any initialization files.
     FGDBProcess.Parameters.Add('-f');//Full name GDB output the full file name and line number in a standard.
     //FGDBProcess.Parameters.Add('-annotate 1');
-    //FGDBProcess.Parameters.Add('-interpreter mi');//GDB/MI
+    FGDBProcess.Parameters.Add('--interpreter=mi2');//GDB/MI
     //-nw not work with mi
     //FGDBProcess.Parameters.Add('-nw');//"No windows".
     //FGDBProcess.Parameters.Add('-noasync');//Disable the asynchronous event loop for the command-line interface.
 
+
     FGDBProcess.CurrentDirectory := ExtractFilePath(ParamStr(0));
     FGDBProcess.Options :=  [poUsePipes, poStderrToOutPut];
     FGDBProcess.ShowWindow := swoHIDE;
-    FGDBProcess.PipeBufferSize := 80;
+    FGDBProcess.PipeBufferSize := 0;
 
-    FConsoleThread := TmnConsoleThread.Create(FGDBProcess, @ReceiveProcess);
-    FConsoleThread.FreeOnTerminate := False;
+    //FConsoleThread := TmnConsoleThread.Create(FGDBProcess, @ReceiveProcess);
+    //FConsoleThread.FreeOnTerminate := False;
 
     FGDBProcess.Execute;
-    FConsoleThread.Start;
-
-    WriteProcess('set prompt gdb:');
-    WriteProcess('set confirm off');
+    //FConsoleThread.Start;
+//    Spool.Add(TgdbFeatureSet.CreateBy('prompt', 'gdb:'#13));
+    Spool.Add(TgdbInit.Create);
+    Execute;
+    Spool.Add(TgdbFeatureSet.CreateBy('language', 'pascal'));
+    Spool.Add(TgdbFeatureSet.CreateBy('confirm', 'off'));
+    Execute;
+    //WriteProcess('set prompt gdb:');
+    //WriteProcess('set confirm off');
 
     //WriteProcess('set new-console on');
     //WriteProcess('set verbose off');
@@ -382,15 +704,21 @@ procedure TGDBDebug.Attach(SubProcess: TProcess; Resume: Boolean);
 var
   i: Integer;
 begin
-  //WriteProcess('help');
-  //WriteProcess('set new-console on
-  WriteProcess('cd '+ SubProcess.CurrentDirectory);
-  WriteProcess('attach '+ IntToStr(SubProcess.ProcessID));
-  WriteProcess('directory '+ SubProcess.CurrentDirectory);
-  for i := 0 to Breakpoints.Count - 1 do
-    WriteProcess('break "'+ Breakpoints[i].FileName+':'+IntToStr(Breakpoints[i].Line)+'"');
-  WriteProcess('continue');
-  //WriteProcess('run');
+  ////WriteProcess('help');
+  ////WriteProcess('set new-console on
+  Spool.Add(TgdbCommand.CreateBy('cd', SubProcess.CurrentDirectory));
+  Spool.Add(TgdbCommand.CreateBy('attach', IntToStr(SubProcess.ProcessID)));
+  Spool.Add(TgdbCommand.CreateBy('directory', SubProcess.CurrentDirectory));
+  //WriteProcess('cd '+ SubProcess.CurrentDirectory);
+  //WriteProcess('attach '+ IntToStr(SubProcess.ProcessID));
+  //WriteProcess('directory '+ SubProcess.CurrentDirectory);
+  //for i := 0 to Breakpoints.Count - 1 do
+    //WriteProcess('break "' + StringReplace(Breakpoints[i].FileName, '\', '/', [rfReplaceAll]) + '":' + IntToStr(Breakpoints[i].Line));
+  Spool.Add(TgdbContinue.Create);
+  Execute;
+
+  //WriteProcess('continue');
+ ////WriteProcess('run');
 end;
 
 procedure TGDBDebug.Stop;
@@ -401,8 +729,8 @@ begin
     WriteProcess('q');
     GDBProcess.WaitOnExit;
     FreeAndNil(FGDBProcess);
-    FConsoleThread.Terminate;
-    FreeAndNil(FConsoleThread);
+    //FConsoleThread.Terminate;
+    //FreeAndNil(FConsoleThread);
   end;
 end;
 
@@ -432,7 +760,9 @@ end;
 function TGDBDebug.GetState: TDebugStates;
 begin
   if GDBProcess <> nil then
-    Result := [dbsDebugging, dbsRunning]
+    Result := [dbsActive, dbsDebugging, dbsRunning]
+  else if FActive then
+    Result := [dbsActive]
   else
     Result := [];
 end;
@@ -440,6 +770,14 @@ end;
 procedure TGDBDebug.Action(AAction: TDebugAction);
 begin
   case AAction of
+    dbaActivate:
+        FActive := True;
+        //Start;
+    dbaDeactivate:
+        begin
+          Stop;
+          FActive := False;
+        end;
     dbaReset:
       Stop;
     dbaRun:

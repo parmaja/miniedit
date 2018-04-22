@@ -102,6 +102,7 @@ type
     FolderPanel: TPanel;
     MainFileBtn: TToolButton;
     SynAnySyn1: TSynAnySyn;
+    ToolButton3: TToolButton;
     ToolButton8: TToolButton;
     WatchesGrid: TStringGrid;
     SearchGrid: TStringGrid;
@@ -2231,7 +2232,10 @@ begin
         AddError(vError);
     end;
     msgtLog:
+    begin
       LogEdit.Lines.Add(S);
+      LogEdit.CaretY := LogEdit.Lines.Count;
+    end;
   end;
 end;
 
@@ -2613,7 +2617,6 @@ begin
 
   FoldersSpl.Color := Engine.Options.Profile.Attributes.Panel.Background;
   MessagesSpl.Color := FoldersSpl.Color;
-  FileList.Font.Name := Engine.Options.Profile.Attributes.FontName;
 
   MessagesTabs.Color := Engine.Options.Profile.Attributes.Panel.Background;
   MessagesTabs.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
@@ -2636,6 +2639,7 @@ begin
   FileTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
   FileTabs.NormalColor := MixColors(OppositeColor(FileTabs.ActiveColor), FileTabs.ActiveColor, 50);
 
+  FileList.Font.Name := Engine.Options.Profile.Attributes.FontName;
   FileList.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   FileList.Color := Engine.Options.Profile.Attributes.Default.Background;
 

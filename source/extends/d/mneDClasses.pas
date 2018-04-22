@@ -257,13 +257,13 @@ begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.Run.Console := Info.Console;
-    aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.StartDebug := rnaDebug in Info.Actions;
     aRunItem.Info.Title := ExtractFileName(Info.OutputFile);
     aRunItem.Info.Run.Command := Info.RunFile;
     aRunItem.Info.Run.AddParam(RunOptions.Params);
     aRunItem.Info.Run.AddParam(Engine.Session.Project.RunOptions.Params);
+    aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
   end;
 
   Engine.Session.Run.Start(Self, Info.Root);

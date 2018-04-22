@@ -7,22 +7,22 @@
     </SCM>
     <Desktop Class="TEditorDesktop">
       <Breakpoints Class="TmneBreakpoints">
+        <Objects>
+          <Object Type="TmneBreakpoint">
+            <FileName>M:\home\pascal\projects\miniEdit\test\test-pas.pas</FileName>
+            <LineNo>11</LineNo>
+          </Object>
+        </Objects>
       </Breakpoints>
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>D:\home\lua\projects\iyfct\tunnel.lua</CurrentFile>
-        <CurrentFolder>D:\home\lua\projects\iyfct\</CurrentFolder>
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test-pas.pas</CurrentFile>
+        <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
-            <FileName>D:\home\lua\projects\iyfct\main.lua</FileName>
-            <CaretY>272</CaretY>
-            <TopLine>251</TopLine>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>D:\home\lua\projects\iyfct\tunnel.lua</FileName>
-            <CaretX>68</CaretX>
-            <CaretY>12</CaretY>
+            <FileName>M:\home\pascal\projects\miniEdit\test\test-pas.pas</FileName>
+            <CaretY>15</CaretY>
           </Object>
         </Items>
       </Files>

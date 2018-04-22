@@ -92,8 +92,8 @@ type
   end;
 
   TDebugAction = (
-    dbaStartServer,
-    dbaStopServer,
+    dbaActivate,
+    dbaDeactivate,
     dbaReset, //stop debug and stop the run
     dbaResume, //run and do not stop at breakpoints, or run without debug
     dbaStepOver,
@@ -441,9 +441,9 @@ end;
 procedure TEditorDebugger.SetActive(AValue: boolean);
 begin
   if not Active and AValue then
-    Action(dbaStartServer)
+    Action(dbaActivate)
   else if Active and not AValue then
-    Action(dbaStopServer);
+    Action(dbaDeactivate);
 end;
 
 constructor TEditorDebugger.Create;

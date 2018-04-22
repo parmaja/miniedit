@@ -1526,8 +1526,8 @@ end;
 procedure TLuaDBGDebug.Action(AAction: TDebugAction);
 begin
     case AAction of
-    dbaStartServer: Start;
-    dbaStopServer: Stop;
+    dbaActivate: Start;
+    dbaDeactivate: Stop;
     dbaReset: Reset;
     dbaResume: Resume;
     dbaStepInto: StepInto;

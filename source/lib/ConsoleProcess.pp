@@ -210,7 +210,7 @@ var
   C: DWORD;
 begin
   aBuffer := '';
-  while Process.Running do
+  while Process.Running and not Terminated do
   begin
     //    repeat
     if ReadNow(C) then
@@ -221,7 +221,7 @@ begin
     end;
     //until C = 0;
   end;
-  WriteString('------exit--------');
+  //WriteString('------exit--------');
 end;
 
 procedure TmnConsoleThread.Execute;

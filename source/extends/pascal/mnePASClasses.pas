@@ -218,6 +218,7 @@ begin
         aRunItem.Info.Run.AddParam('@' + ExtractFileNameWithoutExt(ExtractFileName(Info.MainFile))+'.cfg');
     end;
 
+    p := '';
     for i := 0 to RunOptions.Paths.Count - 1 do
     begin
       aPath := Trim(RunOptions.Paths[i]);
@@ -244,17 +245,18 @@ begin
     aRunItem.Info.StatusMessage := 'Compiling ' + Info.OutputFile;
   end;
 
-  if rnaExecute in Info.Actions then
+  if (rnaExecute in Info.Actions) then
   begin
     aRunItem := Engine.Session.Run.Add;
-    aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
-    aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Run.Pause := Info.Pause;
+    aRunItem.Info.Run.Console := Info.Console;
+    aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.StartDebug := rnaDebug in Info.Actions;
-    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);
+    aRunItem.Info.Title := ExtractFileName(Info.OutputFile);
     aRunItem.Info.Run.Command := Info.RunFile;
     aRunItem.Info.Run.AddParam(RunOptions.Params);
     aRunItem.Info.Run.AddParam(Engine.Session.Project.RunOptions.Params);
+    aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
   end;
 
   Engine.Session.Run.Start(Self);

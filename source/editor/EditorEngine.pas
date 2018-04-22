@@ -80,11 +80,6 @@ type
   published
   end;
 
-  TMySynEdit = class(TSynEdit)
-  public
-
-  end;
-
   { TEditorExtension }
 
   TEditorExtension = class(TObject)
@@ -1867,7 +1862,7 @@ begin
   inherited;
   { There is more assigns in TEditorFile.SetGroup and TEditorProfile.Assign}
   FHighlightLine := -1;
-  FSynEdit := TMySynEdit.Create(Engine.Container);
+  FSynEdit := TSynEdit.Create(Engine.Container);
   FSynEdit.OnChange := @DoEdit;
   FSynEdit.OnStatusChange := @DoStatusChange;
   FSynEdit.OnGutterClick := @DoGutterClickEvent;

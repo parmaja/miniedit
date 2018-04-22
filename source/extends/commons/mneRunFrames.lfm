@@ -11,7 +11,7 @@ object RunFrameOptions: TRunFrameOptions
   object PauseChk: TCheckBox
     Left = 33
     Height = 19
-    Top = 83
+    Top = 81
     Width = 156
     Caption = 'Pause after run in console'
     TabOrder = 0
@@ -46,7 +46,7 @@ object RunFrameOptions: TRunFrameOptions
   object ConsoleChk: TCheckBox
     Left = 33
     Height = 19
-    Top = 62
+    Top = 60
     Width = 63
     Caption = 'Console'
     TabOrder = 3

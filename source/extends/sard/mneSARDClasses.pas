@@ -46,17 +46,15 @@ type
   TSardEditorDebugger = class(TEditorDebugger)
   end;
 
-  { TSARDPerspective }
-
   { TSARDTendency }
 
   TSARDTendency = class(TEditorTendency)
   protected
     procedure Init; override;
     function CreateDebugger: TEditorDebugger; override;
-    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
+    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
   end;
 
 implementation
