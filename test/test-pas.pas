@@ -13,4 +13,6 @@ begin
   s:='Hi World';
   writeln(s);
   writeln('Bye');
+  writeln('Press Enter to exit');
+  ReadLn();
 end.

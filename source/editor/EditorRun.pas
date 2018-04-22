@@ -315,7 +315,7 @@ begin
   if Engine.Tendency.Debug <> nil then
   begin
     Engine.Tendency.Debug.Start;
-    Engine.Tendency.Debug.Attach(Process, True);
+    Engine.Tendency.Debug.Attach(Process);
   end;
 end;
 

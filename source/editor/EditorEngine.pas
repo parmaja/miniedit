@@ -1148,6 +1148,7 @@ type
     procedure SetNotifyEngine(ANotifyObject: INotifyEngine);
     procedure RemoveNotifyEngine(ANotifyObject: INotifyEngine);
     property MacroRecorder: TSynMacroRecorder read FMacroRecorder;
+    procedure SendLog(S: string);
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType);
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);
     procedure SendAction(EditorAction: TEditorAction);
@@ -1756,10 +1757,11 @@ end;
 
 procedure TTextEditorFile.GroupChanged;
 begin
+  if Group <> nil then
+    FSynEdit.Highlighter := FGroup.Category.Highlighter;
   inherited;
   if Group <> nil then
   begin
-    FSynEdit.Highlighter := FGroup.Category.Highlighter;
     FGroup.Category.InitCompletion(FSynEdit);
 
     if (fgkExecutable in FGroup.Kind) then
@@ -3709,6 +3711,11 @@ begin
   if (FNotifyObject <> nil) and (FNotifyObject <> ANotifyObject) then
     raise Exception.Create('NotifyObject not exists');
   FNotifyObject := nil; //TODO if list we should remove it
+end;
+
+procedure TEditorEngine.SendLog(S: string);
+begin
+  SendMessage(S, msgtLog);
 end;
 
 procedure TEditorEngine.SendMessage(S: string; vMessageType: TNotifyMessageType);

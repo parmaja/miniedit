@@ -127,11 +127,11 @@ type
   protected
     function GetItems(Index: Integer): TDebugBreakpointInfo; virtual; abstract;
   public
-    procedure Toggle(FileName: string; LineNo: Integer); virtual;
-    function IsExists(FileName: string; LineNo: Integer): boolean; virtual;
-    procedure Add(FileName: string; LineNo: Integer); virtual;
-    procedure Remove(FileName: string; Line: Integer); virtual; overload;
-    procedure Remove(Handle: Integer); virtual; overload;
+    procedure Toggle(FileName: string; LineNo: Integer); virtual; abstract;
+    function IsExists(FileName: string; LineNo: Integer): boolean; virtual; abstract;
+    procedure Add(FileName: string; LineNo: Integer); virtual; abstract;
+    procedure Remove(FileName: string; Line: Integer); virtual; overload; abstract;
+    procedure Remove(Handle: Integer); virtual; overload; abstract;
     property Items[Index: Integer]: TDebugBreakpointInfo read GetItems; default;
   end;
 
@@ -222,7 +222,7 @@ type
     destructor Destroy; override;
 
     procedure Start; virtual;
-    procedure Attach(SubProcess: TProcess; Resume: Boolean); virtual;
+    procedure Attach(SubProcess: TProcess); virtual;
     procedure Stop; virtual;
 
     procedure Lock; virtual;
@@ -288,33 +288,6 @@ begin
       Params := Params + #13;
     Params := Params + AParam;
   end;
-end;
-
-{ TEditorBreakPoints }
-
-procedure TEditorBreakPoints.Toggle(FileName: string; LineNo: Integer);
-begin
-
-end;
-
-function TEditorBreakPoints.IsExists(FileName: string; LineNo: Integer): boolean;
-begin
-
-end;
-
-procedure TEditorBreakPoints.Add(FileName: string; LineNo: Integer);
-begin
-
-end;
-
-procedure TEditorBreakPoints.Remove(FileName: string; Line: Integer);
-begin
-
-end;
-
-procedure TEditorBreakPoints.Remove(Handle: Integer);
-begin
-
 end;
 
 { TDebugManager }
@@ -465,9 +438,8 @@ begin
 
 end;
 
-procedure TEditorDebugger.Attach(SubProcess: TProcess; Resume: Boolean);
+procedure TEditorDebugger.Attach(SubProcess: TProcess);
 begin
-
 end;
 
 procedure TEditorDebugger.Stop;

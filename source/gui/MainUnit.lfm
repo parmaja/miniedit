@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Height = 557
   Top = 114
   Width = 882
-  ActiveControl = LogEdit
+  ActiveControl = OutputEdit
   AllowDropFiles = True
   Caption = 'Mini Edit'
   ClientHeight = 537
@@ -642,15 +642,11 @@ object MainForm: TMainForm
       Font.Quality = fqNonAntialiased
       ParentColor = False
       ParentFont = False
+      PopupMenu = MessagesPopup
       TabOrder = 5
       BorderStyle = bsNone
       Gutter.Width = 17
       Gutter.MouseActions = <      
-        item
-          ClickCount = ccAny
-          ClickDir = cdDown
-          Command = emcOnMainGutterClick
-        end      
         item
           Button = mbRight
           Command = emcContextMenu
@@ -1141,12 +1137,6 @@ object MainForm: TMainForm
           MoveCaret = True
         end      
         item
-          Button = mbMiddle
-          ClickDir = cdDown
-          Command = emcPasteSelection
-          MoveCaret = True
-        end      
-        item
           Shift = [ssCtrl]
           ShiftMask = [ssShift, ssAlt, ssCtrl]
           Command = emcMouseLink
@@ -1157,8 +1147,8 @@ object MainForm: TMainForm
           ClickDir = cdDown
           Command = emcStartDragMove
         end>
-      Options = [eoAutoIndent, eoBracketHighlight, eoGroupUndo, eoHideRightMargin, eoScrollPastEol, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces]
-      MouseOptions = [emUseMouseActions, emAltSetsColumnMode, emDragDropEditing, emRightMouseMovesCursor, emShowCtrlMouseLinks]
+      Options = [eoAutoIndent, eoBracketHighlight, eoGroupUndo, eoHideRightMargin, eoScrollPastEol, eoTrimTrailingSpaces]
+      MouseOptions = [emAltSetsColumnMode, emDragDropEditing, emRightMouseMovesCursor, emShowCtrlMouseLinks]
       VisibleSpecialChars = [vscSpace, vscTabAtLast]
       ReadOnly = True
       RightEdge = 360
@@ -1208,6 +1198,7 @@ object MainForm: TMainForm
       Font.Quality = fqNonAntialiased
       ParentColor = False
       ParentFont = False
+      PopupMenu = MessagesPopup
       TabOrder = 1
       OnDblClick = OutputEditDblClick
       BorderStyle = bsNone
@@ -1217,19 +1208,10 @@ object MainForm: TMainForm
           ClickCount = ccAny
           ClickDir = cdDown
           Command = emcOnMainGutterClick
-        end      
-        item
-          Button = mbRight
-          Command = emcContextMenu
         end>
       RightGutter.Visible = False
       RightGutter.Width = 0
       RightGutter.MouseActions = <      
-        item
-          ClickCount = ccAny
-          ClickDir = cdDown
-          Command = emcOnMainGutterClick
-        end      
         item
           Button = mbRight
           Command = emcContextMenu

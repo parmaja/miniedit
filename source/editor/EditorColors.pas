@@ -36,9 +36,9 @@ type
     BackgroundCbo: TColorBox;
     BackgroundChk: TCheckBox;
     Bevel1: TBevel;
+    CategoryCbo: TComboBox;
     ForegroundBtn: TButton;
     BackgroundBtn: TButton;
-    CategoryCbo: TComboBox;
     FontBtn: TButton;
     FontDialog: TFontDialog;
     FontLbl: TLabel;
@@ -46,7 +46,6 @@ type
     ForegroundChk: TCheckBox;
     ExampleLbl: TLabel;
     Label11: TLabel;
-    Label12: TLabel;
     LoadBtn: TButton;
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
@@ -582,7 +581,7 @@ begin
   end;
 
   aFileCategory.Apply(SampleEdit.Highlighter, FProfile.Attributes);
-
+  SampleEdit.Gutter.SeparatorPart(0).Index := SampleEdit.Gutter.Parts.Count - 1;//To make this part last one
   if SampleEdit.Highlighter <> nil then //remove Divider
     for i := 0 to SampleEdit.Highlighter.DividerDrawConfigCount - 1 do
       SampleEdit.Highlighter.DividerDrawConfig[i].MaxDrawDepth := 0;

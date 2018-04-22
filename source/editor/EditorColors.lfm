@@ -62,14 +62,6 @@ object EditorColorsForm: TEditorColorsForm
     Caption = '&Attribute:'
     ParentColor = False
   end
-  object Label12: TLabel
-    Left = 8
-    Height = 13
-    Top = 133
-    Width = 48
-    Caption = 'Examples:'
-    ParentColor = False
-  end
   object BackgroundCbo: TColorBox
     Left = 105
     Height = 22
@@ -126,17 +118,6 @@ object EditorColorsForm: TEditorColorsForm
     OnClick = BoldChkClick
     TabOrder = 7
   end
-  object CategoryCbo: TComboBox
-    Left = 105
-    Height = 21
-    Top = 131
-    Width = 191
-    Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 13
-    OnSelect = CategoryCboSelect
-    Style = csDropDownList
-    TabOrder = 8
-  end
   object FontLbl: TLabel
     Left = 13
     Height = 13
@@ -153,7 +134,7 @@ object EditorColorsForm: TEditorColorsForm
     Anchors = [akTop, akRight]
     Caption = 'Font'
     OnClick = FontBtnClick
-    TabOrder = 9
+    TabOrder = 8
   end
   object NoAntialiasingChk: TCheckBox
     Left = 340
@@ -163,7 +144,7 @@ object EditorColorsForm: TEditorColorsForm
     Anchors = [akTop, akRight]
     Caption = 'No &Antialiasing'
     OnChange = NoAntialiasingChkChange
-    TabOrder = 10
+    TabOrder = 9
   end
   object SaveBtn: TButton
     Left = 325
@@ -173,7 +154,7 @@ object EditorColorsForm: TEditorColorsForm
     Anchors = [akRight, akBottom]
     Caption = 'Save'
     OnClick = SaveBtnClick
-    TabOrder = 11
+    TabOrder = 10
   end
   object LoadBtn: TButton
     Left = 255
@@ -183,7 +164,7 @@ object EditorColorsForm: TEditorColorsForm
     Anchors = [akRight, akBottom]
     Caption = 'Load'
     OnClick = LoadBtnClick
-    TabOrder = 12
+    TabOrder = 11
   end
   object ResetBtn: TButton
     Left = 395
@@ -193,7 +174,7 @@ object EditorColorsForm: TEditorColorsForm
     Anchors = [akRight, akBottom]
     Caption = 'Reset'
     OnClick = ResetBtnClick
-    TabOrder = 13
+    TabOrder = 12
   end
   object ForegroundBtn: TButton
     Left = 367
@@ -204,7 +185,7 @@ object EditorColorsForm: TEditorColorsForm
     Caption = '...'
     OnClick = ForegroundBtnClick
     PopupMenu = ColorPopupMenu
-    TabOrder = 14
+    TabOrder = 13
   end
   object BackgroundBtn: TButton
     Left = 367
@@ -215,24 +196,24 @@ object EditorColorsForm: TEditorColorsForm
     Caption = '...'
     OnClick = BackgroundBtnClick
     PopupMenu = ColorPopupMenu
-    TabOrder = 15
+    TabOrder = 14
   end
   object PanelPnl: TPanel
     Left = 6
-    Height = 203
-    Top = 157
+    Height = 225
+    Top = 135
     Width = 459
     BevelOuter = bvLowered
     Caption = 'PanelPnl'
-    ClientHeight = 203
+    ClientHeight = 225
     ClientWidth = 459
-    TabOrder = 16
+    TabOrder = 15
     OnClick = PanelPnlClick
     inline SampleEdit: TSynEdit
-      Left = 23
-      Height = 179
-      Top = 23
-      Width = 435
+      Left = 16
+      Height = 191
+      Top = 34
+      Width = 442
       Anchors = [akTop, akLeft, akRight, akBottom]
       Font.Height = -13
       Font.Name = 'Courier New'
@@ -856,13 +837,24 @@ object EditorColorsForm: TEditorColorsForm
       end
     end
     object ExampleLbl: TLabel
-      Left = 10
+      Left = 16
       Height = 13
-      Top = 5
-      Width = 83
-      Caption = 'Example of colors'
+      Top = 10
+      Width = 136
+      Caption = 'Example of colors and codes'
       ParentColor = False
       OnClick = ExampleLblClick
+    end
+    object CategoryCbo: TComboBox
+      Left = 166
+      Height = 21
+      Top = 7
+      Width = 282
+      Anchors = [akTop, akLeft, akRight]
+      ItemHeight = 13
+      OnSelect = CategoryCboSelect
+      Style = csDropDownList
+      TabOrder = 1
     end
   end
   object FontDialog: TFontDialog
