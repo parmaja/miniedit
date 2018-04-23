@@ -28,6 +28,8 @@ http://wiki.freepascal.org/Debugging_-_GDB_tricks
 ftp://ftp.gnu.org/old-gnu/Manuals/gdb/html_node/gdb_8.html
 ftp://ftp.gnu.org/old-gnu/Manuals/gdb/html_node/gdb_211.html#SEC216
 http://dirac.org/linux/gdb/06-Debugging_A_Running_Process.php
+d:\dev\lazarus\components\lazdebuggergdbmi\gdbmidebugger.pp
+d:\dev\lazarus\components\lazdebuggergdbmi\debugutils.pp
 }
 interface
 
@@ -184,6 +186,14 @@ type
     procedure DoExecute(ARespond: TStringList); override;
   end;
 
+  { TgdbRunning }
+
+  TgdbRunning = class(TgdbAction)
+  public
+    function GetCommand: String; override;
+    procedure DoExecute(ARespond: TStringList); override;
+  end;
+
   { TmnSpoolThread }
 
   TmnSpoolThread = class(TThread)
@@ -232,6 +242,7 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure Start; override;
+    procedure Launch(vFileName: string); override;
     procedure Attach(SubProcess: TProcess); override;
     procedure Stop; override;
     procedure Next;
@@ -247,6 +258,18 @@ implementation
 
 uses
   EditorClasses;
+
+{ TgdbRunning }
+
+function TgdbRunning.GetCommand: String;
+begin
+  Result := '';
+end;
+
+procedure TgdbRunning.DoExecute(ARespond: TStringList);
+begin
+  //Collect and wait a break point here, later....
+end;
 
 { TmnSpoolThread }
 
@@ -375,7 +398,12 @@ begin
 end;
 
 procedure TgdbAction.Execute(ARespond: TStringList);
+var
+  i: Integer;
 begin
+  for i := 0 to ARespond.Count -1 do
+    OutputDebugString(PChar('[MNE]Ret:' + ARespond[i]));
+  DoExecute(ARespond);
 end;
 
 { TGDBWatchList }
@@ -650,12 +678,11 @@ function TmnSpoolThread.ReadRespond: TStringList;
       Result := MidStr(S, 2, MaxInt);
       MidStr(S, 2, MaxInt);
       if S[1] = '^' then
-        Result := Result
-      else if c = '&' then
+      else if c = '&' then //echo
         Result := DescapeStringC(DequoteStr(Result))
-      else if c = '*' then
+      else if c = '*' then //command
         Result := DescapeStringC(DequoteStr(Result))
-      else if c = '~' then
+      else if c = '~' then //info
         Result := DescapeStringC(DequoteStr(Result))
       else if c = '=' then
         Result := DescapeStringC(DequoteStr(Result))
@@ -670,12 +697,15 @@ begin
   Result := TStringList.Create;
   while ReadStream.ReadLine(S, True, #13#10) do
   begin
+    OutputDebugString(PChar('<[MNE]RAW:' + S));
     S := ParseMI(S);
     Result.Add(s);
     //Engine.SendLog(S);
-    OutputDebugString(PChar('<[MNE]' + S));
+    //OutputDebugString(PChar('<[MNE]' + S));
     if trim(s) = '(gdb)' then
+    begin
       break;
+    end;
   end;
 end;
 
@@ -694,7 +724,7 @@ begin
   if Data <> '' then
     s := s + ' ' + Data;
   //Engine.SendLog(S);
-  OutputDebugString(PChar('>[MNE]' + S));
+  //OutputDebugString(PChar('>[MNE]' + S));
   s := s + #13#10;
   Process.Input.WriteBuffer(S[1], Length(S));
 end;
@@ -750,7 +780,7 @@ begin
 
 
     FProcess.CurrentDirectory := ExtractFilePath(ParamStr(0));
-    FProcess.Options := [poUsePipes, poStderrToOutPut];
+    FProcess.Options := [poUsePipes{, poStderrToOutPut}];
     FProcess.ShowWindow := swoHIDE;
     FProcess.PipeBufferSize := 0;
 
@@ -807,31 +837,47 @@ begin
     FSpoolThread := TmnSpoolThread.Create(Self);
     FSpoolThread.FreeOnTerminate := False;
     FSpoolThread.Start;
+    AddAction(TgdbInit.Create); //read the initial prompt
     //AddAction(TgdbSet.CreateBy('prompt', '(gdb)'#13));
-    AddAction(TgdbInit.Create);
     AddAction(TgdbSet.CreateBy('language', 'pascal'));
     AddAction(TgdbSet.CreateBy('confirm', 'off'));
-    AddAction(TgdbSet.CreateBy('annotate', '3'));
-    //AddAction((TgdbSet.CreateBy('new-console', 'on'));
-    AddAction(TgdbSet.CreateBy('verbose', 'off'));
+    //AddAction(TgdbSet.CreateBy('annotate', '3'));
+    //AddAction(TgdbSet.CreateBy('verbose', 'off'));
     //AddAction(TgdbSet.CreateBy('print', 'symbol-filename off'));
     Resume;
   end;
+end;
+
+procedure TGDBDebug.Launch(vFileName: string);
+var
+  i: Integer;
+begin
+  inherited;
+  AddAction(TgdbSet.CreateBy('new-console', 'on'));
+  AddAction(TgdbCommand.CreateBy('cd', ToUnixPathDelimiter(ExtractFileDir(vFileName))));
+  AddAction(TgdbCommand.CreateBy('file', ToUnixPathDelimiter(vFileName)));
+  AddAction(TgdbCommand.CreateBy('directory', ToUnixPathDelimiter(ExtractFileDir(vFileName))));
+  for i := 0 to Breakpoints.Count - 1 do
+    AddAction(TgdbCommand.CreateBy('break', '"' + ToUnixPathDelimiter(Breakpoints[i].FileName) + '":' + IntToStr(Breakpoints[i].Line)));
+  AddAction(TgdbRun.Create);
+  AddAction(TgdbRunning.Create);
+  Resume;
 end;
 
 procedure TGDBDebug.Attach(SubProcess: TProcess);
 var
   i: Integer;
 begin
-  //TgdbSet.CreateBy('new-console', 'on');
-  AddAction(TgdbCommand.CreateBy('cd', SubProcess.CurrentDirectory));
-  AddAction(TgdbCommand.CreateBy('directory', SubProcess.CurrentDirectory));
+  AddAction(TgdbSet.CreateBy('new-console', 'on'));
+  AddAction(TgdbCommand.CreateBy('cd', ToUnixPathDelimiter(SubProcess.CurrentDirectory)));
+  AddAction(TgdbCommand.CreateBy('directory', ToUnixPathDelimiter(SubProcess.CurrentDirectory)));
   AddAction(TgdbCommand.CreateBy('attach', IntToStr(SubProcess.ProcessID)));
   Resume;
   SubProcess.Resume;
   for i := 0 to Breakpoints.Count - 1 do
     AddAction(TgdbCommand.CreateBy('break', '"' + StringReplace(Breakpoints[i].FileName, '\', '/', [rfReplaceAll]) + '":' + IntToStr(Breakpoints[i].Line)));
-  AddAction(TgdbContinue.Create);
+  AddAction(TgdbRun.Create);
+  AddAction(TgdbRunning.Create);
   Resume;
 end;
 

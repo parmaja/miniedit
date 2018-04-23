@@ -58,6 +58,7 @@ type
     //procedure CreateControl;
     procedure CreateConsole(AInfo: TmneCommandInfo);
     procedure Attach; //To Sync
+    procedure Launch; //To Sync
   public
     Info: TmneCommandInfo;
     Status: integer;
@@ -319,6 +320,15 @@ begin
   end;
 end;
 
+procedure TmneRunItem.Launch;
+begin
+  if Engine.Tendency.Debug <> nil then
+  begin
+    Engine.Tendency.Debug.Start;
+    Engine.Tendency.Debug.Launch(Info.Run.Command);
+  end;
+end;
+
 procedure TmneRunItem.WriteOutput(S: string);
 begin
   InternalString := S;
@@ -425,12 +435,13 @@ var
 begin
   if Info.StartDebug then
   begin
-    Info.Run.Command := Info.GetCommandLine;
-    Info.Run.Params := '';
-    Info.Suspended := True;
-    CreateConsole(Info);
-    FPool.Synchronize(@Attach);
+    //Info.Run.Command := Info.GetCommandLine;
+    //Info.Run.Params := '';
+    //Info.Suspended := True;
+    //CreateConsole(Info);
+    //FPool.Synchronize(@Attach);
     //Process.Resume;
+    FPool.Synchronize(@Launch);
   end
   else if Info.Run.Console then
   begin

@@ -7,26 +7,23 @@
     </SCM>
     <Desktop Class="TEditorDesktop">
       <Breakpoints Class="TmneBreakpoints">
+        <Objects>
+          <Object Type="TmneBreakpoint">
+            <FileName>M:\home\pascal\projects\miniEdit\test\test-pas.pas</FileName>
+            <LineNo>16</LineNo>
+          </Object>
+        </Objects>
       </Breakpoints>
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\home\pascal\projects\miniEdit\test\ident.php</CurrentFile>
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test-pas.pas</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test-pas.pas</FileName>
-            <CaretX>7</CaretX>
-            <CaretY>10</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\ident.php</FileName>
-            <CaretY>5</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\lina_2.d</FileName>
-            <CaretX>44</CaretX>
-            <CaretY>12</CaretY>
+            <CaretX>117</CaretX>
+            <CaretY>14</CaretY>
           </Object>
         </Items>
       </Files>

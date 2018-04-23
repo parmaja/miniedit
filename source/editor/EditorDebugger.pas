@@ -223,6 +223,7 @@ type
 
     procedure Start; virtual;
     procedure Attach(SubProcess: TProcess); virtual;
+    procedure Launch(vFileName: string); virtual;
     procedure Stop; virtual;
 
     procedure Lock; virtual;
@@ -439,6 +440,10 @@ begin
 end;
 
 procedure TEditorDebugger.Attach(SubProcess: TProcess);
+begin
+end;
+
+procedure TEditorDebugger.Launch(vFileName: string);
 begin
 end;
 
