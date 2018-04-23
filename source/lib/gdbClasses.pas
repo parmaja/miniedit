@@ -111,6 +111,38 @@ type
     function GetValue(vName: String; out vValue: Variant; out vType: String; EvalIt: Boolean): Boolean; override;
   end;
 
+  TMIRespondType = (
+      miEcho,  //&
+      miInfo,
+      miResult, //^
+      miCommand //*, =
+    );
+
+  TMICommand = record
+    Name: string;
+    Value: string;
+  end;
+
+  { TMIRespond }
+
+  TMIRespond = class(TObject)
+  private
+    FName: String;
+    FValue: String;
+  public
+    ResType: TMIRespondType;
+    property Name: String read FName write FName;
+    property Value: String read FValue write FValue;
+  end;
+
+  { TMIResponds }
+
+  TMIResponds = class(specialize TmnNamedObjectList<TMIRespond>)
+  private
+  protected
+  public
+    function Add(AName, AValue: String; AResType: TMIRespondType): Integer; overload;
+  end;
 
   { TgdbAction }
 
@@ -118,9 +150,9 @@ type
   private
   protected
     FTransactionID: Integer;
-    procedure CheckError(ARespond: TStringList);
-    procedure DoExecute(ARespond: TStringList); virtual; abstract;
-    procedure Execute(ARespond: TStringList);
+    procedure CheckError(AResponds: TMIResponds);
+    procedure DoExecute(AResponds: TMIResponds); virtual; abstract;
+    procedure Execute(AResponds: TMIResponds);
   public
   end;
 
@@ -142,7 +174,7 @@ type
     procedure Created; override;
   public
     function GetCommand: String; override;
-    procedure DoExecute(ARespond: TStringList); override;
+    procedure DoExecute(AResponds: TMIResponds); override;
   end;
 
   { TgdbSet }
@@ -151,7 +183,7 @@ type
   protected
     FName: String;
     FValue: String;
-    procedure DoExecute(ARespond: TStringList); override;
+    procedure DoExecute(AResponds: TMIResponds); override;
   public
     constructor CreateBy(vName, vValue: String);
     function GetCommand: String; override;
@@ -163,7 +195,7 @@ type
   protected
     FName: String;
     FValue: String;
-    procedure DoExecute(ARespond: TStringList); override;
+    procedure DoExecute(AResponds: TMIResponds); override;
   public
     constructor CreateBy(vName: String; vValue: String = '');
     function GetCommand: String; override;
@@ -175,7 +207,7 @@ type
   TgdbRun = class(TgdbAction)
   public
     function GetCommand: String; override;
-    procedure DoExecute(ARespond: TStringList); override;
+    procedure DoExecute(AResponds: TMIResponds); override;
   end;
 
   { TgdbContinue }
@@ -183,7 +215,7 @@ type
   TgdbContinue = class(TgdbAction)
   public
     function GetCommand: String; override;
-    procedure DoExecute(ARespond: TStringList); override;
+    procedure DoExecute(AResponds: TMIResponds); override;
   end;
 
   { TgdbRunning }
@@ -191,7 +223,7 @@ type
   TgdbRunning = class(TgdbAction)
   public
     function GetCommand: String; override;
-    procedure DoExecute(ARespond: TStringList); override;
+    procedure DoExecute(AResponds: TMIResponds); override;
   end;
 
   { TmnSpoolThread }
@@ -204,7 +236,7 @@ type
     FSpool: TgdbSpool;
     FTransactionID: Integer;
     ReadStream: TmnWrapperStream;
-    function ReadRespond: TStringList;
+    function ReadRespond: TMIResponds;
     function NewTransactionID: Integer;
     function SendCommand(Command: String; Data: String): Integer;
     function PopAction: TgdbAction;
@@ -259,6 +291,90 @@ implementation
 uses
   EditorClasses;
 
+procedure ParseMI(const S: String; out Result: String; out ResType: TMIRespondType);
+var
+  c, t: String;
+begin
+  ResType := miInfo;
+  Result := '';
+  if s <> '' then
+  begin
+    c := S[1];
+    t := MidStr(S, 2, MaxInt);
+    if S[1] = '^' then //result like ^done.  or ^error, .
+    begin
+      ResType := miResult;
+      Result := t;
+    end
+    else if c = '&' then //echo
+    begin
+      ResType := miEcho;
+      Result := DescapeStringC(DequoteStr(Result))
+    end
+    else if c = '*' then //command
+    begin
+      ResType := miCommand;
+      Result := DescapeStringC(DequoteStr(Result))
+    end
+    else if c = '~' then //info
+    begin
+      ResType := miInfo;
+      Result := DescapeStringC(DequoteStr(Result))
+    end
+    else if c = '=' then
+    begin
+      ResType := miCommand;
+      Result := DescapeStringC(DequoteStr(Result))
+    end
+    else
+    begin
+      ResType := miInfo;
+      Result := S;
+    end;
+  end;
+end;
+
+
+{
+^error,msg="No executable specified, use `target exec'."
+*stopped,reason="exited-normally"
+
+=cmd-param-changed,param="language",value="pascal"
+=cmd-param-changed,param="confirm",value="off"
+=cmd-param-changed,param="new-console",value="on"
+=breakpoint-created,bkpt={number="1",type="breakpoint",disp="keep",enabled="y",addr="0x00401639",func="main",file="test_pas.pas",fullname="M:\\home\\pascal\\projects\\miniEdit\\test\\test_pas.pas",line="16",thread-groups=["i1"],times="0",original-location="test_pas.pas:16"}
+
+*stopped,reason="breakpoint-hit",disp="keep",bkptno="1",frame={addr="0x00401639",func="main",args=[],file="test_pas.pas",fullname="M:\\home\\pascal\\projects\\miniEdit\\test\\test_pas.pas",line="16"},thread-id="1",stopped-threads="all"
+}
+
+function ParseMICommand(S: string): TMICommand;
+var
+  list: TStringList;
+begin
+  Result := Default(TMICommand);
+  OutputDebugString(PChar('[MNE]CMD:' + S));
+  list:=TStringList.Create;
+  try
+    StrToStrings(S, list, [','], [], false, ['"']);
+    Result.Name := list[0];
+    Result.Value := list[1];
+  finally
+  end;
+end;
+
+{ TMIResponds }
+
+function TMIResponds.Add(AName, AValue: String; AResType: TMIRespondType): Integer;
+var
+  aItem: TMIRespond;
+begin
+  aItem := TMIRespond.Create;
+  aItem.Name := AName;
+  aItem.Value := AValue;
+  aItem.ResType := AResType;
+  Result := inherited Add(aItem);
+end;
+
 { TgdbRunning }
 
 function TgdbRunning.GetCommand: String;
@@ -266,8 +382,21 @@ begin
   Result := '';
 end;
 
-procedure TgdbRunning.DoExecute(ARespond: TStringList);
+procedure TgdbRunning.DoExecute(AResponds: TMIResponds);
+var
+  i: Integer;
+  cmd: TMICommand;
 begin
+  for i := 0 to AResponds.Count -1 do
+  begin
+    if AResponds[i].ResType = miCommand then
+    begin
+      cmd := ParseMICommand(AResponds[i].Value);
+      if SameText(cmd.Name, 'stopped') then
+      begin
+      end;
+    end;
+  end;
   //Collect and wait a break point here, later....
 end;
 
@@ -305,13 +434,13 @@ begin
   Result := 'continue';
 end;
 
-procedure TgdbContinue.DoExecute(ARespond: TStringList);
+procedure TgdbContinue.DoExecute(AResponds: TMIResponds);
 begin
 end;
 
 { TgdbCommand }
 
-procedure TgdbCommand.DoExecute(ARespond: TStringList);
+procedure TgdbCommand.DoExecute(AResponds: TMIResponds);
 begin
 end;
 
@@ -351,13 +480,13 @@ begin
   Result := 'run';
 end;
 
-procedure TgdbRun.DoExecute(ARespond: TStringList);
+procedure TgdbRun.DoExecute(AResponds: TMIResponds);
 begin
 end;
 
 { TgdbSet }
 
-procedure TgdbSet.DoExecute(ARespond: TStringList);
+procedure TgdbSet.DoExecute(AResponds: TMIResponds);
 begin
 end;
 
@@ -387,23 +516,23 @@ begin
   Result := '';
 end;
 
-procedure TgdbInit.DoExecute(ARespond: TStringList);
+procedure TgdbInit.DoExecute(AResponds: TMIResponds);
 begin
 end;
 
 { TgdbAction }
 
-procedure TgdbAction.CheckError(ARespond: TStringList);
+procedure TgdbAction.CheckError(AResponds: TMIResponds);
 begin
 end;
 
-procedure TgdbAction.Execute(ARespond: TStringList);
-var
-  i: Integer;
+procedure TgdbAction.Execute(AResponds: TMIResponds);
+{var
+  i: Integer;}
 begin
-  for i := 0 to ARespond.Count -1 do
-    OutputDebugString(PChar('[MNE]Ret:' + ARespond[i]));
-  DoExecute(ARespond);
+  {for i := 0 to AResponds.Count -1 do
+    OutputDebugString(PChar('[MNE]Ret:' + AResponds[i].Value));}
+  DoExecute(AResponds);
 end;
 
 { TGDBWatchList }
@@ -664,42 +793,17 @@ end;
 
 { TmnSpoolThread }
 
-function TmnSpoolThread.ReadRespond: TStringList;
-
-  function ParseMI(const S: String): String;
-  var
-    c: String;
-  begin
-    if s = '' then
-      Result := ''
-    else
-    begin
-      c := S[1];
-      Result := MidStr(S, 2, MaxInt);
-      MidStr(S, 2, MaxInt);
-      if S[1] = '^' then
-      else if c = '&' then //echo
-        Result := DescapeStringC(DequoteStr(Result))
-      else if c = '*' then //command
-        Result := DescapeStringC(DequoteStr(Result))
-      else if c = '~' then //info
-        Result := DescapeStringC(DequoteStr(Result))
-      else if c = '=' then
-        Result := DescapeStringC(DequoteStr(Result))
-      else
-        Result := S;
-    end;
-  end;
-
+function TmnSpoolThread.ReadRespond: TMIResponds;
 var
   s: String;
+  ResType: TMIRespondType;
 begin
-  Result := TStringList.Create;
+  Result := TMIResponds.Create;
   while ReadStream.ReadLine(S, True, #13#10) do
   begin
     OutputDebugString(PChar('<[MNE]RAW:' + S));
-    S := ParseMI(S);
-    Result.Add(s);
+    ParseMI(S, S, ResType);
+    Result.Add('', S, ResType);
     //Engine.SendLog(S);
     //OutputDebugString(PChar('<[MNE]' + S));
     if trim(s) = '(gdb)' then
@@ -780,7 +884,7 @@ begin
 
 
     FProcess.CurrentDirectory := ExtractFilePath(ParamStr(0));
-    FProcess.Options := [poUsePipes{, poStderrToOutPut}];
+    FProcess.Options := [poUsePipes, poStderrToOutPut];
     FProcess.ShowWindow := swoHIDE;
     FProcess.PipeBufferSize := 0;
 
@@ -791,7 +895,7 @@ end;
 procedure TmnSpoolThread.DoExecute;
 var
   aAction: TgdbAction;
-  aRespond: TStringList;
+  AResponds: TMIResponds;
   aCommand: String;
   aKeep: Boolean;
 begin
@@ -808,11 +912,11 @@ begin
           aAction.FTransactionID := SendCommand(aCommand, aAction.GetData);
         if aAction.Accept and not Terminated then
         begin
-          aRespond := ReadRespond;
+          aResponds := ReadRespond;
           try
-            aAction.Execute(aRespond);
+            aAction.Execute(aResponds);
           finally
-            FreeAndNil(aRespond);
+            FreeAndNil(aResponds);
           end;
         end;
       finally
