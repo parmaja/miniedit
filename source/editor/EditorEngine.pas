@@ -3184,7 +3184,8 @@ begin
   else
   begin
     AProject.SaveToFile(AProject.FileName);
-    Engine.ProcessRecentProject(AProject.FileName);
+    if AProject.IsActive then
+      Engine.ProcessRecentProject(AProject.FileName);
     Engine.UpdateState([ecsFolder, ecsChanged, ecsState, ecsRefresh]);
     Result := True;
     FIsChanged := False;

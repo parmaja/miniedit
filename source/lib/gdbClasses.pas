@@ -1,4 +1,5 @@
 unit gdbClasses;
+
 {$mode objfpc}{$H+}
 {**
  * Mini Edit
@@ -8,7 +9,7 @@ unit gdbClasses;
  *}
 {**
 TODO show gdb log
-
+//→→M:\home\
 set prompt >>>>>>gdb:
 
 set new-console on
@@ -24,11 +25,15 @@ next
 
 
 http://wiki.freepascal.org/Debugging_-_GDB_tricks
+ftp://ftp.gnu.org/old-gnu/Manuals/gdb/html_node/gdb_8.html
+ftp://ftp.gnu.org/old-gnu/Manuals/gdb/html_node/gdb_211.html#SEC216
+http://dirac.org/linux/gdb/06-Debugging_A_Running_Process.php
 }
 interface
 
 uses
-  Classes, SysUtils, mnClasses, syncobjs, process,
+  Windows, Classes, SysUtils, StrUtils,
+  mnClasses, syncobjs, process,
   mnUtils, mnStreams, ConsoleProcess, EditorEngine, EditorDebugger;
 
 type
@@ -45,8 +50,8 @@ type
   private
   protected
   public
-    function Add(FileName: string; Line: integer): Integer; overload;
-    function IndexOf(FileName: string; LineNo: integer): Integer;
+    function Add(FileName: String; Line: Integer): Integer; overload;
+    function IndexOf(FileName: String; LineNo: Integer): Integer;
   end;
 
   { TGDBBreakPoints }
@@ -55,17 +60,17 @@ type
   protected
     FDebug: TGDBDebug;
     BreakPoints: TGDBBreakPointList;
-    function GetCount: integer; override;
-    function GetItems(Index: integer): TDebugBreakpointInfo; override;
+    function GetCount: Integer; override;
+    function GetItems(Index: Integer): TDebugBreakpointInfo; override;
   public
     constructor Create;
     destructor Destroy; override;
     procedure Clear; override;
-    procedure Toggle(FileName: string; LineNo: integer); override;
-    function IsExists(FileName: string; LineNo: integer): boolean; override;
-    procedure Add(FileName: string; LineNo: integer); override;
-    procedure Remove(FileName: string; Line: integer); override; overload;
-    procedure Remove(Handle: integer); override; overload;
+    procedure Toggle(FileName: String; LineNo: Integer); override;
+    function IsExists(FileName: String; LineNo: Integer): Boolean; override;
+    procedure Add(FileName: String; LineNo: Integer); override;
+    procedure Remove(FileName: String; Line: Integer); override; overload;
+    procedure Remove(Handle: Integer); override; overload;
   end;
 
   { TGDBWatchItem }
@@ -73,8 +78,8 @@ type
   TGDBWatchItem = class(TObject)
   public
     Info: TDebugWatchInfo;
-    property Name: string read Info.Name write Info.Name;
-    property VarType: string read Info.VarType write Info.VarType;
+    property Name: String read Info.Name write Info.Name;
+    property VarType: String read Info.VarType write Info.VarType;
     property Value: Variant read Info.Value write Info.Value;
   end;
 
@@ -84,7 +89,7 @@ type
   private
   protected
   public
-    function Add(Name: string; VarType: string): Integer; overload;
+    function Add(Name: String; VarType: String): Integer; overload;
   end;
 
   { TGDBWatches }
@@ -93,15 +98,15 @@ type
   protected
     FDebug: TGDBDebug;
     Watches: TGDBWatchList;
-    function GetCount: integer; override;
-    function GetItems(Index: integer): TDebugWatchInfo; override;
+    function GetCount: Integer; override;
+    function GetItems(Index: Integer): TDebugWatchInfo; override;
   public
     constructor Create;
     destructor Destroy; override;
     procedure Clear; override;
-    procedure Add(vName: string); override;
-    procedure Remove(vName: string); override;
-    function GetValue(vName: string; out vValue: Variant; out vType: string; EvalIt: Boolean): boolean; override;
+    procedure Add(vName: String); override;
+    procedure Remove(vName: String); override;
+    function GetValue(vName: String; out vValue: Variant; out vType: String; EvalIt: Boolean): Boolean; override;
   end;
 
 
@@ -110,7 +115,7 @@ type
   TgdbAction = class(TDebugCommand)
   private
   protected
-    FTransactionID: integer;
+    FTransactionID: Integer;
     procedure CheckError(ARespond: TStringList);
     procedure DoExecute(ARespond: TStringList); virtual; abstract;
     procedure Execute(ARespond: TStringList);
@@ -134,40 +139,40 @@ type
   protected
     procedure Created; override;
   public
-    function GetCommand: string; override;
+    function GetCommand: String; override;
     procedure DoExecute(ARespond: TStringList); override;
   end;
 
-  { TgdbFeatureSet }
+  { TgdbSet }
 
-  TgdbFeatureSet = class(TgdbAction)
+  TgdbSet = class(TgdbAction)
   protected
-    FName: string;
-    FValue: string;
+    FName: String;
+    FValue: String;
     procedure DoExecute(ARespond: TStringList); override;
   public
-    constructor CreateBy(vName, vValue: string);
-    function GetCommand: string; override;
+    constructor CreateBy(vName, vValue: String);
+    function GetCommand: String; override;
   end;
 
-  { TgdbCommandSet }
+  { TgdbCommand }
 
   TgdbCommand = class(TgdbAction)
   protected
-    FName: string;
-    FValue: string;
+    FName: String;
+    FValue: String;
     procedure DoExecute(ARespond: TStringList); override;
   public
-    constructor CreateBy(vName: string; vValue: string = '');
-    function GetCommand: string; override;
-    function GetData: string; override;
+    constructor CreateBy(vName: String; vValue: String = '');
+    function GetCommand: String; override;
+    function GetData: String; override;
   end;
 
   { TgdbRun }
 
   TgdbRun = class(TgdbAction)
   public
-    function GetCommand: string; override;
+    function GetCommand: String; override;
     procedure DoExecute(ARespond: TStringList); override;
   end;
 
@@ -175,7 +180,7 @@ type
 
   TgdbContinue = class(TgdbAction)
   public
-    function GetCommand: string; override;
+    function GetCommand: String; override;
     procedure DoExecute(ARespond: TStringList); override;
   end;
 
@@ -187,11 +192,11 @@ type
     FDebug: TGDBDebug;
     FProcess: TProcess;
     FSpool: TgdbSpool;
-    FTransactionID: integer;
+    FTransactionID: Integer;
     ReadStream: TmnWrapperStream;
     function ReadRespond: TStringList;
-    function NewTransactionID: integer;
-    function SendCommand(Command: string; Data: string): integer;
+    function NewTransactionID: Integer;
+    function SendCommand(Command: String; Data: String): Integer;
     function PopAction: TgdbAction;
     procedure CreateProcess;
     procedure DoExecute;
@@ -234,7 +239,7 @@ type
     procedure Step;
     function GetState: TDebugStates; override;
     procedure Action(AAction: TDebugAction); override;
-    function GetKey: string; override;
+    function GetKey: String; override;
     property RunCount: Integer read FRunCount; //count of waiting action
   end;
 
@@ -272,7 +277,7 @@ end;
 
 { TgdbContinue }
 
-function TgdbContinue.GetCommand: string;
+function TgdbContinue.GetCommand: String;
 begin
   Result := 'continue';
 end;
@@ -287,19 +292,19 @@ procedure TgdbCommand.DoExecute(ARespond: TStringList);
 begin
 end;
 
-constructor TgdbCommand.CreateBy(vName, vValue: string);
+constructor TgdbCommand.CreateBy(vName, vValue: String);
 begin
   Create;
   FName := vName;
-  FValue:= vValue;
+  FValue := vValue;
 end;
 
-function TgdbCommand.GetCommand: string;
+function TgdbCommand.GetCommand: String;
 begin
-  Result :=  FName;
+  Result := FName;
 end;
 
-function TgdbCommand.GetData: string;
+function TgdbCommand.GetData: String;
 begin
   Result := FValue;
 end;
@@ -318,7 +323,7 @@ end;
 
 { TgdbRun }
 
-function TgdbRun.GetCommand: string;
+function TgdbRun.GetCommand: String;
 begin
   Result := 'run';
 end;
@@ -327,23 +332,23 @@ procedure TgdbRun.DoExecute(ARespond: TStringList);
 begin
 end;
 
-{ TgdbFeatureSet }
+{ TgdbSet }
 
-procedure TgdbFeatureSet.DoExecute(ARespond: TStringList);
+procedure TgdbSet.DoExecute(ARespond: TStringList);
 begin
 end;
 
-constructor TgdbFeatureSet.CreateBy(vName, vValue: string);
+constructor TgdbSet.CreateBy(vName, vValue: String);
 begin
   Create;
   FName := vName;
-  FValue:= vValue;
+  FValue := vValue;
 end;
 
-function TgdbFeatureSet.GetCommand: string;
+function TgdbSet.GetCommand: String;
 begin
   // 'set prompt gdb:';
-  Result := 'set ' + FName + ' '+ FValue;
+  Result := 'set ' + FName + ' ' + FValue;
 end;
 
 { TgdbInit }
@@ -354,7 +359,7 @@ begin
   Flags := Flags - [dafSend];
 end;
 
-function TgdbInit.GetCommand: string;
+function TgdbInit.GetCommand: String;
 begin
   Result := '';
 end;
@@ -370,17 +375,12 @@ begin
 end;
 
 procedure TgdbAction.Execute(ARespond: TStringList);
-{var
-  i: Integer;}
 begin
-  //for i := 0 to ARespond.Count - 1 do
-    //Engine.SendLog(ARespond[i]);
-  //DoExecute(ARespond);
 end;
 
 { TGDBWatchList }
 
-function TGDBWatchList.Add(Name: string; VarType: string): Integer;
+function TGDBWatchList.Add(Name: String; VarType: String): Integer;
 var
   aItem: TGDBWatchItem;
 begin
@@ -392,7 +392,7 @@ end;
 
 { TGDBBreakPointList }
 
-function TGDBBreakPointList.Add(FileName: string; Line: integer): Integer;
+function TGDBBreakPointList.Add(FileName: String; Line: Integer): Integer;
 var
   aItem: TGDBBreakPointItem;
 begin
@@ -402,9 +402,9 @@ begin
   Result := inherited Add(aItem);
 end;
 
-function TGDBBreakPointList.IndexOf(FileName: string; LineNo: integer): Integer;
+function TGDBBreakPointList.IndexOf(FileName: String; LineNo: Integer): Integer;
 var
-  i: integer;
+  i: Integer;
 begin
   Result := -1;
   if FileName <> '' then
@@ -420,12 +420,12 @@ end;
 
 { TGDBWatches }
 
-function TGDBWatches.GetCount: integer;
+function TGDBWatches.GetCount: Integer;
 begin
   Result := Watches.Count;
 end;
 
-function TGDBWatches.GetItems(Index: integer): TDebugWatchInfo;
+function TGDBWatches.GetItems(Index: Integer): TDebugWatchInfo;
 begin
   Result := Watches.Items[Index].Info;
 end;
@@ -447,12 +447,12 @@ begin
   Watches.Clear;
 end;
 
-procedure TGDBWatches.Add(vName: string);
+procedure TGDBWatches.Add(vName: String);
 begin
   Watches.Add(vName, '');
 end;
 
-procedure TGDBWatches.Remove(vName: string);
+procedure TGDBWatches.Remove(vName: String);
 var
   i: Integer;
 begin
@@ -461,7 +461,7 @@ begin
     Watches.Delete(i);
 end;
 
-function TGDBWatches.GetValue(vName: string; out vValue: Variant; out vType: string; EvalIt: Boolean): boolean;
+function TGDBWatches.GetValue(vName: String; out vValue: Variant; out vType: String; EvalIt: Boolean): Boolean;
 var
   aItem: TGDBWatchItem;
 begin
@@ -482,12 +482,12 @@ end;
 
 { TGDBBreakPoints }
 
-function TGDBBreakPoints.GetCount: integer;
+function TGDBBreakPoints.GetCount: Integer;
 begin
   Result := BreakPoints.Count;
 end;
 
-function TGDBBreakPoints.GetItems(Index: integer): TDebugBreakpointInfo;
+function TGDBBreakPoints.GetItems(Index: Integer): TDebugBreakpointInfo;
 begin
   Result := BreakPoints[Index].Info;
 end;
@@ -509,7 +509,7 @@ begin
   BreakPoints.Clear;
 end;
 
-procedure TGDBBreakPoints.Toggle(FileName: string; LineNo: integer);
+procedure TGDBBreakPoints.Toggle(FileName: String; LineNo: Integer);
 var
   i: Integer;
 begin
@@ -520,19 +520,19 @@ begin
     BreakPoints.Add(FileName, LineNo);
 end;
 
-function TGDBBreakPoints.IsExists(FileName: string; LineNo: integer): boolean;
+function TGDBBreakPoints.IsExists(FileName: String; LineNo: Integer): Boolean;
 begin
   Result := BreakPoints.IndexOf(FileName, LineNo) >= 0;
 end;
 
-procedure TGDBBreakPoints.Add(FileName: string; LineNo: integer);
+procedure TGDBBreakPoints.Add(FileName: String; LineNo: Integer);
 begin
   if IsExists(FileName, LineNo) then
     raise Exception.Create('Breakpoint Already exists');
   BreakPoints.Add(FileName, LineNo);
 end;
 
-procedure TGDBBreakPoints.Remove(FileName: string; Line: integer);
+procedure TGDBBreakPoints.Remove(FileName: String; Line: Integer);
 var
   i: Integer;
 begin
@@ -541,7 +541,7 @@ begin
     BreakPoints.Delete(i);
 end;
 
-procedure TGDBBreakPoints.Remove(Handle: integer);
+procedure TGDBBreakPoints.Remove(Handle: Integer);
 var
   i, f: Integer;
 begin
@@ -555,7 +555,7 @@ begin
     end;
   end;
   if f >= 0 then
-    BreakPoints.Delete(i)
+    BreakPoints.Delete(i);
 end;
 
 { TGDBDebug }
@@ -637,35 +637,64 @@ end;
 { TmnSpoolThread }
 
 function TmnSpoolThread.ReadRespond: TStringList;
+
+  function ParseMI(const S: String): String;
+  var
+    c: String;
+  begin
+    if s = '' then
+      Result := ''
+    else
+    begin
+      c := S[1];
+      Result := MidStr(S, 2, MaxInt);
+      MidStr(S, 2, MaxInt);
+      if S[1] = '^' then
+        Result := Result
+      else if c = '&' then
+        Result := DescapeStringC(DequoteStr(Result))
+      else if c = '*' then
+        Result := DescapeStringC(DequoteStr(Result))
+      else if c = '~' then
+        Result := DescapeStringC(DequoteStr(Result))
+      else if c = '=' then
+        Result := DescapeStringC(DequoteStr(Result))
+      else
+        Result := S;
+    end;
+  end;
+
 var
-  s: string;
+  s: String;
 begin
   Result := TStringList.Create;
-  while ReadStream.ReadLine(S, true, #13#10) do
+  while ReadStream.ReadLine(S, True, #13#10) do
   begin
-    S := DescapeStringC(S);
+    S := ParseMI(S);
     Result.Add(s);
-    Engine.SendLog(S);
+    //Engine.SendLog(S);
+    OutputDebugString(PChar('<[MNE]' + S));
     if trim(s) = '(gdb)' then
       break;
   end;
 end;
 
-function TmnSpoolThread.NewTransactionID: integer;
+function TmnSpoolThread.NewTransactionID: Integer;
 begin
   Inc(FTransactionID);
   Result := FTransactionID;
 end;
 
-function TmnSpoolThread.SendCommand(Command: string; Data: string): integer;
+function TmnSpoolThread.SendCommand(Command: String; Data: String): Integer;
 var
-  s: string;
+  s: String;
 begin
   Result := NewTransactionID;
   s := Command;
   if Data <> '' then
     s := s + ' ' + Data;
-  Engine.SendLog(S);
+  //Engine.SendLog(S);
+  OutputDebugString(PChar('>[MNE]' + S));
   s := s + #13#10;
   Process.Input.WriteBuffer(S[1], Length(S));
 end;
@@ -713,15 +742,15 @@ begin
     FProcess.Parameters.Add('-q');//"Quiet". Do not print the introductory and copyright messages.
     FProcess.Parameters.Add('-n');//Do not execute commands found in any initialization files.
     FProcess.Parameters.Add('-f');//Full name GDB output the full file name and line number in a standard.
-    //FProcess.Parameters.Add('-annotate 1');
     FProcess.Parameters.Add('--interpreter=mi2');//GDB/MI
+    //FProcess.Parameters.Add('-annotate 1');
     //-nw not work with mi
     //FProcess.Parameters.Add('-nw');//"No windows".
     //FProcess.Parameters.Add('-noasync');//Disable the asynchronous event loop for the command-line interface.
 
 
     FProcess.CurrentDirectory := ExtractFilePath(ParamStr(0));
-    FProcess.Options :=  [poUsePipes, poStderrToOutPut];
+    FProcess.Options := [poUsePipes, poStderrToOutPut];
     FProcess.ShowWindow := swoHIDE;
     FProcess.PipeBufferSize := 0;
 
@@ -733,7 +762,7 @@ procedure TmnSpoolThread.DoExecute;
 var
   aAction: TgdbAction;
   aRespond: TStringList;
-  aCommand: string;
+  aCommand: String;
   aKeep: Boolean;
 begin
   ReadStream := TmnWrapperStream.Create(Process.Output, False);
@@ -778,12 +807,14 @@ begin
     FSpoolThread := TmnSpoolThread.Create(Self);
     FSpoolThread.FreeOnTerminate := False;
     FSpoolThread.Start;
-    //AddAction(TgdbFeatureSet.CreateBy('prompt', '(gdb)'#13));
+    //AddAction(TgdbSet.CreateBy('prompt', '(gdb)'#13));
     AddAction(TgdbInit.Create);
-    AddAction(TgdbFeatureSet.CreateBy('language', 'pascal'));
-    AddAction(TgdbFeatureSet.CreateBy('confirm', 'off'));
-    //AddAction((TgdbFeatureSet.CreateBy('new-console', 'on'));
-    //AddAction(TgdbFeatureSet.CreateBy('verbose', 'off'));
+    AddAction(TgdbSet.CreateBy('language', 'pascal'));
+    AddAction(TgdbSet.CreateBy('confirm', 'off'));
+    AddAction(TgdbSet.CreateBy('annotate', '3'));
+    //AddAction((TgdbSet.CreateBy('new-console', 'on'));
+    AddAction(TgdbSet.CreateBy('verbose', 'off'));
+    //AddAction(TgdbSet.CreateBy('print', 'symbol-filename off'));
     Resume;
   end;
 end;
@@ -792,13 +823,15 @@ procedure TGDBDebug.Attach(SubProcess: TProcess);
 var
   i: Integer;
 begin
-  //TgdbFeatureSet.CreateBy('new-console', 'on');
+  //TgdbSet.CreateBy('new-console', 'on');
   AddAction(TgdbCommand.CreateBy('cd', SubProcess.CurrentDirectory));
-  AddAction(TgdbCommand.CreateBy('attach', IntToStr(SubProcess.ProcessID)));
   AddAction(TgdbCommand.CreateBy('directory', SubProcess.CurrentDirectory));
+  AddAction(TgdbCommand.CreateBy('attach', IntToStr(SubProcess.ProcessID)));
+  Resume;
+  SubProcess.Resume;
   for i := 0 to Breakpoints.Count - 1 do
     AddAction(TgdbCommand.CreateBy('break', '"' + StringReplace(Breakpoints[i].FileName, '\', '/', [rfReplaceAll]) + '":' + IntToStr(Breakpoints[i].Line)));
-  AddAction(TgdbRun.Create);
+  AddAction(TgdbContinue.Create);
   Resume;
 end;
 
@@ -847,13 +880,13 @@ procedure TGDBDebug.Action(AAction: TDebugAction);
 begin
   case AAction of
     dbaActivate:
-        FActive := True;
-        //Start;
+      FActive := True;
+    //Start;
     dbaDeactivate:
-        begin
-          Stop;
-          FActive := False;
-        end;
+    begin
+      Stop;
+      FActive := False;
+    end;
     dbaReset:
       Stop;
     dbaRun:
@@ -865,10 +898,9 @@ begin
   end;
 end;
 
-function TGDBDebug.GetKey: string;
+function TGDBDebug.GetKey: String;
 begin
   Result := 'GDB'; //Return version of debugger
 end;
-//→→M:\home\
+
 end.
-                                                 

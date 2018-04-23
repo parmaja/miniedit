@@ -430,7 +430,7 @@ begin
     Info.Suspended := True;
     CreateConsole(Info);
     FPool.Synchronize(@Attach);
-    Process.Resume;
+    //Process.Resume;
   end
   else if Info.Run.Console then
   begin
