@@ -636,15 +636,15 @@ type
     function GetItems(Index: integer): TEditorFile;
     function GetCurrent: TEditorFile;
     procedure SetCurrent(const Value: TEditorFile);
-    function InternalOpenFile(FileName: string; AppendToRecent: Boolean): TEditorFile;
   protected
-    function CreateEditorFile(vExtension: string): TEditorFile;
-
     function SetActiveFile(FileName: string): TEditorFile;
   public
     destructor Destroy; override;
     function FindFile(const vFileName: string): TEditorFile;
     function IsExist(vName: string): Boolean;
+
+    function InternalOpenFile(FileName: string; AppendToRecent: Boolean): TEditorFile;
+    function CreateEditorFile(vExtension: string): TEditorFile;
     function LoadFile(vFileName: string; AppendToRecent: Boolean = True): TEditorFile;
     function ShowFile(vFileName: string): TEditorFile; overload; //open it without add to recent, for debuging
     function ShowFile(const FileName: string; Line: integer): TEditorFile; overload;
@@ -652,12 +652,15 @@ type
     procedure SetCurrentIndex(Index: integer; vRefresh: Boolean);
     function New(vGroup: TFileGroup = nil): TEditorFile; overload;
     function New(Name: string; Control: TWinControl): TEditorFile; overload;
+
+
     procedure Open;
     procedure Save;
     procedure SaveAll;
     procedure ReloadAll;
     procedure CheckAll;
     procedure SaveAs;
+
     procedure Revert;
     procedure Refresh;
     procedure Next;
@@ -973,6 +976,7 @@ type
   private
     FIsChanged: Boolean;
     FOptions: TEditorSessionOptions;
+    FPanel: TControl;
     FProject: TEditorProject;
     FRun: TmneRun;
     FCachedIdentifiers: THashedStringList;
@@ -980,6 +984,7 @@ type
     FCachedAge: QWord;
     function GetActive: Boolean;
     function GetMainFolder: string;
+    procedure SetPanel(AValue: TControl);
     procedure SetProject(const Value: TEditorProject);
     procedure SetInternalProject(const Value: TEditorProject);
     procedure SetRun(AValue: TmneRun);
@@ -1000,6 +1005,7 @@ type
     property Active: Boolean read GetActive;
     //Current is the opened project, if it is a nil that mean there is no opened project.
     property Project: TEditorProject read FProject write SetProject;
+    property Panel: TControl read FPanel write SetPanel;
     //Session Options is depend on the system used not shared between OSs
     property Options: TEditorSessionOptions read FOptions;
     property MainFolder: string read GetMainFolder;
@@ -1055,7 +1061,8 @@ type
     FUpdateState: TEditorChangeStates;
     FUpdateCount: integer;
     FFiles: TEditorFiles;
-    FContainer: TWinControl;
+    FFilePanel: TWinControl;
+    FProjectPanel: TWinControl;
     FOptions: TEditorOptions;
     FSearchEngine: TSynEditSearch;
     FCategories: TFileCategories;
@@ -1135,8 +1142,9 @@ type
     property Session: TEditorSession read FSession;
     property Options: TEditorOptions read FOptions;
     property MessagesList: TEditorMessagesList read FMessagesList;
-    //Container is a panel or any wincontrol that the editor SynEdit put on it
-    property Container: TWinControl read FContainer write FContainer;
+    //FilePanel is a panel or any wincontrol that the editor SynEdit put on it
+    property FilePanel: TWinControl read FFilePanel write FFilePanel;
+    property ProjectPanel: TWinControl read FProjectPanel write FProjectPanel;
     //BrowseFolder: Current folder
     property BrowseFolder: string read FBrowseFolder write SetBrowseFolder;
     property DebugLink: TEditorDebugLink read FDebugLink;
@@ -1529,7 +1537,7 @@ begin
       FControl.Free;
     FControl := AValue;
     FControl.Align := alClient;
-    FControl.Parent := Engine.Container;
+    FControl.Parent := Engine.FilePanel;
     //FControl.Visible := True;
   end;
 end;
@@ -1864,7 +1872,7 @@ begin
   inherited;
   { There is more assigns in TEditorFile.SetGroup and TEditorProfile.Assign}
   FHighlightLine := -1;
-  FSynEdit := TSynEdit.Create(Engine.Container);
+  FSynEdit := TSynEdit.Create(Engine.FilePanel);
   FSynEdit.OnChange := @DoEdit;
   FSynEdit.OnStatusChange := @DoStatusChange;
   FSynEdit.OnGutterClick := @DoGutterClickEvent;
@@ -1874,14 +1882,14 @@ begin
   FSynEdit.OnKeyDown := @SynEditKeyDown;
 
   FSynEdit.TrimSpaceType := settLeaveLine;
-  FSynEdit.BoundsRect := Engine.Container.ClientRect;
+  FSynEdit.BoundsRect := Engine.FilePanel.ClientRect;
   FSynEdit.Font.Quality := fqDefault;
   FSynEdit.BorderStyle := bsNone;
   FSynEdit.ShowHint := True;
   FSynEdit.Visible := False;
   FSynEdit.WantTabs := True;
 
-  FSynEdit.Parent := Engine.Container;
+  FSynEdit.Parent := Engine.FilePanel;
   with FSynEdit.Keystrokes.Add do
   begin
     Key       := VK_DELETE;
@@ -4172,7 +4180,7 @@ begin
     if aControl = nil then
       aControl := Control as TWinControl;
 
-    (Engine.Container.Owner as TCustomForm).ActiveControl := aControl;
+    (Engine.FilePanel.Owner as TCustomForm).ActiveControl := aControl;
   end;
 end;
 
@@ -4932,6 +4940,14 @@ begin
   end
   else
     Result := Project.Path;
+end;
+
+procedure TEditorSession.SetPanel(AValue: TControl);
+begin
+  if FPanel <> AValue then
+  begin
+    FPanel :=AValue;
+  end;
 end;
 
 function TEditorProject.GetPath: string;

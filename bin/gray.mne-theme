@@ -20,7 +20,7 @@
     </Selected>
     <Highlighted Class="TGlobalAttribute">
       <BackColor>clWhite</BackColor>
-      <ForeColor>clRed</ForeColor>
+      <ForeColor>6447833</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Highlighted>
     <Active Class="TGlobalAttribute">
@@ -33,7 +33,7 @@
     </Gutter>
     <Separator Class="TGlobalAttribute">
       <BackColor>3552822</BackColor>
-      <ForeColor>clBlack</ForeColor>
+      <ForeColor>3552822</ForeColor>
     </Separator>
     <Modified Class="TGlobalAttribute">
       <BackColor>clGreen</BackColor>
@@ -96,8 +96,8 @@
     </Text>
     <EmbedText Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>clWhite</ForeColor>
-      <Options>gaoDefaultBackground,gaoDefaultForeground</Options>
+      <ForeColor>5163369</ForeColor>
+      <Options>gaoDefaultBackground</Options>
     </EmbedText>
     <Comment Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
@@ -106,7 +106,7 @@
     </Comment>
     <QuotedString Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>1491229</ForeColor>
+      <ForeColor>5163369</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </QuotedString>
     <FontName>Consolas</FontName>

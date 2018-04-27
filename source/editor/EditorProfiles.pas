@@ -670,6 +670,7 @@ begin
       cf.Visible := CodeFolding and ((SynGutter.SynEdit as TSynEdit).Highlighter <> nil) and (hcCodeFolding in (SynGutter.SynEdit as TSynEdit).Highlighter.Capabilities);
       if (cf.Visible) and (cf.Visible <> OldCF) then
         (SynGutter.SynEdit as TSynEdit).UnfoldAll;
+      cf.MarkupInfo.Foreground := Keyword.Foreground;
     end;
 
     SynGutter.LeftOffset := GutterLeftOffset;

@@ -72,7 +72,7 @@ begin
   if FContents = nil then
   begin
     FContents := TConsoleForm.Create(nil);
-    FContents.Parent := Engine.Container;
+    FContents.Parent := Engine.FilePanel;
     FContents.Align := alClient;
     FContents.OnChanged := @DoEdit;
   end;

@@ -51,8 +51,8 @@ function TBoardFile.GetContents: TBoardForm;
 begin
   if FContents = nil then
   begin
-    FContents := TBoardForm.Create(Engine.Container);
-    FContents.Parent := Engine.Container;
+    FContents := TBoardForm.Create(Engine.FilePanel);
+    FContents.Parent := Engine.FilePanel;
     FContents.Align := alClient;
   end;
   Result := FContents;

@@ -118,7 +118,7 @@ object MainForm: TMainForm
       end
     end
   end
-  object BrowserPnl: TPanel
+  object ProjectPnl: TPanel
     Left = 0
     Height = 351
     Top = 29
@@ -1762,7 +1762,7 @@ object MainForm: TMainForm
     Height = 351
     Top = 29
     Width = 12
-    ResizeControl = BrowserPnl
+    ResizeControl = ProjectPnl
   end
   object MainMenu: TMainMenu
     Images = EditorResource.ToolbarImageList

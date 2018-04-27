@@ -26,8 +26,8 @@
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test_pas.pas</FileName>
-            <CaretX>53</CaretX>
-            <CaretY>5</CaretY>
+            <CaretX>43</CaretX>
+            <CaretY>12</CaretY>
           </Object>
         </Items>
       </Files>

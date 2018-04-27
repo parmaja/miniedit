@@ -2,34 +2,35 @@
 <rtti version="1.0" author="MiniXML">
   <Object Type="TGlobalAttributes">
     <Default Class="TGlobalAttribute">
-      <BackColor>2758927</BackColor>
+      <BackColor>clBlack</BackColor>
       <ForeColor>clWhite</ForeColor>
     </Default>
     <Link Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
       <ForeColor>clWhite</ForeColor>
-      <Style>fsUnderline</Style>
       <Options>gaoDefaultBackground,gaoDefaultForeground</Options>
     </Link>
     <Panel Class="TGlobalAttribute">
-      <BackColor>5651497</BackColor>
+      <BackColor>3815994</BackColor>
       <ForeColor>clWhite</ForeColor>
     </Panel>
     <Selected Class="TGlobalAttribute">
       <BackColor>13280646</BackColor>
       <ForeColor>clBlack</ForeColor>
     </Selected>
+    <Highlighted Class="TGlobalAttribute">
+    </Highlighted>
     <Active Class="TGlobalAttribute">
       <BackColor>7691082</BackColor>
       <ForeColor>clBlack</ForeColor>
     </Active>
     <Gutter Class="TGlobalAttribute">
-      <BackColor>3548703</BackColor>
+      <BackColor>3158064</BackColor>
       <ForeColor>clWhite</ForeColor>
     </Gutter>
     <Separator Class="TGlobalAttribute">
-      <BackColor>4934475</BackColor>
-      <ForeColor>8871997</ForeColor>
+      <BackColor>clBlack</BackColor>
+      <ForeColor>3158064</ForeColor>
     </Separator>
     <Modified Class="TGlobalAttribute">
       <BackColor>clGreen</BackColor>
@@ -47,13 +48,12 @@
     </Symbol>
     <Number Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>1040362</ForeColor>
+      <ForeColor>2358519</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Number>
     <Directive Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
       <ForeColor>4276694</ForeColor>
-      <Style>fsBold</Style>
       <Options>gaoDefaultBackground</Options>
     </Directive>
     <Identifier Class="TGlobalAttribute">
@@ -64,7 +64,6 @@
     <Variable Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
       <ForeColor>clSkyBlue</ForeColor>
-      <Style>fsBold</Style>
       <Options>gaoDefaultBackground</Options>
     </Variable>
     <Standard Class="TGlobalAttribute">
@@ -72,11 +71,6 @@
       <ForeColor>4107007</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Standard>
-    <Value Class="TGlobalAttribute">
-      <BackColor>2758927</BackColor>
-      <ForeColor>1491229</ForeColor>
-      <Options>gaoDefaultBackground</Options>
-    </Value>
     <DataType Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
       <ForeColor>3111647</ForeColor>
@@ -99,8 +93,8 @@
     </Text>
     <EmbedText Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>clWhite</ForeColor>
-      <Options>gaoDefaultBackground,gaoDefaultForeground</Options>
+      <ForeColor>4760672</ForeColor>
+      <Options>gaoDefaultBackground</Options>
     </EmbedText>
     <Comment Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
@@ -115,5 +109,6 @@
     <FontName>Consolas</FontName>
     <FontSize>12</FontSize>
     <FontNoAntialiasing>False</FontNoAntialiasing>
+    <CodeFolding>True</CodeFolding>
   </Object>
 </rtti>

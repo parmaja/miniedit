@@ -251,7 +251,7 @@ type
     UnixMnu: TMenuItem;
     WindowsMnu: TMenuItem;
     MacMnu: TMenuItem;
-    BrowserPnl: TPanel;
+    ProjectPnl: TPanel;
     BrowserHeaderPanel: TPanel;
     ManageAct: TAction;
     Manage1: TMenuItem;
@@ -612,7 +612,7 @@ end;
 procedure TMainForm.UpdateFoldersPnl;
 begin
   FoldersSpl.Visible := FoldersAct.Checked;
-  BrowserPnl.Visible := FoldersAct.Checked;
+  ProjectPnl.Visible := FoldersAct.Checked;
   if FoldersAct.Checked then
     UpdateFolder;
 end;
@@ -1653,7 +1653,8 @@ begin
   FOutputs := TOutputs.Create;
   FMenuItemsList := TObjectList.Create(True);
 
-  Engine.Container := EditorsPnl;
+  Engine.FilePanel := EditorsPnl;
+  Engine.ProjectPanel := ProjectPnl;
 
   Engine.SetNotifyEngine(Self);
 
@@ -1663,7 +1664,7 @@ begin
   SortFolderFiles := Engine.Options.SortFolderFiles;
   FoldersAct.Checked := Engine.Options.ShowFolder;
   MessagesAct.Checked := Engine.Options.ShowMessages;
-  BrowserPnl.Width := Engine.Options.FoldersWidth;
+  ProjectPnl.Width := Engine.Options.FoldersWidth;
   //MessagesTabs.Height := Engine.Options.MessagesHeight;
   with MessagesTabs, BoundsRect do
     BoundsRect := Rect(Left, Bottom - Engine.Options.MessagesHeight, Right, Bottom);
@@ -1731,7 +1732,7 @@ begin
   Engine.Options.SortFolderFiles := SortFolderFiles;
   Engine.Options.ShowMessages := MessagesAct.Checked;
   Engine.Options.MessagesHeight := MessagesTabs.Height;
-  Engine.Options.FoldersWidth := BrowserPnl.Width;
+  Engine.Options.FoldersWidth := ProjectPnl.Width;
   if Engine.Session.Active then
     Engine.Options.LastProject := Engine.Session.Project.FileName
   else
@@ -1890,10 +1891,10 @@ begin
       Engine.Session.Project.Options.CreateProjectPanel(Self, Engine.Session.Project, FProjectFrame);
       if FProjectFrame <> nil then
       begin
-        FProjectFrame.Parent := BrowserPnl;
+        FProjectFrame.Parent := ProjectPnl;
         FProjectFrame.Align := alClient;
         FProjectFrame.Visible := False;
-        FProjectFrame.Color := BrowserPnl.Color;
+        FProjectFrame.Color := ProjectPnl.Color;
         if Supports(FProjectFrame, IEditorOptions) then
           (FProjectFrame as IEditorOptions).Retrieve;
       end;
@@ -2629,8 +2630,8 @@ begin
   BrowserTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
   BrowserTabs.NormalColor := MixColors(OppositeColor(BrowserTabs.ActiveColor), BrowserTabs.ActiveColor, 50);
 
-  BrowserPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
-  BrowserPnl.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
+  ProjectPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
+  ProjectPnl.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
 
   ClientPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
   ClientPnl.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;

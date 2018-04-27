@@ -78,8 +78,8 @@ function TImageFile.GetContents: TImagePanel;
 begin
   if FContents = nil then
   begin
-    FContents := TImagePanel.Create(Engine.Container);
-    FContents.Parent := Engine.Container;
+    FContents := TImagePanel.Create(Engine.FilePanel);
+    FContents.Parent := Engine.FilePanel;
     FContents.Align := alClient;
   end;
   Result := FContents;

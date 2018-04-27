@@ -6,11 +6,11 @@ var
   s: string;
   x: integer;
 begin
-  x:=10;
+  x := 10;
   writeln(x);
-  x:=x+10;
+  x:=x + 10;
   writeln(x);
-  s:='Hi World';
+  s := 'Hi World';
   writeln(s);
   writeln('Bye');
   writeln('Press Enter to exit');
