@@ -21,7 +21,9 @@ if you are editing multiple files, e.g. Python, PHP it can run this files into c
  * [TODO] GDB debugging 
  * Until now it is very Fast and very small
  * Tortoise SVN/GIT integrated in Windows, [TODO] RabbitVCS in Linux
- * Works in Windows and Linux 
+ * Works in Windows and Linux
+ * Compile and run Pascal, D, Go, Cpp (cpp todo not yet)
+ * Run PHP, CMD, SH, BAT, Lua, Py
  
 ### Disadvantages
   

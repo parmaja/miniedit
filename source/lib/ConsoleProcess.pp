@@ -85,7 +85,7 @@ begin
   begin
     try
       aWrapper := TmnWrapperStream.Create(vStream, False);
-      aWrapper.EndOfLine := #13#10;
+      aWrapper.EndOfLine := #10;
 
       while not IsTerminated do
       begin

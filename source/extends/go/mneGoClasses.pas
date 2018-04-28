@@ -1,10 +1,10 @@
-unit mneDClasses;
+unit mneGoClasses;
 {$mode objfpc}{$H+}
 {**
  * Mini Edit
  *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author    Zaher Dirkey <zaher at parmaja dot com>
+ * @author    Zaher Goirkey <zaher at parmaja dot com>
  *
  *}
 
@@ -15,15 +15,16 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  mnSynHighlighterD, EditorDebugger, gdbClasses,
+  EditorDebugger, gdbClasses, mnSynHighlighterGo,
   EditorClasses, mneClasses, MsgBox,
-  mneCompilerProjectFrames, mneDTendencyFrames, EditorRun, mneRunFrames;
+  mneCompilerProjectFrames, mneGoTendencyFrames, EditorRun,
+  mneRunFrames;
 
 type
 
-  { TDFile }
+  { TGoFile }
 
-  TDFile = class(TSourceEditorFile)
+  TGoFile = class(TSourceEditorFile)
   protected
   public
     procedure NewContent; override;
@@ -31,9 +32,9 @@ type
     function CanOpenInclude: Boolean; override;
   end;
 
-  { TDFileCategory }
+  { TGoFileCategory }
 
-  TDFileCategory = class(TCodeFileCategory)
+  TGoFileCategory = class(TCodeFileCategory)
   private
   protected
     procedure InitMappers; override;
@@ -43,9 +44,9 @@ type
   public
   end;
 
-  { TDProjectOptions }
+  { TGoProjectOptions }
 
-  TDProjectOptions = class(TEditorProjectOptions)
+  TGoProjectOptions = class(TEditorProjectOptions)
   private
     FCompilerType: Integer;
   public
@@ -54,11 +55,10 @@ type
     property CompilerType: Integer read FCompilerType write FCompilerType default 0;
   end;
 
-  { TDTendency }
+  { TGoTendency }
 
-  TDTendency = class(TEditorTendency)
+  TGoTendency = class(TEditorTendency)
   private
-    FCompilerType: Integer;
     FUseCfg: boolean;
   protected
     function CreateDebugger: TEditorDebugger; override;
@@ -70,18 +70,17 @@ type
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType); override; //Please handle errors format in RunItems
   published
-    property CompilerType: Integer read FCompilerType write FCompilerType default 0;
     property UseCfg: boolean read FUseCfg write FUseCfg default false;
   end;
 
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mneDProjectFrames, LCLProc;
+  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mneGoProjectFrames, LCLProc;
 
-{ TDProject }
+{ TGoProject }
 
-procedure TDProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack);
+procedure TGoProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack);
 var
   aFrame: TFrame;
 begin
@@ -90,22 +89,22 @@ begin
   aFrame.Caption := 'Compiler';
   AddFrame(aFrame);
 
-  aFrame := TDProjectFrame.Create(AOwner);
-  (aFrame as TDProjectFrame).Project := AProject;
+  aFrame := TGoProjectFrame.Create(AOwner);
+  (aFrame as TGoProjectFrame).Project := AProject;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 end;
 
-{ TDFile }
+{ TGoFile }
 
-procedure TDFile.NewContent;
+procedure TGoFile.NewContent;
 begin
-  SynEdit.Text := cDSample;
+  SynEdit.Text := cGoSample;
 end;
 
-{ TDFile }
+{ TGoFile }
 
-procedure TDFile.OpenInclude;
+procedure TGoFile.OpenInclude;
 var
   P: TPoint;
   Attri: TSynHighlighterAttributes;
@@ -127,7 +126,7 @@ begin
   inherited;
   if Engine.Files.Current <> nil then
   begin
-    if Engine.Files.Current.Group.Category is TDFileCategory then
+    if Engine.Files.Current.Group.Category is TGoFileCategory then
     begin
       P := SynEdit.CaretXY;
       SynEdit.GetHighlighterAttriAtRowColEx(P, aToken, aTokenType, aStart, Attri);
@@ -145,7 +144,7 @@ begin
   end;
 end;
 
-function TDFile.CanOpenInclude: Boolean;
+function TGoFile.CanOpenInclude: Boolean;
 var
   P: TPoint;
   Attri: TSynHighlighterAttributes;
@@ -156,7 +155,7 @@ begin
   Result := False;
   if (Group <> nil) then
   begin
-    if Group.Category is TDFileCategory then
+    if Group.Category is TGoFileCategory then
     begin
       P := SynEdit.CaretXY;
       aToken := '';
@@ -166,15 +165,16 @@ begin
   end;
 end;
 
-{ TDTendency }
+{ TGoTendency }
 
-procedure TDTendency.DoRun(Info: TmneRunInfo);
+procedure TGoTendency.DoRun(Info: TmneRunInfo);
 var
-  i: Integer;
+  //i: Integer;
   aPath: string;
   aRunItem: TmneRunItem;
 begin
   Engine.Session.Run.Clear;
+  Engine.SendAction(eaClearOutput);
 
   if rnaCompile in Info.Actions then
   begin
@@ -184,15 +184,11 @@ begin
     aRunItem.Info.Run.Command := Info.Command;
     if aRunItem.Info.Run.Command = '' then
     begin
-      case CompilerType of
-        0: aRunItem.Info.Run.Command := 'dmd.exe';
-        1:
-        {$ifdef windows}
-        aRunItem.Info.Run.Command := 'gdc.exe';
-        {$else}
-        aRunItem.Info.Run.Command := 'gdc';
-        {$endif}
-      end;
+      {$ifdef windows}
+      aRunItem.Info.Run.Command := 'go.exe';
+      {$else}
+      aRunItem.Info.Run.Command := 'go';
+      {$endif}
     end;
 
     aRunItem.Info.Run.Silent := True;
@@ -200,36 +196,28 @@ begin
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
-    aPath := Info.MainFile;
-    if RunOptions.ExpandPaths then
-      aPath := Engine.ExpandFile(aPath);
-    if not FileExists(aPath) then
-      raise EEditorException.Create('File not exists: ' + aPath);
+    aRunItem.Info.Run.AddParam('build');
 
-    aRunItem.Info.Run.AddParam(aPath);
-
-    if RunOptions.ConfigFile <> '' then
+    {if RunOptions.ConfigFile <> '' then
       aRunItem.Info.Run.AddParam('@' + Engine.EnvReplace(RunOptions.ConfigFile))
     else if UseCfg then
     begin
       if FileExists(ChangeFileExt(Info.MainFile, '.cfg')) then
         aRunItem.Info.Run.AddParam('@' + ExtractFileNameWithoutExt(ExtractFileName(Info.MainFile))+'.cfg');
-    end;
+    end;}
 
     if Info.OutputFile <> '' then
-      case CompilerType of
-        0: aRunItem.Info.Run.AddParam('-of' + Info.OutputFile); //dmd
-        1: aRunItem.Info.Run.AddParam('-o' + Info.OutputFile); //gdc
-      end;
+      aRunItem.Info.Run.AddParam('-o "' + Info.OutputFile+'"');
 
     if rnaDebug in Info.Actions then
+      aRunItem.Info.Run.AddParam('-tags debug')
+    else
     begin
-      case CompilerType of
-        0: aRunItem.Info.Run.AddParam('-g');
-        1: aRunItem.Info.Run.AddParam('-g');
-      end;
+      aRunItem.Info.Run.AddParam('-tags release');
+      aRunItem.Info.Run.AddParam('-ldflags "-s -w"');
     end;
 
+    {
     for i := 0 to RunOptions.Paths.Count - 1 do
     begin
       aPath := Trim(RunOptions.Paths[i]);
@@ -240,13 +228,17 @@ begin
         if not DirectoryExists(aPath) then
           raise EEditorException.Create('Path not exists: ' + aPath);
 
-        case CompilerType of
-          0: aRunItem.Info.Run.AddParam('-I' + aPath);
-          1: aRunItem.Info.Run.AddParam('-B' + aPath);
-        end;
+         aRunItem.Info.Run.AddParam('-I' + aPath);
       end;
-    end;
-    //aRunItem.Info.AddParam('-v');
+    end;}
+    aPath := Info.MainFile;
+    if RunOptions.ExpandPaths then
+      aPath := Engine.ExpandFile(aPath);
+    if not FileExists(aPath) then
+      raise EEditorException.Create('File not exists: ' + aPath);
+
+    aRunItem.Info.Run.AddParam('"'+aPath+'"');
+
     aRunItem.Info.StatusMessage := 'Compiling ' + Info.OutputFile;
   end;
 
@@ -267,24 +259,24 @@ begin
   Engine.Session.Run.Start(Self, Info.Root);
 end;
 
-constructor TDTendency.Create;
+constructor TGoTendency.Create;
 begin
   inherited Create;
 end;
 
-procedure TDTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+procedure TGoTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
   aFrame: TRunFrameOptions;
-  aTendencyFrame: TDTendencyFrame;
+  aTendencyFrame: TGoTendencyFrame;
 begin
   aFrame := TRunFrameOptions.Create(AOwner);
   aFrame.Options := ATendency.RunOptions;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 
-  aTendencyFrame := TDTendencyFrame.Create(AOwner);
+  aTendencyFrame := TGoTendencyFrame.Create(AOwner);
   aTendencyFrame.Tendency := ATendency;
-  aTendencyFrame.Caption := 'D Options';
+  aTendencyFrame.Caption := 'Go Options';
   AddFrame(aTendencyFrame);
 end;
 
@@ -308,55 +300,55 @@ begin
   end;
 end;
 
-procedure TDTendency.SendMessage(S: string; vMessageType: TNotifyMessageType);
+procedure TGoTendency.SendMessage(S: string; vMessageType: TNotifyMessageType);
 var
   aErr: TErrorInfo;
   p: Integer;
-  m, t : string;
 begin
   aErr := Default(TErrorInfo);
   if (S <> '') and (vMessageType = msgtError) then
   begin
-    p := PosForward(S, '):');
-    if p > 0 then
+    if (S[1] <> '#') then
     begin
-      t := MidStr(S, 1, p - 1);
-      m := Trim(MidStr(S, p + 2, MaxInt));
-      p := PosBackword(t, '(');
+      p := PosForward(S, ':');
       if p > 0 then
       begin
-        aErr.FileName := ExpandToPath(Trim(MidStr(t, 1, p - 1)), Engine.Session.Run.CurrentDirectory);
-        t := MidStr(t, p + 1, MaxInt);
-        aErr.Line := StrToIntDef(t, 0);
+        aErr.FileName := ExpandToPath(Trim(MidStr(s, 1, p - 1)), Engine.Session.Run.CurrentDirectory);
+        s := Trim(MidStr(S, p + 1, MaxInt));
+        p := PosForward(s, ':');
+        if p > 0 then
+        begin
+          aErr.Line := StrToIntDef(MidStr(s, 1, p - 1), 0);
+          s := MidStr(s, p + 1, MaxInt);
+          p := PosForward(s, ':');
+          if p > 0 then
+          begin
+            aErr.Column := StrToIntDef(MidStr(s, 1, p - 1), 0);
+          end;
+        end;
+        aErr.Message := s;
       end;
-      p := PosForward(m, ':');
-      if p > 0 then
-      begin
-        aErr.Name := Trim(MidStr(m, 1, p - 1));
-        m := Trim(MidStr(m, p + 1, MaxInt));
-      end;
-      aErr.Message := m;
     end;
   end;
   Engine.SendMessage(S, vMessageType, aErr);
 end;
 
-function TDTendency.CreateDebugger: TEditorDebugger;
+function TGoTendency.CreateDebugger: TEditorDebugger;
 begin
   Result := TGDBDebug.Create;
 end;
 
-function TDTendency.CreateOptions: TEditorProjectOptions;
+function TGoTendency.CreateOptions: TEditorProjectOptions;
 begin
-  Result := TDProjectOptions.Create;
+  Result := TGoProjectOptions.Create;
 end;
 
-procedure TDTendency.Init;
+procedure TGoTendency.Init;
 begin
   FCapabilities := [capRun, capDebug, capTrace, capCompile, capLink, capOptions];
-  FTitle := 'D Lang';
-  FDescription := 'D Files, *.D, *.inc';
-  FName := 'D';
+  FTitle := 'Go Lang';
+  FDescription := 'Go Files, *.Go';
+  FName := 'Go';
   {$ifdef windows}
   OutputExtension := '.exe';
   {$endif}
@@ -366,36 +358,35 @@ begin
   AddGroup('txt', 'txt');
 end;
 
-{ TDFileCategory }
+{ TGoFileCategory }
 
-function TDFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TGoFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
-  Result := TSynDSyn.Create(nil);
+  Result := TSynGoSyn.Create(nil);
 end;
 
-procedure TDFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
+procedure TGoFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   FCompletion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
   IdentifierID := ord(mnSynHighlighterMultiProc.tkIdentifier);
 end;
 
-procedure TDFileCategory.DoAddKeywords;
+procedure TGoFileCategory.DoAddKeywords;
 begin
-  EnumerateKeywords(Ord(tkKeyword), sDKeywords, Highlighter.IdentChars, @DoAddCompletion);
-  EnumerateKeywords(Ord(tkFunction), sDFunctions, Highlighter.IdentChars, @DoAddCompletion);
+  EnumerateKeywords(Ord(tkKeyword), sGoKeywords, Highlighter.IdentChars, @DoAddCompletion);
+  EnumerateKeywords(Ord(tkFunction), sGoFunctions, Highlighter.IdentChars, @DoAddCompletion);
 end;
 
-procedure TDFileCategory.InitMappers;
+procedure TGoFileCategory.InitMappers;
 begin
-  with Highlighter as TSynDSyn do
+  with Highlighter as TSynGoSyn do
   begin
     Mapper.Add(WhitespaceAttri, attDefault);
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(KeywordAttri, attKeyword);
     Mapper.Add(DocumentAttri, attDocument);
     Mapper.Add(TypeAttri, attDataType);
-    //Mapper.Add(ValueAttri, attDataValue);
     Mapper.Add(FunctionAttri, attStandard);
     Mapper.Add(IdentifierAttri, attIdentifier);
     Mapper.Add(TextAttri, attText);
@@ -410,8 +401,8 @@ end;
 initialization
   with Engine do
   begin
-    Tendencies.Add(TDTendency);
-    Categories.Add(TDFileCategory.Create(TDTendency, 'D', [fckPublish]));
-    Groups.Add(TDFile, 'd', 'D', TDFileCategory, ['d', 'inc'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
+    Tendencies.Add(TGoTendency);
+    Categories.Add(TGoFileCategory.Create(TGoTendency, 'Go', [fckPublish]));
+    Groups.Add(TGoFile, 'Go', 'Go', TGoFileCategory, ['go'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
   end;
 end.

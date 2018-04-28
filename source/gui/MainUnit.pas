@@ -30,7 +30,7 @@ uses
   {$ifdef Windows}
   mneAssociateForm,
   {$endif}
-  mnePHPIniForm, mneConsoleForms,
+  mnePHPIniForm,
   //end of addons
   mneTendencyOptions, IniFiles, mnFields, simpleipc, mnUtils, ntvTabs,
   ntvPageControls, SynEditMiscClasses, SynEditMarkupSpecialLine,

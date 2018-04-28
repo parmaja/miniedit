@@ -28,7 +28,7 @@ uses
   SysUtils,
   LCLVersion,
   simpleipc,
-  Themes, cmdbox, Interfaces,
+  Themes, Interfaces,
   MainUnit in 'MainUnit.pas' {MainForm},
   mneProjectOptions in 'mneProjectOptions.pas' {ProjectForm},
   SearchForms in '..\editor\SearchForms.pas' {SearchForm},
@@ -44,14 +44,15 @@ uses
   mneBreakpoints in 'mneBreakpoints.pas' {BreakpointsForm},
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
   SearchProgressForms, EditorDebugger, SelectList, IniFiles, mneAssociateForm,
-  mneExtends, mneSARDClasses, sqlvManager, mneDBClasses, mneBoardClasses,
-  mneBoardForms, mneSelectComponents, mneBoardComponents, mneFontGenForm,
-  mneCppClasses, mneVerilogClasses, SynHighlighterVerilog, mneCustomClasses,
-  mnePasProjectFrames, mnePASClasses, mneCSVClasses, mneDClasses, mneLuaClasses,
-  LuaDBGServers, MsgBox, GUIMsgBox, Classes, PHPUtils, ntvThemes, mneSetups,
-  mneSettings, EditorClasses, EditorColors, gdbClasses,
-  mneCompilerProjectFrames, mneRunFrames, mneClasses, mneManageRecentsForms,
-  mneTendencyOptions, mneCSVForms, mnUtils, mnStreams, mncCSV;
+  mneExtends, mneCMDClasses, mneGoClasses, mneSARDClasses, sqlvManager,
+  mneDBClasses, mneBoardClasses, mneBoardForms, mneSelectComponents,
+  mneBoardComponents, mneFontGenForm, mneCppClasses, mneVerilogClasses,
+  SynHighlighterVerilog, mneCustomClasses, mnePasProjectFrames, mnePASClasses,
+  mneCSVClasses, mneDClasses, mneLuaClasses, LuaDBGServers, MsgBox, GUIMsgBox,
+  Classes, PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses,
+  EditorColors, gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneClasses,
+  mneManageRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils, mnStreams,
+  mncCSV;
 
 {$R *.res}
 {$i '..\lib\mne.inc'}

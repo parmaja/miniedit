@@ -21,13 +21,19 @@
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test_pas.pas</CurrentFile>
+        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test.cmd</CurrentFile>
         <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>M:\home\pascal\projects\miniEdit\test\test_pas.pas</FileName>
-            <CaretX>43</CaretX>
             <CaretY>12</CaretY>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>M:\home\pascal\projects\miniEdit\test\test.cmd</FileName>
+            <CaretX>68</CaretX>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>C:\temp\test_sh.sh</FileName>
           </Object>
         </Items>
       </Files>

@@ -120,8 +120,8 @@ begin
       {$else}
         aRunItem.Info.Run.Command := 'sard';
       {$endif}
-      aRunItem.Info.Run.AddParam(' "' + Info.MainFile + '"');
-    end
+    end;
+    aRunItem.Info.Run.AddParam(' "' + Info.MainFile + '"');
   end
   else if (rnaLint in Info.Actions) then
   begin

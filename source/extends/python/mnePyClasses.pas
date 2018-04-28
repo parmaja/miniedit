@@ -20,8 +20,8 @@ uses
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   SynHighlighterPython, EditorDebugger, EditorClasses, mneClasses,
-  mneCompilerProjectFrames, EditorRun, mneConsoleClasses, dbgpServers,
-  mneConsoleForms, mneRunFrames;
+  mneCompilerProjectFrames, EditorRun, dbgpServers,
+  mneRunFrames;
 
 type
 
@@ -170,9 +170,30 @@ procedure TPyTendency.DoRun(Info: TmneRunInfo);
 var
   aRunItem: TmneRunItem;
 begin
+  Engine.SendAction(eaClearOutput);
   Engine.Session.Run.Clear;
 
-  if rnaCompile in Info.Actions then
+  if rnaExecute in Info.Actions then
+  begin
+    aRunItem := Engine.Session.Run.Add;
+    aRunItem.Info.CurrentDirectory := Info.Root;
+    aRunItem.Info.Run.Pause := Info.Pause;
+    aRunItem.Info.Run.Console := Info.Console;
+    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
+    aRunItem.Info.Run.Command := Info.Command;
+    if Info.Command = '' then
+    begin
+      {$ifdef windows}
+        aRunItem.Info.Run.Command := 'python.exe';
+      {$else}
+        aRunItem.Info.Run.Command := 'python';
+      {$endif}
+    end;
+    aRunItem.Info.Run.AddParam(' "' + Info.MainFile + '"');
+    aRunItem.Info.Run.AddParam(RunOptions.Params);
+    aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
+  end
+  else if rnaCompile in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
 
@@ -193,16 +214,6 @@ begin
     aRunItem.Info.StatusMessage := 'Runing ' + Info.MainFile;
     //{'-m pyxdebug ' + }
     aRunItem.Info.Run.AddParam(Info.MainFile);
-  end
-  else if rnaExecute in Info.Actions then
-  begin
-    aRunItem := Engine.Session.Run.Add;
-    aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
-    aRunItem.Info.CurrentDirectory := Info.Root;
-    aRunItem.Info.Run.Pause := RunOptions.Pause;
-    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
-    aRunItem.Info.Run.Command := ChangeFileExt(Info.OutputFile, '.exe');
-    aRunItem.Info.Run.AddParam(RunOptions.Params);
   end;
 
   Engine.Session.Run.Start(Self);

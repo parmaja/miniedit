@@ -13,7 +13,7 @@ interface
 uses
   Forms, SysUtils, StrUtils, Classes, SyncObjs, contnrs,
   mnUtils, ConsoleProcess, process,
-  mnStreams, mneConsoleForms, EditorClasses, EditorDebugger, mnClasses, mnXMLUtils;
+  mnStreams, EditorClasses, EditorDebugger, mnClasses, mnXMLUtils;
 
 {$i '..\lib\mne.inc'}
 
@@ -45,7 +45,6 @@ type
     FMessageType: TNotifyMessageType;
   protected
     FProcess: TProcess;
-    FControl: TConsoleForm;
     FPool: TmneRunPool;
   protected
     FCatchOutput: Boolean;
@@ -290,27 +289,6 @@ begin
   FreeAndNil(FPool);
 end;
 
-{procedure TmneRunItem.CreateControl;
-begin
-  FControl := TConsoleForm.Create(Application);
-  FControl.Parent := Engine.Container;
-  Engine.Files.New('CMD: ' + Info.Title, FControl);
-
-  FControl.CMDBox.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
-  FControl.CMDBox.BackGroundColor := Engine.Options.Profile.Attributes.Default.Background;
-  FControl.ContentPanel.Color := FControl.CMDBox.BackGroundColor;
-
-  FControl.CMDBox.Font.Name := Engine.Options.Profile.Attributes.FontName;
-  FControl.CMDBox.Font.Size := Engine.Options.Profile.Attributes.FontSize;
-  //FControl.CMDBox.GraphicalCharacterWidth := 14;
-
-  FControl.CMDBox.TextColor(Engine.Options.Profile.Attributes.Default.Foreground);
-  FControl.CMDBox.TextBackground(Engine.Options.Profile.Attributes.Default.Background);
-  FControl.CMDBox.Write('Ready!'+#13#10);
-  //FOnWrite := @FControl.WriteText;
-  Engine.UpdateState([ecsRefresh]);
-end;}
-
 procedure TmneRunItem.Attach;
 begin
   if Engine.Tendency.Debug <> nil then
@@ -402,12 +380,17 @@ begin
     end
     else
       FProcess.ShowWindow := swoShow;
-    FProcess.Options :=  aOptions + [poUsePipes, poStderrToOutPut];
+    FProcess.Options :=  aOptions + [poUsePipes, poStderrToOutPut, poNewProcessGroup];
     ProcessObject := TmnProcessObject.Create(FProcess, FPool, @WriteOutput);
     //FProcess.PipeBufferSize := 0; //80 char in line
     try
-      FProcess.Execute;
-      Status := ProcessObject.ReadStream(FProcess.Output);
+      try
+        FProcess.Execute;
+        Status := ProcessObject.ReadStream(FProcess.Output);
+        except
+          on E: Exception do
+            WriteMessage(E.Message, msgtLog);
+        end;
     finally
       FreeAndNil(FProcess);
       FreeAndNil(ProcessObject);
@@ -421,7 +404,6 @@ begin
     FProcess.Execute;
   end;
   WriteMessage(#13#10'Exit: ' + IntToStr(Status), msgtLog);
-  WriteMessage('', msgtLog);
   WriteMessage('Done', msgtStatus);
 end;
 

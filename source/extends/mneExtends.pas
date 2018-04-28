@@ -16,7 +16,6 @@ interface
 uses
   SysUtils, StrUtils,
   mneClasses,
-  mneConsoleClasses,
   mneViewClasses,
   mneDClasses,
   mneSARDClasses,
@@ -25,6 +24,8 @@ uses
   mneCSVClasses,
   mnePyClasses,
   mneLuaClasses,
+  mneCMDClasses,
+  mneGoClasses,
   mneVerilogClasses,
   Classes;
 

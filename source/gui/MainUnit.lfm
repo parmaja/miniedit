@@ -2582,6 +2582,9 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'Rename File'
       OnExecute = RenameActExecute
+      SecondaryShortCuts.Strings = (
+        'f2'
+      )
     end
     object DeleteAct: TAction
       Category = 'File'
@@ -2715,6 +2718,9 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'Change File Type'
       OnExecute = ChangeExtActExecute
+      SecondaryShortCuts.Strings = (
+        'Ctrl+F2'
+      )
     end
     object CloseOthersAct: TAction
       Category = 'File'

@@ -91,6 +91,7 @@ type
     InChanging: boolean;
     procedure ChangeEdit;
     procedure ApplyAttribute;
+    function PickCustomColor(var AColor: TColor): Boolean;
     procedure RetrieveAttribute;
 
     procedure Apply;
@@ -250,10 +251,26 @@ begin
   PanelPnlClick(Sender);
 end;
 
-procedure TEditorColorsForm.ForegroundBtnClick(Sender: TObject);
+function TEditorColorsForm.PickCustomColor(var AColor: TColor): Boolean;
 begin
-  if ForegroundCbo.PickCustomColor then
+  with TColorDialog.Create(nil) do
+    try
+      Color := AColor;
+      Result := Execute;
+      if Result then AColor := Color;
+    finally
+      free;
+    end;
+end;
+
+procedure TEditorColorsForm.ForegroundBtnClick(Sender: TObject);
+var
+  aColor: TColor;
+begin
+  aColor := ForegroundCbo.Selected;
+  if PickCustomColor(aColor) then
   begin
+    ForegroundCbo.Selected := aColor;
     if ForegroundChk.Enabled then
       ForegroundChk.Checked := True;
     ForegroundCbo.ItemIndex := 0;
@@ -262,9 +279,13 @@ begin
 end;
 
 procedure TEditorColorsForm.BackgroundBtnClick(Sender: TObject);
+var
+  aColor: TColor;
 begin
-  if BackgroundCbo.PickCustomColor then
+  aColor := BackgroundCbo.Selected;
+  if PickCustomColor(aColor) then
   begin
+    BackgroundCbo.Selected := aColor;
     if BackgroundChk.Enabled then
       BackgroundChk.Checked := True;
     BackgroundCbo.ItemIndex := 0;

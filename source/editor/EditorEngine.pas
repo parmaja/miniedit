@@ -512,7 +512,9 @@ type
 
     procedure SaveFile(Extension: string = ''; AsNewFile: Boolean = False); virtual;
     procedure Show; virtual; //Need to activate it after show to focus editor
+    function Visible: Boolean;
     procedure Activate; virtual;
+    function Activated: Boolean;
     procedure Close;
     procedure Reload;
     procedure OpenInclude; virtual;
@@ -2870,7 +2872,7 @@ end;
 
 procedure TEditorEngine.EndUpdate;
 begin
-  if (FUpdateCount = 1) and (Files.Current <> nil) then
+  if (FUpdateCount = 1) and (Files.Current <> nil) and not (Files.Current.Visible) then
     Files.Current.Show;
   Dec(FUpdateCount);
   if FUpdateCount = 0 then
@@ -3078,6 +3080,8 @@ begin
     Result.NewContent;
     Result.Edit;
     Current := Result;
+    Current.Show;
+    Current.Activate;
     Engine.UpdateState([ecsChanged, ecsDebug, ecsState, ecsRefresh]);
   finally
     Engine.EndUpdate;
@@ -3901,6 +3905,7 @@ var
   aParent: TEditorEngine;
   i: integer;
   mr: TmsgChoice;
+  a: Boolean;
 begin
   if IsEdited then
   begin
@@ -3913,10 +3918,13 @@ begin
 
   i := Index;
   aParent := Engine;
+  a := (aParent.Files.Current <> nil) and aParent.Files.Current.Activated;
   if aParent.Files.FCurrent = self then
     aParent.Files.FCurrent := nil;
   Free;
   aParent.Files.SetCurrentIndex(i, False);
+  if a and (aParent.Files.Current <> nil) then
+    aParent.Files.Current.Activate;
   aParent.UpdateState([ecsChanged, ecsState, ecsRefresh]);
 end;
 
@@ -4069,6 +4077,11 @@ begin
   end;
 end;
 
+function TEditorFile.Visible: Boolean;
+begin
+  Result := (Control <> nil ) and (Control.Visible);
+end;
+
 procedure TEditorFile.SaveFile(Extension:string; AsNewFile: Boolean);
 var
   aDialog: TSaveDialog;
@@ -4181,6 +4194,25 @@ begin
       aControl := Control as TWinControl;
 
     (Engine.FilePanel.Owner as TCustomForm).ActiveControl := aControl;
+  end;
+end;
+
+function TEditorFile.Activated: Boolean;
+var
+  aControl: TWinControl;
+begin
+  Result := False;
+  if Control.CanFocus then
+  begin
+    if Supports(Control, IEditorControl) then
+      aControl := (Control as IEditorControl).GetMainControl
+    else
+      aControl := nil;
+
+    if aControl = nil then
+      aControl := Control as TWinControl;
+
+    Result := (Engine.FilePanel.Owner as TCustomForm).ActiveControl = aControl;
   end;
 end;
 

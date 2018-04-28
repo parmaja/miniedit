@@ -87,6 +87,7 @@ uses
     TErrorInfo = record
       ID: Integer;
       Line: Integer;
+      Column: Integer;
       Name: string;
       FileName: string;
       Message: string;

@@ -14,8 +14,8 @@ uses
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   FileUtil, mnSynHighlighterLua, EditorDebugger, EditorClasses, mneClasses,
-  mneCompilerProjectFrames, EditorRun, mneConsoleClasses, LuaDBGServers,
-  mneConsoleForms, mneRunFrames;
+  mneCompilerProjectFrames, EditorRun, LuaDBGServers,
+  mneRunFrames;
 
 type
 
@@ -169,11 +169,10 @@ var
   aRunItem: TmneRunItem;
 begin
   Engine.Session.Run.Clear;
+  Engine.SendAction(eaClearOutput);
 
   if rnaExecute in Info.Actions then
   begin
-    Engine.SendAction(eaClearOutput);
-
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.Run.Console := Info.Console;
@@ -193,13 +192,11 @@ begin
       {$else}
         aRunItem.Info.Run.Command := 'lua';
       {$endif}
-      aRunItem.Info.Run.AddParam(' "' + Info.MainFile + '"');
-    end
+    end;
+    aRunItem.Info.Run.AddParam(' "' + Info.MainFile + '"');
   end
   else if (rnaLint in Info.Actions) or (rnaCompile in Info.Actions) then
   begin
-    Engine.SendAction(eaClearOutput);
-
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
