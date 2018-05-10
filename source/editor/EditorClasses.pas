@@ -82,7 +82,7 @@ uses
     ); //ecsShow bring to front
 
     TNotifyMessageType = (msgtStatus, msgtEndStatus, msgtLog, msgtOutput, msgtError);
-    TEditorAction = (eaClearOutput, eaClearLog);
+    TEditorAction = (eaClearOutput, eaClearLog, eaEnd);
 
     TErrorInfo = record
       ID: Integer;

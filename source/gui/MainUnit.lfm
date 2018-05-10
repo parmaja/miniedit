@@ -2416,6 +2416,7 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'Explore Folder'
       Hint = 'Open the folder of current file in Exeplorer '
+      ImageIndex = 30
       OnExecute = ExploreFolderActExecute
     end
     object MessagesAct: TAction
@@ -2729,7 +2730,7 @@ object MainForm: TMainForm
     end
     object CreateFolderAct: TAction
       Category = 'File'
-      Caption = 'Create Folder'
+      Caption = 'New Folder'
       OnExecute = CreateFolderActExecute
     end
     object EditorColorsAct: TAction
@@ -2762,19 +2763,15 @@ object MainForm: TMainForm
       Action = FolderOpenAllAct
       OnClick = FolderOpenAllActExecute
     end
-    object MenuItem24: TMenuItem
-      Caption = 'Copy File Name'
-      OnClick = MenuItem24Click
-    end
     object MenuItem28: TMenuItem
       Caption = '-'
+    end
+    object RecentFoldersMnu: TMenuItem
+      Caption = 'Recents'
     end
     object SelectFolderMnu: TMenuItem
       Caption = 'Select Folder'
       OnClick = SelectFolderMnuClick
-    end
-    object RecentFoldersMnu: TMenuItem
-      Caption = 'Recents'
     end
     object MenuItem23: TMenuItem
       Caption = 'Go to File Folder'
@@ -2783,6 +2780,13 @@ object MainForm: TMainForm
     object MenuItem22: TMenuItem
       Caption = 'Go to Project Folder'
       OnClick = MenuItem22Click
+    end
+    object MenuItem44: TMenuItem
+      Action = CreateFolderAct
+    end
+    object MenuItem24: TMenuItem
+      Caption = 'Copy File Name'
+      OnClick = MenuItem24Click
     end
     object ExploreFileFolderMnu: TMenuItem
       Caption = 'Explore Folder'
@@ -2818,8 +2822,8 @@ object MainForm: TMainForm
     end
   end
   object FileModeMenu: TPopupMenu
-    left = 780
-    top = 61
+    left = 768
+    top = 69
     object UnixMnu: TMenuItem
       Caption = 'Unix'
       OnClick = UnixMnuClick
@@ -2930,56 +2934,19 @@ object MainForm: TMainForm
     Images = EditorResource.ToolbarImageList
     left = 366
     top = 49
+    object MenuItem32: TMenuItem
+      Action = SetAsMainFileAc
+    end
     object Copyfilename1: TMenuItem
       Action = CopyFileNameAct
       OnClick = CopyFileNameActExecute
     end
-    object OpenFolder3: TMenuItem
-      Action = ExploreFolderAct
-      Bitmap.Data = {
-        36040000424D3604000000000000360000002800000010000000100000000100
-        2000000000000004000064000000640000000000000000000000FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00000000FF000000FF000000FF000000FF000000FF000000FF000000FFFF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF000000
-        00FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00000000FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00000000FFFF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00000000FF000000FF000000FF000000FF0000
-        00FF000000FF000000FF000000FF000000FFFF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00000000FF9CFFFFFF00CFFFFF00CFFFFF00CFFFFF00CF
-        FFFF000000FF00CFFFFF00CFFFFF00CFFFFF000000FFFF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00000000FF9CFFFFFF00CFFFFF00CFFFFF000000FF0000
-        00FF000000FF000000FF000000FF00CFFFFF000000FFFF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00000000FF9CFFFFFF00CFFFFF00CFFFFF00CFFFFF0000
-        00FF000000FF000000FF00CFFFFF00CFFFFF000000FFFF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00000000FF9CFFFFFF00CFFFFF00CFFFFF00CFFFFF00CF
-        FFFF000000FF00CFFFFF00CFFFFF00CFFFFF000000FFFF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00000000FF9CFFFFFF00CFFFFF00CFFFFF00CFFFFF00CF
-        FFFF00CFFFFF00CFFFFF00CFFFFF00CFFFFF000000FFFF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00000000FF9CFFFFFF9CFFFFFF9CFFFFFF9CFFFFFF9CFF
-        FFFF9CFFFFFF9CFFFFFF9CFFFFFF9CFFFFFF000000FFFF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00000000FF9CFFFFFF9CFFFFFF9CFFFFFF9CFFFFFF0000
-        00FF000000FF000000FF000000FF000000FFFF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00000000FF000000FF000000FF000000FFFF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-        FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00
-      }
-      ImageIndex = 30
-      OnClick = ExploreFolderActExecute
-    end
-    object MenuItem32: TMenuItem
-      Action = SetAsMainFileAc
-    end
     object MenuItem37: TMenuItem
       Action = CloseOthersAct
+    end
+    object OpenFolder3: TMenuItem
+      Action = ExploreFolderAct
+      OnClick = ExploreFolderActExecute
     end
   end
   object StatusTimer: TTimer

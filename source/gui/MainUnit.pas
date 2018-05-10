@@ -39,6 +39,7 @@ uses
 type
   TOutputLine = class(TObject)
   public
+    LogLine: Integer; //line number in log editor/list
     Info: TErrorInfo;
   end;
 
@@ -73,6 +74,7 @@ type
     MainFilePopupMnu: TPopupMenu;
     MenuItem42: TMenuItem;
     MenuItem43: TMenuItem;
+    MenuItem44: TMenuItem;
     ResetMainFileAct: TAction;
     MenuItem32: TMenuItem;
     MenuItem33: TMenuItem;
@@ -514,6 +516,7 @@ type
     FMessages: TEditorMessages;
     FShowFolderFiles: TShowFolderFiles;
     FSortFolderFiles: TSortFolderFiles;
+    procedure LogGotoLine;
     procedure TestDebug;
     function CanOpenInclude: boolean;
     procedure CatchErr(Sender: TObject; e: exception);
@@ -1063,12 +1066,17 @@ begin
 end;
 
 procedure TMainForm.OutputEditDblClick(Sender: TObject);
+begin
+  LogGotoLine;
+end;
+
+procedure TMainForm.LogGotoLine;
 var
   aLine: TOutputLine;
 begin
   if OutputEdit.CaretY <= OutputEdit.Lines.Count then //y based on 1
   begin
-    aLine := FOutputs[OutputEdit.LogicalCaretXY.Y - 1];
+    aLine := FOutputs[OutputEdit.CaretY - 1];
     if aLine.Info.FileName <> '' then
       ShowFileAtLine(aLine.Info.FileName, aLine.Info.Line);
   end;
@@ -1081,8 +1089,8 @@ begin
     Special := (Sender as TSynEdit).CaretY = Line;
     if Special then
     begin
-      Markup.Foreground := Engine.Options.Profile.Attributes.Active.Foreground;;
-      Markup.Background := Engine.Options.Profile.Attributes.Active.Background;;
+      Markup.Foreground := Engine.Options.Profile.Attributes.Active.Foreground;
+      Markup.Background := Engine.Options.Profile.Attributes.Active.Background;
     end;
   end;
 end;
@@ -2229,6 +2237,7 @@ begin
       FOutputs.Add(aLine);
       OutputEdit.Lines.Add(S);
       OutputEdit.CaretY := OutputEdit.Lines.Count;
+      aLine.LogLine := OutputEdit.CaretY;
       if (vError.FileName <> '') then
         AddError(vError);
     end;
@@ -2430,6 +2439,19 @@ begin
     eaClearLog :
     begin
       LogEdit.Lines.Clear;
+    end;
+    eaEnd:
+    begin
+      {if MessagesGrid.RowCount > 1 then
+      begin
+        MessagesGrid.Row := 1;
+        MessagesGrid.OnDblClick(MessagesGrid);
+      end;}
+      if FOutputs.Count > 0 then
+      begin
+        OutputEdit.CaretY := FOutputs[0].LogLine;
+        LogGotoLine;
+      end;
     end;
   end;
 end;

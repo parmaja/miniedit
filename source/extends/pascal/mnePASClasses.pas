@@ -210,6 +210,8 @@ begin
     if Info.OutputFile <> '' then
       aRunItem.Info.Run.AddParam('-o' + Info.OutputFile);
 
+    aRunItem.Info.Run.AddParam('-MObjFPC');
+
     if RunOptions.ConfigFile <> '' then
       aRunItem.Info.Run.AddParam('@' + Engine.EnvReplace(RunOptions.ConfigFile))
     else if UseCfg then
@@ -316,18 +318,16 @@ end;
 procedure TPASFile.NewContent;
 begin
   inherited NewContent;
-  SynEdit.Text := 'unit ';
-  SynEdit.Lines.Add('');
-  SynEdit.Lines.Add('interface');
+  SynEdit.Text := 'program newprogram;';
   SynEdit.Lines.Add('');
   SynEdit.Lines.Add('uses');
   SynEdit.Lines.Add('  SysUtils;');
   SynEdit.Lines.Add('');
-  SynEdit.Lines.Add('implementation');
+  SynEdit.Lines.Add('begin');
   SynEdit.Lines.Add('');
   SynEdit.Lines.Add('end.');
-  SynEdit.CaretY := 1;
-  SynEdit.CaretX := 5;
+  SynEdit.CaretX := 1;
+  SynEdit.CaretY := 7;
 end;
 
 initialization

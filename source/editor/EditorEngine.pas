@@ -3390,11 +3390,9 @@ begin
   if FCurrent <> Value then
   begin
     FCurrent := Value;
+    FCurrent.Show;
     if not Engine.Updating then
-    begin
-      FCurrent.Show;
       FCurrent.Activate;
-    end;
     Engine.UpdateState([ecsDebug, ecsRefresh]);
   end;
 end;
@@ -3403,6 +3401,7 @@ procedure TEditorFiles.SetCurrentIndex(Index: integer; vRefresh: Boolean);
 var
   aCurrent: TEditorFile;
   OldCurrent: TEditorFile;
+  a: Boolean;
 begin
   if Count <> 0 then
   begin
@@ -3411,12 +3410,17 @@ begin
       if Index >= Count then
         Index := Count - 1;
       aCurrent := Items[Index];
+      a := (Current <> nil) and Current.Activated;
       if aCurrent <> nil then
       begin
         OldCurrent := Current;
         Current := aCurrent;
         if vRefresh and (OldCurrent <> Current) then
+        begin
+          if a then
+            Current.Activate;
           Engine.UpdateState([ecsState, ecsDebug, ecsRefresh]);
+        end;
       end;
     finally
       Engine.EndUpdate;

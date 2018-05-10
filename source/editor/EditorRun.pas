@@ -148,7 +148,6 @@ begin
   if FCurrent <> nil then
     FCurrent.Stop;
   Terminate;
-  WaitFor;
 end;
                             
 {$ifdef windows}
@@ -230,6 +229,7 @@ procedure TmneRun.Finish;
 begin
   FTendency := nil;
   FCurrentDirectory := '';
+  Engine.SendAction(eaEnd);
 end;
 
 constructor TmneRun.Create;
@@ -263,8 +263,9 @@ begin
   if FPool <> nil then
   begin
     FPool.Stop;
+    FPool.WaitFor;
+    //Finish; //on terminate with call it
   end;
-  Finish;
 end;
 
 function TmneRun.Add(AItemClass: TmneRunItemClass): TmneRunItem;
