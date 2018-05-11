@@ -2147,8 +2147,7 @@ object MainForm: TMainForm
     object Help1: TMenuItem
       Caption = '&Help'
       object HelpIndex1: TMenuItem
-        Caption = 'Help Index'
-        OnClick = HelpIndexActExecute
+        Action = HelpKeywordAct
       end
       object About2: TMenuItem
         Caption = '-'
@@ -2199,10 +2198,11 @@ object MainForm: TMainForm
       OnUpdate = SelectAllActUpdate
       ShortCut = 16449
     end
-    object KeywordAct: TAction
+    object HelpKeywordAct: TAction
       Category = 'Help'
-      Caption = 'Keyword'
-      OnExecute = KeywordActExecute
+      Caption = 'Help Keyword'
+      OnExecute = HelpKeywordActExecute
+      ShortCut = 112
     end
     object SaveAllAct: TAction
       Category = 'File'
@@ -2976,7 +2976,7 @@ object MainForm: TMainForm
     top = 270
   end
   object ApplicationProperties: TApplicationProperties
-    CaptureExceptions = False
+    ExceptionDialog = aedOkMessageBox
     OnActivate = ApplicationPropertiesActivate
     OnShowHint = ApplicationPropertiesShowHint
     left = 66

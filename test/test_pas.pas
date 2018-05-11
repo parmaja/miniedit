@@ -10,7 +10,7 @@ begin
   writeln(x);
   x:=x + 10;
   writeln(x);
-  s := 'Hi World';
+ sss  s := 'Hi World';
   writeln(s);
   writeln('Bye');
   writeln('Press Enter to exit');

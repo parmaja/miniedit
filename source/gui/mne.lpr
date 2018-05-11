@@ -104,9 +104,11 @@ end;
 function IsAnotherInstance: Boolean;
 var
   aClient: TSimpleIPCClient;
+  aFile: string;
 begin
   if (ParamCount > 0) and not (SameText(ParamStr(1), '/dde')) then
   begin
+    aFile := ExpandFileName(ParamStr(1));
     aClient := TSimpleIPCClient.Create(nil);
     try
       aClient.ServerID := sApplicationID;
@@ -115,7 +117,7 @@ begin
       begin
         aClient.Connect;
         try
-          aClient.SendStringMessage(1, ParamStr(1));
+          aClient.SendStringMessage(1, aFile);
         finally
           aClient.Disconnect;
         end;

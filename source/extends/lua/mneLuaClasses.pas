@@ -62,6 +62,7 @@ type
     procedure DoRun(Info: TmneRunInfo); override;
   public
     constructor Create; override;
+    procedure HelpKeyword(AWord:string); override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
     function CreateOptions: TEditorProjectOptions; override;
     procedure EnumRunCommands(Items: TStrings); override;
@@ -239,6 +240,13 @@ end;
 constructor TLuaTendency.Create;
 begin
   inherited Create;
+end;
+
+procedure TLuaTendency.HelpKeyword(AWord: string);
+begin
+  inherited;
+  //if Love2D project?
+  OpenURL('https://love2d.org/wiki/' + AWord);
 end;
 
 procedure TLuaTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);

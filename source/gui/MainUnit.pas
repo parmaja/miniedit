@@ -201,7 +201,7 @@ type
     ToolButton1: TToolButton;
     SaveAllAct: TAction;
     AboutAct: TAction;
-    KeywordAct: TAction;
+    HelpKeywordAct: TAction;
     About2: TMenuItem;
     DBGRunAct: TAction;
     DBGLintAct: TAction;
@@ -388,6 +388,7 @@ type
     procedure FoldersActExecute(Sender: TObject);
     procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
     procedure FormShow(Sender: TObject);
+    procedure HelpKeywordActExecute(Sender: TObject);
     procedure IPCServerMessage(Sender: TObject);
     procedure IPCServerMessageQueued(Sender: TObject);
     procedure MainFileActExecute(Sender: TObject);
@@ -427,8 +428,6 @@ type
     procedure FindActExecute(Sender: TObject);
     procedure FindNextActExecute(Sender: TObject);
     procedure FileListKeyPress(Sender: TObject; var Key: char);
-    procedure KeywordActExecute(Sender: TObject);
-    procedure HelpIndexActExecute(Sender: TObject);
     procedure EditorOptionsActExecute(Sender: TObject);
     procedure SelectSCMTypeActExecute(Sender: TObject);
     procedure GeneralOptionsActExecute(Sender: TObject);
@@ -1349,16 +1348,6 @@ begin
     FolderOpenAct.Execute;
 end;
 
-procedure TMainForm.KeywordActExecute(Sender: TObject);
-begin
-
-end;
-
-procedure TMainForm.HelpIndexActExecute(Sender: TObject);
-begin
-
-end;
-
 procedure TMainForm.EditorOptionsActExecute(Sender: TObject);
 begin
   Engine.Options.OptionsShow;
@@ -1728,6 +1717,40 @@ begin
   end;
 end;
 
+procedure TMainForm.HelpKeywordActExecute(Sender: TObject);
+var
+  aSynEdit: TCustomSynEdit;
+  aWordBreaker: TSynWordBreaker;
+  aLine, aWord: string;
+  XY: TPoint;
+  StartX, EndX: Integer;
+begin
+  if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomSynEdit) then
+  begin
+    aSynEdit := Engine.Files.Current.Control as TCustomSynEdit;
+    XY := aSynEdit.LogicalCaretXY;
+    aWordBreaker := TSynWordBreaker.Create;
+    try
+      aWordBreaker.Reset;
+      aWordBreaker.WordBreakChars := aWordBreaker.WordBreakChars - ['.']; //<---- depend on tendency, TODO
+      aLine := aSynEdit.LineText;
+      if aWordBreaker.IsInWord(aLine, XY.X) then
+      begin
+        StartX := aWordBreaker.PrevWordStart(aLine, XY.X, True);
+        EndX := aWordBreaker.NextWordEnd(aLine, XY.X, True);
+      end;
+      aWord := Copy(aLine, StartX, EndX - StartX);
+      //aWord := Trim(aSynEdit.GetWordAtRowCol(aSynEdit.LogicalCaretXY));
+      if aWord <> '' then
+      begin
+        Engine.Files.Current.Tendency.HelpKeyWord(aWord);
+      end;
+    finally
+      aWordBreaker.Free;
+    end;
+  end;
+end;
+
 procedure TMainForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   Engine.Options.WindowMaxmized := WindowState = wsMaximized;
@@ -1750,7 +1773,6 @@ begin
   Engine.RemoveNotifyEngine(Self);
 
   Engine.Shutdown;
-  //HtmlHelp(Application.Handle, nil, HH_CLOSE_ALL, 0);
 end;
 
 procedure TMainForm.DBGLintActExecute(Sender: TObject);

@@ -277,6 +277,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
+    procedure HelpKeyword(AWord:string); virtual;
     procedure Run(RunActions: TmneRunActions);
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType); override;
 
@@ -2284,6 +2285,10 @@ begin
   FreeAndNil(FRunOptions);
   FreeAndNil(FGroups);
   inherited;
+end;
+
+procedure TEditorTendency.HelpKeyword(AWord: string);
+begin
 end;
 
 procedure TEditorTendency.Run(RunActions: TmneRunActions); //please check dublicate in  M:\home\pascal\projects\miniEdit\source\extends\commons\mneCustomClasses.pas#DoRun
