@@ -31,7 +31,7 @@ type
   private
   public
     Extensions: TEditorExtensions;
-    function GetFileImageIndex(const FileName: string): integer;
+    function GetFileImageIndex(const FileName: string; DefaultImage: Integer): integer;
     procedure Switch(Style: TThemeStyle);
   end;
 
@@ -48,7 +48,7 @@ implementation
 uses
   Graphics, GraphType;
 
-function TEditorResource.GetFileImageIndex(const FileName: string): integer;
+function TEditorResource.GetFileImageIndex(const FileName: string; DefaultImage: Integer): integer;
 var
   Extension: TEditorExtension;
   s: string;
@@ -61,7 +61,7 @@ begin
   if Extension <> nil then
     Result := Extension.ImageIndex
   else
-    Result := 1;//any file
+    Result := DefaultImage;
 end;
 
 procedure TEditorResource.Switch(Style: TThemeStyle);
@@ -72,15 +72,19 @@ var
   c, i: integer;
   new: Byte;
 begin
-  exit;//TODO there is bug in it
+//  exit;//TODO there is bug in it
   PanelImages.BeginUpdate;
   try
     if Style = thsLight then
       new := 0
     else
-      new := $ff;
+      new := $FF;
     Bmp := TBitmap.Create;
     PanelImages.GetFullBitmap(Bmp);
+    PanelImages.Clear;
+    Bmp.TransparentColor := clFuchsia;
+    Bmp.Transparent := True;
+    Bmp.BeginUpdate;
     Img := Bmp.RawImage;
     p := PRGBAQuad(img.Data);
     c := img.DataSize div SizeOf(p^);
@@ -93,11 +97,8 @@ begin
       inc(p);
       inc(i);
     end;
-    PanelImages.Clear;
-    PanelImages.AddMasked(Bmp, clBlue);
-    //Bmp.TransparentColor := clFuchsia;
-    //Bmp.Transparent := True;
-    //PanelImages.AddSliced(Bmp, Bmp.Width div PanelImages.Width, Bmp.Height div PanelImages.Height);
+    Bmp.EndUpdate;
+    PanelImages.AddSliced(Bmp, Bmp.Width div PanelImages.Width, Bmp.Height div PanelImages.Height);
   finally
     PanelImages.EndUpdate;
   end;
@@ -108,6 +109,9 @@ end;
 procedure TEditorResource.DataModuleCreate(Sender: TObject);
 begin
   Extensions := TEditorExtensions.Create(true);
+  Extensions.Add('text', 1);
+  Extensions.Add('txt', 1);
+  Extensions.Add('md', 1);
   Extensions.Add('php', 3);
   Extensions.Add('pas', 4);
   Extensions.Add('d', 5);
@@ -116,6 +120,9 @@ begin
   Extensions.Add('mne-project', 8);
   Extensions.Add('png', 9);
   Extensions.Add('jpg', 9);
+  Extensions.Add('cmd', 10);
+  Extensions.Add('sh', 10);
+  Extensions.Add('bat', 10);
 end;
 
 procedure TEditorResource.DataModuleDestroy(Sender: TObject);

@@ -112,7 +112,7 @@ begin
         aItem := FilesList.Items.Add;
         aItem.Caption := aFileName;
         aItem.SubItems.Add(ExtractFilePath(FFiles[i]));
-        aItem.ImageIndex := EditorResource.GetFileImageIndex(aItem.Caption);
+        aItem.ImageIndex := EditorResource.GetFileImageIndex(aItem.Caption, -1);
       end;
     end;
   finally

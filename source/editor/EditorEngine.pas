@@ -986,6 +986,7 @@ type
     FCachedVariables: THashedStringList;
     FCachedAge: QWord;
     function GetActive: Boolean;
+    function GetMainFile: string;
     function GetMainFolder: string;
     procedure SetPanel(AValue: TControl);
     procedure SetProject(const Value: TEditorProject);
@@ -1012,6 +1013,7 @@ type
     //Session Options is depend on the system used not shared between OSs
     property Options: TEditorSessionOptions read FOptions;
     property MainFolder: string read GetMainFolder;
+    property MainFile: string read GetMainFile;
     property IsChanged: Boolean read FIsChanged;
     //Process the project running if it is null, process should nil it after finish
     property Run: TmneRun read FRun write SetRun;
@@ -3462,6 +3464,14 @@ end;
 function TEditorSession.GetActive: Boolean;
 begin
   Result := (Project <> nil) and not (Project is TDefaultProject);
+end;
+
+function TEditorSession.GetMainFile: string;
+begin
+  if Project.RunOptions.MainFile <> '' then
+    Result := Engine.ExpandFile(Project.RunOptions.MainFile)
+  else
+    Result := '';
 end;
 
 procedure TEditorOptions.OptionsShow;

@@ -32,8 +32,8 @@ uses
   {$endif}
   mnePHPIniForm,
   //end of addons
-  mneTendencyOptions, IniFiles, mnFields, simpleipc, mnUtils, ntvTabs,
-  ntvPageControls, SynEditMiscClasses, SynEditMarkupSpecialLine,
+  mneTendencyOptions, mneResources, IniFiles, mnFields, simpleipc, mnUtils,
+  ntvTabs, ntvPageControls, SynEditMiscClasses, SynEditMarkupSpecialLine,
   SynHighlighterAny;
 
 type
@@ -594,7 +594,7 @@ implementation
 
 uses
   mnXMLUtils, StrUtils, SearchForms, mneProjectOptions, EditorOptions,
-  EditorProfiles, mneResources, mneSetups, Clipbrd, ColorUtils,
+  EditorProfiles, mneSetups, Clipbrd, ColorUtils,
   SelectFiles, mneSettings, mneConsts,
   SynEditTypes, AboutForms, mneManageRecentsForms, Types,
   mneBreakpoints, SynMacroRecorder,
@@ -885,7 +885,7 @@ end;
 procedure TMainForm.MainFileActExecute(Sender: TObject);
 begin
   if Engine.Session.Project.RunOptions.MainFile <> '' then
-    Engine.Files.OpenFile(Engine.Session.Project.RunOptions.MainFile);
+    Engine.Files.OpenFile(Engine.Session.MainFile);
 end;
 
 procedure TMainForm.MenuItem22Click(Sender: TObject);
@@ -1433,6 +1433,7 @@ var
   i, c: integer;
   aMenuItem: TMenuItem;
 begin
+  ReopenMnu.SubMenuImages := EditorResource.FileImages;
   ReopenMnu.Clear;
   c := Engine.Options.RecentFiles.Count;
   if c > 10 then
@@ -1443,6 +1444,7 @@ begin
     aMenuItem.Caption := Engine.Options.RecentFiles[i];
     aMenuItem.Hint := aMenuItem.Caption;
     aMenuItem.OnClick := @ReopenClick;
+    aMenuItem.ImageIndex :=  EditorResource.GetFileImageIndex(aMenuItem.Caption, 1);
     ReopenMnu.Add(aMenuItem);
   end;
 end;
@@ -1501,6 +1503,7 @@ var
   i, c: integer;
   aMenuItem: TMenuItem;
 begin
+  ReopenProjectMnu.SubMenuImages := EditorResource.FileImages;
   ReopenProjectMnu.Clear;
   c := Engine.Options.RecentProjects.Count;
   if c > 10 then
@@ -1511,6 +1514,7 @@ begin
     aMenuItem.Caption := Engine.Options.RecentProjects[i];
     aMenuItem.Hint := aMenuItem.Caption;
     aMenuItem.OnClick := @ReopenProjectClick;
+    aMenuItem.ImageIndex :=  EditorResource.GetFileImageIndex(aMenuItem.Caption, 1);
     ReopenProjectMnu.Add(aMenuItem);
   end;
 end;
@@ -2151,7 +2155,7 @@ begin
             aItem := FileList.Items.Add;
             aItem.Caption := aFiles[r];
             aItem.Data := Pointer(1);
-            aItem.ImageIndex := EditorResource.GetFileImageIndex(aFiles[r]);
+            aItem.ImageIndex := EditorResource.GetFileImageIndex(aFiles[r], -1);
           end;
         end;
       finally
