@@ -857,6 +857,21 @@ object EditorColorsForm: TEditorColorsForm
       TabOrder = 1
     end
   end
+  object NameEdit: TEdit
+    Left = 54
+    Height = 21
+    Top = 364
+    Width = 140
+    TabOrder = 16
+  end
+  object Label1: TLabel
+    Left = 10
+    Height = 13
+    Top = 368
+    Width = 28
+    Caption = 'Name'
+    ParentColor = False
+  end
   object FontDialog: TFontDialog
     Width = 28
     Height = 28
@@ -873,11 +888,12 @@ object EditorColorsForm: TEditorColorsForm
     Width = 28
     Height = 28
     DefaultExt = '.mne-theme'
+    FileName = '*.mne-theme'
     Filter = 'Theme (*.mne-theme)|*.mne-theme'
     InitialDir = 'M:\home\pascal\projects\miniEdit\'
     Options = [ofFileMustExist, ofEnableSizing, ofViewDetail]
-    left = 185
-    top = 221
+    left = 199
+    top = 242
   end
   object SaveDialog: TSaveDialog
     DefaultExt = '.mne-theme'

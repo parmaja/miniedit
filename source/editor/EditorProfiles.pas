@@ -107,6 +107,7 @@ type
   { TGlobalAttributes }
 
   TGlobalAttributesInfo = record
+    Name: string;
     FontName: String;
     FontNoAntialiasing: Boolean;
     FontSize: Integer;
@@ -175,6 +176,7 @@ type
   public
     property Info: TGlobalAttributesInfo read FInfo write FInfo;
   published
+    property Name: string read FInfo.Name write FInfo.Name; //just name
     property Default: TGlobalAttribute read FDefault;
     property Link: TGlobalAttribute read FLink;
     property Panel: TGlobalAttribute read FPanel;

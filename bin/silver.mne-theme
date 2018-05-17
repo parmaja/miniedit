@@ -19,6 +19,8 @@
       <ForeColor>clBlack</ForeColor>
     </Selected>
     <Highlighted Class="TGlobalAttribute">
+      <ForeColor>1380351</ForeColor>
+      <Options>gaoDefaultBackground</Options>
     </Highlighted>
     <Active Class="TGlobalAttribute">
       <BackColor>7691082</BackColor>

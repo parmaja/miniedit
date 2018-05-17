@@ -136,7 +136,7 @@ end;
 constructor TTGIT_SCM.Create;
 begin
   inherited Create;
-  FName := 'TGIT';
+  FName := 'GIT';
   FTitle := 'Tortoise GIT';
   FDescription := 'Tortoise GIT for windows';
 end;

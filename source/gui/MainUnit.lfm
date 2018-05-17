@@ -2021,41 +2021,6 @@ object MainForm: TMainForm
         OnClick = SelectAllActExecute
       end
     end
-    object SCMMnu: TMenuItem
-      Caption = 'SCM'
-      Visible = False
-      object CommitMnu: TMenuItem
-        Action = SCMCommitAct
-        OnClick = SCMCommitActExecute
-      end
-      object CommitFileMnu: TMenuItem
-        Action = SCMCommitFileAct
-        OnClick = SCMCommitFileActExecute
-      end
-      object UpdateMnu: TMenuItem
-        Action = SCMUpdateAct
-        OnClick = SCMUpdateActExecute
-      end
-      object UpdateFileMnu: TMenuItem
-        Action = SCMUpdateFileAct
-        OnClick = SCMUpdateFileActExecute
-      end
-      object SCMAddFileMnu: TMenuItem
-        Action = SCMAddFileAct
-      end
-      object DiffMnu: TMenuItem
-        Action = SCMDiffFileAct
-        OnClick = SCMDiffFileActExecute
-      end
-      object RevertMnu: TMenuItem
-        Action = SCMRevertAct
-        OnClick = SCMRevertActExecute
-      end
-      object CompareToMnu: TMenuItem
-        Action = SCMCompareToAct
-        OnClick = SCMCompareToActExecute
-      end
-    end
     object ExecuteMnu: TMenuItem
       Caption = 'Execute'
       object StartServer1: TMenuItem
@@ -2142,6 +2107,41 @@ object MainForm: TMainForm
       end
       object MenuItem29: TMenuItem
         Caption = '-'
+      end
+    end
+    object SCMMnu: TMenuItem
+      Caption = 'SCM'
+      Visible = False
+      object CommitMnu: TMenuItem
+        Action = SCMCommitAct
+        OnClick = SCMCommitActExecute
+      end
+      object CommitFileMnu: TMenuItem
+        Action = SCMCommitFileAct
+        OnClick = SCMCommitFileActExecute
+      end
+      object UpdateMnu: TMenuItem
+        Action = SCMUpdateAct
+        OnClick = SCMUpdateActExecute
+      end
+      object UpdateFileMnu: TMenuItem
+        Action = SCMUpdateFileAct
+        OnClick = SCMUpdateFileActExecute
+      end
+      object SCMAddFileMnu: TMenuItem
+        Action = SCMAddFileAct
+      end
+      object DiffMnu: TMenuItem
+        Action = SCMDiffFileAct
+        OnClick = SCMDiffFileActExecute
+      end
+      object RevertMnu: TMenuItem
+        Action = SCMRevertAct
+        OnClick = SCMRevertActExecute
+      end
+      object CompareToMnu: TMenuItem
+        Action = SCMCompareToAct
+        OnClick = SCMCompareToActExecute
       end
     end
     object Help1: TMenuItem
@@ -2583,9 +2583,7 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'Rename File'
       OnExecute = RenameActExecute
-      SecondaryShortCuts.Strings = (
-        'f2'
-      )
+      ShortCut = 113
     end
     object DeleteAct: TAction
       Category = 'File'
@@ -2719,9 +2717,6 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'Change File Type'
       OnExecute = ChangeExtActExecute
-      SecondaryShortCuts.Strings = (
-        'Ctrl+F2'
-      )
     end
     object CloseOthersAct: TAction
       Category = 'File'

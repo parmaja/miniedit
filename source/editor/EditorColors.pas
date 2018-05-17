@@ -12,7 +12,7 @@ interface
 uses
   Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, Clipbrd,
   Registry, ExtCtrls, Buttons, ImgList, Menus, ColorBox, SynEdit, SynGutter, SynEditMarkupWordGroup,
-  SynEditHighlighter, SynEditMiscClasses, SynEditKeyCmds, Classes, SysUtils, typinfo,
+  SynEditHighlighter, SynEditMiscClasses, SynEditKeyCmds, Classes, SysUtils, typinfo, FileUtil,
   EditorProfiles, SynGutterBase, SynEditMarks, mnStreams, Types;
 
 type
@@ -37,6 +37,7 @@ type
     BackgroundChk: TCheckBox;
     Bevel1: TBevel;
     CategoryCbo: TComboBox;
+    NameEdit: TEdit;
     ForegroundBtn: TButton;
     BackgroundBtn: TButton;
     FontBtn: TButton;
@@ -45,6 +46,7 @@ type
     ForegroundCbo: TColorBox;
     ForegroundChk: TCheckBox;
     ExampleLbl: TLabel;
+    Label1: TLabel;
     Label11: TLabel;
     LoadBtn: TButton;
     MenuItem1: TMenuItem;
@@ -420,6 +422,7 @@ var
 begin
   if not InChanging and (AttributeCbo.ItemIndex >= 0) then
   begin
+    NameEdit.Text := FProfile.Attributes.Name;
     aGlobalAttribute := (AttributeCbo.Items.Objects[AttributeCbo.ItemIndex] as TGlobalAttribute);
     InChanging := True;
     try
@@ -459,6 +462,7 @@ var
 begin
   if not InChanging and (AttributeCbo.ItemIndex >= 0) then
   begin
+    FProfile.Attributes.Name := NameEdit.Text;
     aGlobalAttribute := (AttributeCbo.Items.Objects[AttributeCbo.ItemIndex] as TGlobalAttribute);
 
     //Copy some from TGutterOptions.AssignTo(Dest: TPersistent);
@@ -554,12 +558,14 @@ var
   end;
   {$endif}
 begin
+  SaveDialog.FileName := NameEdit.Text + SaveDialog.DefaultExt;
   if SaveDialog.Execute then
   begin
     Apply;
+    FProfile.Attributes.Name := ExtractFileNameWithoutExt(ExtractFileName(SaveDialog.FileName));
     XMLWriteObjectFile(FProfile.Attributes, SaveDialog.FileName);
     {$ifdef debug}
-    Stream := TFileStream.Create(SaveDialog.FileName+'-code.pas', fmCreate);
+    Stream := TFileStream.Create(ExtractFilePath(SaveDialog.FileName) + ExtractFileNameWithoutExt(ExtractFileName(SaveDialog.FileName))+'-code.pas', fmCreate);
     try
       for i := 0 to FProfile.Attributes.Count -1 do
       begin
@@ -578,6 +584,7 @@ begin
       Stream.Free;
     end;
     {$endif}
+    RetrieveAttribute;
   end;
 end;
 
