@@ -197,7 +197,7 @@ type
     fgkText, //Is it an Text Editor like SQL or PHP
     fgkUneditable, // Can't be editable
     fgkExecutable,//You can guess what is it :P
-    fgkShell,//TODO: Executable but very hot, override the main file or project tendency
+    fgkShell,//TODO: Executable but hi priority, override the main file or project tendency
     fgkDebugee, //TODO
     fgkMain,//this can be the main file for project
     fgkResult,//Result file, generated, like: exe or .o or .hex
@@ -870,6 +870,7 @@ type
 
   TFileGroup = class(TEditorElement)
   private
+    FExtraExtensions: TEditorExtensions;
     FFileClass: TEditorFileClass;
     FExtensions: TEditorExtensions;
     FKind: TFileGroupKinds;
@@ -885,6 +886,7 @@ type
     procedure EnumExtensions(vExtensions: TEditorElements);
     property Category: TFileCategory read FCategory write SetCategory;
     property Extensions: TEditorExtensions read FExtensions;
+    property ExtraExtensions: TEditorExtensions read FExtraExtensions;
     property Kind: TFileGroupKinds read FKind write FKind;
     property Style: TFileGroupStyles read FStyle write FStyle;
     property FileClass: TEditorFileClass read FFileClass;
@@ -1104,6 +1106,7 @@ type
 
     procedure Startup(vSafeMode: Boolean = False);
     procedure LoadOptions;
+    procedure UpdateOptions;
     procedure SaveOptions;
     procedure Shutdown;
     function IsShutdown: Boolean;
@@ -3562,7 +3565,7 @@ var
   aFile: string;
   i: Integer;
 begin
-  Engine.BeginUpdate;
+  BeginUpdate;
   try
     Options.Load(Workspace);
     Session.Options.SafeLoadFromFile(Workspace + 'mne-options-' + SysPlatform + '.xml');
@@ -3575,9 +3578,43 @@ begin
           XMLReadObjectFile(Tendencies[i], aFile);
       end;
     end;
-    Engine.UpdateState([ecsOptions]);
+    UpdateOptions;
+    UpdateState([ecsOptions]);
   finally
-    Engine.EndUpdate;
+    EndUpdate;
+  end;
+end;
+
+procedure TEditorEngine.UpdateOptions;
+var
+  i, j: Integer;
+  s: string;
+  lStrings: TStringList;
+begin
+  for i := 0 to Groups.Count - 1 do
+  begin
+    if not Groups[i].Category.Tendency.IsDefault then
+    begin
+      Groups[i].ExtraExtensions.Clear;
+
+      lStrings := TStringList.Create;
+      try
+        s := Options.ExtraExtensions.Values[Groups[i].Name];
+        if s <> '' then
+        begin
+          StrToStrings(s, lStrings, [';'], [' ']);
+          for j := 0 to lStrings.Count -1 do
+          begin
+            s := lStrings[j];
+            if LeftStr(s, 1) = '.' then
+              s := Copy(s, 2, MaxInt);
+            Groups[i].ExtraExtensions.Add(s);
+          end;
+        end;
+      finally
+        lStrings.Free;
+      end;
+    end;
   end;
 end;
 
@@ -4739,6 +4776,15 @@ begin
             break;
           end;
         end;
+        if Result = nil then
+          for j := 0 to Items[i].ExtraExtensions.Count - 1 do
+          begin
+            if SameText(Items[i].ExtraExtensions[j].Name, vExtension) then
+            begin
+              Result := Items[i];
+              break;
+            end;
+          end;
       end;
       if Result <> nil then
         break;
@@ -5072,6 +5118,7 @@ constructor TFileGroup.Create;
 begin
   inherited;
   FExtensions := TEditorExtensions.Create;
+  FExtraExtensions := TEditorExtensions.Create;
   FKind := [fgkBrowsable];
 end;
 
@@ -5099,7 +5146,7 @@ procedure TFileGroup.EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKi
   end;
 var
   s: string;
-  lStrings:TStringList;
+  lStrings: TStringList;
 begin
   vExtensions.BeginUpdate;
   try
@@ -5145,6 +5192,7 @@ end;
 destructor TFileGroup.Destroy;
 begin
   FExtensions.Free;
+  FExtraExtensions.Free;
   inherited;
 end;
 

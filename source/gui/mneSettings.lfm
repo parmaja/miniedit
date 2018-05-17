@@ -179,7 +179,7 @@ object EditorSettingForm: TEditorSettingForm
         TitleFont.Name = 'MS Sans Serif'
         ColWidths = (
           129
-          255
+          272
         )
       end
       object IgnoreNamesEdit: TEdit

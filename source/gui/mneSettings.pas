@@ -11,7 +11,8 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  EditorDebugger, EditorEngine, Dialogs, StdCtrls, ComCtrls, Grids;
+  EditorDebugger, EditorEngine, EditorClasses, Dialogs, StdCtrls, ComCtrls,
+  Grids;
 
 type
 
@@ -180,6 +181,8 @@ begin
   end;
   FEngine.Options.IgnoreNames := IgnoreNamesEdit.Text;
   FEngine.Options.AnsiCodePage := CodePageNames[CodePagesCbo.ItemIndex].cp;
+  Engine.UpdateOptions;
+  Engine.UpdateState([ecsOptions]);
 end;
 
 procedure TEditorSettingForm.Retrieve;

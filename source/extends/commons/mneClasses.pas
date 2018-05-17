@@ -19,6 +19,20 @@ uses
   SynHighlighterPython;
 
 type
+
+  { TmneProjectFileCategory }
+
+  TmneProjectFileCategory = class(TFileCategory)
+  protected
+    function GetIsText: Boolean; override;
+  public
+  end;
+
+  TmneProjectFile = class(TEditorFile)
+  protected
+  public
+  end;
+
   TSQLFile = class(TSourceEditorFile)
   protected
   public
@@ -219,6 +233,13 @@ begin
   end;
 end;
 
+{ TmneProjectFileCategory }
+
+function TmneProjectFileCategory.GetIsText: Boolean;
+begin
+  Result := False;
+end;
+
 { TYamlFileCategory }
 
 function TYamlFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
@@ -398,6 +419,7 @@ initialization
   with Engine do
   begin
     //Categories.Add('', TTXTFile, TTXTFileCategory);
+    Categories.Add(TmneProjectFileCategory.Create(DefaultProject.Tendency, 'mne-project'));
     Categories.Add(TTXTFileCategory.Create(DefaultProject.Tendency, 'txt'));
     Categories.Add(TSQLFileCategory.Create(DefaultProject.Tendency, 'sql'));
     Categories.Add(TApacheFileCategory.Create(DefaultProject.Tendency, 'apache', []));
@@ -407,6 +429,7 @@ initialization
     Categories.Add(TYamlFileCategory.Create(DefaultProject.Tendency, 'Yaml'));
     Categories.Add(TMDFileCategory.Create(DefaultProject.Tendency, 'md'));
 
+    Groups.Add(TmneProjectFile, 'mne-project', 'Project', TmneProjectFileCategory, ['mne-project'], [fgkAssociated, fgkBrowsable, fgkUneditable]);
     Groups.Add(TTXTFile, 'txt', 'Text', TTXTFileCategory, ['txt', 'text'], []);
     Groups.Add(TTXTFile, 'motd', 'motd', TTXTFileCategory, ['motd'], []);
     Groups.Add(TTXTFile, 'md', 'MarkDown', TMDFileCategory, ['md'], []);

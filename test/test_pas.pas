@@ -1,18 +1,17 @@
-program zaher;
-
-uses
-  SysUtils;
-var
-  s: string;
-  x: integer;
-begin
+Program zaher;
+Uses
+SysUtils;
+Var
+  s: String;
+  x: Integer;
+Begin
   x := 10;
-  writeln(x);
-  x:=x + 10;
-  writeln(x);
- sss  s := 'Hi World';
-  writeln(s);
-  writeln('Bye');
-  writeln('Press Enter to exit');
-  ReadLn();
-end.
+  Writeln(x);
+  x := x + 10;
+  Writeln(x);   jhkjhk
+  s := 'Hi World';
+  Writeln(s);
+  Writeln('Bye');
+  Writeln('Press Enter to exit');
+  //ReadLn();
+End.

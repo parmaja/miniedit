@@ -52,16 +52,22 @@ function TEditorResource.GetFileImageIndex(const FileName: string; DefaultImage:
 var
   Extension: TEditorExtension;
   s: string;
+  g: TFileGroup;
 begin
   s := ExtractFileExt(FileName);
   if LeftStr(s, 1) = '.' then
     s := Copy(s, 2, MaxInt);
-
-  Extension := Extensions.Find(s);
-  if Extension <> nil then
-    Result := Extension.ImageIndex
+  g := Engine.Groups.FindExtension(s);
+  if g = nil then
+    Result := DefaultImage
   else
-    Result := DefaultImage;
+  begin
+    Extension := Extensions.Find(g.Name);
+    if Extension <> nil then
+      Result := Extension.ImageIndex
+    else
+      Result := DefaultImage;
+  end;
 end;
 
 procedure TEditorResource.Switch(Style: TThemeStyle);
