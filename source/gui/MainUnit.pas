@@ -1612,7 +1612,9 @@ procedure TMainForm.TypesOptionsActExecute(Sender: TObject);
 var
   lTendency: TEditorTendency;
 begin
-  if Engine.Files.Current <> nil then
+  if Engine.Session.Active then
+    lTendency := Engine.Session.Project.Tendency
+  else if Engine.Files.Current <> nil then
     lTendency := Engine.Files.Current.Tendency
   else
     lTendency := nil;
@@ -2477,6 +2479,7 @@ begin
       begin
         OutputEdit.CaretY := FOutputs[0].LogLine;
         LogGotoLine;
+        OutputEdit.Invalidate;//there is bug refereshing marked line
       end;
     end;
   end;

@@ -42,12 +42,12 @@
     </Modified>
     <Keyword Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>16748371</ForeColor>
+      <ForeColor>16747857</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Keyword>
     <Symbol Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>16772561</ForeColor>
+      <ForeColor>13606911</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Symbol>
     <Number Class="TGlobalAttribute">
@@ -77,7 +77,7 @@
     </Standard>
     <DataType Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>6974179</ForeColor>
+      <ForeColor>4227327</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </DataType>
     <DataName Class="TGlobalAttribute">
@@ -87,7 +87,7 @@
     </DataName>
     <Document Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>10540718</ForeColor>
+      <ForeColor>5159011</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Document>
     <Text Class="TGlobalAttribute">
@@ -102,7 +102,7 @@
     </EmbedText>
     <Comment Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>12946341</ForeColor>
+      <ForeColor>clSilver</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Comment>
     <QuotedString Class="TGlobalAttribute">

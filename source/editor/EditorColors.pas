@@ -131,9 +131,11 @@ begin
         aFileCategory := Engine.Categories[i];
         if aFileCategory.Highlighter <> nil then
         begin
-          S := aFileCategory.Highlighter.GetLanguageName;
+          S := aFileCategory.Title;
+          if S = '' then
+            S := aFileCategory.Name;
           CategoryCbo.Items.AddObject(S, aFileCategory);
-          if SameText(Select, S) then
+          if SameText(Select, aFileCategory.Name) then
             n := CategoryCbo.Items.Count - 1;
         end;
       end;

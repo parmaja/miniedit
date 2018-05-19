@@ -359,7 +359,7 @@ initialization
   with Engine do
   begin
     Tendencies.Add(TLuaTendency);
-    Categories.Add(TLuaFileCategory.Create(TLuaTendency, 'Lua', [fckPublish]));
+    Categories.Add(TLuaFileCategory.Create(TLuaTendency, 'Lua', 'Lua', [fckPublish]));
     Groups.Add(TLuaFile, 'lua', 'Lua', TLuaFileCategory, ['lua'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
   end;
 end.

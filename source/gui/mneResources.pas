@@ -66,7 +66,7 @@ begin
     if Extension <> nil then
       Result := Extension.ImageIndex
     else
-      Result := DefaultImage;
+      Result := 1;
   end;
 end;
 

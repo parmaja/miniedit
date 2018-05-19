@@ -10,7 +10,7 @@ unit mneClasses;
 interface
 
 uses
-  Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
+  Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs, StdCtrls,
   LCLintf, LCLType,
   Dialogs, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit,
   Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
@@ -26,6 +26,8 @@ type
   protected
     function GetIsText: Boolean; override;
   public
+    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    procedure InitMappers; override;
   end;
 
   TmneProjectFile = class(TEditorFile)
@@ -139,6 +141,9 @@ type
 
 function ColorToRGBHex(Color: TColor): string;
 function RGBHexToColor(Value: string): TColor;
+function CheckBoxStateToStates(State: TCheckBoxState): TThreeStates;
+function StatesToCheckBoxState(State: TThreeStates): TCheckBoxState;
+
 
 const
   sSoftwareRegKey = 'Software\miniEdit\';
@@ -184,6 +189,20 @@ begin
   end
   else
     Result := clBlack;
+end;
+
+function CheckBoxStateToStates(State: TCheckBoxState): TThreeStates;
+const
+  r: array[TCheckBoxState] of TThreeStates  = (stateFalse, stateTrue, stateNone);
+begin
+  Result := r[State];
+end;
+
+function StatesToCheckBoxState(State: TThreeStates): TCheckBoxState;
+const
+  r: array[TThreeStates] of TCheckBoxState  = (cbGrayed, cbUnchecked, cbChecked);
+begin
+  Result := r[State];
 end;
 
 type
@@ -238,6 +257,15 @@ end;
 function TmneProjectFileCategory.GetIsText: Boolean;
 begin
   Result := False;
+end;
+
+function TmneProjectFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+begin
+  Result := nil;
+end;
+
+procedure TmneProjectFileCategory.InitMappers;
+begin
 end;
 
 { TYamlFileCategory }
@@ -418,16 +446,15 @@ end;
 initialization
   with Engine do
   begin
-    //Categories.Add('', TTXTFile, TTXTFileCategory);
-    Categories.Add(TmneProjectFileCategory.Create(DefaultProject.Tendency, 'mne-project'));
-    Categories.Add(TTXTFileCategory.Create(DefaultProject.Tendency, 'txt'));
-    Categories.Add(TSQLFileCategory.Create(DefaultProject.Tendency, 'sql'));
-    Categories.Add(TApacheFileCategory.Create(DefaultProject.Tendency, 'apache', []));
-    Categories.Add(TINIFileCategory.Create(DefaultProject.Tendency, 'ini'));
-    Categories.Add(TXMLFileCategory.Create(DefaultProject.Tendency, 'xml'));
-    Categories.Add(TCFGFileCategory.Create(DefaultProject.Tendency, 'CFG'));
-    Categories.Add(TYamlFileCategory.Create(DefaultProject.Tendency, 'Yaml'));
-    Categories.Add(TMDFileCategory.Create(DefaultProject.Tendency, 'md'));
+    Categories.Add(TmneProjectFileCategory.Create(DefaultProject.Tendency, 'mne-project', 'MiniEdit project'));
+    Categories.Add(TTXTFileCategory.Create(DefaultProject.Tendency, 'txt', 'Text'));
+    Categories.Add(TSQLFileCategory.Create(DefaultProject.Tendency, 'sql', 'SQL'));
+    Categories.Add(TApacheFileCategory.Create(DefaultProject.Tendency, 'apache', 'Apache Config', []));
+    Categories.Add(TINIFileCategory.Create(DefaultProject.Tendency, 'ini', 'INI config'));
+    Categories.Add(TXMLFileCategory.Create(DefaultProject.Tendency, 'xml', 'XML files'));
+    Categories.Add(TCFGFileCategory.Create(DefaultProject.Tendency, 'CFG', 'CFG Condif'));
+    Categories.Add(TYamlFileCategory.Create(DefaultProject.Tendency, 'Yaml', 'YAML'));
+    Categories.Add(TMDFileCategory.Create(DefaultProject.Tendency, 'md', 'Markdown'));
 
     Groups.Add(TmneProjectFile, 'mne-project', 'Project', TmneProjectFileCategory, ['mne-project'], [fgkAssociated, fgkBrowsable, fgkUneditable]);
     Groups.Add(TTXTFile, 'txt', 'Text', TTXTFileCategory, ['txt', 'text'], []);

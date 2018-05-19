@@ -11,7 +11,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, SynEdit, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, ExtCtrls, EditorEngine, SelectFiles, EditorDebugger;
+  StdCtrls, ExtCtrls, EditorEngine, SelectFiles, EditorDebugger, mneClasses;
 
 type
 
@@ -54,15 +54,15 @@ end;
 
 procedure TRunFrameOptions.Apply;
 begin
-  Options.Pause := PauseChk.Checked;
-  Options.Console := ConsoleChk.Checked;
+  Options.Pause := CheckBoxStateToStates(PauseChk.State);
+  Options.Console := CheckBoxStateToStates(ConsoleChk.State);
   Options.Command := CommandEdit.Text;
 end;
 
 procedure TRunFrameOptions.Retrieve;
 begin
-  PauseChk.Checked := Options.Pause;
-  ConsoleChk.Checked := Options.Console;
+  PauseChk.State := StatesToCheckBoxState(Options.Pause);
+  ConsoleChk.State := StatesToCheckBoxState(Options.Console);
   CommandEdit.Text := Options.Command;
 end;
 

@@ -13,6 +13,7 @@ object RunFrameOptions: TRunFrameOptions
     Height = 19
     Top = 81
     Width = 156
+    AllowGrayed = True
     Caption = 'Pause after run in console'
     TabOrder = 0
   end
@@ -48,6 +49,7 @@ object RunFrameOptions: TRunFrameOptions
     Height = 19
     Top = 60
     Width = 63
+    AllowGrayed = True
     Caption = 'Console'
     TabOrder = 3
   end

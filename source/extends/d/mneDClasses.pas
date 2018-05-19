@@ -411,7 +411,7 @@ initialization
   with Engine do
   begin
     Tendencies.Add(TDTendency);
-    Categories.Add(TDFileCategory.Create(TDTendency, 'D', [fckPublish]));
+    Categories.Add(TDFileCategory.Create(TDTendency, 'D', 'D lang', [fckPublish]));
     Groups.Add(TDFile, 'd', 'D', TDFileCategory, ['d', 'inc'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
   end;
 end.

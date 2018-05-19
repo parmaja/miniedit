@@ -180,7 +180,7 @@ initialization
   with Engine do
   begin
     Tendencies.Add(TSARDTendency);
-    Categories.Add(TSARDFileCategory.Create(TSARDTendency, 'Sard'));
+    Categories.Add(TSARDFileCategory.Create(TSARDTendency, 'Sard', 'SARD lang'));
     Groups.Add(TSARDFile, 'sard', 'SARD', TSARDFileCategory, ['sard'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
   end;
 end.

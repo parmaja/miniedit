@@ -1,6 +1,6 @@
 Program zaher;
 Uses
-SysUtils;
+  SysUtils;
 Var
   s: String;
   x: Integer;

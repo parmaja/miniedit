@@ -265,7 +265,7 @@ begin
       aRunItem := Engine.Session.Run.Add;
       aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
       aRunItem.Info.CurrentDirectory := Info.Root;
-      aRunItem.Info.Run.Pause := AOptions.Pause;
+      aRunItem.Info.Run.Pause := Info.Pause;
       aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
       aRunItem.Info.Run.Command := ChangeFileExt(Info.OutputFile, '.exe');
       aRunItem.Info.Run.AddParam(AOptions.Params);

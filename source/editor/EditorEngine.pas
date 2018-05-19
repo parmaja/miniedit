@@ -34,6 +34,8 @@ uses
   mnUtils, LCLType, EditorClasses, EditorRun;
 
 type
+  TThreeStates = (stateNone, stateFalse, stateTrue);
+
   TSynCompletionType = (ctCode, ctHint, ctParams);
 
   TEditorEngine = class;
@@ -344,10 +346,10 @@ type
 
   TRunProjectInfo = record
     Command: string;
-    Console: Boolean;
     MainFolder: string;
     Params: string;
-    Pause: Boolean;
+    Console: TThreeStates;
+    Pause: TThreeStates;
     MainFile: string;
     OutputFile: string;
     Require: string;
@@ -367,8 +369,8 @@ type
     procedure Copy(AOptions: TRunProjectOptions);
     procedure Assign(Source: TPersistent); override;
   published
-    property Pause: Boolean read FInfo.Pause write FInfo.Pause default true;
-    property Console: Boolean read FInfo.Console write FInfo.Console default true;
+    property Pause: TThreeStates read FInfo.Pause write FInfo.Pause default stateTrue;
+    property Console: TThreeStates read FInfo.Console write FInfo.Console default stateTrue;
     property Command: string read FInfo.Command write FInfo.Command;
     property Params: string read FInfo.Params write FInfo.Params;
     property Require: string read FInfo.Require write FInfo.Require;
@@ -801,6 +803,7 @@ type
     FKind: TFileCategoryKinds;
     FMapper: TMapper;
     FTendency: TEditorTendency;
+    FTitle: string;
     function GetHighlighter: TSynCustomHighlighter;
     function GetItem(Index: Integer): TFileGroup;
     function GetMapper: TMapper;
@@ -817,8 +820,8 @@ type
     procedure InitEdit(vSynEdit: TCustomSynEdit); virtual;
     function GetIsText: Boolean; virtual;
   public
-    constructor Create(ATendency: TEditorTendency; const vName: string; vKind: TFileCategoryKinds = []); virtual;
-    constructor Create(ATendency: TEditorTendencyClass; const vName: string; vKind: TFileCategoryKinds = []); virtual;
+    constructor Create(ATendency: TEditorTendency; const vName, vTitle: string; vKind: TFileCategoryKinds = []); virtual;
+    constructor Create(ATendency: TEditorTendencyClass; const vName, vTitle: string; vKind: TFileCategoryKinds = []); virtual;
     destructor Destroy; override;
     procedure EnumMenuItems(AddItems: TAddClickCallBack); virtual;
     function CreateHighlighter: TSynCustomHighlighter; //todo replace with doCreate....
@@ -826,6 +829,7 @@ type
     property Mapper:TMapper read GetMapper write FMapper;
     procedure Apply(AHighlighter: TSynCustomHighlighter; Attributes: TGlobalAttributes);
     property Name: string read FName write FName;
+    property Title: string read FTitle write FTitle;
     function Find(vName: string): TFileGroup;
     procedure EnumExtensions(vExtensions: TStringList);
     function GetExtensions: string;
@@ -1620,6 +1624,14 @@ procedure TRunProjectOptions.Merge(AOptions: TRunProjectOptions);
       Result := v;
   end;
 
+  function iif(v, s: TThreeStates): TThreeStates;
+  begin
+    if s = stateNone then
+      Result := v
+    else
+      Result := s;
+  end;
+
 begin
   FInfo.Command := iif(FInfo.Command, AOptions.Command);
   FInfo.Params := iif(FInfo.Params, AOptions.Params);
@@ -1651,8 +1663,8 @@ constructor TRunProjectOptions.Create;
 begin
   inherited;
   FPaths := TStringList.Create;
-  FInfo.Pause := True;
-  FInfo.Console := True;
+  FInfo.Pause := stateTrue;
+  FInfo.Console := stateTrue;
 end;
 
 destructor TRunProjectOptions.Destroy;
@@ -2339,8 +2351,8 @@ begin
         p.Root := Engine.Session.GetRoot;
         p.Command := Engine.EnvReplace(AOptions.Command);
 
-        p.Pause := AOptions.Pause;
-        p.Console := AOptions.Console;
+        p.Pause := AOptions.Pause in [stateTrue];
+        p.Console := AOptions.Console in [stateTrue, stateNone];
 
         p.MainFile := Engine.ExpandFile(Engine.Session.Project.RunOptions.MainFile); //TODO: here need to care about expand file to be similar to env variable
 
@@ -3511,7 +3523,7 @@ begin
     Engine.BeginUpdate;
     try
       if (Engine.Files.Current <> nil) then
-        aSelect := Engine.Files.Current.GetLanguageName //just to select a language in the combobox
+        aSelect := Engine.Files.Current.Group.Category.Name //just to select a language in the combobox
       else
         aSelect := '';
       if Execute(Profile, aSelect) then
@@ -4794,20 +4806,21 @@ end;
 
 { TFileCategory }
 
-constructor TFileCategory.Create(ATendency: TEditorTendency; const vName: string; vKind: TFileCategoryKinds);
+constructor TFileCategory.Create(ATendency: TEditorTendency; const vName, vTitle: string; vKind: TFileCategoryKinds);
 begin
   inherited Create(False); //childs is groups and already added to Groups and freed by it
   FTendency := ATendency;
   FName := vName;
+  FTitle := vTitle;
   FKind := vKind;
 end;
 
-constructor TFileCategory.Create(ATendency: TEditorTendencyClass; const vName: string; vKind: TFileCategoryKinds);
+constructor TFileCategory.Create(ATendency: TEditorTendencyClass; const vName, vTitle: string; vKind: TFileCategoryKinds);
 var
   lTendency: TEditorTendency;
 begin
   lTendency := Engine.Tendencies.FindByClass(ATendency);
-  Create(lTendency, vName, vKind);
+  Create(lTendency, vName, vTitle, vKind);
 end;
 
 procedure TFileCategory.EnumExtensions(vExtensions: TStringList);

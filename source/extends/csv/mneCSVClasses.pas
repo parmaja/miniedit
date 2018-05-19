@@ -160,7 +160,7 @@ initialization
   with Engine do
   begin
     Tendencies.Add(TCSVTendency);
-    Categories.Add(TCSVFileCategory.Create(TCSVTendency, 'csv'));
+    Categories.Add(TCSVFileCategory.Create(TCSVTendency, 'csv', 'CSV comma seperated files'));
     Groups.Add(TCSVFile, 'csv', 'CSV', TCSVFileCategory, ['csv'], [fgkBrowsable], []);
   end;
 end.

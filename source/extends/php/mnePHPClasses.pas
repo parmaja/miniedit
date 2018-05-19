@@ -585,9 +585,9 @@ initialization
   with Engine do
   begin
     Tendencies.Add(TPHPTendency);
-    Categories.Add(TXHTMLFileCategory.Create(TPHPTendency, 'php/html', [fckPublish]));
-    Categories.Add(TCSSFileCategory.Create(TPHPTendency, 'css', [fckPublish]));
-    Categories.Add(TJSFileCategory.Create(TPHPTendency, 'js', [fckPublish]));
+    Categories.Add(TXHTMLFileCategory.Create(TPHPTendency, 'php/html','PHP and HTML', [fckPublish]));
+    Categories.Add(TCSSFileCategory.Create(TPHPTendency, 'css', 'CSS', [fckPublish]));
+    Categories.Add(TJSFileCategory.Create(TPHPTendency, 'js', 'Javascript JS', [fckPublish]));
 
     Groups.Add(TPHPFile, 'php', 'PHP', TXHTMLFileCategory, ['php', 'inc'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
     Groups.Add(TXHTMLFile, 'html', 'HTML', TXHTMLFileCategory, ['html', 'xhtml', 'htm', 'tpl'], [fgkAssociated, fgkBrowsable]);

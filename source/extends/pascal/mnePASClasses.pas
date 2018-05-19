@@ -334,8 +334,8 @@ initialization
   with Engine do
   begin
     Tendencies.Add(TPasTendency);
-    Categories.Add(TPASFileCategory.Create(TPasTendency, 'pas'));
-    Categories.Add(TLFMFileCategory.Create(TPasTendency, 'lfm'));
+    Categories.Add(TPASFileCategory.Create(TPasTendency, 'pas', 'Pascal'));
+    Categories.Add(TLFMFileCategory.Create(TPasTendency, 'lfm', 'Lazarus form lfm'));
 
     Groups.Add(TPASFile, 'pas', 'Pascal', TPASFileCategory, ['pas', 'pp', 'p', 'inc'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
     Groups.Add(TPASFile, 'ppr', 'Pascal Project', TPASFileCategory, ['ppr'], [fgkAssociated, fgkMain, fgkExecutable, fgkBrowsable], [fgsFolding]);//PPR meant Pascal project
