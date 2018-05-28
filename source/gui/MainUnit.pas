@@ -381,7 +381,6 @@ type
     procedure EditorsPnlClick(Sender: TObject);
     procedure FetchCallStackBtnClick(Sender: TObject);
     procedure FileCloseBtnClick(Sender: TObject);
-    procedure FileListData(Sender: TObject; Item: TListItem);
     procedure FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure FindPreviousActExecute(Sender: TObject);
     procedure FolderCloseBtnClick(Sender: TObject);
@@ -784,11 +783,6 @@ end;
 procedure TMainForm.FileCloseBtnClick(Sender: TObject);
 begin
   CloseAct.Execute;
-end;
-
-procedure TMainForm.FileListData(Sender: TObject; Item: TListItem);
-begin
-
 end;
 
 procedure TMainForm.ApplicationPropertiesActivate(Sender: TObject);

@@ -39,6 +39,7 @@ type
     procedure Button3Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
+    procedure FormShow(Sender: TObject);
     procedure OpenBtnClick(Sender: TObject);
     procedure ProjectsListDblClick(Sender: TObject);
     procedure AddtoProjects1Click(Sender: TObject);
@@ -100,6 +101,7 @@ begin
     RProjectsList.ItemIndex := 0;
   if RFilesList.Items.Count > 0 then
     RFilesList.ItemIndex := 0;
+  ActiveControl := ProjectsList;
 end;
 
 procedure TManageProjectsForm.NewProject;
@@ -164,6 +166,11 @@ end;
 procedure TManageProjectsForm.Button2Click(Sender: TObject);
 begin
   RemoveNow;
+end;
+
+procedure TManageProjectsForm.FormShow(Sender: TObject);
+begin
+
 end;
 
 procedure TManageProjectsForm.RemoveNow;

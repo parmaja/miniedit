@@ -225,7 +225,6 @@ object MainForm: TMainForm
         SmallImages = EditorResource.FileImages
         TabOrder = 0
         ViewStyle = vsReport
-        OnData = FileListData
         OnDblClick = FileListDblClick
         OnKeyDown = FileListKeyDown
         OnKeyPress = FileListKeyPress
@@ -2394,7 +2393,7 @@ object MainForm: TMainForm
       Hint = 'Open manage projects and recent files dialog'
       ImageIndex = 13
       OnExecute = ManageActExecute
-      ShortCut = 49274
+      ShortCut = 123
     end
     object SelectSCMTypeAct: TAction
       Category = 'Project'

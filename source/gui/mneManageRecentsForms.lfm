@@ -3,6 +3,7 @@ object ManageProjectsForm: TManageProjectsForm
   Height = 335
   Top = 113
   Width = 477
+  ActiveControl = ProjectsList
   BorderStyle = bsDialog
   Caption = 'Manage Projects'
   ClientHeight = 335
@@ -10,6 +11,7 @@ object ManageProjectsForm: TManageProjectsForm
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   OnCreate = FormCreate
+  OnShow = FormShow
   Position = poMainFormCenter
   LCLVersion = '1.9.0.0'
   object PageControl: TPageControl
