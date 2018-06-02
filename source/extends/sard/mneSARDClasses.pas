@@ -1,4 +1,4 @@
-unit mneSARDClasses;
+unit mneSardClasses;
 {$mode objfpc}{$H+}
 {**
  * Mini Edit
@@ -15,27 +15,27 @@ uses
   EditorOptions, EditorDebugger, EditorRun, EditorClasses, mneRunFrames,
   SynEditHighlighter, SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  mnSynHighlighterSARD, SynHighlighterLFM;
+  mnSynHighlighterSard, SynHighlighterLFM;
 
 type
 
-  { TmneSynSARDSyn }
+  { TmneSynSardSyn }
 
-  TmneSynSARDSyn = class(TSynSARDSyn)
+  TmneSynSardSyn = class(TSynSardSyn)
   public
   end;
 
-  { TSARDFile }
+  { TSardFile }
 
-  TSARDFile = class(TSourceEditorFile)
+  TSardFile = class(TSourceEditorFile)
   protected
     procedure NewContent; override;
   public
   end;
 
-  { TSARDFileCategory }
+  { TSardFileCategory }
 
-  TSARDFileCategory = class(TTextFileCategory)
+  TSardFileCategory = class(TTextFileCategory)
   private
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
@@ -46,9 +46,9 @@ type
   TSardEditorDebugger = class(TEditorDebugger)
   end;
 
-  { TSARDTendency }
+  { TSardTendency }
 
-  TSARDTendency = class(TEditorTendency)
+  TSardTendency = class(TEditorTendency)
   protected
     procedure Init; override;
     function CreateDebugger: TEditorDebugger; override;
@@ -62,24 +62,24 @@ implementation
 uses
   IniFiles, mnStreams, mnUtils;
 
-{ TSARDTendency }
+{ TSardTendency }
 
-procedure TSARDTendency.Init;
+procedure TSardTendency.Init;
 begin
   FCapabilities := [capRun, capOptions];
-  FName := 'SARD';
-  FTitle := 'SARD project';
-  FDescription := 'SARD Files, *.sard';
+  FName := 'Sard';
+  FTitle := 'Sard project';
+  FDescription := 'Sard Files, *.sard';
   FImageIndex := -1;
 end;
 
-function TSARDTendency.CreateDebugger: TEditorDebugger;
+function TSardTendency.CreateDebugger: TEditorDebugger;
 begin
   //Result := TSardEditorDebugger.Create;
   Result := inherited CreateDebugger;
 end;
 
-procedure TSARDTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+procedure TSardTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
   aFrame: TRunFrameOptions;
 begin
@@ -90,7 +90,7 @@ begin
   AddFrame(aFrame);
 end;
 
-procedure TSARDTendency.DoRun(Info: TmneRunInfo);
+procedure TSardTendency.DoRun(Info: TmneRunInfo);
 var
   aRunItem: TmneRunItem;
 begin
@@ -148,30 +148,36 @@ begin
     Engine.Session.Run.Start(Self);
 end;
 
-{ TSARDFileCategory }
+{ TSardFileCategory }
 
-function TSARDFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TSardFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
-  Result := TmneSynSARDSyn.Create(nil);
+  Result := TmneSynSardSyn.Create(nil);
 end;
 
-procedure TSARDFileCategory.InitMappers;
+procedure TSardFileCategory.InitMappers;
 begin
-  with Highlighter as TSynSARDSyn do
+  with Highlighter as TSynSardSyn do
   begin
-    Mapper.Add(SpaceAttri, attDefault);
+    Mapper.Add(WhitespaceAttri, attDefault);
     Mapper.Add(CommentAttri, attComment);
-    Mapper.Add(ObjectAttri, attDataName);
+    Mapper.Add(KeywordAttri, attKeyword);
+    Mapper.Add(DocumentAttri, attDocument);
+    Mapper.Add(TypeAttri, attDataType);
+    Mapper.Add(FunctionAttri, attStandard);
     Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(TextAttri, attText);
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
+    Mapper.Add(VariableAttri, attVariable);
+    Mapper.Add(ProcessorAttri, attDirective);
   end
 end;
 
-{ TSARDFile }
+{ TSardFile }
 
-procedure TSARDFile.NewContent;
+procedure TSardFile.NewContent;
 begin
   inherited NewContent;
 end;
@@ -179,8 +185,8 @@ end;
 initialization
   with Engine do
   begin
-    Tendencies.Add(TSARDTendency);
-    Categories.Add(TSARDFileCategory.Create(TSARDTendency, 'Sard', 'SARD lang'));
-    Groups.Add(TSARDFile, 'sard', 'SARD', TSARDFileCategory, ['sard'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
+    Tendencies.Add(TSardTendency);
+    Categories.Add(TSardFileCategory.Create(TSardTendency, 'Sard', 'Sard lang'));
+    Groups.Add(TSardFile, 'sard', 'Sard', TSardFileCategory, ['sard'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
   end;
 end.

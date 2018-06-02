@@ -30,8 +30,6 @@ type
   TSynCustomSyn = class(TSynMultiProcSyn)
   private
   protected
-    function GetIdentChars: TSynIdentChars; override;
-    function GetSampleSource: string; override;
   public
     class function GetLanguageName: string; override;
   public
@@ -93,20 +91,9 @@ uses
 
 { TSynCustomSyn }
 
-function TSynCustomSyn.GetIdentChars: TSynIdentChars;
-begin
-  //  Result := TSynValidStringChars + ['&', '#', ';', '$'];
-  Result := TSynValidStringChars + ['&', '#', '$'];
-end;
-
-function TSynCustomSyn.GetSampleSource: string;
-begin
-  Result := '';
-end;
-
 class function TSynCustomSyn.GetLanguageName: string;
 begin
-  Result := 'Custom';
+  Result := 'Custom';//TODO save it in variable
 end;
 
 constructor TSynCustomSyn.Create(AOwner: TComponent);

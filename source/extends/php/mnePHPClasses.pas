@@ -554,7 +554,7 @@ begin
   EnumerateKeywords(Ord(tkKeyword), sPHPControls, Highlighter.IdentChars, @DoAddCompletion);
   EnumerateKeywords(Ord(tkKeyword), sPHPKeywords, Highlighter.IdentChars, @DoAddCompletion);
   EnumerateKeywords(Ord(tkFunction), sPHPFunctions, Highlighter.IdentChars, @DoAddCompletion);
-  EnumerateKeywords(Ord(tkValue), sPHPConstants, Highlighter.IdentChars, @DoAddCompletion);
+  EnumerateKeywords(Ord(tkFunction), sPHPConstants, Highlighter.IdentChars, @DoAddCompletion);
 end;
 
 { TJSFileCategory }

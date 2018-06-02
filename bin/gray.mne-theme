@@ -86,9 +86,8 @@
       <Options>gaoDefaultBackground</Options>
     </DataName>
     <Document Class="TGlobalAttribute">
-      <BackColor>2758927</BackColor>
+      <BackColor>3420206</BackColor>
       <ForeColor>5159011</ForeColor>
-      <Options>gaoDefaultBackground</Options>
     </Document>
     <Text Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>

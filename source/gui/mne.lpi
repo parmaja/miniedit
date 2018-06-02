@@ -454,6 +454,7 @@
       <Unit53>
         <Filename Value="..\extends\sard\mneSARDClasses.pas"/>
         <IsPartOfProject Value="True"/>
+        <UnitName Value="mneSardClasses"/>
       </Unit53>
       <Unit54>
         <Filename Value="..\extends\commons\mneClasses.pas"/>
