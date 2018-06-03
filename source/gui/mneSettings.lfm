@@ -40,8 +40,8 @@ object EditorSettingForm: TEditorSettingForm
     Height = 243
     Top = 3
     Width = 419
-    ActivePage = TabSheet2
-    TabIndex = 0
+    ActivePage = TabSheet4
+    TabIndex = 1
     TabOrder = 2
     object TabSheet2: TTabSheet
       Caption = 'Options'

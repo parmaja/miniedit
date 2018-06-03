@@ -329,12 +329,12 @@ function TSQLFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
   {Result := TSynSQLSyn.Create(nil);
   (Result as TSynSQLSyn).SQLDialect := sqlMySQL;}
-  Result := TSynStdSQLSyn.Create(nil);
+  Result := TmnSynStdSQLSyn.Create(nil);
 end;
 
 procedure TSQLFileCategory.InitMappers;
 begin
-  with Highlighter as TSynStdSQLSyn do
+  with Highlighter as TmnSynStdSQLSyn do
   begin
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(TypeAttri, attDataType);
@@ -462,7 +462,7 @@ initialization
     Groups.Add(TTXTFile, 'md', 'MarkDown', TMDFileCategory, ['md'], []);
     Groups.Add(TSQLFile, 'sql', 'SQL', TSQLFileCategory, ['sql'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TApacheFile, 'htaccess', 'htaccess', TApacheFileCategory, ['htaccess', 'conf'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TXMLFile, 'xml', 'XML', TXMLFileCategory, ['xml'], [fgkBrowsable]);
+    Groups.Add(TXMLFile, 'xml', 'XML', TXMLFileCategory, ['xml', 'lpi'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TINIConfigFile, 'ini', 'INI', TINIFileCategory, ['ini'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TCFGConfigFile, 'cfg', 'Config', TCFGFileCategory, ['cfg', 'conf'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TYamlConfigFile, 'yaml', 'YAML', TYamlFileCategory, ['yaml'], [fgkAssociated, fgkBrowsable]);

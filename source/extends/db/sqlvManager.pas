@@ -211,7 +211,7 @@ type
     {$ifdef FIREBIRD}
     FSQLSyn: TSynFirebirdSyn;
     {$else SQLITE}
-    FSQLSyn: TSynStdSQLSyn;
+    FSQLSyn: TmnSynStdSQLSyn;
     {$endif}
     Completion: TSynCompletion;
     FDataPath: string;
@@ -1194,7 +1194,7 @@ begin
   {$ifdef FIREBIRD}
   FSQLSyn := TSynFirebirdSyn.Create(Self);
   {$else}
-  FSQLSyn := TSynStdSQLSyn.Create(Self);
+  FSQLSyn := TmnSynStdSQLSyn.Create(Self);
   {$endif}
   SQLEdit.Highlighter := FSQLSyn;
   PanelsList := TPanelsList.Create;

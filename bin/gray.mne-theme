@@ -72,7 +72,7 @@
     </Variable>
     <Standard Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>4107007</ForeColor>
+      <ForeColor>4126207</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Standard>
     <DataType Class="TGlobalAttribute">
