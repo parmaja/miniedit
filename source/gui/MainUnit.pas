@@ -1322,7 +1322,7 @@ begin
     if FileList.Selected.Data = nil then
       FollowFolder(FileList.Selected.Caption, FileList.Focused)
     else
-      Engine.Files.OpenFile(Folder + FileList.Selected.Caption);
+      Engine.Files.OpenFile(Folder + FileList.Selected.Caption, True);
   end;
 end;
 

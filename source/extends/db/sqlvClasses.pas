@@ -14,7 +14,7 @@ interface
 uses
   SysUtils, Variants, Classes, Controls, Dialogs, Contnrs,
   mnXMLRttiProfile, mncCSVExchanges,
-  mncMetas, mnUtils, mnParams, mnFields, mncCSV,
+  mncMeta, mnUtils, mnParams, mnFields, mncCSV,
   sqlvConsts, sqlvSessions, ImgList;
 
 const
@@ -933,7 +933,7 @@ begin
     Result := Result + '|' + sSqliteFilter + '|' + s + '|' + sAllFilesFilter;
   end
   else
-    Result := Result + sSqliteFilter + '|' + sAllFilesFilter;
+    Result := sSqliteFilter + '|' + sAllFilesFilter;
 end;
 
 procedure TsqlvEngine.LoadSetting;

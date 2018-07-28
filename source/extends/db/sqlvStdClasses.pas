@@ -28,7 +28,7 @@ interface
 
 uses
   SysUtils, Variants, Classes, Graphics, Controls, Forms, StdCtrls,
-  mncMetas, mnUtils,
+  mncMeta, mnUtils,
   sqlvSessions, sqlvClasses;
 
 type
@@ -66,7 +66,7 @@ type
   TsqlvTables = class(TsqlvMembers)
   public
     constructor Create; override;
-    procedure EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvAttributes); override;
+    procedure EnumMeta(vItems: TmncMetaItems; vAttributes: TsqlvAttributes); override;
   end;
 
   TsqlvTable = class(TsqlvAddon)
@@ -343,13 +343,13 @@ begin
   ImageIndex := IMG_TABLE;
 end;
 
-procedure TsqlvTables.EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvAttributes);
+procedure TsqlvTables.EnumMeta(vItems: TmncMetaItems; vAttributes: TsqlvAttributes);
 var
   aMeta: TmncMeta;
 begin
   aMeta := sqlvEngine.DB.Session.CreateMeta;
   try
-    aMeta.EnumTables(MetaItems);
+    aMeta.EnumTables(vItems);
   finally
     aMeta.Free
   end;

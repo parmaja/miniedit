@@ -350,7 +350,7 @@ procedure TXHTMLFileCategory.DoExecuteCompletion(Sender: TObject);
 var
   aVariables: THashedStringList;
   aIdentifiers: THashedStringList;
-  Current, Token: string;
+  aCurrent, Token: string;
   i, r: integer;
   aSynEdit: TCustomSynEdit;
   aProcessor: byte;
@@ -374,7 +374,7 @@ begin
       aPHPProcessor := (Highlighter as TSynXHTMLSyn).Processors.IndexOf('php');
       aHTMLProcessor := (Highlighter as TSynXHTMLSyn).Processors.IndexOf('html');
       P := aSynEdit.CaretXY;
-      GetHighlighterAttriAtRowColExtend(aSynEdit, P, Current, aTokenType, aStart, Attri, aRange);
+      GetHighlighterAttriAtRowColExtend(aSynEdit, P, aCurrent, aTokenType, aStart, Attri, aRange);
       Completion.TheForm.Font.Size := aSynEdit.Font.Size;
       Completion.TheForm.Font.Color := aSynEdit.Font.Color;
       Completion.TheForm.Color := aSynEdit.Color;

@@ -29,7 +29,7 @@ uses
   contnrs, ExtCtrls, StdCtrls, SynEdit, FileUtil, Buttons, Menus,
   sqlvSessions, mncCSV, mncSQL,
   SynCompletion, SynEditAutoComplete, SynHighlighterHashEntries,
-  mnUtils, mncMetas, mncCSVExchanges,
+  mnUtils, mncMeta, mncCSVExchanges,
   {$ifdef FIREBIRD}
   SynHighlighterFirebird,
   {$else SQLITE}

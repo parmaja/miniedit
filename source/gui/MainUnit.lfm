@@ -2231,6 +2231,9 @@ object MainForm: TMainForm
       Hint = 'Open exist file'
       ImageIndex = 3
       OnExecute = OpenActExecute
+      SecondaryShortCuts.Strings = (
+        'CTRL+SHIFT+O'
+      )
       ShortCut = 16463
     end
     object SaveAct: TAction

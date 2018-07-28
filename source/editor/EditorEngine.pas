@@ -98,6 +98,16 @@ type
     procedure Add(Name:string; ImageIndex: Integer = -1);
   end;
 
+  { TmnSynEdit }
+
+  TmnSynEdit = class(TSynEdit)
+  protected
+  public
+    procedure ExecuteCommand(Command: TSynEditorCommand; const AChar: TUTF8Char; Data: pointer); override;
+  end;
+
+  { TEditorDesktopFile }
+
   TEditorDesktopFile = class(TCollectionItem)
   private
     FFileName: string;
@@ -653,7 +663,7 @@ type
     function LoadFile(vFileName: string; AppendToRecent: Boolean = True): TEditorFile;
     function ShowFile(vFileName: string): TEditorFile; overload; //open it without add to recent, for debuging
     function ShowFile(const FileName: string; Line: integer): TEditorFile; overload;
-    function OpenFile(vFileName: string): TEditorFile;
+    function OpenFile(vFileName: string; ActivateIt: Boolean = false): TEditorFile;
     procedure SetCurrentIndex(Index: integer; vRefresh: Boolean);
     function New(vGroup: TFileGroup = nil): TEditorFile; overload;
     function New(Name: string; Control: TWinControl): TEditorFile; overload;
@@ -1338,6 +1348,24 @@ begin
   end;
 end;
 
+{ TmnSynEdit }
+
+procedure TmnSynEdit.ExecuteCommand(Command: TSynEditorCommand; const AChar: TUTF8Char; Data: pointer);
+begin
+  if command = ecLowerCaseBlock then
+  begin
+    if SelAvail then
+      FBlockSelection.SelText := LowerCase(FBlockSelection.SelText);
+  end
+  else if command = ecUpperCaseBlock then
+  begin
+    if SelAvail then
+      FBlockSelection.SelText := UpperCase(FBlockSelection.SelText);
+  end
+  else
+    inherited ExecuteCommand(Command, AChar, Data);
+end;
+
 { TFileCategories }
 
 function TFileCategories.FindByClass(CategoryClass: TFileCategoryClass): TFileCategory;
@@ -1892,7 +1920,7 @@ begin
   inherited;
   { There is more assigns in TEditorFile.SetGroup and TEditorProfile.Assign}
   FHighlightLine := -1;
-  FSynEdit := TSynEdit.Create(Engine.FilePanel);
+  FSynEdit := TmnSynEdit.Create(Engine.FilePanel);
   FSynEdit.OnChange := @DoEdit;
   FSynEdit.OnStatusChange := @DoStatusChange;
   FSynEdit.OnGutterClick := @DoGutterClickEvent;
@@ -1917,18 +1945,22 @@ begin
     Command   := ecDeleteWord;
   end;
 
-  //not work, idk how to do
   with FSynEdit.Keystrokes.Add do
   begin
-    Key       := VK_U;
+    Key       := VK_K;
     Shift     := [ssCtrl];
-    Command   := ecUpperCaseBlock;
-  end;
-  with FSynEdit.Keystrokes.Add do
-  begin
-    Key       := VK_L;
-    Shift     := [ssCtrl];
+    Key2       := VK_O;
+    Shift2     := [ssCtrl];
     Command   := ecLowerCaseBlock;
+  end;
+
+  with FSynEdit.Keystrokes.Add do
+  begin
+    Key       := VK_K;
+    Shift     := [ssCtrl];
+    Key2       := VK_P;
+    Shift2     := [ssCtrl];
+    Command   := ecUpperCaseBlock;
   end;
 
   Engine.MacroRecorder.AddEditor(FSynEdit);
@@ -3182,7 +3214,7 @@ begin
   end;
 end;
 
-function TEditorFiles.OpenFile(vFileName: string): TEditorFile;
+function TEditorFiles.OpenFile(vFileName: string; ActivateIt: Boolean): TEditorFile;
 begin
   if SameText(ExtractFileExt(vFileName), '.' + Engine.Extenstion) then
   begin
@@ -3190,7 +3222,11 @@ begin
     Result := nil; //it is a project not a file.
   end
   else
+  begin
     Result := LoadFile(vFileName);
+    if ActivateIt and not Result.Activated then
+      Result.Activate;
+  end;
 end;
 
 procedure TEditorSession.Open;

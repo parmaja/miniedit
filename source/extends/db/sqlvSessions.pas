@@ -13,7 +13,7 @@ unit sqlvSessions;
 interface
 
 uses
-  SysUtils, Classes, mncMetas,
+  SysUtils, Classes, mncMeta,
   mncSQL, mncConnections, mncDB;
 
 type
@@ -97,9 +97,9 @@ constructor TsqlvDB.Create;
 begin
   inherited;
   {$ifdef FIREBIRD}
-  FConnection := Engines.CreateByName('FirebirdSQL') as TmncSQLConnection;
+  FConnection := DB.CreateByName('FirebirdSQL') as TmncSQLConnection;
   {$else}
-  FConnection := Engines.CreateByName('SQLite') as TmncSQLConnection;
+  FConnection := DB.CreateConnection('SQLite') as TmncSQLConnection;
   {$endif}
 
   FSession := FConnection.CreateSession;
