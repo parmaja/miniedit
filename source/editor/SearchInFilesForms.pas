@@ -256,7 +256,7 @@ var
   Size: Integer;
   Stream: TFileStream;
   aStrings: TStringList;
-  Mode: TEditorFileMode;
+  Mode: TEditorLinesMode;
 begin
   FileName := ExpandFileName(FileName);
   if FProgressForm <> nil then
@@ -271,7 +271,7 @@ begin
       Size := Stream.Size - Stream.Position;
       SetString(Contents, nil, Size);
       Stream.Read(Pointer(Contents)^, Size);
-      Mode := DetectFileMode(Contents);
+      Mode := DetectLinesMode(Contents);
       aStrings.Text := Contents;
     finally
       Stream.Free;

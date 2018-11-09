@@ -8,7 +8,7 @@ Begin
   x := 10;
   Writeln(x);
   x := x + 10;
-  Writeln(x);   jhkjhk
+  Writeln(x);
   s := 'Hi World';
   Writeln(s);
   Writeln('Bye');

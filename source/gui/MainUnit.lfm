@@ -23,7 +23,7 @@ object MainForm: TMainForm
   OnShow = FormShow
   Position = poDefaultPosOnly
   ShowHint = True
-  LCLVersion = '1.9.0.0'
+  LCLVersion = '2.1.0.0'
   object TopCoolBar: TToolBar
     Left = 0
     Height = 29
@@ -297,11 +297,11 @@ object MainForm: TMainForm
       TabOrder = 1
       Visible = False
       object FileNameLbl: TLabel
-        Left = 2
+        Left = 33
         Height = 21
         Hint = 'File name'
         Top = 2
-        Width = 561
+        Width = 530
         Align = alClient
         AutoSize = False
         Layout = tlCenter
@@ -330,15 +330,26 @@ object MainForm: TMainForm
         OnClick = FileCloseBtnClick
         AutoCheck = False
       end
-      object FileModeBtn: TntvImgBtn
+      object FileEncodeBtn: TntvImgBtn
         Left = 563
         Height = 21
         Top = 2
         Width = 73
-        Caption = 'Unix'
+        Caption = 'UTF8'
         ImageIndex = 0
         Align = alRight
-        PopupMenu = FileModeMenu
+        PopupMenu = EncodeModeMenu
+        AutoCheck = False
+      end
+      object FileModeBtn: TntvImgBtn
+        Left = 2
+        Height = 21
+        Top = 2
+        Width = 31
+        Caption = 'U'
+        ImageIndex = 0
+        Align = alLeft
+        PopupMenu = LineModeMenu
         AutoCheck = False
       end
     end
@@ -398,6 +409,7 @@ object MainForm: TMainForm
       BevelOuter = bvLowered
       BorderWidth = 2
       TabOrder = 3
+      OnClick = StatePnlClick
     end
     object TypePnl: TPanel
       Left = 2
@@ -2818,9 +2830,9 @@ object MainForm: TMainForm
       Action = RefreshFilesAct
     end
   end
-  object FileModeMenu: TPopupMenu
-    left = 768
-    top = 69
+  object LineModeMenu: TPopupMenu
+    left = 244
+    top = 74
     object UnixMnu: TMenuItem
       Caption = 'Unix'
       OnClick = UnixMnuClick
@@ -3000,6 +3012,26 @@ object MainForm: TMainForm
     object MenuItem42: TMenuItem
       Caption = 'Explore Folder'
       OnClick = MenuItem42Click
+    end
+  end
+  object EncodeModeMenu: TPopupMenu
+    left = 772
+    top = 79
+    object UTF8Mnu: TMenuItem
+      Caption = 'UTF8'
+      OnClick = UTF8MnuClick
+    end
+    object AnsiMnu: TMenuItem
+      Caption = 'ANSI'
+      OnClick = AnsiMnuClick
+    end
+    object UC16BEMnu: TMenuItem
+      Caption = 'UC16BE'
+      OnClick = UC16BEMnuClick
+    end
+    object UC16LEMnu: TMenuItem
+      Caption = 'UC16LE'
+      OnClick = UC16LEMnuClick
     end
   end
 end

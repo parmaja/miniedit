@@ -10,7 +10,7 @@ unit MainUnit;
 interface
 
 uses
-  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, MsgBox, contnrs,
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, MsgBox, contnrs, LConvEncoding,
   LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorDebugger, process,
   Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus,
   ToolWin, Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses,
@@ -61,6 +61,10 @@ type
     CreateFolderAct: TAction;
     CloseOthersAct: TAction;
     ChangeExtAct: TAction;
+    FileEncodeBtn: TntvImgBtn;
+    FileModeBtn: TntvImgBtn;
+    EncodeModeMenu: TPopupMenu;
+    UC16BEMnu: TMenuItem;
     MainFileAct: TAction;
     MenuItem1: TMenuItem;
     MenuItem35: TMenuItem;
@@ -75,6 +79,7 @@ type
     MenuItem42: TMenuItem;
     MenuItem43: TMenuItem;
     MenuItem44: TMenuItem;
+    UC16LEMnu: TMenuItem;
     ResetMainFileAct: TAction;
     MenuItem32: TMenuItem;
     MenuItem33: TMenuItem;
@@ -86,7 +91,6 @@ type
     MenuItem30: TMenuItem;
     MenuItem31: TMenuItem;
     SCMAddFileAct: TAction;
-    FileModeBtn: TntvImgBtn;
     FileCloseBtn: TntvImgBtn;
     BugSignBtn: TntvImgBtn;
     FolderCloseBtn: TntvImgBtn;
@@ -106,6 +110,7 @@ type
     SynAnySyn1: TSynAnySyn;
     ToolButton3: TToolButton;
     ToolButton8: TToolButton;
+    UTF8Mnu: TMenuItem;
     WatchesGrid: TStringGrid;
     SearchGrid: TStringGrid;
     MessagesGrid: TStringGrid;
@@ -128,6 +133,7 @@ type
     MenuItem20: TMenuItem;
     MenuItem21: TMenuItem;
     CallStackGrid: TStringGrid;
+    AnsiMnu: TMenuItem;
     WorkspaceMnu: TMenuItem;
     RenameAct: TAction;
     FindPreviousAct: TAction;
@@ -249,7 +255,7 @@ type
     ToolButton2: TToolButton;
     MessagesAct: TAction;
     Messages1: TMenuItem;
-    FileModeMenu: TPopupMenu;
+    LineModeMenu: TPopupMenu;
     UnixMnu: TMenuItem;
     WindowsMnu: TMenuItem;
     MacMnu: TMenuItem;
@@ -366,6 +372,7 @@ type
     SwitchFocusAct: TAction;
     SwitchFocus1: TMenuItem;
     N16: TMenuItem;
+    procedure AnsiMnuClick(Sender: TObject);
     procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
     procedure BrowserTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
@@ -447,10 +454,14 @@ type
     procedure ShowSpecialCharsActExecute(Sender: TObject);
     procedure SortByExtensionsActExecute(Sender: TObject);
     procedure SortByNamesActExecute(Sender: TObject);
+    procedure StatePnlClick(Sender: TObject);
     procedure ToolButton4Click(Sender: TObject);
     procedure ToolsMnuClick(Sender: TObject);
     procedure TypeOptionsActExecute(Sender: TObject);
     procedure TypesOptionsActExecute(Sender: TObject);
+    procedure UC16BEMnuClick(Sender: TObject);
+    procedure UC16LEMnuClick(Sender: TObject);
+    procedure UTF8MnuClick(Sender: TObject);
     procedure UnixMnuClick(Sender: TObject);
     procedure WatchesGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure WindowsMnuClick(Sender: TObject);
@@ -791,6 +802,11 @@ begin
     Engine.Files.CheckChanged;
 end;
 
+procedure TMainForm.AnsiMnuClick(Sender: TObject);
+begin
+  Engine.Files.Current.FileEncoding := EncodingAnsi;
+end;
+
 procedure TMainForm.FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
 begin
   Engine.Files.SetCurrentIndex(FileTabs.ItemIndex, True);
@@ -1015,7 +1031,9 @@ begin
       Engine.Files.Current.Control.PopupMenu := EditorPopupMenu;
     FileNameLbl.Caption := Engine.Files.Current.Name;
     FileModeBtn.Caption := Engine.Files.Current.ModeAsText;
-    FileModeBtn.Visible := Engine.Files.Current.IsText;
+    FileModeBtn.Enabled := Engine.Files.Current.IsText;
+    FileEncodeBtn.Caption := UpperCase(Engine.Files.Current.FileEncoding);
+    FileEncodeBtn.Enabled := Engine.Files.Current.IsText;
     FileTabs.ItemIndex := Engine.Files.Current.Index;
     if Engine.Files.Current.Name <> '' then
       FileTabs.Items[FileTabs.ItemIndex].Caption := ExtractFileName(Engine.Files.Current.Name);
@@ -1028,7 +1046,9 @@ begin
   begin
     FileNameLbl.Caption := '';
     FileModeBtn.Caption := '';
-    FileModeBtn.Visible := False;
+    FileModeBtn.Enabled := False;
+    FileEncodeBtn.Caption := '';
+    FileEncodeBtn.Enabled := False;
     SaveAct.Enabled := False;
     SaveAllAct.Enabled := Engine.GetIsChanged;
   end;
@@ -1588,6 +1608,11 @@ begin
   SortFolderFiles := srtfByNames;
 end;
 
+procedure TMainForm.StatePnlClick(Sender: TObject);
+begin
+
+end;
+
 procedure TMainForm.ToolButton4Click(Sender: TObject);
 begin
 end;
@@ -1617,9 +1642,24 @@ begin
       ShowTendencyForm(lTendency);
 end;
 
+procedure TMainForm.UC16BEMnuClick(Sender: TObject);
+begin
+  Engine.Files.Current.FileEncoding := EncodingUCS2BE;
+end;
+
+procedure TMainForm.UC16LEMnuClick(Sender: TObject);
+begin
+  Engine.Files.Current.FileEncoding := EncodingUCS2LE;
+end;
+
+procedure TMainForm.UTF8MnuClick(Sender: TObject);
+begin
+  Engine.Files.Current.FileEncoding := EncodingUTF8;
+end;
+
 procedure TMainForm.UnixMnuClick(Sender: TObject);
 begin
-  Engine.Files.Current.Mode := efmUnix;
+  Engine.Files.Current.LinesMode := efmUnix;
 end;
 
 procedure TMainForm.WatchesGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -1634,12 +1674,12 @@ end;
 
 procedure TMainForm.WindowsMnuClick(Sender: TObject);
 begin
-  Engine.Files.Current.Mode := efmWindows;
+  Engine.Files.Current.LinesMode := efmWindows;
 end;
 
 procedure TMainForm.MacMnuClick(Sender: TObject);
 begin
-  Engine.Files.Current.Mode := efmMac;
+  Engine.Files.Current.LinesMode := efmMac;
 end;
 
 constructor TMainForm.Create(AOwner: TComponent);
@@ -1681,6 +1721,7 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
+  FileModeBtn.Font.Style := FileModeBtn.Font.Style + [fsBold];
   Application.OnException := @CatchErr;
 
   FMessages := Engine.MessagesList.GetMessages('Messages');
@@ -3067,13 +3108,16 @@ procedure TMainForm.ExploreFolder(AFolder: string);
 var
   s: string;
 begin
-  s := '';
-{$ifdef WINDOWS}
-  //ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Files.Current.Name + '"'), nil, SW_SHOW);
-  RunCommand('Explorer', ['/select,"' + Engine.Files.Current.Name + '"'], s);
-{$else}
-  RunCommand('xdg-open', [Engine.Files.Current.Path], s);
-{$endif}
+  if Engine.Files.Current <> nil then
+  begin
+    s := '';
+  {$ifdef WINDOWS}
+    //ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Files.Current.Name + '"'), nil, SW_SHOW);
+    RunCommand('Explorer', ['/select,"' + Engine.Files.Current.Name + '"'], s);
+  {$else}
+    RunCommand('xdg-open', [Engine.Files.Current.Path], s);
+  {$endif}
+  end;
 end;
 
 procedure TMainForm.PriorMessageActExecute(Sender: TObject);

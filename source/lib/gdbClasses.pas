@@ -335,7 +335,7 @@ begin
 end;
 
 
-{
+(*
 ^error,msg="No executable specified, use `target exec'."
 *stopped,reason="exited-normally"
 
@@ -345,7 +345,7 @@ end;
 =breakpoint-created,bkpt={number="1",type="breakpoint",disp="keep",enabled="y",addr="0x00401639",func="main",file="test_pas.pas",fullname="M:\\home\\pascal\\projects\\miniEdit\\test\\test_pas.pas",line="16",thread-groups=["i1"],times="0",original-location="test_pas.pas:16"}
 
 *stopped,reason="breakpoint-hit",disp="keep",bkptno="1",frame={addr="0x00401639",func="main",args=[],file="test_pas.pas",fullname="M:\\home\\pascal\\projects\\miniEdit\\test\\test_pas.pas",line="16"},thread-id="1",stopped-threads="all"
-}
+*)
 
 function ParseMICommand(S: string): TMICommand;
 var

@@ -25,7 +25,7 @@ Portable Notes:
 interface
 
 uses
-  Messages, SysUtils, Forms, StrUtils, Dialogs, Variants, Classes, Controls, LCLIntf,
+  Messages, SysUtils, Forms, StrUtils, Dialogs, Variants, Classes, Controls, LCLIntf, LConvEncoding,
   Graphics, Contnrs, Types, IniFiles, EditorOptions, EditorColors, EditorProfiles,
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
@@ -469,13 +469,14 @@ type
     property MarkupInfo;
   end;
 
-  TEditorFileMode = (efmUnix, efmWindows, efmMac);
+  TEditorLinesMode = (efmUnix, efmWindows, efmMac);
   TEditCapability = set of (ecpAllowCopy, ecpAllowPaste, ecpAllowCut, ecpAllowUndo, ecpAllowRedo);
 
   { TEditorFile }
 
   TEditorFile = class(TCollectionItem, IFileEditor)
   private
+    FFileEncode: string;
     FName: string;
     FIsNew: Boolean;
     FIsEdited: Boolean;
@@ -483,7 +484,7 @@ type
     FFileSize: int64;
     FGroup: TFileGroup;
     FRelated: string;
-    FMode: TEditorFileMode;
+    FLinesMode: TEditorLinesMode;
     function GetCapability: TEditCapability;
     function GetIsText: Boolean;
     function GetNakeName: string;
@@ -491,11 +492,12 @@ type
     function GetExtension: string;
     function GetPath: string;
     function GetTendency: TEditorTendency;
+    procedure SetFileEncoding(AValue: string);
     procedure SetGroup(const Value: TFileGroup);
     procedure SetIsEdited(const Value: Boolean);
     procedure SetIsNew(AValue: Boolean);
     function GetModeAsText: string;
-    procedure SetMode(const Value: TEditorFileMode);
+    procedure SetLinesMode(const Value: TEditorLinesMode);
     procedure SetExtension(AValue: string);
     procedure SetNakeName(AValue: string);
     procedure SetPureName(AValue: string);
@@ -556,7 +558,8 @@ type
     procedure SelectAll; virtual;
 
     //run the file or run the project depend on the project type (Tendency)
-    property Mode: TEditorFileMode read FMode write SetMode default efmUnix;
+    property LinesMode: TEditorLinesMode read FLinesMode write SetLinesMode default efmUnix;
+    property FileEncoding: string read FFileEncode write SetFileEncoding;
     property ModeAsText: string read GetModeAsText;
     property IsText: Boolean read GetIsText;
     property Name: string read FName write FName;
@@ -1207,11 +1210,14 @@ type
 
 function SelectFolder(const Caption: string; const Root: string; var Directory: string): Boolean;
 procedure SpliteStr(S, Separator: string; var Name, Value: string);
+
 procedure SaveAsUnix(Strings: TStrings; Stream: TStream);
 procedure SaveAsWindows(Strings: TStrings; Stream: TStream);
 procedure SaveAsMAC(Strings: TStrings; Stream: TStream);
-procedure SaveAsMode(const FileName: string; Mode: TEditorFileMode; Strings: Tstrings);
-function DetectFileMode(const Contents: string): TEditorFileMode;
+procedure SaveAsMode(const FileName: string; Mode: TEditorLinesMode; Strings: Tstrings);
+
+function ConvertToLinesMode(Mode: TEditorLinesMode; Contents: string): string;
+function DetectLinesMode(const Contents: string): TEditorLinesMode;
 
 function ConvertIndents(const Contents: string; TabWidth: integer; Options: TIndentMode = idntTabsToSpaces): string;
 
@@ -1281,7 +1287,7 @@ begin
   Result := FEngine;
 end;
 
-function SelectFolder(const Caption: string; const Root: String; var Directory: string): Boolean;
+function SelectFolder(const Caption: string; const Root: string; var Directory: string): Boolean;
 begin
   Result := SelectDirectory(Caption, Root, Directory);
 end;
@@ -1752,6 +1758,7 @@ var
   Size: integer;
   Stream: TFileStream;
   IndentMode: TIndentMode;
+  Encoded: Boolean;
 begin
   try
     Stream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
@@ -1760,8 +1767,10 @@ begin
       Size := Stream.Size - Stream.Position;
       SetString(Contents, nil, Size);
       Stream.Read(Pointer(Contents)^, Size);
-      Mode := DetectFileMode(Contents);
-
+      FileEncoding := GuessEncoding(Contents);
+      if not SameText(FileEncoding, EncodingUTF8) then
+        Contents := ConvertEncodingToUTF8(Contents, FileEncoding, Encoded);
+      LinesMode := DetectLinesMode(Contents);
       IndentMode := Engine.Options.Profile.IndentMode;
       if Tendency.OverrideEditorOptions then
         IndentMode := Tendency.IndentMode;
@@ -1773,7 +1782,8 @@ begin
       begin
         SynEdit.BeginUndoBlock;  //adding it to history of undo, so we can undo the revert to changes in by external
         try
-          SynEdit.TextBetweenPoints[Point(1,1), Point(length(SynEdit.Lines[SynEdit.Lines.Count-1]),SynEdit.Lines.Count)] := Contents;
+          SynEdit.TextBetweenPoints[Point(1, 1), Point(length(SynEdit.Lines[SynEdit.Lines.Count - 1]) + 1, SynEdit.Lines.Count)] := Contents;
+          //SynEdit.Text := Contents;
         finally
           SynEdit.EndUndoBlock;
         end;
@@ -1789,7 +1799,9 @@ end;
 
 procedure TTextEditorFile.DoSave(FileName: string);
 var
-  aLines: TStringList;
+  //aLines: TStringList;
+  aStream : TFileStream;
+  Contents: string;
   IndentMode: TIndentMode;
 begin
   IndentMode := Engine.Options.Profile.IndentMode;
@@ -1797,18 +1809,27 @@ begin
     IndentMode := Tendency.IndentMode;
 
   if IndentMode > idntNone then
-  begin
-    //Ref: http://forum.lazarus.freepascal.org/index.php?topic=33500.msg217147#msg217147
-    aLines := TStringList.Create;
-    try
-      aLines.Text := ConvertIndents(SynEdit.Lines.Text, SynEdit.TabWidth, IndentMode);
-      SaveAsMode(FileName, Mode, aLines);
-    finally
-      aLines.Free;
-    end;
-  end
+    Contents := ConvertIndents(SynEdit.Lines.Text, SynEdit.TabWidth, IndentMode)
   else
-    SaveAsMode(FileName, Mode, SynEdit.Lines);
+    Contents := SynEdit.Lines.Text;
+
+  Contents := ConvertToLinesMode(LinesMode, Contents);
+
+  if not SameText(FileEncoding, EncodingUTF8) then
+  begin
+    Contents := ConvertEncoding(Contents, EncodingUTF8, FileEncoding, false);
+    if FileEncoding = EncodingUCS2LE then
+      Contents := #$ff + #$fe + Contents
+    else if FileEncoding = EncodingUCS2BE then
+      Contents := #$fe + #$ff + Contents;
+  end;
+
+  aStream := TFileStream.Create(FileName, fmCreate);
+  try
+    aStream.WriteBuffer(Pointer(Contents)^, Length(Contents));
+  finally
+    aStream.Free;
+  end;
 end;
 
 procedure TTextEditorFile.GroupChanged;
@@ -4084,7 +4105,7 @@ begin
   UpdateAge;
 end;
 
-procedure SaveAsMode(const FileName: string; Mode: TEditorFileMode; Strings: Tstrings);
+procedure SaveAsMode(const FileName: string; Mode: TEditorLinesMode; Strings: Tstrings);
 var
   aStream: TFileStream;
 begin
@@ -4449,6 +4470,16 @@ begin
     Result := Engine.DefaultProject.Tendency;
 end;
 
+procedure TEditorFile.SetFileEncoding(AValue: string);
+begin
+  if FFileEncode <> AValue then
+  begin
+    FFileEncode := AValue;
+    Edit;
+    Engine.UpdateState([ecsState, ecsRefresh]);
+  end;
+end;
+
 procedure TEditorFile.SetExtension(AValue: string);
 begin
   if LeftStr(AValue, 1) <> '.' then
@@ -4486,7 +4517,26 @@ procedure TEditorFile.NewContent;
 begin
 end;
 
-function DetectFileMode(const Contents: string): TEditorFileMode;
+function ConvertToLinesMode(Mode: TEditorLinesMode; Contents: string): string;
+var
+  Strings: TStringList;
+begin
+  Strings := TStringList.Create;
+  Strings.Text := Contents;
+  try
+    case Mode of
+      efmWindows: Strings.LineBreak := #$D#$A;
+      efmMac: Strings.LineBreak := #$D;
+      else
+        Strings.LineBreak := #$A;
+    end;
+    Result := Strings.Text;
+  finally
+    Strings.Free;
+  end
+end;
+
+function DetectLinesMode(const Contents: string): TEditorLinesMode;
 var
   i: integer;
 begin
@@ -4569,18 +4619,18 @@ end;
 
 function TEditorFile.GetModeAsText: string;
 begin
-  case Mode of
-    efmWindows: Result := 'Windows';
-    efmMac: Result := 'Mac';
-    else Result := 'Unix'; //efmUnix
+  case LinesMode of
+    efmWindows: Result := '[W]';
+    efmMac: Result := '[M]';
+    else Result := '[U]'; //efmUnix
   end;
 end;
 
-procedure TEditorFile.SetMode(const Value: TEditorFileMode);
+procedure TEditorFile.SetLinesMode(const Value: TEditorLinesMode);
 begin
-  if FMode <> Value then
+  if FLinesMode <> Value then
   begin
-    FMode := Value;
+    FLinesMode := Value;
     Edit;
     Engine.UpdateState([ecsState, ecsRefresh]);
   end;
