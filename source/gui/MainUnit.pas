@@ -62,9 +62,10 @@ type
     CloseOthersAct: TAction;
     ChangeExtAct: TAction;
     FileEncodeBtn: TntvImgBtn;
-    FileModeBtn: TntvImgBtn;
+    LinesModeBtn: TntvImgBtn;
     EncodeModeMenu: TPopupMenu;
-    UC16BEMnu: TMenuItem;
+    UTF8BOMMnu: TMenuItem;
+    UC16BEBOMMnu: TMenuItem;
     MainFileAct: TAction;
     MenuItem1: TMenuItem;
     MenuItem35: TMenuItem;
@@ -79,7 +80,7 @@ type
     MenuItem42: TMenuItem;
     MenuItem43: TMenuItem;
     MenuItem44: TMenuItem;
-    UC16LEMnu: TMenuItem;
+    UC16LEBOMMnu: TMenuItem;
     ResetMainFileAct: TAction;
     MenuItem32: TMenuItem;
     MenuItem33: TMenuItem;
@@ -459,8 +460,9 @@ type
     procedure ToolsMnuClick(Sender: TObject);
     procedure TypeOptionsActExecute(Sender: TObject);
     procedure TypesOptionsActExecute(Sender: TObject);
-    procedure UC16BEMnuClick(Sender: TObject);
-    procedure UC16LEMnuClick(Sender: TObject);
+    procedure UC16BEBOMMnuClick(Sender: TObject);
+    procedure UC16LEBOMMnuClick(Sender: TObject);
+    procedure UTF8BOMMnuClick(Sender: TObject);
     procedure UTF8MnuClick(Sender: TObject);
     procedure UnixMnuClick(Sender: TObject);
     procedure WatchesGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -1030,8 +1032,8 @@ begin
     if Engine.Files.Current.Control <> nil then
       Engine.Files.Current.Control.PopupMenu := EditorPopupMenu;
     FileNameLbl.Caption := Engine.Files.Current.Name;
-    FileModeBtn.Caption := Engine.Files.Current.ModeAsText;
-    FileModeBtn.Enabled := Engine.Files.Current.IsText;
+    LinesModeBtn.Caption := Engine.Files.Current.LinesModeAsText;
+    LinesModeBtn.Enabled := Engine.Files.Current.IsText;
     FileEncodeBtn.Caption := UpperCase(Engine.Files.Current.FileEncoding);
     FileEncodeBtn.Enabled := Engine.Files.Current.IsText;
     FileTabs.ItemIndex := Engine.Files.Current.Index;
@@ -1045,8 +1047,8 @@ begin
   else
   begin
     FileNameLbl.Caption := '';
-    FileModeBtn.Caption := '';
-    FileModeBtn.Enabled := False;
+    LinesModeBtn.Caption := '';
+    LinesModeBtn.Enabled := False;
     FileEncodeBtn.Caption := '';
     FileEncodeBtn.Enabled := False;
     SaveAct.Enabled := False;
@@ -1642,14 +1644,19 @@ begin
       ShowTendencyForm(lTendency);
 end;
 
-procedure TMainForm.UC16BEMnuClick(Sender: TObject);
+procedure TMainForm.UC16BEBOMMnuClick(Sender: TObject);
 begin
   Engine.Files.Current.FileEncoding := EncodingUCS2BE;
 end;
 
-procedure TMainForm.UC16LEMnuClick(Sender: TObject);
+procedure TMainForm.UC16LEBOMMnuClick(Sender: TObject);
 begin
   Engine.Files.Current.FileEncoding := EncodingUCS2LE;
+end;
+
+procedure TMainForm.UTF8BOMMnuClick(Sender: TObject);
+begin
+  Engine.Files.Current.FileEncoding := EncodingUTF8BOM;
 end;
 
 procedure TMainForm.UTF8MnuClick(Sender: TObject);
@@ -1721,7 +1728,7 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-  FileModeBtn.Font.Style := FileModeBtn.Font.Style + [fsBold];
+  //LinesModeBtn.Font.Style := LinesModeBtn.Font.Style + [fsBold];
   Application.OnException := @CatchErr;
 
   FMessages := Engine.MessagesList.GetMessages('Messages');

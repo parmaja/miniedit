@@ -497,7 +497,7 @@ type
     procedure SetGroup(const Value: TFileGroup);
     procedure SetIsEdited(const Value: Boolean);
     procedure SetIsNew(AValue: Boolean);
-    function GetModeAsText: string;
+    function GetLinesModeAsText: string;
     procedure SetLinesMode(const Value: TEditorLinesMode);
     procedure SetExtension(AValue: string);
     procedure SetNakeName(AValue: string);
@@ -561,7 +561,7 @@ type
     //run the file or run the project depend on the project type (Tendency)
     property LinesMode: TEditorLinesMode read FLinesMode write SetLinesMode default efmUnix;
     property FileEncoding: string read FFileEncode write SetFileEncoding;
-    property ModeAsText: string read GetModeAsText;
+    property LinesModeAsText: string read GetLinesModeAsText;
     property IsText: Boolean read GetIsText;
     property Name: string read FName write FName;
     property NakeName: string read GetNakeName write SetNakeName; //no path with ext
@@ -1817,7 +1817,7 @@ begin
 
   if not SameText(FileEncoding, EncodingUTF8) then
   begin
-    Contents := ConvertEncoding(Contents, EncodingUTF8, FileEncoding, true);
+    Contents := ConvertEncoding(Contents, EncodingUTF8, FileEncoding, false);
     if FileEncoding = EncodingUTF8 then
     if FileEncoding = EncodingUCS2LE then
       Contents := #$ff + #$fe + Contents
@@ -4618,12 +4618,12 @@ begin
   end;
 end;
 
-function TEditorFile.GetModeAsText: string;
+function TEditorFile.GetLinesModeAsText: string;
 begin
   case LinesMode of
-    efmWindows: Result := '[W]';
-    efmMac: Result := '[M]';
-    else Result := '[U]'; //efmUnix
+    efmWindows: Result := 'W';
+    efmMac: Result := 'M';
+    else Result := 'U'; //efmUnix
   end;
 end;
 

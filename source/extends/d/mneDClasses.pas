@@ -11,7 +11,7 @@ unit mneDClasses;
 interface
 
 uses
-  Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, FileUtil,
+  Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, LazFileUtils,
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,

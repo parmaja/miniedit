@@ -15,7 +15,7 @@ uses
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   EditorDebugger, gdbClasses, EditorRun, mneCompilerProjectFrames, mneRunFrames,
-  FileUtil, SynHighlighterPas, SynHighlighterLFM;
+  LazFileUtils, SynHighlighterPas, SynHighlighterLFM;
 
 type
 

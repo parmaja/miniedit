@@ -40,7 +40,7 @@ Miniedit is FreePascal/Lazarus project, to compile it need to install all packag
 
  * Use source code from github.com in branch "release", or use last tag,  branch "master" is my upstream work, it is not stable.
  * FreePascal FPC 3.0 or later
- * Lazarus last update from subversion repo, it is recommended, or use version 1.7
+ * Lazarus last update from subversion repo, it is recommended, or use version 2.1
  * MiniLib http://sourceforge.net/projects/minilib
  * CMDBox http://wiki.freepascal.org/CmdLine
 

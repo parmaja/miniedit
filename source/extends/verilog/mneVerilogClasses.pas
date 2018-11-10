@@ -14,7 +14,7 @@ interface
 
 uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics,
-  Contnrs, FileUtil, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter, LCLProc,
+  Contnrs, LazFileUtils, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter, LCLProc,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   EditorDebugger, EditorRun, mneCompilerProjectFrames,

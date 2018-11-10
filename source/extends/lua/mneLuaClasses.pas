@@ -13,7 +13,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  FileUtil, mnSynHighlighterLua, EditorDebugger, EditorClasses, mneClasses,
+  LazFileUtils, mnSynHighlighterLua, EditorDebugger, EditorClasses, mneClasses,
   mneCompilerProjectFrames, EditorRun, LuaDBGServers,
   mneRunFrames;
 

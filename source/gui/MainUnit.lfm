@@ -297,7 +297,7 @@ object MainForm: TMainForm
       TabOrder = 1
       Visible = False
       object FileNameLbl: TLabel
-        Left = 33
+        Left = 2
         Height = 21
         Hint = 'File name'
         Top = 2
@@ -331,7 +331,7 @@ object MainForm: TMainForm
         AutoCheck = False
       end
       object FileEncodeBtn: TntvImgBtn
-        Left = 563
+        Left = 532
         Height = 21
         Top = 2
         Width = 73
@@ -341,14 +341,14 @@ object MainForm: TMainForm
         PopupMenu = EncodeModeMenu
         AutoCheck = False
       end
-      object FileModeBtn: TntvImgBtn
-        Left = 2
+      object LinesModeBtn: TntvImgBtn
+        Left = 605
         Height = 21
         Top = 2
         Width = 31
         Caption = 'U'
         ImageIndex = 0
-        Align = alLeft
+        Align = alRight
         PopupMenu = LineModeMenu
         AutoCheck = False
       end
@@ -3021,17 +3021,21 @@ object MainForm: TMainForm
       Caption = 'UTF8'
       OnClick = UTF8MnuClick
     end
+    object UTF8BOMMnu: TMenuItem
+      Caption = 'UTF8 - BOM'
+      OnClick = UTF8BOMMnuClick
+    end
     object AnsiMnu: TMenuItem
       Caption = 'ANSI'
       OnClick = AnsiMnuClick
     end
-    object UC16BEMnu: TMenuItem
-      Caption = 'UC16BE'
-      OnClick = UC16BEMnuClick
+    object UC16BEBOMMnu: TMenuItem
+      Caption = 'UC16BE - BOM'
+      OnClick = UC16BEBOMMnuClick
     end
-    object UC16LEMnu: TMenuItem
-      Caption = 'UC16LE'
-      OnClick = UC16LEMnuClick
+    object UC16LEBOMMnu: TMenuItem
+      Caption = 'UC16LE - BOM'
+      OnClick = UC16LEBOMMnuClick
     end
   end
 end
