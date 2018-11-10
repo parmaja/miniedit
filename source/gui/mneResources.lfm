@@ -10,9 +10,7 @@ object EditorResource: TEditorResource
   Width = 288
   PPI = 96
   object FileImages: TImageList
-    BkColor = clForeground
     DrawingStyle = dsTransparent
-    ShareImages = True
     left = 47
     top = 100
     Bitmap = {
@@ -404,7 +402,6 @@ object EditorResource: TEditorResource
     }
   end
   object ToolbarImageList: TImageList
-    BkColor = clForeground
     DrawingStyle = dsTransparent
     left = 47
     top = 21
@@ -1437,7 +1434,6 @@ object EditorResource: TEditorResource
     }
   end
   object BookmarkImages: TImageList
-    BkColor = clForeground
     DrawingStyle = dsTransparent
     ShareImages = True
     left = 158
@@ -1767,7 +1763,6 @@ object EditorResource: TEditorResource
     }
   end
   object DebugImages: TImageList
-    BkColor = clForeground
     DrawingStyle = dsTransparent
     ShareImages = True
     left = 158

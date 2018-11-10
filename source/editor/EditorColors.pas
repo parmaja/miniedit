@@ -12,7 +12,7 @@ interface
 uses
   Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, Clipbrd,
   Registry, ExtCtrls, Buttons, ImgList, Menus, ColorBox, SynEdit, SynGutter, SynEditMarkupWordGroup,
-  SynEditHighlighter, SynEditMiscClasses, SynEditKeyCmds, Classes, SysUtils, typinfo, FileUtil,
+  SynEditHighlighter, SynEditMiscClasses, SynEditKeyCmds, Classes, SysUtils, typinfo, LazFileUtils,
   EditorProfiles, SynGutterBase, SynEditMarks, mnStreams, Types;
 
 type

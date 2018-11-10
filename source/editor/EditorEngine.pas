@@ -26,11 +26,12 @@ interface
 
 uses
   Messages, SysUtils, Forms, StrUtils, Dialogs, Variants, Classes, Controls, LCLIntf, LConvEncoding,
+  FileUtil, LazFileUtils,
   Graphics, Contnrs, Types, IniFiles, EditorOptions, EditorColors, EditorProfiles,
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
-  dbgpServers, Masks, mnXMLRttiProfile, mnXMLUtils, FileUtil, mnClasses,
+  dbgpServers, Masks, mnXMLRttiProfile, mnXMLUtils, mnClasses,
   mnUtils, LCLType, EditorClasses, EditorRun;
 
 type
@@ -1799,9 +1800,8 @@ end;
 
 procedure TTextEditorFile.DoSave(FileName: string);
 var
-  //aLines: TStringList;
   aStream : TFileStream;
-  Contents: string;
+  Contents: rawbytestring;
   IndentMode: TIndentMode;
 begin
   IndentMode := Engine.Options.Profile.IndentMode;
@@ -1817,7 +1817,8 @@ begin
 
   if not SameText(FileEncoding, EncodingUTF8) then
   begin
-    Contents := ConvertEncoding(Contents, EncodingUTF8, FileEncoding, false);
+    Contents := ConvertEncoding(Contents, EncodingUTF8, FileEncoding, true);
+    if FileEncoding = EncodingUTF8 then
     if FileEncoding = EncodingUCS2LE then
       Contents := #$ff + #$fe + Contents
     else if FileEncoding = EncodingUCS2BE then
