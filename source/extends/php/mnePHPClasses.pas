@@ -72,6 +72,7 @@ type
     procedure DoAddKeywords; override;
     procedure DoExecuteCompletion(Sender: TObject); override;
   public
+    function GetColorPrefix: string; override;
   end;
 
   { TCSSFileCategory }
@@ -81,6 +82,7 @@ type
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
+    function GetColorPrefix: string; override;
   end;
 
   { TJSFileCategory }
@@ -90,6 +92,7 @@ type
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
+    function GetColorPrefix: string; override;
   end;
 
   { TPHPProjectOptions }
@@ -339,6 +342,11 @@ begin
   end;
 end;
 
+function TCSSFileCategory.GetColorPrefix: string;
+begin
+  Result := '#';
+end;
+
 { TXHTMLFileCategory }
 
 function TXHTMLFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
@@ -475,6 +483,11 @@ begin
   end;
 end;
 
+function TXHTMLFileCategory.GetColorPrefix: string;
+begin
+  Result := '#';
+end;
+
 procedure TXHTMLFileCategory.ExtractKeywords(Files, Variables, Identifiers: TStringList);
 var
   aFile: TStringList;
@@ -579,6 +592,11 @@ begin
     Mapper.Add(EventAttri, attVariable);   
     Mapper.Add(BracketAttri, attSymbol);
   end;
+end;
+
+function TJSFileCategory.GetColorPrefix: string;
+begin
+  Result := '#';
 end;
 
 initialization

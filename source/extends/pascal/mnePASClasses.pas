@@ -10,7 +10,7 @@ unit mnePASClasses;
 interface
 
 uses
-  Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics,
+  Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, mneClasses,
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
@@ -50,6 +50,9 @@ type
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddKeywords; override;
   public
+    function GetColorPrefix: string; override;
+    function FormatColor(Color: TColor): string; override;
+    function DeformatColor(Str: string): TColor; override;
   end;
 
   { TLFMFileCategory }
@@ -311,6 +314,21 @@ begin
   inherited DoAddKeywords;
   //EnumerateKeywords(Ord(tkKeyword), sPasKeywords, Highlighter.IdentChars, @DoAddCompletion);
   //EnumerateKeywords(Ord(tkFunction), sDFunctions, Highlighter.IdentChars, @DoAddCompletion);
+end;
+
+function TPASFileCategory.GetColorPrefix: string;
+begin
+  Result := '$';
+end;
+
+function TPASFileCategory.FormatColor(Color: TColor): string;
+begin
+  Result := ColorToRGBHex(Color, GetColorPrefix, true);
+end;
+
+function TPASFileCategory.DeformatColor(Str: string): TColor;
+begin
+  Result := RGBHexToColor(str, GetColorPrefix, true);
 end;
 
 { TPASFile }

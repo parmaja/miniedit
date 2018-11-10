@@ -2439,7 +2439,7 @@ begin
     Result := Trim(aSynEdit.GetWordAtRowCol(aSynEdit.LogicalCaretXY));
     if Result <> '' then
     begin
-      if Result[1] <> '#' then
+      if Result[1] <> Engine.Files.Current.Group.Category.GetColorPrefix then
         Result := '';
     end;
   end;
@@ -2477,13 +2477,14 @@ begin
     if (aWord <> '') and (Length(aWord) > 1) then
     begin
       CheckIsUpper;
-      aColor := RGBHexToColor(aWord);
+      aColor := Engine.Files.Current.Group.Category.DeformatColor(aWord);
       aDialog := TColorDialog.Create(Self);
       try
         aDialog.Color := aColor;
         if aDialog.Execute then
         begin
-          aWord := ColorToRGBHex(aDialog.Color);
+          aWord := Engine.Files.Current.Group.Category.FormatColor(aDialog.Color);
+          //aWord := ColorToRGBHex(aDialog.Color, Engine.Files.Current.Group.Category.GetColorPrefix);
           if aIsUpper then
             aWord := UpperCase(aWord)
           else

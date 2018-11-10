@@ -847,6 +847,9 @@ type
     function Find(vName: string): TFileGroup;
     procedure EnumExtensions(vExtensions: TStringList);
     function GetExtensions: string;
+    function GetColorPrefix: string; virtual;
+    function FormatColor(Color: TColor): string; virtual;
+    function DeformatColor(Str: string): TColor; virtual;
     property Tendency: TEditorTendency read FTendency;
     property IsText: Boolean read GetIsText;
     property Highlighter: TSynCustomHighlighter read GetHighlighter;
@@ -4941,6 +4944,21 @@ begin
   finally
     strings.Free;
   end;
+end;
+
+function TFileCategory.GetColorPrefix: string;
+begin
+  Result := '';
+end;
+
+function TFileCategory.FormatColor(Color: TColor): string;
+begin
+  Result := ColorToRGBHex(Color, GetColorPrefix);
+end;
+
+function TFileCategory.DeformatColor(Str: string): TColor;
+begin
+  Result := RGBHexToColor(Str, GetColorPrefix, false);
 end;
 
 procedure TFileCategory.Apply(AHighlighter: TSynCustomHighlighter; Attributes: TGlobalAttributes);

@@ -19,7 +19,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  FileUtil, mnSynHighlighterD, EditorDebugger, EditorClasses, mneClasses,
+  LazFileUtils, mnSynHighlighterD, EditorDebugger, EditorClasses, mneClasses,
   mneCompilerProjectFrames, EditorRun, mnSynHighlighterMultiProc,
   mneRunFrames;
 

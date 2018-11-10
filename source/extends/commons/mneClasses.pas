@@ -139,11 +139,10 @@ type
 
   { TmneEngine }
 
-function ColorToRGBHex(Color: TColor): string;
-function RGBHexToColor(Value: string): TColor;
+function ColorToRGBHex(Color: TColor; ColorPrefix: string = '#'; Reverse: Boolean = false): string;
+function RGBHexToColor(Value: string; ColorPrefix: string = '#'; Reverse: Boolean = false): TColor;
 function CheckBoxStateToStates(State: TCheckBoxState): TThreeStates;
 function StatesToCheckBoxState(State: TThreeStates): TCheckBoxState;
-
 
 const
   sSoftwareRegKey = 'Software\miniEdit\';
@@ -155,20 +154,24 @@ implementation
 uses
   IniFiles, mnStreams, mnUtils, mnSynHighlighterStdSQL;
 
-function ColorToRGBHex(Color: TColor): string;
+function ColorToRGBHex(Color: TColor; ColorPrefix: string; Reverse: Boolean): string;
 var
   aRGB: TColorRef;
 begin
   aRGB := ColorToRGB(Color);
   Result := '';//temporary
-  FmtStr(Result, '%s%.2x%.2x%.2x', ['#', GetRValue(aRGB), GetGValue(aRGB), GetBValue(aRGB)]);
+  if Reverse then
+    FmtStr(Result, '%s%.2x%.2x%.2x', [ColorPrefix, GetBValue(aRGB), GetGValue(aRGB), GetRValue(aRGB)])
+  else
+    FmtStr(Result, '%s%.2x%.2x%.2x', [ColorPrefix, GetRValue(aRGB), GetGValue(aRGB), GetBValue(aRGB)]);
 end;
 
-function RGBHexToColor(Value: string): TColor;
+function RGBHexToColor(Value: string; ColorPrefix: string; Reverse: Boolean): TColor;
 var
   R, G, B: byte;
+  S: byte;
 begin
-  if LeftStr(Value, 1) = '#' then
+  if LeftStr(Value, 1) = ColorPrefix then
     Delete(Value, 1, 1);
   if Value <> '' then
   begin
@@ -177,15 +180,22 @@ begin
       R := StrToIntDef('$' + Copy(Value, 1, 1) + Copy(Value, 1, 1), 0);
       G := StrToIntDef('$' + Copy(Value, 2, 1) + Copy(Value, 2, 1), 0);
       B := StrToIntDef('$' + Copy(Value, 3, 1) + Copy(Value, 3, 1), 0);
-      Result := RGB(R, G, B);
     end
     else
     begin
+      if Length(Value) > 6 then
+        Value := RightStr(Value, 6);
       R := StrToIntDef('$' + Copy(Value, 1, 2), 0);
       G := StrToIntDef('$' + Copy(Value, 3, 2), 0);
       B := StrToIntDef('$' + Copy(Value, 5, 2), 0);
-      Result := RGB(R, G, B);
     end;
+    if Reverse then
+    begin
+      S := R;
+      R := B;
+      B := S;
+    end;
+    Result := RGB(R, G, B);
   end
   else
     Result := clBlack;
