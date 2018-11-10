@@ -715,6 +715,7 @@ type
   TEditorOptions = class(TmnXMLProfile)
   private
     FAutoOpenProject: Boolean;
+    FDatabasePanelWidth: integer;
     FIgnoreNames: string;
     FLastFolder: string;
     FLastProject: string;
@@ -731,7 +732,7 @@ type
     FAutoStartDebugServer: Boolean;
 
     FMessagesHeight: integer;
-    FFoldersWidth: integer;
+    FFoldersPanelWidth: integer;
 
     FExtraExtensions: TStringList;
     FSearchFolderHistory: TStringList;
@@ -780,7 +781,8 @@ type
     property SortFolderFiles: TSortFolderFiles read FSortFolderFiles write FSortFolderFiles default srtfByNames;
     property ShowMessages: Boolean read FShowMessages write FShowMessages default False;
     property MessagesHeight: integer read FMessagesHeight write FMessagesHeight default 100;
-    property FoldersWidth: integer read FFoldersWidth write FFoldersWidth default 180;
+    property FoldersPanelWidth: integer read FFoldersPanelWidth write FFoldersPanelWidth default 180;
+    property DatabasePanelWidth: integer read FDatabasePanelWidth write FDatabasePanelWidth default 180;
     property AutoStartDebugServer: Boolean read FAutoStartDebugServer write FAutoStartDebugServer default False;
     property AnsiCodePage: Integer read GetAnsiCodePage write SetAnsiCodePage;
     property WindowMaxmized: Boolean read FWindowMaxmized write FWindowMaxmized default False;
@@ -1171,7 +1173,7 @@ type
     property Session: TEditorSession read FSession;
     property Options: TEditorOptions read FOptions;
     property MessagesList: TEditorMessagesList read FMessagesList;
-    //FilePanel is a panel or any wincontrol that the editor SynEdit put on it
+    //FilePanel is a panel or any wincontrol that the editor SynEdit put on it and so on
     property FilePanel: TWinControl read FFilePanel write FFilePanel;
     property ProjectPanel: TWinControl read FProjectPanel write FProjectPanel;
     //BrowseFolder: Current folder
@@ -4681,7 +4683,8 @@ begin
   FShowMessages := False;
   FCollectTimeout := 60;
   FMessagesHeight := 100;
-  FFoldersWidth := 180;
+  FFoldersPanelWidth := 180;
+  FDatabasePanelWidth := 180;
 end;
 
 destructor TEditorOptions.Destroy;

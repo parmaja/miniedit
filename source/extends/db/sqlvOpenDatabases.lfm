@@ -1,0 +1,178 @@
+object OpenDatabaseForm: TOpenDatabaseForm
+  Left = 378
+  Height = 302
+  Top = 176
+  Width = 465
+  Caption = 'Open Database'
+  ClientHeight = 302
+  ClientWidth = 465
+  LCLVersion = '2.1.0.0'
+  object OkBtn: TButton
+    Left = 386
+    Height = 27
+    Top = 273
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Caption = '&OK'
+    Default = True
+    ModalResult = 1
+    OnClick = OkBtnClick
+    TabOrder = 0
+  end
+  object CancelBtn: TButton
+    Left = 310
+    Height = 27
+    Top = 273
+    Width = 75
+    Anchors = [akRight, akBottom]
+    Cancel = True
+    Caption = '&Cancel'
+    ModalResult = 2
+    OnClick = CancelBtnClick
+    TabOrder = 1
+  end
+  object Label1: TLabel
+    Left = 7
+    Height = 15
+    Top = 57
+    Width = 99
+    Caption = 'Database Directory'
+    ParentColor = False
+  end
+  object Label2: TLabel
+    Left = 7
+    Height = 15
+    Top = 107
+    Width = 92
+    Caption = 'Databases *.sqlite'
+    ParentColor = False
+  end
+  object Label3: TLabel
+    Left = 7
+    Height = 15
+    Top = 8
+    Width = 60
+    Caption = 'Recent files'
+    ParentColor = False
+  end
+  object DatabasesCbo: TComboBox
+    Left = 5
+    Height = 23
+    Top = 125
+    Width = 456
+    Anchors = [akTop, akLeft, akRight]
+    ItemHeight = 15
+    OnDropDown = DatabasesCboDropDown
+    TabOrder = 2
+  end
+  object DataPathCbo: TComboBox
+    Left = 5
+    Height = 23
+    Top = 76
+    Width = 456
+    Anchors = [akTop, akLeft, akRight]
+    ItemHeight = 15
+    OnDropDown = DataPathCboDropDown
+    OnExit = DataPathCboExit
+    TabOrder = 3
+    Text = '\'
+  end
+  object AutoCreateChk: TCheckBox
+    Left = 10
+    Height = 19
+    Top = 151
+    Width = 116
+    Caption = 'Create if not exists'
+    ParentBidiMode = False
+    TabOrder = 4
+  end
+  object RecentsCbo: TComboBox
+    Left = 5
+    Height = 23
+    Top = 28
+    Width = 456
+    Anchors = [akTop, akLeft, akRight]
+    ItemHeight = 15
+    OnSelect = RecentsCboSelect
+    Style = csDropDownList
+    TabOrder = 5
+  end
+  object BrowseBtn: TButton
+    Left = 376
+    Height = 23
+    Top = 52
+    Width = 85
+    Anchors = [akTop, akRight]
+    Caption = 'Browse'
+    OnClick = BrowseBtnClick
+    TabOrder = 6
+  end
+  object RemoveBtn: TButton
+    Left = 376
+    Height = 23
+    Top = 3
+    Width = 85
+    Anchors = [akTop, akRight]
+    Caption = 'Remove'
+    OnClick = RemoveBtnClick
+    TabOrder = 7
+  end
+  object CacheMetaChk: TCheckBox
+    Left = 10
+    Height = 19
+    Top = 173
+    Width = 181
+    BidiMode = bdRightToLeftReadingOnly
+    Caption = 'Cache Meta for auto complete'
+    ParentBidiMode = False
+    TabOrder = 8
+  end
+  object RefreshBtn: TButton
+    Left = 376
+    Height = 23
+    Top = 99
+    Width = 85
+    Anchors = [akTop, akRight]
+    Caption = 'Refresh'
+    OnClick = RefreshBtnClick
+    TabOrder = 9
+  end
+  object ExclusiveChk: TCheckBox
+    Left = 10
+    Height = 19
+    Top = 194
+    Width = 99
+    BidiMode = bdRightToLeftReadingOnly
+    Caption = 'Open exclusive'
+    ParentBidiMode = False
+    TabOrder = 10
+  end
+  object VacuumChk: TCheckBox
+    Left = 10
+    Height = 19
+    Top = 215
+    Width = 142
+    BidiMode = bdRightToLeftReadingOnly
+    Caption = 'Vacuum when connect'
+    ParentBidiMode = False
+    TabOrder = 11
+  end
+  object AnsiCodePageChk: TCheckBox
+    Left = 10
+    Height = 19
+    Top = 236
+    Width = 164
+    BidiMode = bdRightToLeftReadingOnly
+    Caption = 'Ansi CodePage (current os)'
+    ParentBidiMode = False
+    TabOrder = 12
+  end
+  object OpenDialog: TOpenDialog
+    DefaultExt = '.sql'
+    FileName = '*.sql'
+    Filter = '*.sql'
+    InitialDir = '\'
+    left = 365
+    top = 205
+  end
+end

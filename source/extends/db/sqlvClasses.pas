@@ -12,10 +12,10 @@ interface
 {$mode objfpc}{$H+}
 
 uses
-  SysUtils, Variants, Classes, Controls, Dialogs, Contnrs,
+  SysUtils, Variants, Classes, Controls, Dialogs, Forms, Contnrs,
   mnXMLRttiProfile, mncCSVExchanges,
   mncMeta, mnUtils, mnParams, mnFields, mncCSV,
-  sqlvConsts, sqlvSessions, ImgList;
+  sqlvConsts, sqlvSessions, sqlvOpenDatabases, ImgList;
 
 const
   IMG_UNKOWN = 0;
@@ -302,6 +302,9 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+
+    procedure OpenDatabase;
+
     procedure LoadSetting;
     procedure SaveSetting;
     procedure LoadRecents;
@@ -895,6 +898,24 @@ begin
   FreeAndNil(FHistory);
   FreeAndNil(FSQLHistory);
   inherited;
+end;
+
+procedure TsqlvEngine.OpenDatabase;
+begin
+  with TOpenDatabaseForm.Create(Application) do
+  begin
+    if ShowModal = mrOK then
+    begin
+      if sqlvEngine.DB.IsActive then
+        sqlvEngine.DB.Close;
+
+      sqlvEngine.Setting.CacheMetas := CacheMetaChk.Checked;
+      sqlvEngine.DB.Open(GetDatabaseName, AutoCreateChk.Checked, ExclusiveChk.Checked, VacuumChk.Checked);
+      sqlvEngine.Stack.Clear;
+      sqlvEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabasesCbo.Text));
+      sqlvEngine.Run(sqlvEngine.Stack);
+    end;
+  end;
 end;
 
 procedure TsqlvEngine.RegisterFilter(Filter: string);

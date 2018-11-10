@@ -1,13 +1,13 @@
 object MainForm: TMainForm
-  Left = 380
+  Left = 109
   Height = 557
-  Top = 114
-  Width = 882
+  Top = 98
+  Width = 1046
   ActiveControl = OutputEdit
   AllowDropFiles = True
   Caption = 'Mini Edit'
   ClientHeight = 537
-  ClientWidth = 882
+  ClientWidth = 1046
   Color = clWindow
   Font.CharSet = ANSI_CHARSET
   Font.Height = -13
@@ -28,7 +28,7 @@ object MainForm: TMainForm
     Left = 0
     Height = 29
     Top = 0
-    Width = 882
+    Width = 1046
     AutoSize = True
     EdgeBorders = [ebTop, ebBottom]
     Images = EditorResource.ToolbarImageList
@@ -70,7 +70,7 @@ object MainForm: TMainForm
         Action = SaveAllAct
       end
       object RunBtn: TToolButton
-        Left = 549
+        Left = 628
         Top = 0
         Action = DBGRunAct
       end
@@ -96,7 +96,7 @@ object MainForm: TMainForm
         Style = tbsCheck
       end
       object ToolButton8: TToolButton
-        Left = 466
+        Left = 545
         Height = 23
         Top = 0
         Caption = 'ToolButton8'
@@ -104,16 +104,23 @@ object MainForm: TMainForm
         Style = tbsSeparator
       end
       object MainFileBtn: TToolButton
-        Left = 624
+        Left = 703
         Top = 0
         Action = MainFileAct
         AutoSize = True
         PopupMenu = MainFilePopupMnu
       end
       object ToolButton3: TToolButton
-        Left = 474
+        Left = 553
         Top = 0
         Action = DBGDebugModeAct
+        Style = tbsCheck
+      end
+      object FoldersBtn1: TToolButton
+        Left = 466
+        Top = 0
+        Action = DatabaseAct
+        Indeterminate = True
         Style = tbsCheck
       end
     end
@@ -244,24 +251,24 @@ object MainForm: TMainForm
     end
   end
   object ClientPnl: TPanel
-    Left = 212
+    Left = 417
     Height = 351
     Top = 29
-    Width = 670
+    Width = 629
     Align = alClient
     BevelOuter = bvNone
     ClientHeight = 351
-    ClientWidth = 670
+    ClientWidth = 629
     TabOrder = 1
     object EditorsPnl: TPanel
       Left = 0
       Height = 326
       Top = 25
-      Width = 670
+      Width = 629
       Align = alClient
       BevelOuter = bvNone
       ClientHeight = 326
-      ClientWidth = 670
+      ClientWidth = 629
       FullRepaint = False
       TabOrder = 0
       OnClick = EditorsPnlClick
@@ -269,7 +276,7 @@ object MainForm: TMainForm
         Left = 0
         Height = 23
         Top = 0
-        Width = 670
+        Width = 629
         StoreIndex = False
         ShowButtons = False
         ShowBorder = False
@@ -286,13 +293,13 @@ object MainForm: TMainForm
       Left = 0
       Height = 25
       Top = 0
-      Width = 670
+      Width = 629
       Align = alTop
       Alignment = taLeftJustify
       BevelOuter = bvNone
       BorderWidth = 2
       ClientHeight = 25
-      ClientWidth = 670
+      ClientWidth = 629
       PopupMenu = FilePopupMenu
       TabOrder = 1
       Visible = False
@@ -301,7 +308,7 @@ object MainForm: TMainForm
         Height = 21
         Hint = 'File name'
         Top = 2
-        Width = 530
+        Width = 489
         Align = alClient
         AutoSize = False
         Layout = tlCenter
@@ -309,7 +316,8 @@ object MainForm: TMainForm
         PopupMenu = FilePopupMenu
       end
       object FileCloseBtn: TntvImgBtn
-        Left = 652
+        AnchorSideRight.Control = FileHeaderPanel
+        Left = 611
         Height = 21
         Top = 2
         Width = 16
@@ -320,7 +328,9 @@ object MainForm: TMainForm
         AutoCheck = False
       end
       object BugSignBtn: TntvImgBtn
-        Left = 636
+        AnchorSideRight.Control = FileCloseBtn
+        AnchorSideBottom.Side = asrBottom
+        Left = 595
         Height = 21
         Top = 2
         Width = 16
@@ -331,23 +341,27 @@ object MainForm: TMainForm
         AutoCheck = False
       end
       object FileEncodeBtn: TntvImgBtn
-        Left = 532
+        AnchorSideRight.Control = LinesModeBtn
+        AnchorSideBottom.Side = asrBottom
+        Left = 491
         Height = 21
         Top = 2
         Width = 73
         Caption = 'UTF8'
-        ImageIndex = 0
         Align = alRight
         PopupMenu = EncodeModeMenu
         AutoCheck = False
       end
       object LinesModeBtn: TntvImgBtn
-        Left = 605
+        AnchorSideTop.Control = BugSignBtn
+        AnchorSideRight.Control = BugSignBtn
+        AnchorSideBottom.Control = BugSignBtn
+        AnchorSideBottom.Side = asrBottom
+        Left = 564
         Height = 21
         Top = 2
         Width = 31
         Caption = 'U'
-        ImageIndex = 0
         Align = alRight
         PopupMenu = LineModeMenu
         AutoCheck = False
@@ -358,18 +372,18 @@ object MainForm: TMainForm
     Left = 0
     Height = 21
     Top = 516
-    Width = 882
+    Width = 1046
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 21
-    ClientWidth = 882
+    ClientWidth = 1046
     TabOrder = 2
     object MessageLabel: TPanel
       Left = 80
       Height = 19
       Hint = 'Message'
       Top = 1
-      Width = 594
+      Width = 758
       Alignment = taLeftJustify
       Anchors = [akLeft, akRight, akBottom]
       BevelOuter = bvLowered
@@ -377,7 +391,7 @@ object MainForm: TMainForm
       TabOrder = 0
     end
     object DebugPnl: TPanel
-      Left = 780
+      Left = 944
       Height = 19
       Hint = 'Debug Session'
       Top = 1
@@ -389,7 +403,7 @@ object MainForm: TMainForm
       TabOrder = 1
     end
     object CursorPnl: TPanel
-      Left = 698
+      Left = 862
       Height = 19
       Hint = 'Caret Position'
       Top = 1
@@ -400,7 +414,7 @@ object MainForm: TMainForm
       TabOrder = 2
     end
     object StatePnl: TPanel
-      Left = 676
+      Left = 840
       Height = 19
       Hint = 'State'
       Top = 1
@@ -427,7 +441,7 @@ object MainForm: TMainForm
     Left = 0
     Height = 127
     Top = 389
-    Width = 882
+    Width = 1046
     Margin = 1
     StoreIndex = False
     ShowButtons = False
@@ -476,7 +490,7 @@ object MainForm: TMainForm
       Left = 1
       Height = 105
       Top = 21
-      Width = 880
+      Width = 1044
       Align = alClient
       ColCount = 4
       Columns = <      
@@ -520,7 +534,7 @@ object MainForm: TMainForm
       Left = 1
       Height = 105
       Top = 21
-      Width = 880
+      Width = 1044
       Align = alClient
       DefaultRowHeight = 20
       Flat = True
@@ -564,7 +578,7 @@ object MainForm: TMainForm
       Left = 1
       Height = 105
       Top = 21
-      Width = 880
+      Width = 1044
       Align = alClient
       ColCount = 3
       Columns = <      
@@ -603,7 +617,7 @@ object MainForm: TMainForm
       Left = 1
       Height = 105
       Top = 21
-      Width = 880
+      Width = 1044
       Align = alClient
       ColCount = 4
       Flat = True
@@ -644,7 +658,7 @@ object MainForm: TMainForm
       Left = 1
       Height = 105
       Top = 21
-      Width = 880
+      Width = 1044
       Align = alClient
       Constraints.MinHeight = 60
       Font.Height = -13
@@ -1200,7 +1214,7 @@ object MainForm: TMainForm
       Left = 1
       Height = 105
       Top = 21
-      Width = 880
+      Width = 1044
       Align = alClient
       Constraints.MinHeight = 60
       Font.Height = -13
@@ -1764,16 +1778,34 @@ object MainForm: TMainForm
     Left = 0
     Height = 9
     Top = 380
-    Width = 882
+    Width = 1046
     ResizeControl = MessagesTabs
   end
-  object FoldersSpl: TntvSplitter
+  object ProjectSpl: TntvSplitter
     Cursor = crHSplit
     Left = 200
     Height = 351
     Top = 29
-    Width = 12
+    Width = 5
     ResizeControl = ProjectPnl
+  end
+  object DatabasePnl: TPanel
+    Left = 205
+    Height = 351
+    Top = 29
+    Width = 200
+    Align = alLeft
+    BevelOuter = bvNone
+    Constraints.MinHeight = 60
+    TabOrder = 5
+  end
+  object DatabaseSpl: TntvSplitter
+    Cursor = crHSplit
+    Left = 405
+    Height = 351
+    Top = 29
+    Width = 12
+    ResizeControl = DatabasePnl
   end
   object MainMenu: TMainMenu
     Images = EditorResource.ToolbarImageList
@@ -1920,6 +1952,16 @@ object MainForm: TMainForm
       object ProjectOptionsMnu: TMenuItem
         Action = ProjectOptionsAct
         OnClick = ProjectOptionsActExecute
+      end
+    end
+    object DatabaseMnu: TMenuItem
+      Caption = 'Database'
+      object DBConnectMnu: TMenuItem
+        Caption = 'Connect'
+        OnClick = DBConnectMnuClick
+      end
+      object DBDisconnectMnu: TMenuItem
+        Caption = 'Disconnect'
       end
     end
     object veiw1: TMenuItem
@@ -2275,7 +2317,7 @@ object MainForm: TMainForm
       Checked = True
       ImageIndex = 2
       OnExecute = FoldersActExecute
-      ShortCut = 49220
+      ShortCut = 49222
     end
     object NextAct: TAction
       Category = 'View'
@@ -2753,6 +2795,14 @@ object MainForm: TMainForm
       Caption = 'Close All'
       Hint = 'Close all files and project'
       OnExecute = CloseAllActExecute
+    end
+    object DatabaseAct: TAction
+      Category = 'View'
+      AutoCheck = True
+      Caption = 'Database'
+      ImageIndex = 32
+      OnExecute = DatabaseActExecute
+      ShortCut = 49220
     end
   end
   object FolderMenu: TPopupMenu

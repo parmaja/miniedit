@@ -52,7 +52,7 @@ uses
   Classes, PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses,
   EditorColors, gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneClasses,
   mneManageRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils, mnStreams,
-  mncCSV;
+  mncCSV, sqlvOpenDatabases;
 
 {$R *.res}
 {$i '..\lib\mne.inc'}

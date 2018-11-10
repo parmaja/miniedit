@@ -32,6 +32,7 @@ uses
   {$endif}
   mnePHPIniForm,
   //end of addons
+  sqlvClasses, sqlvManager,
   mneTendencyOptions, mneResources, IniFiles, mnFields, simpleipc, mnUtils,
   ntvTabs, ntvPageControls, SynEditMiscClasses, SynEditMarkupSpecialLine,
   SynHighlighterAny;
@@ -56,14 +57,21 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    DatabaseAct: TAction;
     CloseAllAct: TAction;
     EditorColorsAct: TAction;
     CreateFolderAct: TAction;
     CloseOthersAct: TAction;
     ChangeExtAct: TAction;
     FileEncodeBtn: TntvImgBtn;
+    FoldersBtn1: TToolButton;
+    DatabaseSpl: TntvSplitter;
     LinesModeBtn: TntvImgBtn;
     EncodeModeMenu: TPopupMenu;
+    DatabasePnl: TPanel;
+    DatabaseMnu: TMenuItem;
+    DBConnectMnu: TMenuItem;
+    DBDisconnectMnu: TMenuItem;
     UTF8BOMMnu: TMenuItem;
     UC16BEBOMMnu: TMenuItem;
     MainFileAct: TAction;
@@ -141,7 +149,7 @@ type
     MenuItem17: TMenuItem;
     SortByExtensionsAct: TAction;
     SortByNamesAct: TAction;
-    FoldersSpl: TntvSplitter;
+    ProjectSpl: TntvSplitter;
     MenuItem14: TMenuItem;
     MenuItem15: TMenuItem;
     MenuItem16: TMenuItem;
@@ -382,6 +390,8 @@ type
     procedure CloseAllActExecute(Sender: TObject);
     procedure CloseOthersActExecute(Sender: TObject);
     procedure CreateFolderActExecute(Sender: TObject);
+    procedure DatabaseActExecute(Sender: TObject);
+    procedure DBConnectMnuClick(Sender: TObject);
     procedure DBGCompileActExecute(Sender: TObject);
     procedure DeleteActExecute(Sender: TObject);
     procedure EditorColorsActExecute(Sender: TObject);
@@ -393,6 +403,7 @@ type
     procedure FindPreviousActExecute(Sender: TObject);
     procedure FolderCloseBtnClick(Sender: TObject);
     procedure FoldersActExecute(Sender: TObject);
+
     procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
     procedure FormShow(Sender: TObject);
     procedure HelpKeywordActExecute(Sender: TObject);
@@ -595,7 +606,7 @@ type
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     property Folder: string read GetFolder write SetFolder;
-    procedure UpdateFoldersPnl;
+    procedure UpdateBrowsePnl;
     procedure UpdateMessagesPnl;
   end;
 
@@ -623,10 +634,12 @@ end;
 
 { TMainNotifyEngine }
 
-procedure TMainForm.UpdateFoldersPnl;
+procedure TMainForm.UpdateBrowsePnl;
 begin
-  FoldersSpl.Visible := FoldersAct.Checked;
   ProjectPnl.Visible := FoldersAct.Checked;
+  ProjectSpl.Visible := FoldersAct.Checked;
+  DatabaseSpl.Visible := DatabaseAct.Checked;
+  DatabasePnl.Visible := DatabaseAct.Checked;
   if FoldersAct.Checked then
     UpdateFolder;
 end;
@@ -754,6 +767,16 @@ begin
   end;
 end;
 
+procedure TMainForm.DatabaseActExecute(Sender: TObject);
+begin
+  UpdateBrowsePnl;
+end;
+
+procedure TMainForm.DBConnectMnuClick(Sender: TObject);
+begin
+  sqlvEngine.OpenDatabase;
+end;
+
 procedure TMainForm.DBGCompileActExecute(Sender: TObject);
 begin
   CompileFile;
@@ -821,7 +844,7 @@ end;
 
 procedure TMainForm.FoldersActExecute(Sender: TObject);
 begin
-  UpdateFoldersPnl;
+  UpdateBrowsePnl;
 end;
 
 procedure TMainForm.FormDropFiles(Sender: TObject; const FileNames: array of string);
@@ -1699,7 +1722,12 @@ begin
 
   Engine.FilePanel := EditorsPnl;
   Engine.ProjectPanel := ProjectPnl;
-
+  with TsqlvManagerForm.Create(Self) do
+  begin
+    Parent := DatabasePnl;
+    Align := alClient;
+    Visible := True;
+  end;
   Engine.SetNotifyEngine(Self);
 
   Engine.Startup(GetKeyShiftState = [ssShift]);
@@ -1708,13 +1736,14 @@ begin
   SortFolderFiles := Engine.Options.SortFolderFiles;
   FoldersAct.Checked := Engine.Options.ShowFolder;
   MessagesAct.Checked := Engine.Options.ShowMessages;
-  ProjectPnl.Width := Engine.Options.FoldersWidth;
+  ProjectPnl.Width := Engine.Options.FoldersPanelWidth;
+  DatabasePnl.Width := Engine.Options.DatabasePanelWidth;
   //MessagesTabs.Height := Engine.Options.MessagesHeight;
   with MessagesTabs, BoundsRect do
     BoundsRect := Rect(Left, Bottom - Engine.Options.MessagesHeight, Right, Bottom);
   MessagesTabs.Visible := False;
   MessagesSpl.Visible := False;
-  UpdateFoldersPnl;
+  UpdateBrowsePnl;
   UpdateMessagesPnl;
   // Open any files passed in the command line
   if (ParamCount > 0) and not (SameText(ParamStr(1), '/dde')) then
@@ -1811,7 +1840,8 @@ begin
   Engine.Options.SortFolderFiles := SortFolderFiles;
   Engine.Options.ShowMessages := MessagesAct.Checked;
   Engine.Options.MessagesHeight := MessagesTabs.Height;
-  Engine.Options.FoldersWidth := ProjectPnl.Width;
+  Engine.Options.FoldersPanelWidth := ProjectPnl.Width;
+  Engine.Options.DatabasePanelWidth := DatabasePnl.Width;
   if Engine.Session.Active then
     Engine.Options.LastProject := Engine.Session.Project.FileName
   else
@@ -2710,8 +2740,9 @@ begin
   ntvTheme.Painter.RaisedColor := Lighten(ntvTheme.Painter.ActiveColor, 10);
   ntvTheme.Painter.LoweredColor := Darken(ntvTheme.Painter.ActiveColor, 10);
 
-  FoldersSpl.Color := Engine.Options.Profile.Attributes.Panel.Background;
-  MessagesSpl.Color := FoldersSpl.Color;
+  ProjectSpl.Color := Engine.Options.Profile.Attributes.Panel.Background;
+  DatabaseSpl.Color := Engine.Options.Profile.Attributes.Panel.Background;
+  MessagesSpl.Color := ProjectSpl.Color;
 
   MessagesTabs.Color := Engine.Options.Profile.Attributes.Panel.Background;
   MessagesTabs.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
@@ -2726,6 +2757,9 @@ begin
 
   ProjectPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
   ProjectPnl.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
+
+  DatabasePnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
+  DatabasePnl.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
 
   ClientPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
   ClientPnl.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;

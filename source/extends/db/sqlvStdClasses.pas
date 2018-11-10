@@ -745,7 +745,7 @@ end;
 procedure TsqlvNewField.DoExecute(vAttributes: TsqlvAttributes);
 var
   aStrings: TStringList;
-  aFieldName: string;
+//  aFieldName: string;
 begin
   inherited;
   aStrings := TStringList.Create;

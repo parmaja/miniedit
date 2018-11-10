@@ -155,7 +155,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item10>
     </RequiredPackages>
-    <Units Count="57">
+    <Units Count="58">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -466,6 +466,13 @@
         <Filename Value="..\extends\cmd\mneCMDClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit56>
+      <Unit57>
+        <Filename Value="..\extends\db\sqlvOpenDatabases.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="OpenDatabaseForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit57>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
