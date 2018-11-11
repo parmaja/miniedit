@@ -715,7 +715,6 @@ type
   TEditorOptions = class(TmnXMLProfile)
   private
     FAutoOpenProject: Boolean;
-    FDatabasePanelWidth: integer;
     FIgnoreNames: string;
     FLastFolder: string;
     FLastProject: string;
@@ -782,7 +781,6 @@ type
     property ShowMessages: Boolean read FShowMessages write FShowMessages default False;
     property MessagesHeight: integer read FMessagesHeight write FMessagesHeight default 100;
     property FoldersPanelWidth: integer read FFoldersPanelWidth write FFoldersPanelWidth default 180;
-    property DatabasePanelWidth: integer read FDatabasePanelWidth write FDatabasePanelWidth default 180;
     property AutoStartDebugServer: Boolean read FAutoStartDebugServer write FAutoStartDebugServer default False;
     property AnsiCodePage: Integer read GetAnsiCodePage write SetAnsiCodePage;
     property WindowMaxmized: Boolean read FWindowMaxmized write FWindowMaxmized default False;
@@ -4684,7 +4682,6 @@ begin
   FCollectTimeout := 60;
   FMessagesHeight := 100;
   FFoldersPanelWidth := 180;
-  FDatabasePanelWidth := 180;
 end;
 
 destructor TEditorOptions.Destroy;

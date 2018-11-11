@@ -57,21 +57,24 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
-    DatabaseAct: TAction;
     CloseAllAct: TAction;
     EditorColorsAct: TAction;
     CreateFolderAct: TAction;
     CloseOthersAct: TAction;
     ChangeExtAct: TAction;
     FileEncodeBtn: TntvImgBtn;
-    FoldersBtn1: TToolButton;
-    DatabaseSpl: TntvSplitter;
+    FileList: TListView;
+    FolderCloseBtn1: TntvImgBtn;
+    FolderPanel: TPanel;
+    FolderPathLbl: TLabel;
     LinesModeBtn: TntvImgBtn;
     EncodeModeMenu: TPopupMenu;
-    DatabasePnl: TPanel;
     DatabaseMnu: TMenuItem;
     DBConnectMnu: TMenuItem;
     DBDisconnectMnu: TMenuItem;
+    BrowserTabs: TntvPageControl;
+    DatabasePnl: TPanel;
+    ProjectPnl: TPanel;
     UTF8BOMMnu: TMenuItem;
     UC16BEBOMMnu: TMenuItem;
     MainFileAct: TAction;
@@ -102,19 +105,14 @@ type
     SCMAddFileAct: TAction;
     FileCloseBtn: TntvImgBtn;
     BugSignBtn: TntvImgBtn;
-    FolderCloseBtn: TntvImgBtn;
-    FolderCloseBtn1: TntvImgBtn;
     MenuItem28: TMenuItem;
     MenuItem29: TMenuItem;
     SCMAddFileMnu: TMenuItem;
     RecentFoldersMnu: TMenuItem;
     ShowSpecialCharsAct: TAction;
-    FileList: TListView;
-    FolderPathLbl: TLabel;
     MenuItem26: TMenuItem;
     MenuItem27: TMenuItem;
     OutputEdit: TSynEdit;
-    FolderPanel: TPanel;
     MainFileBtn: TToolButton;
     SynAnySyn1: TSynAnySyn;
     ToolButton3: TToolButton;
@@ -126,7 +124,6 @@ type
     TypeOptionsForMnu: TMenuItem;
     TypesOptionsAct: TAction;
     DBGCompileAct: TAction;
-    BrowserTabs: TntvTabSet;
     MenuItem22: TMenuItem;
     MenuItem23: TMenuItem;
     MenuItem24: TMenuItem;
@@ -149,7 +146,7 @@ type
     MenuItem17: TMenuItem;
     SortByExtensionsAct: TAction;
     SortByNamesAct: TAction;
-    ProjectSpl: TntvSplitter;
+    BrowserSpl: TntvSplitter;
     MenuItem14: TMenuItem;
     MenuItem15: TMenuItem;
     MenuItem16: TMenuItem;
@@ -268,8 +265,6 @@ type
     UnixMnu: TMenuItem;
     WindowsMnu: TMenuItem;
     MacMnu: TMenuItem;
-    ProjectPnl: TPanel;
-    BrowserHeaderPanel: TPanel;
     ManageAct: TAction;
     Manage1: TMenuItem;
     OpenFolder2: TMenuItem;
@@ -384,7 +379,6 @@ type
     procedure AnsiMnuClick(Sender: TObject);
     procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
-    procedure BrowserTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure CallStackListDblClick(Sender: TObject);
     procedure ChangeExtActExecute(Sender: TObject);
     procedure CloseAllActExecute(Sender: TObject);
@@ -401,7 +395,6 @@ type
     procedure FileCloseBtnClick(Sender: TObject);
     procedure FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure FindPreviousActExecute(Sender: TObject);
-    procedure FolderCloseBtnClick(Sender: TObject);
     procedure FoldersActExecute(Sender: TObject);
 
     procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
@@ -426,6 +419,7 @@ type
     procedure OutputEditDblClick(Sender: TObject);
 
     procedure OutputEditSpecialLineMarkup(Sender: TObject; Line: integer; var Special: boolean; Markup: TSynSelectedColor);
+    procedure DatabasePnlClick(Sender: TObject);
     procedure PriorActExecute(Sender: TObject);
     procedure CloseActExecute(Sender: TObject);
     procedure FileListDblClick(Sender: TObject);
@@ -636,17 +630,10 @@ end;
 
 procedure TMainForm.UpdateBrowsePnl;
 begin
-  ProjectPnl.Visible := FoldersAct.Checked;
-  ProjectSpl.Visible := FoldersAct.Checked;
-  DatabaseSpl.Visible := DatabaseAct.Checked;
-  DatabasePnl.Visible := DatabaseAct.Checked;
+  BrowserTabs.Visible := FoldersAct.Checked;
+  BrowserSpl.Visible := FoldersAct.Checked;
   if FoldersAct.Checked then
     UpdateFolder;
-end;
-
-procedure TMainForm.FolderCloseBtnClick(Sender: TObject);
-begin
-  FoldersAct.Execute;
 end;
 
 procedure TMainForm.ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
@@ -669,26 +656,6 @@ begin
     begin
       HintInfo.HintStr := HintInfo.HintControl.Caption + ' (' + ShortCutToText(ShortCut) + ')';
     end;
-end;
-
-procedure TMainForm.BrowserTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
-begin
-  if NewTab.Index = 0 then
-  begin
-    FolderPanel.Visible := True;
-    if FProjectFrame <> nil then
-      FProjectFrame.Visible := False;
-  end
-  else
-  begin
-    if FProjectFrame <> nil then
-    begin
-      FolderPanel.Visible := False;
-      FProjectFrame.Visible := True;
-    end
-    else
-      FolderPanel.Visible := True;
-  end;
 end;
 
 procedure TMainForm.TestDebug;
@@ -1131,6 +1098,11 @@ begin
       Markup.Background := Engine.Options.Profile.Attributes.Active.Background;
     end;
   end;
+end;
+
+procedure TMainForm.DatabasePnlClick(Sender: TObject);
+begin
+
 end;
 
 procedure TMainForm.PriorActExecute(Sender: TObject);
@@ -1736,8 +1708,7 @@ begin
   SortFolderFiles := Engine.Options.SortFolderFiles;
   FoldersAct.Checked := Engine.Options.ShowFolder;
   MessagesAct.Checked := Engine.Options.ShowMessages;
-  ProjectPnl.Width := Engine.Options.FoldersPanelWidth;
-  DatabasePnl.Width := Engine.Options.DatabasePanelWidth;
+  BrowserTabs.Width := Engine.Options.FoldersPanelWidth;
   //MessagesTabs.Height := Engine.Options.MessagesHeight;
   with MessagesTabs, BoundsRect do
     BoundsRect := Rect(Left, Bottom - Engine.Options.MessagesHeight, Right, Bottom);
@@ -1840,8 +1811,7 @@ begin
   Engine.Options.SortFolderFiles := SortFolderFiles;
   Engine.Options.ShowMessages := MessagesAct.Checked;
   Engine.Options.MessagesHeight := MessagesTabs.Height;
-  Engine.Options.FoldersPanelWidth := ProjectPnl.Width;
-  Engine.Options.DatabasePanelWidth := DatabasePnl.Width;
+  Engine.Options.FoldersPanelWidth := BrowserTabs.Width;
   if Engine.Session.Active then
     Engine.Options.LastProject := Engine.Session.Project.FileName
   else
@@ -1950,8 +1920,8 @@ begin
 
   with Engine.CurrentTendency do
   begin
-    MessagesTabs.PageItem[WatchesGrid].Visible := capDebug in Capabilities;
-    MessagesTabs.PageItem[CallStackGrid].Visible := capTrace in Capabilities;
+    MessagesTabs.Page[WatchesGrid].Visible := capDebug in Capabilities;
+    MessagesTabs.Page[CallStackGrid].Visible := capTrace in Capabilities;
     //MessagesTabs.PageItem[MessagesGrid].Visible := capErrors in Capabilities;
   end;
 end;
@@ -2002,7 +1972,7 @@ begin
         FProjectFrame.Parent := ProjectPnl;
         FProjectFrame.Align := alClient;
         FProjectFrame.Visible := False;
-        FProjectFrame.Color := ProjectPnl.Color;
+        //FProjectFrame.Color := .Color;
         if Supports(FProjectFrame, IEditorOptions) then
           (FProjectFrame as IEditorOptions).Retrieve;
       end;
@@ -2010,7 +1980,7 @@ begin
   end
   else
     FreeFrame;
-  BrowserTabs.Items[1].Visible := FProjectFrame <> nil;
+  BrowserTabs.Page[ProjectPnl].Visible := FProjectFrame <> nil;
 end;
 
 procedure TMainForm.SaveAsProjectActExecute(Sender: TObject);
@@ -2728,6 +2698,7 @@ var
 begin
   {Color := Engine.Options.Profile.Attributes.Panel.Background;
   Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;}
+  Color := Engine.Options.Profile.Attributes.Panel.Background;
   EditorsPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
   EditorsPnl.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
 
@@ -2740,26 +2711,18 @@ begin
   ntvTheme.Painter.RaisedColor := Lighten(ntvTheme.Painter.ActiveColor, 10);
   ntvTheme.Painter.LoweredColor := Darken(ntvTheme.Painter.ActiveColor, 10);
 
-  ProjectSpl.Color := Engine.Options.Profile.Attributes.Panel.Background;
-  DatabaseSpl.Color := Engine.Options.Profile.Attributes.Panel.Background;
-  MessagesSpl.Color := ProjectSpl.Color;
+  BrowserSpl.Color := Engine.Options.Profile.Attributes.Panel.Background;
+  MessagesSpl.Color := BrowserSpl.Color;
 
   MessagesTabs.Color := Engine.Options.Profile.Attributes.Panel.Background;
   MessagesTabs.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
   MessagesTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
   MessagesTabs.NormalColor := MixColors(OppositeColor(MessagesTabs.ActiveColor), MessagesTabs.ActiveColor, 50);
 
-  //BrowserHeaderPanel.Color := Engine.Options.Profile.Attributes.Panel.Background;
   BrowserTabs.Color := Engine.Options.Profile.Attributes.Panel.Background;
   BrowserTabs.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
   BrowserTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
   BrowserTabs.NormalColor := MixColors(OppositeColor(BrowserTabs.ActiveColor), BrowserTabs.ActiveColor, 50);
-
-  ProjectPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
-  ProjectPnl.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
-
-  DatabasePnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
-  DatabasePnl.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
 
   ClientPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
   ClientPnl.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;

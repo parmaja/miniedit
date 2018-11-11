@@ -24,19 +24,19 @@ object sqlvManagerForm: TsqlvManagerForm
     TabOrder = 0
     object GroupPanel: TPanel
       Left = 0
-      Height = 335
+      Height = 333
       Top = 0
       Width = 277
       Align = alClient
       BevelOuter = bvNone
       BorderWidth = 2
-      ClientHeight = 335
+      ClientHeight = 333
       ClientWidth = 277
       TabOrder = 0
       object MembersGrid: TStringGrid
         Left = 2
-        Height = 283
-        Top = 50
+        Height = 278
+        Top = 53
         Width = 273
         Align = alClient
         AutoEdit = False
@@ -63,26 +63,27 @@ object sqlvManagerForm: TsqlvManagerForm
         )
       end
       object GroupsPanel: TPanel
-        Left = 2
-        Height = 48
-        Top = 2
-        Width = 273
+        Left = 3
+        Height = 49
+        Top = 3
+        Width = 271
         Align = alTop
+        BorderSpacing.Around = 1
         BevelOuter = bvNone
-        ClientHeight = 48
-        ClientWidth = 273
+        ClientHeight = 49
+        ClientWidth = 271
         TabOrder = 1
         object MetaLbl: TLabel
           Left = 2
           Height = 15
-          Top = 4
+          Top = 6
           Width = 23
           Caption = 'Title'
           ParentColor = False
         end
         object FirstBtn: TSpeedButton
-          Left = 217
-          Height = 25
+          Left = 215
+          Height = 26
           Top = 0
           Width = 56
           Align = alRight
@@ -91,8 +92,8 @@ object sqlvManagerForm: TsqlvManagerForm
           OnClick = FirstBtnClick
         end
         object BackBtn: TSpeedButton
-          Left = 161
-          Height = 25
+          Left = 159
+          Height = 26
           Top = 0
           Width = 56
           Align = alRight
@@ -103,8 +104,8 @@ object sqlvManagerForm: TsqlvManagerForm
         object GroupsList: TComboBox
           Left = 0
           Height = 23
-          Top = 25
-          Width = 273
+          Top = 26
+          Width = 271
           Align = alBottom
           Anchors = [akTop, akLeft, akRight]
           ItemHeight = 15
@@ -117,13 +118,13 @@ object sqlvManagerForm: TsqlvManagerForm
     end
     object ActionsPanel: TPanel
       Left = 0
-      Height = 24
-      Top = 335
+      Height = 26
+      Top = 333
       Width = 277
       Align = alBottom
       BevelInner = bvSpace
       BevelOuter = bvSpace
-      ClientHeight = 24
+      ClientHeight = 26
       ClientWidth = 277
       TabOrder = 1
       object Label5: TLabel
@@ -137,7 +138,7 @@ object sqlvManagerForm: TsqlvManagerForm
       object ActionsList: TComboBox
         Left = 50
         Height = 23
-        Top = 2
+        Top = 1
         Width = 224
         Anchors = [akTop, akLeft, akRight]
         ItemHeight = 15
@@ -195,7 +196,7 @@ object sqlvManagerForm: TsqlvManagerForm
     end
   end
   object ActionsPopupMenu: TPopupMenu
-    left = 25
-    top = 271
+    left = 107
+    top = 162
   end
 end

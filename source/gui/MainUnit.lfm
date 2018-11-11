@@ -1,12 +1,12 @@
 object MainForm: TMainForm
-  Left = 109
-  Height = 557
-  Top = 98
+  Left = 343
+  Height = 553
+  Top = 108
   Width = 1046
-  ActiveControl = OutputEdit
+  ActiveControl = FileList
   AllowDropFiles = True
   Caption = 'Mini Edit'
-  ClientHeight = 537
+  ClientHeight = 533
   ClientWidth = 1046
   Color = clWindow
   Font.CharSet = ANSI_CHARSET
@@ -33,7 +33,7 @@ object MainForm: TMainForm
     EdgeBorders = [ebTop, ebBottom]
     Images = EditorResource.ToolbarImageList
     ParentColor = False
-    TabOrder = 3
+    TabOrder = 2
     object MainBar: TToolBar
       Left = 1
       Height = 23
@@ -70,7 +70,7 @@ object MainForm: TMainForm
         Action = SaveAllAct
       end
       object RunBtn: TToolButton
-        Left = 628
+        Left = 549
         Top = 0
         Action = DBGRunAct
       end
@@ -96,7 +96,7 @@ object MainForm: TMainForm
         Style = tbsCheck
       end
       object ToolButton8: TToolButton
-        Left = 545
+        Left = 466
         Height = 23
         Top = 0
         Caption = 'ToolButton8'
@@ -104,171 +104,41 @@ object MainForm: TMainForm
         Style = tbsSeparator
       end
       object MainFileBtn: TToolButton
-        Left = 703
+        Left = 624
         Top = 0
         Action = MainFileAct
         AutoSize = True
         PopupMenu = MainFilePopupMnu
       end
       object ToolButton3: TToolButton
-        Left = 553
+        Left = 474
         Top = 0
         Action = DBGDebugModeAct
         Style = tbsCheck
       end
-      object FoldersBtn1: TToolButton
-        Left = 466
-        Top = 0
-        Action = DatabaseAct
-        Indeterminate = True
-        Style = tbsCheck
-      end
-    end
-  end
-  object ProjectPnl: TPanel
-    Left = 0
-    Height = 351
-    Top = 29
-    Width = 200
-    Align = alLeft
-    BevelOuter = bvNone
-    ClientHeight = 351
-    ClientWidth = 200
-    Constraints.MinHeight = 60
-    TabOrder = 0
-    object BrowserHeaderPanel: TPanel
-      Left = 0
-      Height = 24
-      Top = 0
-      Width = 200
-      Align = alTop
-      Alignment = taLeftJustify
-      BevelOuter = bvNone
-      ClientHeight = 24
-      ClientWidth = 200
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      ParentFont = False
-      TabOrder = 0
-      object BrowserTabs: TntvTabSet
-        Left = 0
-        Height = 24
-        Top = 0
-        Width = 200
-        StoreIndex = False
-        ShowButtons = False
-        ShowBorder = False
-        AlignTabs = talBottom
-        Items = <        
-          item
-            Caption = 'Folders'
-            Name = 'FoldersTab'
-            AutoWidth = True
-          end        
-          item
-            Caption = 'Project'
-            Name = 'ProjectTab'
-            AutoWidth = True
-          end>
-        OnTabSelected = BrowserTabsTabSelected
-        Align = alClient
-        Color = clWindow
-        ParentColor = False
-        TabOrder = 0
-        object FolderCloseBtn: TntvImgBtn
-          Left = 184
-          Height = 24
-          Top = 0
-          Width = 16
-          Images = EditorResource.PanelImages
-          ImageIndex = 0
-          Align = alRight
-          OnClick = FolderCloseBtnClick
-          AutoCheck = False
-        end
-        object FolderCloseBtn1: TntvImgBtn
-          Left = 168
-          Height = 24
-          Top = 0
-          Width = 16
-          Images = EditorResource.PanelImages
-          ImageIndex = 1
-          Align = alRight
-          PopupMenu = FolderMenu
-          AutoCheck = False
-        end
-      end
-    end
-    object FolderPanel: TPanel
-      Left = 0
-      Height = 327
-      Top = 24
-      Width = 200
-      Align = alClient
-      BevelOuter = bvNone
-      Caption = 'FolderPanel'
-      ClientHeight = 327
-      ClientWidth = 200
-      TabOrder = 1
-      object FileList: TListView
-        Left = 3
-        Height = 303
-        Top = 21
-        Width = 194
-        Align = alClient
-        BorderSpacing.Around = 3
-        Columns = <        
-          item
-            AutoSize = True
-            Caption = 'File Name'
-            Width = 68
-          end>
-        HideSelection = False
-        ParentColor = True
-        PopupMenu = FolderMenu
-        ReadOnly = True
-        RowSelect = True
-        ShowColumnHeaders = False
-        SmallImages = EditorResource.FileImages
-        TabOrder = 0
-        ViewStyle = vsReport
-        OnDblClick = FileListDblClick
-        OnKeyDown = FileListKeyDown
-        OnKeyPress = FileListKeyPress
-      end
-      object FolderPathLbl: TLabel
-        Left = 2
-        Height = 16
-        Top = 2
-        Width = 196
-        Align = alTop
-        AutoSize = False
-        BorderSpacing.Around = 2
-        Caption = 'Path:'
-        ParentColor = False
-        PopupMenu = FolderMenu
-      end
     end
   end
   object ClientPnl: TPanel
-    Left = 417
-    Height = 351
+    Left = 223
+    Height = 345
     Top = 29
-    Width = 629
+    Width = 823
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 351
-    ClientWidth = 629
-    TabOrder = 1
+    ClientHeight = 345
+    ClientWidth = 823
+    TabOrder = 0
     object EditorsPnl: TPanel
-      Left = 0
-      Height = 326
+      Left = 2
+      Height = 320
       Top = 25
-      Width = 629
+      Width = 819
       Align = alClient
+      BorderSpacing.Left = 2
+      BorderSpacing.Right = 2
       BevelOuter = bvNone
-      ClientHeight = 326
-      ClientWidth = 629
+      ClientHeight = 320
+      ClientWidth = 819
       FullRepaint = False
       TabOrder = 0
       OnClick = EditorsPnlClick
@@ -276,7 +146,7 @@ object MainForm: TMainForm
         Left = 0
         Height = 23
         Top = 0
-        Width = 629
+        Width = 819
         StoreIndex = False
         ShowButtons = False
         ShowBorder = False
@@ -293,13 +163,13 @@ object MainForm: TMainForm
       Left = 0
       Height = 25
       Top = 0
-      Width = 629
+      Width = 823
       Align = alTop
       Alignment = taLeftJustify
       BevelOuter = bvNone
       BorderWidth = 2
       ClientHeight = 25
-      ClientWidth = 629
+      ClientWidth = 823
       PopupMenu = FilePopupMenu
       TabOrder = 1
       Visible = False
@@ -308,7 +178,7 @@ object MainForm: TMainForm
         Height = 21
         Hint = 'File name'
         Top = 2
-        Width = 489
+        Width = 683
         Align = alClient
         AutoSize = False
         Layout = tlCenter
@@ -317,7 +187,7 @@ object MainForm: TMainForm
       end
       object FileCloseBtn: TntvImgBtn
         AnchorSideRight.Control = FileHeaderPanel
-        Left = 611
+        Left = 805
         Height = 21
         Top = 2
         Width = 16
@@ -330,7 +200,7 @@ object MainForm: TMainForm
       object BugSignBtn: TntvImgBtn
         AnchorSideRight.Control = FileCloseBtn
         AnchorSideBottom.Side = asrBottom
-        Left = 595
+        Left = 789
         Height = 21
         Top = 2
         Width = 16
@@ -343,7 +213,7 @@ object MainForm: TMainForm
       object FileEncodeBtn: TntvImgBtn
         AnchorSideRight.Control = LinesModeBtn
         AnchorSideBottom.Side = asrBottom
-        Left = 491
+        Left = 685
         Height = 21
         Top = 2
         Width = 73
@@ -357,7 +227,7 @@ object MainForm: TMainForm
         AnchorSideRight.Control = BugSignBtn
         AnchorSideBottom.Control = BugSignBtn
         AnchorSideBottom.Side = asrBottom
-        Left = 564
+        Left = 758
         Height = 21
         Top = 2
         Width = 31
@@ -371,13 +241,13 @@ object MainForm: TMainForm
   object StatusPanel: TPanel
     Left = 0
     Height = 21
-    Top = 516
+    Top = 512
     Width = 1046
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 21
     ClientWidth = 1046
-    TabOrder = 2
+    TabOrder = 1
     object MessageLabel: TPanel
       Left = 80
       Height = 19
@@ -440,9 +310,10 @@ object MainForm: TMainForm
   object MessagesTabs: TntvPageControl
     Left = 0
     Height = 127
-    Top = 389
+    Top = 385
     Width = 1046
     Margin = 1
+    BorderSpacing.Top = 2
     StoreIndex = False
     ShowButtons = False
     ShowBorder = False
@@ -485,7 +356,7 @@ object MainForm: TMainForm
       end>
     Align = alBottom
     Constraints.MinHeight = 60
-    TabOrder = 4
+    TabOrder = 3
     object WatchesGrid: TStringGrid
       Left = 1
       Height = 105
@@ -1777,40 +1648,135 @@ object MainForm: TMainForm
     Cursor = crVSplit
     Left = 0
     Height = 9
-    Top = 380
+    Top = 374
     Width = 1046
     ResizeControl = MessagesTabs
   end
-  object ProjectSpl: TntvSplitter
+  object BrowserSpl: TntvSplitter
     Cursor = crHSplit
-    Left = 200
-    Height = 351
+    Left = 214
+    Height = 345
     Top = 29
-    Width = 5
-    ResizeControl = ProjectPnl
+    Width = 9
+    ResizeControl = BrowserTabs
   end
-  object DatabasePnl: TPanel
-    Left = 205
-    Height = 351
-    Top = 29
-    Width = 200
+  object BrowserTabs: TntvPageControl
+    Left = 0
+    Height = 340
+    Top = 34
+    Width = 214
+    BorderSpacing.Top = 5
+    StoreIndex = False
+    ShowButtons = False
+    ShowBorder = False
+    Items = <    
+      item
+        Caption = 'Folder'
+        Name = 'Folder1Tab'
+        AutoWidth = True
+        Control = FolderPanel
+      end    
+      item
+        Caption = 'Data'
+        Name = 'DataTab'
+        AutoWidth = True
+        Control = DatabasePnl
+      end    
+      item
+        Caption = 'Project'
+        Name = 'ProjectTab'
+        AutoWidth = True
+        Control = ProjectPnl
+      end>
     Align = alLeft
-    BevelOuter = bvNone
-    Constraints.MinHeight = 60
-    TabOrder = 5
-  end
-  object DatabaseSpl: TntvSplitter
-    Cursor = crHSplit
-    Left = 405
-    Height = 351
-    Top = 29
-    Width = 12
-    ResizeControl = DatabasePnl
+    TabOrder = 4
+    object ProjectPnl: TPanel
+      Left = 3
+      Height = 314
+      Top = 23
+      Width = 208
+      Align = alClient
+      BevelOuter = bvNone
+      TabOrder = 2
+    end
+    object DatabasePnl: TPanel
+      Left = 3
+      Height = 314
+      Top = 23
+      Width = 208
+      Align = alClient
+      BevelOuter = bvNone
+      TabOrder = 1
+      OnClick = DatabasePnlClick
+    end
+    object FolderPanel: TPanel
+      Left = 3
+      Height = 314
+      Top = 23
+      Width = 208
+      Align = alClient
+      BevelOuter = bvNone
+      Caption = 'FolderPanel'
+      ClientHeight = 314
+      ClientWidth = 208
+      TabOrder = 0
+      object FileList: TListView
+        Left = 1
+        Height = 293
+        Top = 21
+        Width = 207
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        BorderSpacing.Around = 3
+        Columns = <        
+          item
+            AutoSize = True
+            Caption = 'File Name'
+            Width = 68
+          end>
+        HideSelection = False
+        ParentColor = True
+        PopupMenu = FolderMenu
+        ReadOnly = True
+        RowSelect = True
+        ShowColumnHeaders = False
+        SmallImages = EditorResource.FileImages
+        TabOrder = 0
+        ViewStyle = vsReport
+        OnDblClick = FileListDblClick
+        OnKeyDown = FileListKeyDown
+        OnKeyPress = FileListKeyPress
+      end
+      object FolderPathLbl: TLabel
+        Left = 1
+        Height = 20
+        Top = 0
+        Width = 189
+        Anchors = [akTop, akLeft, akRight]
+        AutoSize = False
+        BorderSpacing.Around = 2
+        Caption = 'Path:'
+        ParentColor = False
+        PopupMenu = FolderMenu
+      end
+      object FolderCloseBtn1: TntvImgBtn
+        Left = 192
+        Height = 20
+        Top = 0
+        Width = 16
+        Images = EditorResource.PanelImages
+        ImageIndex = 1
+        ParentColor = False
+        Anchors = [akTop, akRight]
+        Color = clWindow
+        PopupMenu = FolderMenu
+        AutoCheck = False
+      end
+    end
   end
   object MainMenu: TMainMenu
     Images = EditorResource.ToolbarImageList
-    left = 109
-    top = 84
+    left = 345
+    top = 114
     object file1: TMenuItem
       Caption = '&File'
       Hint = 'Exit|Quits the application'
@@ -2213,8 +2179,8 @@ object MainForm: TMainForm
   end
   object ActionList: TActionList
     Images = EditorResource.ToolbarImageList
-    left = 23
-    top = 90
+    left = 257
+    top = 153
     object PasteAct: TAction
       Category = 'Edit'
       Caption = 'Paste'
@@ -2796,14 +2762,6 @@ object MainForm: TMainForm
       Hint = 'Close all files and project'
       OnExecute = CloseAllActExecute
     end
-    object DatabaseAct: TAction
-      Category = 'View'
-      AutoCheck = True
-      Caption = 'Database'
-      ImageIndex = 32
-      OnExecute = DatabaseActExecute
-      ShortCut = 49220
-    end
   end
   object FolderMenu: TPopupMenu
     Images = EditorResource.ToolbarImageList
@@ -3038,8 +2996,8 @@ object MainForm: TMainForm
     ExceptionDialog = aedOkMessageBox
     OnActivate = ApplicationPropertiesActivate
     OnShowHint = ApplicationPropertiesShowHint
-    left = 66
-    top = 155
+    left = 16
+    top = 90
   end
   object SynAnySyn1: TSynAnySyn
     Enabled = False
