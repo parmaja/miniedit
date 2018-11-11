@@ -576,6 +576,7 @@ type
     procedure MoveListIndex(vDirection: Integer);
   protected
     FProjectFrame: TFrame;
+    FDatabaseFrame: TsqlvManagerForm;
     FOutputs: TOutputs;
     FMenuItemsList: TObjectList;
     procedure ExploreFolder(AFolder: string);
@@ -1694,7 +1695,9 @@ begin
 
   Engine.FilePanel := EditorsPnl;
   Engine.ProjectPanel := ProjectPnl;
-  with TsqlvManagerForm.Create(Self) do
+
+  FDatabaseFrame := TsqlvManagerForm.Create(Self);
+  with FDatabaseFrame do
   begin
     Parent := DatabasePnl;
     Align := alClient;
@@ -2739,6 +2742,8 @@ begin
   CorrectGridColors(CallStackGrid);
   CorrectGridColors(WatchesGrid);
   CorrectGridColors(SearchGrid);
+  if FDatabaseFrame <> nil then
+    CorrectGridColors(FDatabaseFrame.MembersGrid);
 
   OutputEdit.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   OutputEdit.Color := Engine.Options.Profile.Attributes.Default.Background;

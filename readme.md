@@ -12,15 +12,15 @@ if you are editing multiple files, e.g. Python, PHP it can run this files into c
 
 ### Features
 
- * UTF8 encoding, Only UTF8 sorry for that.
+ * Portable, one executable file, take it any where.
+ * UTF8, Ansi, UC16LE, UC16BE encoding
+ * Projects files, each project have special type/tendency (PHP, Lua, Python, Pascal, D)
+ * Until now it is very Fast and very small
  * Search in files
  * Search for file
- * Portable, one executable file.
- * Projects files, each project have special type/tendency (PHP,Lua,Python,Pascal,D)
  * PHP XDebug
- * [TODO] GDB debugging 
- * Until now it is very Fast and very small
  * Tortoise SVN/GIT integrated in Windows, [TODO] RabbitVCS in Linux
+ * [TODO] GDB debugging
  * Works in Windows and Linux
  * Compile and run Pascal, D, Go, Cpp (cpp todo not yet)
  * Run PHP, CMD, SH, BAT, Lua, Py
@@ -28,15 +28,17 @@ if you are editing multiple files, e.g. Python, PHP it can run this files into c
 ### Disadvantages
   
  * Not good in auto complete
+ * Can't open unkown files
+ * Can't open a huge file like logs
 
 ### Contributing
 
 Keep it as simple as possible.
-There is an addons to add menu items to file or main menu tools
+There is an addons to add menu items to file or main menu tools.
 
 ### Build
 
-Miniedit is FreePascal/Lazarus project, to compile it need to install all packages that needed for the project
+MiniEdit is FreePascal/Lazarus project, to compile it you need to install all packages that needed
 
  * Use source code from github.com in branch "release", or use last tag,  branch "master" is my upstream work, it is not stable.
  * FreePascal FPC 3.0 or later
@@ -44,12 +46,11 @@ Miniedit is FreePascal/Lazarus project, to compile it need to install all packag
  * MiniLib http://sourceforge.net/projects/minilib
  * CMDBox http://wiki.freepascal.org/CmdLine
 
-CMDBox package
+Open each package in Lazarus and compile it in order.
+
+#### Required Packages
 
     CMDLine\cmdbox.dpk
-
-#### minilib packages
-
     minilib\lib\MiniCommons.lpk
     minilib\xml\source\MiniXML.lpk
     minilib\socket\source\MiniSockets.lpk
@@ -58,13 +59,3 @@ CMDBox package
     minilib\lazarus\lib\MiniLib.lpk
     minilib\lazarus\components\native\NativeLib.lpk
 
-#### Build minilib project
-
-
-## miniEdit
-
-#### Options
-
-### Project Options
-
-Console: Run program in Terminal Console of system
