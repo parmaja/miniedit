@@ -40,9 +40,11 @@ object sqlvManagerForm: TsqlvManagerForm
         Width = 273
         Align = alClient
         AutoEdit = False
+        AutoFillColumns = True
         ColCount = 1
         DefaultRowHeight = 18
         FixedCols = 0
+        Flat = True
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goRowSelect]
         PopupMenu = ActionsPopupMenu
         RowCount = 3
@@ -59,7 +61,7 @@ object sqlvManagerForm: TsqlvManagerForm
         OnKeyDown = MembersGridKeyDown
         OnUTF8KeyPress = MembersGridUTF8KeyPress
         ColWidths = (
-          117
+          272
         )
       end
       object GroupsPanel: TPanel

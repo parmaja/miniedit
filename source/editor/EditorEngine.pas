@@ -25,7 +25,7 @@ Portable Notes:
 interface
 
 uses
-  Messages, SysUtils, Forms, StrUtils, Dialogs, Variants, Classes, Controls, LCLIntf, LConvEncoding,
+  Messages, SysUtils, Forms, StdCtrls, StrUtils, Dialogs, Variants, Classes, Controls, LCLIntf, LConvEncoding,
   FileUtil, LazFileUtils,
   Graphics, Contnrs, Types, IniFiles, EditorOptions, EditorColors, EditorProfiles,
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses,
@@ -477,7 +477,7 @@ type
 
   TEditorFile = class(TCollectionItem, IFileEditor)
   private
-    FFileEncode: string;
+    FFileEncoding: string;
     FName: string;
     FIsNew: Boolean;
     FIsEdited: Boolean;
@@ -560,7 +560,7 @@ type
 
     //run the file or run the project depend on the project type (Tendency)
     property LinesMode: TEditorLinesMode read FLinesMode write SetLinesMode default efmUnix;
-    property FileEncoding: string read FFileEncode write SetFileEncoding;
+    property FileEncoding: string read FFileEncoding write SetFileEncoding;
     property LinesModeAsText: string read GetLinesModeAsText;
     property IsText: Boolean read GetIsText;
     property Name: string read FName write FName;
@@ -721,6 +721,7 @@ type
     FRecentFolders: TStringList;
     FShowFolder: Boolean;
     FShowFolderFiles: TShowFolderFiles;
+    FShowToolbar: Boolean;
     FSortFolderFiles: TSortFolderFiles;
     FWindowMaxmized: Boolean;
     FBoundRect: TRect;
@@ -779,6 +780,7 @@ type
     property ShowFolderFiles: TShowFolderFiles read FShowFolderFiles write FShowFolderFiles default sffRelated;
     property SortFolderFiles: TSortFolderFiles read FSortFolderFiles write FSortFolderFiles default srtfByNames;
     property ShowMessages: Boolean read FShowMessages write FShowMessages default False;
+    property ShowToolbar: Boolean read FShowToolbar write FShowToolbar default True;
     property MessagesHeight: integer read FMessagesHeight write FMessagesHeight default 100;
     property FoldersPanelWidth: integer read FFoldersPanelWidth write FFoldersPanelWidth default 180;
     property AutoStartDebugServer: Boolean read FAutoStartDebugServer write FAutoStartDebugServer default False;
@@ -1961,6 +1963,8 @@ begin
   FSynEdit.ShowHint := True;
   FSynEdit.Visible := False;
   FSynEdit.WantTabs := True;
+  FSynEdit.MaxLeftChar := 80;
+  FSynEdit.ScrollBars := ssAutoBoth;
 
   FSynEdit.Parent := Engine.FilePanel;
   with FSynEdit.Keystrokes.Add do
@@ -4071,6 +4075,8 @@ begin
   inherited;
   FIsNew := True;
   FIsEdited := False;
+  FFileEncoding := 'UTF8';
+  FLinesMode := efmUnix;
 end;
 
 destructor TEditorFile.Destroy;
@@ -4476,9 +4482,9 @@ end;
 
 procedure TEditorFile.SetFileEncoding(AValue: string);
 begin
-  if FFileEncode <> AValue then
+  if FFileEncoding <> AValue then
   begin
-    FFileEncode := AValue;
+    FFileEncoding := AValue;
     Edit;
     Engine.UpdateState([ecsState, ecsRefresh]);
   end;
@@ -4682,6 +4688,7 @@ begin
   FCollectTimeout := 60;
   FMessagesHeight := 100;
   FFoldersPanelWidth := 180;
+  FShowToolbar := True;
 end;
 
 destructor TEditorOptions.Destroy;

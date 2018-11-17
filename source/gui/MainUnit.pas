@@ -57,6 +57,8 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    ShowToolbarMnu: TMenuItem;
+    ShowToolbarAct: TAction;
     CloseAllAct: TAction;
     EditorColorsAct: TAction;
     CreateFolderAct: TAction;
@@ -188,7 +190,7 @@ type
     OptionsMnu: TMenuItem;
     ShowTree1: TMenuItem;
     ReopenMnu: TMenuItem;
-    TopCoolBar: TToolBar;
+    TopToolbar: TToolBar;
     MainBar: TToolBar;
     BackBtn: TToolButton;
     ForwardBtn: TToolButton;
@@ -409,7 +411,7 @@ type
     procedure MenuItem42Click(Sender: TObject);
     procedure MessagesGridDblClick(Sender: TObject);
 
-      procedure MessagesGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure MessagesGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure NewActExecute(Sender: TObject);
     procedure OpenActExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -470,6 +472,7 @@ type
     procedure UTF8BOMMnuClick(Sender: TObject);
     procedure UTF8MnuClick(Sender: TObject);
     procedure UnixMnuClick(Sender: TObject);
+    procedure ShowToolbarActExecute(Sender: TObject);
     procedure WatchesGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure WindowsMnuClick(Sender: TObject);
     procedure MacMnuClick(Sender: TObject);
@@ -603,6 +606,7 @@ type
     property Folder: string read GetFolder write SetFolder;
     procedure UpdateBrowsePnl;
     procedure UpdateMessagesPnl;
+    procedure UpdateToolbars;
   end;
 
 var
@@ -1550,6 +1554,11 @@ begin
   MessagesSpl.Visible := MessagesAct.Checked;
 end;
 
+procedure TMainForm.UpdateToolbars;
+begin
+  TopToolbar.Visible := ShowToolbarAct.Checked;
+end;
+
 procedure TMainForm.MessagesActExecute(Sender: TObject);
 begin
   UpdateMessagesPnl;
@@ -1665,6 +1674,11 @@ begin
   Engine.Files.Current.LinesMode := efmUnix;
 end;
 
+procedure TMainForm.ShowToolbarActExecute(Sender: TObject);
+begin
+  UpdateToolbars;
+end;
+
 procedure TMainForm.WatchesGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if Shift = [] then
@@ -1712,6 +1726,7 @@ begin
   FoldersAct.Checked := Engine.Options.ShowFolder;
   MessagesAct.Checked := Engine.Options.ShowMessages;
   BrowserTabs.Width := Engine.Options.FoldersPanelWidth;
+  ShowToolbarAct.Checked := Engine.Options.ShowToolbar;
   //MessagesTabs.Height := Engine.Options.MessagesHeight;
   with MessagesTabs, BoundsRect do
     BoundsRect := Rect(Left, Bottom - Engine.Options.MessagesHeight, Right, Bottom);
@@ -1719,6 +1734,7 @@ begin
   MessagesSpl.Visible := False;
   UpdateBrowsePnl;
   UpdateMessagesPnl;
+  UpdateToolbars;
   // Open any files passed in the command line
   if (ParamCount > 0) and not (SameText(ParamStr(1), '/dde')) then
   begin
@@ -1814,6 +1830,7 @@ begin
   Engine.Options.SortFolderFiles := SortFolderFiles;
   Engine.Options.ShowMessages := MessagesAct.Checked;
   Engine.Options.MessagesHeight := MessagesTabs.Height;
+  Engine.Options.ShowToolbar := ShowToolbarAct.Checked;
   Engine.Options.FoldersPanelWidth := BrowserTabs.Width;
   if Engine.Session.Active then
     Engine.Options.LastProject := Engine.Session.Project.FileName
@@ -2685,9 +2702,9 @@ procedure TMainForm.OptionsChanged;
 
   procedure CorrectGridColors(AGrid: TStringGrid);
   begin
-    AGrid.FixedColor := ntvTheme.Painter.ActiveColor;
-    AGrid.TitleFont.Color := Engine.Options.Profile.Attributes.Default.Foreground;
-    AGrid.FixedGridLineColor := Engine.Options.Profile.Attributes.Panel.Background;
+    AGrid.FixedColor := Engine.Options.Profile.Attributes.Gutter.BackColor; //ntvTheme.Painter.ActiveColor;
+    AGrid.TitleFont.Color := Engine.Options.Profile.Attributes.Gutter.Foreground;
+    AGrid.FixedGridLineColor := Engine.Options.Profile.Attributes.Gutter.ForeColor;
     AGrid.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
     {AGrid.Font.Name := Engine.Options.Profile.Attributes.FontName;
     AGrid.Font.Size := Engine.Options.Profile.Attributes.FontSize;}
@@ -2730,9 +2747,13 @@ begin
   ClientPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
   ClientPnl.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
 
-  FileTabs.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
+  FileTabs.Color := Engine.Options.Profile.Attributes.Gutter.Background;
+  FileTabs.Font.Color := Engine.Options.Profile.Attributes.Gutter.Foreground;
+  //FileTabs.ActiveColor := Engine.Options.Profile.Attributes.Gutter.Background;
   FileTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
   FileTabs.NormalColor := MixColors(OppositeColor(FileTabs.ActiveColor), FileTabs.ActiveColor, 50);
+  FileHeaderPanel.Font.Color := Engine.Options.Profile.Attributes.Gutter.Foreground;
+  FileHeaderPanel.Color := Engine.Options.Profile.Attributes.Gutter.Background;
 
   FileList.Font.Name := Engine.Options.Profile.Attributes.FontName;
   FileList.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;

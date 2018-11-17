@@ -512,7 +512,6 @@ constructor TsqlvManagerForm.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
   GroupsNames := TsqlvAddons.Create;
-//  sqlvEngine.WorkPath := Application.Location;
   sqlvGui := TsqlvMainGui.Create(Self);
   StateChanged;
 end;

@@ -639,9 +639,9 @@ begin
   Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   DataGrid.Color := Engine.Options.Profile.Attributes.Default.Background;
   DataGrid.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
-  DataGrid.FixedColor := Engine.Options.Profile.Attributes.Panel.Background;
-  DataGrid.TitleFont.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
-  DataGrid.GridLineColor := Engine.Options.Profile.Attributes.Separator.Foreground;
+  DataGrid.FixedColor := Engine.Options.Profile.Attributes.Gutter.Background;
+  DataGrid.TitleFont.Color := Engine.Options.Profile.Attributes.Gutter.Foreground;
+  DataGrid.GridLineColor := Engine.Options.Profile.Attributes.Gutter.Foreground;
 
   DataGrid.FocusColor := Engine.Options.Profile.Attributes.Selected.Background;
   DataGrid.AlternateColor := Engine.Options.Profile.Attributes.Comment.Background
@@ -660,8 +660,8 @@ begin
   DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   if (aRow < DataGrid.FixedRows) or (aCol < DataGrid.FixedCols) then
   begin
-    DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Panel.Background;
-    DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
+    DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Gutter.Background;
+    DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Gutter.Foreground;
   end
   else if ((aRow = DataGrid.Row) and (aCol = DataGrid.Col)) or
           ((aRow >= DataGrid.Selection.Top) and (aRow <= DataGrid.Selection.Bottom) and (aCol >= DataGrid.Selection.Left) and (aCol <= DataGrid.Selection.Right))

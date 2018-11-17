@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 343
+  Left = 328
   Height = 553
-  Top = 108
+  Top = 112
   Width = 1046
   ActiveControl = FileList
   AllowDropFiles = True
@@ -24,7 +24,7 @@ object MainForm: TMainForm
   Position = poDefaultPosOnly
   ShowHint = True
   LCLVersion = '2.1.0.0'
-  object TopCoolBar: TToolBar
+  object TopToolbar: TToolBar
     Left = 0
     Height = 29
     Top = 0
@@ -129,16 +129,14 @@ object MainForm: TMainForm
     ClientWidth = 823
     TabOrder = 0
     object EditorsPnl: TPanel
-      Left = 2
+      Left = 0
       Height = 320
       Top = 25
-      Width = 819
+      Width = 823
       Align = alClient
-      BorderSpacing.Left = 2
-      BorderSpacing.Right = 2
       BevelOuter = bvNone
       ClientHeight = 320
-      ClientWidth = 819
+      ClientWidth = 823
       FullRepaint = False
       TabOrder = 0
       OnClick = EditorsPnlClick
@@ -146,7 +144,7 @@ object MainForm: TMainForm
         Left = 0
         Height = 23
         Top = 0
-        Width = 819
+        Width = 823
         StoreIndex = False
         ShowButtons = False
         ShowBorder = False
@@ -1608,6 +1606,7 @@ object MainForm: TMainForm
       VisibleSpecialChars = [vscSpace, vscTabAtLast]
       ReadOnly = True
       RightEdge = 360
+      ScrollBars = ssAutoVertical
       SelectedColor.BackPriority = 50
       SelectedColor.ForePriority = 50
       SelectedColor.FramePriority = 50
@@ -1963,6 +1962,10 @@ object MainForm: TMainForm
         Action = MessagesAct
         AutoCheck = True
         OnClick = MessagesActExecute
+      end
+      object ShowToolbarMnu: TMenuItem
+        Action = ShowToolbarAct
+        AutoCheck = True
       end
       object MenuItem6: TMenuItem
         Caption = '-'
@@ -2762,6 +2765,12 @@ object MainForm: TMainForm
       Hint = 'Close all files and project'
       OnExecute = CloseAllActExecute
     end
+    object ShowToolbarAct: TAction
+      Category = 'View'
+      AutoCheck = True
+      Caption = 'Toobar'
+      OnExecute = ShowToolbarActExecute
+    end
   end
   object FolderMenu: TPopupMenu
     Images = EditorResource.ToolbarImageList
@@ -2996,8 +3005,8 @@ object MainForm: TMainForm
     ExceptionDialog = aedOkMessageBox
     OnActivate = ApplicationPropertiesActivate
     OnShowHint = ApplicationPropertiesShowHint
-    left = 16
-    top = 90
+    left = 73
+    top = 99
   end
   object SynAnySyn1: TSynAnySyn
     Enabled = False
