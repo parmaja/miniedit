@@ -15,7 +15,7 @@ uses
   Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus,
   ToolWin, Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses,
   StdActns, Grids, SynEditHighlighter, SynEdit, IAddons, ntvSplitters, ntvThemes,
-  SynHighlighterSQL, EditorClasses, ntvImgBtns,
+  SynHighlighterSQL, EditorClasses, ntvImgBtns, ntvPanels,
   {$ifdef WINDOWS}
   Windows, //TODO, i hate include it
   {$endif}
@@ -57,6 +57,21 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    BrowserTabs: TntvPageControl;
+    CallStackGrid: TStringGrid;
+    DatabasePnl: TPanel;
+    FileList: TListView;
+    FolderCloseBtn1: TntvImgBtn;
+    FolderPanel: TPanel;
+    FolderPathLbl: TLabel;
+    BrowserPnl: TntvPanel;
+    LogEdit: TSynEdit;
+    MessagesGrid: TStringGrid;
+    MessagesTabs: TntvPageControl;
+    MessagesPnl: TntvPanel;
+    OutputEdit: TSynEdit;
+    ProjectPnl: TPanel;
+    SearchGrid: TStringGrid;
     ShowToolbarMnu: TMenuItem;
     ShowToolbarAct: TAction;
     CloseAllAct: TAction;
@@ -65,18 +80,11 @@ type
     CloseOthersAct: TAction;
     ChangeExtAct: TAction;
     FileEncodeBtn: TntvImgBtn;
-    FileList: TListView;
-    FolderCloseBtn1: TntvImgBtn;
-    FolderPanel: TPanel;
-    FolderPathLbl: TLabel;
     LinesModeBtn: TntvImgBtn;
     EncodeModeMenu: TPopupMenu;
     DatabaseMnu: TMenuItem;
     DBConnectMnu: TMenuItem;
     DBDisconnectMnu: TMenuItem;
-    BrowserTabs: TntvPageControl;
-    DatabasePnl: TPanel;
-    ProjectPnl: TPanel;
     UTF8BOMMnu: TMenuItem;
     UC16BEBOMMnu: TMenuItem;
     MainFileAct: TAction;
@@ -99,7 +107,6 @@ type
     MenuItem33: TMenuItem;
     MenuItem34: TMenuItem;
     MenuItem36: TMenuItem;
-    LogEdit: TSynEdit;
     SetAsRootFolderAct: TAction;
     SetAsMainFileAc: TAction;
     MenuItem30: TMenuItem;
@@ -114,15 +121,11 @@ type
     ShowSpecialCharsAct: TAction;
     MenuItem26: TMenuItem;
     MenuItem27: TMenuItem;
-    OutputEdit: TSynEdit;
     MainFileBtn: TToolButton;
     SynAnySyn1: TSynAnySyn;
     ToolButton3: TToolButton;
     ToolButton8: TToolButton;
     UTF8Mnu: TMenuItem;
-    WatchesGrid: TStringGrid;
-    SearchGrid: TStringGrid;
-    MessagesGrid: TStringGrid;
     TypeOptionsForMnu: TMenuItem;
     TypesOptionsAct: TAction;
     DBGCompileAct: TAction;
@@ -140,22 +143,20 @@ type
     MenuItem19: TMenuItem;
     MenuItem20: TMenuItem;
     MenuItem21: TMenuItem;
-    CallStackGrid: TStringGrid;
     AnsiMnu: TMenuItem;
+    WatchesGrid: TStringGrid;
     WorkspaceMnu: TMenuItem;
     RenameAct: TAction;
     FindPreviousAct: TAction;
     MenuItem17: TMenuItem;
     SortByExtensionsAct: TAction;
     SortByNamesAct: TAction;
-    BrowserSpl: TntvSplitter;
     MenuItem14: TMenuItem;
     MenuItem15: TMenuItem;
     MenuItem16: TMenuItem;
     NewMnu: TMenuItem;
     NewAct: TAction;
     MenuItem13: TMenuItem;
-    MessagesSpl: TntvSplitter;
     SelectSCMTypeAct: TAction;
     TypePnl: TPanel;
     ProjectTypeMnu: TMenuItem;
@@ -178,7 +179,6 @@ type
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
     MenuItem5: TMenuItem;
-    MessagesTabs: TntvPageControl;
     IPCServer: TSimpleIPCServer;
     veiw1: TMenuItem;
     Help1: TMenuItem;
@@ -635,8 +635,7 @@ end;
 
 procedure TMainForm.UpdateBrowsePnl;
 begin
-  BrowserTabs.Visible := FoldersAct.Checked;
-  BrowserSpl.Visible := FoldersAct.Checked;
+  BrowserPnl.Visible := FoldersAct.Checked;
   if FoldersAct.Checked then
     UpdateFolder;
 end;
@@ -1550,8 +1549,7 @@ end;
 
 procedure TMainForm.UpdateMessagesPnl;
 begin
-  MessagesTabs.Visible := MessagesAct.Checked;
-  MessagesSpl.Visible := MessagesAct.Checked;
+  MessagesPnl.Visible := MessagesAct.Checked;
 end;
 
 procedure TMainForm.UpdateToolbars;
@@ -1704,6 +1702,7 @@ var
   lFilePath: string;
 begin
   inherited;
+
   FOutputs := TOutputs.Create;
   FMenuItemsList := TObjectList.Create(True);
 
@@ -1725,13 +1724,12 @@ begin
   SortFolderFiles := Engine.Options.SortFolderFiles;
   FoldersAct.Checked := Engine.Options.ShowFolder;
   MessagesAct.Checked := Engine.Options.ShowMessages;
-  BrowserTabs.Width := Engine.Options.FoldersPanelWidth;
+  BrowserPnl.Width := Engine.Options.FoldersPanelWidth;
   ShowToolbarAct.Checked := Engine.Options.ShowToolbar;
-  //MessagesTabs.Height := Engine.Options.MessagesHeight;
-  with MessagesTabs, BoundsRect do
+  //MessagesPnl.Height := Engine.Options.MessagesHeight;
+  with MessagesPnl, BoundsRect do
     BoundsRect := Rect(Left, Bottom - Engine.Options.MessagesHeight, Right, Bottom);
-  MessagesTabs.Visible := False;
-  MessagesSpl.Visible := False;
+  MessagesPnl.Visible := False;
   UpdateBrowsePnl;
   UpdateMessagesPnl;
   UpdateToolbars;
@@ -1829,9 +1827,9 @@ begin
   Engine.Options.ShowFolderFiles := ShowFolderFiles;
   Engine.Options.SortFolderFiles := SortFolderFiles;
   Engine.Options.ShowMessages := MessagesAct.Checked;
-  Engine.Options.MessagesHeight := MessagesTabs.Height;
+  Engine.Options.MessagesHeight := MessagesPnl.Height;
   Engine.Options.ShowToolbar := ShowToolbarAct.Checked;
-  Engine.Options.FoldersPanelWidth := BrowserTabs.Width;
+  Engine.Options.FoldersPanelWidth := BrowserPnl.Width;
   if Engine.Session.Active then
     Engine.Options.LastProject := Engine.Session.Project.FileName
   else
@@ -2731,14 +2729,14 @@ begin
   ntvTheme.Painter.RaisedColor := Lighten(ntvTheme.Painter.ActiveColor, 10);
   ntvTheme.Painter.LoweredColor := Darken(ntvTheme.Painter.ActiveColor, 10);
 
-  BrowserSpl.Color := Engine.Options.Profile.Attributes.Panel.Background;
-  MessagesSpl.Color := BrowserSpl.Color;
+  MessagesPnl.Color := BrowserPnl.Color;
 
   MessagesTabs.Color := Engine.Options.Profile.Attributes.Panel.Background;
   MessagesTabs.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
   MessagesTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
   MessagesTabs.NormalColor := MixColors(OppositeColor(MessagesTabs.ActiveColor), MessagesTabs.ActiveColor, 50);
 
+  BrowserPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
   BrowserTabs.Color := Engine.Options.Profile.Attributes.Panel.Background;
   BrowserTabs.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
   BrowserTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
@@ -3201,7 +3199,7 @@ procedure TMainForm.SwitchFocusActExecute(Sender: TObject);
 begin
   if FileList.Focused then
   begin
-    if MessagesTabs.Visible then
+    if MessagesPnl.Visible then
       MessagesTabs.ActivateControl
     else if (Engine.Files.Current <> nil) then
       Engine.Files.Current.Activate;
@@ -3219,7 +3217,7 @@ begin
   begin
     if FolderPanel.Visible then
       FileList.SetFocus
-    else if MessagesTabs.Visible then
+    else if MessagesPnl.Visible then
       MessagesTabs.ActivateControl;
   end
 end;

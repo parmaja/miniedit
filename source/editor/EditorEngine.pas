@@ -1871,6 +1871,8 @@ procedure TTextEditorFile.DoStatusChange(Sender: TObject; Changes: TSynStatusCha
 begin
   if ([scReadOnly, scCaretX, scCaretY, scLeftChar, scTopLine, scSelection] * Changes) <> [] then
     HighlightLine := -1;
+  {if ([scCaretY] * Changes) <> [] then
+    (Sender as TSynEdit).InvalidateLine((Sender as TSynEdit).CaretX);}
   inherited;
 end;
 
@@ -1895,15 +1897,6 @@ procedure TTextEditorFile.DoSpecialLineMarkup(Sender: TObject; Line: integer; va
 var
   aColor: TColor;
 begin
-  if FHighlightLine = Line then
-  begin
-    Special := True;
-    //aColor := Engine.Options.Profile.Attributes.Default.Background;
-    //Markup.BackAlpha := 100;
-    Markup.Foreground := Engine.Options.Profile.Attributes.Active.Foreground;
-    Markup.Background := Engine.Options.Profile.Attributes.Active.Background;
-  end;
-
   if (Engine.DebugLink.ExecutedControl = Sender) then
   begin
     if Engine.DebugLink.ExecutedLine = Line then
@@ -1913,7 +1906,21 @@ begin
       Markup.Background := MixColors(aColor,  OppositeColor(Engine.Options.Profile.Attributes.Default.Background), 200);
       Markup.Foreground := Engine.Options.Profile.Attributes.Default.Foreground;
     end;
-  end;
+  end
+  else if FHighlightLine = Line then
+  begin
+    Special := True;
+    //aColor := Engine.Options.Profile.Attributes.Default.Background;
+    //Markup.BackAlpha := 100;
+    Markup.Foreground := Engine.Options.Profile.Attributes.Active.Foreground;
+    Markup.Background := Engine.Options.Profile.Attributes.Active.Background;
+  end
+  {else if  (Sender as TSynEdit).CaretY = Line then
+  begin
+    Special := True;
+    Markup.BackAlpha := 100;
+    Markup.Background := Engine.Options.Profile.Attributes.Active.Background;
+  end;}
 end;
 
 procedure TTextEditorFile.DoGetCapability(var vCapability: TEditCapability);
