@@ -3,7 +3,7 @@ object MainForm: TMainForm
   Height = 568
   Top = 296
   Width = 1047
-  ActiveControl = FileList
+  ActiveControl = OutputEdit
   AllowDropFiles = True
   Caption = 'Mini Edit'
   ClientHeight = 548
@@ -343,6 +343,20 @@ object MainForm: TMainForm
         end>
       Align = alClient
       TabOrder = 0
+      object DatabasePnl: TntvPanel
+        Left = 3
+        Height = 284
+        Top = 23
+        Width = 255
+        Align = alClient
+      end
+      object ProjectPnl: TntvPanel
+        Left = 3
+        Height = 284
+        Top = 23
+        Width = 255
+        Align = alClient
+      end
       object FolderPanel: TPanel
         Left = 3
         Height = 284
@@ -406,20 +420,6 @@ object MainForm: TMainForm
           AutoCheck = False
         end
       end
-      object DatabasePnl: TntvPanel
-        Left = 3
-        Height = 284
-        Top = 23
-        Width = 255
-        Align = alClient
-      end
-      object ProjectPnl: TntvPanel
-        Left = 3
-        Height = 284
-        Top = 23
-        Width = 255
-        Align = alClient
-      end
     end
   end
   object MessagesPnl: TntvPanel
@@ -480,6 +480,91 @@ object MainForm: TMainForm
       Align = alClient
       Constraints.MinHeight = 60
       TabOrder = 0
+      object MessagesGrid: TStringGrid
+        Left = 1
+        Height = 151
+        Top = 21
+        Width = 1045
+        Align = alClient
+        DefaultRowHeight = 23
+        Flat = True
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goRowSelect, goDblClickAutoSize, goSmoothScroll, goSelectionActive, goRowHighlight]
+        ParentColor = True
+        PopupMenu = MessagesPopup
+        RowCount = 1
+        TabOrder = 2
+        TitleFont.CharSet = ANSI_CHARSET
+        TitleFont.Height = -13
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Pitch = fpVariable
+        TitleFont.Quality = fqDraft
+        UseXORFeatures = True
+        OnDblClick = MessagesGridDblClick
+        OnKeyDown = MessagesGridKeyDown
+        ColWidths = (
+          18
+          64
+          378
+          164
+          64
+        )
+        Cells = (
+          4
+          1
+          0
+          'Type'
+          2
+          0
+          'Message'
+          3
+          0
+          'File'
+          4
+          0
+          'Line'
+        )
+      end
+      object SearchGrid: TStringGrid
+        Left = 1
+        Height = 151
+        Top = 21
+        Width = 1045
+        Align = alClient
+        ColCount = 4
+        Flat = True
+        MouseWheelOption = mwGrid
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking, goDblClickAutoSize, goSmoothScroll, goFixedRowNumbering, goCellHints, goRowHighlight]
+        ParentColor = True
+        PopupMenu = MessagesPopup
+        RowCount = 1
+        TabOrder = 0
+        TitleFont.CharSet = ANSI_CHARSET
+        TitleFont.Height = -13
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Pitch = fpVariable
+        TitleFont.Quality = fqDraft
+        OnDblClick = SearchGridDblClick
+        OnDrawCell = SearchGridDrawCell
+        OnKeyDown = SearchGridKeyDown
+        ColWidths = (
+          21
+          184
+          53
+          548
+        )
+        Cells = (
+          3
+          1
+          0
+          'File'
+          2
+          0
+          'Line'
+          3
+          0
+          'Result'
+        )
+      end
       object WatchesGrid: TStringGrid
         Left = 1
         Height = 151
@@ -524,50 +609,6 @@ object MainForm: TMainForm
           'Variable'
         )
       end
-      object MessagesGrid: TStringGrid
-        Left = 1
-        Height = 151
-        Top = 21
-        Width = 1045
-        Align = alClient
-        DefaultRowHeight = 20
-        Flat = True
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goRowSelect, goDblClickAutoSize, goSmoothScroll, goSelectionActive, goRowHighlight]
-        ParentColor = True
-        PopupMenu = MessagesPopup
-        RowCount = 1
-        TabOrder = 2
-        TitleFont.CharSet = ANSI_CHARSET
-        TitleFont.Height = -13
-        TitleFont.Name = 'Tahoma'
-        TitleFont.Pitch = fpVariable
-        TitleFont.Quality = fqDraft
-        UseXORFeatures = True
-        OnDblClick = MessagesGridDblClick
-        OnKeyDown = MessagesGridKeyDown
-        ColWidths = (
-          18
-          64
-          378
-          164
-          64
-        )
-        Cells = (
-          4
-          1
-          0
-          'Type'
-          2
-          0
-          'Message'
-          3
-          0
-          'File'
-          4
-          0
-          'Line'
-        )
-      end
       object CallStackGrid: TStringGrid
         Left = 1
         Height = 151
@@ -605,47 +646,6 @@ object MainForm: TMainForm
           1
           0
           'Variable'
-        )
-      end
-      object SearchGrid: TStringGrid
-        Left = 1
-        Height = 151
-        Top = 21
-        Width = 1045
-        Align = alClient
-        ColCount = 4
-        Flat = True
-        MouseWheelOption = mwGrid
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking, goDblClickAutoSize, goSmoothScroll, goFixedRowNumbering, goCellHints, goRowHighlight]
-        ParentColor = True
-        PopupMenu = MessagesPopup
-        RowCount = 1
-        TabOrder = 0
-        TitleFont.CharSet = ANSI_CHARSET
-        TitleFont.Height = -13
-        TitleFont.Name = 'Tahoma'
-        TitleFont.Pitch = fpVariable
-        TitleFont.Quality = fqDraft
-        OnDblClick = SearchGridDblClick
-        OnDrawCell = SearchGridDrawCell
-        OnKeyDown = SearchGridKeyDown
-        ColWidths = (
-          21
-          184
-          53
-          548
-        )
-        Cells = (
-          3
-          1
-          0
-          'File'
-          2
-          0
-          'Line'
-          3
-          0
-          'Result'
         )
       end
       inline LogEdit: TSynEdit
@@ -1235,7 +1235,7 @@ object MainForm: TMainForm
             Button = mbRight
             Command = emcContextMenu
           end>
-        Highlighter = SynAnySyn1
+        Highlighter = LogSyn
         Keystrokes = <        
           item
             Command = ecUp
@@ -2979,8 +2979,8 @@ object MainForm: TMainForm
     top = 198
   end
   object MessagesPopup: TPopupMenu
-    left = 135
-    top = 432
+    left = 153
+    top = 444
     object Clear1: TMenuItem
       Caption = 'Clear'
       OnClick = Clear1Click
@@ -3005,7 +3005,7 @@ object MainForm: TMainForm
     left = 73
     top = 99
   end
-  object SynAnySyn1: TSynAnySyn
+  object LogSyn: TSynAnySyn
     Enabled = False
     Comments = []
     DetectPreprocessor = False

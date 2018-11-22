@@ -1777,7 +1777,11 @@ begin
       Stream.Read(Pointer(Contents)^, Size);
       FileEncoding := GuessEncoding(Contents);
       if not SameText(FileEncoding, EncodingUTF8) then
+      begin
+        if SameText(FileEncoding, 'ucs2le') or SameText(FileEncoding, 'ucs2be') then //Because ConvertEncodingToUTF8 not removes BOM
+          Contents := System.Copy(Contents, 3, MaxInt);
         Contents := ConvertEncodingToUTF8(Contents, FileEncoding, Encoded);
+      end;
       LinesMode := DetectLinesMode(Contents);
       IndentMode := Engine.Options.Profile.IndentMode;
       if Tendency.OverrideEditorOptions then
@@ -1826,10 +1830,11 @@ begin
   begin
     Contents := ConvertEncoding(Contents, EncodingUTF8, FileEncoding, false);
     if FileEncoding = EncodingUTF8 then
-    if FileEncoding = EncodingUCS2LE then
-      Contents := #$ff + #$fe + Contents
+      Contents := UTF8BOM + Contents
+    else if FileEncoding = EncodingUCS2LE then
+      Contents := UTF16LEBOM + Contents
     else if FileEncoding = EncodingUCS2BE then
-      Contents := #$fe + #$ff + Contents;
+      Contents := UTF16BEBOM + Contents;
   end;
 
   aStream := TFileStream.Create(FileName, fmCreate);
