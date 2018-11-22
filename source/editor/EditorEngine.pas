@@ -715,6 +715,7 @@ type
   TEditorOptions = class(TmnXMLProfile)
   private
     FAutoOpenProject: Boolean;
+    FFallbackToText: Boolean;
     FIgnoreNames: string;
     FLastFolder: string;
     FLastProject: string;
@@ -784,6 +785,7 @@ type
     property MessagesHeight: integer read FMessagesHeight write FMessagesHeight default 100;
     property FoldersPanelWidth: integer read FFoldersPanelWidth write FFoldersPanelWidth default 180;
     property AutoStartDebugServer: Boolean read FAutoStartDebugServer write FAutoStartDebugServer default False;
+    property FallbackToText: Boolean read FFallbackToText write FFallbackToText default False;
     property AnsiCodePage: Integer read GetAnsiCodePage write SetAnsiCodePage;
     property WindowMaxmized: Boolean read FWindowMaxmized write FWindowMaxmized default False;
     property WindowTop: Integer read FBoundRect.Top write FBoundRect.Top;
@@ -3090,6 +3092,8 @@ begin
       aExt := Copy(aExt, 2, MaxInt);
 
     Result := CreateEditorFile(aExt);
+    if (Result = nil) and (Engine.Options.FallbackToText) then
+      Result := CreateEditorFile(cFallbackGroup);
     if Result <> nil then
       Result.Load(lFileName);
   end;
@@ -3260,8 +3264,12 @@ begin
   else
   begin
     Result := LoadFile(vFileName);
-    if ActivateIt and not Result.Activated then
-      Result.Activate;
+    if Result <> nil then
+    begin
+      Current := Result;
+      if ActivateIt and not Result.Activated then
+        Result.Activate;
+    end;
   end;
 end;
 
@@ -3916,10 +3924,6 @@ begin
     finally
       Engine.UpdateState([ecsChanged]);
     end;
-    if Result <> nil then
-    begin
-      Current := Result;
-    end;
   finally
     Engine.UpdateState([ecsState, ecsDebug, ecsRefresh]);
   end;
@@ -3999,7 +4003,10 @@ function TEditorFiles.SetActiveFile(FileName: string): TEditorFile;
 begin
   Result := FindFile(FileName);
   if Result <> nil then
+  begin
     Current := Result;
+    Current.Activate;
+  end;
 end;
 
 destructor TEditorFiles.Destroy;
@@ -4344,7 +4351,7 @@ var
   aControl: TWinControl;
 begin
   Result := False;
-  if Control.CanFocus then
+  if (Control <> nil) and Control.CanFocus then
   begin
     if Supports(Control, IEditorControl) then
       aControl := (Control as IEditorControl).GetMainControl

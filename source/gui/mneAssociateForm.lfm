@@ -2,16 +2,16 @@ object AssociateForm: TAssociateForm
   Left = 521
   Height = 168
   Top = 241
-  Width = 268
+  Width = 298
   BorderStyle = bsDialog
   Caption = 'Associate'
   ClientHeight = 168
-  ClientWidth = 268
+  ClientWidth = 298
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '1.7'
+  LCLVersion = '2.1.0.0'
   object Label1: TLabel
     Left = 10
     Height = 13
@@ -20,38 +20,16 @@ object AssociateForm: TAssociateForm
     Caption = 'Open'
     ParentColor = False
   end
-  object Bevel1: TBevel
-    Left = 4
-    Height = 2
-    Top = 65
-    Width = 259
-  end
-  object PHPChk: TCheckBox
-    Left = 14
-    Height = 19
-    Top = 23
-    Width = 41
-    Caption = '.php'
-    TabOrder = 0
-  end
-  object CSSChk: TCheckBox
-    Left = 14
-    Height = 19
-    Top = 41
-    Width = 39
-    Caption = '.css'
-    TabOrder = 1
-  end
   object EditAssociateSupportedChk: TCheckBox
     Left = 14
     Height = 19
-    Top = 76
+    Top = 29
     Width = 203
     Caption = 'Associate "Edit" with all supported files'
-    TabOrder = 2
+    TabOrder = 0
   end
   object OkBtn: TButton
-    Left = 188
+    Left = 218
     Height = 25
     Top = 137
     Width = 75
@@ -60,10 +38,10 @@ object AssociateForm: TAssociateForm
     Default = True
     ModalResult = 1
     OnClick = OkBtnClick
-    TabOrder = 3
+    TabOrder = 1
   end
   object CancelBtn: TButton
-    Left = 113
+    Left = 143
     Height = 25
     Top = 137
     Width = 75
@@ -71,22 +49,22 @@ object AssociateForm: TAssociateForm
     Cancel = True
     Caption = '&Cancel'
     ModalResult = 2
-    TabOrder = 4
+    TabOrder = 2
   end
   object AddEditChk: TCheckBox
     Left = 14
     Height = 19
-    Top = 98
-    Width = 210
-    Caption = 'Add "Edit" with miniEdit to context menu'
-    TabOrder = 5
+    Top = 52
+    Width = 256
+    Caption = 'Add "Edit" with miniEdit to context menu of all files'
+    TabOrder = 3
   end
   object Label2: TLabel
-    Left = 17
-    Height = 13
-    Top = 120
-    Width = 216
-    Caption = 'By click ok, it i will associate with .mne-project'
+    Left = 18
+    Height = 26
+    Top = 79
+    Width = 260
+    Caption = 'By click ok, It ill associates with .mne-project project file'#13#10'It need admin privileges to be successful.'
     ParentColor = False
   end
 end

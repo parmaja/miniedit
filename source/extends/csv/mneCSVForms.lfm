@@ -109,7 +109,7 @@ object CSVForm: TCSVForm
     FixedColor = cl3DLight
     Flat = True
     MouseWheelOption = mwGrid
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected, goColSizing, goRowMoving, goColMoving, goEditing, goRelaxedRowSelect, goDblClickAutoSize, goSmoothScroll, goHeaderHotTracking, goHeaderPushedLook, goCellHints, goRowHighlight]
+    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected, goColSizing, goRowMoving, goColMoving, goEditing, goDblClickAutoSize, goSmoothScroll, goHeaderHotTracking, goHeaderPushedLook, goSelectionActive, goCellHints, goRowHighlight]
     PopupMenu = GridPopupMenu
     TabOrder = 0
     TitleFont.CharSet = ANSI_CHARSET
@@ -119,6 +119,7 @@ object CSVForm: TCSVForm
     TitleFont.Pitch = fpVariable
     TitleFont.Quality = fqDraft
     OnColRowMoved = DataGridColRowMoved
+    OnDblClick = DataGridDblClick
     OnDrawCell = DataGridDrawCell
     OnGetEditText = DataGridGetEditText
     OnHeaderClick = DataGridHeaderClick

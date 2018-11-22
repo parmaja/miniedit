@@ -1,11 +1,12 @@
 object MainForm: TMainForm
-  Left = 483
-  Height = 553
-  Top = 117
+  Left = 315
+  Height = 568
+  Top = 296
   Width = 1047
+  ActiveControl = FileList
   AllowDropFiles = True
   Caption = 'Mini Edit'
-  ClientHeight = 533
+  ClientHeight = 548
   ClientWidth = 1047
   Color = clWindow
   Font.CharSet = ANSI_CHARSET
@@ -119,22 +120,22 @@ object MainForm: TMainForm
   end
   object ClientPnl: TPanel
     Left = 269
-    Height = 300
+    Height = 315
     Top = 29
     Width = 778
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 300
+    ClientHeight = 315
     ClientWidth = 778
     TabOrder = 0
     object EditorsPnl: TPanel
       Left = 0
-      Height = 275
+      Height = 290
       Top = 25
       Width = 778
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 275
+      ClientHeight = 290
       ClientWidth = 778
       FullRepaint = False
       TabOrder = 0
@@ -238,7 +239,7 @@ object MainForm: TMainForm
   object StatusPanel: TPanel
     Left = 0
     Height = 21
-    Top = 512
+    Top = 527
     Width = 1047
     Align = alBottom
     BevelOuter = bvNone
@@ -306,7 +307,7 @@ object MainForm: TMainForm
   end
   object BrowserPnl: TntvPanel
     Left = 0
-    Height = 300
+    Height = 315
     Top = 29
     Width = 269
     Align = alLeft
@@ -314,7 +315,7 @@ object MainForm: TMainForm
     ResizeStyle = nrsUpdate
     object BrowserTabs: TntvPageControl
       Left = 0
-      Height = 295
+      Height = 310
       Top = 5
       Width = 261
       BorderSpacing.Top = 5
@@ -329,8 +330,8 @@ object MainForm: TMainForm
           Control = FolderPanel
         end      
         item
-          Caption = 'Data'
-          Name = 'DataTab'
+          Caption = 'Database'
+          Name = 'DatabaseTab'
           AutoWidth = True
           Control = DatabasePnl
         end      
@@ -342,39 +343,20 @@ object MainForm: TMainForm
         end>
       Align = alClient
       TabOrder = 0
-      object ProjectPnl: TPanel
-        Left = 3
-        Height = 269
-        Top = 23
-        Width = 255
-        Align = alClient
-        BevelOuter = bvNone
-        TabOrder = 2
-      end
-      object DatabasePnl: TPanel
-        Left = 3
-        Height = 269
-        Top = 23
-        Width = 255
-        Align = alClient
-        BevelOuter = bvNone
-        TabOrder = 1
-        OnClick = DatabasePnlClick
-      end
       object FolderPanel: TPanel
         Left = 3
-        Height = 269
+        Height = 284
         Top = 23
         Width = 255
         Align = alClient
         BevelOuter = bvNone
         Caption = 'FolderPanel'
-        ClientHeight = 269
+        ClientHeight = 284
         ClientWidth = 255
         TabOrder = 0
         object FileList: TListView
           Left = 1
-          Height = 248
+          Height = 263
           Top = 21
           Width = 254
           Anchors = [akTop, akLeft, akRight, akBottom]
@@ -424,12 +406,26 @@ object MainForm: TMainForm
           AutoCheck = False
         end
       end
+      object DatabasePnl: TntvPanel
+        Left = 3
+        Height = 284
+        Top = 23
+        Width = 255
+        Align = alClient
+      end
+      object ProjectPnl: TntvPanel
+        Left = 3
+        Height = 284
+        Top = 23
+        Width = 255
+        Align = alClient
+      end
     end
   end
   object MessagesPnl: TntvPanel
     Left = 0
     Height = 183
-    Top = 329
+    Top = 344
     Width = 1047
     Align = alBottom
     Constraints.MinWidth = 100
@@ -2183,8 +2179,8 @@ object MainForm: TMainForm
   end
   object ActionList: TActionList
     Images = EditorResource.ToolbarImageList
-    left = 257
-    top = 153
+    left = 292
+    top = 187
     object PasteAct: TAction
       Category = 'Edit'
       Caption = 'Paste'
@@ -2849,8 +2845,8 @@ object MainForm: TMainForm
     end
   end
   object LineModeMenu: TPopupMenu
-    left = 244
-    top = 74
+    left = 294
+    top = 111
     object UnixMnu: TMenuItem
       Caption = 'Unix'
       OnClick = UnixMnuClick

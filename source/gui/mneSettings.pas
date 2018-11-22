@@ -20,6 +20,7 @@ type
 
   TEditorSettingForm = class(TForm)
     AutoOpenProjectChk: TCheckBox;
+    FallbackToTxtChk: TCheckBox;
     CodePagesCbo: TComboBox;
     IgnoreNamesEdit: TEdit;
     Label1: TLabel;
@@ -166,6 +167,7 @@ procedure TEditorSettingForm.Apply;
 var
   i, c: Integer;
 begin
+  FEngine.Options.FallbackToText := FallbackToTxtChk.Checked;
   FEngine.Options.AutoOpenProject := AutoOpenProjectChk.Checked;
   FEngine.Options.CollectAutoComplete := CollectAutoCompleteChk.Checked;
   FEngine.Options.CollectTimeout := CollectTimeoutSpn.Position;
@@ -189,6 +191,7 @@ procedure TEditorSettingForm.Retrieve;
 var
   i, c: Integer;
 begin
+  FallbackToTxtChk.Checked := FEngine.Options.FallbackToText;
   AutoOpenProjectChk.Checked := FEngine.Options.AutoOpenProject;
   CollectAutoCompleteChk.Checked := FEngine.Options.CollectAutoComplete;
   CollectTimeoutSpn.Position := FEngine.Options.CollectTimeout;

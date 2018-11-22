@@ -20,13 +20,10 @@ type
   TAssociateForm = class(TForm)
     AddEditChk: TCheckBox;
     Label2: TLabel;
-    PHPChk: TCheckBox;
-    CSSChk: TCheckBox;
     EditAssociateSupportedChk: TCheckBox;
     OkBtn: TButton;
     CancelBtn: TButton;
     Label1: TLabel;
-    Bevel1: TBevel;
     procedure FormCreate(Sender: TObject);
     procedure OkBtnClick(Sender: TObject);
   private
@@ -52,15 +49,15 @@ var
 begin
   AssociateNow('Open', '.mne-project', 'mne-project', Application.ExeName, 'Mini Edit project file', 'application/miniedit', False);
 
-  if PHPChk.Checked then
+(*  if PHPChk.Checked then
   begin
     AssociateNow('Open', '.php', 'phpfile', Application.ExeName, 'PHP script file', 'text/plain', False);
     AssociateNow('Edit', '.phpx', 'phpxfile', Application.ExeName, 'PHPX script file', 'text/plain', False);
 {      AssociateNow('Open', '.phpx', 'phpxfile', IncludeTrailingPathDelimiter(Engine.Options.CompilerFolder) + 'php.exe', 'PHP executable script file', 'text/plain', False);}
   end;
-
   if CSSChk.Checked then
     AssociateNow('Open', '.css', 'cssfile', Application.ExeName, 'CSS file', 'text/plain', False);
+    *)
 
   if EditAssociateSupportedChk.Checked then
   begin
@@ -172,6 +169,7 @@ begin
 
     aReg.OpenKey('\*\Shell\miniEdit', True);
     aReg.WriteString('', 'Edit with miniEdit');
+    aReg.WriteString('Icon', '"'+Application.ExeName+'"');
 
     aReg.OpenKey('\*\Shell\miniEdit\command', True);
     aReg.WriteString('', '"'+Application.ExeName+'" "%1"');
@@ -188,8 +186,8 @@ end;
 
 procedure TAssociateForm.Retrieve;
 begin
-  PHPChk.Checked := GetAssociated('Open', 'phpfile', '.php');
-  CSSChk.Checked := GetAssociated('Open', 'cssfile', '.css');
+  //PHPChk.Checked := GetAssociated('Open', 'phpfile', '.php');
+  //CSSChk.Checked := GetAssociated('Open', 'cssfile', '.css');
 end;
 
 procedure TAssociateForm.FormCreate(Sender: TObject);

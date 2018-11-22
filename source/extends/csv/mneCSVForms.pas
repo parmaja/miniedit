@@ -48,19 +48,15 @@ type
     StopBtn2: TButton;
     OptionsBtn: TButton;
     DelConfigFileBtn: TButton;
-
     procedure ConfigFileBtnClick(Sender: TObject);
-
     procedure DataGridColRowMoved(Sender: TObject; IsColumn: Boolean; sIndex, tIndex: Integer);
+    procedure DataGridDblClick(Sender: TObject);
     procedure DataGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
     procedure DataGridGetEditText(Sender: TObject; ACol, ARow: Integer; var Value: string);
-
     procedure DataGridHeaderClick(Sender: TObject; IsColumn: Boolean; Index: Integer);
     procedure DataGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-
     procedure DataGridSelectEditor(Sender: TObject; aCol, aRow: Integer; var Editor: TWinControl);
-
-      procedure DataGridSetEditText(Sender: TObject; ACol, ARow: Integer; const Value: string);
+    procedure DataGridSetEditText(Sender: TObject; ACol, ARow: Integer; const Value: string);
     procedure DelConfigFileBtnClick(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
@@ -152,6 +148,11 @@ end;
 procedure TCSVForm.DataGridColRowMoved(Sender: TObject; IsColumn: Boolean; sIndex, tIndex: Integer);
 begin
   Changed;
+end;
+
+procedure TCSVForm.DataGridDblClick(Sender: TObject);
+begin
+  DataGrid.EditorMode := true;
 end;
 
 procedure TCSVForm.DataGridGetEditText(Sender: TObject; ACol, ARow: Integer; var Value: string);
@@ -658,14 +659,13 @@ procedure TCSVForm.DataGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect:
 begin
   DataGrid.Canvas.Font.Assign(DataGrid.Font);
   DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
-  if (aRow < DataGrid.FixedRows) or (aCol < DataGrid.FixedCols) then
+
+  if gdFixed in aState then
   begin
     DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Gutter.Background;
     DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Gutter.Foreground;
   end
-  else if ((aRow = DataGrid.Row) and (aCol = DataGrid.Col)) or
-          ((aRow >= DataGrid.Selection.Top) and (aRow <= DataGrid.Selection.Bottom) and (aCol >= DataGrid.Selection.Left) and (aCol <= DataGrid.Selection.Right))
-    then
+  else if (gdSelected in aState) then  //or (gdHot in aState) then
   begin
     if DataGrid.Focused then
     begin
@@ -678,7 +678,7 @@ begin
       DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Text.Foreground;
     end;
   end
-  else if (aRow = DataGrid.Row) then
+  else if gdRowHighlight in aState then
   begin
     DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Active.Background;
     DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Active.Foreground;

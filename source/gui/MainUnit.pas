@@ -59,7 +59,7 @@ type
   TMainForm = class(TForm, INotifyEngine)
     BrowserTabs: TntvPageControl;
     CallStackGrid: TStringGrid;
-    DatabasePnl: TPanel;
+    DatabasePnl: TntvPanel;
     FileList: TListView;
     FolderCloseBtn1: TntvImgBtn;
     FolderPanel: TPanel;
@@ -70,7 +70,7 @@ type
     MessagesTabs: TntvPageControl;
     MessagesPnl: TntvPanel;
     OutputEdit: TSynEdit;
-    ProjectPnl: TPanel;
+    ProjectPnl: TntvPanel;
     SearchGrid: TStringGrid;
     ShowToolbarMnu: TMenuItem;
     ShowToolbarAct: TAction;
