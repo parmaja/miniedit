@@ -51,7 +51,7 @@ type
     LoadBtn: TButton;
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
-    NoAntialiasingChk: TCheckBox;
+    AntialiasingChk: TCheckBox;
     OpenDialog: TOpenDialog;
     ColorPopupMenu: TPopupMenu;
     PanelPnl: TPanel;
@@ -71,7 +71,7 @@ type
     procedure LoadBtnClick(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
-    procedure NoAntialiasingChkChange(Sender: TObject);
+    procedure AntialiasingChkChange(Sender: TObject);
     procedure DefaultBackgroundCboSelect(Sender: TObject);
     procedure DefaultForegroundCboSelect(Sender: TObject);
     procedure AttributeCboSelect(Sender: TObject);
@@ -177,11 +177,11 @@ begin
   RetrieveAttribute;
 end;
 
-procedure TEditorColorsForm.NoAntialiasingChkChange(Sender: TObject);
+procedure TEditorColorsForm.AntialiasingChkChange(Sender: TObject);
 begin
   if not InChanging then
   begin
-    FProfile.Attributes.FontNoAntialiasing := NoAntialiasingChk.Checked;
+    FProfile.Attributes.FontNoAntialiasing := not AntialiasingChk.Checked;
     ChangeEdit;
   end;
 end;
@@ -491,7 +491,7 @@ procedure TEditorColorsForm.Retrieve;
 begin
   InChanging := True;
   try
-    NoAntialiasingChk.Checked := FProfile.Attributes.FontNoAntialiasing;
+    AntialiasingChk.Checked := not FProfile.Attributes.FontNoAntialiasing;
 
   finally
     InChanging := False;
@@ -529,7 +529,7 @@ begin
   FProfile.ExtEditorOptions := aExtOptions;
 
   //Font
-  FProfile.Attributes.FontNoAntialiasing := NoAntialiasingChk.Checked;
+  FProfile.Attributes.FontNoAntialiasing := not AntialiasingChk.Checked;
   FProfile.Attributes.Assign(FProfile.Attributes);
   ApplyAttribute;
 end;

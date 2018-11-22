@@ -136,14 +136,14 @@ object EditorColorsForm: TEditorColorsForm
     OnClick = FontBtnClick
     TabOrder = 8
   end
-  object NoAntialiasingChk: TCheckBox
+  object AntialiasingChk: TCheckBox
     Left = 340
     Height = 19
     Top = 45
     Width = 90
     Anchors = [akTop, akRight]
-    Caption = 'No &Antialiasing'
-    OnChange = NoAntialiasingChkChange
+    Caption = '&Antialiasing'
+    OnChange = AntialiasingChkChange
     TabOrder = 9
   end
   object SaveBtn: TButton
