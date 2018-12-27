@@ -63,15 +63,14 @@ begin
   begin
     AExtensions := TStringList.Create;
     try
-      Engine.Groups.EnumExtensions(AExtensions);
+      Engine.Groups.EnumExtensions(AExtensions, [fgkAssociated]);
       for i := 0 to AExtensions.Count - 1 do
         AssociateNow('Edit', '.' + AExtensions[i], AExtensions[i] + 'file', Application.ExeName, AExtensions[i] + ' files', 'text/plain', False);
-      AssociateNow('Open', '.htaccess', 'htaccessfile', Application.ExeName, '.htaccess files', 'text/plain', False);
+//      AssociateNow('Open', '.htaccess', 'htaccessfile', Application.ExeName, '.htaccess files', 'text/plain', False);
     finally
       AExtensions.Free;
     end;
   end;
-
 
   if AddEditChk.Checked then
   begin

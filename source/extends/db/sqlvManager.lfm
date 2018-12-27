@@ -2,45 +2,42 @@ object sqlvManagerForm: TsqlvManagerForm
   Left = 0
   Height = 390
   Top = 0
-  Width = 277
+  Width = 237
   ClientHeight = 390
-  ClientWidth = 277
-  ParentShowHint = False
-  ShowHint = True
+  ClientWidth = 237
   TabOrder = 0
-  DesignLeft = 407
-  DesignTop = 200
+  DesignLeft = 538
+  DesignTop = 197
   object ClientPanel: TPanel
     Left = 0
     Height = 359
     Top = 0
-    Width = 277
+    Width = 237
     Align = alClient
     BevelOuter = bvNone
     ClientHeight = 359
-    ClientWidth = 277
-    ParentBackground = False
-    ParentColor = False
+    ClientWidth = 237
     TabOrder = 0
     object GroupPanel: TPanel
       Left = 0
       Height = 333
       Top = 0
-      Width = 277
+      Width = 237
       Align = alClient
       BevelOuter = bvNone
       BorderWidth = 2
       ClientHeight = 333
-      ClientWidth = 277
+      ClientWidth = 237
       TabOrder = 0
       object MembersGrid: TStringGrid
-        Left = 2
-        Height = 278
-        Top = 53
-        Width = 273
+        Left = 4
+        Height = 275
+        Top = 54
+        Width = 229
         Align = alClient
         AutoEdit = False
         AutoFillColumns = True
+        BorderSpacing.Around = 2
         ColCount = 1
         DefaultRowHeight = 18
         FixedCols = 0
@@ -61,53 +58,37 @@ object sqlvManagerForm: TsqlvManagerForm
         OnKeyDown = MembersGridKeyDown
         OnUTF8KeyPress = MembersGridUTF8KeyPress
         ColWidths = (
-          272
+          228
         )
       end
       object GroupsPanel: TPanel
         Left = 3
         Height = 49
         Top = 3
-        Width = 271
+        Width = 231
         Align = alTop
         BorderSpacing.Around = 1
         BevelOuter = bvNone
         ClientHeight = 49
-        ClientWidth = 271
+        ClientWidth = 231
         TabOrder = 1
         object MetaLbl: TLabel
           Left = 2
-          Height = 15
-          Top = 6
-          Width = 23
+          Height = 22
+          Top = 2
+          Width = 129
+          Align = alClient
+          AutoSize = False
+          BorderSpacing.Around = 2
           Caption = 'Title'
+          Layout = tlCenter
           ParentColor = False
-        end
-        object FirstBtn: TSpeedButton
-          Left = 215
-          Height = 26
-          Top = 0
-          Width = 56
-          Align = alRight
-          Anchors = [akTop, akRight]
-          Caption = 'Top'
-          OnClick = FirstBtnClick
-        end
-        object BackBtn: TSpeedButton
-          Left = 159
-          Height = 26
-          Top = 0
-          Width = 56
-          Align = alRight
-          Anchors = [akTop, akRight]
-          Caption = 'Back'
-          OnClick = BackBtnClick
         end
         object GroupsList: TComboBox
           Left = 0
           Height = 23
           Top = 26
-          Width = 271
+          Width = 231
           Align = alBottom
           Anchors = [akTop, akLeft, akRight]
           ItemHeight = 15
@@ -116,32 +97,60 @@ object sqlvManagerForm: TsqlvManagerForm
           Style = csDropDownList
           TabOrder = 0
         end
+        object BackBtn: TButton
+          Left = 133
+          Height = 26
+          Top = 0
+          Width = 51
+          Align = alRight
+          Anchors = [akTop, akRight]
+          AutoSize = True
+          Caption = 'Back'
+          OnClick = BackBtnClick
+          TabOrder = 1
+        end
+        object FirstBtn: TButton
+          Left = 184
+          Height = 26
+          Top = 0
+          Width = 47
+          Align = alRight
+          Anchors = [akTop, akRight]
+          AutoSize = True
+          Caption = 'Top'
+          OnClick = FirstBtnClick
+          TabOrder = 2
+        end
       end
     end
     object ActionsPanel: TPanel
       Left = 0
       Height = 26
       Top = 333
-      Width = 277
+      Width = 237
       Align = alBottom
       BevelInner = bvSpace
       BevelOuter = bvSpace
       ClientHeight = 26
-      ClientWidth = 277
+      ClientWidth = 237
       TabOrder = 1
       object Label5: TLabel
-        Left = 6
-        Height = 15
-        Top = 5
+        Left = 4
+        Height = 18
+        Top = 4
         Width = 40
+        Align = alLeft
+        BorderSpacing.Around = 2
         Caption = 'Actions'
+        Layout = tlCenter
         ParentColor = False
       end
       object ActionsList: TComboBox
-        Left = 50
+        Left = 46
         Height = 23
-        Top = 1
-        Width = 224
+        Top = 2
+        Width = 189
+        Align = alClient
         Anchors = [akTop, akLeft, akRight]
         ItemHeight = 15
         OnSelect = ActionsListSelect
@@ -155,24 +164,26 @@ object sqlvManagerForm: TsqlvManagerForm
     Left = 0
     Height = 31
     Top = 359
-    Width = 277
+    Width = 237
     Align = alBottom
     BevelInner = bvSpace
     BevelOuter = bvSpace
+    ChildSizing.HorizontalSpacing = 2
     ChildSizing.ShrinkHorizontal = crsScaleChilds
     ChildSizing.Layout = cclLeftToRightThenTopToBottom
     ChildSizing.ControlsPerLine = 1
     ClientHeight = 31
-    ClientWidth = 277
+    ClientWidth = 237
     TabOrder = 1
     object DisconnectBtn: TButton
-      Left = 70
+      Left = 75
       Height = 27
       Hint = 'Disconnect Shift+F9'
       Top = 2
-      Width = 75
+      Width = 85
       Align = alLeft
       Anchors = [akLeft, akBottom]
+      AutoSize = True
       Caption = 'Disconnect'
       TabOrder = 0
     end
@@ -180,18 +191,20 @@ object sqlvManagerForm: TsqlvManagerForm
       Left = 2
       Height = 27
       Top = 2
-      Width = 68
+      Width = 71
       Align = alLeft
       Anchors = [akLeft, akBottom]
+      AutoSize = True
       Caption = 'Connect'
       TabOrder = 1
     end
     object OpenBtn: TButton
-      Left = 145
+      Left = 162
       Height = 27
       Top = 2
-      Width = 71
+      Width = 55
       Align = alLeft
+      AutoSize = True
       Caption = 'Open'
       OnClick = OpenBtnClick
       TabOrder = 2

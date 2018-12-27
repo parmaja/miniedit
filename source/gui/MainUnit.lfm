@@ -9,11 +9,6 @@ object MainForm: TMainForm
   ClientHeight = 548
   ClientWidth = 1047
   Color = clWindow
-  Font.CharSet = ANSI_CHARSET
-  Font.Height = -13
-  Font.Name = 'Tahoma'
-  Font.Pitch = fpVariable
-  Font.Quality = fqDraft
   Menu = MainMenu
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
@@ -21,6 +16,7 @@ object MainForm: TMainForm
   OnDestroy = FormDestroy
   OnDropFiles = FormDropFiles
   OnShow = FormShow
+  ParentFont = True
   Position = poDefaultPosOnly
   ShowHint = True
   LCLVersion = '2.1.0.0'
@@ -70,7 +66,7 @@ object MainForm: TMainForm
         Action = SaveAllAct
       end
       object RunBtn: TToolButton
-        Left = 549
+        Left = 544
         Top = 0
         Action = DBGRunAct
       end
@@ -96,7 +92,7 @@ object MainForm: TMainForm
         Style = tbsCheck
       end
       object ToolButton8: TToolButton
-        Left = 466
+        Left = 461
         Height = 23
         Top = 0
         Caption = 'ToolButton8'
@@ -104,14 +100,14 @@ object MainForm: TMainForm
         Style = tbsSeparator
       end
       object MainFileBtn: TToolButton
-        Left = 624
+        Left = 619
         Top = 0
         Action = MainFileAct
         AutoSize = True
         PopupMenu = MainFilePopupMnu
       end
       object ToolButton3: TToolButton
-        Left = 474
+        Left = 469
         Top = 0
         Action = DBGDebugModeAct
         Style = tbsCheck
@@ -257,6 +253,7 @@ object MainForm: TMainForm
       BevelOuter = bvLowered
       BorderWidth = 2
       TabOrder = 0
+      OnClick = MessageLabelClick
     end
     object DebugPnl: TPanel
       Left = 945

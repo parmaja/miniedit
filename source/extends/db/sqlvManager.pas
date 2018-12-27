@@ -45,10 +45,11 @@ type
 
   TsqlvManagerForm = class(TFrame)
     ActionsPanel: TPanel;
+    BackBtn: TButton;
     CacheMetaChk1: TCheckBox;
     FileMnu: TMenuItem;
     ExitMnu: TMenuItem;
-    BackBtn: TSpeedButton;
+    FirstBtn: TButton;
     GroupsList: TComboBox;
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
@@ -58,7 +59,6 @@ type
     SaveMnu: TMenuItem;
     SaveAsMnu: TMenuItem;
     OpenMnu: TMenuItem;
-    FirstBtn: TSpeedButton;
     ActionsList: TComboBox;
     Label5: TLabel;
     OpenBtn: TButton;

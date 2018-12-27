@@ -409,6 +409,7 @@ type
     procedure MenuItem23Click(Sender: TObject);
     procedure MenuItem24Click(Sender: TObject);
     procedure MenuItem42Click(Sender: TObject);
+    procedure MessageLabelClick(Sender: TObject);
     procedure MessagesGridDblClick(Sender: TObject);
 
     procedure MessagesGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -921,6 +922,11 @@ end;
 procedure TMainForm.MenuItem42Click(Sender: TObject);
 begin
   ExploreFolder(Engine.Session.Project.RunOptions.MainFile);
+end;
+
+procedure TMainForm.MessageLabelClick(Sender: TObject);
+begin
+
 end;
 
 procedure TMainForm.MessagesGridDblClick(Sender: TObject);
@@ -1716,6 +1722,7 @@ begin
     Align := alClient;
     Visible := True;
   end;
+
   Engine.SetNotifyEngine(Self);
 
   Engine.Startup(GetKeyShiftState = [ssShift]);
@@ -1726,7 +1733,7 @@ begin
   MessagesAct.Checked := Engine.Options.ShowMessages;
   BrowserPnl.Width := Engine.Options.FoldersPanelWidth;
   ShowToolbarAct.Checked := Engine.Options.ShowToolbar;
-  //MessagesPnl.Height := Engine.Options.MessagesHeight;
+
   with MessagesPnl, BoundsRect do
     BoundsRect := Rect(Left, Bottom - Engine.Options.MessagesHeight, Right, Bottom);
   MessagesPnl.Visible := False;
@@ -1745,7 +1752,6 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-  //LinesModeBtn.Font.Style := LinesModeBtn.Font.Style + [fsBold];
   Application.OnException := @CatchErr;
 
   FMessages := Engine.MessagesList.GetMessages('Messages');
@@ -1757,7 +1763,6 @@ begin
   IPCServer.StartServer;
   LoadAddons;
 
-  //Color := clSkyBlue; for test propose
   //Engine.SendLog('MiniEdit started');
 end;
 
@@ -2704,21 +2709,18 @@ procedure TMainForm.OptionsChanged;
     AGrid.TitleFont.Color := Engine.Options.Profile.Attributes.Gutter.Foreground;
     AGrid.FixedGridLineColor := Engine.Options.Profile.Attributes.Gutter.ForeColor;
     AGrid.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
-    {AGrid.Font.Name := Engine.Options.Profile.Attributes.FontName;
-    AGrid.Font.Size := Engine.Options.Profile.Attributes.FontSize;}
     AGrid.SelectedColor := Engine.Options.Profile.Attributes.Selected.Background;
     AGrid.FocusColor := Engine.Options.Profile.Attributes.Active.ForeColor;
-    //AGrid.FocusRectVisible := False;
   end;
 
 var
   i: Integer;
 begin
-  {Color := Engine.Options.Profile.Attributes.Panel.Background;
-  Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;}
+  Font.Name := Engine.Options.Profile.Attributes.FontName;
+  Font.Size := Engine.Options.Profile.Attributes.FontSize;
+
   Color := Engine.Options.Profile.Attributes.Panel.Background;
-  EditorsPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
-  EditorsPnl.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
+  Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
 
   if IsDarkColor(Engine.Options.Profile.Attributes.Panel.Background) then
     EditorResource.Switch(thsDark)
@@ -2729,38 +2731,30 @@ begin
   ntvTheme.Painter.RaisedColor := Lighten(ntvTheme.Painter.ActiveColor, 10);
   ntvTheme.Painter.LoweredColor := Darken(ntvTheme.Painter.ActiveColor, 10);
 
-  MessagesPnl.Color := BrowserPnl.Color;
-
-  MessagesTabs.Color := Engine.Options.Profile.Attributes.Panel.Background;
-  MessagesTabs.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
   MessagesTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
   MessagesTabs.NormalColor := MixColors(OppositeColor(MessagesTabs.ActiveColor), MessagesTabs.ActiveColor, 50);
 
-  BrowserPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
-  BrowserTabs.Color := Engine.Options.Profile.Attributes.Panel.Background;
-  BrowserTabs.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
   BrowserTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
   BrowserTabs.NormalColor := MixColors(OppositeColor(BrowserTabs.ActiveColor), BrowserTabs.ActiveColor, 50);
 
-  ClientPnl.Color := Engine.Options.Profile.Attributes.Panel.Background;
-  ClientPnl.Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
-
-  FileTabs.Color := Engine.Options.Profile.Attributes.Gutter.Background;
-  FileTabs.Font.Color := Engine.Options.Profile.Attributes.Gutter.Foreground;
-  //FileTabs.ActiveColor := Engine.Options.Profile.Attributes.Gutter.Background;
-  FileTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
-  FileTabs.NormalColor := MixColors(OppositeColor(FileTabs.ActiveColor), FileTabs.ActiveColor, 50);
   FileHeaderPanel.Font.Color := Engine.Options.Profile.Attributes.Gutter.Foreground;
   FileHeaderPanel.Color := Engine.Options.Profile.Attributes.Gutter.Background;
 
-  FileList.Font.Name := Engine.Options.Profile.Attributes.FontName;
-  FileList.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
-  FileList.Color := Engine.Options.Profile.Attributes.Default.Background;
+  FileTabs.Color := Engine.Options.Profile.Attributes.Gutter.Background;
+  FileTabs.Font.Color := Engine.Options.Profile.Attributes.Gutter.Foreground;
+
+  FileTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
+  FileTabs.NormalColor := MixColors(OppositeColor(FileTabs.ActiveColor), FileTabs.ActiveColor, 50);
+
+//  FileList.Font.Name := Engine.Options.Profile.Attributes.FontName;
+//  FileList.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
+//  FileList.Color := Engine.Options.Profile.Attributes.Default.Background;
 
   CorrectGridColors(MessagesGrid);
   CorrectGridColors(CallStackGrid);
   CorrectGridColors(WatchesGrid);
   CorrectGridColors(SearchGrid);
+
   if FDatabaseFrame <> nil then
     CorrectGridColors(FDatabaseFrame.MembersGrid);
 

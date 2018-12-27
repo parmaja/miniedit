@@ -11,7 +11,7 @@ object ProjectForm: TProjectForm
   Font.Name = 'MS Sans Serif'
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '1.9.0.0'
+  LCLVersion = '2.1.0.0'
   object OkBtn: TButton
     Left = 392
     Height = 25
@@ -39,9 +39,9 @@ object ProjectForm: TProjectForm
     Height = 249
     Top = 5
     Width = 463
-    ActivePage = GeneralOptionsSheet
+    ActivePage = GeneralSheet
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     OnChanging = PageControlChanging
     Options = [nboKeyboardTabSwitch]
@@ -64,7 +64,6 @@ object ProjectForm: TProjectForm
         Top = 62
         Width = 53
         Caption = '&Description'
-        FocusControl = DescriptionEdit
         ParentColor = False
       end
       object NameEdit: TEdit
@@ -73,13 +72,6 @@ object ProjectForm: TProjectForm
         Top = 9
         Width = 303
         TabOrder = 0
-      end
-      object DescriptionEdit: TEdit
-        Left = 108
-        Height = 21
-        Top = 59
-        Width = 303
-        TabOrder = 2
       end
       object TitleEdit: TEdit
         Left = 108
@@ -103,7 +95,7 @@ object ProjectForm: TProjectForm
         Top = 150
         Width = 270
         Caption = 'Save Desktop, &Reopen last opend files in this project'
-        TabOrder = 3
+        TabOrder = 2
       end
       object Label8: TLabel
         Left = 12
@@ -120,6 +112,14 @@ object ProjectForm: TProjectForm
         Width = 289
         ItemHeight = 13
         Style = csDropDownList
+        TabOrder = 3
+      end
+      object DescriptionEdit: TMemo
+        Left = 108
+        Height = 56
+        Top = 59
+        Width = 303
+        ScrollBars = ssVertical
         TabOrder = 4
       end
     end

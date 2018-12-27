@@ -21,7 +21,7 @@ type
   TProjectForm = class(TForm)
     Button3: TButton;
     Button4: TButton;
-    DescriptionEdit: TEdit;
+    DescriptionEdit: TMemo;
     GroupBox1: TGroupBox;
     IndentModeCbo: TComboBox;
     Label1: TLabel;

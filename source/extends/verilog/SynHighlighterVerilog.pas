@@ -668,7 +668,7 @@ end;
 
 procedure TSynVerilogSyn.SetRange(Value: Pointer);
 begin
-  FRange := TRangeState(PtrUInt(Value));
+  FRange := TRangeState(PtrInt(Value));
 end;
 
 function TSynVerilogSyn.GetIdentChars: TSynIdentChars;

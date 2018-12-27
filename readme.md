@@ -59,3 +59,8 @@ Open each package in Lazarus and compile it in order.
     minilib\lazarus\lib\MiniLib.lpk
     minilib\lazarus\components\native\NativeLib.lpk
 
+
+#### Competitions
+    Notepad++ https://notepad-plus-plus.org/
+    Geany https://www.geany.org/
+    Textadept https://foicica.com/textadept/
