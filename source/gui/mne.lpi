@@ -122,13 +122,13 @@
     </RunParams>
     <RequiredPackages Count="10">
       <Item1>
-        <PackageName Value="MiniCommons"/>
+        <PackageName Value="MiniCtrls"/>
       </Item1>
       <Item2>
-        <PackageName Value="MiniConnections"/>
+        <PackageName Value="MiniCommons"/>
       </Item2>
       <Item3>
-        <PackageName Value="MiniLib"/>
+        <PackageName Value="MiniConnections"/>
       </Item3>
       <Item4>
         <PackageName Value="MiniSockets"/>
@@ -157,7 +157,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item10>
     </RequiredPackages>
-    <Units Count="58">
+    <Units Count="55">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -422,59 +422,47 @@
         <IsPartOfProject Value="True"/>
       </Unit46>
       <Unit47>
-        <Filename Value="..\..\..\..\lib\minilib\lib\mnStreams.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit47>
-      <Unit48>
-        <Filename Value="..\..\..\..\lib\minilib\connection\src\mncCSV.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit48>
-      <Unit49>
-        <Filename Value="..\..\..\..\lib\minilib\lazarus\components\native\ntvThemes.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit49>
-      <Unit50>
         <Filename Value="..\editor\EditorColors.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="EditorColorsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit50>
-      <Unit51>
+      </Unit47>
+      <Unit48>
         <Filename Value="..\extends\db\mneDBClasses.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit51>
-      <Unit52>
+      </Unit48>
+      <Unit49>
         <Filename Value="..\extends\db\sqlvManager.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="sqlvManagerForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit52>
-      <Unit53>
+      </Unit49>
+      <Unit50>
         <Filename Value="..\extends\sard\mneSARDClasses.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="mneSardClasses"/>
-      </Unit53>
-      <Unit54>
+      </Unit50>
+      <Unit51>
         <Filename Value="..\extends\commons\mneClasses.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit54>
-      <Unit55>
+      </Unit51>
+      <Unit52>
         <Filename Value="..\extends\go\mneGoClasses.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit55>
-      <Unit56>
+      </Unit52>
+      <Unit53>
         <Filename Value="..\extends\cmd\mneCMDClasses.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit56>
-      <Unit57>
+      </Unit53>
+      <Unit54>
         <Filename Value="..\extends\db\sqlvOpenDatabases.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="OpenDatabaseForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit57>
+      </Unit54>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -485,7 +473,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\extends\fntgen;..\extends\designer;..\..\..\..\lib\minilib\connection\src;..\..\..\..\lib\minilib\lib;..\..\..\..\lib\minilib\lazarus\components\native;..\extends\db;..\extends\go;..\extends\cmd"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\extends\fntgen;..\extends\designer;..\extends\db;..\extends\go;..\extends\cmd"/>
       <UnitOutputDirectory Value="..\..\units\debug"/>
     </SearchPaths>
     <Linking>

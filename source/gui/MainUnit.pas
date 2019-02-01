@@ -14,7 +14,7 @@ uses
   LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorDebugger, process,
   Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus,
   ToolWin, Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses,
-  StdActns, Grids, SynEditHighlighter, SynEdit, IAddons, ntvSplitters, ntvThemes,
+  StdActns, Grids, SynEditHighlighter, SynEdit, IAddons, ntvThemes, ntvSplitters,
   SynHighlighterSQL, EditorClasses, ntvImgBtns, ntvPanels,
   {$ifdef WINDOWS}
   Windows, //TODO, i hate include it

@@ -148,9 +148,10 @@ begin
   if not IsAnotherInstance then
   begin
     //DefaultSystemCodePage := widestringmanager.GetStandardCodePageProc(scpAnsi); //I fix it temporary that needed for AnsiToUtf8; //i commented cuz i cant convert to ansi in TTextEditorFile.DoSave
-  Application.Scaled :=True;
+    Application.Scaled :=True;
     Application.Initialize;
-  Application.Title :='miniEdit';
+    Application.Title :='miniEdit';
+    Application.Name := 'miniEdit';
     Application.BidiMode := bdLeftToRight;
     if InitEngine then
     begin
