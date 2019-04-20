@@ -243,11 +243,11 @@ object MainForm: TMainForm
     ClientWidth = 1021
     TabOrder = 1
     object MessageLabel: TPanel
-      Left = 67
+      Left = 103
       Height = 21
       Hint = 'Message'
       Top = 0
-      Width = 714
+      Width = 742
       Align = alClient
       Alignment = taLeftJustify
       Anchors = [akLeft, akRight, akBottom]
@@ -256,33 +256,20 @@ object MainForm: TMainForm
       TabOrder = 0
       OnClick = MessageLabelClick
     end
-    object DebugPnl: TPanel
-      Left = 921
+    object CursorPnl: TPanel
+      Left = 865
       Height = 21
-      Hint = 'Debug Session'
+      Hint = 'Caret Position'
       Top = 0
-      Width = 100
+      Width = 156
       Align = alRight
-      Alignment = taLeftJustify
       Anchors = [akRight, akBottom]
       BevelOuter = bvLowered
       BorderWidth = 2
       TabOrder = 1
     end
-    object CursorPnl: TPanel
-      Left = 801
-      Height = 21
-      Hint = 'Caret Position'
-      Top = 0
-      Width = 120
-      Align = alRight
-      Anchors = [akRight, akBottom]
-      BevelOuter = bvLowered
-      BorderWidth = 2
-      TabOrder = 2
-    end
     object StatePnl: TPanel
-      Left = 781
+      Left = 845
       Height = 21
       Hint = 'State'
       Top = 0
@@ -291,7 +278,7 @@ object MainForm: TMainForm
       Anchors = [akRight, akBottom]
       BevelOuter = bvLowered
       BorderWidth = 2
-      TabOrder = 3
+      TabOrder = 2
       OnClick = StatePnlClick
     end
     object TypePnl: TPanel
@@ -299,12 +286,12 @@ object MainForm: TMainForm
       Height = 21
       Hint = 'Project Type'
       Top = 0
-      Width = 67
+      Width = 103
       Align = alLeft
       Anchors = [akLeft, akBottom]
       BevelOuter = bvLowered
       BorderWidth = 2
-      TabOrder = 4
+      TabOrder = 3
     end
   end
   object BrowserPnl: TntvPanel
@@ -1815,9 +1802,6 @@ object MainForm: TMainForm
       object MenuItem21: TMenuItem
         Caption = '-'
       end
-      object CloseFileMnu: TMenuItem
-        Action = CloseAct
-      end
       object MenuItem38: TMenuItem
         Action = CloseOthersAct
       end
@@ -1827,6 +1811,9 @@ object MainForm: TMainForm
       end
       object MenuItem43: TMenuItem
         Action = CloseAllAct
+      end
+      object CloseFileMnu: TMenuItem
+        Action = CloseAct
       end
       object N1: TMenuItem
         Caption = '-'
@@ -2444,7 +2431,7 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'Explore Folder'
       Hint = 'Open the folder of current file in Exeplorer '
-      ImageIndex = 30
+      ImageIndex = 33
       OnExecute = ExploreFolderActExecute
     end
     object MessagesAct: TAction
@@ -2774,11 +2761,16 @@ object MainForm: TMainForm
       Caption = 'Toobar'
       OnExecute = ShowToolbarActExecute
     end
+    object GotoFileFolderAct: TAction
+      Category = 'File'
+      Caption = 'Goto File Folder'
+      OnExecute = GotoFileFolderActExecute
+    end
   end
   object FolderMenu: TPopupMenu
     Images = EditorResource.ToolbarImageList
-    left = 32
-    top = 240
+    left = 474
+    top = 187
     object Home1: TMenuItem
       Action = FolderHomeAct
       OnClick = FolderHomeActExecute
@@ -2802,9 +2794,8 @@ object MainForm: TMainForm
       Caption = 'Select Folder'
       OnClick = SelectFolderMnuClick
     end
-    object MenuItem23: TMenuItem
-      Caption = 'Go to File Folder'
-      OnClick = MenuItem23Click
+    object GotoFileFolderMnu: TMenuItem
+      Action = GotoFileFolderAct
     end
     object MenuItem22: TMenuItem
       Caption = 'Go to Project Folder'
@@ -2870,8 +2861,14 @@ object MainForm: TMainForm
     Images = EditorResource.ToolbarImageList
     TrackButton = tbLeftButton
     OnPopup = EditorPopupMenuPopup
-    left = 630
+    left = 632
     top = 272
+    object MenuItem47: TMenuItem
+      Action = SetAsMainFileAc
+    end
+    object Sep1N6: TMenuItem
+      Caption = '-'
+    end
     object OpenInclude2: TMenuItem
       Action = OpenIncludeAct
       OnClick = OpenIncludeActExecute
@@ -2966,12 +2963,15 @@ object MainForm: TMainForm
     object MenuItem32: TMenuItem
       Action = SetAsMainFileAc
     end
+    object SepN8: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem46: TMenuItem
+      Action = GotoFileFolderAct
+    end
     object Copyfilename1: TMenuItem
       Action = CopyFileNameAct
       OnClick = CopyFileNameActExecute
-    end
-    object MenuItem37: TMenuItem
-      Action = CloseOthersAct
     end
     object OpenFolder3: TMenuItem
       Action = ExploreFolderAct
@@ -2979,6 +2979,9 @@ object MainForm: TMainForm
     end
     object SepN6: TMenuItem
       Caption = '-'
+    end
+    object MenuItem37: TMenuItem
+      Action = CloseOthersAct
     end
     object MenuItem45: TMenuItem
       Action = CloseAct
@@ -3030,8 +3033,8 @@ object MainForm: TMainForm
     top = 440
   end
   object MainFilePopupMnu: TPopupMenu
-    left = 452
-    top = 129
+    left = 480
+    top = 114
     object MenuItem39: TMenuItem
       Action = ResetMainFileAct
     end

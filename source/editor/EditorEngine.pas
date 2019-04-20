@@ -2121,7 +2121,9 @@ begin
   if SynEdit.SelAvail then
   begin
     r := SynEdit.BlockEnd.y - SynEdit.BlockBegin.y + 1;
-    Result := Result + ' [' + IntToStr(r) + ']';
+    Result := Result + ' [' + IntToStr(r);
+    r := Length(SynEdit.SelText);
+    Result := Result + ',' + IntToStr(r) + ']';
   end;
 end;
 

@@ -57,6 +57,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine)
+    GotoFileFolderAct: TAction;
     BrowserTabs: TntvPageControl;
     CallStackGrid: TStringGrid;
     DatabasePnl: TntvPanel;
@@ -69,7 +70,11 @@ type
     LogSyn: TSynAnySyn;
     MenuItem45: TMenuItem;
     CloseFileMnu: TMenuItem;
+    MenuItem46: TMenuItem;
+    SepN8: TMenuItem;
     N6: TMenuItem;
+    MenuItem47: TMenuItem;
+    Sep1N6: TMenuItem;
     MessagesGrid: TStringGrid;
     MessagesTabs: TntvPageControl;
     MessagesPnl: TntvPanel;
@@ -134,7 +139,7 @@ type
     TypesOptionsAct: TAction;
     DBGCompileAct: TAction;
     MenuItem22: TMenuItem;
-    MenuItem23: TMenuItem;
+    GotoFileFolderMnu: TMenuItem;
     MenuItem24: TMenuItem;
     MenuItem25: TMenuItem;
     TypeOptionsMnu: TMenuItem;
@@ -362,7 +367,6 @@ type
     AddWatch2: TMenuItem;
     StatusPanel: TPanel;
     MessageLabel: TPanel;
-    DebugPnl: TPanel;
     CursorPnl: TPanel;
     FolderHomeAct: TAction;
     Home1: TMenuItem;
@@ -405,12 +409,13 @@ type
 
     procedure FormDropFiles(Sender: TObject; const FileNames: array of string);
     procedure FormShow(Sender: TObject);
+    procedure GotoFileFolderActExecute(Sender: TObject);
     procedure HelpKeywordActExecute(Sender: TObject);
     procedure IPCServerMessage(Sender: TObject);
     procedure IPCServerMessageQueued(Sender: TObject);
     procedure MainFileActExecute(Sender: TObject);
     procedure MenuItem22Click(Sender: TObject);
-    procedure MenuItem23Click(Sender: TObject);
+    procedure GotoFileFolderMnuClick(Sender: TObject);
     procedure MenuItem24Click(Sender: TObject);
     procedure MenuItem42Click(Sender: TObject);
     procedure MessageLabelClick(Sender: TObject);
@@ -908,13 +913,9 @@ begin
   end;
 end;
 
-procedure TMainForm.MenuItem23Click(Sender: TObject);
+procedure TMainForm.GotoFileFolderMnuClick(Sender: TObject);
 begin
-  if Engine.Files.Current <> nil then
-  begin
-    Folder := ExtractFilePath(Engine.Files.Current.Name);
-    Engine.ProcessRecentFolder(Folder);
-  end;
+
 end;
 
 procedure TMainForm.MenuItem24Click(Sender: TObject);
@@ -1321,6 +1322,7 @@ begin
   begin
     SaveAct.Enabled := False;
     StatePnl.Caption := '';
+    StatePnl.ParentColor := True;
   end;
 end;
 
@@ -1791,6 +1793,15 @@ begin
   end;
 end;
 
+procedure TMainForm.GotoFileFolderActExecute(Sender: TObject);
+begin
+  if Engine.Files.Current <> nil then
+  begin
+    Folder := ExtractFilePath(Engine.Files.Current.Name);
+    Engine.ProcessRecentFolder(Folder);
+  end;
+end;
+
 procedure TMainForm.HelpKeywordActExecute(Sender: TObject);
 var
   aSynEdit: TCustomSynEdit;
@@ -1894,7 +1905,7 @@ begin
   if Engine.Session.Active and (Engine.Session.Project.Tendency <> nil) then
     TypePnl.Caption := Engine.Session.Project.Tendency.Name
   else
-    TypePnl.Caption := '';
+    TypePnl.Caption := 'Undefined';
 
   UpdateMenu;
   UpdateMenuItems;
@@ -2655,7 +2666,7 @@ begin
   UpdateMenuItems;
   if (Engine.CurrentTendency.Debug <> nil) then
   begin
-    DebugPnl.Caption := Engine.CurrentTendency.Debug.GetKey;
+    //DebugPnl.Caption := Engine.CurrentTendency.Debug.GetKey;
     UpdateFileHeaderPanel;
     UpdateCallStack;
     UpdateWatches;
@@ -3155,7 +3166,10 @@ end;
 procedure TMainForm.EngineState;
 begin
   if Engine.MacroRecorder.State = msRecording then
-    StatePnl.Caption := 'R'
+  begin
+    StatePnl.Caption := 'C';
+    StatePnl.Color := Engine.Options.Profile.Attributes.Active.BackColor;
+  end
   else if Engine.Files.Current <> nil then
   begin
     CursorPnl.Caption := Engine.Files.Current.GetGlance;
@@ -3164,7 +3178,8 @@ begin
     else if Engine.Files.Current.IsReadOnly then
       StatePnl.Caption := 'R'
     else
-      StatePnl.Caption := 'S'
+      StatePnl.Caption := 'W';
+    StatePnl.ParentColor := True;
   end
   else
     StatePnl.Caption := '-';
