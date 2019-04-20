@@ -66,6 +66,10 @@ type
     FolderPathLbl: TLabel;
     BrowserPnl: TntvPanel;
     LogEdit: TSynEdit;
+    LogSyn: TSynAnySyn;
+    MenuItem45: TMenuItem;
+    CloseFileMnu: TMenuItem;
+    N6: TMenuItem;
     MessagesGrid: TStringGrid;
     MessagesTabs: TntvPageControl;
     MessagesPnl: TntvPanel;
@@ -204,7 +208,7 @@ type
     SaveAsAct: TAction;
     Saveas1: TMenuItem;
     GeneralOptionsAct: TAction;
-    N6: TMenuItem;
+    SepN6: TMenuItem;
     NextAct: TAction;
     PriorAct: TAction;
     CloseAct: TAction;

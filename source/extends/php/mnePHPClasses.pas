@@ -259,7 +259,7 @@ begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.StatusMessage := 'Running';
     aRunItem.Info.Run.Pause := Info.Pause;
-
+    aRunItem.Info.Run.Console := Info.Console;
     aRunItem.Info.Run.Command := Info.Command;
     if aRunItem.Info.Run.Command = '' then
     begin

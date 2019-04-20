@@ -2136,7 +2136,7 @@ begin
     else
       v := Trim(SynEdit.GetWordAtRowCol(SynEdit.LogicalCaretXY));
     Result := (v <> '') and Tendency.Debug.Watches.GetValue(v, l, t, False);
-    s := l;
+    s := VarToStrDef(l, '');
   end
   else
     Result := False;
@@ -2153,7 +2153,7 @@ begin
     else
       v := SynEdit.SelText;
     Result := (v <> '') and Tendency.Debug.Watches.GetValue(v, l, t, False);
-    s := l;
+    s := VarToStrDef(l, '');
   end
   else
     Result := False;
