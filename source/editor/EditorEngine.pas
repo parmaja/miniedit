@@ -2404,10 +2404,13 @@ begin
       else if Engine.Session.Run.Active then
         Engine.Session.Run.Show;
 
-      if rnaDebug in RunActions then
-        Debug.Action(dbaRun)
-      else
-        Debug.Action(dbaResume);
+      if rnaExecute in RunActions then
+      begin
+        if rnaCompile in RunActions then
+          Debug.Action(dbaRun)
+        else
+          Debug.Action(dbaResume);
+      end;
     end
     else
     begin

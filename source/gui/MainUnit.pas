@@ -35,7 +35,7 @@ uses
   sqlvClasses, sqlvManager,
   mneTendencyOptions, mneResources, IniFiles, mnFields, simpleipc, mnUtils,
   ntvTabs, ntvPageControls, SynEditMiscClasses, SynEditMarkupSpecialLine,
-  SynHighlighterAny;
+  SynHighlighterAny, Types;
 
 type
   TOutputLine = class(TObject)
@@ -389,7 +389,7 @@ type
     procedure AnsiMnuClick(Sender: TObject);
     procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
-    procedure CallStackListDblClick(Sender: TObject);
+    procedure CallStackGridDblClick(Sender: TObject);
     procedure ChangeExtActExecute(Sender: TObject);
     procedure CloseAllActExecute(Sender: TObject);
     procedure CloseOthersActExecute(Sender: TObject);
@@ -628,7 +628,7 @@ uses
   mnXMLUtils, StrUtils, SearchForms, mneProjectOptions, EditorOptions,
   EditorProfiles, mneSetups, Clipbrd, ColorUtils,
   SelectFiles, mneSettings, mneConsts,
-  SynEditTypes, AboutForms, mneManageRecentsForms, Types,
+  SynEditTypes, AboutForms, mneManageRecentsForms,
   mneBreakpoints, SynMacroRecorder,
   SearchInFilesForms, SelectList;
 
@@ -672,16 +672,7 @@ begin
     end;
 end;
 
-procedure TMainForm.TestDebug;
-begin
-  with Engine.Tendencies.Find('Pascal') do
-  begin
-    Prepare;
-    Debug.Start;
-  end;
-end;
-
-procedure TMainForm.CallStackListDblClick(Sender: TObject);
+procedure TMainForm.CallStackGridDblClick(Sender: TObject);
 var
   s: string;
   aLine: integer;
@@ -705,6 +696,15 @@ begin
         end
       end;
     end;
+  end;
+end;
+
+procedure TMainForm.TestDebug;
+begin
+  with Engine.Tendencies.Find('Pascal') do
+  begin
+    Prepare;
+    Debug.Start;
   end;
 end;
 

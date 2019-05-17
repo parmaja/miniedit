@@ -19,7 +19,15 @@ uses
 type
   EDebugException = class(Exception);
 
-  TmneRunAction = (rnaCompile, rnaLint, rnaLink, rnaExecute, rnaDebug, rnaShow, rnaKill);
+  TmneRunAction = (
+    rnaCompile, //Build
+    rnaExecute, //Execute , Build + Execute = Run
+    rnaLint,
+    rnaLink,
+    rnaDebug,
+    rnaShow,
+    rnaKill
+  );
   TmneRunActions = set of TmneRunAction;
 
   { TRunCommand }
@@ -99,7 +107,7 @@ type
     dbaStepOver,
     dbaStepInto,
     dbaStepOut,
-    dbaRun
+    dbaRun //run and stop on next breakpoint
    );
 
    TDebugState = (
