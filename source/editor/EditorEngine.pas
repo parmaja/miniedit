@@ -4082,6 +4082,7 @@ begin
   aParent.Files.SetCurrentIndex(i, False);
   if a and (aParent.Files.Current <> nil) then
     aParent.Files.Current.Activate;
+  aParent.ProcessRecentFile(Name);
   aParent.UpdateState([ecsChanged, ecsState, ecsRefresh]);
 end;
 

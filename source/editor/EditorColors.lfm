@@ -13,7 +13,7 @@ object EditorColorsForm: TEditorColorsForm
   OnShow = FormShow
   Position = poScreenCenter
   ShowHint = True
-  LCLVersion = '1.9.0.0'
+  LCLVersion = '2.1.0.0'
   object OkBtn: TButton
     Left = 390
     Height = 27
@@ -85,6 +85,7 @@ object EditorColorsForm: TEditorColorsForm
     Style = [cbStandardColors, cbExtendedColors, cbCustomColor, cbPrettyNames, cbCustomColors]
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 16
+    ItemWidth = 300
     OnChange = ForegroundCboChange
     PopupMenu = ColorPopupMenu
     TabOrder = 4
@@ -137,10 +138,10 @@ object EditorColorsForm: TEditorColorsForm
     TabOrder = 8
   end
   object AntialiasingChk: TCheckBox
-    Left = 340
+    Left = 357
     Height = 19
     Top = 45
-    Width = 90
+    Width = 73
     Anchors = [akTop, akRight]
     Caption = '&Antialiasing'
     OnChange = AntialiasingChkChange
@@ -784,6 +785,7 @@ object EditorColorsForm: TEditorColorsForm
           MarkupInfo.Foreground = clGray
         end
         object SynGutterCodeFolding1: TSynGutterCodeFolding
+          Width = 0
           MouseActions = <          
             item
               Button = mbRight
@@ -873,8 +875,6 @@ object EditorColorsForm: TEditorColorsForm
     ParentColor = False
   end
   object FontDialog: TFontDialog
-    Width = 28
-    Height = 28
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     MinFontSize = 0
@@ -885,8 +885,6 @@ object EditorColorsForm: TEditorColorsForm
     top = 233
   end
   object OpenDialog: TOpenDialog
-    Width = 28
-    Height = 28
     DefaultExt = '.mne-theme'
     FileName = '*.mne-theme'
     Filter = 'Theme (*.mne-theme)|*.mne-theme'
