@@ -4075,6 +4075,7 @@ begin
 
   i := Index;
   aParent := Engine;
+  aParent.ProcessRecentFile(Name);
   a := (aParent.Files.Current <> nil) and aParent.Files.Current.Activated;
   if aParent.Files.FCurrent = self then
     aParent.Files.FCurrent := nil;
@@ -4082,7 +4083,6 @@ begin
   aParent.Files.SetCurrentIndex(i, False);
   if a and (aParent.Files.Current <> nil) then
     aParent.Files.Current.Activate;
-  aParent.ProcessRecentFile(Name);
   aParent.UpdateState([ecsChanged, ecsState, ecsRefresh]);
 end;
 
@@ -4825,7 +4825,8 @@ var
         AGroup.EnumExtensions(AExtensions);
         if (AGroup = vGroup) and (FirstExtension <> '') then
         begin
-          if AExtensions.Find(FirstExtension, n) then
+          n := AExtensions.IndexOf(FirstExtension);
+          if n >= 0 then
             AExtensions.Move(n, 0);
         end;
 
