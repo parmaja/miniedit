@@ -1854,15 +1854,15 @@ begin
   begin
     FGroup.Category.InitCompletion(FSynEdit);
 
-    if (fgkExecutable in FGroup.Kind) then
+    //FSynEdit.Gutter.SeparatorPart(0).Index := FSynEdit.Gutter.Parts.Count - 1;//To make this part last one
+
+    //if (fgkExecutable in FGroup.Kind) then //show it make it more comfirtable
       with TSynDebugMarksPart.Create(FSynEdit.Gutter.Parts) do
       begin
         FEditorFile := Self;
         AutoSize := False;
         Width := EditorResource.DebugImages.Width + DEBUG_IMAGE_MARGINES;
       end;
-
-    FSynEdit.Gutter.SeparatorPart(0).Index := FSynEdit.Gutter.Parts.Count - 1;//To make this part last one
 
     FGroup.Category.InitEdit(FSynEdit);
   end;
