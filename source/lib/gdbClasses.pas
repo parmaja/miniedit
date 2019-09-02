@@ -799,7 +799,7 @@ var
   ResType: TMIRespondType;
 begin
   Result := TMIResponds.Create;
-  while ReadStream.ReadLine(S, True, #13#10) do
+  while ReadStream.ReadLine(S, True) do
   begin
     OutputDebugString(PChar('<[MNE]RAW:' + S));
     ParseMI(S, S, ResType);
@@ -900,6 +900,7 @@ var
   aKeep: Boolean;
 begin
   ReadStream := TmnWrapperStream.Create(Process.Output, False);
+  ReadStream.EndOfLine := sWinEndOfLine;
   aAction := PopAction;
   if aAction <> nil then
   begin

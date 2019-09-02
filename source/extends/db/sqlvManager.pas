@@ -36,7 +36,7 @@ uses
   mncSQLite,
   mnSynHighlighterStdSQL,
   {$endif}
-  sqlvConsts, sqlvClasses, sqlvStdClasses, LMessages,
+  sqlvConsts, sqlvClasses, sqlvStdClasses, LMessages, ComCtrls,
   EditorEngine;
 
 type
@@ -47,6 +47,10 @@ type
     ActionsPanel: TPanel;
     BackBtn: TButton;
     CacheMetaChk1: TCheckBox;
+    Edit1: TEdit;
+    MetaLbl: TLabel;
+    OpenBtn: TButton;
+    OpenedDatabasesList: TListView;
     FileMnu: TMenuItem;
     ExitMnu: TMenuItem;
     FirstBtn: TButton;
@@ -56,24 +60,22 @@ type
     MenuItem3: TMenuItem;
     HelpMnu: TMenuItem;
     ActionsPopupMenu: TPopupMenu;
+    Panel1: TPanel;
     SaveMnu: TMenuItem;
     SaveAsMnu: TMenuItem;
     OpenMnu: TMenuItem;
     ActionsList: TComboBox;
     Label5: TLabel;
-    OpenBtn: TButton;
     GroupsPanel: TPanel;
-    ConnectBtn: TButton;
-    DisconnectBtn: TButton;
     AboutMnu: TMenuItem;
     MembersGrid: TStringGrid;
-    MetaLbl: TLabel;
     ToolsMnu: TMenuItem;
     GroupPanel: TPanel;
     ClientPanel: TPanel;
-    TopPanel: TPanel;
     procedure ActionsListSelect(Sender: TObject);
     procedure BackBtnClick(Sender: TObject);
+    procedure ConnectBtnClick(Sender: TObject);
+    procedure DisconnectBtnClick(Sender: TObject);
     procedure FirstBtnClick(Sender: TObject);
     procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
     procedure GroupsListKeyPress(Sender: TObject; var Key: char);
@@ -295,6 +297,16 @@ begin
     if (sqlvEngine.Stack.Current <> nil) then
       sqlvEngine.Run(sqlvEngine.Stack);
   end;
+end;
+
+procedure TsqlvManagerForm.ConnectBtnClick(Sender: TObject);
+begin
+
+end;
+
+procedure TsqlvManagerForm.DisconnectBtnClick(Sender: TObject);
+begin
+
 end;
 
 procedure TsqlvManagerForm.FirstBtnClick(Sender: TObject);

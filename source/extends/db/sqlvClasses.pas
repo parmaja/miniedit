@@ -910,9 +910,9 @@ begin
         sqlvEngine.DB.Close;
 
       sqlvEngine.Setting.CacheMetas := CacheMetaChk.Checked;
-      sqlvEngine.DB.Open(GetDatabaseName, AutoCreateChk.Checked, ExclusiveChk.Checked, VacuumChk.Checked);
+      sqlvEngine.DB.Open(DatabaseTypeCbo.Text, DatabaseCbo.Text, AutoCreateChk.Checked, ExclusiveChk.Checked, VacuumChk.Checked);
       sqlvEngine.Stack.Clear;
-      sqlvEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabasesCbo.Text));
+      sqlvEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabaseCbo.Text));
       sqlvEngine.Run(sqlvEngine.Stack);
     end;
   end;

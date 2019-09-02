@@ -679,7 +679,7 @@ begin
   s := Command ;//+ ' -i ' + IntToStr(Result);
   if Data <> '' then
     s := s + ' ' + Data;
-  Stream.WriteLine(s, #13#10);
+  Stream.WriteLine(s);
 {$IFDEF SAVELOG}
   SaveLog(s);
 {$ENDIF}

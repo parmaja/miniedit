@@ -49,7 +49,7 @@ type
     constructor Create;
     destructor Destroy; override;
     procedure LoadMeta;
-    procedure Open(Name:string; vAutoCreate, vExclusive, vVacuum: Boolean);
+    procedure Open(DatabaseType, Name:string; vAutoCreate, vExclusive, vVacuum: Boolean);
     procedure Close;
     function IsActive: Boolean;
     procedure Connected;
@@ -73,11 +73,11 @@ type
 implementation
 
 uses
-  {$ifdef FIREBIRD}
+  mncPostgre,
+  mncMySQL,
+  mncCSV,
   mncFirebird,
-  {$else}
   mncSQLite,
-  {$endif}
   sqlvClasses;
 
 { TsqlvDB }
@@ -161,7 +161,7 @@ begin
   end;
 end;
 
-procedure TsqlvDB.Open(Name: string; vAutoCreate, vExclusive, vVacuum: Boolean);
+procedure TsqlvDB.Open(DatabaseType, Name: string; vAutoCreate, vExclusive, vVacuum: Boolean);
 begin
   FVacuum := vVacuum;
   FExclusive := vExclusive;
