@@ -2879,9 +2879,6 @@ object MainForm: TMainForm
       Action = OpenColorAct
       OnClick = OpenColorActExecute
     end
-    object MenuItem33: TMenuItem
-      Action = SetAsMainFileAc
-    end
     object N11: TMenuItem
       Caption = '-'
     end

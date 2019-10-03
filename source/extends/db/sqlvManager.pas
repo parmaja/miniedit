@@ -317,10 +317,7 @@ begin
 end;
 
 procedure TsqlvManagerForm.FormShortCut(var Msg: TLMKey; var Handled: Boolean);
-var
-  ShiftState: TShiftState;
 begin
-  ShiftState := KeyDataToShiftState(Msg.KeyData);
   case Msg.CharCode of
     VK_F6:
     begin

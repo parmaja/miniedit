@@ -355,7 +355,7 @@ begin
   OutputDebugString(PChar('[MNE]CMD:' + S));
   list:=TStringList.Create;
   try
-    StrToStrings(S, list, [','], [], false, ['"']);
+    StrToStrings(S, list, [','], [], ['"']);
     Result.Name := list[0];
     Result.Value := list[1];
   finally

@@ -23,7 +23,7 @@ uses
   {$ifdef WINDOWS}
   TSVN_SCM, TGIT_SCM,
   {$endif}
-  ntvTabSets, EditorRun, Registry, SynEditPlugins,
+  ntvTabSets, EditorRun, SynEditPlugins,
   synhighlighterunixshellscript, SynHighlighterPas, SynHighlighterMulti,
   mnStreams, mnClasses,
   //Addons
@@ -113,7 +113,6 @@ type
     UC16LEBOMMnu: TMenuItem;
     ResetMainFileAct: TAction;
     MenuItem32: TMenuItem;
-    MenuItem33: TMenuItem;
     MenuItem34: TMenuItem;
     MenuItem36: TMenuItem;
     SetAsRootFolderAct: TAction;
@@ -2335,7 +2334,7 @@ begin
     end;
     msgtOutput:
     begin
-      StrToStringsCallback(s, self, @AddOutput, [#13], [], false, [], []);
+      StrToStringsCallback(s, self, @AddOutput, [#13], [], [], []);
       OutputEdit.CaretY := OutputEdit.Lines.Count;
     end;
     msgtError:

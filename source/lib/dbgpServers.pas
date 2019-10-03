@@ -342,6 +342,7 @@ type
     function CreateListener: TmnListener; override;
     procedure DoChanged(vListener: TmnListener); override;
     procedure DoStart; override;
+    procedure DoBeforeOpen; override;
     procedure DoStop; override;
     property Queue: TdbgpSpool read FQueue;
   public
@@ -792,6 +793,11 @@ begin
 end;
 
 procedure TdbgpServer.DoStart;
+begin
+  inherited;
+end;
+
+procedure TdbgpServer.DoBeforeOpen;
 begin
   Queue.Clear;
   inherited;
