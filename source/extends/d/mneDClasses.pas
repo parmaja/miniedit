@@ -62,7 +62,7 @@ type
     FUseCfg: boolean;
   protected
     function CreateDebugger: TEditorDebugger; override;
-    procedure Init; override;
+    procedure Created; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
     constructor Create; override;
@@ -351,7 +351,7 @@ begin
   Result := TDProjectOptions.Create;
 end;
 
-procedure TDTendency.Init;
+procedure TDTendency.Created;
 begin
   FCapabilities := [capRun, capDebug, capTrace, capCompile, capLink, capOptions];
   FTitle := 'D Lang';

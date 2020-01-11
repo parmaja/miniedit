@@ -1793,6 +1793,7 @@ begin
     else
     begin
       Folder := Engine.Options.LastFolder;
+      Engine.OpenDefaultProject;
     end;
   end;
 end;
@@ -2023,6 +2024,7 @@ begin
   else
     FreeFrame;
   BrowserTabs.Page[ProjectPnl].Visible := FProjectFrame <> nil;
+  BrowserTabs.Page[DatabasePnl].Visible := sqlvEngine.DB.IsActive;
 end;
 
 procedure TMainForm.SaveAsProjectActExecute(Sender: TObject);

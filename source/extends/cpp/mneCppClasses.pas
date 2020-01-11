@@ -62,7 +62,7 @@ type
   private
   protected
     function CreateDebugger: TEditorDebugger; override;
-    procedure Init; override;
+    procedure Created; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
     constructor Create; override;
@@ -306,7 +306,7 @@ begin
   Result := TCppProjectOptions.Create;
 end;
 
-procedure TCppTendency.Init;
+procedure TCppTendency.Created;
 begin
   FCapabilities := [capRun, capCompile, capLink, capOptions];
   FTitle := 'Cpp Lang';

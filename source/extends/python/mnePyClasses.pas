@@ -64,7 +64,7 @@ type
   private
   protected
     function CreateDebugger: TEditorDebugger; override;
-    procedure Init; override;
+    procedure Created; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
     constructor Create; override;
@@ -244,7 +244,7 @@ begin
   Result := TPyProjectOptions.Create;
 end;
 
-procedure TPyTendency.Init;
+procedure TPyTendency.Created;
 begin
   FCapabilities := [capDebug, capTrace, capDebugServer, capRun, capCompile, capLink, capOptions];
   FTitle := 'Python Lang';

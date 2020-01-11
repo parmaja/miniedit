@@ -117,6 +117,7 @@ type
     procedure LoadMembers(vGroup: TsqlvAddon; vAttributes: TsqlvAttributes);
   public
     constructor Create(AMainForm: TsqlvManagerForm);
+    procedure LoadEditor(vAddon: TsqlvAddon; S: string); override;
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean); override;
   end;
 
@@ -262,6 +263,11 @@ constructor TsqlvMainGui.Create(AMainForm: TsqlvManagerForm);
 begin
   inherited Create;
   MainForm := AMainForm;
+end;
+
+procedure TsqlvMainGui.LoadEditor(vAddon: TsqlvAddon; S: string);
+begin
+
 end;
 
 { TsqlvManagerForm }

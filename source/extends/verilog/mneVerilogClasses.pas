@@ -78,7 +78,7 @@ type
     FCompiler: string;
   protected
     function CreateDebugger: TEditorDebugger; override;
-    procedure Init; override;
+    procedure Created; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
     function CreateOptions: TEditorProjectOptions; override;
@@ -145,7 +145,7 @@ begin
   Result := TVerilogProjectOptions.Create;
 end;
 
-procedure TVerilogTendency.Init;
+procedure TVerilogTendency.Created;
 begin
   FCapabilities := [capRun, capCompile, capLink, capOptions];
   FName := 'Verilog';

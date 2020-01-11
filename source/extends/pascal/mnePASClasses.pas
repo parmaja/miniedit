@@ -83,7 +83,7 @@ type
     FCompiler: string;
   protected
     function CreateDebugger: TEditorDebugger; override;
-    procedure Init; override;
+    procedure Created; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
@@ -179,7 +179,7 @@ begin
   Result := TPasProjectOptions.Create;;
 end;
 
-procedure TPasTendency.Init;
+procedure TPasTendency.Created;
 begin
   FCapabilities := [capRun, capDebug, capTrace, capCompile, capLink, capOptions];
   FName := 'Pascal';

@@ -467,7 +467,7 @@ initialization
     Categories.Add(TMDFileCategory.Create(DefaultProject.Tendency, 'md', 'Markdown'));
 
     Groups.Add(TmneProjectFile, 'mne-project', 'Project', TmneProjectFileCategory, ['mne-project'], [fgkAssociated, fgkBrowsable, fgkUneditable]);
-    Groups.Add(TTXTFile, 'txt', 'Text', TTXTFileCategory, ['txt', 'text', 'log'], []);
+    Groups.Add(TTXTFile, 'txt', 'Text', TTXTFileCategory, ['txt', 'text', 'log'], [fgkDefault]);
     Groups.Add(TTXTFile, 'motd', 'motd', TTXTFileCategory, ['motd'], []);
     Groups.Add(TTXTFile, 'md', 'MarkDown', TMDFileCategory, ['md'], []);
     Groups.Add(TSQLFile, 'sql', 'SQL', TSQLFileCategory, ['sql'], [fgkAssociated, fgkBrowsable]);

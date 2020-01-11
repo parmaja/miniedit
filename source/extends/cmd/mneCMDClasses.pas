@@ -71,7 +71,7 @@ type
 
   TConsoleTendency = class(TEditorTendency)
   protected
-    procedure Init; override;
+    procedure Created; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
@@ -113,7 +113,7 @@ end;
 
 { TConsoleTendency }
 
-procedure TConsoleTendency.Init;
+procedure TConsoleTendency.Created;
 begin
   FCapabilities := [capRun, capOptions];
   FName := 'CMD';

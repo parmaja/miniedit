@@ -50,7 +50,7 @@ type
 
   TSardTendency = class(TEditorTendency)
   protected
-    procedure Init; override;
+    procedure Created; override;
     function CreateDebugger: TEditorDebugger; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
@@ -64,7 +64,7 @@ uses
 
 { TSardTendency }
 
-procedure TSardTendency.Init;
+procedure TSardTendency.Created;
 begin
   FCapabilities := [capRun, capOptions];
   FName := 'Sard';

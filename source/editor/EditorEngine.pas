@@ -270,7 +270,7 @@ type
 
   { TEditorTendency }
 
-  TEditorTendency = class(TEditorDebugTendency)
+  TEditorTendency = class abstract(TEditorDebugTendency)
   private
     //FEditorOptions: TSynEditorOptions;
     FGroups: TFileGroups;
@@ -286,7 +286,8 @@ type
     FCapabilities: TEditorCapabilities;
     procedure AddGroup(vName, vCategory: string);
     function CreateDebugger: TEditorDebugger; virtual;
-    procedure Init; virtual; abstract;
+    procedure Init; virtual;
+    procedure Created; virtual;
     procedure DoRun(Info: TmneRunInfo); virtual;
   public
     constructor Create; override;
@@ -329,6 +330,7 @@ type
     function GetIsDefault: Boolean; override;
   protected
     procedure Init; override;
+    procedure Created; override;
   public
   end;
 
@@ -672,7 +674,6 @@ type
     function New(vGroup: TFileGroup = nil): TEditorFile; overload;
     function New(Name: string; Control: TWinControl): TEditorFile; overload;
 
-
     procedure Open;
     procedure Save;
     procedure SaveAll;
@@ -949,6 +950,7 @@ type
   private
     function GetItem(Index: integer): TEditorTendency;
   public
+    procedure Init;
     function Find(vName: string): TEditorTendency;
     function FindByClass(TendencyClass: TEditorTendencyClass): TEditorTendency;
     function Add(vEditorTendency: TEditorTendencyClass): TEditorTendency;
@@ -2267,10 +2269,14 @@ end;
 
 procedure TDefaultTendency.Init;
 begin
+  inherited;
+end;
+
+procedure TDefaultTendency.Created;
+begin
   FTitle := 'Default';
   FName := 'Default';
   FDescription := 'Default project type';
-  AddGroup('txt', 'txt');
 end;
 
 { TEditorFormList }
@@ -2361,6 +2367,15 @@ begin
   Result := nil;
 end;
 
+procedure TEditorTendency.Init;
+begin
+
+end;
+
+procedure TEditorTendency.Created;
+begin
+end;
+
 constructor TEditorTendency.Create;
 begin
   inherited;
@@ -2368,7 +2383,7 @@ begin
   FRunOptions := TRunProjectOptions.Create;
   FTabWidth := 4;
   FIndentMode := idntTabsToSpaces;
-  Init;
+  Created;
 end;
 
 destructor TEditorTendency.Destroy;
@@ -2431,6 +2446,10 @@ begin
         p.Pause := AOptions.Pause in [stateTrue];
         p.Console := AOptions.Console in [stateTrue, stateNone];
 
+        if Engine.Session = nil then
+          raise Exception.Create('No Session active!');
+        if Engine.Session.Project = nil then
+          raise Exception.Create('No Project opened!');
         p.MainFile := Engine.ExpandFile(Engine.Session.Project.RunOptions.MainFile); //TODO: here need to care about expand file to be similar to env variable
 
         if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
@@ -2509,6 +2528,14 @@ end;
 function TTendencies.GetItem(Index: integer): TEditorTendency;
 begin
   Result := inherited Items[Index] as TEditorTendency;
+end;
+
+procedure TTendencies.Init;
+var
+  i: Integer;
+begin
+  for i := 0 to Count -1 do
+    Items[i].Init;
 end;
 
 function TTendencies.Find(vName: string): TEditorTendency;
@@ -2764,16 +2791,6 @@ begin
   FEnvironment.Add('EXE=' + Application.ExeName);
   FEnvironment.Add('MiniEdit=' + Application.Location);
 
-  FTendencies := TTendencies.Create(True);
-  aDefaultTendency := TDefaultTendency.Create;
-  Tendencies.Add(aDefaultTendency);
-
-  FDefaultProject := TDefaultProject.Create;
-  FDefaultProject.FileName := WorkSpace;//no file name just path
-  FDefaultProject.Name := 'Default';
-
-  FDefaultProject.Tendency := aDefaultTendency;
-
   //FForms := TEditorFormList.Create(True);
   FOptions := TEditorOptions.Create;
   FCategories := TFileCategories.Create(True);
@@ -2782,6 +2799,15 @@ begin
   FSearchEngine := TSynEditSearch.Create;
   FFiles := TEditorFiles.Create(TEditorFile);
   FDebugLink := TEditorDebugLink.Create(nil);
+
+  FTendencies := TTendencies.Create(True);
+  aDefaultTendency := TDefaultTendency.Create;
+  Tendencies.Add(aDefaultTendency);
+
+  FDefaultProject := TDefaultProject.Create;
+  FDefaultProject.FileName := WorkSpace;//no file name just path
+  FDefaultProject.Name := 'Default';
+  FDefaultProject.Tendency := aDefaultTendency;
 
   FSession := TEditorSession.Create;
   Extenstion := 'mne-project';
@@ -3648,13 +3674,14 @@ procedure TEditorEngine.Startup(vSafeMode: Boolean);
 begin
   FSafeMode := vSafeMode;
   FEngineLife := engnStarting;
+  Tendencies.Init;
   Groups.Sort(@SortGroupsByTitle);
   DefaultProject.FileName := WorkSpace + 'mne-default-project.xml';
   try
     LoadOptions;
     //here we will autoopen last files
     //OpenDefaultProject
-    //Session.Project := DefaultProject;
+    //Session.FProject := DefaultProject; nah it is effect on UpdatePanel and ProjectChanged in mainform
   except
     on E: Exception do
       Engine.SendMessage(E.Message, msgtLog);

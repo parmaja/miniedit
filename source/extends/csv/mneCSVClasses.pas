@@ -56,7 +56,7 @@ type
 
   TCSVTendency = class(TEditorTendency)
   protected
-    procedure Init; override;
+    procedure Created; override;
   public
   end;
 
@@ -121,7 +121,7 @@ end;
 
 { TCSVTendency }
 
-procedure TCSVTendency.Init;
+procedure TCSVTendency.Created;
 begin
   FName := 'CSV';
   FTitle := 'CSV project';

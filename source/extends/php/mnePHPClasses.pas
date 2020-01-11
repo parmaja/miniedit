@@ -111,7 +111,7 @@ type
   private
   protected
     function CreateDebugger: TEditorDebugger; override;
-    procedure Init; override;
+    procedure Created; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
     constructor Create; override;
@@ -303,7 +303,7 @@ begin
   Result := TPHPProjectOptions.Create;
 end;
 
-procedure TPHPTendency.Init;
+procedure TPHPTendency.Created;
 begin
   FCapabilities := [capRun, capDebug, capEval, capTrace, capDebugServer, capOptions];
   FTitle := 'PHP project';

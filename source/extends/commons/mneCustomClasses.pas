@@ -76,7 +76,7 @@ type
   private
   protected
     function CreateDebugger: TEditorDebugger; override;
-    procedure Init; override;
+    procedure Created; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
     function CreateOptions: TEditorProjectOptions; override;
@@ -285,7 +285,7 @@ begin
   Result := TCustomProjectOptions.Create;
 end;
 
-procedure TCustomTendency.Init;
+procedure TCustomTendency.Created;
 begin
   FCapabilities := [capRun, capCompile, capLink, capOptions];
   FTitle := 'D Lang';

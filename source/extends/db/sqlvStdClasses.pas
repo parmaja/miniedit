@@ -276,9 +276,9 @@ type
   public
     procedure ExecuteScript(ExecuteType: TsqlvExecuteType); virtual; abstract;
 
-    procedure LoadEditor(vAddon: TsqlvAddon; vStrings:TStringList);
-    procedure LoadEditor(vAddon: TsqlvAddon; S: string); virtual; abstract;
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean); virtual; abstract;
+    procedure LoadEditor(vAddon: TsqlvAddon; S: string); virtual; abstract;
+    procedure LoadEditor(vAddon: TsqlvAddon; vStrings:TStringList);
   end;
 
 var

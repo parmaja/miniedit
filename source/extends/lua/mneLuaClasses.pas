@@ -58,7 +58,7 @@ type
   private
   protected
     function CreateDebugger: TEditorDebugger; override;
-    procedure Init; override;
+    procedure Created; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
     constructor Create; override;
@@ -273,7 +273,7 @@ begin
   Items.Add('lovec "?root" "?mainfile"');
 end;
 
-procedure TLuaTendency.Init;
+procedure TLuaTendency.Created;
 begin
   FCapabilities := [capDebug, capTrace, capDebugServer, capRun, capCompile, capLint, capOptions];
   Title := 'Lua Lang';
