@@ -22,7 +22,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Grids, ExtCtrls, StdCtrls,
   FileUtil, LCLType, Graphics, Menus, Buttons, EditorEngine, IniFiles,
-  MsgBox, mnStreams, mncConnections, mncCSV;
+  MsgBox, mnStreams, ntvGrids, mncConnections, mncCSV;
 
 type
 
@@ -32,8 +32,8 @@ type
     MenuItem7: TMenuItem;
     MenuItem8: TMenuItem;
     IsRtlMnu: TMenuItem;
+    DataGrid: TntvGrid;
     SaveConfigFileBtn: TButton;
-    DataGrid: TStringGrid;
     FetchCountLbl: TLabel;
     FetchedLbl: TLabel;
     MenuItem1: TMenuItem;
@@ -49,14 +49,9 @@ type
     OptionsBtn: TButton;
     DelConfigFileBtn: TButton;
     procedure ConfigFileBtnClick(Sender: TObject);
-    procedure DataGridColRowMoved(Sender: TObject; IsColumn: Boolean; sIndex, tIndex: Integer);
-    procedure DataGridDblClick(Sender: TObject);
-    procedure DataGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
-    procedure DataGridGetEditText(Sender: TObject; ACol, ARow: Integer; var Value: string);
-    procedure DataGridHeaderClick(Sender: TObject; IsColumn: Boolean; Index: Integer);
-    procedure DataGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure DataGridSelectEditor(Sender: TObject; aCol, aRow: Integer; var Editor: TWinControl);
-    procedure DataGridSetEditText(Sender: TObject; ACol, ARow: Integer; const Value: string);
+    procedure DataGridChanged(Sender: TObject);
+    procedure ataGridColClick(Sender: TntvCustomGrid; vCol: Integer);
+    procedure DataGridColClick(Sender: TntvCustomGrid; Column: TntvColumn);
     procedure DelConfigFileBtnClick(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
@@ -71,7 +66,6 @@ type
     procedure StopBtnClick(Sender: TObject);
   private
     FOnChanged: TNotifyEvent;
-    FOldValue: String;
   protected
     FCancel: Boolean;
     IsNumbers: array of boolean;
@@ -119,23 +113,6 @@ begin
   end;
 end;
 
-procedure RemoveCols(Grid: TStringGrid; ColIndex, vCount: Integer);
-var
-  i: Integer;
-begin
-  with Grid do
-  begin
-    BeginUpdate;
-    try
-      for i := ColIndex to ColCount - vCount - 1 do
-        Cols[i] := Cols[i + vCount];
-      ColCount := ColCount - vCount;
-    finally
-      EndUpdate;
-    end;
-  end;
-end;
-
 { TCSVForm }
 
 procedure TCSVForm.ConfigFileBtnClick(Sender: TObject);
@@ -145,41 +122,19 @@ begin
   Engine.UpdateState([ecsFolder]);
 end;
 
-procedure TCSVForm.DataGridColRowMoved(Sender: TObject; IsColumn: Boolean; sIndex, tIndex: Integer);
+procedure TCSVForm.DataGridChanged(Sender: TObject);
 begin
   Changed;
 end;
 
-procedure TCSVForm.DataGridDblClick(Sender: TObject);
+procedure TCSVForm.ataGridColClick(Sender: TntvCustomGrid; vCol: Integer);
 begin
-  DataGrid.EditorMode := true;
+
 end;
 
-procedure TCSVForm.DataGridGetEditText(Sender: TObject; ACol, ARow: Integer; var Value: string);
+procedure TCSVForm.DataGridColClick(Sender: TntvCustomGrid; Column: TntvColumn);
 begin
-  FOldValue := Value;
-end;
-
-procedure TCSVForm.DataGridHeaderClick(Sender: TObject; IsColumn: Boolean; Index: Integer);
-begin
-  if IsColumn then
-    RenameHeader(Index);
-end;
-
-procedure TCSVForm.DataGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-begin
-  if (Key = VK_C) and (Shift = [ssCtrl]) then
-    DataGrid.CopyToClipboard(True)
-  else if (Key = VK_ESCAPE) and (Shift = []) then
-  begin
-    DataGrid.EditorMode := False;
-    DataGrid.Cells[DataGrid.Col, DataGrid.Row] := FOldValue;
-  end;
-end;
-
-procedure TCSVForm.DataGridSetEditText(Sender: TObject; ACol, ARow: Integer; const Value: string);
-begin
-  Changed;
+  RenameHeader(Column.Index);
 end;
 
 procedure TCSVForm.DelConfigFileBtnClick(Sender: TObject);
@@ -191,7 +146,7 @@ end;
 
 procedure TCSVForm.MenuItem1Click(Sender: TObject);
 var
-  r, c: Integer;
+  r: Integer;
 begin
   if not Msg.No('Are you sure you want to clear cells') then
   begin
@@ -199,10 +154,9 @@ begin
     begin
       BeginUpdate;
       try
-        for r := Selection.Top to Selection.Bottom do
-          for c := Selection.Left to Selection.Right do
+        for r := Selected.StartRow to Selected.EndRow do
           begin
-            Cells[c, r] := '';
+            ClearRow(r);
           end;
       finally
         EndUpdate;
@@ -215,19 +169,21 @@ end;
 procedure TCSVForm.MenuItem2Click(Sender: TObject);
 var
   s: string;
+  i: Integer;
 begin
   s := '1';
   if Msg.Input(s, 'Enter columns count to add') then
   begin
-    DataGrid.ColCount := DataGrid.ColCount + StrToIntDef(s, 0);
+    for i := 0 to StrToInt(s) -1 do
+      DataGrid.AddColumn;
     Changed;
   end;
 end;
 
 procedure TCSVForm.MenuItem3Click(Sender: TObject);
 begin
-  //DataGrid.DeleteCol(DataGrid.Col);
-  RemoveCols(DataGrid, DataGrid.Selection.Left,DataGrid.Selection.Right - DataGrid.Selection.Left + 1);
+  DataGrid.DeleteColumn(DataGrid.CurrentColumn.Index);
+  //RemoveCols(DataGrid, DataGrid.Selection.Left,DataGrid.Selection.Right - DataGrid.Selection.Left + 1);
   Changed;
 end;
 
@@ -238,7 +194,7 @@ begin
   s := '1';
   if Msg.Input(s, 'Enter rows count to add') then
   begin
-    DataGrid.RowCount := DataGrid.RowCount + StrToIntDef(s, 0);
+    DataGrid.RowsCount := DataGrid.RowsCount + StrToIntDef(s, 0);
     Changed;
   end;
 end;
@@ -246,18 +202,18 @@ end;
 procedure TCSVForm.MenuItem5Click(Sender: TObject);
 begin
   //DataGrid.DeleteRow(DataGrid.Row);
-  RemoveRows(DataGrid, DataGrid.Selection.Top,DataGrid.Selection.Bottom - DataGrid.Selection.Top + 1);
+  //RemoveRows(DataGrid, DataGrid.Selection.Top, DataGrid.Selection.Bottom - DataGrid.Selection.Top + 1);
   Changed;
 end;
 
 procedure TCSVForm.MenuItem6Click(Sender: TObject);
 begin
-  DataGrid.CopyToClipboard(True);
+  //DataGrid.CopyToClipboard(True);
 end;
 
 procedure TCSVForm.MenuItem8Click(Sender: TObject);
 begin
-  RenameHeader(DataGrid.Col);
+  RenameHeader(DataGrid.Current.Col);
 end;
 
 procedure TCSVForm.IsRtlMnuClick(Sender: TObject);
@@ -303,12 +259,12 @@ procedure TCSVForm.RenameHeader(Index: Integer);
 var
   s: string;
 begin
-  s := DataGrid.Cells[Index, 0];
+  s := DataGrid.Columns[Index].Title;
   if s = '' then
     s := 'Header' + IntToStr(Index);
   if MsgBox.Msg.Input(s, 'Rename column header') then
   begin
-    DataGrid.Cells[Index, 0] := s;
+    DataGrid.Columns[Index].Title := s;
     Changed;
   end;
 end;
@@ -345,14 +301,7 @@ end;
 procedure TCSVForm.ClearGrid;
 begin
   IsNumbers := nil;
-  DataGrid.ColWidths[0] := 20;
-  DataGrid.Row := 1;
-  DataGrid.Col := 1;
-  DataGrid.FixedCols := 1;
-  DataGrid.FixedRows := 1;
-  DataGrid.ColCount := 1;
-  DataGrid.RowCount := 1;
-  DataGrid.Cells[0, 0] := '';
+  DataGrid.Reset;
 end;
 
 procedure TCSVForm.Save(FileName: string);
@@ -374,20 +323,20 @@ begin
     csvCMD := TmncCSVCommand.Create(csvSes, aFile, csvmWrite);
     try
       //adding header, even if we will not save it
-      for c := 1 to DataGrid.ColCount - 1 do
+      for c := 0 to DataGrid.Columns.Count - 1 do
       begin
-        csvCMD.Columns.Add(DataGrid.Cells[c, 0], dtString);
+        csvCMD.Columns.Add(DataGrid.Columns[c].Title, dtString);
       end;
       csvCMD.Prepare; //generate Params and save header
-      r := 1; //first row of data
-      while r < DataGrid.RowCount do
+      r := 0; //first row of data
+      while r < DataGrid.RowsCount do
       begin
-        for c := 1 to DataGrid.ColCount - 1 do
+        for c := 0 to DataGrid.Columns.Count - 1 do
         begin
-          csvCMD.Params.Items[c - 1].Value := DataGrid.Cells[c, r];
+          csvCMD.Params.Items[c].Value := DataGrid.Values[c, r];
         end;
         csvCMD.Execute;
-        r := r+ 1;
+        r := r + 1;
       end;
 
     finally
@@ -481,22 +430,23 @@ procedure TCSVForm.FillGrid(SQLCMD: TmncCommand; Title: String);
 var
   i, c, w: Integer;
   s: String;
-  b: Boolean;
   str: string;
   startCol: integer;
   cols: Integer;
   max: array of integer;
-  procedure CalcWidths;
+  procedure CalcWidths; //stupid idea
   var
-    i: Integer;
+    i, m: Integer;
   begin
-    max[0] := length(IntToStr(c));
-    for i := 0 to cols do
+    for i := 0 to cols - 1 do
     begin
-      w := GetTextWidth(StringOfChar('W', max[i])) + 10;
-      if w < 10 then
-        w := 10;
-      DataGrid.ColWidths[startCol + i] := w;
+      m := max[i];
+      if m > 36 then
+        m := 36;
+      w := GetTextWidth(StringOfChar('W', m)); //aaaaaaaaaaaaaaaaa
+      if w < 40 then
+        w := 40;
+      DataGrid.Columns[startCol + i].Width := w;
     end;
   end;
 var
@@ -524,25 +474,24 @@ begin
     begin
       cols := SQLCMD.Fields.Count;
     end;
-    setLength(max, cols + 1);
-    setLength(IsNumbers, cols + 1);
+    setLength(max, cols);
+    setLength(IsNumbers, cols);
 
-    startCol := DataGrid.ColCount - 1;
-    DataGrid.ColCount := startCol + cols + 1; //1 for fixed col
-    DataGrid.Col := startCol;
+    startCol := DataGrid.Columns.Count;
+    DataGrid.ColumnsCount := startCol + cols;
+    DataGrid.Current.Col := startCol;
 
     if HaveHeader then
     begin
       for i := 0 to cols - 1 do
       begin
         s := SQLCMD.Columns[i].Name;
-        max[i + 1] := length(s);
-        DataGrid.Cells[startCol + i + 1, 0] := s;
-        b := SQLCMD.Columns[i].IsNumber;
-        IsNumbers[i] := b;
+        max[i] := length(s);
+        DataGrid.Columns[startCol + i].Title := s;
+        IsNumbers[i] := SQLCMD.Columns[i].IsNumber;
       end;
     end;
-    c := 1;
+    c := 0;
     CalcWidths;
 
     if FInteractive then
@@ -550,22 +499,22 @@ begin
 
     while not SQLCMD.Done do
     begin
-      if DataGrid.RowCount <= (c + 1) then
+      if DataGrid.RowsCount <= (c + 1) then
       begin
         if not FInteractive or (c >= Steps) then
-          DataGrid.RowCount := c + Steps
+          DataGrid.RowsCount := c + Steps
         else
-          DataGrid.RowCount := c + 1;
+          DataGrid.RowsCount := c + 1;
       end;
-      DataGrid.Cells[0, c] := IntToStr(c);
+      DataGrid.Values[0, c] := IntToStr(c);
       for i := 0 to cols - 1 do
       begin
         if i < SQLCMD.Fields.Count then
         begin
           str := SQLCMD.Fields.Items[i].AsString;
-          if length(str) > max[i + 1] then
-            max[i + 1] := length(str);
-          DataGrid.Cells[startCol + i + 1, c] := str;
+          if length(str) > max[i] then
+            max[i] := length(str);
+          DataGrid.Values[startCol + i, c] := str;
         end;
       end;
       Inc(c);
@@ -594,11 +543,11 @@ begin
       SQLCMD.Next;
     end;
     CalcWidths;
-    DataGrid.RowCount := c;
+    DataGrid.RowsCount := c;
     FetchCountLbl.Caption := IntToStr(c - 1);
   finally
     if not FInteractive then
-      DataGrid.EndUpdate(True);
+      DataGrid.EndUpdate;
     StopBtn.Enabled := False;
   end;
 end;
@@ -631,23 +580,20 @@ begin
       Font.Quality := fqNonAntialiased
     else
       Font.Quality := fqDefault;}
-    DefaultRowHeight := GetDefaultRowHeight;
   end;
   CSVOptions.HeaderLine := hdrNormal;
   CSVOptions.DelimiterChar := ',';
   CSVOptions.EndOfLine := sUnixEndOfLine;
   Color := Engine.Options.Profile.Attributes.Default.Background;
   Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
-  DataGrid.Color := Engine.Options.Profile.Attributes.Default.Background;
+  DataGrid.Color := Engine.Options.Profile.Attributes.Panel.Background;
   DataGrid.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   DataGrid.FixedColor := Engine.Options.Profile.Attributes.Gutter.Background;
-  DataGrid.TitleFont.Color := Engine.Options.Profile.Attributes.Gutter.Foreground;
-  DataGrid.GridLineColor := Engine.Options.Profile.Attributes.Gutter.Foreground;
+  DataGrid.FixedFontColor := Engine.Options.Profile.Attributes.Gutter.Foreground;
+  DataGrid.LinesColor := Engine.Options.Profile.Attributes.Separator.Background;
 
-  DataGrid.FocusColor := Engine.Options.Profile.Attributes.Selected.Background;
-  DataGrid.AlternateColor := Engine.Options.Profile.Attributes.Comment.Background
-  //Color := Engine.Options.Profile.Attributes.Default.Background;
-  //Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
+  DataGrid.EvenColor := Engine.Options.Profile.Attributes.Default.Background;
+  DataGrid.OddColor := Engine.Options.Profile.Attributes.Default.Background;
 end;
 
 function TCSVForm.GetMainControl: TWinControl;
@@ -655,48 +601,6 @@ begin
   Result := DataGrid;
 end;
 
-procedure TCSVForm.DataGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
-begin
-  DataGrid.Canvas.Font.Assign(DataGrid.Font);
-  DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
-
-  if gdFixed in aState then
-  begin
-    DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Gutter.Background;
-    DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Gutter.Foreground;
-  end
-  else if (gdSelected in aState) then  //or (gdHot in aState) then
-  begin
-    if DataGrid.Focused then
-    begin
-      DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Selected.Background;
-      DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Selected.Foreground;
-    end
-    else
-    begin
-      DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Text.Background;
-      DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Text.Foreground;
-    end;
-  end
-  else if gdRowHighlight in aState then
-  begin
-    DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Active.Background;
-    DataGrid.Canvas.Font.Color := Engine.Options.Profile.Attributes.Active.Foreground;
-  end
-  else
-  begin
-    DataGrid.Canvas.Brush.Color := Engine.Options.Profile.Attributes.Default.Background;
-  end;
-  DataGrid.Canvas.FillRect(aRect);
-  DataGrid.DefaultDrawCell(aCol, aRow, aRect, aState);
-end;
-
-procedure TCSVForm.DataGridSelectEditor(Sender: TObject; aCol, aRow: Integer; var Editor: TWinControl);
-begin
-  Editor.Font.Assign(DataGrid.Font);
-  Editor.Color := Engine.Options.Profile.Attributes.Selected.Background;
-  Editor.Font.Color := Engine.Options.Profile.Attributes.Selected.Foreground;
-end;
 
 end.
 

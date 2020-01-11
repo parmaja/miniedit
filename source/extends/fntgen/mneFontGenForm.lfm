@@ -11,7 +11,7 @@ object FontGenForm: TFontGenForm
   Font.Name = 'MS Sans Serif'
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '1.7'
+  LCLVersion = '2.1.0.0'
   object OkBtn: TButton
     Left = 372
     Height = 27
@@ -500,6 +500,7 @@ object FontGenForm: TFontGenForm
     MouseLinkColor.Foreground = clBlue
     LineHighlightColor.Background = clNone
     LineHighlightColor.Foreground = clNone
+    WantTabs = False
     inline SynLeftGutterPartList1: TSynGutterPartList
       object SynGutterMarks1: TSynGutterMarks
         Width = 24
@@ -624,32 +625,28 @@ object FontGenForm: TFontGenForm
     TabOrder = 7
   end
   object FontDialog: TFontDialog
-    Width = 28
-    Height = 28
     Font.Height = -11
     Font.Name = 'MS Sans Serif'
     MinFontSize = 0
     MaxFontSize = 0
     Options = []
     PreviewText = 'Hello World'
-    left = 327
-    top = 130
+    Left = 193
+    Top = 67
   end
   object SaveDialog: TSaveDialog
     DefaultExt = '.png'
     FileName = '*.png'
     Filter = 'Font image|*.png'
     Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
-    left = 142
-    top = 66
+    Left = 142
+    Top = 66
   end
   object OpenDialog: TOpenDialog
-    Width = 28
-    Height = 28
     DefaultExt = '.*.png'
     Filter = 'Font image|*.png'
     Options = [ofFileMustExist, ofEnableSizing, ofViewDetail]
-    left = 267
-    top = 69
+    Left = 254
+    Top = 66
   end
 end

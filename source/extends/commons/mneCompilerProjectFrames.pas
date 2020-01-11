@@ -28,7 +28,6 @@ type
     ExpandPathsChk: TCheckBox;
     ExpandPathsChk1: TCheckBox;
     ExpandPathsChk2: TCheckBox;
-    PathsLbl: TLabel;
     PathsEdit: TSynEdit;
     procedure Bevel1ChangeBounds(Sender: TObject);
   private

@@ -66,7 +66,6 @@ type
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
     function CreateOptions: TEditorProjectOptions; override;
     procedure EnumRunCommands(Items: TStrings); override;
-    function GetDefaultGroup: TFileGroup; override;
   published
 
   end;
@@ -232,11 +231,6 @@ begin
     Engine.Session.Run.Start(Self);
 end;
 
-function TLuaTendency.GetDefaultGroup: TFileGroup;
-begin
-  Result :=Groups.Find('lua');
-end;
-
 constructor TLuaTendency.Create;
 begin
   inherited Create;
@@ -274,9 +268,8 @@ procedure TLuaTendency.EnumRunCommands(Items: TStrings);
 begin
   inherited;
   Items.Add('lua "?file"');
-  Items.Add('lua -l "tyro" "?file"');
+  Items.Add('tyro "?file"');
   Items.Add('love ?mainpath "?mainfile"');
-  Items.Add('lovec ?mainpath "?mainfile"');
   Items.Add('lovec "?root" "?mainfile"');
 end;
 
@@ -360,6 +353,6 @@ initialization
   begin
     Tendencies.Add(TLuaTendency);
     Categories.Add(TLuaFileCategory.Create(TLuaTendency, 'Lua', 'Lua', [fckPublish]));
-    Groups.Add(TLuaFile, 'lua', 'Lua', TLuaFileCategory, ['lua'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
+    Groups.Add(TLuaFile, 'lua', 'Lua', TLuaFileCategory, ['lua'], [fgkDefault, fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
   end;
 end.

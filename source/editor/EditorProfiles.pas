@@ -197,6 +197,7 @@ type
     property DataType: TGlobalAttribute read FDataType;
     property DataName: TGlobalAttribute read FDataName;
     property Document: TGlobalAttribute read FDocument;
+
     property Text: TGlobalAttribute read FText;
     property EmbedText: TGlobalAttribute read FEmbedText;
     property Comment: TGlobalAttribute read FComment;

@@ -842,7 +842,7 @@ begin
       if DirectoryExists(A) and (i = 0) then
         aFolder := A
       else if FileExists(A) then
-        Engine.Files.OpenFile(A);
+        Engine.Files.OpenFile(A, True);
     end;
     if aFolder <> '' then
       Folder := aFolder;
@@ -1782,13 +1782,18 @@ begin
   begin
     if Engine.Options.AutoOpenProject then
     begin
-      if FileExists(Engine.Options.LastProject) then
+      if (Engine.Options.LastProject <> '')  and FileExists(Engine.Options.LastProject) then
         Engine.Session.Load(Engine.Options.LastProject)
       else
+      begin
         Folder := Engine.Options.LastFolder;
+        Engine.OpenDefaultProject;
+      end;
     end
     else
-        Folder := Engine.Options.LastFolder;
+    begin
+      Folder := Engine.Options.LastFolder;
+    end;
   end;
 end;
 
@@ -2683,7 +2688,10 @@ begin
   FileHeaderPanel.Visible := Engine.Files.Count > 0;
   if FileHeaderPanel.Visible then
     FileHeaderPanel.Refresh;
-  MainFileAct.Caption := Engine.Session.Project.RunOptions.MainFile;
+  if Engine.Session.Project.IsActive then
+    MainFileAct.Caption := Engine.Session.Project.RunOptions.MainFile
+  else
+    MainFileAct.Caption := '';
   MainFileAct.Visible := MainFileAct.Caption <> '';
 end;
 
@@ -2769,8 +2777,8 @@ begin
   CorrectGridColors(WatchesGrid);
   CorrectGridColors(SearchGrid);
 
-  if FDatabaseFrame <> nil then
-    CorrectGridColors(FDatabaseFrame.MembersGrid);
+  {if FDatabaseFrame <> nil then
+    CorrectGridColors(FDatabaseFrame.MembersGrid);}
 
   OutputEdit.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   OutputEdit.Color := Engine.Options.Profile.Attributes.Default.Background;

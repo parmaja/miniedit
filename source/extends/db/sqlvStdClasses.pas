@@ -347,7 +347,7 @@ procedure TsqlvTables.EnumMeta(vItems: TmncMetaItems; vAttributes: TsqlvAttribut
 var
   aMeta: TmncMeta;
 begin
-  aMeta := sqlvEngine.DB.Session.CreateMeta;
+  aMeta := sqlvEngine.DB.CreateMeta;
   try
     aMeta.EnumTables(vItems);
   finally
@@ -372,7 +372,7 @@ procedure TsqlvProcedures.EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvA
 var
   aMeta: TmncMeta;
 begin
-  aMeta := sqlvEngine.DB.Session.CreateMeta;
+  aMeta := sqlvEngine.DB.CreateMeta;
   try
     aMeta.EnumProcedures(MetaItems);
   finally
@@ -397,7 +397,7 @@ procedure TsqlvViews.EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvAttrib
 var
   aMeta: TmncMeta;
 begin
-  aMeta := sqlvEngine.DB.Session.CreateMeta;
+  aMeta := sqlvEngine.DB.CreateMeta;
   try
     aMeta.EnumViews(MetaItems);
   finally
@@ -422,7 +422,7 @@ procedure TsqlvSequences.EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvAt
 var
   aMeta: TmncMeta;
 begin
-  aMeta := sqlvEngine.DB.Session.CreateMeta;
+  aMeta := sqlvEngine.DB.CreateMeta;
   try
     aMeta.EnumSequences(MetaItems);
   finally
@@ -447,7 +447,7 @@ procedure TsqlvDomains.EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvAttr
 var
   aMeta: TmncMeta;
 begin
-  aMeta := sqlvEngine.DB.Session.CreateMeta;
+  aMeta := sqlvEngine.DB.CreateMeta;
   try
     aMeta.EnumDomains(MetaItems);
   finally
@@ -472,7 +472,7 @@ procedure TsqlvExceptions.EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvA
 var
   aMeta: TmncMeta;
 begin
-  aMeta := sqlvEngine.DB.Session.CreateMeta;
+  aMeta := sqlvEngine.DB.CreateMeta;
   try
     aMeta.EnumExceptions(MetaItems);
   finally
@@ -497,7 +497,7 @@ procedure TsqlvFunctions.EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvAt
 var
   aMeta: TmncMeta;
 begin
-  aMeta := sqlvEngine.DB.Session.CreateMeta;
+  aMeta := sqlvEngine.DB.CreateMeta;
   try
     aMeta.EnumFunctions(MetaItems);
   finally
@@ -544,7 +544,7 @@ begin
   inherited;
   aStrings := TStringList.Create;
   try
-    aMeta := sqlvEngine.DB.Session.CreateMeta;
+    aMeta := sqlvEngine.DB.CreateMeta;
     try
       //aMeta.ExtractObject(aStrings, sokProcedure, MemberName, [ekAlter]);
     finally
@@ -577,7 +577,7 @@ begin
   inherited;
   aStrings := TStringList.Create;
   try
-    aMeta := sqlvEngine.DB.Session.CreateMeta;
+    aMeta := sqlvEngine.DB.CreateMeta;
     try
       aMeta.GetViewSource(aStrings, vAttributes['View'], [ekAlter]);
     finally
@@ -605,7 +605,7 @@ procedure TsqlvTableTriggers.EnumMeta(MetaItems: TmncMetaItems; vAttributes: Tsq
 var
   aMeta: TmncMeta;
 begin
-  aMeta := sqlvEngine.DB.Session.CreateMeta;
+  aMeta := sqlvEngine.DB.CreateMeta;
   try
     aMeta.EnumTriggers(MetaItems, vAttributes['Table']);
   finally
@@ -633,7 +633,7 @@ begin
   inherited;
   aStrings := TStringList.Create;
   try
-    aMeta := sqlvEngine.DB.Session.CreateMeta;
+    aMeta := sqlvEngine.DB.CreateMeta;
     try
       aMeta.GetTriggerSource(aStrings, vAttributes['Trigger'], [ekAlter]);
     finally
@@ -668,7 +668,7 @@ procedure TsqlvTableIndices.EnumMeta(MetaItems: TmncMetaItems; vAttributes: Tsql
 var
   aMeta: TmncMeta;
 begin
-  aMeta := sqlvEngine.DB.Session.CreateMeta;
+  aMeta := sqlvEngine.DB.CreateMeta;
   try
     aMeta.EnumIndices(MetaItems, vAttributes['Table']);
   finally
@@ -721,7 +721,7 @@ procedure TsqlvTableFields.EnumMeta(MetaItems: TmncMetaItems; vAttributes: Tsqlv
 var
   aMeta: TmncMeta;
 begin
-  aMeta := sqlvEngine.DB.Session.CreateMeta;
+  aMeta := sqlvEngine.DB.CreateMeta;
   try
     aMeta.EnumFields(MetaItems, vAttributes['Table']);
   finally
@@ -835,7 +835,7 @@ procedure TsqlvTriggers.EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvAtt
 var
   aMeta: TmncMeta;
 begin
-  aMeta := sqlvEngine.DB.Session.CreateMeta;
+  aMeta := sqlvEngine.DB.CreateMeta;
   try
     aMeta.EnumTriggers(MetaItems);
   finally
@@ -890,7 +890,7 @@ procedure TsqlvIndex.EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvAttrib
 var
   aMeta: TmncMeta;
 begin
-  aMeta := sqlvEngine.DB.Session.CreateMeta;
+  aMeta := sqlvEngine.DB.CreateMeta;
   try
     aMeta.GetIndexInfo(MetaItems, vAttributes['Index']);
   finally
@@ -920,7 +920,7 @@ procedure TsqlvIndices.EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvAttr
 var
   aMeta: TmncMeta;
 begin
-  aMeta := sqlvEngine.DB.Session.CreateMeta;
+  aMeta := sqlvEngine.DB.CreateMeta;
   try
     aMeta.EnumIndices(MetaItems);
   finally
@@ -989,7 +989,7 @@ begin
   inherited;
   aItems := TmncMetaItems.Create;
   try
-    aMeta := sqlvEngine.DB.Session.CreateMeta;
+    aMeta := sqlvEngine.DB.CreateMeta;
     try
       aMeta.EnumFields(aItems, vAttributes['Table']);
     finally

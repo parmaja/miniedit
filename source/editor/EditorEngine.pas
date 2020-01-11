@@ -207,6 +207,7 @@ type
 
 
   TFileGroupKind = (
+    fgkDefault,
     fgkText, //Is it an Text Editor like SQL or PHP
     fgkUneditable, // Can't be editable
     fgkExecutable,//You can guess what is it :P
@@ -297,7 +298,7 @@ type
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); virtual;
     function CreateOptions: TEditorProjectOptions; virtual;
     procedure EnumRunCommands(Items: TStrings); virtual;
-    function GetDefaultGroup: TFileGroup; virtual;
+    function GetDefaultGroup: TFileGroup;
     //OSDepended: When save to file, the filename changed depend on the os system name
     procedure Prepare;
     procedure Unprepare;
@@ -329,7 +330,6 @@ type
   protected
     procedure Init; override;
   public
-    function GetDefaultGroup: TFileGroup; override;
   end;
 
   { TEditorSCM }
@@ -1130,6 +1130,7 @@ type
     destructor Destroy; override;
 
     procedure Startup(vSafeMode: Boolean = False);
+    procedure OpenDefaultProject;
     procedure LoadOptions;
     procedure UpdateOptions;
     procedure SaveOptions;
@@ -2269,11 +2270,7 @@ begin
   FTitle := 'Default';
   FName := 'Default';
   FDescription := 'Default project type';
-end;
-
-function TDefaultTendency.GetDefaultGroup: TFileGroup;
-begin
-  Result := Groups.Find('txt');
+  AddGroup('txt', 'txt');
 end;
 
 { TEditorFormList }
@@ -2741,7 +2738,7 @@ begin
   FCachedIdentifiers.Clear;
   FCachedVariables.Clear;
   FCachedAge := 0;
-  if Project.FileName <> '' then
+  if (Project <> nil) and (Project.FileName <> '') then
     Project.SaveToFile(Project.FileName);
 
   Engine.Files.CloseAll;
@@ -3240,7 +3237,10 @@ begin
     aDialog.Filter := Engine.Groups.CreateFilter;
     aDialog.FilterIndex := 0;
     aDialog.InitialDir := Engine.BrowseFolder;
-    aDialog.DefaultExt := Engine.Tendency.GetDefaultGroup.Extensions[0].Name;
+    if Engine.Tendency.GetDefaultGroup <> nil then
+      aDialog.DefaultExt := Engine.Tendency.GetDefaultGroup.Extensions[0].Name
+    else
+      Engine.SendLog(Engine.Tendency.Name + ' have no default group');
     //aDialog.FileName := '*' + aDialog.DefaultExt;
     if aDialog.Execute then
     begin
@@ -3652,14 +3652,20 @@ begin
   DefaultProject.FileName := WorkSpace + 'mne-default-project.xml';
   try
     LoadOptions;
-    //here we will autoopen last project
-    DefaultProject.SafeLoadFromFile(DefaultProject.FileName);
-    Session.Project := DefaultProject;
+    //here we will autoopen last files
+    //OpenDefaultProject
+    //Session.Project := DefaultProject;
   except
     on E: Exception do
       Engine.SendMessage(E.Message, msgtLog);
   end;
   FEngineLife := engnStarted;
+end;
+
+procedure TEditorEngine.OpenDefaultProject;
+begin
+  DefaultProject.SafeLoadFromFile(DefaultProject.FileName);
+  Session.Project := DefaultProject;
 end;
 
 procedure TEditorEngine.LoadOptions;
@@ -4862,7 +4868,8 @@ begin
       aDefaultGroup := vGroup
     else
       aDefaultGroup := Engine.Tendency.GetDefaultGroup;
-    AddIt(aDefaultGroup);
+    if aDefaultGroup <> nil then
+      AddIt(aDefaultGroup);
     for i := 0 to Count - 1 do
     begin
       if (Items[i] <> aDefaultGroup) then
@@ -5376,7 +5383,10 @@ begin
   for i := 0 to Length(Extensions) - 1 do
     aGroup.Extensions.Add(Extensions[i]);
   aGroup.Category := aCategory;
-  aCategory.Tendency.Groups.Add(aGroup);
+  if fgkDefault in Kind then
+    aCategory.Tendency.Groups.Insert(0, aGroup)
+  else
+    aCategory.Tendency.Groups.Add(aGroup);
   inherited Add(aGroup);
 end;
 

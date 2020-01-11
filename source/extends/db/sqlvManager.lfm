@@ -29,38 +29,6 @@ object sqlvManagerForm: TsqlvManagerForm
       ClientHeight = 262
       ClientWidth = 275
       TabOrder = 0
-      object MembersGrid: TStringGrid
-        Left = 4
-        Height = 180
-        Top = 78
-        Width = 267
-        Align = alClient
-        AutoEdit = False
-        AutoFillColumns = True
-        BorderSpacing.Around = 2
-        ColCount = 1
-        DefaultRowHeight = 18
-        FixedCols = 0
-        Flat = True
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goRowSelect]
-        PopupMenu = ActionsPopupMenu
-        RowCount = 3
-        TabAdvance = aaNone
-        TabOrder = 0
-        TitleFont.CharSet = ANSI_CHARSET
-        TitleFont.Color = clBlack
-        TitleFont.Height = -11
-        TitleFont.Name = 'Tahoma'
-        TitleFont.Pitch = fpVariable
-        TitleFont.Quality = fqDraft
-        OnClick = MembersGridClick
-        OnDblClick = MembersGridDblClick
-        OnKeyDown = MembersGridKeyDown
-        OnUTF8KeyPress = MembersGridUTF8KeyPress
-        ColWidths = (
-          266
-        )
-      end
       object GroupsPanel: TPanel
         Left = 3
         Height = 49
@@ -71,7 +39,7 @@ object sqlvManagerForm: TsqlvManagerForm
         BevelOuter = bvNone
         ClientHeight = 49
         ClientWidth = 269
-        TabOrder = 1
+        TabOrder = 0
         object GroupsList: TComboBox
           Left = 0
           Height = 23
@@ -132,6 +100,29 @@ object sqlvManagerForm: TsqlvManagerForm
         Caption = 'Title'
         Layout = tlCenter
         ParentColor = False
+      end
+      object MembersGrid: TntvGrid
+        Left = 4
+        Height = 180
+        Top = 78
+        Width = 267
+        Align = alClient
+        BorderSpacing.Around = 2
+        BorderStyle = bsSingle
+        ColWidth = 80
+        EvenColor = clWindow
+        FixedFontColor = clBlack
+        Gutter = False
+        PopupMenu = ActionsPopupMenu
+        OddColor = clWindow
+        ReadOnly = True
+        RowHeight = 22
+        Selected.TextColor = clHighlightText
+        RowSelect = True
+        TabOrder = 1
+        FullHeader = True
+        OnDblClick = MembersGridDblClick
+        OnKeyDown = MembersGridKeyDown
       end
     end
     object ActionsPanel: TPanel
@@ -213,7 +204,7 @@ object sqlvManagerForm: TsqlvManagerForm
     end
   end
   object ActionsPopupMenu: TPopupMenu
-    left = 79
-    top = 274
+    Left = 79
+    Top = 274
   end
 end

@@ -48,6 +48,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
+    function CreateMeta: TmncMeta;
     procedure LoadMeta;
     procedure Open(DatabaseType, Name:string; vAutoCreate, vExclusive, vVacuum: Boolean);
     procedure Close;
@@ -131,6 +132,11 @@ begin
   inherited;
 end;
 
+function TsqlvDB.CreateMeta: TmncMeta;
+begin
+  Result := Meta.CreateMeta(Connection);
+end;
+
 procedure TsqlvDB.Disconnected;
 begin
   RunLogoutSQL;
@@ -140,21 +146,21 @@ end;
 
 procedure TsqlvDB.LoadMeta;
 var
-  Meta: TmncMeta;
+  AMeta: TmncMeta;
 begin
   if sqlvEngine.Setting.CacheMetas then
   begin
-    Meta := Session.CreateMeta;
+    AMeta := Meta.CreateMeta(FConnection);
     try
-      Meta.Link := Session;
-      Meta.EnumObjects(Tables, sokTable, '', [ekSystem, ekSort]);
-      Meta.EnumObjects(Views, sokView, '', [ekSort]);
-      Meta.EnumObjects(Proceduers, sokProcedure, '', [ekSort]);
-      Meta.EnumObjects(Sequences, sokSequence, '', [ekSort]);
-      Meta.EnumObjects(Functions, sokFunction, '', [ekSort]);
-      Meta.EnumObjects(Exceptions, sokException, '', [ekSort]);
-      Meta.EnumObjects(Domains, sokDomain, '', [ekSort]);
-      Meta.EnumObjects(Fields, sokField);
+      AMeta.Link := Session;
+      AMeta.EnumObjects(Tables, sokTable, '', [ekSystem, ekSort]);
+      AMeta.EnumObjects(Views, sokView, '', [ekSort]);
+      AMeta.EnumObjects(Proceduers, sokProcedure, '', [ekSort]);
+      AMeta.EnumObjects(Sequences, sokSequence, '', [ekSort]);
+      AMeta.EnumObjects(Functions, sokFunction, '', [ekSort]);
+      AMeta.EnumObjects(Exceptions, sokException, '', [ekSort]);
+      AMeta.EnumObjects(Domains, sokDomain, '', [ekSort]);
+      AMeta.EnumObjects(Fields, sokField);
     finally
       Meta.Free;
     end;

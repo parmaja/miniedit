@@ -30,13 +30,10 @@ uses
   sqlvSessions, mncCSV, mncSQL,
   SynCompletion, SynEditAutoComplete, SynHighlighterHashEntries,
   mnUtils, mncMeta, mncCSVExchanges,
-  {$ifdef FIREBIRD}
-  SynHighlighterFirebird,
-  {$else SQLITE}
-  mncSQLite,
   mnSynHighlighterStdSQL,
-  {$endif}
-  sqlvConsts, sqlvClasses, sqlvStdClasses, LMessages, ComCtrls,
+  mncMySQL, mncPostgre, mncSQLite,
+  mncSQLiteMeta, mncPGMeta, mncFBMeta,
+  ntvGrids, sqlvConsts, sqlvClasses, sqlvStdClasses, LMessages, ComCtrls,
   EditorEngine;
 
 type
@@ -48,6 +45,7 @@ type
     BackBtn: TButton;
     CacheMetaChk1: TCheckBox;
     Edit1: TEdit;
+    MembersGrid: TntvGrid;
     MetaLbl: TLabel;
     OpenBtn: TButton;
     OpenedDatabasesList: TListView;
@@ -68,7 +66,6 @@ type
     Label5: TLabel;
     GroupsPanel: TPanel;
     AboutMnu: TMenuItem;
-    MembersGrid: TStringGrid;
     ToolsMnu: TMenuItem;
     GroupPanel: TPanel;
     ClientPanel: TPanel;
@@ -80,10 +77,8 @@ type
     procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
     procedure GroupsListKeyPress(Sender: TObject; var Key: char);
     procedure GroupsListSelect(Sender: TObject);
-    procedure MembersGridClick(Sender: TObject);
     procedure MembersGridDblClick(Sender: TObject);
     procedure MembersGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure MembersGridKeyPress(Sender: TObject; var Key: char);
     procedure MembersGridUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
     procedure RefreshBtnClick(Sender: TObject);
     procedure MembersListDblClick(Sender: TObject);
@@ -219,12 +214,12 @@ begin
         aHeader := TStringList.Create;
         try
           vGroup.EnumHeader(aHeader);
-          MembersGrid.ColCount := aHeader.Count;
+          MembersGrid.ColumnsCount := aHeader.Count;
           for i := 0 to aHeader.Count -1 do
           begin
-            MembersGrid.Cells[i, 0] := aHeader[i];
-      //      if i = 0 then
-      //        MembersGrid.Columns[i].SizePriority := 50;
+            MembersGrid.Columns[i].Title := aHeader[i];
+            if i = 0 then
+              MembersGrid.Columns[i].AutoSize := True;
           end;
 
           aCols := aHeader.Count;
@@ -236,24 +231,23 @@ begin
         c := 0;
         MembersGrid.BeginUpdate;
         try
-          MembersGrid.RowCount := 1;//fixed only
           for i := 0 to aItems.Count -1 do
           begin
-            MembersGrid.RowCount := c + 2;
+            MembersGrid.RowsCount := c + 1;
             for j := 0 to aCols - 1 do
             begin
               if j = 0 then
-                MembersGrid.Cells[j, c + 1] := aItems[i].Name
+                MembersGrid.Values[j, c + 1] := aItems[i].Name
               else if (j - 1) < aItems[i].Attributes.Count then //maybe Attributes not have all data
-                MembersGrid.Cells[j, c + 1] := aItems[i].Attributes.Items[j - 1].Value; //TODO must be assigned my name not by index
+                MembersGrid.Values[j, c + 1] := aItems[i].Attributes.Items[j - 1].Value; //TODO must be assigned my name not by index
             end;
             c := c + 1;
           end;
         finally
           MembersGrid.EndUpdate;
         end;
-        MembersGrid.Row := 0;
-        MembersGrid.AutoSizeColumns;
+        MembersGrid.Current.Row := 0;
+        //MembersGrid.AutoSizeColumns;
         CurrentGroup := nil; //reduce flicker when fill Actions
         CurrentGroup := vGroup;
         LoadActions(vGroup.ItemName);
@@ -281,7 +275,7 @@ begin
   begin
     try
       aAddon := Actions[ActionsList.ItemIndex];
-      aValue := MembersGrid.Cells[0, MembersGrid.Row];
+      aValue := MembersGrid.Values[0, MembersGrid.Current.Row];
       OpenAction(aAddon, aValue);
     finally
       ActionsList.ItemIndex := -1;
@@ -341,21 +335,10 @@ begin
   OpenGroup(GroupsNames[GroupsList.ItemIndex].Name);
 end;
 
-procedure TsqlvManagerForm.MembersGridClick(Sender: TObject);
-begin
-  if not FSearching then
-    FSearch := '';
-end;
-
 procedure TsqlvManagerForm.MembersGridDblClick(Sender: TObject);
 begin
-  if (MembersGrid.RowCount > 1) and (MembersGrid.Row >= 1) then
-    OpenMember(MembersGrid.Cells[0, MembersGrid.Row]);
-end;
-
-procedure TsqlvManagerForm.MembersGridKeyPress(Sender: TObject; var Key: char);
-begin
-
+  if (MembersGrid.RowsCount > 1) and (MembersGrid.Current.Row >= 1) then
+    OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
 end;
 
 procedure TsqlvManagerForm.MembersGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -368,7 +351,7 @@ begin
     end;
     VK_RETURN:
     begin
-      OpenMember(MembersGrid.Cells[0, MembersGrid.Row]);
+      OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
     end;
   end;
 end;
@@ -388,21 +371,21 @@ end;
 
 procedure TsqlvManagerForm.MembersListDblClick(Sender: TObject);
 begin
-  OpenMember(MembersGrid.Cells[0, MembersGrid.Row]);
+  OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
 end;
 
 procedure TsqlvManagerForm.MembersListKeyPress(Sender: TObject; var Key: char);
 begin
   if (Key = #13) then
   begin
-    OpenMember(MembersGrid.Cells[0, MembersGrid.Row]);
+    OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
     Key := #0;
   end;
 end;
 
 procedure TsqlvManagerForm.OpenBtnClick(Sender: TObject);
 begin
-  OpenMember(MembersGrid.Cells[0, MembersGrid.Row]);
+  OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
 end;
 
 procedure TsqlvManagerForm.CheckSearch;
@@ -421,16 +404,16 @@ var
   f: Integer;
 begin
   f := ord(not FFirstSearch);
-  for i := MembersGrid.Row + f to MembersGrid.RowCount -1 do
+  for i := MembersGrid.Current.Row + f to MembersGrid.RowsCount -1 do
   begin
-    t := LeftStr(MembersGrid.Cells[0, i], Length(S));
+    t := LeftStr(MembersGrid.Values[0, i], Length(S));
     if SameText(S, t) then
     //t := MembersGrid.Cells[0, i];
     //if Pos(s, t) > 0 then
     begin
       FSearching := True;
       try
-        MembersGrid.Row := i;
+        MembersGrid.Current.Row := i;
       finally
         FSearching := False;
       end;
@@ -444,7 +427,7 @@ procedure TsqlvManagerForm.CollectAttributes(vAttributes: TsqlvAttributes);
 begin
   vAttributes.Clone(sqlvEngine.Stack.Current.Attributes);
   //vAttributes.Values[sqlvEngine.Stack.Current.Addon.Name] := sqlvEngine.Stack.Current.Value;
-  vAttributes.Values[CurrentGroup.ItemName] := MembersGrid.Cells[0, MembersGrid.Row];
+  vAttributes.Values[CurrentGroup.ItemName] := MembersGrid.Values[0, MembersGrid.Current.Row];
   DumpAttributes(vAttributes);
 end;
 
@@ -505,7 +488,7 @@ var
 begin
   try
     aAddon := Actions[(Sender as TMenuItem).Tag];
-    aValue := MembersGrid.Cells[0, MembersGrid.Row];
+    aValue := MembersGrid.Values[0, MembersGrid.Current.Row];
     OpenAction(aAddon, aValue);
   finally
     ActionsList.ItemIndex := -1;

@@ -95,6 +95,7 @@ begin
     aReg.WriteString('', FileType);
     aReg.WriteString('Content Type', Mime);
     aReg.CloseKey;
+
     aReg.OpenKey(FileType, True);
     aReg.WriteString('', Description);
     aReg.CloseKey;
@@ -104,12 +105,14 @@ begin
     aReg.OpenKey(FileType + '\Shell\', True);
     aReg.WriteString('', 'Open');
     aReg.CloseKey;
+
     aReg.OpenKey(FileType + '\Shell\' + Cmd + '\Command', True);
     if WithDDE then
       aReg.WriteString('', '"' + WithApplication + '" /DDE "%1"')
     else
       aReg.WriteString('', '"' + WithApplication + '" "%1"');
     aReg.CloseKey;
+
     if WithDDE then
     begin
       aReg.OpenKey(FileType + '\Shell\' + Cmd + '\ddeexec', True);

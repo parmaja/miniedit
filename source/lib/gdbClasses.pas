@@ -1042,10 +1042,14 @@ begin
       Stop;
     dbaRun:
       Run;
+    dbaResume:
+      ;
     dbaStepInto:
       Step;
     dbaStepOver:
       Next;
+    dbaStepOut:
+      ;
   end;
 end;
 

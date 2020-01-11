@@ -160,14 +160,14 @@ object OpenDatabaseForm: TOpenDatabaseForm
   object UserEdit: TEdit
     Left = 73
     Height = 23
-    Top = 196
+    Top = 207
     Width = 169
     TabOrder = 12
   end
   object Label5: TLabel
     Left = 11
     Height = 15
-    Top = 201
+    Top = 212
     Width = 23
     Caption = 'User'
     ParentColor = False
@@ -175,14 +175,14 @@ object OpenDatabaseForm: TOpenDatabaseForm
   object PasswordEdit: TEdit
     Left = 73
     Height = 23
-    Top = 222
+    Top = 233
     Width = 169
     TabOrder = 13
   end
   object Label6: TLabel
     Left = 11
     Height = 15
-    Top = 227
+    Top = 238
     Width = 50
     Caption = 'Password'
     ParentColor = False
@@ -192,7 +192,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
     FileName = '*.sql'
     Filter = '*.sql'
     InitialDir = '\'
-    left = 365
-    top = 205
+    Left = 365
+    Top = 205
   end
 end

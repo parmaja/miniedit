@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 315
+  Left = 200
   Height = 568
-  Top = 296
+  Top = 86
   Width = 1021
   ActiveControl = CallStackGrid
   AllowDropFiles = True
@@ -1762,8 +1762,8 @@ object MainForm: TMainForm
   end
   object MainMenu: TMainMenu
     Images = EditorResource.ToolbarImageList
-    left = 373
-    top = 114
+    Left = 373
+    Top = 114
     object file1: TMenuItem
       Caption = '&File'
       Hint = 'Exit|Quits the application'
@@ -2173,8 +2173,8 @@ object MainForm: TMainForm
   end
   object ActionList: TActionList
     Images = EditorResource.ToolbarImageList
-    left = 292
-    top = 187
+    Left = 292
+    Top = 187
     object PasteAct: TAction
       Category = 'Edit'
       Caption = 'Paste'
@@ -2771,8 +2771,8 @@ object MainForm: TMainForm
   end
   object FolderMenu: TPopupMenu
     Images = EditorResource.ToolbarImageList
-    left = 474
-    top = 187
+    Left = 474
+    Top = 187
     object Home1: TMenuItem
       Action = FolderHomeAct
       OnClick = FolderHomeActExecute
@@ -2844,8 +2844,8 @@ object MainForm: TMainForm
     end
   end
   object LineModeMenu: TPopupMenu
-    left = 294
-    top = 111
+    Left = 294
+    Top = 111
     object UnixMnu: TMenuItem
       Caption = 'Unix'
       OnClick = UnixMnuClick
@@ -2863,8 +2863,8 @@ object MainForm: TMainForm
     Images = EditorResource.ToolbarImageList
     TrackButton = tbLeftButton
     OnPopup = EditorPopupMenuPopup
-    left = 632
-    top = 272
+    Left = 632
+    Top = 272
     object MenuItem47: TMenuItem
       Action = SetAsMainFileAc
     end
@@ -2938,8 +2938,8 @@ object MainForm: TMainForm
     end
   end
   object WatchesPopupMenu: TPopupMenu
-    left = 297
-    top = 254
+    Left = 297
+    Top = 254
     object Add1: TMenuItem
       Caption = 'Add'
       OnClick = Add1Click
@@ -2957,8 +2957,8 @@ object MainForm: TMainForm
   end
   object FilePopupMenu: TPopupMenu
     Images = EditorResource.ToolbarImageList
-    left = 366
-    top = 49
+    Left = 366
+    Top = 49
     object MenuItem32: TMenuItem
       Action = SetAsMainFileAc
     end
@@ -2989,12 +2989,12 @@ object MainForm: TMainForm
   object StatusTimer: TTimer
     Interval = 5000
     OnTimer = StatusTimerTimer
-    left = 371
-    top = 198
+    Left = 371
+    Top = 198
   end
   object MessagesPopup: TPopupMenu
-    left = 153
-    top = 444
+    Left = 153
+    Top = 444
     object Clear1: TMenuItem
       Caption = 'Clear'
       OnClick = Clear1Click
@@ -3003,21 +3003,19 @@ object MainForm: TMainForm
   object IPCServer: TSimpleIPCServer
     Active = False
     ServerID = 'Parmaja.MiniEdit'
-    ThreadTimeOut = 50
     Global = True
     OnMessage = IPCServerMessage
     OnMessageQueued = IPCServerMessageQueued
-    MaxQueue = 0
-    MaxAction = ipcmoaNone
-    left = 97
-    top = 270
+    Threaded = False
+    Left = 97
+    Top = 270
   end
   object ApplicationProperties: TApplicationProperties
     ExceptionDialog = aedOkMessageBox
     OnActivate = ApplicationPropertiesActivate
     OnShowHint = ApplicationPropertiesShowHint
-    left = 73
-    top = 99
+    Left = 73
+    Top = 99
   end
   object LogSyn: TSynAnySyn
     Enabled = False
@@ -3028,12 +3026,12 @@ object MainForm: TMainForm
     Entity = False
     DollarVariables = False
     ActiveDot = False
-    left = 245
-    top = 440
+    Left = 245
+    Top = 440
   end
   object MainFilePopupMnu: TPopupMenu
-    left = 480
-    top = 114
+    Left = 480
+    Top = 114
     object MenuItem39: TMenuItem
       Action = ResetMainFileAct
     end
@@ -3043,8 +3041,8 @@ object MainForm: TMainForm
     end
   end
   object EncodeModeMenu: TPopupMenu
-    left = 772
-    top = 79
+    Left = 772
+    Top = 79
     object UTF8Mnu: TMenuItem
       Caption = 'UTF8'
       OnClick = UTF8MnuClick

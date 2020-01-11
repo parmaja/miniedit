@@ -8,8 +8,8 @@ object CSVForm: TCSVForm
   Color = clDefault
   ParentColor = False
   TabOrder = 0
-  DesignLeft = 374
-  DesignTop = 227
+  DesignLeft = 325
+  DesignTop = 204
   object Panel2: TPanel
     Left = 0
     Height = 26
@@ -19,7 +19,7 @@ object CSVForm: TCSVForm
     BevelOuter = bvNone
     ClientHeight = 26
     ClientWidth = 677
-    TabOrder = 1
+    TabOrder = 0
     object FetchedLbl: TLabel
       Left = 292
       Height = 26
@@ -95,46 +95,26 @@ object CSVForm: TCSVForm
       TabOrder = 3
     end
   end
-  object DataGrid: TStringGrid
+  object DataGrid: TntvGrid
     Left = 0
     Height = 214
     Top = 26
     Width = 677
     Align = alClient
-    AlternateColor = 14408667
-    AutoEdit = False
-    ColCount = 3
-    DefaultDrawing = False
-    DefaultRowHeight = 18
-    FixedColor = cl3DLight
-    Flat = True
-    MouseWheelOption = mwGrid
-    Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goDrawFocusSelected, goColSizing, goRowMoving, goColMoving, goEditing, goDblClickAutoSize, goSmoothScroll, goHeaderHotTracking, goHeaderPushedLook, goSelectionActive, goCellHints, goRowHighlight]
+    BorderStyle = bsSingle
+    ColWidth = 80
+    FixedFontColor = clBlack
     PopupMenu = GridPopupMenu
-    TabOrder = 0
-    TitleFont.CharSet = ANSI_CHARSET
-    TitleFont.Color = clBlack
-    TitleFont.Height = -11
-    TitleFont.Name = 'Tahoma'
-    TitleFont.Pitch = fpVariable
-    TitleFont.Quality = fqDraft
-    OnColRowMoved = DataGridColRowMoved
-    OnDblClick = DataGridDblClick
-    OnDrawCell = DataGridDrawCell
-    OnGetEditText = DataGridGetEditText
-    OnHeaderClick = DataGridHeaderClick
-    OnKeyDown = DataGridKeyDown
-    OnSelectEditor = DataGridSelectEditor
-    OnSetEditText = DataGridSetEditText
-    ColWidths = (
-      22
-      77
-      77
-    )
+    RowHeight = 22
+    Capacity = 100000
+    Selected.TextColor = clHighlightText
+    TabOrder = 1
+    OnChanged = DataGridChanged
+    OnColClick = DataGridColClick
   end
   object GridPopupMenu: TPopupMenu
-    left = 280
-    top = 94
+    Left = 280
+    Top = 94
     object IsRtlMnu: TMenuItem
       AutoCheck = True
       Caption = 'Right To Left'
