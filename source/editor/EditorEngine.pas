@@ -5044,9 +5044,6 @@ begin
     if M <> nil then
       G := Attributes.Find(M.AttType);
 
-    if M <> nil then
-      G := Attributes.Find(M.AttType);
-
     if G = nil then
       G := Attributes.Default;
 

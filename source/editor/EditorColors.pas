@@ -550,13 +550,15 @@ var
     procedure Add(ss: string);
     begin
       if Result <> '' then
-        Result := Result + ',';
+        Result := Result + ', ';
       Result := Result + ss;
     end;
   begin
     Result := '';
-{    if gaoBold in op then
-      Add('gaoBold');}
+    if gaoDefaultBackground in op then
+      Add('gaoDefaultBackground');
+    if gaoDefaultForeground in op then
+      Add('gaoDefaultForeground');
   end;
   {$endif}
 begin
@@ -574,9 +576,8 @@ begin
         aName := GetEnumName(typeinfo(TAttributeType), ord(FProfile.Attributes[i].AttType));
         //v := Integer(FProfile.Attributes[i].Style);
         s := '  Add(F'+Copy(aName, 4, MaxInt) + ', ' +
-          aName + ', '''+FProfile.Attributes[i].Title+''', ' +
-          ColorToString(FProfile.Attributes[i].ForeColor)+', '+ColorToString(FProfile.Attributes[i].BackColor)+', '+
-          //'['+SetToString(TypeInfo(TFontStyles), v)+']'+
+          aName + ', ''' + FProfile.Attributes[i].Title + ''', ' +
+          ColorToString(FProfile.Attributes[i].ForeColor) + ', ' + ColorToString(FProfile.Attributes[i].BackColor) + ', ' +
 
           '['+GetStyle(FProfile.Attributes[i].Options)+']'+
           ');'+#13#10;

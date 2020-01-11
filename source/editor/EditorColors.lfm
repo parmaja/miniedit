@@ -881,8 +881,8 @@ object EditorColorsForm: TEditorColorsForm
     MaxFontSize = 0
     Options = [fdEffects, fdFixedPitchOnly, fdNoStyleSel]
     PreviewText = 'Hello World'
-    left = 259
-    top = 233
+    Left = 259
+    Top = 233
   end
   object OpenDialog: TOpenDialog
     DefaultExt = '.mne-theme'
@@ -890,20 +890,20 @@ object EditorColorsForm: TEditorColorsForm
     Filter = 'Theme (*.mne-theme)|*.mne-theme'
     InitialDir = 'M:\home\pascal\projects\miniEdit\'
     Options = [ofFileMustExist, ofEnableSizing, ofViewDetail]
-    left = 199
-    top = 242
+    Left = 199
+    Top = 242
   end
   object SaveDialog: TSaveDialog
     DefaultExt = '.mne-theme'
     FileName = '*.mne-theme'
     Filter = 'theme|*.mne-theme'
     Options = [ofOverwritePrompt, ofEnableSizing, ofViewDetail]
-    left = 99
-    top = 260
+    Left = 99
+    Top = 260
   end
   object ColorPopupMenu: TPopupMenu
-    left = 218
-    top = 176
+    Left = 218
+    Top = 176
     object MenuItem1: TMenuItem
       Caption = 'Copy Color'
       OnClick = MenuItem1Click
