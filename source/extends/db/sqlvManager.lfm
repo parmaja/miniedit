@@ -20,13 +20,13 @@ object sqlvManagerForm: TsqlvManagerForm
     TabOrder = 0
     object GroupPanel: TPanel
       Left = 0
-      Height = 262
+      Height = 288
       Top = 0
       Width = 275
       Align = alClient
       BevelOuter = bvNone
       BorderWidth = 2
-      ClientHeight = 262
+      ClientHeight = 288
       ClientWidth = 275
       TabOrder = 0
       object GroupsPanel: TPanel
@@ -103,7 +103,7 @@ object sqlvManagerForm: TsqlvManagerForm
       end
       object MembersGrid: TntvGrid
         Left = 4
-        Height = 180
+        Height = 206
         Top = 78
         Width = 267
         Align = alClient
@@ -125,49 +125,13 @@ object sqlvManagerForm: TsqlvManagerForm
         OnKeyDown = MembersGridKeyDown
       end
     end
-    object ActionsPanel: TPanel
-      Left = 0
-      Height = 26
-      Top = 285
-      Width = 275
-      Align = alBottom
-      BevelInner = bvSpace
-      BevelOuter = bvSpace
-      ClientHeight = 26
-      ClientWidth = 275
-      TabOrder = 1
-      object Label5: TLabel
-        Left = 4
-        Height = 18
-        Top = 4
-        Width = 40
-        Align = alLeft
-        BorderSpacing.Around = 2
-        Caption = 'Actions'
-        Layout = tlCenter
-        ParentColor = False
-      end
-      object ActionsList: TComboBox
-        Left = 46
-        Height = 23
-        Top = 2
-        Width = 227
-        Align = alClient
-        Anchors = [akTop, akLeft, akRight]
-        ItemHeight = 15
-        OnSelect = ActionsListSelect
-        ParentColor = True
-        Style = csDropDownList
-        TabOrder = 0
-      end
-    end
     object Edit1: TEdit
       Left = 0
       Height = 23
-      Top = 262
+      Top = 288
       Width = 275
       Align = alBottom
-      TabOrder = 2
+      TabOrder = 1
       TextHint = 'Search'
     end
   end

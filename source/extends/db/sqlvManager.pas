@@ -41,7 +41,6 @@ type
   { TsqlvManagerForm }
 
   TsqlvManagerForm = class(TFrame)
-    ActionsPanel: TPanel;
     BackBtn: TButton;
     CacheMetaChk1: TCheckBox;
     Edit1: TEdit;
@@ -62,14 +61,11 @@ type
     SaveMnu: TMenuItem;
     SaveAsMnu: TMenuItem;
     OpenMnu: TMenuItem;
-    ActionsList: TComboBox;
-    Label5: TLabel;
     GroupsPanel: TPanel;
     AboutMnu: TMenuItem;
     ToolsMnu: TMenuItem;
     GroupPanel: TPanel;
     ClientPanel: TPanel;
-    procedure ActionsListSelect(Sender: TObject);
     procedure BackBtnClick(Sender: TObject);
     procedure ConnectBtnClick(Sender: TObject);
     procedure DisconnectBtnClick(Sender: TObject);
@@ -272,23 +268,6 @@ end;
 
 { TsqlvManagerForm }
 
-procedure TsqlvManagerForm.ActionsListSelect(Sender: TObject);
-var
-  aValue: string;
-  aAddon: TsqlvAddon;
-begin
-  if ActionsList.ItemIndex >= 0 then
-  begin
-    try
-      aAddon := Actions[ActionsList.ItemIndex];
-      aValue := MembersGrid.Values[0, MembersGrid.Current.Row];
-      OpenAction(aAddon, aValue);
-    finally
-      ActionsList.ItemIndex := -1;
-    end;
-  end;
-end;
-
 procedure TsqlvManagerForm.BackBtnClick(Sender: TObject);
 begin
   if sqlvEngine.Stack.Count > 1 then
@@ -453,7 +432,6 @@ var
 begin
   if (vGroup = '') or not Append then
   begin
-    ActionsList.Items.Clear;
     ActionsPopupMenu.Items.Clear;
     FreeAndNil(Actions);
   end;
@@ -467,7 +445,6 @@ begin
       for i := 0 to aList.Count - 1 do
         if nsCommand in aList[i].Style then
         begin
-          ActionsList.Items.Add(aList[i].Title);
           aMenuItem := TMenuItem.Create(ActionsPopupMenu);
           aMenuItem.Caption := aList[i].Title;
           aMenuItem.OnClick := @ActionsMenuSelect;
@@ -480,11 +457,7 @@ begin
       aList.Free;
     end;
   end;
-  ActionsPanel.Visible := ActionsList.Items.Count > 0;
-  if ActionsPanel.Visible then
-    MembersGrid.PopupMenu := ActionsPopupMenu
-  else
-    MembersGrid.PopupMenu := nil;
+  MembersGrid.PopupMenu := ActionsPopupMenu;
 end;
 
 procedure TsqlvManagerForm.ActionsMenuSelect(Sender: TObject);
@@ -492,13 +465,9 @@ var
   aValue: string;
   aAddon: TsqlvAddon;
 begin
-  try
-    aAddon := Actions[(Sender as TMenuItem).Tag];
-    aValue := MembersGrid.Values[0, MembersGrid.Current.Row];
-    OpenAction(aAddon, aValue);
-  finally
-    ActionsList.ItemIndex := -1;
-  end;
+  aAddon := Actions[(Sender as TMenuItem).Tag];
+  aValue := MembersGrid.Values[0, MembersGrid.Current.Row];
+  OpenAction(aAddon, aValue);
 end;
 
 function TsqlvManagerForm.GetMainControl: TWinControl;

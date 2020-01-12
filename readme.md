@@ -24,6 +24,18 @@ if you are editing multiple files, e.g. Python, PHP it can run this files into c
  * Works in Windows and Linux
  * Compile and run Pascal, D, Go, Cpp (cpp todo not yet)
  * Run PHP, CMD, SH, BAT, Lua, Py
+
+### Languages supported
+
+ | Name       	| Methods     	| Engine     	|
+ |--------------|--------------	|---------------|
+ | PHP 			| run, debug 	| 	   			|
+ | Lua 			| run           |				|
+ | Python 		| run           |               |
+ | Basic 		| run 			|SmallBasic, YaBasic|
+ | Pascal 		| compile,run	|               |
+ | D 			| compile, run  |               |
+ | C 			| compile, run	|				|
  
 ### Disadvantages
   
