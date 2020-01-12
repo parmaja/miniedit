@@ -13,7 +13,7 @@ if you are editing multiple files, e.g. Python, PHP it can run this files into c
 ### Features
 
  * Portable, one executable file, take it any where.
- * UTF8, Ansi, UC16LE, UC16BE encoding
+ * UTF8, Ansi, and UC16LE, UC16BE encoding with BOM
  * Projects files, each project have special type/tendency (PHP, Lua, Python, Pascal, D)
  * Until now it is very Fast and very small
  * Search in files
@@ -24,18 +24,24 @@ if you are editing multiple files, e.g. Python, PHP it can run this files into c
  * Works in Windows and Linux
  * Compile and run Pascal, D, Go, Cpp (cpp todo not yet)
  * Run PHP, CMD, SH, BAT, Lua, Py
+ * Semi themed colors can be customized easy
 
 ### Languages supported
 
  | Name       	| Methods     	| Engine     	|
  |--------------|--------------	|---------------|
- | PHP 			| run, debug 	| 	   			|
- | Lua 			| run           |				|
- | Python 		| run           |               |
- | Basic 		| run 			|SmallBasic, YaBasic|
- | Pascal 		| compile,run	|               |
- | D 			| compile, run  |               |
+ | PHP 			| run, debug 	| PHP 			|
+ | Lua 			| run           | lua, luac, internal		|
+ | Python 		| run           | python        |
+ | Basic 		| run 			| SmallBasic, YaBasic|
+ | Pascal 		| compile, run	| FPC           |
+ | D 			| compile, run  | DMD           |
  | C 			| compile, run	|				|
+ | Go 			| compile, run	| go			|
+ | CMD, Bat		| run			| cmd.exe		|
+ | sh 			| run			| sh			|
+ | csv 			| show			| 				|
+ | btfont [TODO]| edit, show	| 				|
  
 ### Disadvantages
   
