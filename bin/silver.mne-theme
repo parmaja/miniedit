@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <rtti version="1.0" author="MiniXML">
   <Object Type="TGlobalAttributes">
+    <Name>silver</Name>
     <Default Class="TGlobalAttribute">
       <BackColor>14671839</BackColor>
       <ForeColor>clBlack</ForeColor>
@@ -40,7 +41,7 @@
     </Modified>
     <Keyword Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>12274176</ForeColor>
+      <ForeColor>16739597</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Keyword>
     <Symbol Class="TGlobalAttribute">
@@ -65,7 +66,7 @@
     </Identifier>
     <Variable Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>clSkyBlue</ForeColor>
+      <ForeColor>4400652</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Variable>
     <Standard Class="TGlobalAttribute">

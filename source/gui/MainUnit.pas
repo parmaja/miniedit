@@ -1058,6 +1058,12 @@ begin
     SaveAct.Enabled := False;
     SaveAllAct.Enabled := Engine.GetIsChanged;
   end;
+  if Engine.Session.Active and (Engine.Session.Project.Tendency <> nil) then
+    TypePnl.Caption := Engine.Session.Project.Tendency.Name
+  else if (Engine.Files.Current <> nil) and (Engine.Files.Current.Tendency <> nil) then
+    TypePnl.Caption := Engine.Files.Current.Tendency.Name
+  else
+    TypePnl.Caption := 'Undefined';
   //  DebugPnl.Visible := DebugPnl.Caption <> '';
   UpdateMenu;
   UpdateMenuItems;
@@ -1907,10 +1913,6 @@ begin
     SCMMnu.Caption := Engine.SCM.Name
   else
     SCMMnu.Caption := '';
-  if Engine.Session.Active and (Engine.Session.Project.Tendency <> nil) then
-    TypePnl.Caption := Engine.Session.Project.Tendency.Name
-  else
-    TypePnl.Caption := 'Undefined';
 
   UpdateMenu;
   UpdateMenuItems;
