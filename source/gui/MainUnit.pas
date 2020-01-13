@@ -2692,8 +2692,13 @@ begin
   FileHeaderPanel.Visible := Engine.Files.Count > 0;
   if FileHeaderPanel.Visible then
     FileHeaderPanel.Refresh;
-  if Engine.Session.Project.IsActive then
-    MainFileAct.Caption := Engine.Session.Project.RunOptions.MainFile
+  if Engine.Session.Project <> nil then
+  begin
+    if Engine.Session.Project.IsActive then
+      MainFileAct.Caption := Engine.Session.Project.RunOptions.MainFile
+    else
+      MainFileAct.Caption := ExtractFileName(Engine.Session.Project.RunOptions.MainFile)
+  end
   else
     MainFileAct.Caption := '';
   MainFileAct.Visible := MainFileAct.Caption <> '';

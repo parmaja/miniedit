@@ -19,7 +19,7 @@ object MainForm: TMainForm
   ParentFont = True
   Position = poDefaultPosOnly
   ShowHint = True
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.0.6.0'
   object TopToolbar: TToolBar
     Left = 0
     Height = 29
