@@ -55,6 +55,7 @@ var
   fv: TFileVersionInfo;
 begin
   s := ' Lazarus: '  + IntToStr(lcl_fullversion) + ' FPC: ' + IntToStr(FPC_FULLVERSION);
+  //FPC_FULLVERSION //need C Style macro to enable it
 
   fv:=TFileVersionInfo.Create(nil);
   try
