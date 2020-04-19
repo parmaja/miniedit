@@ -96,7 +96,18 @@ uses
     { INotifyEngine }
 
     INotifyEngine = interface(IInterface)
-      procedure EditorChangeState(State: TEditorChangeStates);
+      ['{1BFF59EA-1B50-483D-A34C-9C925ABCD88C}']
+      procedure ChangeState(State: TEditorChangeStates);
+    end;
+
+    ISettingNotifyEngine = interface(INotifyEngine)
+      ['{371F2173-3169-4C93-9EDC-206BDDA9903F}']
+      procedure SaveOptions;
+      procedure LoadOptions;
+    end;
+
+    IEditorNotifyEngine = interface(INotifyEngine)
+      ['{B3ACF9DF-2A37-4693-A7A5-FBF47DCAFC92}']
       procedure EngineAction(EngineAction: TEditorAction);
       procedure EngineMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);
       procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);

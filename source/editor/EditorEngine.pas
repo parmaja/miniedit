@@ -31,7 +31,7 @@ uses
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
-  dbgpServers, Masks, mnXMLRttiProfile, mnXMLUtils, mnClasses,
+  dbgpServers, Masks, mnXMLRttiProfile, mnXMLUtils, mnClasses, fgl,
   mnUtils, LCLType, EditorClasses, EditorRun;
 
 type
@@ -1075,6 +1075,8 @@ type
     function GetMessages(Name: string): TEditorMessages;
   end;
 
+  TEditorNotifyList = specialize TFPGList<INotifyEngine>;
+
   TOnFoundEvent = procedure(FileName: string; const Line: string; LineNo, Column, FoundLength: integer) of object;
   TOnEditorChangeState = procedure(State: TEditorChangeStates) of object;
 
@@ -1121,7 +1123,9 @@ type
   protected
     FSafeMode: Boolean;
     FInUpdateState: Integer;
-    FNotifyObject: INotifyEngine; //TODO should be list
+    //FNotifyObject: IEditorNotifyEngine; //TODO should be list
+    FNotifyObjects: TEditorNotifyList;
+
     property SearchEngine: TSynEditSearch read FSearchEngine;
     procedure InternalChangedState(State: TEditorChangeStates);
     procedure DoChangedState(State: TEditorChangeStates); virtual;
@@ -1130,6 +1134,9 @@ type
   public
     constructor Create; virtual;
     destructor Destroy; override;
+
+    procedure RegisterNotify(NotifyEngine: INotifyEngine);
+    procedure UnregisterNotify(NotifyEngine: INotifyEngine);
 
     procedure Startup(vSafeMode: Boolean = False);
     procedure OpenDefaultProject;
@@ -1189,8 +1196,6 @@ type
     property DefaultProject: TDefaultProject read FDefaultProject; //used when there is no project action, it is assigned to project, but not active
     property SCM: TEditorSCM read GetSCM;
     function GetIsChanged: Boolean;
-    procedure SetNotifyEngine(ANotifyObject: INotifyEngine);
-    procedure RemoveNotifyEngine(ANotifyObject: INotifyEngine);
     property MacroRecorder: TSynMacroRecorder read FMacroRecorder;
     procedure SendLog(S: string);
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType);
@@ -2786,6 +2791,7 @@ begin
   FMessagesList := TEditorMessagesList.Create;
   FMacroRecorder := TSynMacroRecorder.Create(nil);
   FMacroRecorder.OnStateChange := @DoMacroRecorderChanged;
+  FNotifyObjects := TEditorNotifyList.Create;
 
   FEnvironment.Add('Home=' + SysUtils.GetEnvironmentVariable('HOME'));
   FEnvironment.Add('EXE=' + Application.ExeName);
@@ -2815,7 +2821,7 @@ end;
 
 destructor TEditorEngine.Destroy;
 begin
-  SetNotifyEngine(nil);
+  FreeAndNil(FNotifyObjects);
   if (FEngineLife >= engnStarting) and (FEngineLife <= engnShutdowning) then
     Shutdown;
   FreeAndNil(FDebugLink);
@@ -2833,6 +2839,16 @@ begin
   //FreeAndNil(FForms);
   FreeAndNil(FEnvironment);
   inherited;
+end;
+
+procedure TEditorEngine.RegisterNotify(NotifyEngine: INotifyEngine);
+begin
+  FNotifyObjects.Add(NotifyEngine);
+end;
+
+procedure TEditorEngine.UnregisterNotify(NotifyEngine: INotifyEngine);
+begin
+  FNotifyObjects.Remove(NotifyEngine);
 end;
 
 procedure EnumFiles(Folder, Filter: string; FileList: TStringList);
@@ -3015,9 +3031,14 @@ begin
 end;
 
 procedure TEditorEngine.DoReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
+var
+  i: Integer;
 begin
-  if FNotifyObject <> nil then
-    FNotifyObject.EngineReplaceText(Sender, ASearch, AReplace, Line, Column, ReplaceAction);
+  for i := 0 to FNotifyObjects.Count -1 do
+  begin
+    if FNotifyObjects[i] is IEditorNotifyEngine then
+      (FNotifyObjects[i] as IEditorNotifyEngine).EngineReplaceText(Sender, ASearch, AReplace, Line, Column, ReplaceAction);
+  end;
 end;
 
 function TEditorFiles.FindFile(const vFileName: string): TEditorFile;
@@ -3713,6 +3734,12 @@ begin
           XMLReadObjectFile(Tendencies[i], aFile);
       end;
     end;
+    for i := 0 to FNotifyObjects.Count-1 do
+    begin
+      if (FNotifyObjects[i] is ISettingNotifyEngine) then
+        (FNotifyObjects[i] as ISettingNotifyEngine).LoadOptions;
+    end;
+
     UpdateOptions;
     UpdateState([ecsOptions]);
   finally
@@ -3768,6 +3795,11 @@ begin
       aFile := Workspace + 'mne-tendency-' + LowerCase(Tendencies[i].Name) + '.xml';
       XMLWriteObjectFile(Tendencies[i], aFile);
     end;
+  end;
+  for i := 0 to FNotifyObjects.Count-1 do
+  begin
+    if (FNotifyObjects[i] is ISettingNotifyEngine) then
+      (FNotifyObjects[i] as ISettingNotifyEngine).SaveOptions;
   end;
 end;
 
@@ -3903,20 +3935,6 @@ begin
   Result := (Files.GetEditedCount > 0) or Session.IsChanged;
 end;
 
-procedure TEditorEngine.SetNotifyEngine(ANotifyObject: INotifyEngine);
-begin
-  if (FNotifyObject <> nil) and (ANotifyObject <> nil) then
-    raise Exception.Create('There is already NotifyObject');
-  FNotifyObject := ANotifyObject;
-end;
-
-procedure TEditorEngine.RemoveNotifyEngine(ANotifyObject: INotifyEngine);
-begin
-  if (FNotifyObject <> nil) and (FNotifyObject <> ANotifyObject) then
-    raise Exception.Create('NotifyObject not exists');
-  FNotifyObject := nil; //TODO if list we should remove it
-end;
-
 procedure TEditorEngine.SendLog(S: string);
 begin
   SendMessage(S, msgtLog);
@@ -3931,24 +3949,42 @@ begin
 end;
 
 procedure TEditorEngine.SendMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);
+var
+  i: Integer;
 begin
   if not IsShutdown then
-    if FNotifyObject <> nil then
-      FNotifyObject.EngineMessage(S, vMessageType, vError);
+    for i := 0 to FNotifyObjects.Count -1 do
+    begin
+      if FNotifyObjects[i] is IEditorNotifyEngine then
+        (FNotifyObjects[i] as IEditorNotifyEngine).EngineMessage(S, vMessageType, vError);
+    end;
 end;
 
 procedure TEditorEngine.SendAction(EditorAction: TEditorAction);
+var
+  i: Integer;
 begin
   if not IsShutdown then
-    if FNotifyObject <> nil then
-      FNotifyObject.EngineAction(EditorAction);
+  begin
+    for i := 0 to FNotifyObjects.Count -1 do
+    begin
+      if (FNotifyObjects[i] is IEditorNotifyEngine) then
+        (FNotifyObjects[i] as IEditorNotifyEngine).EngineAction(EditorAction);
+    end;
+  end;
 end;
 
 procedure TEditorEngine.DoChangedState(State: TEditorChangeStates);
+var
+  i: Integer;
 begin
   if not IsShutdown then
-    if FNotifyObject <> nil then
-      FNotifyObject.EditorChangeState(State);
+  begin
+    for i := 0 to FNotifyObjects.Count -1 do
+    begin
+      FNotifyObjects[i].ChangeState(State);
+    end;
+end;
 end;
 
 procedure TEditorEngine.UpdateState(State: TEditorChangeStates);

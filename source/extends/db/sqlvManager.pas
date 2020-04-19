@@ -47,7 +47,6 @@ type
     MembersGrid: TntvGrid;
     MetaLbl: TLabel;
     OpenBtn: TButton;
-    OpenedDatabasesList: TListView;
     FileMnu: TMenuItem;
     ExitMnu: TMenuItem;
     FirstBtn: TButton;
@@ -57,7 +56,6 @@ type
     MenuItem3: TMenuItem;
     HelpMnu: TMenuItem;
     ActionsPopupMenu: TPopupMenu;
-    Panel1: TPanel;
     SaveMnu: TMenuItem;
     SaveAsMnu: TMenuItem;
     OpenMnu: TMenuItem;
@@ -139,9 +137,9 @@ begin
   begin
     aGroups := TsqlvAddons.Create;
     try
-      sqlvEngine.Enum(vAddon.Name, aGroups, sqlvEngine.DB.IsActive);
+      DBEngine.Enum(vAddon.Name, aGroups, DBEngine.DB.IsActive);
 
-      g := sqlvEngine.Stack.Current.Select;
+      g := DBEngine.Stack.Current.Select;
       aGroup := nil;
       d := -1;
       c := 0;
@@ -184,12 +182,12 @@ begin
     finally
       aGroups.Free;
     end;
-    MetaLbl.Caption := vAddon.Title + ': ' + sqlvEngine.Stack.Current.Attributes[sqlvEngine.Stack.Current.Addon.Name];
+    MetaLbl.Caption := vAddon.Title + ': ' + DBEngine.Stack.Current.Attributes[DBEngine.Stack.Current.Addon.Name];
 
     if aGroup <> nil then
-      sqlvEngine.Stack.Current.Select := aGroup.Name;
+      DBEngine.Stack.Current.Select := aGroup.Name;
 
-    LoadMembers(aGroup, sqlvEngine.Stack.Current.Attributes); //if group is nil it must clear the member grid
+    LoadMembers(aGroup, DBEngine.Stack.Current.Attributes); //if group is nil it must clear the member grid
   end;
 end;
 
@@ -270,11 +268,11 @@ end;
 
 procedure TsqlvManagerForm.BackBtnClick(Sender: TObject);
 begin
-  if sqlvEngine.Stack.Count > 1 then
+  if DBEngine.Stack.Count > 1 then
   begin
-    sqlvEngine.Stack.Pop;
-    if (sqlvEngine.Stack.Current <> nil) then
-      sqlvEngine.Run(sqlvEngine.Stack);
+    DBEngine.Stack.Pop;
+    if (DBEngine.Stack.Current <> nil) then
+      DBEngine.Run(DBEngine.Stack);
   end;
 end;
 
@@ -290,9 +288,9 @@ end;
 
 procedure TsqlvManagerForm.FirstBtnClick(Sender: TObject);
 begin
-  sqlvEngine.Stack.Clear;
-//  sqlvEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabasesCbo.Text));
-  sqlvEngine.Run;
+  DBEngine.Stack.Clear;
+//  DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabasesCbo.Text));
+  DBEngine.Run;
 end;
 
 procedure TsqlvManagerForm.FormShortCut(var Msg: TLMKey; var Handled: Boolean);
@@ -410,8 +408,8 @@ end;
 
 procedure TsqlvManagerForm.CollectAttributes(vAttributes: TsqlvAttributes);
 begin
-  vAttributes.Clone(sqlvEngine.Stack.Current.Attributes);
-  //vAttributes.Values[sqlvEngine.Stack.Current.Addon.Name] := sqlvEngine.Stack.Current.Value;
+  vAttributes.Clone(DBEngine.Stack.Current.Attributes);
+  //vAttributes.Values[DBEngine.Stack.Current.Addon.Name] := DBEngine.Stack.Current.Value;
   vAttributes.Values[CurrentGroup.ItemName] := MembersGrid.Values[0, MembersGrid.Current.Row];
   DumpAttributes(vAttributes);
 end;
@@ -440,7 +438,7 @@ begin
     Actions := TsqlvAddons.Create;
     aList := TsqlvAddons.Create;
     try
-      sqlvEngine.Enum(vGroup, aList, sqlvEngine.DB.IsActive);
+      DBEngine.Enum(vGroup, aList, DBEngine.DB.IsActive);
       c := 0;
       for i := 0 to aList.Count - 1 do
         if nsCommand in aList[i].Style then
@@ -485,7 +483,7 @@ end;
 
 destructor TsqlvManagerForm.Destroy;
 begin
-  sqlvEngine.DB.Close;
+  DBEngine.DB.Close;
   FreeAndNil(GroupsNames);
   FreeAndNil(sqlvGui);
   inherited Destroy;
@@ -507,11 +505,11 @@ begin
     DebugLn('AValue='+AValue);
     {$endif}
     CollectAttributes(a);
-    with sqlvEngine.Stack do
+    with DBEngine.Stack do
       if Current.Addon <> nil then
       begin
         TsqlvProcess.Create(CurrentGroup.Name, CurrentGroup.ItemName, AValue, a);
-        sqlvEngine.Run;
+        DBEngine.Run;
       end;
         //what if Addon <> nil or what if Current.Addon.Item = ''
   finally
@@ -531,11 +529,11 @@ begin
     DebugLn('OpenGroup.AValue='+AValue);
     {$endif}
     //CollectAttributes(a);
-    with sqlvEngine.Stack do
+    with DBEngine.Stack do
       if (Current <> nil) and (GroupsList.Items.Count > 0) and (GroupsList.ItemIndex >=0) then
       begin
-        sqlvEngine.Stack.Push(TsqlvProcess.Create(Current.Addon, AValue, Current.Attributes));
-        sqlvEngine.Run;
+        DBEngine.Stack.Push(TsqlvProcess.Create(Current.Addon, AValue, Current.Attributes));
+        DBEngine.Run;
       end;
   finally
     a.Free;

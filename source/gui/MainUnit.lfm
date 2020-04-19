@@ -19,7 +19,7 @@ object MainForm: TMainForm
   ParentFont = True
   Position = poDefaultPosOnly
   ShowHint = True
-  LCLVersion = '2.0.6.0'
+  LCLVersion = '2.1.0.0'
   object TopToolbar: TToolBar
     Left = 0
     Height = 29
@@ -138,7 +138,7 @@ object MainForm: TMainForm
       OnClick = EditorsPnlClick
       object FileTabs: TntvTabSet
         Left = 0
-        Height = 20
+        Height = 25
         Top = 0
         Width = 752
         AutoSize = True
@@ -2772,8 +2772,8 @@ object MainForm: TMainForm
   end
   object FolderMenu: TPopupMenu
     Images = EditorResource.ToolbarImageList
-    Left = 474
-    Top = 187
+    Left = 180
+    Top = 169
     object Home1: TMenuItem
       Action = FolderHomeAct
       OnClick = FolderHomeActExecute
@@ -2813,7 +2813,7 @@ object MainForm: TMainForm
     end
     object ExploreFileFolderMnu: TMenuItem
       Caption = 'Explore Folder'
-      ImageIndex = 30
+      ImageIndex = 33
       OnClick = ExploreFileFolderMnuClick
     end
     object MenuItem2: TMenuItem

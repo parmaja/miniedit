@@ -12,7 +12,7 @@ object EditorSettingForm: TEditorSettingForm
   OnClose = FormClose
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.0.6.0'
   object OkBtn: TButton
     Left = 347
     Height = 26
@@ -40,9 +40,9 @@ object EditorSettingForm: TEditorSettingForm
     Height = 266
     Top = 3
     Width = 419
-    ActivePage = TabSheet2
+    ActivePage = TabSheet4
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 0
+    TabIndex = 1
     TabOrder = 2
     object TabSheet2: TTabSheet
       Caption = 'Options'
@@ -162,33 +162,13 @@ object EditorSettingForm: TEditorSettingForm
         Caption = 'example: inc;php3;php4'
         ParentColor = False
       end
-      object ExtensionsGrid: TStringGrid
-        Left = 2
-        Height = 114
-        Top = 81
-        Width = 402
-        Anchors = [akTop, akLeft, akRight, akBottom]
-        AutoFillColumns = True
-        ColCount = 2
-        DefaultRowHeight = 18
-        Flat = True
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goDrawFocusSelected, goColSizing, goEditing, goThumbTracking]
-        RowCount = 3
-        TabOrder = 0
-        TitleFont.Height = -11
-        TitleFont.Name = 'MS Sans Serif'
-        ColWidths = (
-          129
-          272
-        )
-      end
       object IgnoreNamesEdit: TEdit
         Left = 2
         Height = 21
         Top = 216
         Width = 402
         Anchors = [akLeft, akBottom]
-        TabOrder = 1
+        TabOrder = 0
       end
       object Label11: TLabel
         Left = 2
@@ -214,7 +194,25 @@ object EditorSettingForm: TEditorSettingForm
         Top = 7
         Width = 303
         Caption = 'Fallback to txt file if file not recognized when trying to open it'
+        TabOrder = 1
+      end
+      object ExtensionsGrid: TntvGrid
+        Left = 2
+        Height = 120
+        Top = 73
+        Width = 402
+        Anchors = [akTop, akLeft, akRight, akBottom]
+        BorderStyle = bsSingle
+        ColWidth = 80
+        FixedFontColor = clBlack
+        Gutter = False
+        RowHeight = 22
+        RowNumbers = False
+        Capacity = 1
+        Selected.TextColor = clHighlightText
         TabOrder = 2
+        FullHeader = True
+        OnClick = ExtensionsGridClick
       end
     end
   end

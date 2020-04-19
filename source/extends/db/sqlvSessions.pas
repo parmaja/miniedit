@@ -14,7 +14,7 @@ interface
 
 uses
   SysUtils, Classes, mncMeta,
-  mncSQL, mncConnections, mncDB;
+  mncSQL, mncConnections, mncDB, EditorEngine, EditorClasses;
 
 type
   TsqlvOnNotifySession = procedure of object;
@@ -50,17 +50,20 @@ type
     destructor Destroy; override;
     function CreateMeta: TmncMeta;
     procedure LoadMeta;
-    procedure Open(DatabaseType, Name:string; vAutoCreate, vExclusive, vVacuum: Boolean);
+    procedure Open(DatabaseEngine, Name:string; vAutoCreate, vExclusive, vVacuum: Boolean);
     procedure Close;
     function IsActive: Boolean;
     procedure Connected;
     procedure Disconnected;
+
     property OnConnected: TsqlvOnNotifySession read FOnConnected write FOnConnected;
     property OnDisconnected: TsqlvOnNotifySession read FOnDisconnected write FOnDisconnected;
     property OnSessionStarted: TsqlvOnNotifySession read FOnSessionStarted write FOnSessionStarted;
     property OnSessionStoped: TsqlvOnNotifySession read FOnSessionStoped write FOnSessionStoped;
+
     property Connection: TmncSQLConnection read FConnection;
     property Session: TmncSQLSession read FSession;
+
     property Tables: TmncMetaItems read FTables;
     property Proceduers: TmncMetaItems read FProceduers;
     property Views: TmncMetaItems read FViews;
@@ -86,7 +89,7 @@ uses
 procedure TsqlvDB.Connected;
 begin
   if FVacuum then
-    Connection.Execute('vacuum');
+    Connection.Vacuum;
   Session.Start;
   LoadMeta;
   RunLoginSQL;
@@ -97,16 +100,6 @@ end;
 constructor TsqlvDB.Create;
 begin
   inherited;
-  {$ifdef FIREBIRD}
-  FConnection := DB.CreateByName('FirebirdSQL') as TmncSQLConnection;
-  {$else}
-  FConnection := DB.CreateConnection('SQLite') as TmncSQLConnection;
-  {$endif}
-
-  FSession := FConnection.CreateSession;
-  FConnection.OnConnected :=  @ConnectionAfterConnect;
-  FConnection.OnDisconnected :=  @ConnectionAfterDisconnect;
-
   FTables := TmncMetaItems.Create;
   FProceduers := TmncMetaItems.Create;
   FViews := TmncMetaItems.Create;
@@ -134,7 +127,8 @@ end;
 
 function TsqlvDB.CreateMeta: TmncMeta;
 begin
-  Result := Meta.CreateMeta(Connection);
+  Result := Engines.CreateMeta(Connection);
+  Result.Link := Session;
 end;
 
 procedure TsqlvDB.Disconnected;
@@ -148,9 +142,9 @@ procedure TsqlvDB.LoadMeta;
 var
   AMeta: TmncMeta;
 begin
-  if sqlvEngine.Setting.CacheMetas then
+  if DBEngine.Setting.CacheMetas then
   begin
-    AMeta := Meta.CreateMeta(FConnection);
+    AMeta := Engines.CreateMeta(FConnection);
     try
       AMeta.Link := Session;
       AMeta.EnumObjects(Tables, sokTable, '', [ekSystem, ekSort]);
@@ -162,37 +156,48 @@ begin
       AMeta.EnumObjects(Domains, sokDomain, '', [ekSort]);
       AMeta.EnumObjects(Fields, sokField);
     finally
-      Meta.Free;
+      AMeta.Free;
     end;
   end;
 end;
 
-procedure TsqlvDB.Open(DatabaseType, Name: string; vAutoCreate, vExclusive, vVacuum: Boolean);
+procedure TsqlvDB.Open(DatabaseEngine, Name: string; vAutoCreate, vExclusive, vVacuum: Boolean);
 begin
+  FConnection := Engines.CreateConnection(DatabaseEngine) as TmncSQLConnection;
+
   FVacuum := vVacuum;
   FExclusive := vExclusive;
+
   Connection.Resource := Name;
-  Connection.AutoCreate := vAutoCreate;
+  //Connection.AutoCreate := vAutoCreate;
   Connection.UserName := 'sysdba';//Firebird
   Connection.Password := 'masterkey';
   //DBConnection.Exclusive := FExclusive;//TODO
 
+  DBEngine.AddRecent(Engines.ComposeConnectionString(Connection));
+
+  FSession := FConnection.CreateSession;
+  FConnection.OnConnected :=  @ConnectionAfterConnect;
+  FConnection.OnDisconnected :=  @ConnectionAfterDisconnect;
+
   Connection.Connect;
-  sqlvEngine.AddRecent(Name);
-  sqlvEngine.SaveRecents;
+  //Engine.SendLog()
+  Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsRecents, ecsProject, ecsProjectLoaded]);
 end;
 
 procedure TsqlvDB.Close;
 begin
-  if Session.Active then
+  if (Session <> nil) and Session.Active then
     Session.Stop;
-  if Connection.Connected then
+  if (Connection <> nil) and Connection.Connected then
     Connection.Disconnect;
+  FreeAndNil(FSession);
+  FreeAndNil(FConnection);
 end;
 
 function TsqlvDB.IsActive: Boolean;
 begin
-  Result := Connection.Active;
+  Result := (Connection <> nil) and Connection.Active;
 end;
 
 procedure TsqlvDB.RunLoginSQL;
@@ -201,16 +206,16 @@ var
 begin
   CMD := Session.CreateCommand;
   try
-    if sqlvEngine.Setting.InternalLoginSQL <> '' then
+    if DBEngine.Setting.InternalLoginSQL <> '' then
     begin
-      CMD.SQL.Text := sqlvEngine.Setting.InternalLoginSQL;
+      CMD.SQL.Text := DBEngine.Setting.InternalLoginSQL;
       CMD.Execute;
       CMD.Session.Commit(True);
     end;
-    if sqlvEngine.Setting.LoginSQL <> '' then
+    if DBEngine.Setting.LoginSQL <> '' then
     begin
       CMD.Close;
-      CMD.SQL.Text := sqlvEngine.Setting.LoginSQL;
+      CMD.SQL.Text := DBEngine.Setting.LoginSQL;
       CMD.Execute;
       CMD.Session.Commit(True);
     end;
@@ -225,16 +230,16 @@ var
 begin
   CMD := Session.CreateCommand;
   try
-    if sqlvEngine.Setting.InternalLogoutSQL <> '' then
+    if DBEngine.Setting.InternalLogoutSQL <> '' then
     begin
-      CMD.SQL.Text := sqlvEngine.Setting.InternalLogoutSQL;
+      CMD.SQL.Text := DBEngine.Setting.InternalLogoutSQL;
       CMD.Execute;
       CMD.Session.Commit(True);
     end;
-    if sqlvEngine.Setting.LogoutSQL <> '' then
+    if DBEngine.Setting.LogoutSQL <> '' then
     begin
       CMD.Close;
-      CMD.SQL.Text := sqlvEngine.Setting.LogoutSQL;
+      CMD.SQL.Text := DBEngine.Setting.LogoutSQL;
       CMD.Execute;
       CMD.Session.Commit(True);
     end;

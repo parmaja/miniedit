@@ -22,6 +22,7 @@ type
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
+    Label7: TLabel;
     ServerEdit: TEdit;
     ExclusiveChk: TCheckBox;
     Label1: TLabel;
@@ -33,14 +34,15 @@ type
     PortEdit: TEdit;
     UserEdit: TEdit;
     PasswordEdit: TEdit;
+    UserEdit1: TEdit;
     VacuumChk: TCheckBox;
     procedure BrowseBtnClick(Sender: TObject);
     procedure CancelBtnClick(Sender: TObject);
-    procedure DirectoryFoundEvent(FileIterator: TFileIterator);
     procedure FormCreate(Sender: TObject);
     procedure OkBtnClick(Sender: TObject);
   private
   public
+    constructor Create(TheOwner: TComponent); override;
   end;
 
 implementation
@@ -57,7 +59,8 @@ begin
   OpenDialog.FileName := sFileNameFilter;
   OpenDialog.DefaultExt := sFileExtFilter;
   OpenDialog.Filter := sFileNameFilter;
-  OpenDialog.InitialDir := DatabaseCbo.Text;
+  if DatabaseCbo.Text <> '' then
+    OpenDialog.InitialDir := DatabaseCbo.Text;
   if OpenDialog.Execute then
   begin
     DatabaseCbo.Text := OpenDialog.FileName;
@@ -69,19 +72,27 @@ begin
   ModalResult := mrCancel;
 end;
 
-procedure TOpenDatabaseForm.DirectoryFoundEvent(FileIterator: TFileIterator);
-begin
-  DatabaseCbo.Items.Add(FileIterator.FileName);
-end;
-
 procedure TOpenDatabaseForm.FormCreate(Sender: TObject);
 begin
-  DB.EnumConnectionsModels(DatabaseTypeCbo.Items);
+  Engines.EnumConnections(DatabaseTypeCbo.Items);
 end;
 
 procedure TOpenDatabaseForm.OkBtnClick(Sender: TObject);
 begin
   ModalResult := mrOk;
+end;
+
+constructor TOpenDatabaseForm.Create(TheOwner: TComponent);
+var
+  i: Integer;
+  EngineName, Resource, Host, User, Password, Role: string;
+begin
+  inherited Create(TheOwner);
+  for i := 0 to DBEngine.Recents.Count -1 do
+  begin
+    Engines.DecomposeConnectionString(DBEngine.Recents[i], EngineName, Resource, Host, User, Password, Role);
+    DatabaseCbo.Items.Add(Resource);
+  end;
 end;
 
 end.

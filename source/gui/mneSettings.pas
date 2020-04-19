@@ -11,8 +11,8 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  EditorDebugger, EditorEngine, EditorClasses, Dialogs, StdCtrls, ComCtrls,
-  Grids;
+  EditorDebugger, EditorEngine, EditorClasses, ntvGrids, Dialogs, StdCtrls,
+  ComCtrls;
 
 type
 
@@ -28,6 +28,7 @@ type
     Label12: TLabel;
     Label4: TLabel;
     Label5: TLabel;
+    ExtensionsGrid: TntvGrid;
     OkBtn: TButton;
     CancelBtn: TButton;
     PageControl: TPageControl;
@@ -42,14 +43,16 @@ type
     Button1: TButton;
     TabSheet4: TTabSheet;
     Label9: TLabel;
-    ExtensionsGrid: TStringGrid;
     Label10: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure INIEditChange(Sender: TObject);
+    procedure ExtensionsGridClick(Sender: TObject);
   private
     FEngine: TEditorEngine;
     FExtraExtensions: array of string;
+    GroupCol: TntvStandardColumn;
+    ExtensionCol: TntvStandardColumn;
     procedure Retrieve;
     procedure Apply;
   public
@@ -172,12 +175,13 @@ begin
   FEngine.Options.CollectAutoComplete := CollectAutoCompleteChk.Checked;
   FEngine.Options.CollectTimeout := CollectTimeoutSpn.Position;
   FEngine.Options.AutoStartDebugServer := AutoStartDebugServerChk.Checked;
-  c := 1;
+  c := 0;
   for i := 0 to FEngine.Groups.Count - 1 do
   begin
     if not FEngine.Groups[i].Category.Tendency.IsDefault then
     begin
-      FEngine.Options.ExtraExtensions.Values[FExtraExtensions[c - 1]] := ExtensionsGrid.Cells[1, c];
+      ExtensionsGrid.ActiveRow := c;
+      FEngine.Options.ExtraExtensions.Values[FExtraExtensions[c]] := ExtensionCol.AsString;
       Inc(c);
     end;
   end;
@@ -196,18 +200,16 @@ begin
   CollectAutoCompleteChk.Checked := FEngine.Options.CollectAutoComplete;
   CollectTimeoutSpn.Position := FEngine.Options.CollectTimeout;
   AutoStartDebugServerChk.Checked := FEngine.Options.AutoStartDebugServer;
-  ExtensionsGrid.Cells[0, 0] := 'Group';
-  ExtensionsGrid.Cells[1, 0] := 'Extensions';
-  c := 1;
+  c := 0;
   for i := 0 to FEngine.Groups.Count - 1 do
   begin
     if not FEngine.Groups[i].Category.Tendency.IsDefault then
     begin
-      ExtensionsGrid.RowCount := c + 1;
-      ExtensionsGrid.Cells[0, c] := FEngine.Groups[i].Title;
-      ExtensionsGrid.Cells[1, c] := FEngine.Options.ExtraExtensions.Values[FEngine.Groups[i].Name];
-      SetLength(FExtraExtensions, c);
-      FExtraExtensions[c - 1] := FEngine.Groups[i].Name;
+      ExtensionsGrid.ActiveRow := c;
+      GroupCol.AsString := FEngine.Groups[i].Title;
+      ExtensionCol.AsString := FEngine.Options.ExtraExtensions.Values[FEngine.Groups[i].Name];
+      SetLength(FExtraExtensions, c + 1);
+      FExtraExtensions[c] := FEngine.Groups[i].Name;
       Inc(c);
     end;
   end;
@@ -222,6 +224,9 @@ end;
 
 procedure TEditorSettingForm.FormCreate(Sender: TObject);
 begin
+  GroupCol := TntvStandardColumn.Create(ExtensionsGrid, 'Group', 'GroupCol');
+  ExtensionCol := TntvStandardColumn.Create(ExtensionsGrid, 'Extension', 'ExtensionCol');
+  ExtensionCol.AutoSize := True;
   PageControl.ActivePageIndex := CurrentPage;
 end;
 
@@ -232,6 +237,11 @@ end;
 
 procedure TEditorSettingForm.INIEditChange(Sender: TObject);
 begin
+end;
+
+procedure TEditorSettingForm.ExtensionsGridClick(Sender: TObject);
+begin
+
 end;
 
 end.

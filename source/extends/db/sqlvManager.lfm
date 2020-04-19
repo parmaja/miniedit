@@ -10,23 +10,23 @@ object sqlvManagerForm: TsqlvManagerForm
   DesignTop = 197
   object ClientPanel: TPanel
     Left = 0
-    Height = 311
-    Top = 135
+    Height = 446
+    Top = 0
     Width = 275
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 311
+    ClientHeight = 446
     ClientWidth = 275
     TabOrder = 0
     object GroupPanel: TPanel
       Left = 0
-      Height = 288
+      Height = 423
       Top = 0
       Width = 275
       Align = alClient
       BevelOuter = bvNone
       BorderWidth = 2
-      ClientHeight = 288
+      ClientHeight = 423
       ClientWidth = 275
       TabOrder = 0
       object GroupsPanel: TPanel
@@ -103,7 +103,7 @@ object sqlvManagerForm: TsqlvManagerForm
       end
       object MembersGrid: TntvGrid
         Left = 4
-        Height = 206
+        Height = 341
         Top = 78
         Width = 267
         Align = alClient
@@ -128,43 +128,11 @@ object sqlvManagerForm: TsqlvManagerForm
     object Edit1: TEdit
       Left = 0
       Height = 23
-      Top = 288
+      Top = 423
       Width = 275
       Align = alBottom
       TabOrder = 1
       TextHint = 'Search'
-    end
-  end
-  object Panel1: TPanel
-    Left = 0
-    Height = 135
-    Top = 0
-    Width = 275
-    Align = alTop
-    ClientHeight = 135
-    ClientWidth = 275
-    TabOrder = 1
-    object OpenedDatabasesList: TListView
-      Left = 4
-      Height = 127
-      Top = 4
-      Width = 267
-      Align = alClient
-      BorderSpacing.Around = 3
-      Columns = <      
-        item
-          AutoSize = True
-          Caption = 'File Name'
-          Width = 68
-        end>
-      HideSelection = False
-      ParentColor = True
-      ReadOnly = True
-      RowSelect = True
-      ShowColumnHeaders = False
-      SmallImages = EditorResource.FileImages
-      TabOrder = 0
-      ViewStyle = vsReport
     end
   end
   object ActionsPopupMenu: TPopupMenu

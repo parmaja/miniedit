@@ -41,7 +41,7 @@
     </Modified>
     <Keyword Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>16739597</ForeColor>
+      <ForeColor>2124754</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Keyword>
     <Symbol Class="TGlobalAttribute">
@@ -51,7 +51,7 @@
     </Symbol>
     <Number Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>21156</ForeColor>
+      <ForeColor>35872</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Number>
     <Directive Class="TGlobalAttribute">
@@ -66,7 +66,7 @@
     </Identifier>
     <Variable Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>4400652</ForeColor>
+      <ForeColor>12224027</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Variable>
     <Standard Class="TGlobalAttribute">
@@ -101,7 +101,7 @@
     </EmbedText>
     <Comment Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>5658200</ForeColor>
+      <ForeColor>9803159</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Comment>
     <QuotedString Class="TGlobalAttribute">

@@ -56,7 +56,7 @@ type
 
   { TMainForm }
 
-  TMainForm = class(TForm, INotifyEngine)
+  TMainForm = class(TForm, INotifyEngine, IEditorNotifyEngine)
     GotoFileFolderAct: TAction;
     BrowserTabs: TntvPageControl;
     CallStackGrid: TStringGrid;
@@ -595,8 +595,8 @@ type
     procedure RunFile;
     procedure CompileFile;
     //
+    procedure ChangeState(State: TEditorChangeStates);
     procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
-    procedure EditorChangeState(State: TEditorChangeStates);
     procedure EngineMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);
     procedure AddError(vError: TErrorInfo); overload;
     procedure EngineAction(EngineAction: TEditorAction);
@@ -754,7 +754,7 @@ end;
 
 procedure TMainForm.DBConnectMnuClick(Sender: TObject);
 begin
-  sqlvEngine.OpenDatabase;
+  DBEngine.OpenDatabase;
 end;
 
 procedure TMainForm.DBGCompileActExecute(Sender: TObject);
@@ -1734,7 +1734,7 @@ begin
     Visible := True;
   end;
 
-  Engine.SetNotifyEngine(Self);
+  Engine.RegisterNotify(Self);
 
   Engine.Startup(GetKeyShiftState = [ssShift]);
 
@@ -1867,7 +1867,7 @@ begin
       Engine.Options.LastProject := '';
   Engine.Options.LastFolder := Engine.BrowseFolder;
   Engine.Session.Close;
-  Engine.RemoveNotifyEngine(Self);
+  Engine.UnregisterNotify(Self);
 
   Engine.Shutdown;
 end;
@@ -2026,7 +2026,7 @@ begin
   else
     FreeFrame;
   BrowserTabs.Page[ProjectPnl].Visible := FProjectFrame <> nil;
-  BrowserTabs.Page[DatabasePnl].Visible := sqlvEngine.DB.IsActive;
+  BrowserTabs.Page[DatabasePnl].Visible := DBEngine.DB.IsActive;
 end;
 
 procedure TMainForm.SaveAsProjectActExecute(Sender: TObject);
@@ -2278,7 +2278,7 @@ begin
   end;
 end;
 
-procedure TMainForm.EditorChangeState(State: TEditorChangeStates);
+procedure TMainForm.ChangeState(State: TEditorChangeStates);
 begin
   if ecsFolder in State then
     UpdateFolder;

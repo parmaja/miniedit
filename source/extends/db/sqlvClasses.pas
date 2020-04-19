@@ -13,8 +13,10 @@ interface
 
 uses
   SysUtils, Variants, Classes, Controls, Dialogs, Forms, Contnrs,
+  mnClasses, mnUtils,
+  EditorEngine, EditorClasses,
   mnXMLRttiProfile, mncCSVExchanges,
-  mncMeta, mnUtils, mnParams, mnFields, mncCSV,
+  mncDB, mncMeta, mnParams, mnFields, mncCSV,
   sqlvConsts, sqlvSessions, sqlvOpenDatabases, ImgList;
 
 const
@@ -115,21 +117,17 @@ type
 
   { TsqlvStack }
 
-  TsqlvStack = class(TObjectList)
+  TsqlvStack = class(specialize TmnObjectList<TsqlvProcess>)
   private
     function GetCurrent: TsqlvProcess;
-    function GetItem(Index: Integer): TsqlvProcess;
-    procedure SetItem(Index: Integer; const Value: TsqlvProcess);
   public
     constructor Create;
-    function Find(const Name: string): TsqlvProcess;
     function Add(AItem: TsqlvProcess): Integer; overload;
     function Push(AItem: TsqlvProcess): Integer;
     procedure Pop;
     procedure Top; //pop all to top
     procedure Trim(ToCount: Integer); //Similar to SetCount
     property Current: TsqlvProcess read GetCurrent;
-    property Items[Index: Integer]: TsqlvProcess read GetItem write SetItem;
   end;
 
   TsqlvAddons = class;
@@ -150,9 +148,8 @@ type
 
   { TsqlvAddon }
 
-  TsqlvAddon = class(TObject)
+  TsqlvAddon = class(TmnNamedObject)
   private
-    FName: string;
     FItemName: string;
     FGroup: string;
     FStyle: TsqlvAddonStyle;
@@ -174,7 +171,7 @@ type
     procedure EnumMeta(vItems: TmncMetaItems; vAttributes: TsqlvAttributes = nil); virtual; abstract;
     property CanExecute: Boolean read GetCanExecute;
     property Group: string read FGroup write FGroup; //Group is parent Addon like Tabkes.Group = 'Database'
-    property Name: string read FName write FName; //Name = 'Tables'
+    //property Name: string read FName write FName; //Name = 'Tables'
     property ItemName: string read FItemName write FItemName; //Item name eg  Tables.Item = 'Table'
     property Kind: TschmKind read FKind write FKind default sokNone;
     property Style: TsqlvAddonStyle read FStyle write FStyle;
@@ -186,17 +183,13 @@ type
 
   { TsqlvCustomAddons }
 
-  TsqlvCustomAddons = class(TObjectList)
+  TsqlvCustomAddons = class(specialize TmnNamedObjectList<TsqlvAddon>)
   private
-    function GetItem(Index: Integer): TsqlvAddon;
-    procedure SetItem(Index: Integer; const Value: TsqlvAddon);
   public
     procedure Enum(GroupName: string; Addons: TsqlvAddons; SessionActive: Boolean; OnlyDefaults: Boolean = False); overload;
-    function Find(const Name: string): TsqlvAddon;
     function Find(const Group, Name: string): TsqlvAddon;
     function Find(const Group, Name: string; Deep: Boolean): TsqlvAddon;
     function IsExists(vAddon: TsqlvAddon): Boolean;
-    property Items[Index: Integer]: TsqlvAddon read GetItem write SetItem; default;
   end;
 
   { TsqlvAddons }
@@ -218,13 +211,12 @@ type
 
   { TsqlvHistory }
 
-  TsqlvCustomHistory = class(TObjectList)
+  TsqlvCustomHistory = class(specialize TmnObjectList<TsqlvCustomHistoryItem>)
   private
     FIndex: Integer;
     FMaxCount: Integer;
     FOnChanged: TNotifyEvent;
     function GetCurrent: TsqlvCustomHistoryItem;
-    function GetItem(Index: Integer): TsqlvCustomHistoryItem;
   protected
     function CreateItem: TsqlvCustomHistoryItem; virtual; abstract;
   public
@@ -238,7 +230,6 @@ type
     property Current: TsqlvCustomHistoryItem read GetCurrent;
     property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
     property MaxCount: Integer read FMaxCount write FMaxCount;
-    property Items[Index: Integer]: TsqlvCustomHistoryItem read GetItem; default;
     property Index: Integer read FIndex write FIndex;
   end;
 
@@ -287,28 +278,27 @@ type
     property Current: TsqlvAddonHistoryItem read GetCurrent;
   end;
 
-  { TsqlvEngine }
+  { TDBEngine }
 
-  TsqlvEngine = class(TsqlvCustomAddons)
+  TDBEngine = class(TsqlvCustomAddons, INotifyEngine, ISettingNotifyEngine)
   private
     FDB: TsqlvDB;
     FSetting: TsqlvSetting;
     FRecents: TStringList;
     FStack: TsqlvStack;
-    FWorkPath: string;
     FHistory: TsqlvAddonHistory;
     FSQLHistory: TsqlvSQLHistory;
-    procedure SetWorkPath(const Value: string);
   public
     constructor Create;
     destructor Destroy; override;
 
     procedure OpenDatabase;
 
-    procedure LoadSetting;
-    procedure SaveSetting;
-    procedure LoadRecents;
-    procedure SaveRecents;
+    procedure LoadOptions;
+    procedure SaveOptions;
+
+    procedure ChangeState(State: TEditorChangeStates);
+
     procedure Run(vStack: TsqlvStack);
     procedure Run(vAddon: TsqlvAddon; vAttributes: TsqlvAttributes);
     procedure Run;
@@ -316,22 +306,18 @@ type
     procedure RegisterFilter(Filter: string);
     procedure RegisterViewer(Classes: array of TsqlvAddonClass);
     procedure AddRecent(Name:string);
-    procedure LoadFile(FileName:string; Strings:TStrings);
-    procedure SaveFile(FileName:string; Strings:TStrings);
+    procedure LoadFile(FileName:string; Strings: TStrings);
+    procedure SaveFile(FileName:string; Strings: TStrings);
     function GetAllSupportedFiles: string;
     property Setting: TsqlvSetting read FSetting;
     property Recents: TStringList read FRecents;
     property DB: TsqlvDB read FDB;
-    property WorkPath :string read FWorkPath write SetWorkPath;
     property History: TsqlvAddonHistory read FHistory;
     property Stack: TsqlvStack read FStack;
     property SQLHistory: TsqlvSQLHistory read FSQLHistory;
   end;
 
-var
-  AddOpenSaveDialogFilters: string = '';
-
-function sqlvEngine: TsqlvEngine;
+function DBEngine: TDBEngine;
 
 procedure DumpAttributes(a: TsqlvAttributes);
 
@@ -354,13 +340,13 @@ begin
 end;
 
 var
-  FsqlvEngine: TsqlvEngine = nil;
+  FDBEngine: TDBEngine = nil;
 
-function sqlvEngine: TsqlvEngine;
+function DBEngine: TDBEngine;
 begin
-  if FsqlvEngine = nil then
-    FsqlvEngine := TsqlvEngine.Create;
-  Result := FsqlvEngine;
+  if FDBEngine = nil then
+    FDBEngine := TDBEngine.Create;
+  Result := FDBEngine;
 end;
 
 { TsqlvAttribute }
@@ -391,7 +377,7 @@ constructor TsqlvProcess.Create(Group, Name: string; vSelect: string; vAttribute
 var
   aAddon: TsqlvAddon;
 begin
-  aAddon := sqlvEngine.Find(Group, Name, True);
+  aAddon := DBEngine.Find(Group, Name, True);
   if aAddon = nil then
     raise Exception.Create('Addon not found' + Group + '\' + Name);
   Create(aAddon, Select, Attributes);
@@ -452,34 +438,9 @@ begin
   Result := Last as TsqlvProcess;
 end;
 
-function TsqlvStack.GetItem(Index: Integer): TsqlvProcess;
-begin
-  Result := inherited Items[Index] as TsqlvProcess;
-end;
-
-procedure TsqlvStack.SetItem(Index: Integer; const Value: TsqlvProcess);
-begin
-  inherited Items[Index] := Value;
-end;
-
 constructor TsqlvStack.Create;
 begin
   inherited Create(True);
-end;
-
-function TsqlvStack.Find(const Name: string): TsqlvProcess;
-var
-  i: Integer;
-begin
-  Result := nil;
-  for i := 0 to Count - 1 do
-  begin
-    if SameText(Name, Items[i].Addon.Name) then
-    begin
-      Result := Items[i];
-      break;
-    end;
-  end;
 end;
 
 function TsqlvStack.Add(AItem: TsqlvProcess): Integer;
@@ -589,7 +550,7 @@ begin
   inherited;
 end;
 
-procedure TsqlvEngine.RegisterViewer(Classes: array of TsqlvAddonClass);
+procedure TDBEngine.RegisterViewer(Classes: array of TsqlvAddonClass);
 var
   i: Integer;
 begin
@@ -597,7 +558,7 @@ begin
     Add(Classes[i].Create);
 end;
 
-procedure TsqlvEngine.AddRecent(Name: string);
+procedure TDBEngine.AddRecent(Name: string);
 var
   i: Integer;
 begin
@@ -608,36 +569,31 @@ begin
     Recents.Insert(0, Name);
   if Recents.Count > 10 then
     Recents.Capacity := 10;
+  FRecents.SaveToFile(Engine.WorkSpace + sqlvRecents);
 end;
 
-procedure TsqlvEngine.LoadFile(FileName: string; Strings: TStrings);
+procedure TDBEngine.LoadFile(FileName: string; Strings: TStrings);
 begin
-  if FileExists(WorkPath + FileName) then
-    Strings.LoadFromFile(WorkPath + FileName);
+  if FileExists(Engine.WorkSpace + FileName) then
+    Strings.LoadFromFile(Engine.WorkSpace  + FileName);
 end;
 
-procedure TsqlvEngine.SaveFile(FileName: string; Strings: TStrings);
+procedure TDBEngine.SaveFile(FileName: string; Strings: TStrings);
 begin
-  Strings.SaveToFile(WorkPath + FileName);
+  Strings.SaveToFile(Engine.WorkSpace + FileName);
 end;
 
-procedure TsqlvEngine.SaveSetting;
+procedure TDBEngine.SaveOptions;
 begin
-  FSetting.SaveToFile(WorkPath + sqlvConfig);
+  FSetting.SaveToFile(Engine.WorkSpace + sqlvConfig);
+  FRecents.SaveToFile(Engine.WorkSpace + sqlvRecents);
 end;
 
-procedure TsqlvEngine.LoadRecents;
+procedure TDBEngine.ChangeState(State: TEditorChangeStates);
 begin
-  if FileExists(WorkPath + sqlvRecents) then
-    FRecents.LoadFromFile(WorkPath + sqlvRecents);
 end;
 
-procedure TsqlvEngine.SaveRecents;
-begin
-  FRecents.SaveToFile(WorkPath + sqlvRecents);
-end;
-
-procedure TsqlvEngine.Run(vStack: TsqlvStack);
+procedure TDBEngine.Run(vStack: TsqlvStack);
 begin
   if (vStack = nil) and (vStack.Count = 0) then
     raise Exception.Create('Stack is empty');
@@ -653,26 +609,16 @@ begin
   end;
 end;
 
-procedure TsqlvEngine.Run(vAddon: TsqlvAddon; vAttributes:TsqlvAttributes);
+procedure TDBEngine.Run(vAddon: TsqlvAddon; vAttributes:TsqlvAttributes);
 begin
   if vAddon = nil then
     raise Exception.Create('Addon not found');
   //vAddon.Execute(Value, vStack, True);
 end;
 
-procedure TsqlvEngine.Run;
+procedure TDBEngine.Run;
 begin
   Run(Stack);
-end;
-
-procedure TsqlvEngine.SetWorkPath(const Value: string);
-begin
-  if FWorkPath <> Value then
-  begin
-    FWorkPath := Value;
-    LoadSetting;
-    LoadRecents;
-  end;
 end;
 
 { TsqlvAddons }
@@ -699,11 +645,6 @@ begin
   end;
   if aDefault >= 0 then
     Addons.Move(aDefault, 0);
-end;
-
-function TsqlvCustomAddons.Find(const Name: string): TsqlvAddon;
-begin
-  Result := Find('', Name);
 end;
 
 function TsqlvCustomAddons.Find(const Group, Name: string): TsqlvAddon;
@@ -759,16 +700,6 @@ begin
   end;
 end;
 
-function TsqlvCustomAddons.GetItem(Index: Integer): TsqlvAddon;
-begin
-  Result := inherited Items[Index] as TsqlvAddon;
-end;
-
-procedure TsqlvCustomAddons.SetItem(Index: Integer; const Value: TsqlvAddon);
-begin
-  inherited Items[Index] := Value;
-end;
-
 { TsqlvAddons }
 
 constructor TsqlvAddons.Create;
@@ -819,12 +750,12 @@ end;}
 
 procedure TsqlvAddon.Enum(Addons: TsqlvAddons);
 begin
-  sqlvEngine.Enum(Name, Addons, sqlvEngine.DB.IsActive);
+  DBEngine.Enum(Name, Addons, DBEngine.DB.IsActive);
 end;
 
 procedure TsqlvAddon.EnumDefaults(Addons: TsqlvAddons);
 begin
-  sqlvEngine.Enum(Name, Addons, sqlvEngine.DB.IsActive, True);
+  DBEngine.Enum(Name, Addons, DBEngine.DB.IsActive, True);
 end;
 
 procedure TsqlvAddon.EnumHeader(Header: TStringList);
@@ -878,7 +809,7 @@ end;
 
 { TsqlvClass }
 
-constructor TsqlvEngine.Create;
+constructor TDBEngine.Create;
 begin
   inherited Create(True);
   FHistory := TsqlvAddonHistory.Create;
@@ -887,11 +818,12 @@ begin
   FSetting := TsqlvSetting.Create;
   FRecents := TStringList.Create;
   FDB := TsqlvDB.Create;
+  Engine.RegisterNotify(Self);
 end;
 
-
-destructor TsqlvEngine.Destroy;
+destructor TDBEngine.Destroy;
 begin
+  Engine.UnregisterNotify(Self);
   FreeAndNil(FDB);
   FreeAndNil(FSetting);
   FreeAndNil(FRecents);
@@ -900,25 +832,25 @@ begin
   inherited;
 end;
 
-procedure TsqlvEngine.OpenDatabase;
+procedure TDBEngine.OpenDatabase;
 begin
   with TOpenDatabaseForm.Create(Application) do
   begin
     if ShowModal = mrOK then
     begin
-      if sqlvEngine.DB.IsActive then
-        sqlvEngine.DB.Close;
+      if DBEngine.DB.IsActive then
+        DBEngine.DB.Close;
 
-      sqlvEngine.Setting.CacheMetas := CacheMetaChk.Checked;
-      sqlvEngine.DB.Open(DatabaseTypeCbo.Text, DatabaseCbo.Text, AutoCreateChk.Checked, ExclusiveChk.Checked, VacuumChk.Checked);
-      sqlvEngine.Stack.Clear;
-      sqlvEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabaseCbo.Text));
-      sqlvEngine.Run(sqlvEngine.Stack);
+      DBEngine.Setting.CacheMetas := CacheMetaChk.Checked;
+      DBEngine.DB.Open((DatabaseTypeCbo.Items.Objects[DatabaseTypeCbo.ItemIndex] as TmncEngine).Name, DatabaseCbo.Text, AutoCreateChk.Checked, ExclusiveChk.Checked, VacuumChk.Checked);
+      DBEngine.Stack.Clear;
+      DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabaseCbo.Text));
+      DBEngine.Run(DBEngine.Stack);
     end;
   end;
 end;
 
-procedure TsqlvEngine.RegisterFilter(Filter: string);
+procedure TDBEngine.RegisterFilter(Filter: string);
 begin
   if AnsiPos('|', Filter) = 0 then
     raise EsqlvException.Create('Invalid sqlviewer filter');
@@ -930,13 +862,13 @@ begin
   end;
 end;
 
-function TsqlvEngine.GetAllSupportedFiles: string;
+function TDBEngine.GetAllSupportedFiles: string;
 var
   aStrings: TStringList;
   s: string;
   i: Integer;
 begin
-  s := AddOpenSaveDialogFilters;
+  s := '.sqlite|.fdb';
   if s <> '' then
     s := s + '|';
   s := s + Setting.OpenSaveDialogFilters;
@@ -957,17 +889,14 @@ begin
     Result := sSqliteFilter + '|' + sAllFilesFilter;
 end;
 
-procedure TsqlvEngine.LoadSetting;
+procedure TDBEngine.LoadOptions;
 begin
-  FSetting.SafeLoadFromFile(WorkPath + sqlvConfig);
+  FSetting.SafeLoadFromFile(Engine.WorkSpace + sqlvConfig);
+  if FileExists(Engine.WorkSpace + sqlvRecents) then
+    FRecents.LoadFromFile(Engine.WorkSpace + sqlvRecents);
 end;
 
 { TsqlvCustomHistory }
-
-function TsqlvCustomHistory.GetItem(Index: Integer): TsqlvCustomHistoryItem;
-begin
-  Result := inherited Items[Index] as TsqlvCustomHistoryItem;
-end;
 
 procedure TsqlvCustomHistory.Changed;
 begin
@@ -1072,5 +1001,5 @@ end;
 
 initialization
 finalization
-  FreeAndNil(FsqlvEngine);
+  FreeAndNil(FDBEngine);
 end.

@@ -13,22 +13,13 @@ uses
   SysUtils;
 
 const
-  sqlvVersion = '0.1.6';
-  {$ifdef FIREBIRD}
-  sSqliteFilter = 'FirebirdSQL (*.fdb)|*.fdb';
+  sqlvVersion = '0.2.1';
+  sSqliteFilter = 'Sqlite (*.sqlite)|*.sqlite|FirebirdSQL (*.fdb)|*.fdb';
   sAllFilesFilter = 'All files (*.*)|*.*';
-  sFileNameFilter = '*.fdb';
-  sFileExtFilter = 'fdb';
-  sqlvConfig = 'fbsql.viewer.config';
-  sqlvRecents = 'fbsql.viewer.recents';
-  {$else}
-  sSqliteFilter = 'Sqlite (*.sqlite)|*.sqlite';
-  sAllFilesFilter = 'All files (*.*)|*.*';
-  sFileNameFilter = '*.sqlite';
+  sFileNameFilter = '*.sqlite; *.fdb';
   sFileExtFilter = 'sqlite';
-  sqlvConfig = 'sqlite.viewer.config';
-  sqlvRecents = 'sqlite.viewer.recents';
-  {$endif}
+  sqlvConfig = 'sqlviewer.config';
+  sqlvRecents = 'sqlviewer.recents';
 
 implementation
 end.
