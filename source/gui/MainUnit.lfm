@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 200
+  Left = 437
   Height = 568
-  Top = 86
+  Top = 108
   Width = 1021
   ActiveControl = LogEdit
   AllowDropFiles = True
@@ -334,13 +334,6 @@ object MainForm: TMainForm
         end>
       Align = alClient
       TabOrder = 0
-      object DatabasePnl: TntvPanel
-        Left = 3
-        Height = 284
-        Top = 23
-        Width = 255
-        Align = alClient
-      end
       object ProjectPnl: TntvPanel
         Left = 3
         Height = 284
@@ -410,6 +403,13 @@ object MainForm: TMainForm
           PopupMenu = FolderMenu
           AutoCheck = False
         end
+      end
+      object DatabasePnl: TntvPanel
+        Left = 3
+        Height = 284
+        Top = 23
+        Width = 255
+        Align = alClient
       end
     end
   end

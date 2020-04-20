@@ -30,7 +30,7 @@ type
     Label3: TLabel;
     OkBtn: TButton;
     OpenDialog: TOpenDialog;
-    DatabaseTypeCbo: TComboBox;
+    DatabaseEngineCbo: TComboBox;
     PortEdit: TEdit;
     UserEdit: TEdit;
     PasswordEdit: TEdit;
@@ -38,6 +38,7 @@ type
     VacuumChk: TCheckBox;
     procedure BrowseBtnClick(Sender: TObject);
     procedure CancelBtnClick(Sender: TObject);
+    procedure DatabaseCboSelect(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure OkBtnClick(Sender: TObject);
   private
@@ -72,9 +73,26 @@ begin
   ModalResult := mrCancel;
 end;
 
+procedure TOpenDatabaseForm.DatabaseCboSelect(Sender: TObject);
+var
+  i: Integer;
+  EngineName, Resource, Host, User, Password, Role: string;
+  aEngine: TmncEngine;
+begin
+  if DatabaseCbo.ItemIndex >=0 then
+  begin
+    Engines.DecomposeConnectionString(DBEngine.Recents[DatabaseCbo.ItemIndex], EngineName, Resource, Host, User, Password, Role);
+    if EngineName <> '' then
+    begin
+      aEngine := Engines.Find(EngineName);
+      DatabaseEngineCbo.ItemIndex := DatabaseEngineCbo.Items.IndexOfObject(aEngine);
+    end;
+  end;
+end;
+
 procedure TOpenDatabaseForm.FormCreate(Sender: TObject);
 begin
-  Engines.EnumConnections(DatabaseTypeCbo.Items);
+  Engines.EnumConnections(DatabaseEngineCbo.Items);
 end;
 
 procedure TOpenDatabaseForm.OkBtnClick(Sender: TObject);

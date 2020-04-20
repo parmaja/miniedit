@@ -168,7 +168,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item10>
     </RequiredPackages>
-    <Units Count="56">
+    <Units Count="55">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -474,10 +474,6 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit54>
-      <Unit55>
-        <Filename Value="..\..\..\minictrls\native\ntvGrids.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit55>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -488,7 +484,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\basic;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\extends\fntgen;..\extends\designer;..\extends\db;..\extends\go;..\extends\cmd;..\..\..\minictrls\native"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\basic;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\cpp;..\extends\fntgen;..\extends\designer;..\extends\db;..\extends\go;..\extends\cmd"/>
       <UnitOutputDirectory Value="..\..\units\debug"/>
     </SearchPaths>
     <Parsing>

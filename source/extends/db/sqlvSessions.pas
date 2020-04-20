@@ -33,18 +33,10 @@ type
     FExceptions: TmncMetaItems;
     FDomains: TmncMetaItems;
     FFields: TmncMetaItems;
-    FOnDisconnected: TsqlvOnNotifySession;
-    FOnConnected: TsqlvOnNotifySession;
-    FOnSessionStarted: TsqlvOnNotifySession;
-    FOnSessionStoped: TsqlvOnNotifySession;
     FExclusive: Boolean;
     FVacuum: Boolean;
     procedure RunLoginSQL;
     procedure RunLogoutSQL;
-    procedure ConnectionAfterConnect(Sender: TObject);
-    procedure ConnectionAfterDisconnect(Sender: TObject);
-    procedure SessionStarted(Sender: TObject);
-    procedure SessionStopped(Sender: TObject);
   public
     constructor Create;
     destructor Destroy; override;
@@ -55,11 +47,6 @@ type
     function IsActive: Boolean;
     procedure Connected;
     procedure Disconnected;
-
-    property OnConnected: TsqlvOnNotifySession read FOnConnected write FOnConnected;
-    property OnDisconnected: TsqlvOnNotifySession read FOnDisconnected write FOnDisconnected;
-    property OnSessionStarted: TsqlvOnNotifySession read FOnSessionStarted write FOnSessionStarted;
-    property OnSessionStoped: TsqlvOnNotifySession read FOnSessionStoped write FOnSessionStoped;
 
     property Connection: TmncSQLConnection read FConnection;
     property Session: TmncSQLSession read FSession;
@@ -93,8 +80,6 @@ begin
   Session.Start;
   LoadMeta;
   RunLoginSQL;
-  if Assigned(FOnConnected) then
-    FOnConnected;
 end;
 
 constructor TsqlvDB.Create;
@@ -134,8 +119,6 @@ end;
 procedure TsqlvDB.Disconnected;
 begin
   RunLogoutSQL;
-  if Assigned(FOnDisconnected) then
-    FOnDisconnected;
 end;
 
 procedure TsqlvDB.LoadMeta;
@@ -177,16 +160,17 @@ begin
   DBEngine.AddRecent(Engines.ComposeConnectionString(Connection));
 
   FSession := FConnection.CreateSession;
-  FConnection.OnConnected :=  @ConnectionAfterConnect;
-  FConnection.OnDisconnected :=  @ConnectionAfterDisconnect;
 
   Connection.Connect;
+  Connected;
   //Engine.SendLog()
   Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsRecents, ecsProject, ecsProjectLoaded]);
 end;
 
 procedure TsqlvDB.Close;
 begin
+  if IsActive then
+    Disconnected;
   if (Session <> nil) and Session.Active then
     Session.Stop;
   if (Connection <> nil) and Connection.Connected then
@@ -246,28 +230,6 @@ begin
   finally
     CMD.Free;
   end;
-end;
-
-procedure TsqlvDB.ConnectionAfterConnect(Sender: TObject);
-begin
-  Connected;
-end;
-
-procedure TsqlvDB.ConnectionAfterDisconnect(Sender: TObject);
-begin
-  Disconnected;
-end;
-
-procedure TsqlvDB.SessionStarted(Sender: TObject);
-begin
-  if Assigned(FOnSessionStarted) then
-    FOnSessionStarted();
-end;
-
-procedure TsqlvDB.SessionStopped(Sender: TObject);
-begin
-  if Assigned(FOnSessionStoped) then
-    FOnSessionStoped();
 end;
 
 end.

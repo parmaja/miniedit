@@ -48,6 +48,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
     Width = 342
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 15
+    OnSelect = DatabaseCboSelect
     TabOrder = 0
   end
   object AutoCreateChk: TCheckBox
@@ -59,7 +60,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
     ParentBidiMode = False
     TabOrder = 4
   end
-  object DatabaseTypeCbo: TComboBox
+  object DatabaseEngineCbo: TComboBox
     Left = 5
     Height = 23
     Top = 78

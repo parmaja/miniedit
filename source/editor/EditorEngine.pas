@@ -1123,7 +1123,6 @@ type
   protected
     FSafeMode: Boolean;
     FInUpdateState: Integer;
-    //FNotifyObject: IEditorNotifyEngine; //TODO should be list
     FNotifyObjects: TEditorNotifyList;
 
     property SearchEngine: TSynEditSearch read FSearchEngine;

@@ -842,7 +842,7 @@ begin
         DBEngine.DB.Close;
 
       DBEngine.Setting.CacheMetas := CacheMetaChk.Checked;
-      DBEngine.DB.Open((DatabaseTypeCbo.Items.Objects[DatabaseTypeCbo.ItemIndex] as TmncEngine).Name, DatabaseCbo.Text, AutoCreateChk.Checked, ExclusiveChk.Checked, VacuumChk.Checked);
+      DBEngine.DB.Open((DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name, DatabaseCbo.Text, AutoCreateChk.Checked, ExclusiveChk.Checked, VacuumChk.Checked);
       DBEngine.Stack.Clear;
       DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabaseCbo.Text));
       DBEngine.Run(DBEngine.Stack);

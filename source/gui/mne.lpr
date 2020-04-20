@@ -49,7 +49,7 @@ uses
   mneBoardComponents, mneFontGenForm, mneCppClasses, mneVerilogClasses,
   SynHighlighterVerilog, mneCustomClasses, mnePasProjectFrames, mnePASClasses,
   mneCSVClasses, mneDClasses, mneLuaClasses, LuaDBGServers, MsgBox, GUIMsgBox,
-  Classes, PHPUtils, ntvThemes, ntvGrids, mneSetups, mneSettings, EditorClasses,
+  Classes, PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses,
   EditorColors, gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneClasses,
   mneManageRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils, mnStreams,
   mncCSV, sqlvOpenDatabases;
@@ -148,7 +148,7 @@ begin
   if not IsAnotherInstance then
   begin
     //DefaultSystemCodePage := widestringmanager.GetStandardCodePageProc(scpAnsi); //I fix it temporary that needed for AnsiToUtf8; //i commented cuz i cant convert to ansi in TTextEditorFile.DoSave
-    Application.Scaled := True;
+  Application.Scaled :=True;
     Application.Initialize;
   Application.Title :='miniEdit';
     Application.Name := 'miniEdit';
