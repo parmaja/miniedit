@@ -15,7 +15,7 @@ uses
   Dialogs, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit,
   Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  SynHighlighterSQL, SynHighlighterXML, mnSynHighlighterApache, mnSynHighlighterConfig, SynHighlighterINI,
+  SynHighlighterXML, mnSynHighlighterApache, mnSynHighlighterConfig, SynHighlighterINI,
   SynHighlighterPython;
 
 type
@@ -31,11 +31,6 @@ type
   end;
 
   TmneProjectFile = class(TEditorFile)
-  protected
-  public
-  end;
-
-  TSQLFile = class(TSourceEditorFile)
   protected
   public
   end;
@@ -63,15 +58,6 @@ type
   TXMLFile = class(TSourceEditorFile)
   public
     procedure NewContent; override;
-  end;
-
-  { TSQLFileCategory }
-
-  TSQLFileCategory = class(TTextFileCategory)
-  protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
-    procedure InitMappers; override;
-  public
   end;
 
   { TApacheFileCategory }
@@ -152,7 +138,7 @@ function GetHighlighterAttriAtRowColExtend(SynEdit: TCustomSynEdit; const XY: TP
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, mnSynHighlighterStdSQL;
+  IniFiles, mnStreams, mnUtils;
 
 function ColorToRGBHex(Color: TColor; ColorPrefix: string; Reverse: Boolean): string;
 var
@@ -333,33 +319,6 @@ begin
   end;
 end;
 
-{ TSQLFileCategory }
-
-function TSQLFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
-begin
-  {Result := TSynSQLSyn.Create(nil);
-  (Result as TSynSQLSyn).SQLDialect := sqlMySQL;}
-  Result := TmnSynStdSQLSyn.Create(nil);
-end;
-
-procedure TSQLFileCategory.InitMappers;
-begin
-  with Highlighter as TmnSynStdSQLSyn do
-  begin
-    Mapper.Add(CommentAttri, attComment);
-    Mapper.Add(TypeAttri, attDataType);
-    Mapper.Add(ObjectAttri, attDataName);
-    Mapper.Add(FunctionAttri, attStandard);
-    Mapper.Add(IdentifierAttri, attIdentifier);
-    Mapper.Add(KeyAttri, attKeyword);
-    Mapper.Add(NumberAttri, attNumber);
-    Mapper.Add(SpaceAttri, attDefault);
-    Mapper.Add(StringAttri, attQuotedString);
-    Mapper.Add(SymbolAttri, attSymbol);
-    Mapper.Add(VariableAttri, attVariable);
-  end;
-end;
-
 { TTApacheFileCategory }
 
 function TApacheFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
@@ -458,7 +417,6 @@ initialization
   begin
     Categories.Add(TmneProjectFileCategory.Create(DefaultProject.Tendency, 'mne-project', 'MiniEdit project'));
     Categories.Add(TTXTFileCategory.Create(DefaultProject.Tendency, 'txt', 'Text'));
-    Categories.Add(TSQLFileCategory.Create(DefaultProject.Tendency, 'sql', 'SQL'));
     Categories.Add(TApacheFileCategory.Create(DefaultProject.Tendency, 'apache', 'Apache Config', []));
     Categories.Add(TINIFileCategory.Create(DefaultProject.Tendency, 'ini', 'INI config'));
     Categories.Add(TXMLFileCategory.Create(DefaultProject.Tendency, 'xml', 'XML files'));
@@ -470,7 +428,6 @@ initialization
     Groups.Add(TTXTFile, 'txt', 'Text', TTXTFileCategory, ['txt', 'text', 'log'], [fgkDefault]);
     Groups.Add(TTXTFile, 'motd', 'motd', TTXTFileCategory, ['motd'], []);
     Groups.Add(TTXTFile, 'md', 'MarkDown', TMDFileCategory, ['md'], []);
-    Groups.Add(TSQLFile, 'sql', 'SQL', TSQLFileCategory, ['sql'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TApacheFile, 'htaccess', 'htaccess', TApacheFileCategory, ['htaccess', 'conf'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TXMLFile, 'xml', 'XML', TXMLFileCategory, ['xml', 'lpi'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TINIConfigFile, 'ini', 'INI', TINIFileCategory, ['ini'], [fgkAssociated, fgkBrowsable]);

@@ -505,6 +505,7 @@ type
     procedure SetNakeName(AValue: string);
     procedure SetPureName(AValue: string);
   protected
+    procedure InitContents; virtual;
     procedure GroupChanged; virtual;
     function GetIsReadonly: Boolean; virtual;
     procedure SetIsReadonly(const Value: Boolean); virtual;
@@ -596,15 +597,15 @@ type
     property Control: TWinControl read GetControl write SetControl;
   end;
 
-  { TTextEditorFile }
+  { TSyntaxEditorFile }
 
-  TTextEditorFile = class(TEditorFile, ITextEditor)
+  TSyntaxEditorFile = class abstract(TEditorFile, ITextEditor)
   private
     FHighlightLine: Integer;
-    FSynEdit: TSynEdit;
     procedure SetHighlightLine(AValue: Integer);
   protected
     LastGotoLine: Integer;
+    function GetSynEdit: TSynEdit; virtual; abstract;
     function GetIsReadonly: Boolean; override;
     procedure SetIsReadonly(const Value: Boolean); override;
     function GetControl: TWinControl; override;
@@ -620,6 +621,7 @@ type
   public
     constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
+    procedure BeforeDestruction; override;
     procedure Assign(Source: TPersistent); override;
     procedure AssignTo(Dest: TPersistent); override;
     procedure Find; override;
@@ -641,11 +643,28 @@ type
 
     procedure SetLine(Line: Integer); override;
     procedure GotoLine; override;
-    property SynEdit: TSynEdit read FSynEdit;
+    property SynEdit: TSynEdit read GetSynEdit;
     property HighlightLine: Integer read FHighlightLine write SetHighlightLine;
   end;
 
+  { TTextEditorFile }
+
+  TTextEditorFile = class(TSyntaxEditorFile)
+  private
+    FSynEdit: TSynEdit;
+  protected
+    procedure InitContents; override;
+    function GetSynEdit: TSynEdit; override;
+  public
+    constructor Create(ACollection: TCollection); override;
+    destructor Destroy; override;
+  end;
+
+  { TSourceEditorFile }
+
   TSourceEditorFile = class(TTextEditorFile, IExecuteEditor, IWatchEditor)
+  public
+    function Run: Boolean; virtual;
   end;
 
   { TEditorFiles }
@@ -1369,6 +1388,39 @@ begin
   end;
 end;
 
+{ TSourceEditorFile }
+
+function TSourceEditorFile.Run: Boolean;
+begin
+  Result := False;
+end;
+
+{ TTextEditorFile }
+
+procedure TTextEditorFile.InitContents;
+begin
+  inherited;
+  FSynEdit := TmnSynEdit.Create(Engine.FilePanel);
+end;
+
+function TTextEditorFile.GetSynEdit: TSynEdit;
+begin
+  Result := FSynEdit;
+end;
+
+constructor TTextEditorFile.Create(ACollection: TCollection);
+begin
+  inherited Create(ACollection);
+end;
+
+destructor TTextEditorFile.Destroy;
+begin
+  FreeAndNil(FSynEdit);
+  inherited Destroy;
+end;
+
+{ TSyntaxEditorFile }
+
 { TmnSynEdit }
 
 procedure TmnSynEdit.ExecuteCommand(Command: TSynEditorCommand; const AChar: TUTF8Char; Data: pointer);
@@ -1740,9 +1792,9 @@ begin
   inherited Add(Result); //if there is a bug inside add, you need to fix it by code, so no need to catch it
 end;
 
-{ TTextEditorFile }
+{ TSyntaxEditorFile }
 
-procedure TTextEditorFile.SetHighlightLine(AValue: Integer);
+procedure TSyntaxEditorFile.SetHighlightLine(AValue: Integer);
 begin
   if FHighlightLine <> AValue then
   begin
@@ -1752,22 +1804,22 @@ begin
   end;
 end;
 
-function TTextEditorFile.GetIsReadonly: Boolean;
+function TSyntaxEditorFile.GetIsReadonly: Boolean;
 begin
   Result := SynEdit.ReadOnly;
 end;
 
-procedure TTextEditorFile.SetIsReadonly(const Value: Boolean);
+procedure TSyntaxEditorFile.SetIsReadonly(const Value: Boolean);
 begin
   SynEdit.ReadOnly := Value;
 end;
 
-function TTextEditorFile.GetControl: TWinControl;
+function TSyntaxEditorFile.GetControl: TWinControl;
 begin
   Result := SynEdit;
 end;
 
-procedure TTextEditorFile.DoLoad(FileName: string);
+procedure TSyntaxEditorFile.DoLoad(FileName: string);
 var
   Contents: string;
   Size: integer;
@@ -1816,7 +1868,7 @@ begin
   end;
 end;
 
-procedure TTextEditorFile.DoSave(FileName: string);
+procedure TSyntaxEditorFile.DoSave(FileName: string);
 var
   aStream : TFileStream;
   Contents: rawbytestring;
@@ -1852,36 +1904,36 @@ begin
   end;
 end;
 
-procedure TTextEditorFile.GroupChanged;
+procedure TSyntaxEditorFile.GroupChanged;
 begin
   if Group <> nil then
-    FSynEdit.Highlighter := FGroup.Category.Highlighter;
+    SynEdit.Highlighter := FGroup.Category.Highlighter;
   inherited;
   if Group <> nil then
   begin
-    FGroup.Category.InitCompletion(FSynEdit);
+    FGroup.Category.InitCompletion(SynEdit);
 
     //FSynEdit.Gutter.SeparatorPart(0).Index := FSynEdit.Gutter.Parts.Count - 1;//To make this part last one
 
     //if (fgkExecutable in FGroup.Kind) then //show it make it more comfirtable
-      with TSynDebugMarksPart.Create(FSynEdit.Gutter.Parts) do
+      with TSynDebugMarksPart.Create(SynEdit.Gutter.Parts) do
       begin
         FEditorFile := Self;
         AutoSize := False;
         Width := EditorResource.DebugImages.Width + DEBUG_IMAGE_MARGINES;
       end;
 
-    FGroup.Category.InitEdit(FSynEdit);
+    FGroup.Category.InitEdit(SynEdit);
   end;
 end;
 
-procedure TTextEditorFile.DoEdit(Sender: TObject);
+procedure TSyntaxEditorFile.DoEdit(Sender: TObject);
 begin
   inherited;
   HighlightLine := -1;
 end;
 
-procedure TTextEditorFile.DoStatusChange(Sender: TObject; Changes: TSynStatusChanges);
+procedure TSyntaxEditorFile.DoStatusChange(Sender: TObject; Changes: TSynStatusChanges);
 begin
   if ([scReadOnly, scCaretX, scCaretY, scLeftChar, scTopLine, scSelection] * Changes) <> [] then
     HighlightLine := -1;
@@ -1890,7 +1942,7 @@ begin
   inherited;
 end;
 
-procedure TTextEditorFile.DoGutterClickEvent(Sender: TObject; X, Y, Line: integer; Mark: TSynEditMark);
+procedure TSyntaxEditorFile.DoGutterClickEvent(Sender: TObject; X, Y, Line: integer; Mark: TSynEditMark);
 var
   aLine: integer;
 begin
@@ -1907,7 +1959,7 @@ begin
   end;
 end;
 
-procedure TTextEditorFile.DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
+procedure TSyntaxEditorFile.DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
 var
   aColor: TColor;
 begin
@@ -1937,7 +1989,7 @@ begin
   end;}
 end;
 
-procedure TTextEditorFile.DoGetCapability(var vCapability: TEditCapability);
+procedure TSyntaxEditorFile.DoGetCapability(var vCapability: TEditCapability);
 begin
   inherited;
 
@@ -1948,7 +2000,7 @@ begin
     vCapability := vCapability + [ecpAllowPaste];
 end;
 
-procedure TTextEditorFile.SynEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TSyntaxEditorFile.SynEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   if Shift = [ssCtrl] then
   begin
@@ -1963,39 +2015,38 @@ begin
   end;
 end;
 
-constructor TTextEditorFile.Create(ACollection: TCollection);
+constructor TSyntaxEditorFile.Create(ACollection: TCollection);
 begin
   inherited;
   { There is more assigns in TEditorFile.SetGroup and TEditorProfile.Assign}
   FHighlightLine := -1;
-  FSynEdit := TmnSynEdit.Create(Engine.FilePanel);
-  FSynEdit.OnChange := @DoEdit;
-  FSynEdit.OnStatusChange := @DoStatusChange;
-  FSynEdit.OnGutterClick := @DoGutterClickEvent;
-  FSynEdit.OnSpecialLineMarkup := @DoSpecialLineMarkup;
-  FSynEdit.BookMarkOptions.BookmarkImages := EditorResource.BookmarkImages;
-  FSynEdit.OnReplaceText := @Engine.DoReplaceText;
-  FSynEdit.OnKeyDown := @SynEditKeyDown;
+  SynEdit.OnChange := @DoEdit;
+  SynEdit.OnStatusChange := @DoStatusChange;
+  SynEdit.OnGutterClick := @DoGutterClickEvent;
+  SynEdit.OnSpecialLineMarkup := @DoSpecialLineMarkup;
+  SynEdit.BookMarkOptions.BookmarkImages := EditorResource.BookmarkImages;
+  SynEdit.OnReplaceText := @Engine.DoReplaceText;
+  SynEdit.OnKeyDown := @SynEditKeyDown;
 
-  FSynEdit.TrimSpaceType := settLeaveLine;
-  FSynEdit.BoundsRect := Engine.FilePanel.ClientRect;
-  FSynEdit.Font.Quality := fqDefault;
-  FSynEdit.BorderStyle := bsNone;
-  FSynEdit.ShowHint := True;
-  FSynEdit.Visible := False;
-  FSynEdit.WantTabs := True;
-  FSynEdit.MaxLeftChar := 80;
-  FSynEdit.ScrollBars := ssAutoBoth;
+  SynEdit.TrimSpaceType := settLeaveLine;
+  SynEdit.BoundsRect := Engine.FilePanel.ClientRect;
+  SynEdit.Font.Quality := fqDefault;
+  SynEdit.BorderStyle := bsNone;
+  SynEdit.ShowHint := True;
+  SynEdit.Visible := False;
+  SynEdit.WantTabs := True;
+  SynEdit.MaxLeftChar := 80;
+  SynEdit.ScrollBars := ssAutoBoth;
 
-  FSynEdit.Parent := Engine.FilePanel;
-  with FSynEdit.Keystrokes.Add do
+  SynEdit.Parent := Engine.FilePanel;
+  with SynEdit.Keystrokes.Add do
   begin
     Key       := VK_DELETE;
     Shift     := [ssCtrl];
     Command   := ecDeleteWord;
   end;
 
-  with FSynEdit.Keystrokes.Add do
+  with SynEdit.Keystrokes.Add do
   begin
     Key       := VK_K;
     Shift     := [ssCtrl];
@@ -2004,7 +2055,7 @@ begin
     Command   := ecLowerCaseBlock;
   end;
 
-  with FSynEdit.Keystrokes.Add do
+  with SynEdit.Keystrokes.Add do
   begin
     Key       := VK_K;
     Shift     := [ssCtrl];
@@ -2013,17 +2064,21 @@ begin
     Command   := ecUpperCaseBlock;
   end;
 
-  Engine.MacroRecorder.AddEditor(FSynEdit);
+  Engine.MacroRecorder.AddEditor(SynEdit);
 end;
 
-destructor TTextEditorFile.Destroy;
+destructor TSyntaxEditorFile.Destroy;
 begin
-  Engine.MacroRecorder.RemoveEditor(FSynEdit);
-  FSynEdit.Free;
   inherited;
 end;
 
-procedure TTextEditorFile.Assign(Source: TPersistent);
+procedure TSyntaxEditorFile.BeforeDestruction;
+begin
+  Engine.MacroRecorder.RemoveEditor(SynEdit);
+  inherited BeforeDestruction;
+end;
+
+procedure TSyntaxEditorFile.Assign(Source: TPersistent);
 var
   aProfile: TEditorProfile;
 begin
@@ -2061,7 +2116,7 @@ begin
     inherited Assign(Source);
 end;
 
-procedure TTextEditorFile.AssignTo(Dest: TPersistent);
+procedure TSyntaxEditorFile.AssignTo(Dest: TPersistent);
 begin
   if (Dest is TEditorDesktopFile) then
   begin
@@ -2076,37 +2131,37 @@ begin
     inherited AssignTo(Dest);
 end;
 
-procedure TTextEditorFile.Find;
+procedure TSyntaxEditorFile.Find;
 begin
   inherited;
   ShowSearchForm(SynEdit, Engine.Options.SearchHistory, Engine.Options.ReplaceHistory, False);
 end;
 
-procedure TTextEditorFile.FindNext;
+procedure TSyntaxEditorFile.FindNext;
 begin
   inherited;
   SearchTextNext(SynEdit);
 end;
 
-procedure TTextEditorFile.FindPrevious;
+procedure TSyntaxEditorFile.FindPrevious;
 begin
   inherited;
   SearchTextPrevious(SynEdit);
 end;
 
-procedure TTextEditorFile.Replace;
+procedure TSyntaxEditorFile.Replace;
 begin
   inherited;
   ShowSearchForm(SynEdit, Engine.Options.SearchHistory, Engine.Options.ReplaceHistory, True);
 end;
 
-procedure TTextEditorFile.Refresh;
+procedure TSyntaxEditorFile.Refresh;
 begin
   inherited;
   SynEdit.Refresh;
 end;
 
-function TTextEditorFile.GetHint(HintControl: TControl; CursorPos: TPoint; out vHint: string): Boolean;
+function TSyntaxEditorFile.GetHint(HintControl: TControl; CursorPos: TPoint; out vHint: string): Boolean;
 var
   v, s, t: string;
 begin
@@ -2120,7 +2175,7 @@ begin
     Result := False;
 end;
 
-function TTextEditorFile.GetGlance: string;
+function TSyntaxEditorFile.GetGlance: string;
 var
   r: Integer;
 begin
@@ -2134,7 +2189,7 @@ begin
   end;
 end;
 
-function TTextEditorFile.EvalByMouse(p: TPoint; out v, s, t: string): boolean;
+function TSyntaxEditorFile.EvalByMouse(p: TPoint; out v, s, t: string): boolean;
 var
   l: variant;
 begin
@@ -2151,7 +2206,7 @@ begin
     Result := False;
 end;
 
-function TTextEditorFile.EvalByCursor(out v, s, t: string): boolean;
+function TSyntaxEditorFile.EvalByCursor(out v, s, t: string): boolean;
 var
   l: variant;
 begin
@@ -2168,7 +2223,7 @@ begin
     Result := False;
 end;
 
-procedure TTextEditorFile.UpdateAge;
+procedure TSyntaxEditorFile.UpdateAge;
 begin
   inherited;
   if SynEdit <> nil then
@@ -2178,7 +2233,7 @@ begin
   end;
 end;
 
-function TTextEditorFile.GetLanguageName: string;
+function TSyntaxEditorFile.GetLanguageName: string;
 begin
   if (SynEdit <> nil) and (SynEdit.Highlighter <> nil) then
     Result := SynEdit.Highlighter.GetLanguageName
@@ -2186,33 +2241,33 @@ begin
     Result := inherited;
 end;
 
-procedure TTextEditorFile.Copy;
+procedure TSyntaxEditorFile.Copy;
 begin
   SynEdit.CopyToClipboard
 end;
 
-procedure TTextEditorFile.Paste;
+procedure TSyntaxEditorFile.Paste;
 begin
   SynEdit.PasteFromClipboard;
 end;
 
-procedure TTextEditorFile.Cut;
+procedure TSyntaxEditorFile.Cut;
 begin
   SynEdit.CutToClipboard;
 end;
 
-procedure TTextEditorFile.SelectAll;
+procedure TSyntaxEditorFile.SelectAll;
 begin
   SynEdit.SelectAll;
 end;
 
-procedure TTextEditorFile.SetLine(Line: Integer);
+procedure TSyntaxEditorFile.SetLine(Line: Integer);
 begin
   SynEdit.CaretY := Line;
   SynEdit.CaretX := 1;
 end;
 
-procedure TTextEditorFile.GotoLine;
+procedure TSyntaxEditorFile.GotoLine;
 begin
   with TGotoLineForm.Create(Application) do
   begin
@@ -4170,6 +4225,7 @@ begin
   FIsEdited := False;
   FFileEncoding := 'UTF8';
   FLinesMode := efmUnix;
+  InitContents;
 end;
 
 destructor TEditorFile.Destroy;
@@ -4747,6 +4803,10 @@ end;
 procedure TEditorFile.SetPureName(AValue: string);
 begin
   Rename(AValue + Extension);
+end;
+
+procedure TEditorFile.InitContents;
+begin
 end;
 
 procedure TEditorFile.GroupChanged;

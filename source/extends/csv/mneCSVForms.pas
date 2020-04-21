@@ -50,7 +50,6 @@ type
     DelConfigFileBtn: TButton;
     procedure ConfigFileBtnClick(Sender: TObject);
     procedure DataGridChanged(Sender: TObject);
-    procedure ataGridColClick(Sender: TntvCustomGrid; vCol: Integer);
     procedure DataGridColClick(Sender: TntvCustomGrid; Column: TntvColumn);
     procedure DelConfigFileBtnClick(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
@@ -76,6 +75,7 @@ type
     CSVOptions: TmncCSVOptions;
     FInteractive: Boolean;
     FLoading: Boolean;
+    constructor Create(TheOwner: TComponent); override;
     procedure RenameHeader(Index: Integer);
     procedure RefreshControls;
     function IsConfigFileExists: Boolean;
@@ -85,7 +85,6 @@ type
     procedure FillGrid(SQLCMD: TmncCommand; Title: String);
     procedure Load(FileName: string);
     procedure Save(FileName: string);
-    constructor Create(TheOwner: TComponent); override;
     function GetMainControl: TWinControl;
   end;
 
@@ -125,11 +124,6 @@ end;
 procedure TCSVForm.DataGridChanged(Sender: TObject);
 begin
   Changed;
-end;
-
-procedure TCSVForm.ataGridColClick(Sender: TntvCustomGrid; vCol: Integer);
-begin
-
 end;
 
 procedure TCSVForm.DataGridColClick(Sender: TntvCustomGrid; Column: TntvColumn);
@@ -553,34 +547,9 @@ begin
 end;
 
 constructor TCSVForm.Create(TheOwner: TComponent);
-  function GetDefaultRowHeight: integer;//TODO use grid function(protected now)
-  var
-    TmpCanvas: TCanvas;
-  begin
-    with DataGrid do
-    begin
-      tmpCanvas := GetWorkingCanvas(Canvas);
-      tmpCanvas.Font := Font;
-      result := tmpCanvas.TextHeight('Fj')+7;
-      if tmpCanvas<>Canvas then
-        FreeWorkingCanvas(tmpCanvas);
-    end;
-  end;
-
 begin
   inherited Create(TheOwner);
   FillByte(CSVOptions, Sizeof(CSVOptions), 0);
-  with DataGrid do
-  begin
-    {Font.Name := 'Tahoma';
-    Font.Size := 10;
-    Font.Name := Engine.Options.Profile.Attributes.FontName;
-    Font.Size := Engine.Options.Profile.Attributes.FontSize;
-    if Engine.Options.Profile.Attributes.FontNoAntialiasing then
-      Font.Quality := fqNonAntialiased
-    else
-      Font.Quality := fqDefault;}
-  end;
   CSVOptions.HeaderLine := hdrNormal;
   CSVOptions.DelimiterChar := ',';
   CSVOptions.EndOfLine := sUnixEndOfLine;

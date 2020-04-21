@@ -28,16 +28,17 @@ type
 
   { TCSVFile }
 
-  TCSVFile = class(TSourceEditorFile)
+  TCSVFile = class(TControlEditorFile)
   private
     FContents: TCSVForm;
+    procedure InitContents; override;
     function GetContents: TCSVForm;
   protected
-    property Contents: TCSVForm read GetContents;
     function GetControl: TWinControl; override;
     function GetIsReadonly: Boolean; override;
     procedure DoLoad(FileName: string); override;
     procedure DoSave(FileName: string); override;
+    property Contents: TCSVForm read GetContents;
   public
     destructor Destroy; override;
   end;
@@ -67,15 +68,17 @@ uses
 
 { TCSVFile }
 
+procedure TCSVFile.InitContents;
+begin
+  inherited;
+  FContents := TCSVForm.Create(nil);
+  FContents.Parent := Engine.FilePanel;
+  FContents.Align := alClient;
+  FContents.OnChanged := @DoEdit;
+end;
+
 function TCSVFile.GetContents: TCSVForm;
 begin
-  if FContents = nil then
-  begin
-    FContents := TCSVForm.Create(nil);
-    FContents.Parent := Engine.FilePanel;
-    FContents.Align := alClient;
-    FContents.OnChanged := @DoEdit;
-  end;
   Result := FContents;
 end;
 

@@ -1,32 +1,32 @@
 object sqlvManagerForm: TsqlvManagerForm
   Left = 0
-  Height = 446
+  Height = 445
   Top = 0
   Width = 275
-  ClientHeight = 446
+  ClientHeight = 445
   ClientWidth = 275
   TabOrder = 0
   DesignLeft = 538
-  DesignTop = 197
+  DesignTop = 198
   object ClientPanel: TPanel
     Left = 0
-    Height = 446
+    Height = 445
     Top = 0
     Width = 275
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 446
+    ClientHeight = 445
     ClientWidth = 275
     TabOrder = 0
     object GroupPanel: TPanel
       Left = 0
-      Height = 423
+      Height = 422
       Top = 0
       Width = 275
       Align = alClient
       BevelOuter = bvNone
       BorderWidth = 2
-      ClientHeight = 423
+      ClientHeight = 422
       ClientWidth = 275
       TabOrder = 0
       object GroupsPanel: TPanel
@@ -103,7 +103,7 @@ object sqlvManagerForm: TsqlvManagerForm
       end
       object MembersGrid: TntvGrid
         Left = 4
-        Height = 341
+        Height = 340
         Top = 78
         Width = 267
         Align = alClient
@@ -128,7 +128,7 @@ object sqlvManagerForm: TsqlvManagerForm
     object Edit1: TEdit
       Left = 0
       Height = 23
-      Top = 423
+      Top = 422
       Width = 275
       Align = alBottom
       TabOrder = 1
