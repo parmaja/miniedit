@@ -14,7 +14,6 @@ type
 
   TOpenDatabaseForm = class(TForm)
     AnsiCodePageChk: TCheckBox;
-    AutoCreateChk: TCheckBox;
     BrowseBtn: TButton;
     CacheMetaChk: TCheckBox;
     CancelBtn: TButton;

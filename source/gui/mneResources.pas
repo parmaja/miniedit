@@ -131,6 +131,8 @@ begin
   Extensions.Add('bat', 10);
   Extensions.Add('go', 11);
   Extensions.Add('sql', 12);
+  Extensions.Add('sqlite', 13);
+  Extensions.Add('fdb', 13);
 end;
 
 procedure TEditorResource.DataModuleDestroy(Sender: TObject);

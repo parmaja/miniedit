@@ -45,7 +45,7 @@ uses
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
 
   SearchProgressForms, SelectList, IniFiles, mneAssociateForm, mneExtends,
-  mneCMDClasses, mneGoClasses, mneSARDClasses, sqlvManager, mneBoardClasses,
+  mneCMDClasses, mneGoClasses, mneSARDClasses, sqlvManagerForms, mneBoardClasses,
   mneBoardForms, mneSelectComponents, mneBoardComponents, mneFontGenForm,
   mneCppClasses, mneVerilogClasses, SynHighlighterVerilog, mneCustomClasses,
   mnePasProjectFrames, mnePASClasses, mneCSVClasses, mneDClasses, mneLuaClasses,

@@ -32,9 +32,10 @@ uses
   {$endif}
   mnePHPIniForm,
   //end of addons
-  sqlvClasses, sqlvManager,
+  sqlvClasses, sqlvManagerForms,
   mneTendencyOptions, mneResources, IniFiles, mnFields, simpleipc, mnUtils,
   ntvTabs, ntvPageControls, SynEditMiscClasses, SynEditMarkupSpecialLine,
+  mncDB,
   SynHighlighterAny, Types;
 
 type
@@ -77,6 +78,7 @@ type
     MenuItem45: TMenuItem;
     CloseFileMnu: TMenuItem;
     MenuItem46: TMenuItem;
+    MenuItem48: TMenuItem;
     SepN8: TMenuItem;
     N6: TMenuItem;
     MenuItem47: TMenuItem;
@@ -282,7 +284,6 @@ type
     WindowsMnu: TMenuItem;
     MacMnu: TMenuItem;
     ManageAct: TAction;
-    Manage1: TMenuItem;
     OpenFolder2: TMenuItem;
     ProjectExploreFolderAct: TAction;
     OpenIncludeAct: TAction;
@@ -398,10 +399,12 @@ type
     procedure ChangeExtActExecute(Sender: TObject);
     procedure CloseAllActExecute(Sender: TObject);
     procedure CloseOthersActExecute(Sender: TObject);
+    procedure DBBrowseActExecute(Sender: TObject);
     procedure DBConnectActExecute(Sender: TObject);
     procedure CreateFolderActExecute(Sender: TObject);
     procedure DatabaseActExecute(Sender: TObject);
     procedure DBConnectMnuClick(Sender: TObject);
+    procedure DBCreateDatabaseActExecute(Sender: TObject);
     procedure DBDisconnectMnuClick(Sender: TObject);
     procedure DBGCompileActExecute(Sender: TObject);
     procedure DeleteActExecute(Sender: TObject);
@@ -693,13 +696,13 @@ begin
       aLine := StrToIntDef(s, 0);
       if aLine > 0 then
       begin
-        with Engine.Files.Current do
-        if Control is TCustomSynEdit then
+        with Engine.Files do
+        if Current.SynEdit <> nil then
         begin
-          (Control as TCustomSynEdit).CaretY := aLine;
-          (Control as TCustomSynEdit).CaretX := 0;
-          (Control as TCustomSynEdit).SelectLine;
-          (Control as TCustomSynEdit).SetFocus;
+          Current.SynEdit.CaretY := aLine;
+          Current.SynEdit.CaretX := 0;
+          Current.SynEdit.SelectLine;
+          Current.SynEdit.SetFocus;
         end
       end;
     end;
@@ -743,6 +746,31 @@ begin
   Engine.Files.CloseOthers;
 end;
 
+procedure TMainForm.DBBrowseActExecute(Sender: TObject);
+var
+  i: Integer;
+  Elements: TEditorElements;
+  EngineName, Resource, Host, User, Password, Role: string;
+  E: TEditorElement;
+begin
+  Elements := TEditorElements.Create;
+  try
+    for i := 0 to DBEngine.Engines.Count -1 do
+    begin
+      E := TEditorElement.Create;
+      E.Name := (DBEngine.Engines.Objects[i] as TmncEngine).Name;
+      E.Title := (DBEngine.Engines.Objects[i] as TmncEngine).Title;
+      Elements.Add(E);
+    end;
+    if ShowSelectList('Select DB Engine', Elements, [], i) then
+    begin
+      DBEngine.BrowseDatabases(Elements[i].Name);
+    end;
+  finally
+    Elements.Free;
+  end;
+end;
+
 procedure TMainForm.DBConnectActExecute(Sender: TObject);
 begin
   DBEngine.OpenDatabase;
@@ -767,6 +795,11 @@ end;
 
 procedure TMainForm.DBConnectMnuClick(Sender: TObject);
 begin
+end;
+
+procedure TMainForm.DBCreateDatabaseActExecute(Sender: TObject);
+begin
+  DBEngine.CreateDatabase;
 end;
 
 procedure TMainForm.DBDisconnectMnuClick(Sender: TObject);
@@ -1050,8 +1083,8 @@ procedure TMainForm.EngineRefresh;
 begin
   if Engine.Files.Current <> nil then
   begin
-    if Engine.Files.Current.Control <> nil then
-      Engine.Files.Current.Control.PopupMenu := EditorPopupMenu;
+    if (Engine.Files.Current.SynEdit <> nil) and (Engine.Files.Current.SynEdit.PopupMenu <> nil) then
+      Engine.Files.Current.SynEdit.PopupMenu := EditorPopupMenu;
     FileNameLbl.Caption := Engine.Files.Current.Name;
     LinesModeBtn.Caption := Engine.Files.Current.LinesModeAsText;
     LinesModeBtn.Enabled := Engine.Files.Current.IsText;
@@ -1230,12 +1263,12 @@ begin
       l := ptrint(SearchGrid.Rows[SearchGrid.Row].Objects[0]);
       if y > 0 then
       begin
-        with Engine.Files.Current do
-        if Control is TCustomSynEdit then
+        with Engine.Files do
+        if Current.SynEdit <> nil then
         begin
           if l > 0 then
           begin
-            with (Control as TCustomSynEdit) do
+            with Current.SynEdit do
             begin
               CaretXY := LogicalToPhysicalPos(Point(x, y));
               BlockBegin := Point(LogicalCaretXY.x, LogicalCaretXY.y);
@@ -1243,8 +1276,8 @@ begin
             end;
           end
           else
-            (Control as TCustomSynEdit).LogicalCaretXY := Point(1, y);
-          (Control as TCustomSynEdit).SetFocus;
+            Current.SynEdit.LogicalCaretXY := Point(1, y);
+          Current.SynEdit.SetFocus;
         end;
       end;
     end;
@@ -1832,28 +1865,27 @@ end;
 
 procedure TMainForm.HelpKeywordActExecute(Sender: TObject);
 var
-  aSynEdit: TCustomSynEdit;
   aWordBreaker: TSynWordBreaker;
   aLine, aWord: string;
   XY: TPoint;
   StartX, EndX: Integer;
 begin
-  if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomSynEdit) then
+  if (Engine.Files.Current <> nil) and (Engine.Files.Current.SynEdit <> nil) then
+  with Engine.Files do
   begin
-    aSynEdit := Engine.Files.Current.Control as TCustomSynEdit;
-    XY := aSynEdit.LogicalCaretXY;
+    XY := Current.SynEdit.LogicalCaretXY;
     aWordBreaker := TSynWordBreaker.Create;
     try
       aWordBreaker.Reset;
       aWordBreaker.WordBreakChars := aWordBreaker.WordBreakChars - ['.']; //<---- depend on tendency, TODO
-      aLine := aSynEdit.LineText;
+      aLine := Current.SynEdit.LineText;
       if aWordBreaker.IsInWord(aLine, XY.X) then
       begin
         StartX := aWordBreaker.PrevWordStart(aLine, XY.X, True);
         EndX := aWordBreaker.NextWordEnd(aLine, XY.X, True);
       end;
       aWord := Copy(aLine, StartX, EndX - StartX);
-      //aWord := Trim(aSynEdit.GetWordAtRowCol(aSynEdit.LogicalCaretXY));
+      //aWord := Trim(Current.SynEdit.GetWordAtRowCol(Current.SynEdit.LogicalCaretXY));
       if aWord <> '' then
       begin
         Engine.Files.Current.Tendency.HelpKeyWord(aWord);
@@ -2041,7 +2073,7 @@ begin
   else
     FreeFrame;
   BrowserTabs.Page[ProjectPnl].Visible := FProjectFrame <> nil;
-  BrowserTabs.Page[DatabasePnl].Visible := DBEngine.DB.IsActive;
+  //BrowserTabs.Page[DatabasePnl].Visible := DBEngine.DB.IsActive;
 end;
 
 procedure TMainForm.SaveAsProjectActExecute(Sender: TObject);
@@ -2490,14 +2522,12 @@ begin
 end;
 
 function TMainForm.GetCurrentColorText: string;
-var
-  aSynEdit: TCustomSynEdit;
 begin
   Result := '';
-  if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomSynEdit) then
+  if (Engine.Files.Current <> nil) and (Engine.Files.Current.SynEdit <> nil) then
+  with Engine.Files do
   begin
-    aSynEdit := Engine.Files.Current.Control as TCustomSynEdit;
-    Result := Trim(aSynEdit.GetWordAtRowCol(aSynEdit.LogicalCaretXY));
+    Result := Trim(Current.SynEdit.GetWordAtRowCol(Current.SynEdit.LogicalCaretXY));
     if Result <> '' then
     begin
       if Result[1] <> Engine.Files.Current.Group.Category.GetColorPrefix then
@@ -2527,14 +2557,12 @@ var
       end;
     end;
   end;
-var
-  aSynEdit: TCustomSynEdit;
 begin
-  if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control is TCustomSynEdit) then
+  if (Engine.Files.Current <> nil) and (Engine.Files.Current.SynEdit <> nil) then
+  with Engine.Files do
   begin
-    aSynEdit := Engine.Files.Current.Control as TCustomSynEdit;
-    aSynEdit.SelectWord;
-    aWord := aSynEdit.SelText;
+    Current.SynEdit.SelectWord;
+    aWord := Current.SynEdit.SelText;
     if (aWord <> '') and (Length(aWord) > 1) then
     begin
       CheckIsUpper;
@@ -2550,7 +2578,7 @@ begin
             aWord := UpperCase(aWord)
           else
             aWord := LowerCase(aWord);
-          aSynEdit.SelText := aWord;
+          Current.SynEdit.SelText := aWord;
         end;
       finally
         aDialog.Free;
@@ -2699,7 +2727,7 @@ end;
 
 procedure TMainForm.UpdateFileHeaderPanel;
 begin
-  if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control = Engine.DebugLink.ExecutedControl) then
+  if (Engine.Files.Current <> nil) and (Engine.Files.Current.SynEdit = Engine.DebugLink.ExecutedControl) then
     BugSignBtn.Visible := True
   else
     BugSignBtn.Visible := False;
@@ -2931,13 +2959,13 @@ begin
   begin
     if Current is TTextEditorFile then
       if vLine > 0 then
-        if (Current <> nil) and (Current.Control is TCustomSynEdit) then
+        if (Current <> nil) and (Current.SynEdit <> nil) then
         begin
-          (Current.Control as TCustomSynEdit).LogicalCaretXY := Point(0, vLine);
-//          (Current.Control as TCustomSynEdit).SelectLine;
-          (Current.Control as TCustomSynEdit).EnsureCursorPosVisible;
-          (Current as TTextEditorFile).HighlightLine := vLine; //after changing
-          (Current.Control as TCustomSynEdit).SetFocus;
+          Current.SynEdit.LogicalCaretXY := Point(0, vLine);
+//          Current.SynEdit.SelectLine;
+          Current.SynEdit.EnsureCursorPosVisible;
+          Current.SetHighlightLine(vLine); //after changing
+          Current.SynEdit.SetFocus;
         end;
   end;
 end;
@@ -2992,17 +3020,17 @@ var
 begin
   if (Engine.Files.Current <> nil) and (Engine.Files.Current.Tendency.Debug <> nil) then
   begin
-    if (Engine.Files.Current.Control is TCustomSynEdit) and (ActiveControl = Engine.Files.Current.Control) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
-      with Engine.Files.Current do
+    if (Engine.Files.Current.SynEdit <> nil) and (ActiveControl = Engine.Files.Current.SynEdit) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
+      with Engine.Files do
       begin
-        aLine := (Control as TCustomSynEdit).CaretY;
-        Engine.Files.Current.Tendency.Debug.Lock;
+        aLine := Current.SynEdit.CaretY;
+        Current.Tendency.Debug.Lock;
         try
-          Engine.Files.Current.Tendency.Debug.Breakpoints.Toggle(Name, aLine);
+          Current.Tendency.Debug.Breakpoints.Toggle(Name, aLine);
         finally
-          Engine.Files.Current.Tendency.Debug.Unlock;
+          Current.Tendency.Debug.Unlock;
         end;
-        (Control as TCustomSynEdit).InvalidateLine(aLine);
+        Current.SynEdit.InvalidateLine(aLine);
       end;
   end;
 end;
@@ -3039,12 +3067,12 @@ var
   s: string;
 begin
   with Engine.Files do
-    if (Current <> nil) and (Current.Control is TCustomSynEdit) then
+    if (Current <> nil) and (Current.SynEdit <> nil) then
     begin
-      if not (Current.Control as TCustomSynEdit).SelAvail then
-        s := Trim((Current.Control as TCustomSynEdit).GetWordAtRowCol((Current.Control as TCustomSynEdit).LogicalCaretXY))
+      if not Current.SynEdit.SelAvail then
+        s := Trim(Current.SynEdit.GetWordAtRowCol(Current.SynEdit.LogicalCaretXY))
       else
-        s := (Current.Control as TCustomSynEdit).SelText;
+        s := Current.SynEdit.SelText;
       AddWatch(s);
       MessagesTabs.ActiveControl := WatchesGrid;
     end;
@@ -3120,12 +3148,12 @@ var
   aText, aFolder: string;
 begin
   with Engine.Files do
-    if (Current <> nil) and (Current.Control is TCustomSynEdit) then
+    if (Current <> nil) and (Current.SynEdit <> nil) then
     begin
-      if (Current.Control as TCustomSynEdit).SelAvail and ((Current.Control as TCustomSynEdit).BlockBegin.y = (Current.Control as TCustomSynEdit).BlockEnd.y) then
-        aText := (Current.Control as TCustomSynEdit).SelText
+      if Current.SynEdit.SelAvail and (Current.SynEdit.BlockBegin.y = Current.SynEdit.BlockEnd.y) then
+        aText := Current.SynEdit.SelText
       else
-        aText := (Current.Control as TCustomSynEdit).GetWordAtRowCol((Current.Control as TCustomSynEdit).LogicalCaretXY);
+        aText := Current.SynEdit.GetWordAtRowCol(Current.SynEdit.LogicalCaretXY);
     end
     else
       aText := '';

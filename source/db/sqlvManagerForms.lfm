@@ -6,135 +6,158 @@ object sqlvManagerForm: TsqlvManagerForm
   ClientHeight = 445
   ClientWidth = 275
   TabOrder = 0
-  DesignLeft = 538
-  DesignTop = 198
-  object ClientPanel: TPanel
+  DesignLeft = 197
+  DesignTop = 249
+  object GroupPanel: TPanel
     Left = 0
-    Height = 445
-    Top = 0
+    Height = 314
+    Top = 131
     Width = 275
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 445
+    BorderWidth = 2
+    ClientHeight = 314
     ClientWidth = 275
     TabOrder = 0
-    object GroupPanel: TPanel
-      Left = 0
-      Height = 445
-      Top = 0
-      Width = 275
-      Align = alClient
+    object GroupsPanel: TPanel
+      Left = 3
+      Height = 49
+      Top = 3
+      Width = 269
+      Align = alTop
+      BorderSpacing.Around = 1
       BevelOuter = bvNone
-      BorderWidth = 2
-      ClientHeight = 445
-      ClientWidth = 275
+      ClientHeight = 49
+      ClientWidth = 269
       TabOrder = 0
-      object GroupsPanel: TPanel
-        Left = 3
-        Height = 49
-        Top = 3
-        Width = 269
-        Align = alTop
-        BorderSpacing.Around = 1
-        BevelOuter = bvNone
-        ClientHeight = 49
-        ClientWidth = 269
-        TabOrder = 0
-        object GroupsList: TComboBox
-          Left = 0
-          Height = 23
-          Top = 26
-          Width = 269
-          Align = alBottom
-          Anchors = [akTop, akLeft, akRight]
-          ItemHeight = 15
-          OnKeyPress = GroupsListKeyPress
-          OnSelect = GroupsListSelect
-          Style = csDropDownList
-          TabOrder = 0
-        end
-        object BackBtn: TButton
-          Left = 171
-          Height = 26
-          Top = 0
-          Width = 51
-          Align = alRight
-          Anchors = [akTop, akRight]
-          AutoSize = True
-          Caption = 'Back'
-          OnClick = BackBtnClick
-          TabOrder = 1
-        end
-        object FirstBtn: TButton
-          Left = 222
-          Height = 26
-          Top = 0
-          Width = 47
-          Align = alRight
-          Anchors = [akTop, akRight]
-          AutoSize = True
-          Caption = 'Top'
-          OnClick = FirstBtnClick
-          TabOrder = 2
-        end
-        object OpenBtn: TButton
-          Left = 0
-          Height = 26
-          Top = 0
-          Width = 55
-          Align = alLeft
-          AutoSize = True
-          Caption = 'Open'
-          OnClick = OpenBtnClick
-          TabOrder = 3
-        end
-      end
-      object MetaLbl: TLabel
-        Left = 4
-        Height = 22
-        Top = 54
-        Width = 267
-        Align = alTop
-        AutoSize = False
-        BorderSpacing.Around = 2
-        Caption = 'Title'
-        Layout = tlCenter
-        ParentColor = False
-      end
-      object MembersGrid: TntvGrid
-        Left = 4
-        Height = 340
-        Top = 78
-        Width = 267
-        Align = alClient
-        BorderSpacing.Around = 2
-        BorderStyle = bsSingle
-        ColWidth = 80
-        EvenColor = clWindow
-        FixedFontColor = clBlack
-        Gutter = False
-        PopupMenu = ActionsPopupMenu
-        OddColor = clWindow
-        ReadOnly = True
-        RowHeight = 22
-        ScrollBars = ssAutoVertical
-        Selected.TextColor = clHighlightText
-        RowSelect = True
-        TabOrder = 1
-        FullHeader = True
-        OnClick = MembersGridClick
-        OnDblClick = MembersGridDblClick
-        OnKeyDown = MembersGridKeyDown
-      end
-      object Edit1: TEdit
-        Left = 2
+      object GroupsList: TComboBox
+        Left = 0
         Height = 23
-        Top = 420
-        Width = 271
+        Top = 26
+        Width = 269
         Align = alBottom
-        TabOrder = 2
-        TextHint = 'Search'
+        Anchors = [akTop, akLeft, akRight]
+        ItemHeight = 15
+        OnKeyPress = GroupsListKeyPress
+        OnSelect = GroupsListSelect
+        Style = csDropDownList
+        TabOrder = 0
       end
+      object BackBtn: TButton
+        Left = 171
+        Height = 26
+        Top = 0
+        Width = 51
+        Align = alRight
+        Anchors = [akTop, akRight]
+        AutoSize = True
+        Caption = 'Back'
+        OnClick = BackBtnClick
+        TabOrder = 1
+      end
+      object FirstBtn: TButton
+        Left = 222
+        Height = 26
+        Top = 0
+        Width = 47
+        Align = alRight
+        Anchors = [akTop, akRight]
+        AutoSize = True
+        Caption = 'Top'
+        OnClick = FirstBtnClick
+        TabOrder = 2
+      end
+      object OpenBtn: TButton
+        Left = 0
+        Height = 26
+        Top = 0
+        Width = 55
+        Align = alLeft
+        AutoSize = True
+        Caption = 'Open'
+        OnClick = OpenBtnClick
+        TabOrder = 3
+      end
+    end
+    object MetaLbl: TLabel
+      Left = 4
+      Height = 22
+      Top = 54
+      Width = 267
+      Align = alTop
+      AutoSize = False
+      BorderSpacing.Around = 2
+      Caption = 'Title'
+      Layout = tlCenter
+      ParentColor = False
+    end
+    object MembersGrid: TntvGrid
+      Left = 4
+      Height = 209
+      Top = 78
+      Width = 267
+      Align = alClient
+      BorderSpacing.Around = 2
+      BorderStyle = bsSingle
+      ColWidth = 80
+      EvenColor = clWindow
+      FixedFontColor = clBlack
+      Gutter = False
+      PopupMenu = ActionsPopupMenu
+      OddColor = clWindow
+      ReadOnly = True
+      RowHeight = 22
+      ScrollBars = ssAutoVertical
+      Selected.TextColor = clHighlightText
+      RowSelect = True
+      TabOrder = 1
+      FullHeader = True
+      OnClick = MembersGridClick
+      OnDblClick = MembersGridDblClick
+      OnKeyDown = MembersGridKeyDown
+    end
+    object Edit1: TEdit
+      Left = 2
+      Height = 23
+      Top = 289
+      Width = 271
+      Align = alBottom
+      TabOrder = 2
+      TextHint = 'Search'
+    end
+  end
+  object DatabasesPnl: TntvPanel
+    Left = 0
+    Height = 131
+    Top = 0
+    Width = 275
+    Align = alTop
+    Constraints.MinHeight = 100
+    ResizeStyle = nrsUpdate
+    object MembersGrid1: TntvGrid
+      Left = 2
+      Height = 127
+      Top = 2
+      Width = 271
+      Align = alClient
+      BorderSpacing.Around = 2
+      BorderStyle = bsSingle
+      ColWidth = 80
+      EvenColor = clWindow
+      FixedFontColor = clBlack
+      Gutter = False
+      PopupMenu = ActionsPopupMenu
+      OddColor = clWindow
+      ReadOnly = True
+      RowHeight = 22
+      ScrollBars = ssAutoVertical
+      Selected.TextColor = clHighlightText
+      RowSelect = True
+      TabOrder = 0
+      FullHeader = True
+      OnClick = MembersGridClick
+      OnDblClick = MembersGridDblClick
+      OnKeyDown = MembersGridKeyDown
     end
   end
   object ActionsPopupMenu: TPopupMenu

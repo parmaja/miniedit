@@ -1,10 +1,10 @@
 object OpenDatabaseForm: TOpenDatabaseForm
   Left = 378
-  Height = 310
+  Height = 293
   Top = 176
   Width = 351
   Caption = 'Open Database'
-  ClientHeight = 310
+  ClientHeight = 293
   ClientWidth = 351
   OnCreate = FormCreate
   Position = poMainFormCenter
@@ -12,26 +12,26 @@ object OpenDatabaseForm: TOpenDatabaseForm
   object OkBtn: TButton
     Left = 272
     Height = 27
-    Top = 280
+    Top = 263
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&OK'
     Default = True
     ModalResult = 1
     OnClick = OkBtnClick
-    TabOrder = 12
+    TabOrder = 11
   end
   object CancelBtn: TButton
     Left = 196
     Height = 27
-    Top = 280
+    Top = 263
     Width = 75
     Anchors = [akRight, akBottom]
     Cancel = True
     Caption = '&Cancel'
     ModalResult = 2
     OnClick = CancelBtnClick
-    TabOrder = 13
+    TabOrder = 12
   end
   object Label1: TLabel
     Left = 7
@@ -51,15 +51,6 @@ object OpenDatabaseForm: TOpenDatabaseForm
     OnSelect = DatabaseCboSelect
     TabOrder = 0
   end
-  object AutoCreateChk: TCheckBox
-    Left = 10
-    Height = 19
-    Top = 195
-    Width = 116
-    Caption = 'Create if not exists'
-    ParentBidiMode = False
-    TabOrder = 7
-  end
   object DatabaseEngineCbo: TComboBox
     Left = 5
     Height = 23
@@ -78,47 +69,47 @@ object OpenDatabaseForm: TOpenDatabaseForm
     Anchors = [akTop, akRight]
     Caption = 'Browse'
     OnClick = BrowseBtnClick
-    TabOrder = 14
+    TabOrder = 13
   end
   object CacheMetaChk: TCheckBox
     Left = 10
     Height = 19
-    Top = 217
+    Top = 198
     Width = 181
     BidiMode = bdRightToLeftReadingOnly
     Caption = 'Cache Meta for auto complete'
     ParentBidiMode = False
-    TabOrder = 8
+    TabOrder = 7
   end
   object ExclusiveChk: TCheckBox
     Left = 10
     Height = 19
-    Top = 238
+    Top = 219
     Width = 99
     BidiMode = bdRightToLeftReadingOnly
     Caption = 'Open exclusive'
     ParentBidiMode = False
-    TabOrder = 9
+    TabOrder = 8
   end
   object VacuumChk: TCheckBox
     Left = 10
     Height = 19
-    Top = 259
+    Top = 240
     Width = 142
     BidiMode = bdRightToLeftReadingOnly
     Caption = 'Vacuum when connect'
     ParentBidiMode = False
-    TabOrder = 10
+    TabOrder = 9
   end
   object AnsiCodePageChk: TCheckBox
     Left = 10
     Height = 19
-    Top = 280
+    Top = 261
     Width = 164
     BidiMode = bdRightToLeftReadingOnly
     Caption = 'Ansi CodePage (current os)'
     ParentBidiMode = False
-    TabOrder = 11
+    TabOrder = 10
   end
   object Label3: TLabel
     Left = 7

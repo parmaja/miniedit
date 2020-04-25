@@ -12,7 +12,7 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Menus, Dialogs, ComCtrls, StdCtrls, mneClasses, Types;
+  Menus, Dialogs, ComCtrls, StdCtrls, mneClasses, sqlvClasses, Types;
 
 type
 
@@ -20,6 +20,7 @@ type
 
   TManageRecentsForm = class(TForm)
     PageControl: TPageControl;
+    RDatabasesList: TListBox;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
     TabSheet3: TTabSheet;
@@ -35,6 +36,7 @@ type
     MoveDownBtn: TButton;
     MoveUpBtn: TButton;
     Button2: TButton;
+    TabSheet4: TTabSheet;
     procedure FormCreate(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button1Click(Sender: TObject);
@@ -48,6 +50,7 @@ type
 
     procedure ProjectsListMeasureItem(Control: TWinControl; Index: Integer; var AHeight: Integer);
   private
+    procedure EnumRecentDatabases;
     procedure EnumRecentFile;
     procedure EnumRecentProjects;
     procedure EnumProjects;
@@ -95,6 +98,7 @@ begin
   EnumRecentFile;
   EnumRecentProjects;
   EnumProjects;
+  EnumRecentDatabases;
   if ProjectsList.Items.Count > 0 then
     ProjectsList.ItemIndex := 0;
   if RProjectsList.Items.Count > 0 then
@@ -202,6 +206,14 @@ begin
         EnumRecentFile;
         ChangeToIndex(RFilesList, Old);
       end;
+    3:
+      if RDatabasesList.ItemIndex >= 0 then
+      begin
+        Old := RDatabasesList.ItemIndex;
+        DBEngine.Recents.Delete(RDatabasesList.ItemIndex);
+        EnumRecentDatabases;
+        ChangeToIndex(RDatabasesList, Old);
+      end;
   end;
 end;
 
@@ -287,6 +299,17 @@ end;
 procedure TManageRecentsForm.ProjectsListMeasureItem(Control: TWinControl; Index: Integer; var AHeight: Integer);
 begin
   AHeight := AHeight + 10;
+end;
+
+procedure TManageRecentsForm.EnumRecentDatabases;
+var
+  i: integer;
+begin
+  RDatabasesList.Clear;
+  for i := 0 to DBEngine.Recents.Count - 1 do
+  begin
+    RDatabasesList.Items.Add(DBEngine.Recents[i]);
+  end;
 end;
 
 procedure TManageRecentsForm.ChangeToIndex(ListBox: TlistBox; Index: integer);

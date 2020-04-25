@@ -17,15 +17,12 @@ interface
 
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, Grids,
-  dateutils, LCLType, LCLIntf, Types, mncConnections, LCLProc,
-  contnrs, ExtCtrls, StdCtrls, SynEdit, FileUtil, Buttons, Menus,
-  sqlvSessions, mncCSV, mncSQL,
-  SynCompletion, SynEditAutoComplete, SynHighlighterHashEntries,
-  mnUtils, mncMeta, mncCSVExchanges,
-  mnSynHighlighterStdSQL,
-  mncMySQL, mncPostgre, mncSQLite,
-  mncSQLiteMeta, mncPGMeta, mncFBMeta,
-  ntvGrids, sqlvConsts, sqlvClasses, sqlvStdClasses, LMessages, ComCtrls,
+  dateutils, LCLType, LCLIntf, Types, mncConnections, LCLProc, contnrs,
+  ExtCtrls, StdCtrls, SynEdit, FileUtil, Buttons, Menus, sqlvSessions, mncCSV,
+  mncSQL, SynCompletion, SynEditAutoComplete, SynHighlighterHashEntries,
+  mnUtils, mncMeta, mncCSVExchanges, mnSynHighlighterStdSQL, mncMySQL,
+  mncPostgre, mncSQLite, mncSQLiteMeta, mncPGMeta, mncFBMeta, ntvGrids,
+  ntvPanels, sqlvConsts, sqlvClasses, sqlvStdClasses, LMessages, ComCtrls,
   EditorEngine;
 
 type
@@ -37,6 +34,7 @@ type
     CacheMetaChk1: TCheckBox;
     Edit1: TEdit;
     MembersGrid: TntvGrid;
+    MembersGrid1: TntvGrid;
     MetaLbl: TLabel;
     OpenBtn: TButton;
     FileMnu: TMenuItem;
@@ -48,6 +46,7 @@ type
     MenuItem3: TMenuItem;
     HelpMnu: TMenuItem;
     ActionsPopupMenu: TPopupMenu;
+    DatabasesPnl: TntvPanel;
     SaveMnu: TMenuItem;
     SaveAsMnu: TMenuItem;
     OpenMnu: TMenuItem;
@@ -55,7 +54,6 @@ type
     AboutMnu: TMenuItem;
     ToolsMnu: TMenuItem;
     GroupPanel: TPanel;
-    ClientPanel: TPanel;
     procedure BackBtnClick(Sender: TObject);
     procedure ConnectBtnClick(Sender: TObject);
     procedure DisconnectBtnClick(Sender: TObject);
@@ -100,10 +98,10 @@ type
 
   TsqlvMainGui = class(TsqlvGui)
   protected
-    MainForm: TsqlvManagerForm;
+    ManagerForm: TsqlvManagerForm;
     procedure LoadMembers(vGroup: TsqlvAddon; vAttributes: TsqlvAttributes);
   public
-    constructor Create(AMainForm: TsqlvManagerForm);
+    constructor Create(AManagerForm: TsqlvManagerForm);
     procedure LoadEditor(vAddon: TsqlvAddon; S: string); override;
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean); override;
   end;
@@ -126,7 +124,7 @@ var
   aGroups: TsqlvAddons;
   aGroup: TsqlvAddon;
 begin
-  with MainForm do
+  with ManagerForm do
   begin
     aGroups := TsqlvAddons.Create;
     try
@@ -192,12 +190,12 @@ var
   aItems: TmncMetaItems;
 begin
   if vGroup = nil then
-    MainForm.MembersGrid.Clear
+    ManagerForm.MembersGrid.Clear
   else
   begin
     aItems := TmncMetaItems.Create;
     try
-      with MainForm do
+      with ManagerForm do
       begin
         aHeader := TStringList.Create;
         try
@@ -246,10 +244,10 @@ begin
   end;
 end;
 
-constructor TsqlvMainGui.Create(AMainForm: TsqlvManagerForm);
+constructor TsqlvMainGui.Create(AManagerForm: TsqlvManagerForm);
 begin
   inherited Create;
-  MainForm := AMainForm;
+  ManagerForm := AManagerForm;
 end;
 
 procedure TsqlvMainGui.LoadEditor(vAddon: TsqlvAddon; S: string);

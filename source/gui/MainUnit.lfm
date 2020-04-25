@@ -1756,7 +1756,7 @@ object MainForm: TMainForm
   end
   object MainMenu: TMainMenu
     Images = EditorResource.ToolbarImageList
-    Left = 373
+    Left = 377
     Top = 114
     object file1: TMenuItem
       Caption = '&File'
@@ -1768,9 +1768,6 @@ object MainForm: TMainForm
         Action = OpenAct
         OnClick = OpenActExecute
       end
-      object ReopenMnu: TMenuItem
-        Caption = 'Reopen'
-      end
       object SaveMnu: TMenuItem
         Action = SaveAct
         OnClick = SaveActExecute
@@ -1778,6 +1775,12 @@ object MainForm: TMainForm
       object Saveas1: TMenuItem
         Action = SaveAsAct
         OnClick = SaveAsActExecute
+      end
+      object ReopenMnu: TMenuItem
+        Caption = 'Reopen'
+      end
+      object MenuItem48: TMenuItem
+        Action = ManageAct
       end
       object MenuItem20: TMenuItem
         Caption = '-'
@@ -1835,6 +1838,7 @@ object MainForm: TMainForm
       Caption = 'Database'
       object MenuItem33: TMenuItem
         Action = DBBrowseAct
+        Caption = 'Browse Databases'
       end
       object MenuItem23: TMenuItem
         Action = DBCreateDatabaseAct
@@ -1872,10 +1876,6 @@ object MainForm: TMainForm
       object CloseProject1: TMenuItem
         Action = CloseProjectAct
         OnClick = CloseProjectActExecute
-      end
-      object Manage1: TMenuItem
-        Action = ManageAct
-        OnClick = ManageActExecute
       end
       object OpenFolder2: TMenuItem
         Action = ProjectExploreFolderAct
@@ -2772,6 +2772,7 @@ object MainForm: TMainForm
     object DBCreateDatabaseAct: TAction
       Category = 'Database'
       Caption = 'Create Database'
+      OnExecute = DBCreateDatabaseActExecute
     end
     object DBConnectAct: TAction
       Category = 'Database'
@@ -2785,6 +2786,7 @@ object MainForm: TMainForm
     object DBBrowseAct: TAction
       Category = 'Database'
       Caption = 'Browse'
+      OnExecute = DBBrowseActExecute
     end
   end
   object FolderMenu: TPopupMenu
@@ -2863,7 +2865,7 @@ object MainForm: TMainForm
   end
   object LineModeMenu: TPopupMenu
     Left = 294
-    Top = 111
+    Top = 114
     object UnixMnu: TMenuItem
       Caption = 'Unix'
       OnClick = UnixMnuClick

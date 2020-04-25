@@ -30,15 +30,13 @@ type
 
   TCSVFile = class(TControlEditorFile)
   private
-    FContents: TCSVForm;
-    procedure InitContents; override;
-    function GetContents: TCSVForm;
+    FContent: TCSVForm;
   protected
-    function GetControl: TWinControl; override;
+    procedure InitContents; override;
+    function GetContent: TWinControl; override;
     function GetIsReadonly: Boolean; override;
     procedure DoLoad(FileName: string); override;
     procedure DoSave(FileName: string); override;
-    property Contents: TCSVForm read GetContents;
   public
     destructor Destroy; override;
   end;
@@ -71,20 +69,15 @@ uses
 procedure TCSVFile.InitContents;
 begin
   inherited;
-  FContents := TCSVForm.Create(nil);
-  FContents.Parent := Engine.FilePanel;
-  FContents.Align := alClient;
-  FContents.OnChanged := @DoEdit;
+  FContent := TCSVForm.Create(nil);
+  FContent.Parent := Engine.FilePanel;
+  FContent.Align := alClient;
+  FContent.OnChanged := @DoEdit;
 end;
 
-function TCSVFile.GetContents: TCSVForm;
+function TCSVFile.GetContent: TWinControl;
 begin
-  Result := FContents;
-end;
-
-function TCSVFile.GetControl: TWinControl;
-begin
-  Result := Contents;
+  Result := FContent;
 end;
 
 function TCSVFile.GetIsReadonly: Boolean;
@@ -94,17 +87,17 @@ end;
 
 procedure TCSVFile.DoLoad(FileName: string);
 begin
-  Contents.Load(FileName);
+  FContent.Load(FileName);
 end;
 
 procedure TCSVFile.DoSave(FileName: string);
 begin
-  Contents.Save(FileName);
+  FContent.Save(FileName);
 end;
 
 destructor TCSVFile.Destroy;
 begin
-  FreeAndNil(FContents);
+  FreeAndNil(FContent);
   inherited;
 end;
 

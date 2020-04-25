@@ -21,11 +21,10 @@ type
 
   TBoardFile = class(TEditorFile, IFileEditor)
   private
-    FContents: TBoardForm;
-    function GetContents: TBoardForm;
+    FContent: TBoardForm;
   protected
-    property Contents: TBoardForm read GetContents;
-    function GetControl: TWinControl; override;
+    procedure InitContents; override;
+    function GetContent: TWinControl; override;
     function GetIsReadonly: Boolean; override;
     procedure DoLoad(FileName: string); override;
     procedure DoSave(FileName: string); override;
@@ -47,20 +46,20 @@ implementation
 
 { TBoardFile }
 
-function TBoardFile.GetContents: TBoardForm;
+procedure TBoardFile.InitContents;
 begin
-  if FContents = nil then
+  inherited InitContents;
+  if FContent = nil then
   begin
-    FContents := TBoardForm.Create(Engine.FilePanel);
-    FContents.Parent := Engine.FilePanel;
-    FContents.Align := alClient;
+    FContent := TBoardForm.Create(Engine.FilePanel);
+    FContent.Parent := Engine.FilePanel;
+    FContent.Align := alClient;
   end;
-  Result := FContents;
 end;
 
-function TBoardFile.GetControl: TWinControl;
+function TBoardFile.GetContent: TWinControl;
 begin
-  Result := Contents;
+  Result := FContent;
 end;
 
 function TBoardFile.GetIsReadonly: Boolean;
@@ -80,7 +79,7 @@ end;
 
 destructor TBoardFile.Destroy;
 begin
-  FreeAndNil(FContents);
+  FreeAndNil(FContent);
   inherited Destroy;
 end;
 

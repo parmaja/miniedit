@@ -13,7 +13,7 @@ uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
   LCLintf, LCLType, ExtCtrls, SynHighlighterSQL, EditorProfiles,
   Dialogs, EditorEngine, EditorClasses, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit, EditorRun,
-  sqlvManager, sqlvSQLForms;
+  sqlvManagerForms, sqlvSQLForms;
 
 type
 
@@ -21,14 +21,12 @@ type
 
   TSQLFile = class(TSyntaxEditorFile, IExecuteEditor)
   private
-    FContents: TSQLEditForm;
-    function GetContents: TSQLEditForm;
+    FContent: TSQLEditForm;
   protected
     procedure InitContents; override;
-    function GetControl: TWinControl; override;
+    function GetContent: TWinControl; override;
     function GetSynEdit: TSynEdit; override;
     function GetIsReadonly: Boolean; override;
-    property Contents: TSQLEditForm read GetContents;
     function Execute(RunInfo: TmneRunInfo): Boolean; override;
   public
     destructor Destroy; override;
@@ -42,22 +40,6 @@ type
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
-  end;
-
-  { TDBFile }
-
-  TDBFile = class(TEditorFile, IFileEditor)
-  private
-    FContents: TsqlvManagerForm;
-    function GetContents: TsqlvManagerForm;
-  protected
-    property Contents: TsqlvManagerForm read GetContents;
-    function GetControl: TWinControl; override;
-    function GetIsReadonly: Boolean; override;
-    procedure DoLoad(FileName: string); override;
-    procedure DoSave(FileName: string); override;
-  public
-    destructor Destroy; override;
   end;
 
   { TDBFileCategory }
@@ -77,18 +59,18 @@ uses
 
 { TSQLFile }
 
-function TSQLFile.GetContents: TSQLEditForm;
-begin
-  Result := FContents;
-end;
-
 procedure TSQLFile.InitContents;
 begin
   inherited;
-  FContents := TSQLEditForm.CreateParented(Engine.FilePanel.Handle);
-  FContents.Parent := Engine.FilePanel;
-  FContents.Align := alClient;
-  FContents.OnChanged := @DoEdit;
+  FContent := TSQLEditForm.CreateParented(Engine.FilePanel.Handle);
+  FContent.Parent := Engine.FilePanel;
+  FContent.Align := alClient;
+  FContent.OnChanged := @DoEdit;
+end;
+
+function TSQLFile.GetContent: TWinControl;
+begin
+  Result := FContent;
 end;
 
 function TSQLFile.Run: Boolean;
@@ -98,12 +80,7 @@ end;
 
 function TSQLFile.GetSynEdit: TSynEdit;
 begin
-  Result := FContents.SQLEdit;
-end;
-
-function TSQLFile.GetControl: TWinControl;
-begin
-  Result := Contents;
+  Result := FContent.SQLEdit;
 end;
 
 function TSQLFile.GetIsReadonly: Boolean;
@@ -113,13 +90,13 @@ end;
 
 function TSQLFile.Execute(RunInfo: TmneRunInfo): Boolean;
 begin
-  FContents.Execute;
+  FContent.Execute;
   Result := True;
 end;
 
 destructor TSQLFile.Destroy;
 begin
-  FreeAndNil(FContents);
+  FreeAndNil(FContent);
   inherited Destroy;
 end;
 
@@ -150,45 +127,6 @@ begin
   end;
 end;
 
-{ TDBFile }
-
-function TDBFile.GetContents: TsqlvManagerForm;
-begin
-  if FContents = nil then
-  begin
-    FContents := TsqlvManagerForm.Create(Engine.ProjectPanel);
-    FContents.Parent := Engine.ProjectPanel;
-    FContents.Align := alClient;
-  end;
-  Result := FContents;
-end;
-
-function TDBFile.GetControl: TWinControl;
-begin
-  Result := Contents;
-end;
-
-function TDBFile.GetIsReadonly: Boolean;
-begin
-  Result := True;
-end;
-
-procedure TDBFile.DoLoad(FileName: string);
-begin
-  //Contents.DB.Picture.LoadFromFile(FileName);
-end;
-
-procedure TDBFile.DoSave(FileName: string);
-begin
-  //Contents.DB.Picture.SaveToFile(FileName);
-end;
-
-destructor TDBFile.Destroy;
-begin
-  FreeAndNil(FContents);
-  inherited Destroy;
-end;
-
 { TDBFileCategory }
 
 function TDBFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
@@ -211,7 +149,7 @@ initialization
     Categories.Add(TSQLFileCategory.Create(DefaultProject.Tendency, 'sql', 'SQL'));
     Groups.Add(TSQLFile, 'sql', 'SQL', TSQLFileCategory, ['sql'], [fgkAssociated, fgkExecutable, fgkBrowsable]);
     Categories.Add(TDBFileCategory.Create(DefaultProject.Tendency, 'DB', 'Database connection'));
-    Groups.Add(TDBFile, 'SQLite', 'SQLite', TDBFileCategory, ['sqlite'], [fgkAssociated, fgkBinary, fgkBrowsable]);
-    Groups.Add(TDBFile, 'Firebird', 'Firebird', TDBFileCategory, ['firebird'], [fgkAssociated, fgkBinary, fgkBrowsable]);
+    //Groups.Add(TDBFile, 'SQLite', 'SQLite', TDBFileCategory, ['sqlite'], [fgkAssociated, fgkBinary, fgkBrowsable]);
+    //Groups.Add(TDBFile, 'Firebird', 'Firebird', TDBFileCategory, ['firebird'], [fgkAssociated, fgkBinary, fgkBrowsable]);
   end;
 end.

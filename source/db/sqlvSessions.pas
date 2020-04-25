@@ -42,7 +42,7 @@ type
     destructor Destroy; override;
     function CreateMeta: TmncMeta;
     procedure LoadMeta;
-    procedure Open(DatabaseEngine, DatabaseName, UserName, Password, Role: string; vAutoCreate, vExclusive, vVacuum: Boolean);
+    procedure Open(vCreate:Boolean; DatabaseEngine, DatabaseName, UserName, Password, Role: string; vExclusive, vVacuum: Boolean);
     procedure Close;
     function IsActive: Boolean;
     procedure Connected;
@@ -144,7 +144,7 @@ begin
   end;
 end;
 
-procedure TsqlvDB.Open(DatabaseEngine, DatabaseName, UserName, Password, Role: string; vAutoCreate, vExclusive, vVacuum: Boolean);
+procedure TsqlvDB.Open(vCreate: Boolean; DatabaseEngine, DatabaseName, UserName, Password, Role: string; vExclusive, vVacuum: Boolean);
 begin
   FConnection := Engines.CreateConnection(DatabaseEngine) as TmncSQLConnection;
 

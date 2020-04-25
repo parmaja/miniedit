@@ -283,6 +283,7 @@ type
   TDBEngine = class(TsqlvCustomAddons, INotifyEngine, ISettingNotifyEngine)
   private
     FDB: TsqlvDB;
+    FEngines: TStringLIst;
     FSetting: TsqlvSetting;
     FRecents: TStringList;
     FStack: TsqlvStack;
@@ -293,6 +294,8 @@ type
     destructor Destroy; override;
 
     procedure OpenDatabase;
+    procedure CreateDatabase;
+    procedure BrowseDatabases(EngineName: string);
 
     procedure LoadOptions;
     procedure SaveOptions;
@@ -311,6 +314,7 @@ type
     function GetAllSupportedFiles: string;
     property Setting: TsqlvSetting read FSetting;
     property Recents: TStringList read FRecents;
+    property Engines: TStringLIst read FEngines;
     property DB: TsqlvDB read FDB;
     property History: TsqlvAddonHistory read FHistory;
     property Stack: TsqlvStack read FStack;
@@ -819,6 +823,8 @@ begin
   FRecents := TStringList.Create;
   FDB := TsqlvDB.Create;
   Engine.RegisterNotify(Self);
+  FEngines:=TStringList.Create;
+  mncDB.Engines.EnumConnections(FEngines);
 end;
 
 destructor TDBEngine.Destroy;
@@ -829,6 +835,7 @@ begin
   FreeAndNil(FRecents);
   FreeAndNil(FHistory);
   FreeAndNil(FSQLHistory);
+  FreeAndNil(FEngines);
   inherited;
 end;
 
@@ -842,12 +849,35 @@ begin
         DBEngine.DB.Close;
 
       DBEngine.Setting.CacheMetas := CacheMetaChk.Checked;
-      DBEngine.DB.Open((DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name, DatabaseCbo.Text, UserEdit.Text, PasswordEdit.Text, RoleEdit.Text, AutoCreateChk.Checked, ExclusiveChk.Checked, VacuumChk.Checked);
+      DBEngine.DB.Open(False, (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name, DatabaseCbo.Text, UserEdit.Text, PasswordEdit.Text, RoleEdit.Text, ExclusiveChk.Checked, VacuumChk.Checked);
       DBEngine.Stack.Clear;
       DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabaseCbo.Text));
       DBEngine.Run(DBEngine.Stack);
     end;
   end;
+end;
+
+procedure TDBEngine.CreateDatabase;
+begin
+  with TOpenDatabaseForm.Create(Application) do
+  begin
+    if ShowModal = mrOK then
+    begin
+      if DBEngine.DB.IsActive then
+        DBEngine.DB.Close;
+
+      DBEngine.Setting.CacheMetas := CacheMetaChk.Checked;
+      DBEngine.DB.Open(True, (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name, DatabaseCbo.Text, UserEdit.Text, PasswordEdit.Text, RoleEdit.Text, ExclusiveChk.Checked, VacuumChk.Checked);
+      DBEngine.Stack.Clear;
+      DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabaseCbo.Text));
+      DBEngine.Run(DBEngine.Stack);
+    end;
+  end;
+end;
+
+procedure TDBEngine.BrowseDatabases(EngineName: string);
+begin
+
 end;
 
 procedure TDBEngine.RegisterFilter(Filter: string);

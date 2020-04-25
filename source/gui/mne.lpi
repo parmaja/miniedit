@@ -172,7 +172,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item10>
     </RequiredPackages>
-    <Units Count="55">
+    <Units Count="58">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -457,25 +457,41 @@
         <IsPartOfProject Value="True"/>
       </Unit50>
       <Unit51>
+        <Filename Value="..\db\mneDBClasses.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit51>
+      <Unit52>
         <Filename Value="..\db\sqlvSQLForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SQLEditForm"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit51>
-      <Unit52>
-        <Filename Value="..\db\sqlvOpenDatabases.pas"/>
-        <IsPartOfProject Value="True"/>
-        <ComponentName Value="OpenDatabaseForm"/>
-        <ResourceBaseClass Value="Form"/>
       </Unit52>
       <Unit53>
-        <Filename Value="..\db\sqlvSessions.pas"/>
+        <Filename Value="..\db\sqlvClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit53>
       <Unit54>
+        <Filename Value="..\db\sqlvManagerForms.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="sqlvManagerForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit54>
+      <Unit55>
+        <Filename Value="..\db\sqlvOpenDatabases.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="OpenDatabaseForm"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Form"/>
+      </Unit55>
+      <Unit56>
+        <Filename Value="..\db\sqlvSessions.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit56>
+      <Unit57>
         <Filename Value="..\db\sqlvStdClasses.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit54>
+      </Unit57>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

@@ -513,7 +513,8 @@ type
     procedure GroupChanged; virtual;
     function GetIsReadonly: Boolean; virtual;
     procedure SetIsReadonly(const Value: Boolean); virtual;
-    function GetControl: TWinControl; virtual;
+    function GetContent: TWinControl; virtual;
+    function GetSynEdit: TSynEdit; virtual;
     procedure DoGetCapability(var vCapability: TEditCapability); virtual;
   protected
     procedure Edit;
@@ -557,6 +558,8 @@ type
     //
     function GetLanguageName: string; virtual; //TODO need to get more good name to this function
     procedure SetLine(Line: Integer); virtual;
+    procedure SetHighlightLine(AValue: Integer); virtual;
+
     //Clipboard
     function CanCopy: Boolean;
     function CanPaste: Boolean;
@@ -583,7 +586,9 @@ type
     property IsNew: Boolean read FIsNew write SetIsNew default False;
     property IsReadOnly: Boolean read GetIsReadonly write SetIsReadonly;
     property Group: TFileGroup read FGroup write SetGroup;
-    property Control: TWinControl read GetControl;
+
+    property Content: TWinControl read GetContent;
+    property SynEdit: TSynEdit read GetSynEdit;
   published
   end;
 
@@ -592,15 +597,15 @@ type
   TControlEditorFile = class(TEditorFile, IControlEditor)
   private
     FControl: TWinControl;
-    procedure SetControl(AValue: TWinControl);
+    procedure SetContent(AValue: TWinControl);
   protected
-    function GetControl: TWinControl; override;
+    function GetContent: TWinControl; override;
     function GetIsReadonly: Boolean; override;
     procedure DoLoad(FileName: string); override;
     procedure DoSave(FileName: string); override;
   public
     destructor Destroy; override;
-    property Control: TWinControl read GetControl write SetControl;
+    property Control: TWinControl read GetContent write SetContent;
   end;
 
   { TSyntaxEditorFile }
@@ -608,13 +613,11 @@ type
   TSyntaxEditorFile = class abstract(TEditorFile, ITextEditor)
   private
     FHighlightLine: Integer;
-    procedure SetHighlightLine(AValue: Integer);
   protected
     LastGotoLine: Integer;
-    function GetSynEdit: TSynEdit; virtual; abstract;
     function GetIsReadonly: Boolean; override;
     procedure SetIsReadonly(const Value: Boolean); override;
-    function GetControl: TWinControl; override;
+    function GetContent: TWinControl; override;
     procedure DoLoad(FileName: string); override;
     procedure DoSave(FileName: string); override;
     procedure GroupChanged; override;
@@ -624,6 +627,7 @@ type
     procedure DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
     procedure DoGetCapability(var vCapability: TEditCapability); override;
     procedure SynEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    procedure SetHighlightLine(AValue: Integer); override;
   public
     constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
@@ -649,7 +653,6 @@ type
 
     procedure SetLine(Line: Integer); override;
     procedure GotoLine; override;
-    property SynEdit: TSynEdit read GetSynEdit;
     property HighlightLine: Integer read FHighlightLine write SetHighlightLine;
   end;
 
@@ -1653,7 +1656,7 @@ end;
 
 { TControlEditorFile }
 
-procedure TControlEditorFile.SetControl(AValue: TWinControl);
+procedure TControlEditorFile.SetContent(AValue: TWinControl);
 begin
   if FControl <> AValue then
   begin
@@ -1666,7 +1669,7 @@ begin
   end;
 end;
 
-function TControlEditorFile.GetControl: TWinControl;
+function TControlEditorFile.GetContent: TWinControl;
 begin
   Result := FControl;
 end;
@@ -1825,7 +1828,7 @@ begin
   SynEdit.ReadOnly := Value;
 end;
 
-function TSyntaxEditorFile.GetControl: TWinControl;
+function TSyntaxEditorFile.GetContent: TWinControl;
 begin
   Result := SynEdit;
 end;
@@ -4373,20 +4376,20 @@ end;
 
 procedure TEditorFile.Show;
 begin
-  if Control <> nil then
+  if Content <> nil then
   begin
-    Control.Align := alClient;
-    Control.Realign;
-    Control.Visible := True;
-    Control.Show;
-    Control.BringToFront;
+    Content.Align := alClient;
+    Content.Realign;
+    Content.Visible := True;
+    Content.Show;
+    Content.BringToFront;
     //Activate;//no no, bad when return back from another app to miniedit
   end;
 end;
 
 function TEditorFile.Visible: Boolean;
 begin
-  Result := (Control <> nil ) and (Control.Visible);
+  Result := (Content <> nil ) and (Content.Visible);
 end;
 
 procedure TEditorFile.SaveFile(Extension:string; AsNewFile: Boolean);
@@ -4490,15 +4493,15 @@ procedure TEditorFile.Activate;
 var
   aControl: TWinControl;
 begin
-  if Control.CanFocus then
+  if Content.CanFocus then
   begin
-    if Supports(Control, IEditorControl) then
-      aControl := (Control as IEditorControl).GetMainControl
+    if Supports(Content, IEditorControl) then
+      aControl := (Content as IEditorControl).GetMainControl
     else
       aControl := nil;
 
     if (aControl = nil) or not (aControl.CanFocus) then
-      aControl := Control as TWinControl;
+      aControl := Content;
 
     (Engine.FilePanel.Owner as TCustomForm).ActiveControl := aControl;
   end;
@@ -4509,15 +4512,15 @@ var
   aControl: TWinControl;
 begin
   Result := False;
-  if (Control <> nil) and Control.CanFocus then
+  if (Content <> nil) and Content.CanFocus then
   begin
-    if Supports(Control, IEditorControl) then
-      aControl := (Control as IEditorControl).GetMainControl
+    if Supports(Content, IEditorControl) then
+      aControl := (Content as IEditorControl).GetMainControl
     else
       aControl := nil;
 
     if aControl = nil then
-      aControl := Control as TWinControl;
+      aControl := Content;
 
     Result := (Engine.FilePanel.Owner as TCustomForm).ActiveControl = aControl;
   end;
@@ -4565,6 +4568,10 @@ end;
 procedure TEditorFile.SetLine(Line: Integer);
 begin
 
+end;
+
+procedure TEditorFile.SetHighlightLine(AValue: Integer);
+begin
 end;
 
 function TEditorFile.CanCopy: Boolean;
@@ -4669,7 +4676,12 @@ begin
   Rename(PureName + AValue);
 end;
 
-function TEditorFile.GetControl: TWinControl;
+function TEditorFile.GetContent: TWinControl;
+begin
+  Result := nil;
+end;
+
+function TEditorFile.GetSynEdit: TSynEdit;
 begin
   Result := nil;
 end;

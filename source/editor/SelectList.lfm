@@ -18,15 +18,17 @@ object SelectListForm: TSelectListForm
     Top = 29
     Width = 449
     Anchors = [akTop, akLeft, akRight, akBottom]
+    AutoWidthLastColumn = True
     Columns = <    
       item
+        AutoSize = True
         Caption = 'Type'
-        Width = 100
+        MinWidth = 100
+        Width = 41
       end    
       item
-        AutoSize = True
         Caption = 'Description'
-        Width = 75
+        Width = 404
       end>
     HideSelection = False
     ReadOnly = True

@@ -22,7 +22,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, ExtCtrls, StdCtrls, FileUtil,
   mncSQL,
-  LCLType, Graphics, Menus, Buttons, ComCtrls, EditorEngine, sqlvManager,
+  LCLType, Graphics, Menus, Buttons, ComCtrls, EditorEngine, sqlvManagerForms,
   sqlvClasses, IniFiles, ntvTabSets, MsgBox, mnStreams, ntvGrids,
   ntvPageControls, mncConnections, mncCSV;
 

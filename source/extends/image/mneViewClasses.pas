@@ -30,11 +30,10 @@ type
 
   TImageFile = class(TEditorFile, IFileEditor)
   private
-    FContents: TImagePanel;
-    function GetContents: TImagePanel;
+    FContent: TImagePanel;
   protected
-    property Contents: TImagePanel read GetContents;
-    function GetControl: TWinControl; override;
+    procedure InitContents; override;
+    function GetContent: TWinControl; override;
     function GetIsReadonly: Boolean; override;
     procedure DoLoad(FileName: string); override;
     procedure DoSave(FileName: string); override;
@@ -74,20 +73,20 @@ end;
 
 { TImageFile }
 
-function TImageFile.GetContents: TImagePanel;
+procedure TImageFile.InitContents;
 begin
-  if FContents = nil then
+  inherited InitContents;
+  if FContent = nil then
   begin
-    FContents := TImagePanel.Create(Engine.FilePanel);
-    FContents.Parent := Engine.FilePanel;
-    FContents.Align := alClient;
+    FContent := TImagePanel.Create(Engine.FilePanel);
+    FContent.Parent := Engine.FilePanel;
+    FContent.Align := alClient;
   end;
-  Result := FContents;
 end;
 
-function TImageFile.GetControl: TWinControl;
+function TImageFile.GetContent: TWinControl;
 begin
-  Result := Contents;
+  Result := FContent;
 end;
 
 function TImageFile.GetIsReadonly: Boolean;
@@ -97,17 +96,17 @@ end;
 
 procedure TImageFile.DoLoad(FileName: string);
 begin
-  Contents.Image.Picture.LoadFromFile(FileName);
+  FContent.Image.Picture.LoadFromFile(FileName);
 end;
 
 procedure TImageFile.DoSave(FileName: string);
 begin
-  Contents.Image.Picture.SaveToFile(FileName);
+  FContent.Image.Picture.SaveToFile(FileName);
 end;
 
 destructor TImageFile.Destroy;
 begin
-  FreeAndNil(FContents);
+  FreeAndNil(FContent);
   inherited Destroy;
 end;
 
