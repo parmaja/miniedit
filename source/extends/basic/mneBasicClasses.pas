@@ -13,7 +13,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  LazFileUtils, SynHighlighterVB, EditorDebugger, EditorClasses, mneClasses,
+  LazFileUtils, SynHighlighterVB, EditorClasses, mneClasses,
   mneCompilerProjectFrames, EditorRun,
   mneRunFrames;
 
@@ -266,7 +266,7 @@ end;
 
 procedure TBasicTendency.Created;
 begin
-  FCapabilities := [capDebug, capTrace, capDebugServer, capRun, capCompile, capLint, capOptions];
+  FCapabilities := [capDebug, capTrace, capDebugServer, capExecute, capCompile, capLint, capOptions];
   Title := 'Basic Lang';
   FDescription := 'Basic Files, *.bas';
   FName := 'Basic';

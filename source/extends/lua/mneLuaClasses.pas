@@ -13,7 +13,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  LazFileUtils, mnSynHighlighterLua, EditorDebugger, EditorClasses, mneClasses,
+  LazFileUtils, mnSynHighlighterLua, EditorClasses, mneClasses,
   mneCompilerProjectFrames, EditorRun, LuaDBGServers,
   mneRunFrames;
 
@@ -275,7 +275,7 @@ end;
 
 procedure TLuaTendency.Created;
 begin
-  FCapabilities := [capDebug, capTrace, capDebugServer, capRun, capCompile, capLint, capOptions];
+  FCapabilities := [capDebug, capTrace, capDebugServer, capExecute, capCompile, capLint, capOptions];
   Title := 'Lua Lang';
   FDescription := 'Lua Files, *.lua';
   FName := 'Lua';

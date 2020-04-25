@@ -130,6 +130,7 @@ begin
   Extensions.Add('sh', 10);
   Extensions.Add('bat', 10);
   Extensions.Add('go', 11);
+  Extensions.Add('sql', 12);
 end;
 
 procedure TEditorResource.DataModuleDestroy(Sender: TObject);

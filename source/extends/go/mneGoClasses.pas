@@ -15,7 +15,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  EditorDebugger, gdbClasses, mnSynHighlighterGo,
+  gdbClasses, mnSynHighlighterGo,
   EditorClasses, mneClasses, MsgBox,
   mneCompilerProjectFrames, mneGoTendencyFrames, EditorRun,
   mneRunFrames;
@@ -345,7 +345,7 @@ end;
 
 procedure TGoTendency.Created;
 begin
-  FCapabilities := [capRun, capDebug, capTrace, capCompile, capLink, capOptions];
+  FCapabilities := [capExecute, capDebug, capTrace, capCompile, capLink, capOptions];
   FTitle := 'Go Lang';
   FDescription := 'Go Files, *.Go';
   FName := 'Go';

@@ -30,7 +30,7 @@ uses
   Graphics, Contnrs, Types, IniFiles, EditorOptions, EditorColors, EditorProfiles,
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
-  SynEdit, SynEditTextTrimmer, SynTextDrawer, EditorDebugger, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
+  SynEdit, SynEditTextTrimmer, SynTextDrawer, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
   dbgpServers, Masks, mnXMLRttiProfile, mnXMLUtils, mnClasses, fgl,
   mnUtils, LCLType, EditorClasses, EditorRun;
 
@@ -210,6 +210,7 @@ type
     fgkDefault,
     fgkText, //Is it an Text Editor like SQL or PHP
     fgkUneditable, // Can't be editable
+    fgkBinary, // Like Database SQLite
     fgkExecutable,//You can guess what is it :P
     fgkShell,//TODO: Executable but hi priority, override the main file or project tendency
     fgkDebugee, //TODO
@@ -237,7 +238,8 @@ type
     capErrors,
     capBrowser,
     capOptions,
-    capRun, //Can run this file
+    capExecute, //Can run this file
+    capStop, //Stop executing or compiling
     capCompile, //Can compile this file
     capLink, //Can need link before run
     capLint, //Check error of file without compiling or run
@@ -305,6 +307,7 @@ type
     procedure Unprepare;
     //
     property Capabilities: TEditorCapabilities read FCapabilities;
+    function CanExecute: Boolean;
     property Groups: TFileGroups read FGroups;
     property IsDefault: Boolean read GetIsDefault;
     property OutputExtension: string read FOutputExtension write FOutputExtension;
@@ -519,6 +522,7 @@ type
     procedure NewContent; virtual;
     procedure DoLoad(FileName: string); virtual; abstract;
     procedure DoSave(FileName: string); virtual; abstract;
+    function Execute(RunInfo: TmneRunInfo): Boolean; virtual;
   public
     constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
@@ -528,6 +532,7 @@ type
     procedure Save(FileName: string);
     procedure Rename(ToNakeName: string); //only name not with the path
     procedure Delete; //only name not with the path
+    function CanExecute: Boolean;
 
     procedure SaveFile(Extension: string = ''; AsNewFile: Boolean = False); virtual;
     procedure Show; virtual; //Need to activate it after show to focus editor
@@ -664,7 +669,6 @@ type
 
   TSourceEditorFile = class(TTextEditorFile, IExecuteEditor, IWatchEditor)
   public
-    function Run: Boolean; virtual;
   end;
 
   { TEditorFiles }
@@ -1388,19 +1392,14 @@ begin
   end;
 end;
 
-{ TSourceEditorFile }
-
-function TSourceEditorFile.Run: Boolean;
-begin
-  Result := False;
-end;
-
 { TTextEditorFile }
 
 procedure TTextEditorFile.InitContents;
 begin
   inherited;
   FSynEdit := TmnSynEdit.Create(Engine.FilePanel);
+  SynEdit.Visible := False;
+  SynEdit.Parent := Engine.FilePanel;
 end;
 
 function TTextEditorFile.GetSynEdit: TSynEdit;
@@ -1420,8 +1419,6 @@ begin
 end;
 
 { TSyntaxEditorFile }
-
-{ TmnSynEdit }
 
 procedure TmnSynEdit.ExecuteCommand(Command: TSynEditorCommand; const AChar: TUTF8Char; Data: pointer);
 begin
@@ -2033,12 +2030,10 @@ begin
   SynEdit.Font.Quality := fqDefault;
   SynEdit.BorderStyle := bsNone;
   SynEdit.ShowHint := True;
-  SynEdit.Visible := False;
   SynEdit.WantTabs := True;
   SynEdit.MaxLeftChar := 80;
   SynEdit.ScrollBars := ssAutoBoth;
 
-  SynEdit.Parent := Engine.FilePanel;
   with SynEdit.Keystrokes.Add do
   begin
     Key       := VK_DELETE;
@@ -2397,6 +2392,11 @@ begin
   FreeAndNil(FDebug);
 end;
 
+function TEditorTendency.CanExecute: Boolean;
+begin
+  Result := (capExecute in Capabilities) or ((Engine.Files.Current <> nil) and Engine.Files.Current.CanExecute);
+end;
+
 function TEditorTendency.GetIsDefault: Boolean;
 begin
   Result := False;
@@ -2535,7 +2535,10 @@ begin
 
         if (p.MainFile <> '') then
         begin
-          DoRun(p);
+          if (Engine.Files.Current <> nil) and not Engine.Files.Current.Execute(p) then
+
+          else
+            DoRun(p);
           Engine.UpdateState([ecsDebug]);
         end;
       end;
@@ -4343,6 +4346,14 @@ begin
   end;
 end;
 
+function TEditorFile.CanExecute: Boolean;
+begin
+  if Group = nil then
+    Result := False
+  else
+    Result := fgkExecutable in Group.Kind;
+end;
+
 procedure TEditorFile.SetIsEdited(const Value: Boolean);
 begin
   FIsEdited := Value;
@@ -4474,7 +4485,7 @@ begin
     else
       aControl := nil;
 
-    if aControl = nil then
+    if (aControl = nil) or not (aControl.CanFocus) then
       aControl := Control as TWinControl;
 
     (Engine.FilePanel.Owner as TCustomForm).ActiveControl := aControl;
@@ -4674,6 +4685,11 @@ end;
 
 procedure TEditorFile.NewContent;
 begin
+end;
+
+function TEditorFile.Execute(RunInfo: TmneRunInfo): Boolean;
+begin
+  Result := False;
 end;
 
 function ConvertToLinesMode(Mode: TEditorLinesMode; Contents: string): string;

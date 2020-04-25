@@ -117,6 +117,7 @@ object sqlvManagerForm: TsqlvManagerForm
         OddColor = clWindow
         ReadOnly = True
         RowHeight = 22
+        ScrollBars = ssAutoVertical
         Selected.TextColor = clHighlightText
         RowSelect = True
         TabOrder = 1

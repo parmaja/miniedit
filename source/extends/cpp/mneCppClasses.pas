@@ -15,7 +15,7 @@ uses
   Contnrs, LazFileUtils, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  mnSynHighlighterD, mnSynHighlighterCpp, EditorDebugger, EditorClasses, mneClasses, MsgBox,
+  mnSynHighlighterD, mnSynHighlighterCpp, EditorClasses, mneClasses, MsgBox,
   mneCompilerProjectFrames, EditorRun,
   mneRunFrames;
 
@@ -308,7 +308,7 @@ end;
 
 procedure TCppTendency.Created;
 begin
-  FCapabilities := [capRun, capCompile, capLink, capOptions];
+  FCapabilities := [capExecute, capCompile, capLink, capOptions];
   FTitle := 'Cpp Lang';
   FDescription := 'Cpp Files, *.cpp, *.c, *.h, *.ino';
   FName := 'Cpp';

@@ -14,7 +14,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  EditorDebugger, gdbClasses, EditorRun, mneCompilerProjectFrames, mneRunFrames,
+  gdbClasses, EditorRun, mneCompilerProjectFrames, mneRunFrames,
   LazFileUtils, SynHighlighterPas, SynHighlighterLFM;
 
 type
@@ -181,7 +181,7 @@ end;
 
 procedure TPasTendency.Created;
 begin
-  FCapabilities := [capRun, capDebug, capTrace, capCompile, capLink, capOptions];
+  FCapabilities := [capExecute, capDebug, capTrace, capCompile, capLink, capOptions];
   FName := 'Pascal';
   FTitle := 'Pascal project';
   FDescription := 'Pascal/FPC/Lazarus Files, *.pas, *.pp *.inc';

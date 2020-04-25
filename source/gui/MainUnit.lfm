@@ -142,10 +142,7 @@ object MainForm: TMainForm
         Top = 0
         Width = 752
         AutoSize = True
-        StoreIndex = False
         ShowButtons = False
-        ShowBorder = False
-        AlignTabs = talBottom
         Items = <>
         OnTabSelected = FileTabsTabSelected
         Align = alTop
@@ -310,9 +307,7 @@ object MainForm: TMainForm
       Top = 5
       Width = 261
       BorderSpacing.Top = 5
-      StoreIndex = False
       ShowButtons = False
-      ShowBorder = False
       Items = <      
         item
           Caption = 'Folder'
@@ -335,6 +330,13 @@ object MainForm: TMainForm
       Align = alClient
       TabOrder = 0
       object ProjectPnl: TntvPanel
+        Left = 3
+        Height = 284
+        Top = 23
+        Width = 255
+        Align = alClient
+      end
+      object DatabasePnl: TntvPanel
         Left = 3
         Height = 284
         Top = 23
@@ -404,13 +406,6 @@ object MainForm: TMainForm
           AutoCheck = False
         end
       end
-      object DatabasePnl: TntvPanel
-        Left = 3
-        Height = 284
-        Top = 23
-        Width = 255
-        Align = alClient
-      end
     end
   end
   object MessagesPnl: TntvPanel
@@ -428,9 +423,7 @@ object MainForm: TMainForm
       Width = 1021
       Margin = 1
       BorderSpacing.Top = 2
-      StoreIndex = False
       ShowButtons = False
-      ShowBorder = False
       Items = <      
         item
           Caption = 'Output'
@@ -3016,7 +3009,7 @@ object MainForm: TMainForm
     OnActivate = ApplicationPropertiesActivate
     OnShowHint = ApplicationPropertiesShowHint
     Left = 73
-    Top = 99
+    Top = 116
   end
   object LogSyn: TSynAnySyn
     Enabled = False

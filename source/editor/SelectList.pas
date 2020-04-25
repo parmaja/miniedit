@@ -108,7 +108,7 @@ var
   aItem: TListItem;
   procedure AddItem(vData: Pointer; Name, Title, Description: string; ImageIndex: Integer);
   begin
-    if (vFilter = '') or ContainsText(vFilter, Name) or ContainsText(vFilter, Title) or ContainsText(vFilter, Description) then
+    if (vFilter = '') or ContainsText(Name, vFilter) or ContainsText(Title, vFilter) or ContainsText(Description, vFilter) then
     begin
       aItem := ItemsList.Items.Add;
       aItem.Data := vData;

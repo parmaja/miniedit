@@ -43,7 +43,7 @@ uses
   EditorRun in '..\editor\EditorRun.pas',
   mneBreakpoints in 'mneBreakpoints.pas' {BreakpointsForm},
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
-  SearchProgressForms, EditorDebugger, SelectList, IniFiles, mneAssociateForm,
+  SearchProgressForms, SelectList, IniFiles, mneAssociateForm,
   mneExtends, mneCMDClasses, mneGoClasses, mneSARDClasses, sqlvManager,
   mneDBClasses, mneBoardClasses, mneBoardForms, mneSelectComponents,
   mneBoardComponents, mneFontGenForm, mneCppClasses, mneVerilogClasses,
@@ -52,7 +52,7 @@ uses
   Classes, PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses,
   EditorColors, gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneClasses,
   mneManageRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils, mnStreams,
-  mncCSV, sqlvOpenDatabases, SQLEditForms;
+  mncCSV, sqlvOpenDatabases, SQLEditForms, sqlvClasses;
 
 {$R *.res}
 {$i '..\lib\mne.inc'}

@@ -12,7 +12,7 @@ interface
 uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs, Dialogs,
   LCLintf, LCLType, LazFileUtils,
-  EditorOptions, EditorDebugger, EditorRun, EditorClasses, mneRunFrames,
+  EditorOptions, EditorRun, EditorClasses, mneRunFrames,
   SynEditHighlighter, SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   mnSynHighlighterSard, SynHighlighterLFM;
@@ -66,7 +66,7 @@ uses
 
 procedure TSardTendency.Created;
 begin
-  FCapabilities := [capRun, capOptions];
+  FCapabilities := [capExecute, capOptions];
   FName := 'Sard';
   FTitle := 'Sard project';
   FDescription := 'Sard Files, *.sard';

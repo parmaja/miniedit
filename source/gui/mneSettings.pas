@@ -11,7 +11,7 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  EditorDebugger, EditorEngine, EditorClasses, ntvGrids, Dialogs, StdCtrls,
+  EditorEngine, EditorClasses, ntvGrids, Dialogs, StdCtrls,
   ComCtrls;
 
 type

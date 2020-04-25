@@ -19,7 +19,7 @@ interface
 uses
   SysUtils, StrUtils, Classes, Contnrs, Dialogs, Variants,
   mnSockets, mnStreams, mnConnections, mnServers, mnXMLUtils, Base64,
-  mnXMLRttiProfile, mnXMLNodes, SyncObjs, IniFiles, EditorDebugger, mnClasses;
+  mnXMLRttiProfile, mnXMLNodes, SyncObjs, IniFiles, EditorRun, mnClasses;
 
 type
   TLuaDBGServer = class;

@@ -19,8 +19,8 @@ interface
 
 uses
   SysUtils, StrUtils, Classes, Contnrs, Dialogs, Variants,
-  mnSockets, mnStreams, mnConnections, mnServers, mnXMLUtils, Base64,
-  mnXMLRttiProfile, mnXMLNodes, SyncObjs, IniFiles, EditorDebugger, mnClasses;
+  mnSockets, mnStreams, mnConnections, mnServers, mnXMLUtils, Base64, EditorRun,
+  mnXMLRttiProfile, mnXMLNodes, SyncObjs, IniFiles, mnClasses;
 
 type
   TdbgpServer = class;

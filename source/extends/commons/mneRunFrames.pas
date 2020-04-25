@@ -11,7 +11,7 @@ interface
 
 uses
   Classes, SysUtils, FileUtil, SynEdit, Forms, Controls, Graphics, Dialogs,
-  StdCtrls, ExtCtrls, EditorEngine, SelectFiles, EditorDebugger, mneClasses;
+  StdCtrls, ExtCtrls, EditorEngine, SelectFiles, mneClasses;
 
 type
 

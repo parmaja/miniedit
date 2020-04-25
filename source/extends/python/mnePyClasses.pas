@@ -19,7 +19,7 @@ uses
   Contnrs, LazFileUtils, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  SynHighlighterPython, EditorDebugger, EditorClasses, mneClasses,
+  SynHighlighterPython, EditorClasses, mneClasses,
   mneCompilerProjectFrames, EditorRun, dbgpServers,
   mneRunFrames;
 
@@ -246,7 +246,7 @@ end;
 
 procedure TPyTendency.Created;
 begin
-  FCapabilities := [capDebug, capTrace, capDebugServer, capRun, capCompile, capLink, capOptions];
+  FCapabilities := [capDebug, capTrace, capDebugServer, capExecute, capCompile, capLink, capOptions];
   FTitle := 'Python Lang';
   FDescription := 'Python Files, *.py';
   FName := 'Python';

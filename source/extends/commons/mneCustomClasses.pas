@@ -19,7 +19,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  LazFileUtils, mnSynHighlighterD, EditorDebugger, EditorClasses, mneClasses,
+  LazFileUtils, mnSynHighlighterD, EditorClasses, mneClasses,
   mneCompilerProjectFrames, EditorRun, mnSynHighlighterMultiProc,
   mneRunFrames;
 
@@ -287,7 +287,7 @@ end;
 
 procedure TCustomTendency.Created;
 begin
-  FCapabilities := [capRun, capCompile, capLink, capOptions];
+  FCapabilities := [capExecute, capCompile, capLink, capOptions];
   FTitle := 'D Lang';
   FDescription := 'D Files, *.D, *.inc';
   FName := 'D';

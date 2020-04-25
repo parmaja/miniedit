@@ -19,7 +19,7 @@ uses
   mnXMLRttiProfile, mnXMLUtils, SynEditTypes, SynCompletion,
   SynHighlighterHashEntries, EditorProfiles, SynHighlighterCSS,
   SynHighlighterSQL, SynHighlighterXML, SynHighlighterJScript,
-  mnSynHighlighterXHTML, mnSynHighlighterMultiProc, HTMLProcessor, EditorDebugger,
+  mnSynHighlighterXHTML, mnSynHighlighterMultiProc, HTMLProcessor,
   EditorClasses, dbgpServers, mneClasses, mneRunFrames, EditorRun;
 
 type
@@ -305,7 +305,7 @@ end;
 
 procedure TPHPTendency.Created;
 begin
-  FCapabilities := [capRun, capDebug, capEval, capTrace, capDebugServer, capOptions];
+  FCapabilities := [capExecute, capDebug, capEval, capTrace, capDebugServer, capOptions];
   FTitle := 'PHP project';
   FDescription := 'PHP Files, *.php, *.inc';
   FName := 'PHP';

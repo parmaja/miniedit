@@ -11,7 +11,7 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, MsgBox, contnrs, LConvEncoding,
-  LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorDebugger, process,
+  LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorRun, process,
   Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus,
   ToolWin, Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses,
   StdActns, Grids, SynEditHighlighter, SynEdit, IAddons, ntvThemes, ntvSplitters,
@@ -23,7 +23,7 @@ uses
   {$ifdef WINDOWS}
   TSVN_SCM, TGIT_SCM,
   {$endif}
-  ntvTabSets, EditorRun, SynEditPlugins,
+  ntvTabSets, SynEditPlugins,
   synhighlighterunixshellscript, SynHighlighterPas, SynHighlighterMulti,
   mnStreams, mnClasses,
   //Addons
@@ -1975,12 +1975,10 @@ procedure TMainForm.UpdateMenuItems;
 begin
   with Engine.CurrentTendency do
   begin
-    //ExecuteMnu.Visible := capRun in Engine.Tendency.Capabilities;
-
-    DBGRunAct.Enabled := (capRun in Capabilities) {and (not Engine.Session.Run.Active)};
+    DBGRunAct.Enabled := CanExecute; //(capExecute in Capabilities) {and (not Engine.Session.Run.Active)};
+    DBGExecuteAct.Enabled := CanExecute;
     DBGCompileAct.Visible := capCompile in Capabilities;
-    DBGExecuteAct.Enabled := capRun in Capabilities;
-    DBGResetAct.Enabled := capRun in Capabilities;
+    DBGResetAct.Enabled := capStop in Capabilities;
     DBGLintAct.Enabled := capLint in Capabilities;
 
     DBGDebugModeAct.Enabled := (capDebug in Capabilities);

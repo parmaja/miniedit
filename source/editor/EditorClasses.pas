@@ -33,7 +33,6 @@ uses
     end;
 
     IExecuteEditor = interface
-      function Run: Boolean;
     end;
 
     IWatchEditor = interface

@@ -13,13 +13,12 @@ uses
   SysUtils;
 
 const
-  sqlvVersion = '0.2.1';
   sSqliteFilter = 'Sqlite (*.sqlite)|*.sqlite|FirebirdSQL (*.fdb)|*.fdb';
   sAllFilesFilter = 'All files (*.*)|*.*';
   sFileNameFilter = '*.sqlite; *.fdb';
   sFileExtFilter = 'sqlite';
-  sqlvConfig = 'sqlviewer.config';
-  sqlvRecents = 'sqlviewer.recents';
+  sqlvConfig = 'mne.sqlviewer.config';
+  sqlvRecents = 'mne.sqlviewer.recents';
 
 implementation
 end.

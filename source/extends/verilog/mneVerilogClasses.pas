@@ -17,7 +17,7 @@ uses
   Contnrs, LazFileUtils, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter, LCLProc,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  EditorDebugger, EditorRun, mneCompilerProjectFrames,
+  EditorRun, mneCompilerProjectFrames,
   SynHighlighterVerilog;
 
 type
@@ -147,7 +147,7 @@ end;
 
 procedure TVerilogTendency.Created;
 begin
-  FCapabilities := [capRun, capCompile, capLink, capOptions];
+  FCapabilities := [capExecute, capCompile, capLink, capOptions];
   FName := 'Verilog';
   FTitle := 'Verilog project';
   FDescription := 'Verilog Files, *.v, *.vh';

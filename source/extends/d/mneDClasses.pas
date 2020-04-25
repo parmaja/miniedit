@@ -15,7 +15,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  mnSynHighlighterD, EditorDebugger, gdbClasses,
+  mnSynHighlighterD, gdbClasses,
   EditorClasses, mneClasses, MsgBox,
   mneCompilerProjectFrames, mneDTendencyFrames, EditorRun, mneRunFrames;
 
@@ -353,7 +353,7 @@ end;
 
 procedure TDTendency.Created;
 begin
-  FCapabilities := [capRun, capDebug, capTrace, capCompile, capLink, capOptions];
+  FCapabilities := [capExecute, capDebug, capTrace, capCompile, capLink, capOptions];
   FTitle := 'D Lang';
   FDescription := 'D Files, *.D, *.inc';
   FName := 'D';
