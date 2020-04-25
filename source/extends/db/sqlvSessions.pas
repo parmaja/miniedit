@@ -42,7 +42,7 @@ type
     destructor Destroy; override;
     function CreateMeta: TmncMeta;
     procedure LoadMeta;
-    procedure Open(DatabaseEngine, Name:string; vAutoCreate, vExclusive, vVacuum: Boolean);
+    procedure Open(DatabaseEngine, DatabaseName, UserName, Password, Role: string; vAutoCreate, vExclusive, vVacuum: Boolean);
     procedure Close;
     function IsActive: Boolean;
     procedure Connected;
@@ -144,17 +144,18 @@ begin
   end;
 end;
 
-procedure TsqlvDB.Open(DatabaseEngine, Name: string; vAutoCreate, vExclusive, vVacuum: Boolean);
+procedure TsqlvDB.Open(DatabaseEngine, DatabaseName, UserName, Password, Role: string; vAutoCreate, vExclusive, vVacuum: Boolean);
 begin
   FConnection := Engines.CreateConnection(DatabaseEngine) as TmncSQLConnection;
 
   FVacuum := vVacuum;
   FExclusive := vExclusive;
 
-  Connection.Resource := Name;
+  Connection.Resource := DatabaseName;
+  Connection.UserName := UserName;
+  Connection.Password := Password;
+  Connection.Role := Role;
   //Connection.AutoCreate := vAutoCreate;
-  Connection.UserName := 'sysdba';//Firebird
-  Connection.Password := 'masterkey';
   //DBConnection.Exclusive := FExclusive;//TODO
 
   DBEngine.AddRecent(Engines.ComposeConnectionString(Connection));

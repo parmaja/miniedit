@@ -20,13 +20,13 @@ object sqlvManagerForm: TsqlvManagerForm
     TabOrder = 0
     object GroupPanel: TPanel
       Left = 0
-      Height = 422
+      Height = 445
       Top = 0
       Width = 275
       Align = alClient
       BevelOuter = bvNone
       BorderWidth = 2
-      ClientHeight = 422
+      ClientHeight = 445
       ClientWidth = 275
       TabOrder = 0
       object GroupsPanel: TPanel
@@ -78,11 +78,11 @@ object sqlvManagerForm: TsqlvManagerForm
           TabOrder = 2
         end
         object OpenBtn: TButton
-          Left = 116
+          Left = 0
           Height = 26
           Top = 0
           Width = 55
-          Align = alRight
+          Align = alLeft
           AutoSize = True
           Caption = 'Open'
           OnClick = OpenBtnClick
@@ -122,18 +122,19 @@ object sqlvManagerForm: TsqlvManagerForm
         RowSelect = True
         TabOrder = 1
         FullHeader = True
+        OnClick = MembersGridClick
         OnDblClick = MembersGridDblClick
         OnKeyDown = MembersGridKeyDown
       end
-    end
-    object Edit1: TEdit
-      Left = 0
-      Height = 23
-      Top = 422
-      Width = 275
-      Align = alBottom
-      TabOrder = 1
-      TextHint = 'Search'
+      object Edit1: TEdit
+        Left = 2
+        Height = 23
+        Top = 420
+        Width = 271
+        Align = alBottom
+        TabOrder = 2
+        TextHint = 'Search'
+      end
     end
   end
   object ActionsPopupMenu: TPopupMenu

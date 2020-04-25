@@ -71,6 +71,7 @@ type
     procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
     procedure GroupsListKeyPress(Sender: TObject; var Key: char);
     procedure GroupsListSelect(Sender: TObject);
+    procedure MembersGridClick(Sender: TObject);
     procedure MembersGridDblClick(Sender: TObject);
     procedure MembersGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure MembersGridUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
@@ -316,6 +317,11 @@ end;
 procedure TsqlvManagerForm.GroupsListSelect(Sender: TObject);
 begin
   OpenGroup(GroupsNames[GroupsList.ItemIndex].Name);
+end;
+
+procedure TsqlvManagerForm.MembersGridClick(Sender: TObject);
+begin
+
 end;
 
 procedure TsqlvManagerForm.MembersGridDblClick(Sender: TObject);

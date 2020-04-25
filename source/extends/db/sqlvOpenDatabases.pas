@@ -34,7 +34,7 @@ type
     PortEdit: TEdit;
     UserEdit: TEdit;
     PasswordEdit: TEdit;
-    UserEdit1: TEdit;
+    RoleEdit: TEdit;
     VacuumChk: TCheckBox;
     procedure BrowseBtnClick(Sender: TObject);
     procedure CancelBtnClick(Sender: TObject);
