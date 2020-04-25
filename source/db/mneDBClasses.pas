@@ -25,6 +25,7 @@ type
   protected
     procedure InitContents; override;
     function GetContent: TWinControl; override;
+    function GetControl: TWinControl; override;
     function GetSynEdit: TSynEdit; override;
     function GetIsReadonly: Boolean; override;
     function Execute(RunInfo: TmneRunInfo): Boolean; override;
@@ -71,6 +72,16 @@ end;
 function TSQLFile.GetContent: TWinControl;
 begin
   Result := FContent;
+end;
+
+function TSQLFile.GetControl: TWinControl;
+begin
+  if FContent.PageControl.ActiveControl = FContent.SQLPnl then
+    Result := FContent.SQLEdit
+  else if FContent.PageControl.ActiveControl = FContent.DataPnl then
+    Result := FContent.DataGrid
+  else
+    Result := FContent;
 end;
 
 function TSQLFile.Run: Boolean;

@@ -1083,7 +1083,7 @@ procedure TMainForm.EngineRefresh;
 begin
   if Engine.Files.Current <> nil then
   begin
-    if (Engine.Files.Current.SynEdit <> nil) and (Engine.Files.Current.SynEdit.PopupMenu <> nil) then
+    if (Engine.Files.Current.SynEdit <> nil) and (Engine.Files.Current.SynEdit.PopupMenu = nil) then
       Engine.Files.Current.SynEdit.PopupMenu := EditorPopupMenu;
     FileNameLbl.Caption := Engine.Files.Current.Name;
     LinesModeBtn.Caption := Engine.Files.Current.LinesModeAsText;
@@ -1888,7 +1888,7 @@ begin
       //aWord := Trim(Current.SynEdit.GetWordAtRowCol(Current.SynEdit.LogicalCaretXY));
       if aWord <> '' then
       begin
-        Engine.Files.Current.Tendency.HelpKeyWord(aWord);
+        Current.Tendency.HelpKeyWord(aWord);
       end;
     finally
       aWordBreaker.Free;
@@ -2530,7 +2530,7 @@ begin
     Result := Trim(Current.SynEdit.GetWordAtRowCol(Current.SynEdit.LogicalCaretXY));
     if Result <> '' then
     begin
-      if Result[1] <> Engine.Files.Current.Group.Category.GetColorPrefix then
+      if Result[1] <> Current.Group.Category.GetColorPrefix then
         Result := '';
     end;
   end;
@@ -2566,13 +2566,13 @@ begin
     if (aWord <> '') and (Length(aWord) > 1) then
     begin
       CheckIsUpper;
-      aColor := Engine.Files.Current.Group.Category.DeformatColor(aWord);
+      aColor := Current.Group.Category.DeformatColor(aWord);
       aDialog := TColorDialog.Create(Self);
       try
         aDialog.Color := aColor;
         if aDialog.Execute then
         begin
-          aWord := Engine.Files.Current.Group.Category.FormatColor(aDialog.Color);
+          aWord := Current.Group.Category.FormatColor(aDialog.Color);
           //aWord := ColorToRGBHex(aDialog.Color, Engine.Files.Current.Group.Category.GetColorPrefix);
           if aIsUpper then
             aWord := UpperCase(aWord)
@@ -3026,7 +3026,7 @@ begin
         aLine := Current.SynEdit.CaretY;
         Current.Tendency.Debug.Lock;
         try
-          Current.Tendency.Debug.Breakpoints.Toggle(Name, aLine);
+          Current.Tendency.Debug.Breakpoints.Toggle(Current.Name, aLine);
         finally
           Current.Tendency.Debug.Unlock;
         end;

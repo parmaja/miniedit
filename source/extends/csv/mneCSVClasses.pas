@@ -34,6 +34,7 @@ type
   protected
     procedure InitContents; override;
     function GetContent: TWinControl; override;
+    function GetControl: TWinControl; override;
     function GetIsReadonly: Boolean; override;
     procedure DoLoad(FileName: string); override;
     procedure DoSave(FileName: string); override;
@@ -78,6 +79,11 @@ end;
 function TCSVFile.GetContent: TWinControl;
 begin
   Result := FContent;
+end;
+
+function TCSVFile.GetControl: TWinControl;
+begin
+  Result := FContent.DataGrid;
 end;
 
 function TCSVFile.GetIsReadonly: Boolean;

@@ -44,7 +44,7 @@ type
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
     GridPopupMenu: TPopupMenu;
-    ControlPages: TntvPageControl;
+    PageControl: TntvPageControl;
     SQLPnl: TPanel;
     DataPnl: TPanel;
     Panel4: TPanel;
@@ -82,7 +82,6 @@ type
     property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
     procedure ClearGrid;
     procedure FillGrid(SQLCMD: TmncCommand; Title: String);
-    function GetMainControl: TWinControl;
     procedure Execute;
   end;
 
@@ -362,7 +361,7 @@ end;
 constructor TSQLEditForm.Create(TheOwner: TComponent);
 begin
   inherited;
-  ControlPages.ItemIndex := 0;
+  PageControl.ItemIndex := 0;
   SQLEdit := TmnSynEdit.Create(Self);
   SQLEdit.Parent := SQLPnl;
   SQLEdit.Align := alClient;
@@ -378,11 +377,6 @@ begin
   DataGrid.OddColor := Engine.Options.Profile.Attributes.Default.Background;
 end;
 
-function TSQLEditForm.GetMainControl: TWinControl;
-begin
-  Result := SQLEdit;
-end;
-
 procedure TSQLEditForm.Execute;
 var
   CMD: TmncSQLCommand;
@@ -393,7 +387,7 @@ begin
     CMD.SQL.Text := SQLEdit.Text;
     CMD.Execute;
     try
-      ControlPages.ActiveControl := DataPnl;
+      PageControl.ActiveControl := DataPnl;
       FillGrid(CMD, 'Data');
     finally
       CMD.Close;

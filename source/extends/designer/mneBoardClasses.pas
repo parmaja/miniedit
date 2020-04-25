@@ -25,6 +25,7 @@ type
   protected
     procedure InitContents; override;
     function GetContent: TWinControl; override;
+    function GetControl: TWinControl; override;
     function GetIsReadonly: Boolean; override;
     procedure DoLoad(FileName: string); override;
     procedure DoSave(FileName: string); override;
@@ -60,6 +61,11 @@ end;
 function TBoardFile.GetContent: TWinControl;
 begin
   Result := FContent;
+end;
+
+function TBoardFile.GetControl: TWinControl;
+begin
+  Result := FContent.Board;
 end;
 
 function TBoardFile.GetIsReadonly: Boolean;

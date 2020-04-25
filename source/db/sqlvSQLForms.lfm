@@ -9,7 +9,7 @@ object SQLEditForm: TSQLEditForm
   Visible = False
   DesignLeft = 418
   DesignTop = 278
-  object ControlPages: TntvPageControl
+  object PageControl: TntvPageControl
     Left = 0
     Height = 317
     Top = 0

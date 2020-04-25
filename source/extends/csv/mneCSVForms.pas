@@ -85,7 +85,6 @@ type
     procedure FillGrid(SQLCMD: TmncCommand; Title: String);
     procedure Load(FileName: string);
     procedure Save(FileName: string);
-    function GetMainControl: TWinControl;
   end;
 
 implementation
@@ -563,11 +562,6 @@ begin
 
   DataGrid.EvenColor := Engine.Options.Profile.Attributes.Default.Background;
   DataGrid.OddColor := Engine.Options.Profile.Attributes.Default.Background;
-end;
-
-function TCSVForm.GetMainControl: TWinControl;
-begin
-  Result := DataGrid;
 end;
 
 

@@ -84,7 +84,6 @@ type
     Actions: TsqlvAddons;
     GroupsNames: TsqlvAddons;//Fields, Indexes
     CurrentGroup: TsqlvAddon;
-    function GetMainControl: TWinControl;
     procedure ActionsMenuSelect(Sender: TObject);
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
@@ -462,11 +461,6 @@ begin
   aAddon := Actions[(Sender as TMenuItem).Tag];
   aValue := MembersGrid.Values[0, MembersGrid.Current.Row];
   OpenAction(aAddon, aValue);
-end;
-
-function TsqlvManagerForm.GetMainControl: TWinControl;
-begin
-  Result := MembersGrid;
 end;
 
 constructor TsqlvManagerForm.Create(TheOwner: TComponent);

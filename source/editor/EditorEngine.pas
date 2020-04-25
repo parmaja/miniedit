@@ -68,7 +68,6 @@ type
 
   IEditorControl = interface
     ['{8C2646A1-2738-4830-8107-CF8753D14EBD}']
-    function GetMainControl: TWinControl; //Like datagrid in csv form
   end;
 
   { GXMLItems }
@@ -514,6 +513,7 @@ type
     function GetIsReadonly: Boolean; virtual;
     procedure SetIsReadonly(const Value: Boolean); virtual;
     function GetContent: TWinControl; virtual;
+    function GetControl: TWinControl; virtual;
     function GetSynEdit: TSynEdit; virtual;
     procedure DoGetCapability(var vCapability: TEditCapability); virtual;
   protected
@@ -587,8 +587,10 @@ type
     property IsReadOnly: Boolean read GetIsReadonly write SetIsReadonly;
     property Group: TFileGroup read FGroup write SetGroup;
 
-    property Content: TWinControl read GetContent;
-    property SynEdit: TSynEdit read GetSynEdit;
+    property Content: TWinControl read GetContent; //Container of SynEdit or Grids or Images and all child contrls
+    //Control we need to know about it to focus it after open file or changing focus by F6
+    property Control: TWinControl read GetControl; //Control if available, maybe Grid or SynEdit or same the content
+    property SynEdit: TSynEdit read GetSynEdit; //SynEdit of available
   published
   end;
 
@@ -4490,40 +4492,16 @@ begin
 end;
 
 procedure TEditorFile.Activate;
-var
-  aControl: TWinControl;
 begin
-  if Content.CanFocus then
-  begin
-    if Supports(Content, IEditorControl) then
-      aControl := (Content as IEditorControl).GetMainControl
-    else
-      aControl := nil;
-
-    if (aControl = nil) or not (aControl.CanFocus) then
-      aControl := Content;
-
-    (Engine.FilePanel.Owner as TCustomForm).ActiveControl := aControl;
-  end;
+  if (Content <> nil) and Content.CanFocus then //Content not Control, Control maybe will focused later, maybe buggy but that the right
+    Application.MainForm.ActiveControl := Control;
 end;
 
 function TEditorFile.Activated: Boolean;
-var
-  aControl: TWinControl;
 begin
   Result := False;
   if (Content <> nil) and Content.CanFocus then
-  begin
-    if Supports(Content, IEditorControl) then
-      aControl := (Content as IEditorControl).GetMainControl
-    else
-      aControl := nil;
-
-    if aControl = nil then
-      aControl := Content;
-
-    Result := (Engine.FilePanel.Owner as TCustomForm).ActiveControl = aControl;
-  end;
+    Result := Application.MainForm.ActiveControl = Control;
 end;
 
 procedure TEditorFile.GotoLine;
@@ -4624,6 +4602,11 @@ function TEditorFile.GetCapability: TEditCapability;
 begin
   Result := [];
   DoGetCapability(Result);
+end;
+
+function TEditorFile.GetControl: TWinControl;
+begin
+  Result := GetContent;
 end;
 
 function TEditorFile.GetIsText: Boolean;

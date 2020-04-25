@@ -41,7 +41,7 @@ type
   public
     constructor Create(TheOwner: TComponent); override;
     property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
-    function GetMainControl: TWinControl;
+    property Board: TntvBoard read FBoard;
   end;
 
 implementation
@@ -84,11 +84,6 @@ begin
   FBoard.Parent := Self;
   FBoard.Align := alClient;
   FBoard.OnGetCreateElement := @GetCreateElement;
-end;
-
-function TBoardForm.GetMainControl: TWinControl;
-begin
-  Result := FBoard;
 end;
 
 end.
