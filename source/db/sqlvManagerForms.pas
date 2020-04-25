@@ -1,4 +1,4 @@
-unit sqlvManager;
+unit sqlvManagerForms;
 {**
  *  This file is part of the "Mini Connections"
  *
