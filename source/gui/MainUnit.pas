@@ -750,7 +750,6 @@ procedure TMainForm.DBBrowseActExecute(Sender: TObject);
 var
   i: Integer;
   Elements: TEditorElements;
-  EngineName, Resource, Host, User, Password, Role: string;
   E: TEditorElement;
 begin
   Elements := TEditorElements.Create;

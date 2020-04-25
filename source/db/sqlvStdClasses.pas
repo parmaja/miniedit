@@ -270,20 +270,6 @@ type
     procedure DoExecute(vAttributes: TsqlvAttributes); override;
   end;
 
-  TsqlvExecuteType = (execNormal, execExport, execImport);
-
-  TsqlvGui = class(TObject)
-  public
-    procedure ExecuteScript(ExecuteType: TsqlvExecuteType); virtual; abstract;
-
-    procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean); virtual; abstract;
-    procedure LoadEditor(vAddon: TsqlvAddon; S: string); virtual; abstract;
-    procedure LoadEditor(vAddon: TsqlvAddon; vStrings:TStringList);
-  end;
-
-var
-  sqlvGui: TsqlvGui = nil;
-
 implementation
 
 uses
@@ -305,13 +291,6 @@ procedure TsqlvGuiSQL.DoExecute(vAttributes: TsqlvAttributes);
 begin
 end;
 
-{ TsqlvGui }
-
-procedure TsqlvGui.LoadEditor(vAddon: TsqlvAddon; vStrings: TStringList);
-begin
-  LoadEditor(vAddon, vStrings.Text);
-end;
-
 { TsqlvDatabase }
 
 constructor TsqlvDatabase.Create;
@@ -327,7 +306,7 @@ end;
 procedure TsqlvDatabase.DoExecute(vAttributes: TsqlvAttributes);
 begin
   inherited;
-  sqlvGui.ShowMeta(Self, True);
+  DBEngine.ShowMeta(Self, True);
 end;
 
 { TsqlvTables }
@@ -550,7 +529,7 @@ begin
     finally
       aMeta.Free;
     end;
-    sqlvGui.LoadEditor(Self, aStrings);
+    DBEngine.LoadEditor(Self, aStrings);
   finally
     aStrings.Free;
   end;
@@ -583,7 +562,7 @@ begin
     finally
       aMeta.Free;
     end;
-    sqlvGui.LoadEditor(Self, aStrings);
+    DBEngine.LoadEditor(Self, aStrings);
   finally
     aStrings.Free;
   end;
@@ -639,7 +618,7 @@ begin
     finally
       aMeta.Free;
     end;
-    sqlvGui.LoadEditor(Self, aStrings);
+    DBEngine.LoadEditor(Self, aStrings);
   finally
     aStrings.Free;
   end;
@@ -753,7 +732,7 @@ begin
     //aStrings.Text := 'alter table ' + vStack['Table'] + ' drop column ' + Value;
     aStrings.Text := 'alter table ' + vAttributes['Table'] + ' add ?FieldName ?FieldType';
 
-    sqlvGui.LoadEditor(Self, aStrings);
+    DBEngine.LoadEditor(Self, aStrings);
   finally
     aStrings.Free;
   end;
@@ -787,7 +766,7 @@ begin
   inherited;
   aStrings := TStringList.Create;
   aStrings.Text := 'delete from ' + vAttributes['Table'];
-  sqlvGui.LoadEditor(Self, aStrings);
+  DBEngine.LoadEditor(Self, aStrings);
   aStrings.Free;
 end;
 
@@ -812,7 +791,7 @@ begin
   aStrings := TStringList.Create;
   try
     aStrings.Text := 'alter table ' + vAttributes['Table'] + ' drop column ' + vAttributes['Field'];
-    sqlvGui.LoadEditor(Self, aStrings);
+    DBEngine.LoadEditor(Self, aStrings);
   finally
     aStrings.Free;
   end;
@@ -859,7 +838,7 @@ end;
 procedure TsqlvTable.DoExecute(vAttributes: TsqlvAttributes);
 begin
   inherited;
-  sqlvGui.ShowMeta(Self, True);
+  DBEngine.ShowMeta(Self, True);
 end;
 
 { TsqlvIndex }
@@ -877,7 +856,7 @@ end;
 procedure TsqlvIndex.DoExecute(vAttributes: TsqlvAttributes);
 begin
   inherited;
-  //sqlvGui.EnumMembers(Self, Value);
+  //DBEngine.EnumMembers(Self, Value);
 end;
 
 procedure TsqlvIndex.EnumHeader(Header: TStringList);
@@ -944,7 +923,7 @@ end;
 procedure TsqlvDropTable.DoExecute(vAttributes: TsqlvAttributes);
 begin
   inherited;
-  sqlvGui.LoadEditor(Self, 'drop table ' + vAttributes['Table']);
+  DBEngine.LoadEditor(Self, 'drop table ' + vAttributes['Table']);
 end;
 
 { TsqlvSelectTable }
@@ -963,7 +942,7 @@ end;
 procedure TsqlvSelectTable.DoExecute(vAttributes: TsqlvAttributes);
 begin
   inherited;
-  sqlvGui.LoadEditor(Self, 'select * from ' + vAttributes['Table']);
+  DBEngine.LoadEditor(Self, 'select * from ' + vAttributes['Table']);
 end;
 
 { TsqlvInsertTable }
@@ -1010,7 +989,7 @@ begin
   finally
     aItems.Free;
   end;
-  sqlvGui.LoadEditor(Self, 'insert into ' + vAttributes['Table'] + '(' + s1 + ') values (' + s2 +')');
+  DBEngine.LoadEditor(Self, 'insert into ' + vAttributes['Table'] + '(' + s1 + ') values (' + s2 +')');
 end;
 
 { TsqlvExportSQL }
@@ -1028,7 +1007,7 @@ end;
 
 procedure TsqlvExportSQL.DoExecute(vAttributes: TsqlvAttributes);
 begin
-  sqlvGui.ExecuteScript(execExport);
+  DBEngine.ExecuteScript(execExport);
 end;
 
 { TsqlvImportSQL }
@@ -1046,7 +1025,7 @@ end;
 
 procedure TsqlvImportSQL.DoExecute(vAttributes: TsqlvAttributes);
 begin
-  sqlvGui.ExecuteScript(execImport);
+  DBEngine.ExecuteScript(execImport);
 end;
 
 initialization

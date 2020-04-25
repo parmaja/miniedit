@@ -29,7 +29,7 @@ type
 
   { TsqlvManagerForm }
 
-  TsqlvManagerForm = class(TFrame)
+  TsqlvManagerForm = class(TFrame, IsqlvNotify)
     BackBtn: TButton;
     CacheMetaChk1: TCheckBox;
     Edit1: TEdit;
@@ -80,6 +80,7 @@ type
   private
     function LogTime(Start: TDateTime): string;
     procedure StateChanged;
+    procedure LoadMembers(vGroup: TsqlvAddon; vAttributes: TsqlvAttributes);
   public
     Actions: TsqlvAddons;
     GroupsNames: TsqlvAddons;//Fields, Indexes
@@ -91,18 +92,10 @@ type
     procedure OpenMember(AValue: string);
     procedure OpenGroup(AValue: string);
     procedure LoadActions(vGroup: string; Append: Boolean = False);
-  end;
 
-  { TsqlvMainGui }
-
-  TsqlvMainGui = class(TsqlvGui)
-  protected
-    ManagerForm: TsqlvManagerForm;
-    procedure LoadMembers(vGroup: TsqlvAddon; vAttributes: TsqlvAttributes);
-  public
-    constructor Create(AManagerForm: TsqlvManagerForm);
-    procedure LoadEditor(vAddon: TsqlvAddon; S: string); override;
-    procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean); override;
+    procedure ExecuteScript(ExecuteType: TsqlvExecuteType);
+    procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
+    procedure LoadEditor(vAddon: TsqlvAddon; S: string);
   end;
 
 implementation
@@ -112,9 +105,10 @@ implementation
 uses
   CSVOptionsForms, ParamsForms, SynEditMiscProcs;
 
-{ TsqlvMainGui }
 
-procedure TsqlvMainGui.ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
+{ TsqlvManagerForm }
+
+procedure TsqlvManagerForm.ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
 var
   i, c: Integer;
   d: Integer;
@@ -123,65 +117,66 @@ var
   aGroups: TsqlvAddons;
   aGroup: TsqlvAddon;
 begin
-  with ManagerForm do
-  begin
-    aGroups := TsqlvAddons.Create;
+  aGroups := TsqlvAddons.Create;
+  try
+    DBEngine.Enum(vAddon.Name, aGroups, DBEngine.DB.IsActive);
+
+    g := DBEngine.Stack.Current.Select;
+    aGroup := nil;
+    d := -1;
+    c := 0;
+    b := false;
+    GroupsList.Items.BeginUpdate;
     try
-      DBEngine.Enum(vAddon.Name, aGroups, DBEngine.DB.IsActive);
-
-      g := DBEngine.Stack.Current.Select;
-      aGroup := nil;
-      d := -1;
-      c := 0;
-      b := false;
-      GroupsList.Items.BeginUpdate;
-      try
-        GroupsList.Clear;
-        GroupsNames.Clear;
-        for i := 0 to aGroups.Count -1 do
+      GroupsList.Clear;
+      GroupsNames.Clear;
+      for i := 0 to aGroups.Count -1 do
+      begin
+        if not (nsCommand in aGroups[i].Style) then //Group in style
         begin
-          if not (nsCommand in aGroups[i].Style) then //Group in style
+          GroupsList.Items.Add(aGroups[i].Title);
+          GroupsNames.Add(aGroups[i]);
+          //if (d < 0) then
           begin
-            GroupsList.Items.Add(aGroups[i].Title);
-            GroupsNames.Add(aGroups[i]);
-            //if (d < 0) then
+            if (d < 0) then //select first one
             begin
-              if (d < 0) then //select first one
-              begin
-                d := c;
-                aGroup := aGroups[i];
-              end;
-              //b mean already selected and override privouse assigb
-              if not b and (((g = '') and (nsDefault in aGroups[i].Style))) or (((g <>'') and SameText(g, aGroups[i].Name))) then
-              begin
-                d := c;
-                aGroup := aGroups[i];
-                b := true;
-              end;
+              d := c;
+              aGroup := aGroups[i];
             end;
-            c := c + 1;
+            //b mean already selected and override privouse assigb
+            if not b and (((g = '') and (nsDefault in aGroups[i].Style))) or (((g <>'') and SameText(g, aGroups[i].Name))) then
+            begin
+              d := c;
+              aGroup := aGroups[i];
+              b := true;
+            end;
           end;
+          c := c + 1;
         end;
-      finally
-        GroupsList.Items.EndUpdate;
       end;
-      if d < 0 then
-        d := 0;
-      if aGroups.Count > 0 then
-        GroupsList.ItemIndex := d;
     finally
-      aGroups.Free;
+      GroupsList.Items.EndUpdate;
     end;
-    MetaLbl.Caption := vAddon.Title + ': ' + DBEngine.Stack.Current.Attributes[DBEngine.Stack.Current.Addon.Name];
-
-    if aGroup <> nil then
-      DBEngine.Stack.Current.Select := aGroup.Name;
-
-    LoadMembers(aGroup, DBEngine.Stack.Current.Attributes); //if group is nil it must clear the member grid
+    if d < 0 then
+      d := 0;
+    if aGroups.Count > 0 then
+      GroupsList.ItemIndex := d;
+  finally
+    aGroups.Free;
   end;
+  MetaLbl.Caption := vAddon.Title + ': ' + DBEngine.Stack.Current.Attributes[DBEngine.Stack.Current.Addon.Name];
+
+  if aGroup <> nil then
+    DBEngine.Stack.Current.Select := aGroup.Name;
+
+  LoadMembers(aGroup, DBEngine.Stack.Current.Attributes); //if group is nil it must clear the member grid
 end;
 
-procedure TsqlvMainGui.LoadMembers(vGroup: TsqlvAddon; vAttributes: TsqlvAttributes);
+procedure TsqlvManagerForm.LoadEditor(vAddon: TsqlvAddon; S: string);
+begin
+end;
+
+procedure TsqlvManagerForm.LoadMembers(vGroup: TsqlvAddon; vAttributes: TsqlvAttributes);
 var
   i, j, c: Integer;
   aHeader: TStringList;
@@ -189,72 +184,56 @@ var
   aItems: TmncMetaItems;
 begin
   if vGroup = nil then
-    ManagerForm.MembersGrid.Clear
+    MembersGrid.Clear
   else
   begin
     aItems := TmncMetaItems.Create;
     try
-      with ManagerForm do
-      begin
-        aHeader := TStringList.Create;
-        try
-          vGroup.EnumHeader(aHeader);
-          MembersGrid.ColumnsCount := aHeader.Count;
-          for i := 0 to aHeader.Count -1 do
-          begin
-            MembersGrid.Columns[i].Title := aHeader[i];
-            if i = 0 then
-              MembersGrid.Columns[i].AutoSize := True;
-          end;
-
-          aCols := aHeader.Count;
-        finally
-          aHeader.Free;
+      aHeader := TStringList.Create;
+      try
+        vGroup.EnumHeader(aHeader);
+        MembersGrid.ColumnsCount := aHeader.Count;
+        for i := 0 to aHeader.Count -1 do
+        begin
+          MembersGrid.Columns[i].Title := aHeader[i];
+          if i = 0 then
+            MembersGrid.Columns[i].AutoSize := True;
         end;
 
-        vGroup.EnumMeta(aItems, vAttributes);
-        c := 0;
-        MembersGrid.BeginUpdate;
-        try
-          for i := 0 to aItems.Count -1 do
-          begin
-            MembersGrid.RowsCount := c + 1;
-            for j := 0 to aCols - 1 do
-            begin
-              if j = 0 then
-                MembersGrid.Values[j, c + 1] := aItems[i].Name
-              else if (j - 1) < aItems[i].Attributes.Count then //maybe Attributes not have all data
-                MembersGrid.Values[j, c + 1] := aItems[i].Attributes.Items[j - 1].Value; //TODO must be assigned my name not by index
-            end;
-            c := c + 1;
-          end;
-        finally
-          MembersGrid.EndUpdate;
-        end;
-        MembersGrid.Current.Row := 0;
-        //MembersGrid.AutoSizeColumns;
-        CurrentGroup := nil; //reduce flicker when fill Actions
-        CurrentGroup := vGroup;
-        LoadActions(vGroup.ItemName);
+        aCols := aHeader.Count;
+      finally
+        aHeader.Free;
       end;
+
+      vGroup.EnumMeta(aItems, vAttributes);
+      c := 0;
+      MembersGrid.BeginUpdate;
+      try
+        for i := 0 to aItems.Count -1 do
+        begin
+          MembersGrid.RowsCount := c + 1;
+          for j := 0 to aCols - 1 do
+          begin
+            if j = 0 then
+              MembersGrid.Values[j, c + 1] := aItems[i].Name
+            else if (j - 1) < aItems[i].Attributes.Count then //maybe Attributes not have all data
+              MembersGrid.Values[j, c + 1] := aItems[i].Attributes.Items[j - 1].Value; //TODO must be assigned my name not by index
+          end;
+          c := c + 1;
+        end;
+      finally
+        MembersGrid.EndUpdate;
+      end;
+      MembersGrid.Current.Row := 0;
+      //MembersGrid.AutoSizeColumns;
+      CurrentGroup := nil; //reduce flicker when fill Actions
+      CurrentGroup := vGroup;
+      LoadActions(vGroup.ItemName);
     finally
       aItems.Free;
     end;
   end;
 end;
-
-constructor TsqlvMainGui.Create(AManagerForm: TsqlvManagerForm);
-begin
-  inherited Create;
-  ManagerForm := AManagerForm;
-end;
-
-procedure TsqlvMainGui.LoadEditor(vAddon: TsqlvAddon; S: string);
-begin
-
-end;
-
-{ TsqlvManagerForm }
 
 procedure TsqlvManagerForm.BackBtnClick(Sender: TObject);
 begin
@@ -268,12 +247,10 @@ end;
 
 procedure TsqlvManagerForm.ConnectBtnClick(Sender: TObject);
 begin
-
 end;
 
 procedure TsqlvManagerForm.DisconnectBtnClick(Sender: TObject);
 begin
-
 end;
 
 procedure TsqlvManagerForm.FirstBtnClick(Sender: TObject);
@@ -453,6 +430,11 @@ begin
   MembersGrid.PopupMenu := ActionsPopupMenu;
 end;
 
+procedure TsqlvManagerForm.ExecuteScript(ExecuteType: TsqlvExecuteType);
+begin
+
+end;
+
 procedure TsqlvManagerForm.ActionsMenuSelect(Sender: TObject);
 var
   aValue: string;
@@ -467,15 +449,15 @@ constructor TsqlvManagerForm.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
   GroupsNames := TsqlvAddons.Create;
-  sqlvGui := TsqlvMainGui.Create(Self);
+  DBEngine.NotifyObject := Self;
   StateChanged;
 end;
 
 destructor TsqlvManagerForm.Destroy;
 begin
+  DBEngine.NotifyObject := nil;
   DBEngine.DB.Close;
   FreeAndNil(GroupsNames);
-  FreeAndNil(sqlvGui);
   inherited Destroy;
 end;
 

@@ -39,6 +39,8 @@ const
 type
   EsqlvException = class(Exception);
 
+  TsqlvExecuteType = (execNormal, execExport, execImport);
+
   TMetaInfo = record
     Name: string;
     Value: string;
@@ -278,9 +280,22 @@ type
     property Current: TsqlvAddonHistoryItem read GetCurrent;
   end;
 
+
+  { TsqlvNotify }
+
+  IsqlvNotify = Interface(IInterface)
+    ['{E6F8D9BD-F716-4758-8B08-DDDBD3FA1732}']
+    procedure ExecuteScript(ExecuteType: TsqlvExecuteType); virtual; abstract;
+    procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean); virtual; abstract;
+    procedure LoadEditor(vAddon: TsqlvAddon; S: string); virtual; abstract;
+  end;
+
+  {TsqlvNotifyObjects = class(specialize TmnObjectList<TsqlvNotify>)
+  end;}
+
   { TDBEngine }
 
-  TDBEngine = class(TsqlvCustomAddons, INotifyEngine, ISettingNotifyEngine)
+  TDBEngine = class(TsqlvCustomAddons, IsqlvNotify, INotifyEngine, ISettingNotifyEngine)
   private
     FDB: TsqlvDB;
     FEngines: TStringLIst;
@@ -289,6 +304,8 @@ type
     FStack: TsqlvStack;
     FHistory: TsqlvAddonHistory;
     FSQLHistory: TsqlvSQLHistory;
+    FNotifyObject: IsqlvNotify;
+    procedure SetNotifyObject(AValue: IsqlvNotify);
   public
     constructor Create;
     destructor Destroy; override;
@@ -312,6 +329,12 @@ type
     procedure LoadFile(FileName:string; Strings: TStrings);
     procedure SaveFile(FileName:string; Strings: TStrings);
     function GetAllSupportedFiles: string;
+
+    procedure ExecuteScript(ExecuteType: TsqlvExecuteType);
+    procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
+    procedure LoadEditor(vAddon: TsqlvAddon; S: string);
+    procedure LoadEditor(vAddon: TsqlvAddon; S: TStringList);
+
     property Setting: TsqlvSetting read FSetting;
     property Recents: TStringList read FRecents;
     property Engines: TStringLIst read FEngines;
@@ -319,6 +342,7 @@ type
     property History: TsqlvAddonHistory read FHistory;
     property Stack: TsqlvStack read FStack;
     property SQLHistory: TsqlvSQLHistory read FSQLHistory;
+    property NotifyObject: IsqlvNotify read FNotifyObject write SetNotifyObject {implements IsqlvNotify};
   end;
 
 function DBEngine: TDBEngine;
@@ -813,6 +837,12 @@ end;
 
 { TsqlvClass }
 
+procedure TDBEngine.SetNotifyObject(AValue: IsqlvNotify);
+begin
+  if FNotifyObject =AValue then Exit;
+  FNotifyObject :=AValue;
+end;
+
 constructor TDBEngine.Create;
 begin
   inherited Create(True);
@@ -917,6 +947,26 @@ begin
   end
   else
     Result := sSqliteFilter + '|' + sAllFilesFilter;
+end;
+
+procedure TDBEngine.ExecuteScript(ExecuteType: TsqlvExecuteType);
+begin
+  FNotifyObject.ExecuteScript(ExecuteType);
+end;
+
+procedure TDBEngine.ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
+begin
+  FNotifyObject.ShowMeta(vAddon, vSelectDefault);
+end;
+
+procedure TDBEngine.LoadEditor(vAddon: TsqlvAddon; S: string);
+begin
+  FNotifyObject.LoadEditor(vAddon, S);
+end;
+
+procedure TDBEngine.LoadEditor(vAddon: TsqlvAddon; S: TStringList);
+begin
+  FNotifyObject.LoadEditor(vAddon, S.Text);
 end;
 
 procedure TDBEngine.LoadOptions;

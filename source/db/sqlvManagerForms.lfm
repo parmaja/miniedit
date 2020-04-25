@@ -136,7 +136,7 @@ object sqlvManagerForm: TsqlvManagerForm
     ResizeStyle = nrsUpdate
     object MembersGrid1: TntvGrid
       Left = 2
-      Height = 127
+      Height = 119
       Top = 2
       Width = 271
       Align = alClient
