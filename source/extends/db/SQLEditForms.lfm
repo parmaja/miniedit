@@ -1,0 +1,180 @@
+object SQLEditForm: TSQLEditForm
+  Left = 0
+  Height = 317
+  Top = 0
+  Width = 697
+  ClientHeight = 317
+  ClientWidth = 697
+  TabOrder = 0
+  Visible = False
+  DesignLeft = 418
+  DesignTop = 278
+  object ControlPages: TntvPageControl
+    Left = 0
+    Height = 317
+    Top = 0
+    Width = 697
+    Margin = 0
+    ShowButtons = False
+    Items = <    
+      item
+        Caption = 'SQL'
+        Name = 'SQLPnl'
+        AutoWidth = True
+        Control = SQLPnl
+      end    
+      item
+        Caption = 'Data'
+        Name = 'DataPnl'
+        AutoWidth = True
+        Control = DataPnl
+      end>
+    TabPosition = tbpBottom
+    Align = alClient
+    TabOrder = 0
+    object DataPnl: TPanel
+      Left = 0
+      Height = 297
+      Top = 0
+      Width = 697
+      Align = alClient
+      BevelOuter = bvNone
+      ClientHeight = 297
+      ClientWidth = 697
+      TabOrder = 1
+      object DataGrid: TntvGrid
+        Left = 0
+        Height = 271
+        Top = 26
+        Width = 697
+        Align = alClient
+        BorderStyle = bsSingle
+        ColWidth = 80
+        FixedFontColor = clBlack
+        PopupMenu = GridPopupMenu
+        RowHeight = 22
+        Capacity = 100000
+        Selected.TextColor = clHighlightText
+        TabOrder = 0
+      end
+      object Panel4: TPanel
+        Left = 0
+        Height = 26
+        Top = 0
+        Width = 697
+        Align = alTop
+        BevelOuter = bvNone
+        ClientHeight = 26
+        ClientWidth = 697
+        TabOrder = 1
+        object FetchedLbl: TLabel
+          Left = 170
+          Height = 26
+          Top = 0
+          Width = 371
+          Align = alClient
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'Fetched: '
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object FetchCountLbl: TLabel
+          Left = 541
+          Height = 26
+          Top = 0
+          Width = 53
+          Align = alRight
+          AutoSize = False
+          Caption = '0'
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object StopBtn2: TButton
+          Left = 594
+          Height = 26
+          Top = 0
+          Width = 53
+          Align = alRight
+          Caption = '&Clear'
+          TabOrder = 1
+        end
+        object StopBtn: TButton
+          Left = 647
+          Height = 26
+          Top = 0
+          Width = 50
+          Align = alRight
+          Caption = 'S&top'
+          TabOrder = 0
+        end
+        object StopBtn3: TButton
+          Left = 0
+          Height = 26
+          Top = 0
+          Width = 85
+          Align = alLeft
+          Caption = 'C&ommit'
+          TabOrder = 2
+        end
+        object StopBtn4: TButton
+          Left = 85
+          Height = 26
+          Top = 0
+          Width = 85
+          Align = alLeft
+          Caption = '&Rolback'
+          TabOrder = 3
+        end
+      end
+    end
+    object SQLPnl: TPanel
+      Left = 0
+      Height = 297
+      Top = 0
+      Width = 697
+      Align = alClient
+      BevelOuter = bvNone
+      TabOrder = 0
+    end
+  end
+  object GridPopupMenu: TPopupMenu
+    Left = 381
+    Top = 126
+    object IsRtlMnu: TMenuItem
+      AutoCheck = True
+      Caption = 'Right To Left'
+      OnClick = IsRtlMnuClick
+    end
+    object MenuItem6: TMenuItem
+      Caption = 'Copy Selected'
+      OnClick = MenuItem6Click
+    end
+    object MenuItem1: TMenuItem
+      Caption = 'Clear Selected'
+      OnClick = MenuItem1Click
+    end
+    object MenuItem2: TMenuItem
+      Caption = 'Add Columns'
+      OnClick = MenuItem2Click
+    end
+    object MenuItem3: TMenuItem
+      Caption = 'Delete Columns'
+      OnClick = MenuItem3Click
+    end
+    object MenuItem4: TMenuItem
+      Caption = 'Add Rows'
+      OnClick = MenuItem4Click
+    end
+    object MenuItem5: TMenuItem
+      Caption = 'Delete Rows'
+      OnClick = MenuItem5Click
+    end
+    object MenuItem7: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem8: TMenuItem
+      Caption = 'Rename header'
+    end
+  end
+end

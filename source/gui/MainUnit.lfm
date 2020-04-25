@@ -2277,12 +2277,18 @@ object MainForm: TMainForm
       Category = 'View'
       Caption = 'Next Window'
       OnExecute = NextActExecute
+      SecondaryShortCuts.Strings = (
+        'Ctrl+PageDown'
+      )
       ShortCut = 16393
     end
     object PriorAct: TAction
       Category = 'View'
       Caption = 'Prior Window'
       OnExecute = PriorActExecute
+      SecondaryShortCuts.Strings = (
+        'Ctrl+PageUp'
+      )
       ShortCut = 24585
     end
     object CloseAct: TAction
