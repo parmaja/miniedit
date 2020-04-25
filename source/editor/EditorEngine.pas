@@ -104,6 +104,7 @@ type
   TmnSynEdit = class(TSynEdit)
   protected
   public
+    constructor Create(AOwner: TComponent); override;
     procedure ExecuteCommand(Command: TSynEditorCommand; const AChar: TUTF8Char; Data: pointer); override;
   end;
 
@@ -1420,6 +1421,19 @@ end;
 
 { TSyntaxEditorFile }
 
+constructor TmnSynEdit.Create(AOwner: TComponent);
+var
+  i: Integer;
+begin
+  inherited Create(AOwner);
+  i := Keystrokes.FindKeycode(VK_NEXT, [ssCtrl]);
+  if i >= 0 then
+    Keystrokes.Delete(i);
+  i := Keystrokes.FindKeycode(VK_PRIOR, [ssCtrl]);
+  if i >= 0 then
+    Keystrokes.Delete(i);
+end;
+
 procedure TmnSynEdit.ExecuteCommand(Command: TSynEditorCommand; const AChar: TUTF8Char; Data: pointer);
 begin
   if command = ecLowerCaseBlock then
@@ -2535,9 +2549,7 @@ begin
 
         if (p.MainFile <> '') then
         begin
-          if (Engine.Files.Current <> nil) and not Engine.Files.Current.Execute(p) then
-
-          else
+          if (Engine.Session.Project.RunOptions.MainFile <> '') or (Engine.Files.Current = nil) or not Engine.Files.Current.Execute(p) then
             DoRun(p);
           Engine.UpdateState([ecsDebug]);
         end;
