@@ -1,9 +1,8 @@
-object ManageProjectsForm: TManageProjectsForm
+object ManageRecentsForm: TManageRecentsForm
   Left = 347
   Height = 335
   Top = 113
   Width = 477
-  ActiveControl = ProjectsList
   BorderStyle = bsDialog
   Caption = 'Manage Projects'
   ClientHeight = 335
@@ -13,15 +12,15 @@ object ManageProjectsForm: TManageProjectsForm
   OnCreate = FormCreate
   OnShow = FormShow
   Position = poMainFormCenter
-  LCLVersion = '1.9.0.0'
+  LCLVersion = '2.1.0.0'
   object PageControl: TPageControl
     Left = 5
     Height = 298
     Top = 3
     Width = 468
-    ActivePage = TabSheet1
+    ActivePage = TabSheet3
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 0
+    TabIndex = 2
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Projects'
@@ -83,14 +82,14 @@ object ManageProjectsForm: TManageProjectsForm
     end
     object TabSheet2: TTabSheet
       Caption = 'Recent Projects'
-      ClientHeight = 267
-      ClientWidth = 462
+      ClientHeight = 272
+      ClientWidth = 460
       ImageIndex = 1
       object RProjectsList: TListBox
         Left = 1
-        Height = 258
+        Height = 263
         Top = 4
-        Width = 458
+        Width = 456
         Anchors = [akTop, akLeft, akRight, akBottom]
         ItemHeight = 0
         OnDblClick = ProjectsListDblClick
@@ -101,14 +100,14 @@ object ManageProjectsForm: TManageProjectsForm
     end
     object TabSheet3: TTabSheet
       Caption = 'Recent files'
-      ClientHeight = 267
-      ClientWidth = 462
+      ClientHeight = 272
+      ClientWidth = 460
       ImageIndex = 2
       object RFilesList: TListBox
         Left = 1
-        Height = 258
+        Height = 263
         Top = 4
-        Width = 458
+        Width = 456
         Anchors = [akTop, akLeft, akRight, akBottom]
         ItemHeight = 0
         OnDblClick = ProjectsListDblClick
@@ -151,8 +150,8 @@ object ManageProjectsForm: TManageProjectsForm
     TabOrder = 3
   end
   object PopupMnu: TPopupMenu
-    left = 172
-    top = 174
+    Left = 172
+    Top = 174
     object AddtoProjects1: TMenuItem
       Caption = 'Add to Projects'
       OnClick = AddtoProjects1Click

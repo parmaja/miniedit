@@ -635,7 +635,7 @@ uses
   mnXMLUtils, StrUtils, SearchForms, mneProjectOptions, EditorOptions,
   EditorProfiles, mneSetups, Clipbrd, ColorUtils,
   SelectFiles, mneSettings, mneConsts,
-  SynEditTypes, AboutForms, mneManageRecentsForms,
+  SynEditTypes, AboutForms, mneRecentsForms,
   mneBreakpoints, SynMacroRecorder,
   SearchInFilesForms, SelectList;
 
@@ -2058,7 +2058,7 @@ end;
 
 procedure TMainForm.ManageActExecute(Sender: TObject);
 begin
-  with TManageProjectsForm.Create(Application) do
+  with TManageRecentsForm.Create(Application) do
   begin
     ShowModal;
   end;

@@ -15,7 +15,6 @@ interface
 
 uses
   SysUtils, StrUtils,
-  mneClasses,
   mneViewClasses,
   mneDClasses,
   mneSARDClasses,

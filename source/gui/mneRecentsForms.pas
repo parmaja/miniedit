@@ -1,4 +1,4 @@
-unit mneManageRecentsForms;
+unit mneRecentsForms;
 
 {$mode objfpc}{$H+}
 {**
@@ -16,9 +16,9 @@ uses
 
 type
 
-  { TManageProjectsForm }
+  { TManageRecentsForm }
 
-  TManageProjectsForm = class(TForm)
+  TManageRecentsForm = class(TForm)
     PageControl: TPageControl;
     TabSheet1: TTabSheet;
     TabSheet2: TTabSheet;
@@ -67,7 +67,7 @@ uses EditorEngine, mneProjectOptions;
 
 { TForm1 }
 
-procedure TManageProjectsForm.EnumRecentFile;
+procedure TManageRecentsForm.EnumRecentFile;
 var
   i: integer;
 begin
@@ -78,7 +78,7 @@ begin
   end;
 end;
 
-procedure TManageProjectsForm.EnumRecentProjects;
+procedure TManageRecentsForm.EnumRecentProjects;
 var
   i: integer;
 begin
@@ -89,7 +89,7 @@ begin
   end;
 end;
 
-procedure TManageProjectsForm.FormCreate(Sender: TObject);
+procedure TManageRecentsForm.FormCreate(Sender: TObject);
 begin
   PageControl.TabIndex := 0;
   EnumRecentFile;
@@ -104,7 +104,7 @@ begin
   ActiveControl := ProjectsList;
 end;
 
-procedure TManageProjectsForm.NewProject;
+procedure TManageRecentsForm.NewProject;
 var
   aProject: TEditorProject;
 begin
@@ -125,12 +125,12 @@ begin
   end;
 end;
 
-procedure TManageProjectsForm.Button3Click(Sender: TObject);
+procedure TManageRecentsForm.Button3Click(Sender: TObject);
 begin
   NewProject;
 end;
 
-procedure TManageProjectsForm.EnumProjects;
+procedure TManageRecentsForm.EnumProjects;
 var
   i: integer;
 begin
@@ -141,7 +141,7 @@ begin
   end;
 end;
 
-procedure TManageProjectsForm.Button1Click(Sender: TObject);
+procedure TManageRecentsForm.Button1Click(Sender: TObject);
 var
   aOpenDialog: TOpenDialog;
 begin
@@ -163,17 +163,17 @@ begin
   end;
 end;
 
-procedure TManageProjectsForm.Button2Click(Sender: TObject);
+procedure TManageRecentsForm.Button2Click(Sender: TObject);
 begin
   RemoveNow;
 end;
 
-procedure TManageProjectsForm.FormShow(Sender: TObject);
+procedure TManageRecentsForm.FormShow(Sender: TObject);
 begin
 
 end;
 
-procedure TManageProjectsForm.RemoveNow;
+procedure TManageRecentsForm.RemoveNow;
 var
   Old: integer;
 begin
@@ -205,7 +205,7 @@ begin
   end;
 end;
 
-procedure TManageProjectsForm.OpenNow;
+procedure TManageRecentsForm.OpenNow;
 begin
   case PageControl.TabIndex of
     0:
@@ -229,17 +229,17 @@ begin
   end;
 end;
 
-procedure TManageProjectsForm.OpenBtnClick(Sender: TObject);
+procedure TManageRecentsForm.OpenBtnClick(Sender: TObject);
 begin
   OpenNow;
 end;
 
-procedure TManageProjectsForm.ProjectsListDblClick(Sender: TObject);
+procedure TManageRecentsForm.ProjectsListDblClick(Sender: TObject);
 begin
   OpenNow;
 end;
 
-procedure TManageProjectsForm.AddtoProjects1Click(Sender: TObject);
+procedure TManageRecentsForm.AddtoProjects1Click(Sender: TObject);
 var
   aProject: string;
   POld, ROld: integer;
@@ -258,7 +258,7 @@ begin
   end;
 end;
 
-procedure TManageProjectsForm.MoveUpBtnClick(Sender: TObject);
+procedure TManageRecentsForm.MoveUpBtnClick(Sender: TObject);
 var
   i: integer;
 begin
@@ -271,7 +271,7 @@ begin
   end;
 end;
 
-procedure TManageProjectsForm.MoveDownBtnClick(Sender: TObject);
+procedure TManageRecentsForm.MoveDownBtnClick(Sender: TObject);
 var
   i: integer;
 begin
@@ -284,12 +284,12 @@ begin
   end;
 end;
 
-procedure TManageProjectsForm.ProjectsListMeasureItem(Control: TWinControl; Index: Integer; var AHeight: Integer);
+procedure TManageRecentsForm.ProjectsListMeasureItem(Control: TWinControl; Index: Integer; var AHeight: Integer);
 begin
   AHeight := AHeight + 10;
 end;
 
-procedure TManageProjectsForm.ChangeToIndex(ListBox: TlistBox; Index: integer);
+procedure TManageRecentsForm.ChangeToIndex(ListBox: TlistBox; Index: integer);
 begin
   if ListBox.Items.Count = 0 then
     Index := -1

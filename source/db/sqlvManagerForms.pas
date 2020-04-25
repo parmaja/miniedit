@@ -9,16 +9,8 @@ unit sqlvManagerForms;
 
 {$mode objfpc}{$H+}
 
-{todo: Save/Load sql scripts: DONE}
-{todo: Auto complete: DONE}
-{todo: search for members: DONE}
-{todo: More short cuts: DONE}
-{todo: Export/Import As CSV: DONE}
-{todo: Ask for param when have params in normal execute sql script: DONE}
-
-{todo: Assoiate with *.sqlite}
+{todo: Ask for param when have params in normal execute sql script}
 {todo: Extract the Meta of whale database}
-{todo: Find and Replace}
 {todo: Blob access as PNG or JPG}
 
 interface
