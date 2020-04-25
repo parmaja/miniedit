@@ -57,6 +57,10 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine, IEditorNotifyEngine)
+    DBCreateDatabaseAct: TAction;
+    DBBrowseAct: TAction;
+    DBDisconnectAct: TAction;
+    DBConnectAct: TAction;
     GotoFileFolderAct: TAction;
     BrowserTabs: TntvPageControl;
     CallStackGrid: TStringGrid;
@@ -68,6 +72,8 @@ type
     BrowserPnl: TntvPanel;
     LogEdit: TSynEdit;
     LogSyn: TSynAnySyn;
+    MenuItem23: TMenuItem;
+    MenuItem33: TMenuItem;
     MenuItem45: TMenuItem;
     CloseFileMnu: TMenuItem;
     MenuItem46: TMenuItem;
@@ -392,9 +398,11 @@ type
     procedure ChangeExtActExecute(Sender: TObject);
     procedure CloseAllActExecute(Sender: TObject);
     procedure CloseOthersActExecute(Sender: TObject);
+    procedure DBConnectActExecute(Sender: TObject);
     procedure CreateFolderActExecute(Sender: TObject);
     procedure DatabaseActExecute(Sender: TObject);
     procedure DBConnectMnuClick(Sender: TObject);
+    procedure DBDisconnectMnuClick(Sender: TObject);
     procedure DBGCompileActExecute(Sender: TObject);
     procedure DeleteActExecute(Sender: TObject);
     procedure EditorColorsActExecute(Sender: TObject);
@@ -735,6 +743,11 @@ begin
   Engine.Files.CloseOthers;
 end;
 
+procedure TMainForm.DBConnectActExecute(Sender: TObject);
+begin
+  DBEngine.OpenDatabase;
+end;
+
 procedure TMainForm.CreateFolderActExecute(Sender: TObject);
 var
   s: string;
@@ -754,7 +767,11 @@ end;
 
 procedure TMainForm.DBConnectMnuClick(Sender: TObject);
 begin
-  DBEngine.OpenDatabase;
+end;
+
+procedure TMainForm.DBDisconnectMnuClick(Sender: TObject);
+begin
+
 end;
 
 procedure TMainForm.DBGCompileActExecute(Sender: TObject);
