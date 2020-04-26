@@ -81,7 +81,7 @@ type
     procedure RefreshControls;
     property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
     procedure ClearGrid;
-    procedure FillGrid(SQLCMD: TmncCommand; Title: String);
+    procedure FillGrid(SQLCMD: TmncCommand; Title: String; MergeColumns: Boolean = False);
     procedure Execute;
   end;
 
@@ -221,7 +221,7 @@ begin
   DataGrid.Reset;
 end;
 
-procedure TSQLEditForm.FillGrid(SQLCMD: TmncCommand; Title: String);
+procedure TSQLEditForm.FillGrid(SQLCMD: TmncCommand; Title: String; MergeColumns: Boolean);
 
   function GetTextWidth(Text: String): Integer;
   begin
@@ -234,7 +234,7 @@ procedure TSQLEditForm.FillGrid(SQLCMD: TmncCommand; Title: String);
   end;
 
 var
-  i, c, w: Integer;
+  i, r, w: Integer;
   s: String;
   str: string;
   startCol: integer;
@@ -264,6 +264,12 @@ begin
   if not FInteractive then
     DataGrid.BeginUpdate;
   try
+    if not MergeColumns then
+    begin
+      DataGrid.ColumnsCount := 0;
+      DataGrid.Clear;
+      DataGrid.Rows.Clear;
+    end;
     IsNumbers := nil;
     if Title = '' then
       Caption := 'Data'
@@ -297,22 +303,20 @@ begin
         IsNumbers[i] := SQLCMD.Columns[i].IsNumber;
       end;
     end;
-    c := 0;
+    r := 0;
     CalcWidths;
-
     if FInteractive then
       Application.ProcessMessages;
 
     while not SQLCMD.Done do
     begin
-      if DataGrid.RowsCount <= (c + 1) then
+      if DataGrid.RowsCount <= r then
       begin
-        if not FInteractive or (c >= Steps) then
-          DataGrid.RowsCount := c + Steps
+        if not FInteractive or (r >= Steps) then
+          DataGrid.RowsCount := r + Steps
         else
-          DataGrid.RowsCount := c + 1;
+          DataGrid.RowsCount := r;
       end;
-      DataGrid.Values[0, c] := IntToStr(c);
       for i := 0 to cols - 1 do
       begin
         if i < SQLCMD.Fields.Count then
@@ -320,16 +324,16 @@ begin
           str := SQLCMD.Fields.Items[i].AsString;
           if length(str) > max[i] then
             max[i] := length(str);
-          DataGrid.Values[startCol + i, c] := str;
+          DataGrid.Values[startCol + i, r] := str;
         end;
       end;
-      Inc(c);
+      Inc(r);
       //before 100 rows will see the grid row by row filled, cheeting the eyes of user
-      if (c < Steps) or (Frac(c / Steps) = 0) then
+      if (r < Steps) or (Frac(r / Steps) = 0) then
       begin
         if FInteractive then
         begin
-          FetchCountLbl.Caption := IntToStr(c - 1);
+          FetchCountLbl.Caption := IntToStr(r);
           CalcWidths;
         end;
         Application.ProcessMessages;
@@ -341,7 +345,7 @@ begin
         else
         if c > 2500 then
           steps := 1000
-        else }if c > 500 then
+        else }if r > 500 then
           steps := 500;
       end;
       if FCancel then
@@ -349,8 +353,12 @@ begin
       SQLCMD.Next;
     end;
     CalcWidths;
-    DataGrid.RowsCount := c;
-    FetchCountLbl.Caption := IntToStr(c - 1);
+    if not MergeColumns then
+    begin
+      DataGrid.RowsCount := r;
+      DataGrid.Capacity := r;
+    end;
+    FetchCountLbl.Caption := IntToStr(r);
   finally
     if not FInteractive then
       DataGrid.EndUpdate;

@@ -34,7 +34,7 @@ type
     CacheMetaChk1: TCheckBox;
     Edit1: TEdit;
     MembersGrid: TntvGrid;
-    MembersGrid1: TntvGrid;
+    DatabasesGrid: TntvGrid;
     MetaLbl: TLabel;
     OpenBtn: TButton;
     FileMnu: TMenuItem;
@@ -93,7 +93,6 @@ type
     procedure OpenGroup(AValue: string);
     procedure LoadActions(vGroup: string; Append: Boolean = False);
 
-    procedure ExecuteScript(ExecuteType: TsqlvExecuteType);
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
     procedure LoadEditor(vAddon: TsqlvAddon; S: string);
   end;
@@ -174,61 +173,70 @@ end;
 
 procedure TsqlvManagerForm.LoadEditor(vAddon: TsqlvAddon; S: string);
 begin
+  with Engine.Files.New('sql') do
+  begin
+    SynEdit.Lines.Text := S;
+    Temporary := True;
+  end;
 end;
 
 procedure TsqlvManagerForm.LoadMembers(vGroup: TsqlvAddon; vAttributes: TsqlvAttributes);
 var
-  i, j, c: Integer;
+  i, j: Integer;
   aHeader: TStringList;
   aCols: Integer;
   aItems: TmncMetaItems;
 begin
+  MembersGrid.Clear;
   if vGroup = nil then
-    MembersGrid.Clear
+  begin
+    MembersGrid.ColumnsCount := 1;
+    MembersGrid.Columns[0].Title := '';
+    MembersGrid.Capacity := 1;
+    MembersGrid.RowsCount := 1;
+  end
   else
   begin
     aItems := TmncMetaItems.Create;
     try
       aHeader := TStringList.Create;
-      try
-        vGroup.EnumHeader(aHeader);
-        MembersGrid.ColumnsCount := aHeader.Count;
-        for i := 0 to aHeader.Count -1 do
-        begin
-          MembersGrid.Columns[i].Title := aHeader[i];
-          if i = 0 then
-            MembersGrid.Columns[i].AutoSize := True;
-        end;
-
-        aCols := aHeader.Count;
-      finally
-        aHeader.Free;
-      end;
-
-      vGroup.EnumMeta(aItems, vAttributes);
-      c := 0;
       MembersGrid.BeginUpdate;
       try
-        for i := 0 to aItems.Count -1 do
-        begin
-          MembersGrid.RowsCount := c + 1;
-          for j := 0 to aCols - 1 do
+        try
+          vGroup.EnumHeader(aHeader);
+          MembersGrid.ColumnsCount := aHeader.Count;
+          for i := 0 to aHeader.Count -1 do
           begin
-            if j = 0 then
-              MembersGrid.Values[j, c + 1] := aItems[i].Name
-            else if (j - 1) < aItems[i].Attributes.Count then //maybe Attributes not have all data
-              MembersGrid.Values[j, c + 1] := aItems[i].Attributes.Items[j - 1].Value; //TODO must be assigned my name not by index
+            MembersGrid.Columns[i].Title := aHeader[i];
+{            if i = 0 then
+              MembersGrid.Columns[i].AutoSize := True;}
           end;
-          c := c + 1;
+
+          aCols := aHeader.Count;
+        finally
+          aHeader.Free;
         end;
+
+        vGroup.EnumMeta(aItems, vAttributes);
+          MembersGrid.Capacity := aItems.Count;
+          MembersGrid.RowsCount := aItems.Count;
+          for i := 0 to aItems.Count -1 do
+          begin
+            for j := 0 to aCols - 1 do
+            begin
+              if j = 0 then
+                MembersGrid.Values[j, i] := aItems[i].Name
+              else if (j - 1) < aItems[i].Attributes.Count then //maybe Attributes not have all data
+                MembersGrid.Values[j, i] := aItems[i].Attributes.Items[j - 1].Value; //TODO must be assigned my name not by index
+            end;
+          end;
+        MembersGrid.Current.Row := 0;
+        CurrentGroup := nil; //reduce flicker when fill Actions
+        CurrentGroup := vGroup;
+        LoadActions(vGroup.ItemName);
       finally
         MembersGrid.EndUpdate;
       end;
-      MembersGrid.Current.Row := 0;
-      //MembersGrid.AutoSizeColumns;
-      CurrentGroup := nil; //reduce flicker when fill Actions
-      CurrentGroup := vGroup;
-      LoadActions(vGroup.ItemName);
     finally
       aItems.Free;
     end;
@@ -255,8 +263,9 @@ end;
 
 procedure TsqlvManagerForm.FirstBtnClick(Sender: TObject);
 begin
-  DBEngine.Stack.Clear;
-//  DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabasesCbo.Text));
+  DBEngine.Stack.Top;
+  //DBEngine.Stack.Clear;
+  //DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabasesCbo.Text));
   DBEngine.Run;
 end;
 
@@ -292,7 +301,7 @@ end;
 
 procedure TsqlvManagerForm.MembersGridDblClick(Sender: TObject);
 begin
-  if (MembersGrid.RowsCount > 1) and (MembersGrid.Current.Row >= 1) then
+  if (MembersGrid.RowsCount > 0) and (MembersGrid.Current.Row >= 0) then
     OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
 end;
 
@@ -379,10 +388,13 @@ begin
 end;
 
 procedure TsqlvManagerForm.CollectAttributes(vAttributes: TsqlvAttributes);
+var
+  aItemName: string;
 begin
   vAttributes.Clone(DBEngine.Stack.Current.Attributes);
   //vAttributes.Values[DBEngine.Stack.Current.Addon.Name] := DBEngine.Stack.Current.Value;
-  vAttributes.Values[CurrentGroup.ItemName] := MembersGrid.Values[0, MembersGrid.Current.Row];
+  aItemName := MembersGrid.Values[0, MembersGrid.Current.Row];
+  vAttributes.Values[CurrentGroup.ItemName] := aItemName;
   DumpAttributes(vAttributes);
 end;
 
@@ -430,11 +442,6 @@ begin
   MembersGrid.PopupMenu := ActionsPopupMenu;
 end;
 
-procedure TsqlvManagerForm.ExecuteScript(ExecuteType: TsqlvExecuteType);
-begin
-
-end;
-
 procedure TsqlvManagerForm.ActionsMenuSelect(Sender: TObject);
 var
   aValue: string;
@@ -480,7 +487,7 @@ begin
     with DBEngine.Stack do
       if Current.Addon <> nil then
       begin
-        TsqlvProcess.Create(CurrentGroup.Name, CurrentGroup.ItemName, AValue, a);
+        DBEngine.Stack.Push(TsqlvProcess.Create(CurrentGroup.Name, CurrentGroup.ItemName, AValue, a));
         DBEngine.Run;
       end;
         //what if Addon <> nil or what if Current.Addon.Item = ''

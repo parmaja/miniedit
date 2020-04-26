@@ -218,6 +218,7 @@ type
     fgkResult,//Result file, generated, like: exe or .o or .hex
     fgkBrowsable,//When open file show it in the extension list
     fgkAssociated, //Editor can be the editor of this files, like .php, .inc, but .txt is not
+    //fgkTemporary, //No need to save it to run, but save it when user ask to save
     fgkVirtual //Not a real file, like output console
   );
 
@@ -491,6 +492,8 @@ type
     FGroup: TFileGroup;
     FRelated: string;
     FLinesMode: TEditorLinesMode;
+    FTemporary: Boolean;
+    FTitle: string;
     function GetCapability: TEditCapability;
     function GetIsText: Boolean;
     function GetNakeName: string;
@@ -536,7 +539,7 @@ type
     procedure Delete; //only name not with the path
     function CanExecute: Boolean;
 
-    procedure SaveFile(Extension: string = ''; AsNewFile: Boolean = False); virtual;
+    procedure SaveFile(Force: Boolean; Extension: string = ''; AsNewFile: Boolean = False); virtual;
     procedure Show; virtual; //Need to activate it after show to focus editor
     function Visible: Boolean;
     procedure Activate; virtual;
@@ -576,6 +579,7 @@ type
     property LinesModeAsText: string read GetLinesModeAsText;
     property IsText: Boolean read GetIsText;
     property Name: string read FName write FName;
+    property Title: string read FTitle write FTitle; //used only if Name is empty for temporary files
     property NakeName: string read GetNakeName write SetNakeName; //no path with ext
     property PureName: string read GetPureName write SetPureName; //no path no ext
     property Extension: string read GetExtension write SetExtension;
@@ -584,6 +588,7 @@ type
     property Related: string read FRelated write FRelated;
     property IsEdited: Boolean read FIsEdited write SetIsEdited; //TODO rename to IsChanged
     property IsNew: Boolean read FIsNew write SetIsNew default False;
+    property Temporary: Boolean read FTemporary write FTemporary default False;
     property IsReadOnly: Boolean read GetIsReadonly write SetIsReadonly;
     property Group: TFileGroup read FGroup write SetGroup;
 
@@ -701,11 +706,11 @@ type
     function OpenFile(vFileName: string; ActivateIt: Boolean = false): TEditorFile;
     procedure SetCurrentIndex(Index: integer; vRefresh: Boolean);
     function New(vGroup: TFileGroup = nil): TEditorFile; overload;
-    function New(Name: string; Control: TWinControl): TEditorFile; overload;
+    function New(GroupName: string): TEditorFile; overload;
 
     procedure Open;
-    procedure Save;
-    procedure SaveAll;
+    procedure Save(Force: Boolean);
+    procedure SaveAll(Force: Boolean);
     procedure ReloadAll;
     procedure CheckAll;
     procedure SaveAs;
@@ -1229,6 +1234,9 @@ type
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType);
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);
     procedure SendAction(EditorAction: TEditorAction);
+
+    procedure SaveAll(Force: Boolean);
+    procedure Run;
 
     property Environment: TStringList read FEnvironment write FEnvironment;
   published
@@ -2552,12 +2560,10 @@ begin
         if ExtractFilePath(p.RunFile) = '' then
           p.RunFile := p.Root + p.RunFile;
 
-        if (p.MainFile <> '') then
-        begin
-          if (Engine.Session.Project.RunOptions.MainFile <> '') or (Engine.Files.Current = nil) or not Engine.Files.Current.Execute(p) then
+        if (Engine.Session.Project.RunOptions.MainFile <> '') or (Engine.Files.Current = nil) or not Engine.Files.Current.Execute(p) then
+          if (p.MainFile <> '') then
             DoRun(p);
-          Engine.UpdateState([ecsDebug]);
-        end;
+        Engine.UpdateState([ecsDebug]);
       end;
     end;
   finally
@@ -3310,18 +3316,9 @@ begin
   end;
 end;
 
-function TEditorFiles.New(Name: string; Control: TWinControl): TEditorFile;
+function TEditorFiles.New(GroupName: string): TEditorFile;
 begin
-  BeginUpdate;
-  try
-    Result := TControlEditorFile.Create(Engine.Files);
-    (Result as TControlEditorFile).Control := Control;
-    Result.Name := Name;
-    Engine.UpdateState([ecsChanged, ecsDebug, ecsState, ecsRefresh]);
-    Current := Result;
-  finally
-    EndUpdate;
-  end;
+  Result := New(Engine.Groups.Find(GroupName));
 end;
 
 function TEditorSession.New(Tendency: TEditorTendency): TEditorProject;
@@ -3557,19 +3554,19 @@ begin
   UpdateState([ecsRecents]);
 end;
 
-procedure TEditorFiles.Save;
+procedure TEditorFiles.Save(Force: Boolean);
 begin
   if Current <> nil then
-    Current.SaveFile;
+    Current.SaveFile(Force);
 end;
 
-procedure TEditorFiles.SaveAll;
+procedure TEditorFiles.SaveAll(Force: Boolean);
 var
   i: integer;
 begin
   for i := 0 to Count - 1 do
   begin
-    Items[i].SaveFile;
+    Items[i].SaveFile(Force);
   end;
 end;
 
@@ -3596,7 +3593,7 @@ end;
 procedure TEditorFiles.SaveAs;
 begin
   if Current <> nil then
-    Current.SaveFile(ExtractFileExt(Current.Name), True);
+    Current.SaveFile(True, ExtractFileExt(Current.Name), True);
 end;
 
 procedure TEditorOptions.Save(vWorkspace: string);
@@ -4048,6 +4045,19 @@ begin
   end;
 end;
 
+procedure TEditorEngine.SaveAll(Force: Boolean);
+begin
+  Session.Save;
+  Files.SaveAll(Force);
+end;
+
+procedure TEditorEngine.Run;
+begin
+  if Files.Count > 0 then
+    SaveAll(False);
+  CurrentTendency.Run([rnaCompile, rnaExecute]);
+end;
+
 procedure TEditorEngine.DoChangedState(State: TEditorChangeStates);
 var
   i: Integer;
@@ -4202,31 +4212,32 @@ end;
 
 procedure TEditorFile.Close;
 var
-  aParent: TEditorEngine;
   i: integer;
   mr: TmsgChoice;
   a: Boolean;
 begin
-  if IsEdited then
+  if (Name <> '') or not Temporary then
   begin
-    mr := MsgBox.Msg.YesNoCancel('Save file ' + Name + ' before close?');
-    if mr = msgcCancel then
-      Abort
-    else if mr = msgcYes then
-      SaveFile;
+    if IsEdited then
+    begin
+      mr := MsgBox.Msg.YesNoCancel('Save file ' + Name + ' before close?');
+      if mr = msgcCancel then
+        Abort
+      else if mr = msgcYes then
+        SaveFile(True);
+    end;
+    Engine.ProcessRecentFile(Name);
   end;
 
   i := Index;
-  aParent := Engine;
-  aParent.ProcessRecentFile(Name);
-  a := (aParent.Files.Current <> nil) and aParent.Files.Current.Activated;
-  if aParent.Files.FCurrent = self then
-    aParent.Files.FCurrent := nil;
+  a := (Engine.Files.Current <> nil) and Engine.Files.Current.Activated;
+  if Engine.Files.FCurrent = self then
+    Engine.Files.FCurrent := nil;
   Free;
-  aParent.Files.SetCurrentIndex(i, False);
-  if a and (aParent.Files.Current <> nil) then
-    aParent.Files.Current.Activate;
-  aParent.UpdateState([ecsChanged, ecsState, ecsRefresh]);
+  Engine.Files.SetCurrentIndex(i, False);
+  if a and (Engine.Files.Current <> nil) then
+    Engine.Files.Current.Activate;
+  Engine.UpdateState([ecsChanged, ecsState, ecsRefresh]);
 end;
 
 procedure TEditorFile.OpenInclude;
@@ -4394,44 +4405,49 @@ begin
   Result := (Content <> nil ) and (Content.Visible);
 end;
 
-procedure TEditorFile.SaveFile(Extension:string; AsNewFile: Boolean);
+procedure TEditorFile.SaveFile(Force: Boolean; Extension: string; AsNewFile: Boolean);
 var
   aDialog: TSaveDialog;
   aSave, DoRecent: Boolean;
   aName: string;
 begin
-  DoRecent := False;
-  aName := '';
-  if IsNew or (FName = '') or AsNewFile then
+  if (((Name <> '') or not Temporary) or Force) then
   begin
-    aDialog := TSaveDialog.Create(nil);
-    aDialog.Title := 'Save file';
-    aDialog.Filter := Engine.Groups.CreateFilter(True, Extension, Group, False);//put the group of file as the first one
-    aDialog.InitialDir := Engine.BrowseFolder;
-    if Extension <> '' then
-      aDialog.DefaultExt := Extension
+    DoRecent := False;
+    aName := '';
+    if (IsNew or (FName = '') or AsNewFile) then
+    begin
+      aDialog := TSaveDialog.Create(nil);
+      aDialog.Title := 'Save file';
+      aDialog.Filter := Engine.Groups.CreateFilter(True, Extension, Group, False);//put the group of file as the first one
+      aDialog.InitialDir := Engine.BrowseFolder;
+      if Extension <> '' then
+        aDialog.DefaultExt := Extension
+      else
+      begin
+        if Group <> nil then
+          aDialog.DefaultExt := Group.Extensions[0].Name
+        else
+          aDialog.DefaultExt := Engine.Tendency.GetDefaultGroup.Extensions[0].Name;
+      end;
+      aDialog.FileName := '*' + aDialog.DefaultExt;
+
+      aSave := aDialog.Execute;
+      if aSave then
+      begin
+        aName := aDialog.FileName;
+        DoRecent := True;
+      end;
+      aDialog.Free;
+    end
     else
     begin
-      if Group <> nil then
-        aDialog.DefaultExt := Group.Extensions[0].Name
-      else
-        aDialog.DefaultExt := Engine.Tendency.GetDefaultGroup.Extensions[0].Name;
+      aName := FName;
+      aSave := True;
     end;
-    aDialog.FileName := '*' + aDialog.DefaultExt;
-
-    aSave := aDialog.Execute;
-    if aSave then
-    begin
-      aName := aDialog.FileName;
-      DoRecent := True;
-    end;
-    aDialog.Free;
   end
   else
-  begin
-    aName := FName;
-    aSave := True;
-  end;
+    aSave := False;
 
   if aSave then
   begin

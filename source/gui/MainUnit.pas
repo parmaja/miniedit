@@ -1213,7 +1213,7 @@ begin
     if mr = msgcCancel then
       CanClose := False
     else if mr = msgcYes then
-      Engine.Files.SaveAll;
+      Engine.Files.SaveAll(False);
   end;
 
   if CanClose and (Engine.Session.Active) then
@@ -1361,7 +1361,7 @@ end;
 
 procedure TMainForm.SaveActExecute(Sender: TObject);
 begin
-  Engine.Files.Save;
+  Engine.Files.Save(True);
 end;
 
 procedure TMainForm.EngineEdited;
@@ -1382,8 +1382,7 @@ end;
 
 procedure TMainForm.SaveAllActExecute(Sender: TObject);
 begin
-  Engine.Session.Save;
-  Engine.Files.SaveAll;
+  Engine.SaveAll(False);
 end;
 
 procedure TMainForm.FolderOpenAllActExecute(Sender: TObject);
@@ -3036,9 +3035,7 @@ end;
 
 procedure TMainForm.RunFile;
 begin
-  if Engine.Files.Count > 0 then
-    SaveAllAct.Execute;
-  Engine.CurrentTendency.Run([rnaCompile, rnaExecute]);
+  Engine.Run;
 end;
 
 procedure TMainForm.CompileFile;

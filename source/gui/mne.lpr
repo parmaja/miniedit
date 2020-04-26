@@ -45,15 +45,15 @@ uses
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
 
   SearchProgressForms, SelectList, IniFiles, mneAssociateForm, mneExtends,
-  mneCMDClasses, mneGoClasses, mneSARDClasses, sqlvManagerForms, mneBoardClasses,
-  mneBoardForms, mneSelectComponents, mneBoardComponents, mneFontGenForm,
-  mneCppClasses, mneVerilogClasses, SynHighlighterVerilog, mneCustomClasses,
-  mnePasProjectFrames, mnePASClasses, mneCSVClasses, mneDClasses, mneLuaClasses,
-  LuaDBGServers, MsgBox, GUIMsgBox, Classes, PHPUtils, ntvThemes, mneSetups,
-  mneSettings, EditorClasses, EditorColors, gdbClasses,
-  mneCompilerProjectFrames, mneRunFrames, mneClasses, mneDBClasses,
-  mneRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils, mnStreams,
-  mncCSV, sqlvOpenDatabases, sqlvSQLForms, sqlvClasses, sqlvStdClasses,
+  mneCMDClasses, mneGoClasses, mneSARDClasses, sqlvManagerForms,
+  mneBoardClasses, mneBoardForms, mneSelectComponents, mneBoardComponents,
+  mneFontGenForm, mneCppClasses, mneVerilogClasses, SynHighlighterVerilog,
+  mneCustomClasses, mnePasProjectFrames, mnePASClasses, mneCSVClasses,
+  mneDClasses, mneLuaClasses, LuaDBGServers, MsgBox, GUIMsgBox, Classes,
+  PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses, EditorColors,
+  gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneClasses, mneDBClasses,
+  mneRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils, mnStreams, mncCSV,
+  mncSQLiteMeta, sqlvOpenDatabases, sqlvSQLForms, sqlvClasses, sqlvStdClasses,
   sqlvSessions;
 
 {$R *.res}

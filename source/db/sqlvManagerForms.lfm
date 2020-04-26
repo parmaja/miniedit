@@ -107,7 +107,7 @@ object sqlvManagerForm: TsqlvManagerForm
       OddColor = clWindow
       ReadOnly = True
       RowHeight = 22
-      ScrollBars = ssAutoVertical
+      ScrollBars = ssAutoBoth
       Selected.TextColor = clHighlightText
       RowSelect = True
       TabOrder = 1
@@ -134,7 +134,7 @@ object sqlvManagerForm: TsqlvManagerForm
     Align = alTop
     Constraints.MinHeight = 100
     ResizeStyle = nrsUpdate
-    object MembersGrid1: TntvGrid
+    object DatabasesGrid: TntvGrid
       Left = 2
       Height = 119
       Top = 2

@@ -285,7 +285,6 @@ type
 
   IsqlvNotify = Interface(IInterface)
     ['{E6F8D9BD-F716-4758-8B08-DDDBD3FA1732}']
-    procedure ExecuteScript(ExecuteType: TsqlvExecuteType); virtual; abstract;
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean); virtual; abstract;
     procedure LoadEditor(vAddon: TsqlvAddon; S: string); virtual; abstract;
   end;
@@ -408,7 +407,7 @@ begin
   aAddon := DBEngine.Find(Group, Name, True);
   if aAddon = nil then
     raise Exception.Create('Addon not found' + Group + '\' + Name);
-  Create(aAddon, Select, Attributes);
+  Create(aAddon, Select, vAttributes);
 end;
 
 constructor TsqlvProcess.Create(Group, Name: string; vSelect: string; vValue: string);
@@ -882,7 +881,7 @@ begin
       DBEngine.DB.Open(False, (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name, DatabaseCbo.Text, UserEdit.Text, PasswordEdit.Text, RoleEdit.Text, ExclusiveChk.Checked, VacuumChk.Checked);
       DBEngine.Stack.Clear;
       DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabaseCbo.Text));
-      DBEngine.Run(DBEngine.Stack);
+      DBEngine.Run;
     end;
   end;
 end;
@@ -951,7 +950,6 @@ end;
 
 procedure TDBEngine.ExecuteScript(ExecuteType: TsqlvExecuteType);
 begin
-  FNotifyObject.ExecuteScript(ExecuteType);
 end;
 
 procedure TDBEngine.ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
