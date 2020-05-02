@@ -3766,8 +3766,8 @@ var
 begin
   if (ParamCount > 0) then
   begin
-    if SameText(ParamStr(1), '/dde') then
-      lFilePath := DequoteStr(ParamStr(2));
+    if SameText(ParamStr(1), '/dde') then //idk what is it :-1
+      lFilePath := DequoteStr(ParamStr(2))
     else
       lFilePath := DequoteStr(ParamStr(1));
     BrowseFolder := ExtractFilePath(lFilePath);
