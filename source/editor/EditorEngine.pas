@@ -492,7 +492,7 @@ type
     FGroup: TFileGroup;
     FRelated: string;
     FLinesMode: TEditorLinesMode;
-    FTemporary: Boolean;
+    FIsTemporary: Boolean;
     FTitle: string;
     function GetCapability: TEditCapability;
     function GetIsText: Boolean;
@@ -559,6 +559,7 @@ type
     function GetHint(HintControl: TControl; CursorPos: TPoint; out vHint: string): Boolean; virtual;
     function GetGlance: string; virtual; //Simple string to show in the corner of mainform
     //
+    function GetCaption: string; virtual; //Name or Title or *
     function GetLanguageName: string; virtual; //TODO need to get more good name to this function
     procedure SetLine(Line: Integer); virtual;
     procedure SetHighlightLine(AValue: Integer); virtual;
@@ -588,7 +589,7 @@ type
     property Related: string read FRelated write FRelated;
     property IsEdited: Boolean read FIsEdited write SetIsEdited; //TODO rename to IsChanged
     property IsNew: Boolean read FIsNew write SetIsNew default False;
-    property Temporary: Boolean read FTemporary write FTemporary default False;
+    property IsTemporary: Boolean read FIsTemporary write FIsTemporary default False;
     property IsReadOnly: Boolean read GetIsReadonly write SetIsReadonly;
     property Group: TFileGroup read FGroup write SetGroup;
 
@@ -1171,7 +1172,8 @@ type
     procedure RegisterNotify(NotifyEngine: INotifyEngine);
     procedure UnregisterNotify(NotifyEngine: INotifyEngine);
 
-    procedure Startup(vSafeMode: Boolean = False);
+    procedure Prepare(vSafeMode: Boolean = False);
+    procedure Start; //After Createing MainForm
     procedure OpenDefaultProject;
     procedure LoadOptions;
     procedure UpdateOptions;
@@ -1271,16 +1273,6 @@ procedure SaveAsMode(const FileName: string; Mode: TEditorLinesMode; Strings: Ts
 function ConvertToLinesMode(Mode: TEditorLinesMode; Contents: string): string;
 function DetectLinesMode(const Contents: string): TEditorLinesMode;
 
-function ConvertIndents(const Contents: string; TabWidth: integer; Options: TIndentMode = idntTabsToSpaces): string;
-
-const
-  sEnvVarChar = '?';
-
-type
-  //If set Resume to false it will stop loop
-  TEnumFilesCallback = procedure(AObject: TObject; const FileName: string; Count, Level:Integer; IsDirectory: Boolean; var Resume: Boolean);
-
-procedure EnumFiles(Folder, Filter: string; FileList: TStringList);
 //EnumFileList return false if canceled by callback function
 type
   TFileFindTypes = set of (fftDir, fftFile);
@@ -1288,6 +1280,11 @@ type
 function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean; Types: TFileFindTypes = [fftFile]): Boolean;
 procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean);
 procedure EnumDirList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean);
+
+function ConvertIndents(const Contents: string; TabWidth: integer; Options: TIndentMode = idntTabsToSpaces): string;
+
+const
+  sEnvVarChar = '?';
 
 procedure EnumIndentMode(vItems: TStrings);
 
@@ -2931,24 +2928,6 @@ begin
   FNotifyObjects.Remove(NotifyEngine);
 end;
 
-procedure EnumFiles(Folder, Filter: string; FileList: TStringList);
-var
-  R: integer;
-  SearchRec: TSearchRec;
-begin
-  Folder := IncludeTrailingPathDelimiter(Folder);
-  R := FindFirst(Folder + Filter, faAnyFile, SearchRec);
-  while R = 0 do
-  begin
-    if (SearchRec.Name <> '.') and (SearchRec.Name <> '..') then
-    begin
-      FileList.Add(SearchRec.Name);
-    end;
-    R := FindNext(SearchRec);
-  end;
-  FindClose(SearchRec);
-end;
-
 function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean; Types: TFileFindTypes): Boolean;
 var
   Resume: Boolean;
@@ -3160,7 +3139,7 @@ begin
   Result := 0;
   for i := 0 to Count - 1 do
   begin
-    if Items[i].IsEdited then
+    if Items[i].IsEdited and not Items[i].IsTemporary then
       Result := Result + 1;
   end;
 end;
@@ -3762,7 +3741,7 @@ begin
   Result := CompareText(TFileGroup(Item1).Title, TFileGroup(Item2).Title);
 end;
 
-procedure TEditorEngine.Startup(vSafeMode: Boolean);
+procedure TEditorEngine.Prepare(vSafeMode: Boolean);
 begin
   FSafeMode := vSafeMode;
   FEngineLife := engnStarting;
@@ -3773,7 +3752,7 @@ begin
     LoadOptions;
     //here we will autoopen last files
     //OpenDefaultProject
-    //Session.FProject := DefaultProject; nah it is effect on UpdatePanel and ProjectChanged in mainform
+    Session.FProject := DefaultProject; //nah it is effect on UpdatePanel and ProjectChanged in mainform
   except
     on E: Exception do
       Engine.SendMessage(E.Message, msgtLog);
@@ -3781,10 +3760,36 @@ begin
   FEngineLife := engnStarted;
 end;
 
+procedure TEditorEngine.Start;
+var
+  lFilePath: string;
+begin
+  if (ParamCount > 0) then
+  begin
+    if SameText(ParamStr(1), '/dde') then
+      lFilePath := DequoteStr(ParamStr(2));
+    else
+      lFilePath := DequoteStr(ParamStr(1));
+    BrowseFolder := ExtractFilePath(lFilePath);
+    //The filename is expanded, if necessary, in EditorEngine.TEditorFiles.InternalOpenFile
+    Files.OpenFile(lFilePath);
+  end
+  else
+  begin
+    if Engine.Options.AutoOpenProject and ((Options.LastProject <> '')  and FileExists(Options.LastProject)) then
+      Session.Load(Options.LastProject)
+    else
+    begin
+      BrowseFolder := Options.LastFolder;
+      OpenDefaultProject;
+    end;
+  end;
+end;
+
 procedure TEditorEngine.OpenDefaultProject;
 begin
   DefaultProject.SafeLoadFromFile(DefaultProject.FileName);
-  Session.Project := DefaultProject;
+//  Session.Project := DefaultProject;
 end;
 
 procedure TEditorEngine.LoadOptions;
@@ -4216,7 +4221,7 @@ var
   mr: TmsgChoice;
   a: Boolean;
 begin
-  if (Name <> '') or not Temporary then
+  if (Name <> '') or not IsTemporary then
   begin
     if IsEdited then
     begin
@@ -4254,6 +4259,7 @@ begin
   inherited;
   FIsNew := True;
   FIsEdited := False;
+  FIsTemporary := False;
   FFileEncoding := 'UTF8';
   FLinesMode := efmUnix;
   InitContents;
@@ -4291,6 +4297,7 @@ begin
     end;
   end;
   IsEdited := False;
+  IsTemporary := False;
   IsNew := False;
   UpdateAge;
 end;
@@ -4317,6 +4324,7 @@ begin
   DoSave(FileName);
   Name := FileName;
   IsEdited := False;
+  IsTemporary := False;
   IsNew := False;
   Engine.UpdateState([ecsFolder]);
   UpdateAge;
@@ -4411,7 +4419,7 @@ var
   aSave, DoRecent: Boolean;
   aName: string;
 begin
-  if (((Name <> '') or not Temporary) or Force) then
+  if (((Name <> '') or not IsTemporary) or Force) then
   begin
     DoRecent := False;
     aName := '';
@@ -4499,6 +4507,7 @@ begin
       else if n = 2 then //Keep It
       begin
         IsEdited := False;
+        IsTemporary := False;
         IsReadOnly := True
       end
       else
@@ -4552,6 +4561,23 @@ end;
 function TEditorFile.GetGlance: string;
 begin
   Result := '';
+end;
+
+function TEditorFile.GetCaption: string;
+begin
+  if Name = '' then
+  begin
+    if Group <> nil then
+      Result := Group.Name
+    else
+      Result := 'Unkown';
+    if IsTemporary then
+      Result := '>' + Result
+    else
+      Result := '*' + Result;
+  end
+  else
+    Result := ExtractFileName(Name);
 end;
 
 function TEditorFile.GetLanguageName: string;

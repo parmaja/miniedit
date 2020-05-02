@@ -15,9 +15,9 @@ uses
   SysUtils, Variants, Classes, Controls, Dialogs, Forms, Contnrs,
   mnClasses, mnUtils,
   EditorEngine, EditorClasses,
-  mnXMLRttiProfile, mncCSVExchanges,
+  mnXMLRttiProfile, mncCSVExchanges, mncSQL,
   mncDB, mncMeta, mnParams, mnFields, mncCSV,
-  sqlvConsts, sqlvSessions, sqlvOpenDatabases, ImgList;
+  sqlvConsts, sqlvSessions, sqlvOpenDatabases, sqlvConnectServers, ImgList;
 
 const
   IMG_UNKOWN = 0;
@@ -285,6 +285,7 @@ type
 
   IsqlvNotify = Interface(IInterface)
     ['{E6F8D9BD-F716-4758-8B08-DDDBD3FA1732}']
+    procedure EnumDatabases(Connection: TmncSQLConnection); virtual; abstract;
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean); virtual; abstract;
     procedure LoadEditor(vAddon: TsqlvAddon; S: string); virtual; abstract;
   end;
@@ -309,9 +310,9 @@ type
     constructor Create;
     destructor Destroy; override;
 
+    procedure ConnectServer;
     procedure OpenDatabase;
     procedure CreateDatabase;
-    procedure BrowseDatabases(EngineName: string);
 
     procedure LoadOptions;
     procedure SaveOptions;
@@ -329,7 +330,7 @@ type
     procedure SaveFile(FileName:string; Strings: TStrings);
     function GetAllSupportedFiles: string;
 
-    procedure ExecuteScript(ExecuteType: TsqlvExecuteType);
+    procedure EnumDatabases(Connection: TmncSQLConnection);
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
     procedure LoadEditor(vAddon: TsqlvAddon; S: string);
     procedure LoadEditor(vAddon: TsqlvAddon; S: TStringList);
@@ -868,6 +869,22 @@ begin
   inherited;
 end;
 
+procedure TDBEngine.ConnectServer;
+begin
+  with TConnectDBServerForm.Create(Application) do
+  begin
+    if ShowModal = mrOK then
+    begin
+      if DBEngine.DB.IsActive then
+        DBEngine.DB.Close;
+
+      DBEngine.Stack.Clear;
+//      DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabaseCbo.Text));
+      DBEngine.Run;
+    end;
+  end;
+end;
+
 procedure TDBEngine.OpenDatabase;
 begin
   with TOpenDatabaseForm.Create(Application) do
@@ -902,11 +919,6 @@ begin
       DBEngine.Run(DBEngine.Stack);
     end;
   end;
-end;
-
-procedure TDBEngine.BrowseDatabases(EngineName: string);
-begin
-
 end;
 
 procedure TDBEngine.RegisterFilter(Filter: string);
@@ -948,8 +960,9 @@ begin
     Result := sSqliteFilter + '|' + sAllFilesFilter;
 end;
 
-procedure TDBEngine.ExecuteScript(ExecuteType: TsqlvExecuteType);
+procedure TDBEngine.EnumDatabases(Connection: TmncSQLConnection);
 begin
+  FNotifyObject.EnumDatabases(Connection);
 end;
 
 procedure TDBEngine.ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);

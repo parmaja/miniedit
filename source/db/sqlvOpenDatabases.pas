@@ -16,6 +16,7 @@ type
     AnsiCodePageChk: TCheckBox;
     BrowseBtn: TButton;
     CacheMetaChk: TCheckBox;
+    SavePasswordChk: TCheckBox;
     CancelBtn: TButton;
     DatabaseCbo: TComboBox;
     Label4: TLabel;
@@ -74,7 +75,6 @@ end;
 
 procedure TOpenDatabaseForm.DatabaseCboSelect(Sender: TObject);
 var
-  i: Integer;
   EngineName, Resource, Host, User, Password, Role: string;
   aEngine: TmncEngine;
 begin

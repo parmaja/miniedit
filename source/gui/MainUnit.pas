@@ -747,27 +747,8 @@ begin
 end;
 
 procedure TMainForm.DBBrowseActExecute(Sender: TObject);
-var
-  i: Integer;
-  Elements: TEditorElements;
-  E: TEditorElement;
 begin
-  Elements := TEditorElements.Create;
-  try
-    for i := 0 to DBEngine.Engines.Count -1 do
-    begin
-      E := TEditorElement.Create;
-      E.Name := (DBEngine.Engines.Objects[i] as TmncEngine).Name;
-      E.Title := (DBEngine.Engines.Objects[i] as TmncEngine).Title;
-      Elements.Add(E);
-    end;
-    if ShowSelectList('Select DB Engine', Elements, [], i) then
-    begin
-      DBEngine.BrowseDatabases(Elements[i].Name);
-    end;
-  finally
-    Elements.Free;
-  end;
+  DBEngine.ConnectServer;
 end;
 
 procedure TMainForm.DBConnectActExecute(Sender: TObject);
@@ -1049,15 +1030,7 @@ begin
     FileTabs.Items.Clear;
     for i := 0 to Engine.Files.Count - 1 do
     begin
-      if Engine.Files[i].Name = '' then
-      begin
-        if Engine.Files[i].Group <> nil then
-          FileTabs.Items.AddItem(Engine.Files[i].Group.Name, '*' + Engine.Files[i].Group.Name + '*')
-        else
-          FileTabs.Items.AddItem('', '* No Name *');
-      end
-      else
-        FileTabs.Items.AddItem(ExtractFileName(Engine.Files[i].Name), ExtractFileName(Engine.Files[i].Name));
+      FileTabs.Items.AddItem(ExtractFileName(Engine.Files[i].Name), Engine.Files[i].GetCaption);
     end;
   finally
     FileTabs.Items.EndUpdate;
@@ -1763,8 +1736,6 @@ begin
 end;
 
 constructor TMainForm.Create(AOwner: TComponent);
-var
-  lFilePath: string;
 begin
   inherited;
 
@@ -1784,7 +1755,7 @@ begin
 
   Engine.RegisterNotify(Self);
 
-  Engine.Startup(GetKeyShiftState = [ssShift]);
+  Engine.Prepare(GetKeyShiftState = [ssShift]);
 
   ShowFolderFiles := Engine.Options.ShowFolderFiles;
   SortFolderFiles := Engine.Options.SortFolderFiles;
@@ -1799,14 +1770,6 @@ begin
   UpdateBrowsePnl;
   UpdateMessagesPnl;
   UpdateToolbars;
-  // Open any files passed in the command line
-  if (ParamCount > 0) and not (SameText(ParamStr(1), '/dde')) then
-  begin
-    lFilePath := DequoteStr(ParamStr(1));
-    Folder := ExtractFilePath(lFilePath);
-    // The filename is expanded, if necessary, in EditorEngine.TEditorFiles.InternalOpenFile
-    Engine.Files.OpenFile(lFilePath);
-  end;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -1832,24 +1795,7 @@ begin
   else if Engine.Options.BoundRect.Right - Engine.Options.BoundRect.Left > 10 then   //Safe load width
     BoundsRect := Engine.Options.BoundRect;
 
-  if (ParamCount = 0) then
-  begin
-    if Engine.Options.AutoOpenProject then
-    begin
-      if (Engine.Options.LastProject <> '')  and FileExists(Engine.Options.LastProject) then
-        Engine.Session.Load(Engine.Options.LastProject)
-      else
-      begin
-        Folder := Engine.Options.LastFolder;
-        Engine.OpenDefaultProject;
-      end;
-    end
-    else
-    begin
-      Folder := Engine.Options.LastFolder;
-      Engine.OpenDefaultProject;
-    end;
-  end;
+  Engine.Start;
 end;
 
 procedure TMainForm.GotoFileFolderActExecute(Sender: TObject);

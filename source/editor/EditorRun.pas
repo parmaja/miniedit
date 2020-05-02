@@ -624,7 +624,6 @@ begin
   WriteMessage('Params: ' + ReplaceStr(AInfo.Run.Params, #13, ' '));
   CommandToList(AInfo.Run.Params, FProcess.Parameters);
 
-
   aOptions := [];
   if Info.Suspended then
     aOptions := [poRunSuspended];

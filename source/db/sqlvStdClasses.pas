@@ -33,14 +33,6 @@ uses
 
 type
 
-  { TsqlvGuiSQL }
-
-  TsqlvGuiSQL = class(TsqlvAddon)
-  public
-    constructor Create; override;
-    procedure DoExecute(vAttributes: TsqlvAttributes); override;
-  end;
-
   { TsqlvDatabase }
 
   TsqlvDatabase = class(TsqlvAddon)
@@ -254,42 +246,10 @@ type
     procedure DoExecute(vAttributes: TsqlvAttributes); override;
   end;
 
-  { TsqlvExportSQL }
-
-  TsqlvExportSQL = class(TsqlvAddon)
-  public
-    constructor Create; override;
-    procedure DoExecute(vAttributes: TsqlvAttributes); override;
-  end;
-
-  { TsqlvImportSQL }
-
-  TsqlvImportSQL = class(TsqlvAddon)
-  public
-    constructor Create; override;
-    procedure DoExecute(vAttributes: TsqlvAttributes); override;
-  end;
-
 implementation
 
 uses
   Contnrs;
-
-{ TsqlvGuiSQL }
-
-constructor TsqlvGuiSQL.Create;
-begin
-  inherited;
-  Group := '';
-  Name := 'GUI.SQL';
-  Title := 'SQL';
-  Kind := sokNone;
-  ImageIndex := IMG_INTERACTIVE;
-end;
-
-procedure TsqlvGuiSQL.DoExecute(vAttributes: TsqlvAttributes);
-begin
-end;
 
 { TsqlvDatabase }
 
@@ -994,42 +954,7 @@ end;
 
 { TsqlvExportSQL }
 
-constructor TsqlvExportSQL.Create;
-begin
-  inherited Create;
-  Group := 'GUI.SQL';
-  Name := 'ExportSQL';
-  Title := 'Export';
-  Kind := sokNone;
-  Style := [nsNeedSession, nsCommand];
-  ImageIndex := IMG_COMMAND;
-end;
-
-procedure TsqlvExportSQL.DoExecute(vAttributes: TsqlvAttributes);
-begin
-  DBEngine.ExecuteScript(execExport);
-end;
-
-{ TsqlvImportSQL }
-
-constructor TsqlvImportSQL.Create;
-begin
-  inherited;
-  Group := 'GUI.SQL';
-  Name := 'ImportSQL';
-  Title := 'Import';
-  Kind := sokNone;
-  Style := [nsNeedSession, nsCommand];
-  ImageIndex := IMG_COMMAND;
-end;
-
-procedure TsqlvImportSQL.DoExecute(vAttributes: TsqlvAttributes);
-begin
-  DBEngine.ExecuteScript(execImport);
-end;
-
 initialization
-  DBEngine.RegisterViewer([TsqlvGuiSQL, TsqlvExportSQL, TsqlvImportSQL]);
   DBEngine.RegisterViewer([TsqlvDatabase]);
   DBEngine.RegisterViewer([TsqlvTables, TsqlvTable, TsqlvTableFields]);
   DBEngine.RegisterViewer([TsqlvSelectTable, TsqlvInsertTable, TsqlvEmptyTable, TsqlvDropTable]);

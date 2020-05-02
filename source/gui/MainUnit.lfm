@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 347
+  Left = 210
   Height = 568
-  Top = 179
+  Top = 190
   Width = 1021
   ActiveControl = LogEdit
   AllowDropFiles = True

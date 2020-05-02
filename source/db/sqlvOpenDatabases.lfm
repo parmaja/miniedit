@@ -1,18 +1,18 @@
 object OpenDatabaseForm: TOpenDatabaseForm
   Left = 378
-  Height = 293
+  Height = 271
   Top = 176
-  Width = 351
+  Width = 401
   Caption = 'Open Database'
-  ClientHeight = 293
-  ClientWidth = 351
+  ClientHeight = 271
+  ClientWidth = 401
   OnCreate = FormCreate
   Position = poMainFormCenter
   LCLVersion = '2.1.0.0'
   object OkBtn: TButton
-    Left = 272
+    Left = 322
     Height = 27
-    Top = 263
+    Top = 241
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&OK'
@@ -22,9 +22,9 @@ object OpenDatabaseForm: TOpenDatabaseForm
     TabOrder = 11
   end
   object CancelBtn: TButton
-    Left = 196
+    Left = 246
     Height = 27
-    Top = 263
+    Top = 241
     Width = 75
     Anchors = [akRight, akBottom]
     Cancel = True
@@ -37,44 +37,44 @@ object OpenDatabaseForm: TOpenDatabaseForm
     Left = 7
     Height = 15
     Top = 7
-    Width = 113
-    Caption = 'Database Connection'
+    Width = 83
+    Caption = 'Database Name'
     ParentColor = False
   end
   object DatabaseCbo: TComboBox
     Left = 5
     Height = 23
     Top = 28
-    Width = 342
+    Width = 361
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 15
     OnSelect = DatabaseCboSelect
     TabOrder = 0
   end
   object DatabaseEngineCbo: TComboBox
-    Left = 5
+    Left = 94
     Height = 23
-    Top = 78
-    Width = 342
+    Top = 55
+    Width = 303
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 15
     Style = csDropDownList
     TabOrder = 1
   end
   object BrowseBtn: TButton
-    Left = 262
+    Left = 370
     Height = 23
-    Top = 53
-    Width = 85
+    Top = 28
+    Width = 26
     Anchors = [akTop, akRight]
-    Caption = 'Browse'
+    Caption = '...'
     OnClick = BrowseBtnClick
     TabOrder = 13
   end
   object CacheMetaChk: TCheckBox
     Left = 10
     Height = 19
-    Top = 198
+    Top = 175
     Width = 181
     BidiMode = bdRightToLeftReadingOnly
     Caption = 'Cache Meta for auto complete'
@@ -84,7 +84,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
   object ExclusiveChk: TCheckBox
     Left = 10
     Height = 19
-    Top = 219
+    Top = 196
     Width = 99
     BidiMode = bdRightToLeftReadingOnly
     Caption = 'Open exclusive'
@@ -94,7 +94,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
   object VacuumChk: TCheckBox
     Left = 10
     Height = 19
-    Top = 240
+    Top = 217
     Width = 142
     BidiMode = bdRightToLeftReadingOnly
     Caption = 'Vacuum when connect'
@@ -104,7 +104,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
   object AnsiCodePageChk: TCheckBox
     Left = 10
     Height = 19
-    Top = 261
+    Top = 238
     Width = 164
     BidiMode = bdRightToLeftReadingOnly
     Caption = 'Ansi CodePage (current os)'
@@ -114,7 +114,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
   object Label3: TLabel
     Left = 7
     Height = 15
-    Top = 56
+    Top = 57
     Width = 77
     Caption = 'Database Type'
     ParentColor = False
@@ -122,47 +122,48 @@ object OpenDatabaseForm: TOpenDatabaseForm
   object ServerEdit: TEdit
     Left = 73
     Height = 23
-    Top = 109
-    Width = 131
+    Top = 86
+    Width = 181
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 2
   end
   object Label2: TLabel
     Left = 11
     Height = 15
-    Top = 114
+    Top = 91
     Width = 32
     Caption = 'Server'
     ParentColor = False
   end
   object PortEdit: TEdit
-    Left = 245
+    Left = 295
     Height = 23
-    Top = 109
+    Top = 86
     Width = 102
     Anchors = [akTop, akRight]
     TabOrder = 3
   end
   object Label4: TLabel
-    Left = 253
+    Left = 264
     Height = 15
-    Top = 114
+    Top = 91
     Width = 22
+    Anchors = [akTop, akRight]
     Caption = 'Port'
     ParentColor = False
   end
   object UserEdit: TEdit
     Left = 73
     Height = 23
-    Top = 136
-    Width = 131
+    Top = 113
+    Width = 181
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 4
   end
   object Label5: TLabel
     Left = 11
     Height = 15
-    Top = 141
+    Top = 118
     Width = 23
     Caption = 'User'
     ParentColor = False
@@ -170,35 +171,45 @@ object OpenDatabaseForm: TOpenDatabaseForm
   object PasswordEdit: TEdit
     Left = 73
     Height = 23
-    Top = 163
-    Width = 131
+    Top = 140
+    Width = 181
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 6
   end
   object Label6: TLabel
     Left = 11
     Height = 15
-    Top = 168
+    Top = 145
     Width = 50
     Caption = 'Password'
     ParentColor = False
   end
   object RoleEdit: TEdit
-    Left = 245
+    Left = 295
     Height = 23
-    Top = 136
+    Top = 113
     Width = 102
     Anchors = [akTop, akRight]
     TabOrder = 5
   end
   object Label7: TLabel
-    Left = 215
+    Left = 265
     Height = 15
-    Top = 141
+    Top = 118
     Width = 23
     Anchors = [akTop, akRight]
     Caption = 'Role'
     ParentColor = False
+  end
+  object SavePasswordChk: TCheckBox
+    Left = 264
+    Height = 19
+    Top = 142
+    Width = 97
+    BidiMode = bdRightToLeftReadingOnly
+    Caption = 'Save password'
+    ParentBidiMode = False
+    TabOrder = 14
   end
   object OpenDialog: TOpenDialog
     DefaultExt = '.sql'
@@ -206,6 +217,6 @@ object OpenDatabaseForm: TOpenDatabaseForm
     Filter = '*.sql'
     InitialDir = '\'
     Left = 258
-    Top = 206
+    Top = 183
   end
 end

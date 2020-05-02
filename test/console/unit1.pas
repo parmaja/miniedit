@@ -15,10 +15,12 @@ type
     Button1: TButton;
     Button2: TButton;
     Button3: TButton;
+    Button4: TButton;
     Memo1: TMemo;
     procedure Button1Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
+    procedure Button4Click(Sender: TObject);
   private
     procedure Run(AFile, AParam: String);
     function Read: Integer;
@@ -103,7 +105,7 @@ begin
 
   //aOptions := [poRunSuspended];
 
-  FProcess.Options := aOptions + [poUsePipes, poStderrToOutPut];
+  FProcess.Options := aOptions + [poUsePipes, poStderrToOutPut, poNewConsole];
   FProcess.ShowWindow := swoHIDE;
   //FProcess.PipeBufferSize := 40; //80 char in line
   try
@@ -126,6 +128,17 @@ end;
 procedure TForm1.Button3Click(Sender: TObject);
 begin
   Run('test_pas.exe', '');
+end;
+
+procedure TForm1.Button4Click(Sender: TObject);
+var
+  s: string;
+  env:string;
+begin
+  //RunCommand('test_pas.exe', [], s, [], swoHIDE);
+//  env := 'PGPASSWORD=syspwd';
+  RunCommand('pg_dump.exe', ['-v', '--host localhost', '--port 5432', '--password', '--username postgres', '--blobs', '--format custom', '--compress=9', '--file cur_test.backup cur_test'], s, [], swoHIDE);
+  Memo1.Lines.Add(s);
 end;
 
 end.

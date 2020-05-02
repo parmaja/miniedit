@@ -54,7 +54,7 @@ uses
   gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneClasses, mneDBClasses,
   mneRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils, mnStreams, mncCSV,
   mncSQLiteMeta, sqlvOpenDatabases, sqlvSQLForms, sqlvClasses, sqlvStdClasses,
-  sqlvSessions;
+  sqlvSessions, sqlvConnectServers;
 
 {$R *.res}
 {$i '..\lib\mne.inc'}
@@ -144,6 +144,8 @@ begin
   {$ENDIF DEBUG}
   Application.CreateForm(TEditorResource, EditorResource);
   Application.CreateForm(TMainForm, MainForm);
+  Engine.Start;
+  // Open any files passed in the command line
 end;
 
 begin
@@ -151,15 +153,15 @@ begin
   begin
     //DefaultSystemCodePage := widestringmanager.GetStandardCodePageProc(scpAnsi); //I fix it temporary that needed for AnsiToUtf8; //i commented cuz i cant convert to ansi in TTextEditorFile.DoSave
   Application.Scaled :=True;
-    Application.Initialize;
+  Application.Initialize;
   Application.Title :='miniEdit';
-    Application.Name := 'miniEdit';
-    Application.BidiMode := bdLeftToRight;
-    if InitEngine then
-    begin
-      Run;
-      Application.Run;
-    end;
+  Application.Name := 'miniEdit';
+  Application.BidiMode := bdLeftToRight;
+  if InitEngine then
+  begin
+    Run;
+    Application.Run;
   end;
+end;
 end.
 

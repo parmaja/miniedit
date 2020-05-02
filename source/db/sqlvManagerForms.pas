@@ -93,6 +93,7 @@ type
     procedure OpenGroup(AValue: string);
     procedure LoadActions(vGroup: string; Append: Boolean = False);
 
+    procedure EnumDatabases(Connection: TmncSQLConnection);
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
     procedure LoadEditor(vAddon: TsqlvAddon; S: string);
   end;
@@ -173,10 +174,15 @@ end;
 
 procedure TsqlvManagerForm.LoadEditor(vAddon: TsqlvAddon; S: string);
 begin
-  with Engine.Files.New('sql') do
-  begin
-    SynEdit.Lines.Text := S;
-    Temporary := True;
+  Engine.BeginUpdate;
+  try
+    with Engine.Files.New('sql') do
+    begin
+      IsTemporary := True;
+      SynEdit.Lines.Text := S;
+    end;
+  finally
+    Engine.EndUpdate;
   end;
 end;
 
@@ -440,6 +446,19 @@ begin
     end;
   end;
   MembersGrid.PopupMenu := ActionsPopupMenu;
+end;
+
+procedure TsqlvManagerForm.EnumDatabases(Connection: TmncSQLConnection);
+var
+  i: Integer;
+  Strings: TStringList;
+begin
+  Strings := TStringList.Create;
+  try
+//    Connection.EnumDatabases(Strings)
+  finally
+    Strings.Free
+  end;
 end;
 
 procedure TsqlvManagerForm.ActionsMenuSelect(Sender: TObject);
