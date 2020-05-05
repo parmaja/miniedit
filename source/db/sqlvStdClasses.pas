@@ -10,7 +10,7 @@ unit sqlvStdClasses;
 {$mode objfpc}{$H+}
 
 {
-  Schema --------------------------
+  Meta --------------------------
      |                 |               |
      |                 |               |
      |                 |               |
@@ -19,20 +19,31 @@ unit sqlvStdClasses;
      |       |       |
    Member  Member  Member
 
-   Open Schema = List the groups and open the first (Default) group
+   Open Meta = List the groups and open the first (Default) group
    Open Group = List the members of this group in the members list
-   Open Member = Make the member as Schema and open it as Schema
+   Open Member = Make the member as Meta and open it as Meta
 }
 
 interface
 
 uses
   SysUtils, Variants, Classes, Graphics, Controls, Forms, StdCtrls,
-  mncMeta, mnUtils,
+  mnUtils, mncMeta,
+  mncCSV, mncPostgre, mncMySQL, mncFirebird, mncSQLite,
+  mncPGMeta, mncMySQLMeta, mncFBMeta, mncSQLiteMeta,
   sqlvSessions, sqlvClasses;
 
 type
 
+  { TsqlvDatabases }
+
+  TsqlvDatabases = class(TsqlvAddon)
+  private
+  public
+    constructor Create; override;
+    procedure DoExecute(vAttributes: TsqlvAttributes); override;
+  end;
+         
   { TsqlvDatabase }
 
   TsqlvDatabase = class(TsqlvAddon)
@@ -251,6 +262,23 @@ implementation
 uses
   Contnrs;
 
+{ TsqlvDatabases }
+
+constructor TsqlvDatabases.Create;
+begin
+  inherited Create;
+  Group := 'Server';
+  Name := 'Databases';
+  Title := 'Databases';
+  Kind := sokDatabase;
+  ImageIndex := IMG_DATABASE;
+end;
+
+procedure TsqlvDatabases.DoExecute(vAttributes: TsqlvAttributes);
+begin
+  inherited DoExecute(vAttributes);
+end;
+
 { TsqlvDatabase }
 
 constructor TsqlvDatabase.Create;
@@ -260,7 +288,7 @@ begin
   Name := 'Database';
   Title := 'Database';
   Kind := sokDatabase;
-  ImageIndex := IMG_DATABASE;
+  ImageIndex := IMG_DATABASES;
 end;
 
 procedure TsqlvDatabase.DoExecute(vAttributes: TsqlvAttributes);

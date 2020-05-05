@@ -93,7 +93,7 @@ type
     procedure OpenGroup(AValue: string);
     procedure LoadActions(vGroup: string; Append: Boolean = False);
 
-    procedure EnumDatabases(Connection: TmncSQLConnection);
+    procedure ServerChanged;
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
     procedure LoadEditor(vAddon: TsqlvAddon; S: string);
   end;
@@ -355,7 +355,8 @@ end;
 
 procedure TsqlvManagerForm.OpenBtnClick(Sender: TObject);
 begin
-  OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
+  if MembersGrid.Current.Row < MembersGrid.RowsCount then
+    OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
 end;
 
 procedure TsqlvManagerForm.CheckSearch;
@@ -448,14 +449,34 @@ begin
   MembersGrid.PopupMenu := ActionsPopupMenu;
 end;
 
-procedure TsqlvManagerForm.EnumDatabases(Connection: TmncSQLConnection);
+procedure TsqlvManagerForm.ServerChanged;
 var
-  i: Integer;
   Strings: TStringList;
+  Meta: TmncMeta;
+  Items: TmncMetaItems;
+  Item: TmncMetaItem;
 begin
   Strings := TStringList.Create;
   try
-//    Connection.EnumDatabases(Strings)
+    if (DBEngine.Server.Engine <> nil) and (DBEngine.Server.Engine.MetaClass <> nil) then
+    begin
+      Meta := DBEngine.Server.Engine.MetaClass.Create;
+      Meta.ServerInfo := DBEngine.Server.Info;
+      Items := TmncMetaItems.Create;
+      try
+        Meta.EnumDatabases(Items, [ekSort]);
+        DatabasesGrid.ColumnsCount := 1;
+        for Item in Items do
+        begin
+          DatabasesGrid.AddItem(Item.Name);
+        end;
+      finally
+        Items.Free;
+      end;
+    end
+    else
+    begin
+    end;
   finally
     Strings.Free
   end;
@@ -486,10 +507,6 @@ begin
   FreeAndNil(GroupsNames);
   inherited Destroy;
 end;
-
-{ TPanelsList }
-
-{ TControlObjects }
 
 procedure TsqlvManagerForm.OpenMember(AValue: string);
 var

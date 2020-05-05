@@ -1835,13 +1835,10 @@ object MainForm: TMainForm
       end
     end
     object DatabaseMnu: TMenuItem
-      Caption = 'Database'
+      Caption = 'Data'
       object MenuItem33: TMenuItem
         Action = DBBrowseAct
-        Caption = 'Browse Databases'
-      end
-      object MenuItem23: TMenuItem
-        Action = DBCreateDatabaseAct
+        Caption = 'Connect Server'
       end
       object DBConnectMnu: TMenuItem
         Action = DBConnectAct
@@ -1850,6 +1847,12 @@ object MainForm: TMainForm
       object DBDisconnectMnu: TMenuItem
         Action = DBDisconnectAct
         OnClick = DBDisconnectMnuClick
+      end
+      object MenuItem50: TMenuItem
+        Caption = '-'
+      end
+      object MenuItem23: TMenuItem
+        Action = DBCreateDatabaseAct
       end
     end
     object ProjectMnu: TMenuItem

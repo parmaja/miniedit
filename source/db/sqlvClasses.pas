@@ -12,12 +12,11 @@ interface
 {$mode objfpc}{$H+}
 
 uses
-  SysUtils, Variants, Classes, Controls, Dialogs, Forms, Contnrs,
-  mnClasses, mnUtils,
-  EditorEngine, EditorClasses,
-  mnXMLRttiProfile, mncCSVExchanges, mncSQL,
-  mncDB, mncMeta, mnParams, mnFields, mncCSV,
-  sqlvConsts, sqlvSessions, sqlvOpenDatabases, sqlvConnectServers, ImgList;
+  SysUtils, Variants, Classes, Controls, Dialogs, Forms, Contnrs, ImgList,
+  mnClasses, mnUtils, mnXMLRttiProfile,
+  mncConnections, mncCSVExchanges, mncSQL, mncCSV, mncDB, mncMeta, mnParams, mnFields,
+  EditorEngine, EditorClasses, fgl,
+  sqlvConsts, sqlvSessions, sqlvOpenDatabases, sqlvConnectServers;
 
 const
   IMG_UNKOWN = 0;
@@ -35,6 +34,7 @@ const
   IMG_DATA = 12;
   IMG_COMMAND = 13;
   IMG_INTERACTIVE = 14;
+  IMG_DATABASES = 15;
 
 type
   EsqlvException = class(Exception);
@@ -96,6 +96,8 @@ type
     property Items[Index: Integer]: TsqlvAttribute read GetItem;
   end;
 
+  TsqlvShow = (shwnElement, shwnBrowse, shwnFile);
+
   TsqlvAddon = class;
 
   { TsqlvProcess }
@@ -105,16 +107,18 @@ type
     FAddon: TsqlvAddon;
     FAttributes: TsqlvAttributes;
     FSelect: string;
+    FShowIn: TsqlvShow;
   public
     constructor Create;
-    constructor Create(vAddon:TsqlvAddon; vSelect: string; vAttributes: TsqlvAttributes = nil);
-    constructor Create(Group, Name: string; vSelect: string; vAttributes: TsqlvAttributes = nil);
-    constructor Create(Group, Name: string; vSelect: string; vValue: string);
+    constructor Create(vAddon: TsqlvAddon; vSelect: string; vAttributes: TsqlvAttributes = nil; AShowIn: TsqlvShow = shwnElement);
+    constructor Create(Group, Name: string; vSelect: string; vAttributes: TsqlvAttributes = nil; AShowIn: TsqlvShow = shwnElement);
+    constructor Create(Group, Name: string; vSelect: string; vValue: string; AShowIn: TsqlvShow = shwnElement);
 
     destructor Destroy; override;
     property Addon: TsqlvAddon read FAddon write FAddon;
     property Attributes: TsqlvAttributes read FAttributes write FAttributes;
     property Select: string read FSelect write FSelect;
+    property ShowIn: TsqlvShow read FShowIn write FShowIn;
   end;
 
   { TsqlvStack }
@@ -156,7 +160,7 @@ type
     FGroup: string;
     FStyle: TsqlvAddonStyle;
     FTitle: string;
-    FKind: TschmKind;
+    FKind: TmetaKind;
     FImageIndex: TImageIndex;
   protected
     function GetCanExecute: Boolean; virtual;
@@ -175,7 +179,7 @@ type
     property Group: string read FGroup write FGroup; //Group is parent Addon like Tabkes.Group = 'Database'
     //property Name: string read FName write FName; //Name = 'Tables'
     property ItemName: string read FItemName write FItemName; //Item name eg  Tables.Item = 'Table'
-    property Kind: TschmKind read FKind write FKind default sokNone;
+    property Kind: TmetaKind read FKind write FKind default sokNone;
     property Style: TsqlvAddonStyle read FStyle write FStyle;
     property Title: string read FTitle write FTitle;
     property ImageIndex: TImageIndex read FImageIndex write FImageIndex default -1;
@@ -285,13 +289,18 @@ type
 
   IsqlvNotify = Interface(IInterface)
     ['{E6F8D9BD-F716-4758-8B08-DDDBD3FA1732}']
-    procedure EnumDatabases(Connection: TmncSQLConnection); virtual; abstract;
+    procedure ServerChanged; virtual; abstract;
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean); virtual; abstract;
     procedure LoadEditor(vAddon: TsqlvAddon; S: string); virtual; abstract;
   end;
 
   {TsqlvNotifyObjects = class(specialize TmnObjectList<TsqlvNotify>)
   end;}
+
+  TsqlvServerInfo = record
+    Engine: TmncEngine;
+    Info: TmncServerInfo;
+  end;
 
   { TDBEngine }
 
@@ -307,6 +316,7 @@ type
     FNotifyObject: IsqlvNotify;
     procedure SetNotifyObject(AValue: IsqlvNotify);
   public
+    Server: TsqlvServerInfo;
     constructor Create;
     destructor Destroy; override;
 
@@ -330,7 +340,7 @@ type
     procedure SaveFile(FileName:string; Strings: TStrings);
     function GetAllSupportedFiles: string;
 
-    procedure EnumDatabases(Connection: TmncSQLConnection);
+    procedure ServerChanged;
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
     procedure LoadEditor(vAddon: TsqlvAddon; S: string);
     procedure LoadEditor(vAddon: TsqlvAddon; S: TStringList);
@@ -393,32 +403,33 @@ begin
   FAttributes := TsqlvAttributes.Create;
 end;
 
-constructor TsqlvProcess.Create(vAddon: TsqlvAddon; vSelect: string; vAttributes: TsqlvAttributes);
+constructor TsqlvProcess.Create(vAddon: TsqlvAddon; vSelect: string; vAttributes: TsqlvAttributes; AShowIn: TsqlvShow);
 begin
   Create;
   Addon := vAddon;
   Select := vSelect;
   Attributes.Clone(vAttributes);
+  FShowIn := AShowIn;
 end;
 
-constructor TsqlvProcess.Create(Group, Name: string; vSelect: string; vAttributes: TsqlvAttributes);
+constructor TsqlvProcess.Create(Group, Name: string; vSelect: string; vAttributes: TsqlvAttributes; AShowIn: TsqlvShow);
 var
   aAddon: TsqlvAddon;
 begin
   aAddon := DBEngine.Find(Group, Name, True);
   if aAddon = nil then
     raise Exception.Create('Addon not found' + Group + '\' + Name);
-  Create(aAddon, Select, vAttributes);
+  Create(aAddon, Select, vAttributes, AShowIn);
 end;
 
-constructor TsqlvProcess.Create(Group, Name: string; vSelect: string; vValue: string);
+constructor TsqlvProcess.Create(Group, Name: string; vSelect: string; vValue: string; AShowIn: TsqlvShow);
 var
   a: TsqlvAttributes;
 begin
   a := TsqlvAttributes.Create;
   try
     a.Add(Name, vValue);
-    Create(Group, Name, Select, a);
+    Create(Group, Name, Select, a, AShowIn);
   finally
     a.Free;
   end;
@@ -875,12 +886,24 @@ begin
   begin
     if ShowModal = mrOK then
     begin
-      if DBEngine.DB.IsActive then
-        DBEngine.DB.Close;
+      if DB.IsActive then
+        DB.Close;
 
-      DBEngine.Stack.Clear;
-//      DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabaseCbo.Text));
-      DBEngine.Run;
+      Server.Engine := (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine);
+      Server.Info.Host := HostEdit.Text;
+      if Server.Info.Host = '' then
+      begin
+        if (ccPath in Server.Engine.ConnectionClass.Capabilities) then
+          Server.Info.Host := Engine.BrowseFolder
+        else
+          Server.Info.Host := '127.0.0.1';
+      end;
+      Server.Info.Port := PortEdit.Text;
+      Server.Info.UserName := UserEdit.Text;
+      Server.Info.Role := RoleEdit.Text;
+      Server.Info.Password := PasswordEdit.Text;
+      Stack.Clear;
+      ServerChanged;
     end;
   end;
 end;
@@ -960,9 +983,9 @@ begin
     Result := sSqliteFilter + '|' + sAllFilesFilter;
 end;
 
-procedure TDBEngine.EnumDatabases(Connection: TmncSQLConnection);
+procedure TDBEngine.ServerChanged;
 begin
-  FNotifyObject.EnumDatabases(Connection);
+  FNotifyObject.ServerChanged;
 end;
 
 procedure TDBEngine.ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);

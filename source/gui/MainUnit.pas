@@ -79,6 +79,7 @@ type
     CloseFileMnu: TMenuItem;
     MenuItem46: TMenuItem;
     MenuItem48: TMenuItem;
+    MenuItem50: TMenuItem;
     SepN8: TMenuItem;
     N6: TMenuItem;
     MenuItem47: TMenuItem;
@@ -428,6 +429,7 @@ type
     procedure GotoFileFolderMnuClick(Sender: TObject);
     procedure MenuItem24Click(Sender: TObject);
     procedure MenuItem42Click(Sender: TObject);
+    procedure MenuItem49Click(Sender: TObject);
     procedure MessageLabelClick(Sender: TObject);
     procedure MessagesGridDblClick(Sender: TObject);
 
@@ -956,6 +958,11 @@ end;
 procedure TMainForm.MenuItem42Click(Sender: TObject);
 begin
   ExploreFolder(Engine.Session.Project.RunOptions.MainFile);
+end;
+
+procedure TMainForm.MenuItem49Click(Sender: TObject);
+begin
+
 end;
 
 procedure TMainForm.MessageLabelClick(Sender: TObject);

@@ -23,7 +23,7 @@ type
     Label5: TLabel;
     Label6: TLabel;
     Label7: TLabel;
-    ServerEdit: TEdit;
+    HostEdit: TEdit;
     ExclusiveChk: TCheckBox;
     Label1: TLabel;
     Label2: TLabel;
@@ -92,6 +92,8 @@ end;
 procedure TOpenDatabaseForm.FormCreate(Sender: TObject);
 begin
   Engines.EnumConnections(DatabaseEngineCbo.Items);
+  DatabaseEngineCbo.Sorted := True;
+  DatabaseEngineCbo.ItemIndex := 0;
 end;
 
 procedure TOpenDatabaseForm.OkBtnClick(Sender: TObject);

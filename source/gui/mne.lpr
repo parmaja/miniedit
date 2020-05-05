@@ -52,9 +52,9 @@ uses
   mneDClasses, mneLuaClasses, LuaDBGServers, MsgBox, GUIMsgBox, Classes,
   PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses, EditorColors,
   gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneClasses, mneDBClasses,
-  mneRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils, mnStreams, mncCSV,
-  mncSQLiteMeta, sqlvOpenDatabases, sqlvSQLForms, sqlvClasses, sqlvStdClasses,
-  sqlvSessions, sqlvConnectServers;
+  mneRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils, mnStreams,
+  mnClasses, mncCSV, mncSQLiteMeta, sqlvOpenDatabases, sqlvSQLForms,
+  sqlvClasses, sqlvStdClasses, sqlvSessions, sqlvConnectServers;
 
 {$R *.res}
 {$i '..\lib\mne.inc'}

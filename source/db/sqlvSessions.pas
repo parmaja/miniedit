@@ -64,11 +64,6 @@ type
 implementation
 
 uses
-  mncPostgre,
-  mncMySQL,
-  mncCSV,
-  mncFirebird,
-  mncSQLite,
   sqlvClasses;
 
 { TsqlvDB }
