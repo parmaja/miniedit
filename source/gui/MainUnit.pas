@@ -1459,7 +1459,7 @@ begin
         aProject := Engine.Session.New(aTendency);
         if ShowProjectForm(aProject) then
         begin
-          Engine.Session.Project := aProject;
+          Engine.Session.SetProject(aProject);
         end
         else
           aProject.Free;

@@ -322,7 +322,7 @@ type
   protected
     function DoCreateConnection(vStream: TmnConnectionStream): TmnConnection; override;
   public
-    constructor Create;
+    constructor Create(AOptions: TmnsoOptions = []); override;
     destructor Destroy; override;
   end;
 
@@ -609,7 +609,7 @@ end;
 
 function TdbgpServer.CreateListener: TmnListener;
 begin
-  Result := TmnDBGListener.Create;
+  Result := TmnDBGListener.Create([soReuseAddr]);
 end;
 
 function TdbgpConnection.ReadRespond: TDebugCommandRespond;
@@ -781,10 +781,9 @@ begin
   Result := TdbgpConnection.Create(Self, vStream);
 end;
 
-constructor TmnDBGListener.Create;
+constructor TmnDBGListener.Create(AOptions: TmnsoOptions);
 begin
   inherited;
-  FOptions := FOptions + [soReuseAddr];
 end;
 
 destructor TmnDBGListener.Destroy;

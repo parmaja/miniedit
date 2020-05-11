@@ -226,7 +226,7 @@ procedure TEditorSettingForm.FormCreate(Sender: TObject);
 begin
   GroupCol := TntvStandardColumn.Create(ExtensionsGrid, 'Group', 'GroupCol');
   ExtensionCol := TntvStandardColumn.Create(ExtensionsGrid, 'Extension', 'ExtensionCol');
-  ExtensionCol.AutoSize := True;
+  ExtensionCol.AutoFit := True;
   PageControl.ActivePageIndex := CurrentPage;
 end;
 

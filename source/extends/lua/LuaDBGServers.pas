@@ -320,7 +320,6 @@ type
   protected
     function DoCreateConnection(vStream: TmnConnectionStream): TmnConnection; override;
   public
-    constructor Create;
     destructor Destroy; override;
   end;
 
@@ -601,7 +600,7 @@ end;
 
 function TLuaDBGServer.CreateListener: TmnListener;
 begin
-  Result := TmnDBGListener.Create;
+  Result := TmnDBGListener.Create([]);
 end;
 
 function TLuaDBGConnection.ReadRespond: TDebugCommandRespond;
@@ -778,12 +777,6 @@ end;
 function TmnDBGListener.DoCreateConnection(vStream: TmnConnectionStream): TmnConnection;
 begin
   Result := TLuaDBGConnection.Create(Self, vStream);
-end;
-
-constructor TmnDBGListener.Create;
-begin
-  inherited;
-  FOptions := FOptions + [soReuseAddr];
 end;
 
 destructor TmnDBGListener.Destroy;

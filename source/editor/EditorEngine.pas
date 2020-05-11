@@ -1053,7 +1053,6 @@ type
     function GetMainFile: string;
     function GetMainFolder: string;
     procedure SetPanel(AValue: TControl);
-    procedure SetProject(const Value: TEditorProject);
     procedure SetInternalProject(const Value: TEditorProject);
     procedure SetRun(AValue: TmneRun);
   public
@@ -1069,10 +1068,12 @@ type
     function Save: Boolean;
     function SaveAs: Boolean;
     function GetRoot: string;
+
+    procedure SetProject(const Value: TEditorProject; LoadFiles: Boolean = True);
     //Is project opened
     property Active: Boolean read GetActive;
     //Current is the opened project, if it is a nil that mean there is no opened project.
-    property Project: TEditorProject read FProject write SetProject;
+    property Project: TEditorProject read FProject;
     property Panel: TControl read FPanel write SetPanel;
     //Session Options is depend on the system used not shared between OSs
     property Options: TEditorSessionOptions read FOptions;
@@ -1174,7 +1175,6 @@ type
 
     procedure Prepare(vSafeMode: Boolean = False);
     procedure Start; //After Createing MainForm
-    procedure OpenDefaultProject;
     procedure LoadOptions;
     procedure UpdateOptions;
     procedure SaveOptions;
@@ -2854,7 +2854,7 @@ begin
   if Active then
   begin
     FreeAndNil(FProject);
-    Project := Engine.DefaultProject;
+    SetProject(Engine.DefaultProject);
   end;
   Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
 end;
@@ -3267,7 +3267,7 @@ begin
       aProject.Free;
       raise;
     end;
-    Project := aProject;
+    SetProject(aProject);
     FIsChanged := False;
     if Active then  //sure if not default project
       Engine.ProcessRecentProject(FileName);
@@ -3637,7 +3637,7 @@ begin
   end;
 end;
 
-procedure TEditorSession.SetProject(const Value: TEditorProject);
+procedure TEditorSession.SetProject(const Value: TEditorProject; LoadFiles: Boolean);
 begin
   if FProject <> Value then
   begin
@@ -3648,7 +3648,7 @@ begin
       SetInternalProject(Value);
       if FProject.Tendency <> nil then
         FProject.Tendency.Prepare; //Prepare debug object and others
-      if FProject.SaveDesktop then
+      if FProject.SaveDesktop and LoadFiles then
         FProject.Desktop.Load;
       Changed;
       Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject, ecsProjectLoaded]);
@@ -3750,9 +3750,9 @@ begin
   DefaultProject.FileName := WorkSpace + 'mne-default-project.xml';
   try
     LoadOptions;
+    DefaultProject.SafeLoadFromFile(DefaultProject.FileName);
     //here we will autoopen last files
-    //OpenDefaultProject
-    Session.FProject := DefaultProject; //nah it is effect on UpdatePanel and ProjectChanged in mainform
+    //Session.FProject := DefaultProject; //nah it is effect on UpdatePanel and ProjectChanged in mainform
   except
     on E: Exception do
       Engine.SendMessage(E.Message, msgtLog);
@@ -3772,6 +3772,7 @@ begin
       lFilePath := DequoteStr(ParamStr(1));
     BrowseFolder := ExtractFilePath(lFilePath);
     //The filename is expanded, if necessary, in EditorEngine.TEditorFiles.InternalOpenFile
+    Session.SetProject(DefaultProject, False);
     Files.OpenFile(lFilePath);
   end
   else
@@ -3781,15 +3782,9 @@ begin
     else
     begin
       BrowseFolder := Options.LastFolder;
-      OpenDefaultProject;
+      Session.SetProject(DefaultProject);
     end;
   end;
-end;
-
-procedure TEditorEngine.OpenDefaultProject;
-begin
-  DefaultProject.SafeLoadFromFile(DefaultProject.FileName);
-//  Session.Project := DefaultProject;
 end;
 
 procedure TEditorEngine.LoadOptions;
@@ -4132,7 +4127,7 @@ end;
 
 function TEditorEngine.GetMainFileTendency: TEditorTendency;
 begin
-  if (Session.Active) and (Session.Project.RunOptions.MainFile <> '') then
+  if (Session.Project <> nil) and (Session.Project.RunOptions.MainFile <> '') then //do not use (Session.Active) maybe it is default project
   begin
     if (not SameText(FCache.MainFile, Session.Project.RunOptions.MainFile)) then
     begin

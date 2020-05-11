@@ -156,7 +156,7 @@ object sqlvManagerForm: TsqlvManagerForm
       TabOrder = 0
       FullHeader = True
       OnClick = MembersGridClick
-      OnDblClick = MembersGridDblClick
+      OnDblClick = DatabasesGridDblClick
       OnKeyDown = MembersGridKeyDown
     end
   end

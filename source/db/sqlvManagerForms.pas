@@ -56,6 +56,7 @@ type
     GroupPanel: TPanel;
     procedure BackBtnClick(Sender: TObject);
     procedure ConnectBtnClick(Sender: TObject);
+    procedure DatabasesGridDblClick(Sender: TObject);
     procedure DisconnectBtnClick(Sender: TObject);
     procedure FirstBtnClick(Sender: TObject);
     procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
@@ -261,6 +262,20 @@ end;
 
 procedure TsqlvManagerForm.ConnectBtnClick(Sender: TObject);
 begin
+end;
+
+procedure TsqlvManagerForm.DatabasesGridDblClick(Sender: TObject);
+var
+  aDatabase: string;
+begin
+  if (DatabasesGrid.RowsCount > 0) and (DatabasesGrid.Current.Row >= 0) then
+  begin
+    aDatabase := DatabasesGrid.Values[0, DatabasesGrid.Current.Row];
+    DBEngine.DB.Open(False, DBEngine.Server.Engine.Name, aDatabase, DBEngine.Server.Info.UserName, DBEngine.Server.Info.Password, DBEngine.Server.Info.Role);
+    DBEngine.Stack.Clear;
+    DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', aDatabase));
+    DBEngine.Run;
+  end;
 end;
 
 procedure TsqlvManagerForm.DisconnectBtnClick(Sender: TObject);
