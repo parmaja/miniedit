@@ -25,7 +25,7 @@ uses
   {$endif}
   ntvTabSets, SynEditPlugins,
   synhighlighterunixshellscript, SynHighlighterPas, SynHighlighterMulti,
-  mnStreams, mnClasses,
+  mnStreams, mnClasses, mnDebugs,
   //Addons
   {$ifdef Windows}
   mneAssociateForm,
@@ -668,13 +668,15 @@ var
 begin
   if (Engine.Files.Current <> nil) and (HintInfo.HintControl is TCustomSynEdit) then
   begin
-    CanShow := Engine.Files.Current.GetHint(HintInfo.HintControl, HintInfo.CursorPos, s);
+    Engine.Files.Current.GetHint(HintInfo.HintControl, HintInfo.CursorPos, s);
+    CanShow := s <> '';
 
     if CanShow then
     begin
+      HintStr := s;
       HintInfo.HintStr := s;
       HintInfo.HideTimeout := 10000;
-      HintInfo.ReshowTimeout := 1;
+      HintInfo.ReshowTimeout := 500;
     end;
   end
   else if (HintInfo.HintStr = '') and (HintInfo.HintControl.Action is TAction) then
@@ -2814,7 +2816,7 @@ begin
     WatchesGrid.BeginUpdate;
     try
       WatchesGrid.RowCount := aTendency.Debug.Watches.Count + 1;
-      aTendency.Debug.Lock;
+      DebugManager.Enter;
       try
         for i := 0 to aTendency.Debug.Watches.Count - 1 do
         begin
@@ -2823,7 +2825,7 @@ begin
           WatchesGrid.Cells[3, i + 1] := aTendency.Debug.Watches[i].Value;
         end;
       finally
-        aTendency.Debug.Unlock;
+        DebugManager.Leave;
       end;
     finally
       if (aIndex > 0) and (aIndex <= WatchesGrid.RowCount) then
@@ -2975,11 +2977,11 @@ begin
       with Engine.Files do
       begin
         aLine := Current.SynEdit.CaretY;
-        Current.Tendency.Debug.Lock;
+        DebugManager.Enter;
         try
           Current.Tendency.Debug.Breakpoints.Toggle(Current.Name, aLine);
         finally
-          Current.Tendency.Debug.Unlock;
+          DebugManager.Leave;
         end;
         Current.SynEdit.InvalidateLine(aLine);
       end;

@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 210
+  Left = 273
   Height = 568
-  Top = 190
+  Top = 191
   Width = 1021
   ActiveControl = LogEdit
   AllowDropFiles = True
@@ -1104,6 +1104,92 @@ object MainForm: TMainForm
           'Variable'
         )
       end
+      object SearchGrid: TStringGrid
+        Left = 1
+        Height = 151
+        Top = 21
+        Width = 1019
+        Align = alClient
+        ColCount = 4
+        Flat = True
+        MouseWheelOption = mwGrid
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking, goDblClickAutoSize, goSmoothScroll, goFixedRowNumbering, goCellHints, goRowHighlight]
+        ParentColor = True
+        PopupMenu = MessagesPopup
+        RowCount = 1
+        TabOrder = 0
+        TitleFont.CharSet = ANSI_CHARSET
+        TitleFont.Height = -13
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Pitch = fpVariable
+        TitleFont.Quality = fqDraft
+        OnDblClick = SearchGridDblClick
+        OnDrawCell = SearchGridDrawCell
+        OnKeyDown = SearchGridKeyDown
+        ColWidths = (
+          21
+          184
+          53
+          548
+        )
+        Cells = (
+          3
+          1
+          0
+          'File'
+          2
+          0
+          'Line'
+          3
+          0
+          'Result'
+        )
+      end
+      object WatchesGrid: TStringGrid
+        Left = 1
+        Height = 151
+        Top = 21
+        Width = 1019
+        Align = alClient
+        ColCount = 4
+        Columns = <        
+          item
+            Title.Caption = 'Variable'
+            Width = 117
+          end        
+          item
+            Title.Caption = 'Type'
+            Width = 134
+          end        
+          item
+            Title.Caption = 'Value'
+            Width = 334
+          end>
+        Flat = True
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
+        ParentColor = True
+        PopupMenu = WatchesPopupMenu
+        RowCount = 1
+        TabOrder = 3
+        TitleFont.CharSet = ANSI_CHARSET
+        TitleFont.Height = -13
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Pitch = fpVariable
+        TitleFont.Quality = fqDraft
+        OnKeyDown = WatchesGridKeyDown
+        ColWidths = (
+          18
+          117
+          134
+          334
+        )
+        Cells = (
+          1
+          1
+          0
+          'Variable'
+        )
+      end
       inline OutputEdit: TSynEdit
         Left = 1
         Height = 151
@@ -1667,92 +1753,6 @@ object MainForm: TMainForm
           end
         end
       end
-      object SearchGrid: TStringGrid
-        Left = 1
-        Height = 151
-        Top = 21
-        Width = 1019
-        Align = alClient
-        ColCount = 4
-        Flat = True
-        MouseWheelOption = mwGrid
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking, goDblClickAutoSize, goSmoothScroll, goFixedRowNumbering, goCellHints, goRowHighlight]
-        ParentColor = True
-        PopupMenu = MessagesPopup
-        RowCount = 1
-        TabOrder = 0
-        TitleFont.CharSet = ANSI_CHARSET
-        TitleFont.Height = -13
-        TitleFont.Name = 'Tahoma'
-        TitleFont.Pitch = fpVariable
-        TitleFont.Quality = fqDraft
-        OnDblClick = SearchGridDblClick
-        OnDrawCell = SearchGridDrawCell
-        OnKeyDown = SearchGridKeyDown
-        ColWidths = (
-          21
-          184
-          53
-          548
-        )
-        Cells = (
-          3
-          1
-          0
-          'File'
-          2
-          0
-          'Line'
-          3
-          0
-          'Result'
-        )
-      end
-      object WatchesGrid: TStringGrid
-        Left = 1
-        Height = 151
-        Top = 21
-        Width = 1019
-        Align = alClient
-        ColCount = 4
-        Columns = <        
-          item
-            Title.Caption = 'Variable'
-            Width = 117
-          end        
-          item
-            Title.Caption = 'Type'
-            Width = 134
-          end        
-          item
-            Title.Caption = 'Value'
-            Width = 334
-          end>
-        Flat = True
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goSmoothScroll]
-        ParentColor = True
-        PopupMenu = WatchesPopupMenu
-        RowCount = 1
-        TabOrder = 3
-        TitleFont.CharSet = ANSI_CHARSET
-        TitleFont.Height = -13
-        TitleFont.Name = 'Tahoma'
-        TitleFont.Pitch = fpVariable
-        TitleFont.Quality = fqDraft
-        OnKeyDown = WatchesGridKeyDown
-        ColWidths = (
-          18
-          117
-          134
-          334
-        )
-        Cells = (
-          1
-          1
-          0
-          'Variable'
-        )
-      end
     end
   end
   object MainMenu: TMainMenu
@@ -1786,11 +1786,11 @@ object MainForm: TMainForm
       object MenuItem20: TMenuItem
         Caption = '-'
       end
-      object MenuItem18: TMenuItem
-        Action = RenameAct
-      end
       object ChangeExtMnu: TMenuItem
         Action = ChangeExtAct
+      end
+      object MenuItem18: TMenuItem
+        Action = RenameAct
       end
       object MenuItem19: TMenuItem
         Action = DeleteAct

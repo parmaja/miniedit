@@ -172,7 +172,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item10>
     </RequiredPackages>
-    <Units Count="62">
+    <Units Count="60">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -494,26 +494,18 @@
         <IsPartOfProject Value="True"/>
       </Unit57>
       <Unit58>
-        <Filename Value="..\..\..\minilib\connection\src\sqlite\mncSQLiteMeta.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit58>
-      <Unit59>
         <Filename Value="..\db\sqlvConnectServers.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ConnectDBServerForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit59>
-      <Unit60>
+      </Unit58>
+      <Unit59>
         <Filename Value="mneAssociateForm.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="AssociateForm"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit60>
-      <Unit61>
-        <Filename Value="..\..\..\minilib\lib\mnClasses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit61>
+      </Unit59>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

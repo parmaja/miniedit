@@ -517,7 +517,7 @@ begin
   FLocalSpool := TLuaDBGConnectionSpool.Create;
   FLocalSpool.FConnection := Self;
   //KeepAlive := True;
-  Stream.Timeout := 5000;
+  Stream.ReadTimeout := 5000;
 end;
 
 destructor TLuaDBGConnection.Destroy;
@@ -700,7 +700,7 @@ begin
     DebugManager.Event.WaitFor(INFINITE); //wait the ide to make resume
     InterLockedDecrement(Server.FRunCount);
 
-    DebugManager.Lock.Enter;
+    DebugManager.Enter;
     try
       i := 0;
       while i < Server.Spool.Count do
@@ -712,7 +712,7 @@ begin
         //        inc(i);
       end;
     finally
-      DebugManager.Lock.Leave;
+      DebugManager.Leave;
     end;
   end;
   Result := nil;
@@ -846,12 +846,12 @@ end;
 
 procedure TLuaDBGInit.Execute(Respond: TDebugCommandRespond);
 begin
-  DebugManager.Lock.Enter;
+  DebugManager.Enter;
   try
     Connection.Server.Watches.Clean;
     Connection.FKey := Respond.Root.Attributes['idekey'];
   finally
-    DebugManager.Lock.Leave;
+    DebugManager.Leave;
   end;
 end;
 
@@ -977,20 +977,20 @@ end;
 
 procedure TLuaDBGWatches.AddWatch(Name: string);
 begin
-  DebugManager.Lock.Enter;
+  DebugManager.Enter;
   try
     Add(Name, '');
   finally
-    DebugManager.Lock.Leave;
+    DebugManager.Leave;
   end;
   if Server.IsRuning then
   begin
-    DebugManager.Lock.Enter;
+    DebugManager.Enter;
     try
       Server.Spool.Add(TLuaDBGGetWatches.Create);
       Server.Spool.Add(TLuaDBGGetCurrent.Create);
     finally
-      DebugManager.Lock.Leave;
+      DebugManager.Leave;
     end;
     Server.Resume;
   end;
@@ -1046,12 +1046,12 @@ begin
   end;
   if Server.IsRuning then
   begin
-    DebugManager.Lock.Enter;
+    DebugManager.Enter;
     try
       Server.Spool.Add(TLuaDBGGetWatches.Create);
       Server.Spool.Add(TLuaDBGGetCurrent.Create);
     finally
-      DebugManager.Lock.Leave;
+      DebugManager.Leave;
     end;
     Server.Resume;
   end;
@@ -1066,12 +1066,12 @@ end;
 procedure TLuaDBGGetWatch.Execute(Respond: TDebugCommandRespond);
 begin
   inherited;
-  DebugManager.Lock.Enter;
+  DebugManager.Enter;
   try
     Connection.Server.Watches[Index].Info.Value := Info.Value;
     Connection.Server.Watches[Index].Info.VarType := Info.VarType;
   finally
-    DebugManager.Lock.Leave;
+    DebugManager.Leave;
   end;
 end;
 
@@ -1160,36 +1160,36 @@ end;
 
 function TLuaDBGGetWatches.Stay: boolean;
 begin
-  DebugManager.Lock.Enter;
+  DebugManager.Enter;
   try
     Inc(Current);
     Result := Current < Connection.Server.Watches.Count;
   finally
-    DebugManager.Lock.Leave;
+    DebugManager.Leave;
   end;
 end;
 
 procedure TLuaDBGGetWatches.Execute(Respond: TDebugCommandRespond);
 begin
   inherited;
-  DebugManager.Lock.Enter;
+  DebugManager.Enter;
   try
     Connection.Server.Watches[Current].Info.Value := Info.Value;
     Connection.Server.Watches[Current].Info.VarType := Info.VarType;
   finally
-    DebugManager.Lock.Leave;
+    DebugManager.Leave;
   end;
 end;
 
 function TLuaDBGGetWatches.Enabled: boolean;
 begin
-  DebugManager.Lock.Enter;
+  DebugManager.Enter;
   try
     Result := Current < Connection.Server.Watches.Count;
     if Result then
       Info.Name := Connection.Server.Watches[Current].Info.Name;
   finally
-    DebugManager.Lock.Leave;
+    DebugManager.Leave;
   end;
 end;
 
@@ -1197,7 +1197,7 @@ end;
 
 function TLuaDBGSetBreakpoints.Enabled: boolean;
 begin
-  DebugManager.Lock.Enter;
+  DebugManager.Enter;
   try
     Result := Current < Connection.Server.Breakpoints.Count;
     if Result then
@@ -1206,19 +1206,19 @@ begin
       FileLine := Connection.Server.Breakpoints[Current].Line;
     end;
   finally
-    DebugManager.Lock.Leave;
+    DebugManager.Leave;
   end;
 end;
 
 function TLuaDBGSetBreakpoints.Stay: boolean;
 begin
-  DebugManager.Lock.Enter;
+  DebugManager.Enter;
   try
     Connection.Server.Breakpoints[Current].ID := BreakpointID;
     Inc(Current);
     Result := Current < Connection.Server.Breakpoints.Count;
   finally
-    DebugManager.Lock.Leave;
+    DebugManager.Leave;
   end;
 end;
 
@@ -1288,11 +1288,11 @@ end;
 
 procedure TLuaDBGServer.AddAction(Action: TLuaDBGAction);
 begin
-  DebugManager.Lock.Enter;
+  DebugManager.Enter;
   try
     Spool.Add(Action);
   finally
-    DebugManager.Lock.Leave;
+    DebugManager.Leave;
   end;
 end;
 
@@ -1303,31 +1303,31 @@ end;
 
 procedure TLuaDBGServer.RemoveAction(Action: TLuaDBGAction);
 begin
-  DebugManager.Lock.Enter;
+  DebugManager.Enter;
   try
     Spool.Remove(Action);
   finally
-    DebugManager.Lock.Leave;
+    DebugManager.Leave;
   end;
 end;
 
 procedure TLuaDBGServer.ExtractAction(Action: TLuaDBGAction);
 begin
-  DebugManager.Lock.Enter;
+  DebugManager.Enter;
   try
     Spool.Extract(Action);
   finally
-    DebugManager.Lock.Leave;
+    DebugManager.Leave;
   end;
 end;
 
 procedure TLuaDBGServer.Clear;
 begin
-  DebugManager.Lock.Enter;
+  DebugManager.Enter;
   try
     Spool.Clear;
   finally
-    DebugManager.Lock.Leave;
+    DebugManager.Leave;
   end;
 end;
 

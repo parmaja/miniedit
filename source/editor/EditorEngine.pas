@@ -26,7 +26,7 @@ interface
 
 uses
   Messages, SysUtils, Forms, StdCtrls, StrUtils, Dialogs, Variants, Classes, Controls, LCLIntf, LConvEncoding,
-  FileUtil, LazFileUtils,
+  FileUtil, LazFileUtils, mnDebugs,
   Graphics, Contnrs, Types, IniFiles, EditorOptions, EditorColors, EditorProfiles,
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
@@ -1239,6 +1239,7 @@ type
 
     procedure SaveAll(Force: Boolean);
     procedure Run;
+    procedure Execute;
 
     property Environment: TStringList read FEnvironment write FEnvironment;
   published
@@ -1970,11 +1971,11 @@ begin
   if (Tendency.Debug <> nil) and (fgkExecutable in Group.Kind) then
   begin
     aLine := SynEdit.PixelsToRowColumn(Point(X, Y)).y;
-    Tendency.Debug.Lock;
+    DebugManager.Enter;
     try
       Tendency.Debug.Breakpoints.Toggle(Name, aLine);
     finally
-      Tendency.Debug.Unlock;
+      DebugManager.Leave;
     end;
     SynEdit.InvalidateLine(aLine);
   end;
@@ -2184,6 +2185,7 @@ function TSyntaxEditorFile.GetHint(HintControl: TControl; CursorPos: TPoint; out
 var
   v, s, t: string;
 begin
+  Debug.Write('GetHint');
   if capEval in Tendency.Capabilities then
   begin
     Result := EvalByMouse(CursorPos, v, s, t);
@@ -2211,13 +2213,18 @@ end;
 function TSyntaxEditorFile.EvalByMouse(p: TPoint; out v, s, t: string): boolean;
 var
   l: variant;
+  lp: TPoint;
 begin
   if Tendency.Debug <> nil then
   begin
     if SynEdit.SelAvail then
       v := SynEdit.SelText
     else
-      v := Trim(SynEdit.GetWordAtRowCol(SynEdit.LogicalCaretXY));
+    begin
+      lp := SynEdit.PixelsToLogicalPos(p);
+      v := Trim(SynEdit.GetWordAtRowCol(lp));
+      //v := Trim(SynEdit.GetWordAtRowCol(SynEdit.LogicalCaretXY));
+    end;
     Result := (v <> '') and Tendency.Debug.Watches.GetValue(v, l, t, False);
     s := VarToStrDef(l, '');
   end
@@ -4058,6 +4065,13 @@ begin
   CurrentTendency.Run([rnaCompile, rnaExecute]);
 end;
 
+procedure TEditorEngine.Execute;
+begin
+  if Files.Count > 0 then
+    SaveAll(False);
+  CurrentTendency.Run([rnaExecute]);
+end;
+
 procedure TEditorEngine.DoChangedState(State: TEditorChangeStates);
 var
   i: Integer;
@@ -5741,7 +5755,7 @@ begin
     lh := TSynEdit(SynEdit).LineHeight;
     iw := EditorResource.DebugImages.Width;
 
-    aTendency.Debug.Lock;
+    DebugManager.Enter;
     try
       for i := 0 to aTendency.Debug.Breakpoints.Count - 1 do
       begin
@@ -5749,7 +5763,7 @@ begin
           DrawIndicator(aTendency.Debug.Breakpoints[i].Line, DEBUG_IMAGE_BREAKPOINT);
       end;
     finally
-      aTendency.Debug.Unlock;
+      DebugManager.Leave;
     end;
 
     if (Engine.DebugLink.ExecutedControl = SynEdit) and (Engine.DebugLink.ExecutedLine >= 0) then
@@ -5801,7 +5815,7 @@ begin
 
       if (FProject.Tendency <> nil) and (Project.Tendency.Debug <> nil) then
       begin
-        Project.Tendency.Debug.Lock;
+        DebugManager.Enter;
         try
          Project.Tendency.Debug.Breakpoints.Clear;
           for i := 0 to Breakpoints.Count - 1 do
@@ -5815,7 +5829,7 @@ begin
             Project.Tendency.Debug.Watches.Add(Watches[i].Name);
           end;
         finally
-          Project.Tendency.Debug.Unlock;
+          DebugManager.Leave;
         end;
         Engine.UpdateState([ecsDebug]);
       end;
@@ -5836,7 +5850,7 @@ begin
   Watches.Clear;
   if (FProject.Tendency <> nil) and (Project.Tendency.Debug <> nil) then
   begin
-    Project.Tendency.Debug.Lock;
+    DebugManager.Enter;
     try
       for i := 0 to Project.Tendency.Debug.Breakpoints.Count - 1 do
       begin
@@ -5848,7 +5862,7 @@ begin
         Watches.Add(Project.Tendency.Debug.Watches[i].Name);
       end;
     finally
-      Project.Tendency.Debug.Unlock;
+      DebugManager.Leave;
     end;
   end;
 

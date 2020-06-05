@@ -224,7 +224,6 @@ type
     FOnChanged: TNotifyEvent;
     function GetCurrent: TsqlvCustomHistoryItem;
   protected
-    function CreateItem: TsqlvCustomHistoryItem; virtual; abstract;
   public
     constructor Create;
     function Add(History: TsqlvCustomHistoryItem): Integer;

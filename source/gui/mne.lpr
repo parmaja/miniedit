@@ -53,8 +53,8 @@ uses
   PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses, EditorColors,
   gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneClasses, mneDBClasses,
   mneRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils, mnStreams,
-  mnClasses, mncCSV, mncSQLiteMeta, sqlvOpenDatabases, sqlvSQLForms,
-  sqlvClasses, sqlvStdClasses, sqlvSessions, sqlvConnectServers;
+  mncCSV, sqlvOpenDatabases,
+  sqlvSQLForms, sqlvClasses, sqlvStdClasses, sqlvSessions, sqlvConnectServers;
 
 {$R *.res}
 {$i '..\lib\mne.inc'}

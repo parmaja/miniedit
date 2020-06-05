@@ -10,7 +10,7 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, ComCtrls, StdCtrls, EditorEngine;
+  Dialogs, ComCtrls, StdCtrls, EditorEngine, EditorRun;
 
 type
   TBreakpointsForm = class(TForm)
@@ -52,11 +52,11 @@ end;
 procedure TBreakpointsForm.FormCreate(Sender: TObject);
 begin
   FTendency := Engine.Tendency;
-  FTendency.Debug.Lock;
+  DebugManager.Enter;
   try
     Reload;
   finally
-    FTendency.Debug.Unlock;
+    DebugManager.Leave;
   end;
 end;
 
@@ -80,26 +80,26 @@ procedure TBreakpointsForm.Button2Click(Sender: TObject);
 begin
   if BreakpointList.Selected <> nil then
   begin
-    FTendency.Debug.Lock;
+    DebugManager.Enter;
     try
       FTendency.Debug.Breakpoints.Remove(IntPtr(BreakpointList.Selected.Data));
       Reload;
       Engine.UpdateState([ecsDebug]);
     finally
-      FTendency.Debug.Unlock;
+      DebugManager.Leave;
     end;
   end;
 end;
 
 procedure TBreakpointsForm.Button1Click(Sender: TObject);
 begin
-  FTendency.Debug.Lock;
+  DebugManager.Enter;
   try
     FTendency.Debug.Breakpoints.Clear;
     Reload;
     Engine.UpdateState([ecsDebug]);
   finally
-    FTendency.Debug.Unlock;
+    DebugManager.Leave;
   end;
 end;
 

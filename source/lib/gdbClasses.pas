@@ -736,11 +736,11 @@ end;
 
 procedure TGDBDebug.AddAction(vAction: TgdbAction);
 begin
-  DebugManager.Lock.Enter;
+  DebugManager.Enter;
   try
     Queue.Add(vAction);
   finally
-    DebugManager.Lock.Leave;
+    DebugManager.Leave;
   end;
 end;
 
@@ -751,31 +751,31 @@ end;
 
 procedure TGDBDebug.RemoveAction(vAction: TgdbAction);
 begin
-  DebugManager.Lock.Enter;
+  DebugManager.Enter;
   try
     Queue.Remove(vAction);
   finally
-    DebugManager.Lock.Leave;
+    DebugManager.Leave;
   end;
 end;
 
 procedure TGDBDebug.ExtractAction(vAction: TgdbAction);
 begin
-  DebugManager.Lock.Enter;
+  DebugManager.Enter;
   try
     Queue.Extract(vAction);
   finally
-    DebugManager.Lock.Leave;
+    DebugManager.Leave;
   end;
 end;
 
 procedure TGDBDebug.Clear;
 begin
-  DebugManager.Lock.Enter;
+  DebugManager.Enter;
   try
     Queue.Clear;
   finally
-    DebugManager.Lock.Leave;
+    DebugManager.Leave;
   end;
 end;
 
@@ -843,7 +843,7 @@ begin
     DebugManager.Event.WaitFor(INFINITE); //wait the ide to make resume
     InterLockedDecrement(Debug.FRunCount);
 
-    DebugManager.Lock.Enter;
+    DebugManager.Enter;
     try
       while Debug.Queue.Count > 0 do
       begin
@@ -851,7 +851,7 @@ begin
         Spool.Add(aAction);
       end;
     finally
-      DebugManager.Lock.Leave;
+      DebugManager.Leave;
     end;
   end;
   Result := nil;

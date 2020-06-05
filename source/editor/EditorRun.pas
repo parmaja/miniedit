@@ -12,7 +12,7 @@ interface
 
 uses
   Forms, SysUtils, StrUtils, Classes, contnrs, SynEdit,
-  mnUtils, ConsoleProcess, process, SyncObjs,
+  mnUtils, mnDebugs, ConsoleProcess, process, SyncObjs,
   mnStreams, EditorClasses, mnClasses, mnXMLUtils;
 
 {$i '..\lib\mne.inc'}
@@ -338,8 +338,6 @@ type
     procedure Launch(vFileName: string); virtual;
     procedure Stop; virtual;
 
-    procedure Lock; virtual;
-    procedure Unlock; virtual;
     function GetState: TDebugStates; virtual; abstract;
     procedure Action(AAction: TDebugAction); virtual; abstract;
     function GetKey: string; virtual;
@@ -366,10 +364,13 @@ type
   { TDebugManager }
 
   TDebugManager = class(TObject)
-  private
-   public
+  strict private
+    FLockCount: Integer;
     Lock: TCriticalSection;
+  public
     Event: TEvent;
+    procedure Enter;
+    procedure Leave;
     constructor Create;
     destructor Destroy; override;
   end;
@@ -751,6 +752,24 @@ end;
 
 { TDebugManager }
 
+procedure TDebugManager.Enter;
+begin
+  {$ifdef DEBUG}
+  Inc(FLockCount);
+  Debug.Write('--->DebugManager Enter', FLockCount);
+  {$endif}
+  Lock.Enter;
+end;
+
+procedure TDebugManager.Leave;
+begin
+  Lock.Leave;
+  {$ifdef DEBUG}
+  Debug.Write('DebugManager Leave <---', FLockCount);
+  Dec(FLockCount);
+  {$endif}
+end;
+
 constructor TDebugManager.Create;
 begin
   inherited;
@@ -908,16 +927,6 @@ end;
 procedure TEditorDebugger.Stop;
 begin
 
-end;
-
-procedure TEditorDebugger.Lock;
-begin
-  DebugManager.Lock.Enter;
-end;
-
-procedure TEditorDebugger.Unlock;
-begin
-  DebugManager.Lock.Leave
 end;
 
 function TEditorDebugger.GetActive: Boolean;
