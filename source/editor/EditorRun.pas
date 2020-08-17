@@ -12,7 +12,7 @@ interface
 
 uses
   Forms, SysUtils, StrUtils, Classes, contnrs, SynEdit,
-  mnUtils, mnDebugs, ConsoleProcess, process, SyncObjs,
+  mnUtils, ConsoleProcess, process, SyncObjs,
   mnStreams, EditorClasses, mnClasses, mnXMLUtils;
 
 {$i '..\lib\mne.inc'}
@@ -756,7 +756,7 @@ procedure TDebugManager.Enter;
 begin
   {$ifdef DEBUG}
   Inc(FLockCount);
-  Debug.Write('--->DebugManager Enter', FLockCount);
+  //Debug.Write('--->DebugManager Enter', FLockCount);
   {$endif}
   Lock.Enter;
 end;
@@ -765,7 +765,7 @@ procedure TDebugManager.Leave;
 begin
   Lock.Leave;
   {$ifdef DEBUG}
-  Debug.Write('DebugManager Leave <---', FLockCount);
+  //Debug.Write('DebugManager Leave <---', FLockCount);
   Dec(FLockCount);
   {$endif}
 end;

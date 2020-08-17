@@ -305,7 +305,7 @@ type
     procedure DoExecute;
     procedure Process; override;
   public
-    constructor Create(vOwner: TmnConnections; vStream: TmnConnectionStream); override;
+    constructor Create(vOwner: TmnConnections; vStream: TmnConnectionStream);
     destructor Destroy; override;
     procedure Stop; override;
     property Key: string read FKey;
@@ -600,7 +600,7 @@ end;
 
 function TLuaDBGServer.CreateListener: TmnListener;
 begin
-  Result := TmnDBGListener.Create([]);
+  Result := TmnDBGListener.Create;
 end;
 
 function TLuaDBGConnection.ReadRespond: TDebugCommandRespond;
@@ -1617,4 +1617,3 @@ begin
 end;
 
 end.
-

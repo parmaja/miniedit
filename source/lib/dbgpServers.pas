@@ -307,7 +307,7 @@ type
     procedure DoExecute;
     procedure Process; override;
   public
-    constructor Create(vOwner: TmnConnections; vStream: TmnConnectionStream); override;
+    constructor Create(vOwner: TmnConnections; vStream: TmnConnectionStream);
     destructor Destroy; override;
     procedure Stop; override;
     property Key: string read FKey;
@@ -322,8 +322,6 @@ type
   protected
     function DoCreateConnection(vStream: TmnConnectionStream): TmnConnection; override;
   public
-    constructor Create(AOptions: TmnsoOptions = []); override;
-    destructor Destroy; override;
   end;
 
   { TdbgpServer }
@@ -609,7 +607,7 @@ end;
 
 function TdbgpServer.CreateListener: TmnListener;
 begin
-  Result := TmnDBGListener.Create([soReuseAddr]);
+  Result := TmnDBGListener.Create;
 end;
 
 function TdbgpConnection.ReadRespond: TDebugCommandRespond;
@@ -779,16 +777,6 @@ end;
 function TmnDBGListener.DoCreateConnection(vStream: TmnConnectionStream): TmnConnection;
 begin
   Result := TdbgpConnection.Create(Self, vStream);
-end;
-
-constructor TmnDBGListener.Create(AOptions: TmnsoOptions);
-begin
-  inherited;
-end;
-
-destructor TmnDBGListener.Destroy;
-begin
-  inherited;
 end;
 
 procedure TdbgpServer.DoStart;

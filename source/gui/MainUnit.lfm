@@ -1038,6 +1038,10 @@ object MainForm: TMainForm
         SelectedColor.ItalicPriority = 50
         SelectedColor.UnderlinePriority = 50
         SelectedColor.StrikeOutPriority = 50
+        ScrollOnEditLeftOptions.ScrollExtraPercent = 20
+        ScrollOnEditLeftOptions.ScrollExtraMax = 10
+        ScrollOnEditRightOptions.ScrollExtraPercent = 30
+        ScrollOnEditRightOptions.ScrollExtraMax = 25
         BracketHighlightStyle = sbhsBoth
         BracketMatchColor.Background = clNone
         BracketMatchColor.Foreground = clNone
@@ -1725,6 +1729,10 @@ object MainForm: TMainForm
         SelectedColor.ItalicPriority = 50
         SelectedColor.UnderlinePriority = 50
         SelectedColor.StrikeOutPriority = 50
+        ScrollOnEditLeftOptions.ScrollExtraPercent = 20
+        ScrollOnEditLeftOptions.ScrollExtraMax = 10
+        ScrollOnEditRightOptions.ScrollExtraPercent = 30
+        ScrollOnEditRightOptions.ScrollExtraMax = 25
         BracketHighlightStyle = sbhsBoth
         BracketMatchColor.Background = clNone
         BracketMatchColor.Foreground = clNone

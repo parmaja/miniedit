@@ -25,7 +25,7 @@ uses
   {$endif}
   ntvTabSets, SynEditPlugins,
   synhighlighterunixshellscript, SynHighlighterPas, SynHighlighterMulti,
-  mnStreams, mnClasses, mnDebugs,
+  mnStreams, mnClasses,
   //Addons
   {$ifdef Windows}
   mneAssociateForm,

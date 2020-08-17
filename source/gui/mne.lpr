@@ -6,8 +6,8 @@ program mne;
  * Mini Edit
  *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author    Zaher Dirkey <zaher at parmaja dot com>
- * @url       http://sourceforge.net/projects/minilib
+ * @author    Zaher Dirkey zaherdirkey
+ * @url       http://sourceforge.net/projects/minilib or https://github.com/parmaja/minilib
  *}
 
 {

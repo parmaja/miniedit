@@ -26,7 +26,7 @@ interface
 
 uses
   Messages, SysUtils, Forms, StdCtrls, StrUtils, Dialogs, Variants, Classes, Controls, LCLIntf, LConvEncoding,
-  FileUtil, LazFileUtils, mnDebugs,
+  FileUtil, LazFileUtils,
   Graphics, Contnrs, Types, IniFiles, EditorOptions, EditorColors, EditorProfiles,
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
@@ -2185,7 +2185,6 @@ function TSyntaxEditorFile.GetHint(HintControl: TControl; CursorPos: TPoint; out
 var
   v, s, t: string;
 begin
-  Debug.Write('GetHint');
   if capEval in Tendency.Capabilities then
   begin
     Result := EvalByMouse(CursorPos, v, s, t);
