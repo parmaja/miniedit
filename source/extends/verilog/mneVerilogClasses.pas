@@ -380,8 +380,8 @@ end;
 procedure TVerilogFileCategory.EnumMenuItems(AddItems: TAddClickCallBack);
 begin
   inherited EnumMenuItems(AddItems);
-  AddItems('Implement','Implement', @ImplementClick, TextToShortCut('Ctrl+W'));
-  AddItems('ImplementWires','Implement+Wires', @ImplementWiresClick, TextToShortCut('Ctrl+Shift+W'));
+  AddItems('Implement', 'Implement', @ImplementClick, TextToShortCut('Ctrl+Alt+I'));
+  AddItems('ImplementWires', 'Implement+Wires', @ImplementWiresClick, TextToShortCut('Ctrl+Alt+Shift+I'));
 end;
 
 { TVerilogFile }
