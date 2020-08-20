@@ -49,9 +49,9 @@ type
     DataPnl: TPanel;
     Panel4: TPanel;
     StopBtn: TButton;
-    StopBtn2: TButton;
-    StopBtn3: TButton;
-    StopBtn4: TButton;
+    ClearBtn: TButton;
+    CommitBtn: TButton;
+    RollbackBtn: TButton;
     procedure ConfigFileBtnClick(Sender: TObject);
     procedure ControlPagesChange(Sender: TObject);
     procedure DataGridChanged(Sender: TObject);
@@ -374,6 +374,7 @@ begin
   SQLEdit.Parent := SQLPnl;
   SQLEdit.Align := alClient;
   SQLEdit.Visible := True;
+
   Color := Engine.Options.Profile.Attributes.Default.Background;
   Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   DataGrid.Color := Engine.Options.Profile.Attributes.Panel.Background;

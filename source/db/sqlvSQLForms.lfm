@@ -19,13 +19,13 @@ object SQLEditForm: TSQLEditForm
     Items = <    
       item
         Caption = 'SQL'
-        Name = 'SQLPnl'
+        Name = 'SQLTab'
         AutoWidth = True
         Control = SQLPnl
       end    
       item
         Caption = 'Data'
-        Name = 'DataPnl'
+        Name = 'DataTab'
         AutoWidth = True
         Control = DataPnl
       end>
@@ -90,7 +90,7 @@ object SQLEditForm: TSQLEditForm
           Layout = tlCenter
           ParentColor = False
         end
-        object StopBtn2: TButton
+        object ClearBtn: TButton
           Left = 594
           Height = 26
           Top = 0
@@ -108,7 +108,7 @@ object SQLEditForm: TSQLEditForm
           Caption = 'S&top'
           TabOrder = 0
         end
-        object StopBtn3: TButton
+        object CommitBtn: TButton
           Left = 0
           Height = 26
           Top = 0
@@ -117,7 +117,7 @@ object SQLEditForm: TSQLEditForm
           Caption = 'C&ommit'
           TabOrder = 2
         end
-        object StopBtn4: TButton
+        object RollbackBtn: TButton
           Left = 85
           Height = 26
           Top = 0

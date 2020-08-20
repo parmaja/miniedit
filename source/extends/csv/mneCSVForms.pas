@@ -25,10 +25,12 @@ uses
   MsgBox, mnStreams, ntvGrids, ntvPageControls, mncConnections, mncCSV, ntvTabSets, ntvTabs;
 
 type
+  TCSVFileMode = (csvmGrid, csvmText);
 
   { TCSVForm }
 
   TCSVForm = class(TFrame, IEditorControl)
+    ClearBtn: TButton;
     DataGrid: TntvGrid;
     DelConfigFileBtn: TButton;
     FetchCountLbl: TLabel;
@@ -45,10 +47,11 @@ type
     MenuItem6: TMenuItem;
     GridPopupMenu: TPopupMenu;
     OptionsBtn: TButton;
+    PageControl: TntvPageControl;
     Panel2: TPanel;
     SaveConfigFileBtn: TButton;
+    TextPnl: TPanel;
     StopBtn: TButton;
-    StopBtn2: TButton;
     procedure ConfigFileBtnClick(Sender: TObject);
     procedure DataGridChanged(Sender: TObject);
     procedure DataGridColClick(Sender: TntvCustomGrid; Column: TntvColumn);
@@ -62,17 +65,22 @@ type
     procedure MenuItem8Click(Sender: TObject);
     procedure IsRtlMnuClick(Sender: TObject);
     procedure PageControlTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
-    procedure StopBtn2Click(Sender: TObject);
+    procedure ClearBtnClick(Sender: TObject);
     procedure OptionsBtnClick(Sender: TObject);
     procedure StopBtnClick(Sender: TObject);
   private
     FOnChanged: TNotifyEvent;
+    function GetMode: TCSVFileMode;
   protected
     FCancel: Boolean;
     IsNumbers: array of boolean;
     FFileName: string;
     procedure Changed;
+    procedure ConvertToTextEdit;
+    procedure ConvertToGrid;
   public
+    EditorFile: TEditorFile;
+    TextEdit: TmnSynEdit;
     IsRTL: Boolean;
     CSVOptions: TmncCSVOptions;
     FInteractive: Boolean;
@@ -89,6 +97,7 @@ type
     procedure SaveToFile(FileName: string);
     procedure Load(FileName: string);
     procedure Save(FileName: string);
+    property Mode: TCSVFileMode read GetMode;
   end;
 
 implementation
@@ -222,9 +231,13 @@ end;
 
 procedure TCSVForm.PageControlTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
 begin
+  if Mode = csvmText then
+    ConvertToTextEdit
+  else
+    ConvertToGrid;
 end;
 
-procedure TCSVForm.StopBtn2Click(Sender: TObject);
+procedure TCSVForm.ClearBtnClick(Sender: TObject);
 begin
   if not Msg.No('Are you sure you want to clear it') then
   begin
@@ -250,10 +263,32 @@ begin
   FCancel := True;
 end;
 
+function TCSVForm.GetMode: TCSVFileMode;
+begin
+  if PageControl.ActiveControl = TextPnl then
+    Result := csvmText
+  else if PageControl.ActiveControl = GridPnl then
+    Result := csvmGrid
+  else
+    Result := csvmGrid;
+end;
+
 procedure TCSVForm.Changed;
 begin
   if not FLoading and Assigned(FOnChanged) then
     FOnChanged(Self);
+end;
+
+procedure TCSVForm.ConvertToTextEdit;
+begin
+  EditorFile.Save;
+  EditorFile.Load;
+end;
+
+procedure TCSVForm.ConvertToGrid;
+begin
+  EditorFile.Save;
+  EditorFile.Load;
 end;
 
 procedure TCSVForm.RenameHeader(Index: Integer);
@@ -566,6 +601,12 @@ end;
 constructor TCSVForm.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
+  PageControl.ItemIndex := 0;
+  TextEdit := TmnSynEdit.Create(Self);
+  TextEdit.Parent := TextPnl;
+  TextEdit.Align := alClient;
+  TextEdit.Visible := True;
+
   Initialize(CSVOptions);
   CSVOptions.HeaderLine := hdrNormal;
   CSVOptions.DelimiterChar := ',';

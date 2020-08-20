@@ -28,13 +28,14 @@ type
 
   { TCSVFile }
 
-  TCSVFile = class(TControlEditorFile)
+  TCSVFile = class(TSyntaxEditorFile)
   private
     FContent: TCSVForm;
   protected
     procedure InitContents; override;
     function GetContent: TWinControl; override;
     function GetControl: TWinControl; override;
+    function GetSynEdit: TSynEdit; override;
     function GetIsReadonly: Boolean; override;
     procedure DoLoad(FileName: string); override;
     procedure DoSave(FileName: string); override;
@@ -74,6 +75,7 @@ begin
   FContent.Parent := Engine.FilePanel;
   FContent.Align := alClient;
   FContent.OnChanged := @DoEdit;
+  FContent.EditorFile := Self;
 end;
 
 function TCSVFile.GetContent: TWinControl;
@@ -83,7 +85,17 @@ end;
 
 function TCSVFile.GetControl: TWinControl;
 begin
-  Result := FContent.DataGrid;
+  if FContent.PageControl.ActiveControl = FContent.TextPnl then
+    Result := FContent.TextEdit
+  else if FContent.PageControl.ActiveControl = FContent.GridPnl then
+    Result := FContent.DataGrid
+  else
+    Result := FContent;
+end;
+
+function TCSVFile.GetSynEdit: TSynEdit;
+begin
+  Result := FContent.TextEdit;
 end;
 
 function TCSVFile.GetIsReadonly: Boolean;
@@ -93,12 +105,18 @@ end;
 
 procedure TCSVFile.DoLoad(FileName: string);
 begin
-  FContent.Load(FileName);
+  if FContent.Mode = csvmText then
+    inherited
+  else
+    FContent.Load(FileName);
 end;
 
 procedure TCSVFile.DoSave(FileName: string);
 begin
-  FContent.Save(FileName);
+  if FContent.Mode = csvmText then
+    inherited
+  else
+    FContent.Save(FileName);
 end;
 
 destructor TCSVFile.Destroy;

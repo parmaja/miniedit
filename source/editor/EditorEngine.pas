@@ -520,8 +520,8 @@ type
     function GetSynEdit: TSynEdit; virtual;
     procedure DoGetCapability(var vCapability: TEditCapability); virtual;
 
-    procedure LoadFromFile(SynEdit: TSynEdit; FileName: string);
-    procedure SaveToFile(SynEdit: TSynEdit; FileName: string);
+    procedure SynEditLoadFromFile(SynEdit: TSynEdit; FileName: string); //used if u have synedit
+    procedure SynEditSaveToFile(SynEdit: TSynEdit; FileName: string);
   protected
     procedure Edit;
     procedure DoEdit(Sender: TObject); virtual;
@@ -536,19 +536,21 @@ type
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
     procedure AssignTo(Dest: TPersistent); override;
-    procedure Load(FileName: string);
-    procedure Save(FileName: string);
+    procedure LoadFromFile(FileName: string);
+    procedure Load;
+    procedure SaveToFile(FileName: string);
+    procedure Save(Force: Boolean; Extension: string = ''; AsNewFile: Boolean = False); virtual;
+    procedure Save;
+
     procedure Rename(ToNakeName: string); //only name not with the path
     procedure Delete; //only name not with the path
     function CanExecute: Boolean;
 
-    procedure SaveFile(Force: Boolean; Extension: string = ''; AsNewFile: Boolean = False); virtual;
     procedure Show; virtual; //Need to activate it after show to focus editor
     function Visible: Boolean;
     procedure Activate; virtual;
     function Activated: Boolean;
     procedure Close;
-    procedure Reload;
     procedure OpenInclude; virtual;
     function CanOpenInclude: Boolean; virtual;
     function CheckChanged(Force: Boolean = False): Boolean;
@@ -605,18 +607,10 @@ type
 
   { TControlEditorFile }
 
-  TControlEditorFile = class(TEditorFile, IControlEditor)
+  TControlEditorFile = class abstract(TEditorFile, IControlEditor)
   private
-    FControl: TWinControl;
-    procedure SetContent(AValue: TWinControl);
   protected
-    function GetContent: TWinControl; override;
-    function GetIsReadonly: Boolean; override;
-    procedure DoLoad(FileName: string); override;
-    procedure DoSave(FileName: string); override;
   public
-    destructor Destroy; override;
-    property Control: TWinControl read GetContent write SetContent;
   end;
 
   { TSyntaxEditorFile }
@@ -638,7 +632,6 @@ type
     procedure DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
     procedure DoGetCapability(var vCapability: TEditCapability); override;
     procedure SynEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure SetHighlightLine(AValue: Integer); override;
   public
     constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
@@ -650,6 +643,7 @@ type
     procedure FindPrevious; override;
     procedure Replace; override;
     procedure Refresh; override;
+    procedure SetHighlightLine(AValue: Integer); override;
     function GetHint(HintControl: TControl; CursorPos: TPoint; out vHint: string): Boolean; override;
     function GetGlance: string; override;
     function EvalByMouse(p: TPoint; out v, s, t: string): boolean;
@@ -1665,45 +1659,6 @@ begin
   end;
 end;
 
-{ TControlEditorFile }
-
-procedure TControlEditorFile.SetContent(AValue: TWinControl);
-begin
-  if FControl <> AValue then
-  begin
-    if FControl <> nil then
-      FControl.Free;
-    FControl := AValue;
-    FControl.Align := alClient;
-    FControl.Parent := Engine.FilePanel;
-    //FControl.Visible := True;
-  end;
-end;
-
-function TControlEditorFile.GetContent: TWinControl;
-begin
-  Result := FControl;
-end;
-
-function TControlEditorFile.GetIsReadonly: Boolean;
-begin
-  Result := True;
-end;
-
-procedure TControlEditorFile.DoLoad(FileName: string);
-begin
-end;
-
-procedure TControlEditorFile.DoSave(FileName: string);
-begin
-end;
-
-destructor TControlEditorFile.Destroy;
-begin
-  FreeAndNil(FControl);
-  inherited Destroy;
-end;
-
 { TEditorProjectOptions }
 
 constructor TEditorProjectOptions.Create;
@@ -1846,12 +1801,12 @@ end;
 
 procedure TSyntaxEditorFile.DoLoad(FileName: string);
 begin
-  LoadFromFile(SynEdit, FileName);
+  SynEditLoadFromFile(SynEdit, FileName);
 end;
 
 procedure TSyntaxEditorFile.DoSave(FileName: string);
 begin
-  SaveToFile(SynEdit, FileName);
+  SynEditSaveToFile(SynEdit, FileName);
 end;
 
 procedure TSyntaxEditorFile.GroupChanged;
@@ -3142,7 +3097,7 @@ begin
     if (Result = nil) and (Engine.Options.FallbackToText) then
       Result := CreateEditorFile(cFallbackGroup);
     if Result <> nil then
-      Result.Load(lFileName);
+      Result.LoadFromFile(lFileName);
   end;
   if (Result <> nil) and AppendToRecent then
     Engine.ProcessRecentFile(lFileName);
@@ -3470,7 +3425,7 @@ end;
 procedure TEditorFiles.Save(Force: Boolean);
 begin
   if Current <> nil then
-    Current.SaveFile(Force);
+    Current.Save(Force);
 end;
 
 procedure TEditorFiles.SaveAll(Force: Boolean);
@@ -3479,7 +3434,7 @@ var
 begin
   for i := 0 to Count - 1 do
   begin
-    Items[i].SaveFile(Force);
+    Items[i].Save(Force);
   end;
 end;
 
@@ -3489,7 +3444,7 @@ var
 begin
   for i := 0 to Count - 1 do
   begin
-    Items[i].Reload;
+    Items[i].Load;
   end;
 end;
 
@@ -3506,7 +3461,7 @@ end;
 procedure TEditorFiles.SaveAs;
 begin
   if Current <> nil then
-    Current.SaveFile(True, ExtractFileExt(Current.Name), True);
+    Current.Save(True, ExtractFileExt(Current.Name), True);
 end;
 
 procedure TEditorOptions.Save(vWorkspace: string);
@@ -4044,7 +3999,7 @@ begin
   if Current <> nil then
   begin
     if MsgBox.Msg.Yes('Revert file ' + Current.Name) then
-      Current.Reload;
+      Current.Load;
   end;
 end;
 
@@ -4165,7 +4120,7 @@ begin
       if mr = msgcCancel then
         Abort
       else if mr = msgcYes then
-        SaveFile(True);
+        Save(True);
     end;
     Engine.ProcessRecentFile(Name);
   end;
@@ -4220,7 +4175,7 @@ begin
   Engine.Files.Edited;
 end;
 
-procedure TEditorFile.Load(FileName: string);
+procedure TEditorFile.LoadFromFile(FileName: string);
 begin
   FileName := ExpandFileName(FileName);
   Name := FileName;
@@ -4255,7 +4210,7 @@ begin
   end;
 end;
 
-procedure TEditorFile.Save(FileName: string);
+procedure TEditorFile.SaveToFile(FileName: string);
 begin
   DoSave(FileName);
   Name := FileName;
@@ -4349,7 +4304,7 @@ begin
   Result := (Content <> nil ) and (Content.Visible);
 end;
 
-procedure TEditorFile.SaveFile(Force: Boolean; Extension: string; AsNewFile: Boolean);
+procedure TEditorFile.Save(Force: Boolean; Extension: string; AsNewFile: Boolean);
 var
   aDialog: TSaveDialog;
   aSave, DoRecent: Boolean;
@@ -4395,7 +4350,7 @@ begin
 
   if aSave then
   begin
-    Save(aName);
+    SaveToFile(aName);
     FName := aName;
     if DoRecent then
     begin
@@ -4405,6 +4360,11 @@ begin
     else
       Engine.UpdateState([ecsState, ecsRefresh]);
   end;
+end;
+
+procedure TEditorFile.Save;
+begin
+  Save(True);
 end;
 
 function TEditorFile.CheckChanged(Force: Boolean): Boolean;
@@ -4424,7 +4384,7 @@ begin
         else
           mr := MsgBox.Msg.YesNoCancel(Name + #13' was changed, update it?');
         if mr = msgcYes then
-          Reload;
+          Load;
         if mr = msgcCancel then
           Result := False
         else
@@ -4562,9 +4522,9 @@ begin
   FFileSize := FileSize(Name);
 end;
 
-procedure TEditorFile.Reload;
+procedure TEditorFile.Load;
 begin
-  Load(Name);
+  LoadFromFile(Name);
 end;
 
 procedure TEditorFile.SetGroup(const Value: TFileGroup);
@@ -4652,7 +4612,7 @@ begin
   vCapability := [];
 end;
 
-procedure TEditorFile.LoadFromFile(SynEdit: TSynEdit; FileName: string);
+procedure TEditorFile.SynEditLoadFromFile(SynEdit: TSynEdit; FileName: string);
 var
   Contents: string;
   Size: integer;
@@ -4702,7 +4662,7 @@ begin
   end;
 end;
 
-procedure TEditorFile.SaveToFile(SynEdit: TSynEdit; FileName: string);
+procedure TEditorFile.SynEditSaveToFile(SynEdit: TSynEdit; FileName: string);
 var
   aStream : TFileStream;
   Contents: rawbytestring;
