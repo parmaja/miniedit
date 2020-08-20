@@ -10,14 +10,14 @@ unit sqlvStdClasses;
 {$mode objfpc}{$H+}
 
 {
-  Meta --------------------------
-     |                 |               |
-     |                 |               |
-     |                 |               |
-   Group             Group           Group
-     |---------------
-     |       |       |
-   Member  Member  Member
+  Meta --------------------------------
+    |                 |               |
+    |                 |               |
+    |                 |               |
+  Group             Group           Group
+    |----------------
+    |       |       |
+  Member  Member  Member
 
    Open Meta = List the groups and open the first (Default) group
    Open Group = List the members of this group in the members list

@@ -1,120 +1,131 @@
 object CSVForm: TCSVForm
   Left = 0
-  Height = 240
+  Height = 432
   Top = 0
-  Width = 677
-  ClientHeight = 240
-  ClientWidth = 677
+  Width = 741
+  ClientHeight = 432
+  ClientWidth = 741
   Color = clDefault
   ParentColor = False
   TabOrder = 0
-  DesignLeft = 325
-  DesignTop = 204
-  object Panel2: TPanel
+  DesignLeft = 438
+  DesignTop = 143
+  object GridPnl: TPanel
     Left = 0
-    Height = 26
+    Height = 432
     Top = 0
-    Width = 677
-    Align = alTop
+    Width = 741
+    Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 26
-    ClientWidth = 677
+    ClientHeight = 432
+    ClientWidth = 741
     TabOrder = 0
-    object FetchedLbl: TLabel
-      Left = 292
-      Height = 26
-      Top = 0
-      Width = 282
+    object DataGrid: TntvGrid
+      Left = 0
+      Height = 406
+      Top = 26
+      Width = 741
       Align = alClient
-      Alignment = taRightJustify
-      AutoSize = False
-      Caption = 'Fetched: '
-      Layout = tlCenter
-      ParentColor = False
-    end
-    object FetchCountLbl: TLabel
-      Left = 574
-      Height = 26
-      Top = 0
-      Width = 53
-      Align = alRight
-      AutoSize = False
-      Caption = '0'
-      Layout = tlCenter
-      ParentColor = False
-    end
-    object StopBtn2: TButton
-      Left = 60
-      Height = 26
-      Top = 0
-      Width = 53
-      Align = alLeft
-      Caption = '&Clear'
-      OnClick = StopBtn2Click
-      TabOrder = 1
-    end
-    object StopBtn: TButton
-      Left = 627
-      Height = 26
-      Top = 0
-      Width = 50
-      Align = alRight
-      Caption = 'S&top'
-      OnClick = StopBtnClick
+      BorderStyle = bsSingle
+      ColWidth = 80
+      FixedFontColor = clBlack
+      PopupMenu = GridPopupMenu
+      RowHeight = 22
+      Capacity = 100000
+      Selected.TextColor = clHighlightText
       TabOrder = 0
+      OnChanged = DataGridChanged
+      OnColClick = DataGridColClick
     end
-    object OptionsBtn: TButton
+    object Panel2: TPanel
       Left = 0
       Height = 26
       Top = 0
-      Width = 60
-      Align = alLeft
-      Caption = '&Options'
-      OnClick = OptionsBtnClick
-      TabOrder = 4
+      Width = 741
+      Align = alTop
+      BevelOuter = bvNone
+      ClientHeight = 26
+      ClientWidth = 741
+      TabOrder = 1
+      object FetchedLbl: TLabel
+        Left = 292
+        Height = 26
+        Top = 0
+        Width = 346
+        Align = alClient
+        Alignment = taRightJustify
+        AutoSize = False
+        Caption = 'Fetched: '
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object FetchCountLbl: TLabel
+        Left = 638
+        Height = 26
+        Top = 0
+        Width = 53
+        Align = alRight
+        AutoSize = False
+        Caption = '0'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object StopBtn2: TButton
+        Left = 60
+        Height = 26
+        Top = 0
+        Width = 53
+        Align = alLeft
+        Caption = '&Clear'
+        OnClick = StopBtn2Click
+        TabOrder = 1
+      end
+      object StopBtn: TButton
+        Left = 691
+        Height = 26
+        Top = 0
+        Width = 50
+        Align = alRight
+        Caption = 'S&top'
+        OnClick = StopBtnClick
+        TabOrder = 0
+      end
+      object OptionsBtn: TButton
+        Left = 0
+        Height = 26
+        Top = 0
+        Width = 60
+        Align = alLeft
+        Caption = '&Options'
+        OnClick = OptionsBtnClick
+        TabOrder = 4
+      end
+      object DelConfigFileBtn: TButton
+        Left = 113
+        Height = 26
+        Top = 0
+        Width = 93
+        Align = alLeft
+        Caption = '&Delete Config'
+        OnClick = DelConfigFileBtnClick
+        TabOrder = 2
+        Visible = False
+      end
+      object SaveConfigFileBtn: TButton
+        Left = 206
+        Height = 26
+        Top = 0
+        Width = 86
+        Align = alLeft
+        Caption = '&Save Config'
+        OnClick = ConfigFileBtnClick
+        TabOrder = 3
+      end
     end
-    object DelConfigFileBtn: TButton
-      Left = 113
-      Height = 26
-      Top = 0
-      Width = 93
-      Align = alLeft
-      Caption = '&Delete Config'
-      OnClick = DelConfigFileBtnClick
-      TabOrder = 2
-      Visible = False
-    end
-    object SaveConfigFileBtn: TButton
-      Left = 206
-      Height = 26
-      Top = 0
-      Width = 86
-      Align = alLeft
-      Caption = '&Save Config'
-      OnClick = ConfigFileBtnClick
-      TabOrder = 3
-    end
-  end
-  object DataGrid: TntvGrid
-    Left = 0
-    Height = 214
-    Top = 26
-    Width = 677
-    Align = alClient
-    BorderStyle = bsSingle
-    ColWidth = 80
-    FixedFontColor = clBlack
-    PopupMenu = GridPopupMenu
-    RowHeight = 22
-    Capacity = 100000
-    Selected.TextColor = clHighlightText
-    TabOrder = 1
-    OnChanged = DataGridChanged
-    OnColClick = DataGridColClick
   end
   object GridPopupMenu: TPopupMenu
-    Left = 280
-    Top = 94
+    Left = 293
+    Top = 133
     object IsRtlMnu: TMenuItem
       AutoCheck = True
       Caption = 'Right To Left'

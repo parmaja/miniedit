@@ -70,7 +70,7 @@ uses
 procedure TCSVFile.InitContents;
 begin
   inherited;
-  FContent := TCSVForm.Create(nil);
+  FContent := TCSVForm.CreateParented(Engine.FilePanel.Handle);
   FContent.Parent := Engine.FilePanel;
   FContent.Align := alClient;
   FContent.OnChanged := @DoEdit;

@@ -2311,7 +2311,7 @@ object MainForm: TMainForm
       ShortCut = 24585
     end
     object CloseAct: TAction
-      Category = 'View'
+      Category = 'File'
       Caption = 'Close'
       ImageIndex = 30
       OnExecute = CloseActExecute

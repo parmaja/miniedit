@@ -22,32 +22,33 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Grids, ExtCtrls, StdCtrls,
   FileUtil, LCLType, Graphics, Menus, Buttons, EditorEngine, IniFiles,
-  MsgBox, mnStreams, ntvGrids, mncConnections, mncCSV;
+  MsgBox, mnStreams, ntvGrids, ntvPageControls, mncConnections, mncCSV, ntvTabSets, ntvTabs;
 
 type
 
   { TCSVForm }
 
   TCSVForm = class(TFrame, IEditorControl)
+    DataGrid: TntvGrid;
+    DelConfigFileBtn: TButton;
+    FetchCountLbl: TLabel;
+    FetchedLbl: TLabel;
+    GridPnl: TPanel;
     MenuItem7: TMenuItem;
     MenuItem8: TMenuItem;
     IsRtlMnu: TMenuItem;
-    DataGrid: TntvGrid;
-    SaveConfigFileBtn: TButton;
-    FetchCountLbl: TLabel;
-    FetchedLbl: TLabel;
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
     MenuItem5: TMenuItem;
     MenuItem6: TMenuItem;
-    Panel2: TPanel;
     GridPopupMenu: TPopupMenu;
+    OptionsBtn: TButton;
+    Panel2: TPanel;
+    SaveConfigFileBtn: TButton;
     StopBtn: TButton;
     StopBtn2: TButton;
-    OptionsBtn: TButton;
-    DelConfigFileBtn: TButton;
     procedure ConfigFileBtnClick(Sender: TObject);
     procedure DataGridChanged(Sender: TObject);
     procedure DataGridColClick(Sender: TntvCustomGrid; Column: TntvColumn);
@@ -60,6 +61,7 @@ type
     procedure MenuItem6Click(Sender: TObject);
     procedure MenuItem8Click(Sender: TObject);
     procedure IsRtlMnuClick(Sender: TObject);
+    procedure PageControlTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure StopBtn2Click(Sender: TObject);
     procedure OptionsBtnClick(Sender: TObject);
     procedure StopBtnClick(Sender: TObject);
@@ -83,6 +85,8 @@ type
     property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
     procedure ClearGrid;
     procedure FillGrid(SQLCMD: TmncCommand; Title: String);
+    procedure LoadFromFile(FileName: string);
+    procedure SaveToFile(FileName: string);
     procedure Load(FileName: string);
     procedure Save(FileName: string);
   end;
@@ -216,6 +220,10 @@ begin
   Changed;
 end;
 
+procedure TCSVForm.PageControlTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
+begin
+end;
+
 procedure TCSVForm.StopBtn2Click(Sender: TObject);
 begin
   if not Msg.No('Are you sure you want to clear it') then
@@ -297,7 +305,7 @@ begin
   DataGrid.Reset;
 end;
 
-procedure TCSVForm.Save(FileName: string);
+procedure TCSVForm.SaveToFile(FileName: string);
 var
   aFile: TFileStream;
   csvCnn: TmncCSVConnection;
@@ -344,6 +352,16 @@ begin
 end;
 
 procedure TCSVForm.Load(FileName: string);
+begin
+  LoadFromFile(FileName);
+end;
+
+procedure TCSVForm.Save(FileName: string);
+begin
+  SaveToFile(FileName);
+end;
+
+procedure TCSVForm.LoadFromFile(FileName: string);
 var
   aFile: TFileStream;
   b: Boolean;
@@ -548,7 +566,7 @@ end;
 constructor TCSVForm.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
-  FillByte(CSVOptions, Sizeof(CSVOptions), 0);
+  Initialize(CSVOptions);
   CSVOptions.HeaderLine := hdrNormal;
   CSVOptions.DelimiterChar := ',';
   CSVOptions.EndOfLine := sUnixEndOfLine;
@@ -563,7 +581,6 @@ begin
   DataGrid.EvenColor := Engine.Options.Profile.Attributes.Default.Background;
   DataGrid.OddColor := Engine.Options.Profile.Attributes.Default.Background;
 end;
-
 
 end.
 
