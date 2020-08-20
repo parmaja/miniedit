@@ -64,6 +64,8 @@ type
     procedure MenuItem6Click(Sender: TObject);
     procedure MenuItem8Click(Sender: TObject);
     procedure IsRtlMnuClick(Sender: TObject);
+
+      procedure PageControlTabSelect(Sender: TObject; OldTab, NewTab: TntvTabItem; var CanSelect: boolean);
     procedure PageControlTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure ClearBtnClick(Sender: TObject);
     procedure OptionsBtnClick(Sender: TObject);
@@ -74,10 +76,8 @@ type
   protected
     FCancel: Boolean;
     IsNumbers: array of boolean;
-    FFileName: string;
     procedure Changed;
-    procedure ConvertToTextEdit;
-    procedure ConvertToGrid;
+    procedure Reload;
   public
     EditorFile: TEditorFile;
     TextEdit: TmnSynEdit;
@@ -93,6 +93,8 @@ type
     property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
     procedure ClearGrid;
     procedure FillGrid(SQLCMD: TmncCommand; Title: String);
+    procedure LoadFromStream(AFile: TStream);
+    procedure SaveToStream(AFile: TStream);
     procedure LoadFromFile(FileName: string);
     procedure SaveToFile(FileName: string);
     procedure Load(FileName: string);
@@ -145,7 +147,7 @@ end;
 
 procedure TCSVForm.DelConfigFileBtnClick(Sender: TObject);
 begin
-  DeleteFile(FFileName + '.conf');
+  DeleteFile(EditorFile.Name + '.conf');
   RefreshControls;
   Engine.UpdateState([ecsFolder]);
 end;
@@ -229,12 +231,16 @@ begin
   Changed;
 end;
 
+procedure TCSVForm.PageControlTabSelect(Sender: TObject; OldTab, NewTab: TntvTabItem; var CanSelect: boolean);
+begin
+  if OldTab <> nil then
+    EditorFile.Save;
+end;
+
 procedure TCSVForm.PageControlTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
 begin
-  if Mode = csvmText then
-    ConvertToTextEdit
-  else
-    ConvertToGrid;
+  if OldTab <> nil then
+    EditorFile.Load;
 end;
 
 procedure TCSVForm.ClearBtnClick(Sender: TObject);
@@ -279,16 +285,8 @@ begin
     FOnChanged(Self);
 end;
 
-procedure TCSVForm.ConvertToTextEdit;
+procedure TCSVForm.Reload;
 begin
-  EditorFile.Save;
-  EditorFile.Load;
-end;
-
-procedure TCSVForm.ConvertToGrid;
-begin
-  EditorFile.Save;
-  EditorFile.Load;
 end;
 
 procedure TCSVForm.RenameHeader(Index: Integer);
@@ -318,14 +316,14 @@ end;
 
 function TCSVForm.IsConfigFileExists: Boolean;
 begin
-  Result := FileExists(FFileName + '.conf');
+  Result := FileExists(EditorFile.Name + '.conf');
 end;
 
 procedure TCSVForm.SaveConfigFile;
 var
   ini: TIniFile;
 begin
-  ini := TIniFile.Create(FFileName + '.conf');
+  ini := TIniFile.Create(EditorFile.Name + '.conf');
   try
     CSVOptions.SaveToIni('options', ini);
     ini.WriteBool('ui', 'rtl', IsRTL);
@@ -338,49 +336,18 @@ procedure TCSVForm.ClearGrid;
 begin
   IsNumbers := nil;
   DataGrid.Reset;
+  DataGrid.ColumnsCount := 0;
 end;
 
 procedure TCSVForm.SaveToFile(FileName: string);
 var
   aFile: TFileStream;
-  csvCnn: TmncCSVConnection;
-  csvSes: TmncCSVSession;
-  csvCMD: TmncCSVCommand;
-  c, r: Integer;
 begin
-  FFileName := FileName;
-  csvCnn := TmncCSVConnection.Create;
-  csvSes := TmncCSVSession.Create(csvCnn);
+  aFile := TFileStream.Create(EditorFile.Name, fmCreate or fmOpenWrite);
   try
-    csvSes.CSVOptions := CSVOptions;
-    csvCnn.Connect;
-    csvSes.Start;
-    aFile := TFileStream.Create(FileName, fmCreate or fmOpenWrite);
-    csvCMD := TmncCSVCommand.Create(csvSes, aFile, csvmWrite);
-    try
-      //adding header, even if we will not save it
-      for c := 0 to DataGrid.Columns.Count - 1 do
-      begin
-        csvCMD.Columns.Add(DataGrid.Columns[c].Title, dtString);
-      end;
-      csvCMD.Prepare; //generate Params and save header
-      r := 0; //first row of data
-      while r < DataGrid.RowsCount do
-      begin
-        for c := 0 to DataGrid.Columns.Count - 1 do
-        begin
-          csvCMD.Params.Items[c].Value := DataGrid.Values[c, r];
-        end;
-        csvCMD.Execute;
-        r := r + 1;
-      end;
-
-    finally
-      aFile.Free;
-    end
+    SaveToStream(aFile);
   finally
-    csvSes.Free;
-    csvCnn.Free;
+    aFile.Free;
   end;
   if IsConfigFileExists then
     SaveConfigFile;
@@ -400,65 +367,38 @@ procedure TCSVForm.LoadFromFile(FileName: string);
 var
   aFile: TFileStream;
   b: Boolean;
-  csvCnn: TmncCSVConnection;
-  csvSes: TmncCSVSession;
-  csvCMD: TmncCSVCommand;
   Ini: TIniFile;
 begin
-  FFileName := FileName;
-
-  FLoading := True;
+  b := IsConfigFileExists;
+  if b then
+    Ini := TIniFile.Create(EditorFile.Name + '.conf')
+  else
+    Ini := TIniFile.Create(Engine.WorkSpace + 'mne-csv-options.ini');
   try
-    ClearGrid;
-    csvCnn := TmncCSVConnection.Create;
-    csvSes := TmncCSVSession.Create(csvCnn);
-    try
-      b := IsConfigFileExists;
-      if b then
-        Ini := TIniFile.Create(FFileName + '.conf')
-      else
-        Ini := TIniFile.Create(Engine.WorkSpace + 'mne-csv-options.ini');
-      try
-        CSVOptions.LoadFromIni('options', Ini);
-        IsRTL := Ini.ReadBool('ui', 'rtl', false);
-      finally
-        Ini.Free;
-      end;
-
-      RefreshControls;
-
-      if b or ShowCSVOptions('Export CSV', CSVOptions) then
-      begin
-        csvSes.CSVOptions := CSVOptions;
-        csvCnn.Connect;
-        csvSes.Start;
-        aFile := TFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
-        csvCMD := TmncCSVCommand.Create(csvSes, aFile, csvmRead);
-        csvCMD.EmptyLine := elSkip;
-        try
-          if csvCMD.Execute then //not empty, or eof
-            FillGrid(csvCMD, 'File: ' + FileName);
-        finally
-          aFile.Free;
-          csvCMD.Free;
-        end;
-
-        Ini := TIniFile.Create(Engine.WorkSpace + 'mne-csv-options.ini');
-        try
-          CSVOptions.SaveToIni('options', Ini);
-        finally
-          Ini.Free;
-        end;
-      end;
-    finally
-      csvSes.Free;
-      csvCnn.Free;
-    end;
+    CSVOptions.LoadFromIni('options', Ini);
+    IsRTL := Ini.ReadBool('ui', 'rtl', false);
   finally
-    FLoading := False;
+    Ini.Free;
   end;
-  {if DataGrid.Columns.Count >0 then
-    DataGrid.Columns[1].Alignment := taRightJustify;}
+
+  RefreshControls;
+
+  if b or ShowCSVOptions('Export CSV', CSVOptions) then
+  begin
+    aFile := TFileStream.Create(FileName, fmOpenRead or fmShareDenyWrite);
+    try
+      LoadFromStream(aFile);
+    finally
+      aFile.Free;
+    end;
+
+    Ini := TIniFile.Create(Engine.WorkSpace + 'mne-csv-options.ini');
+    try
+      CSVOptions.SaveToIni('options', Ini);
+    finally
+      Ini.Free;
+    end;
+  end;
 end;
 
 procedure TCSVForm.FillGrid(SQLCMD: TmncCommand; Title: String);
@@ -596,6 +536,78 @@ begin
       DataGrid.EndUpdate;
     StopBtn.Enabled := False;
   end;
+end;
+
+procedure TCSVForm.LoadFromStream(AFile: TStream);
+var
+  csvCnn: TmncCSVConnection;
+  csvSes: TmncCSVSession;
+  csvCMD: TmncCSVCommand;
+begin
+  FLoading := True;
+  try
+    ClearGrid;
+    csvCnn := TmncCSVConnection.Create;
+    csvSes := TmncCSVSession.Create(csvCnn);
+    try
+      csvSes.CSVOptions := CSVOptions;
+      csvCnn.Connect;
+      csvSes.Start;
+      csvCMD := TmncCSVCommand.Create(csvSes, aFile, csvmRead);
+      csvCMD.EmptyLine := elSkip;
+      try
+        if csvCMD.Execute then //not empty, or eof
+          FillGrid(csvCMD, 'File: ' + EditorFile.Name);
+      finally
+        csvCMD.Free;
+      end;
+    finally
+      csvSes.Free;
+      csvCnn.Free;
+    end;
+  finally
+    FLoading := False;
+  end;
+  {if DataGrid.Columns.Count >0 then
+    DataGrid.Columns[1].Alignment := taRightJustify;}
+end;
+
+procedure TCSVForm.SaveToStream(AFile: TStream);
+var
+  csvCnn: TmncCSVConnection;
+  csvSes: TmncCSVSession;
+  csvCMD: TmncCSVCommand;
+  c, r: Integer;
+begin
+  csvCnn := TmncCSVConnection.Create;
+  csvSes := TmncCSVSession.Create(csvCnn);
+  try
+    csvSes.CSVOptions := CSVOptions;
+    csvCnn.Connect;
+    csvSes.Start;
+    csvCMD := TmncCSVCommand.Create(csvSes, aFile, csvmWrite);
+    //adding header, even if we will not save it
+    for c := 0 to DataGrid.Columns.Count - 1 do
+    begin
+      csvCMD.Columns.Add(DataGrid.Columns[c].Title, dtString);
+    end;
+    csvCMD.Prepare; //generate Params and save header
+    r := 0; //first row of data
+    while r < DataGrid.RowsCount do
+    begin
+      for c := 0 to DataGrid.Columns.Count - 1 do
+      begin
+        csvCMD.Params.Items[c].Value := DataGrid.Values[c, r];
+      end;
+      csvCMD.Execute;
+      r := r + 1;
+    end;
+  finally
+    csvSes.Free;
+    csvCnn.Free;
+  end;
+  if IsConfigFileExists then
+    SaveConfigFile;
 end;
 
 constructor TCSVForm.Create(TheOwner: TComponent);

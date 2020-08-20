@@ -32,9 +32,19 @@ object CSVForm: TCSVForm
         Control = TextPnl
       end>
     OnTabSelected = PageControlTabSelected
+    OnTabSelect = PageControlTabSelect
     TabPosition = tbpBottom
     Align = alClient
     TabOrder = 0
+    object TextPnl: TPanel
+      Left = 0
+      Height = 412
+      Top = 0
+      Width = 741
+      Align = alClient
+      BevelOuter = bvNone
+      TabOrder = 0
+    end
     object GridPnl: TPanel
       Left = 0
       Height = 412
@@ -147,15 +157,6 @@ object CSVForm: TCSVForm
           TabOrder = 3
         end
       end
-    end
-    object TextPnl: TPanel
-      Left = 0
-      Height = 412
-      Top = 0
-      Width = 741
-      Align = alClient
-      BevelOuter = bvNone
-      TabOrder = 0
     end
   end
   object GridPopupMenu: TPopupMenu
