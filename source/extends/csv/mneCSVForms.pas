@@ -64,8 +64,7 @@ type
     procedure MenuItem6Click(Sender: TObject);
     procedure MenuItem8Click(Sender: TObject);
     procedure IsRtlMnuClick(Sender: TObject);
-
-      procedure PageControlTabSelect(Sender: TObject; OldTab, NewTab: TntvTabItem; var CanSelect: boolean);
+    procedure PageControlTabSelect(Sender: TObject; OldTab, NewTab: TntvTabItem; var CanSelect: boolean);
     procedure PageControlTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure ClearBtnClick(Sender: TObject);
     procedure OptionsBtnClick(Sender: TObject);
@@ -85,6 +84,7 @@ type
     CSVOptions: TmncCSVOptions;
     FInteractive: Boolean;
     FLoading: Boolean;
+    FConfigLoaded: Boolean;
     constructor Create(TheOwner: TComponent); override;
     procedure RenameHeader(Index: Integer);
     procedure RefreshControls;
@@ -93,8 +93,8 @@ type
     property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
     procedure ClearGrid;
     procedure FillGrid(SQLCMD: TmncCommand; Title: String);
-    procedure LoadFromStream(AFile: TStream);
-    procedure SaveToStream(AFile: TStream);
+    procedure LoadFromStream(AStream: TStream);
+    procedure SaveToStream(AStream: TStream);
     procedure LoadFromFile(FileName: string);
     procedure SaveToFile(FileName: string);
     procedure Load(FileName: string);
@@ -233,14 +233,39 @@ end;
 
 procedure TCSVForm.PageControlTabSelect(Sender: TObject; OldTab, NewTab: TntvTabItem; var CanSelect: boolean);
 begin
-  if OldTab <> nil then
-    EditorFile.Save;
+  {if OldTab <> nil then
+    EditorFile.Save;}
 end;
 
 procedure TCSVForm.PageControlTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
+var
+  Mem: TMemoryStream;
 begin
-  if OldTab <> nil then
-    EditorFile.Load;
+  if OldTab <> nil then //not first time changed, only when end user changed the tab/pagecontrol
+  begin
+    if Mode = csvmText then //New mode is Text, converting it from Grid
+    begin
+      Mem := TMemoryStream.Create;
+      try
+        SaveToStream(Mem);
+        Mem.Position := 0;
+        EditorFile.ContentsLoadFromStream(EditorFile.SynEdit, Mem);
+      finally
+        Mem.Free;
+      end;
+    end
+    else
+    begin
+      Mem := TMemoryStream.Create;
+      try
+        EditorFile.ContentsSaveToStream(EditorFile.SynEdit, Mem);
+        Mem.Position := 0;
+        LoadFromStream(Mem);
+      finally
+        Mem.Free;
+      end;
+    end;
+  end;
 end;
 
 procedure TCSVForm.ClearBtnClick(Sender: TObject);
@@ -369,16 +394,22 @@ var
   b: Boolean;
   Ini: TIniFile;
 begin
-  b := IsConfigFileExists;
-  if b then
-    Ini := TIniFile.Create(EditorFile.Name + '.conf')
+  if FConfigLoaded then
+    b := True
   else
-    Ini := TIniFile.Create(Engine.WorkSpace + 'mne-csv-options.ini');
-  try
-    CSVOptions.LoadFromIni('options', Ini);
-    IsRTL := Ini.ReadBool('ui', 'rtl', false);
-  finally
-    Ini.Free;
+  begin
+    b := IsConfigFileExists;
+    if b then
+      Ini := TIniFile.Create(EditorFile.Name + '.conf')
+    else
+      Ini := TIniFile.Create(Engine.WorkSpace + 'mne-csv-options.ini');
+    try
+      CSVOptions.LoadFromIni('options', Ini);
+      IsRTL := Ini.ReadBool('ui', 'rtl', false);
+    finally
+      Ini.Free;
+    end;
+    FConfigLoaded := True;
   end;
 
   RefreshControls;
@@ -538,7 +569,7 @@ begin
   end;
 end;
 
-procedure TCSVForm.LoadFromStream(AFile: TStream);
+procedure TCSVForm.LoadFromStream(AStream: TStream);
 var
   csvCnn: TmncCSVConnection;
   csvSes: TmncCSVSession;
@@ -553,7 +584,7 @@ begin
       csvSes.CSVOptions := CSVOptions;
       csvCnn.Connect;
       csvSes.Start;
-      csvCMD := TmncCSVCommand.Create(csvSes, aFile, csvmRead);
+      csvCMD := TmncCSVCommand.Create(csvSes, AStream, csvmRead);
       csvCMD.EmptyLine := elSkip;
       try
         if csvCMD.Execute then //not empty, or eof
@@ -572,7 +603,7 @@ begin
     DataGrid.Columns[1].Alignment := taRightJustify;}
 end;
 
-procedure TCSVForm.SaveToStream(AFile: TStream);
+procedure TCSVForm.SaveToStream(AStream: TStream);
 var
   csvCnn: TmncCSVConnection;
   csvSes: TmncCSVSession;
@@ -585,7 +616,7 @@ begin
     csvSes.CSVOptions := CSVOptions;
     csvCnn.Connect;
     csvSes.Start;
-    csvCMD := TmncCSVCommand.Create(csvSes, aFile, csvmWrite);
+    csvCMD := TmncCSVCommand.Create(csvSes, AStream, csvmWrite);
     //adding header, even if we will not save it
     for c := 0 to DataGrid.Columns.Count - 1 do
     begin

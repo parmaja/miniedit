@@ -520,8 +520,6 @@ type
     function GetSynEdit: TSynEdit; virtual;
     procedure DoGetCapability(var vCapability: TEditCapability); virtual;
 
-    procedure SynEditLoadFromFile(SynEdit: TSynEdit; FileName: string); //used if u have synedit
-    procedure SynEditSaveToFile(SynEdit: TSynEdit; FileName: string);
   protected
     procedure Edit;
     procedure DoEdit(Sender: TObject); virtual;
@@ -541,6 +539,12 @@ type
     procedure SaveToFile(FileName: string);
     procedure Save(Force: Boolean; Extension: string = ''; AsNewFile: Boolean = False); virtual;
     procedure Save;
+
+    //Utils for SynEdit loading/saving
+    procedure ContentsLoadFromStream(SynEdit: TSynEdit; AStream: TStream);
+    procedure ContentsSaveToStream(SynEdit: TSynEdit; AStream: TStream);
+    procedure ContentsLoadFromFile(SynEdit: TSynEdit; FileName: string); //used if u have synedit
+    procedure ContentsSaveToFile(SynEdit: TSynEdit; FileName: string);
 
     procedure Rename(ToNakeName: string); //only name not with the path
     procedure Delete; //only name not with the path
@@ -1801,12 +1805,12 @@ end;
 
 procedure TSyntaxEditorFile.DoLoad(FileName: string);
 begin
-  SynEditLoadFromFile(SynEdit, FileName);
+  ContentsLoadFromFile(SynEdit, FileName);
 end;
 
 procedure TSyntaxEditorFile.DoSave(FileName: string);
 begin
-  SynEditSaveToFile(SynEdit, FileName);
+  ContentsSaveToFile(SynEdit, FileName);
 end;
 
 procedure TSyntaxEditorFile.GroupChanged;
@@ -4200,8 +4204,10 @@ begin
   aStream := TFileStream.Create(FileName, fmCreate);
   try
     case Mode of
-      efmWindows: SaveAsWindows(Strings, aStream);
-      efmMac: SaveAsMac(Strings, aStream);
+      efmWindows:
+        SaveAsWindows(Strings, aStream);
+      efmMac:
+        SaveAsMac(Strings, aStream);
       else
         SaveAsUnix(Strings, aStream);
     end;
@@ -4612,59 +4618,52 @@ begin
   vCapability := [];
 end;
 
-procedure TEditorFile.SynEditLoadFromFile(SynEdit: TSynEdit; FileName: string);
+procedure TEditorFile.ContentsLoadFromStream(SynEdit: TSynEdit; AStream: TStream);
 var
   Contents: string;
   Size: integer;
-  Stream: TFileStream;
   IndentMode: TIndentMode;
   Encoded: Boolean;
 begin
+  SynEdit.BeginUpdate;
   try
-    Stream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
-    SynEdit.BeginUpdate;
-    try
-      Size := Stream.Size - Stream.Position;
-      SetString(Contents, nil, Size);
-      Stream.Read(Pointer(Contents)^, Size);
-      FileEncoding := GuessEncoding(Contents);
-      if not SameText(FileEncoding, EncodingUTF8) then
-      begin
-        if SameText(FileEncoding, 'ucs2le') or SameText(FileEncoding, 'ucs2be') then //Because ConvertEncodingToUTF8 not removes BOM
-          Contents := System.Copy(Contents, 3, MaxInt);
-        Contents := ConvertEncodingToUTF8(Contents, FileEncoding, Encoded);
-      end;
-      LinesMode := DetectLinesMode(Contents);
-      IndentMode := Engine.Options.Profile.IndentMode;
-      if Tendency.OverrideEditorOptions then
-        IndentMode := Tendency.IndentMode;
-      if IndentMode > idntNone then
-        Contents := ConvertIndents(Contents, SynEdit.TabWidth, IndentMode);
-
-      if IsNew then //there is no undo here
-        SynEdit.Lines.Text := Contents
-      else
-      begin
-        SynEdit.BeginUndoBlock;  //adding it to history of undo, so we can undo the revert to changes in by external
-        try
-          SynEdit.TextBetweenPoints[Point(1, 1), Point(length(SynEdit.Lines[SynEdit.Lines.Count - 1]) + 1, SynEdit.Lines.Count)] := Contents;
-          //SynEdit.Text := Contents;
-        finally
-          SynEdit.EndUndoBlock;
-        end;
-      end;
-
-    finally
-      SynEdit.EndUpdate;
-      Stream.Free;
+    Size := AStream.Size - AStream.Position;
+    SetString(Contents, nil, Size);
+    AStream.Read(Pointer(Contents)^, Size);
+    FileEncoding := GuessEncoding(Contents);
+    if not SameText(FileEncoding, EncodingUTF8) then
+    begin
+      if SameText(FileEncoding, 'ucs2le') or SameText(FileEncoding, 'ucs2be') then //Because ConvertEncodingToUTF8 not removes BOM
+        Contents := System.Copy(Contents, 3, MaxInt);
+      Contents := ConvertEncodingToUTF8(Contents, FileEncoding, Encoded);
     end;
+    LinesMode := DetectLinesMode(Contents);
+    IndentMode := Engine.Options.Profile.IndentMode;
+    if Tendency.OverrideEditorOptions then
+      IndentMode := Tendency.IndentMode;
+    if IndentMode > idntNone then
+      Contents := ConvertIndents(Contents, SynEdit.TabWidth, IndentMode);
+
+    if IsNew then //there is no undo here
+      SynEdit.Lines.Text := Contents
+    else
+    begin
+      SynEdit.BeginUndoBlock;  //adding it to history of undo, so we can undo the revert to changes in by external
+      try
+        SynEdit.TextBetweenPoints[Point(1, 1), Point(length(SynEdit.Lines[SynEdit.Lines.Count - 1]) + 1, SynEdit.Lines.Count)] := Contents;
+        //SynEdit.Text := Contents;
+      finally
+        SynEdit.EndUndoBlock;
+      end;
+    end;
+
   finally
+    SynEdit.EndUpdate;
   end;
 end;
 
-procedure TEditorFile.SynEditSaveToFile(SynEdit: TSynEdit; FileName: string);
+procedure TEditorFile.ContentsSaveToStream(SynEdit: TSynEdit; AStream: TStream);
 var
-  aStream : TFileStream;
   Contents: rawbytestring;
   IndentMode: TIndentMode;
 begin
@@ -4690,9 +4689,28 @@ begin
       Contents := UTF16BEBOM + Contents;
   end;
 
+  AStream.WriteBuffer(Pointer(Contents)^, Length(Contents));
+end;
+
+procedure TEditorFile.ContentsLoadFromFile(SynEdit: TSynEdit; FileName: string);
+var
+  AStream: TFileStream;
+begin
+  AStream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+  try
+    ContentsLoadFromStream(SynEdit, AStream);
+  finally
+    AStream.Free;
+  end;
+end;
+
+procedure TEditorFile.ContentsSaveToFile(SynEdit: TSynEdit; FileName: string);
+var
+  aStream : TFileStream;
+begin
   aStream := TFileStream.Create(FileName, fmCreate);
   try
-    aStream.WriteBuffer(Pointer(Contents)^, Length(Contents));
+    ContentsSaveToStream(SynEdit, aStream);
   finally
     aStream.Free;
   end;
