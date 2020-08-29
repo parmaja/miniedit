@@ -58,24 +58,20 @@ There is an addons to add menu items to file or main menu tools.
 
 MiniEdit is FreePascal/Lazarus project, to compile it you need to install all packages that needed
 
- * Use source code from github.com in branch "release", or use last tag,  branch "master" is my upstream work, it is not stable.
- * FreePascal FPC 3.0 or later
+ * Use source code from github.com in branch "release", or use last tag,  branch "master" is my working upstream, it is not stable.
+ * FreePascal FPC 3.2 or later
  * Lazarus last update from subversion repo, it is recommended, or use version 2.1
- * MiniLib http://sourceforge.net/projects/minilib
- * MiniCtrls http://github.com/parmaja/minictrls
- * CMDBox http://wiki.freepascal.org/CmdLine
+ * MiniLib https://github.com/parmaja/minilib
+ * MiniCtrls https://github.com/parmaja/minictrls
 
 Open each package in Lazarus and compile it in order.
 
 #### Required Packages
 
-    CMDLine\cmdbox.dpk
-
     minilib\lib\MiniCommons.lpk
     minilib\xml\source\MiniXML.lpk
     minilib\socket\source\MiniSockets.lpk
     minilib\connection\source\MiniConnections.lpk
-    minilib\comm\source\MiniComm.lpk
 
     minictrls\lib\MiniLib.lpk
     minictrls\components\native\NativeLib.lpk

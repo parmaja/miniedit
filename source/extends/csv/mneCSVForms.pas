@@ -574,7 +574,9 @@ var
   csvCnn: TmncCSVConnection;
   csvSes: TmncCSVSession;
   csvCMD: TmncCSVCommand;
+  t: Int64;
 begin
+  t := GetTickCount64;
   FLoading := True;
   try
     ClearGrid;
@@ -601,6 +603,8 @@ begin
   end;
   {if DataGrid.Columns.Count >0 then
     DataGrid.Columns[1].Alignment := taRightJustify;}
+  t := GetTickCount64 - t;
+  Engine.SendLog(TicksToString(t));
 end;
 
 procedure TCSVForm.SaveToStream(AStream: TStream);

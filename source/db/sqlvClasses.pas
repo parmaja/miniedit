@@ -256,7 +256,7 @@ type
   private
     function GetCurrent: TsqlvSQLHistoryItem;
   protected
-    function CreateItem: TsqlvCustomHistoryItem; override;
+    function RequireItem: TsqlvCustomHistoryItem; override;
   public
     procedure Add(const Text: string; Silent: Boolean);
     property Current: TsqlvSQLHistoryItem read GetCurrent;
@@ -277,7 +277,7 @@ type
   private
     function GetCurrent: TsqlvAddonHistoryItem;
   protected
-    function CreateItem: TsqlvCustomHistoryItem; override;
+    function RequireItem: TsqlvCustomHistoryItem; override;
   public
     procedure Add(const Addon: TsqlvAddon; Silent: Boolean);
     property Current: TsqlvAddonHistoryItem read GetCurrent;
@@ -515,7 +515,7 @@ begin
   REsult := inherited GetCurrent as TsqlvAddonHistoryItem;
 end;
 
-function TsqlvAddonHistory.CreateItem: TsqlvCustomHistoryItem;
+function TsqlvAddonHistory.RequireItem: TsqlvCustomHistoryItem;
 begin
   Result := TsqlvAddonHistoryItem.Create;
 end;
@@ -559,7 +559,7 @@ end;
 
 { TsqlvSQLHistory }
 
-function TsqlvSQLHistory.CreateItem: TsqlvCustomHistoryItem;
+function TsqlvSQLHistory.RequireItem: TsqlvCustomHistoryItem;
 begin
   Result := TsqlvSQLHistoryItem.Create;
 end;
