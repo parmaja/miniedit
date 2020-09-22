@@ -77,7 +77,7 @@ begin
   RFilesList.Clear;
   for i := 0 to Engine.Options.RecentFiles.Count - 1 do
   begin
-    RFilesList.Items.Add(Engine.Options.RecentFiles[i]);
+    RFilesList.Items.Add(Engine.Options.RecentFiles[i].Name);
   end;
 end;
 
@@ -88,7 +88,7 @@ begin
   RProjectsList.Clear;
   for i := 0 to Engine.Options.RecentProjects.Count - 1 do
   begin
-    RProjectsList.Items.Add(Engine.Options.RecentProjects[i]);
+    RProjectsList.Items.Add(Engine.Options.RecentProjects[i].Name);
   end;
 end;
 
@@ -109,23 +109,11 @@ begin
 end;
 
 procedure TManageRecentsForm.NewProject;
-var
-  aProject: TEditorProject;
 begin
-  aProject := Engine.Session.New;
-  try
-    if ShowProjectForm(aProject) then
-    begin
-      if Engine.Session.Save(aProject) then
-      begin
-        Engine.ProcessProject(aProject.FileName);
-        Engine.ProcessRecentProject(aProject.FileName);
-        EnumProjects;
-        EnumRecentProjects;
-      end;
-    end;
-  finally
-    aProject.Free;
+  if Engine.NewProject then
+  begin
+    EnumProjects;
+    EnumRecentProjects;
   end;
 end;
 
@@ -141,7 +129,7 @@ begin
   ProjectsList.Clear;
   for i := 0 to Engine.Options.Projects.Count - 1 do
   begin
-    ProjectsList.Items.Add(Engine.Options.Projects[i]);
+    ProjectsList.Items.Add(Engine.Options.Projects[i].Name);
   end;
 end;
 

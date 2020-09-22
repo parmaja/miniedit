@@ -112,12 +112,15 @@ type
   TEditorDesktopFile = class(TCollectionItem)
   private
     FFileName: string;
+    FFileParams: string;
     FCaretY: integer;
     FCaretX: integer;
     FTopLine: integer;
   public
+    constructor Create(ACollection: TCollection); override;
   published
     property FileName: string read FFileName write FFileName;
+    property FileParams: string read FFileParams write FFileParams;
     property CaretX: integer read FCaretX write FCaretX default 1;
     property CaretY: integer read FCaretY write FCaretY default 1;
     property TopLine: integer read FTopLine write FTopLine default 1;
@@ -736,6 +739,36 @@ type
   published
   end;
 
+  { TRecentItem }
+
+  TRecentItem = class(TmnXMLItem)
+  private
+    FName: string;
+    FParams: string;
+  public
+  published
+    property Name: string read FName write FName;
+    property Params: string read FParams write FParams;
+    constructor Create; overload;
+    constructor Create(AName: string; AParams: string = ''); overload;
+    procedure Assign(Source: TPersistent); override;
+  end;
+
+  { TRecentItems }
+
+  TRecentItems = class(specialize GXMLItems<TRecentItem>)
+  private
+    FMax: Integer;
+  protected
+  public
+    constructor Create(AMax: Integer);
+    function IndexOf(AName: string): Integer;
+    function Find(AName: string): TRecentItem;
+    procedure Insert(AName: string; AParams: string);
+    procedure Add(AName: string; AParams: string);
+    property Max: Integer read FMax write FMax;
+  end;
+
   TSynBreakPointItem = class(TSynObjectListItem)
   public
     IsBreakPoint: Boolean;
@@ -756,7 +789,7 @@ type
     FIgnoreNames: string;
     FLastFolder: string;
     FLastProject: string;
-    FRecentFolders: TStringList;
+    FRecentFolders: TRecentItems;
     FShowFolder: Boolean;
     FShowFolderFiles: TShowFolderFiles;
     FShowToolbar: Boolean;
@@ -777,15 +810,15 @@ type
     FSearchHistory: TStringList;
     FProfile: TEditorProfile;
 
-    FRecentFiles: TStringList;
-    FRecentProjects: TStringList;
-    FProjects: TStringList;
+    FRecentFiles: TRecentItems;
+    FRecentProjects: TRecentItems;
+    FProjects: TRecentItems;
     function GetAnsiCodePage: Integer;
     procedure SetAnsiCodePage(AValue: Integer);
-    procedure SetRecentFiles(const Value: TStringList);
-    procedure SetRecentFolders(AValue: TStringList);
-    procedure SetRecentProjects(const Value: TStringList);
-    procedure SetProjects(const Value: TStringList);
+    procedure SetRecentFiles(const Value: TRecentItems);
+    procedure SetRecentFolders(AValue: TRecentItems);
+    procedure SetRecentProjects(const Value: TRecentItems);
+    procedure SetProjects(const Value: TRecentItems);
   protected
   public
     constructor Create;
@@ -797,10 +830,10 @@ type
     procedure ColorsShow;
 
     property BoundRect: TRect read FBoundRect write FBoundRect; //not saved yet
-    property RecentFiles: TStringList read FRecentFiles write SetRecentFiles;
-    property RecentFolders: TStringList read FRecentFolders write SetRecentFolders;
-    property RecentProjects: TStringList read FRecentProjects write SetRecentProjects;
-    property Projects: TStringList read FProjects write SetProjects;
+    property RecentFiles: TRecentItems read FRecentFiles write SetRecentFiles;
+    property RecentFolders: TRecentItems read FRecentFolders write SetRecentFolders;
+    property RecentProjects: TRecentItems read FRecentProjects write SetRecentProjects;
+    property Projects: TRecentItems read FProjects write SetProjects;
 
     property Profile: TEditorProfile read FProfile;
     property SearchHistory: TStringList read FSearchHistory;
@@ -1185,15 +1218,17 @@ type
     //I used it for search in files
     function SearchReplace(const FileName: string; const ALines: TStringList; const ASearch, AReplace: string; OnFoundEvent: TOnFoundEvent; AOptions: TSynSearchOptions): integer;
     //Recent
-    procedure ProcessRecentFile(const FileName: string);
+    procedure ProcessRecentFile(const FileName: string; FileParams: string = '');
     procedure RemoveRecentFile(const FileName: string);
-    procedure ProcessRecentFolder(const FileName: string);
+    procedure ProcessRecentFolder(const FileName: string; FileParams: string = '');
     procedure RemoveRecentFolder(const FileName: string);
-    procedure ProcessRecentProject(const FileName: string);
+    procedure ProcessRecentProject(const FileName: string; FileParams: string = '');
     procedure RemoveRecentProject(const FileName: string);
 
-    procedure ProcessProject(const FileName: string);
+    procedure ProcessProject(const FileName: string; FileParams: string = '');
     procedure RemoveProject(const FileName: string);
+    function NewProject: Boolean;
+    function ChooseTendency(var vTendency: TEditorTendency): Boolean;
 
     procedure BeginUpdate;
     procedure UpdateState(State: TEditorChangeStates);
@@ -1312,6 +1347,7 @@ implementation
 uses
   SynHighlighterHashEntries, SynGutterCodeFolding,
   Registry, SearchForms, SynEditTextBuffer, GotoForms, mneClasses,
+  SelectList, mneProjectOptions,
   mneResources, MsgBox, GUIMsgBox;
 
 type
@@ -1403,6 +1439,97 @@ begin
       S := S + #$D;
     Stream.WriteBuffer(Pointer(S)^, Length(S));
   end;
+end;
+
+{ TEditorDesktopFile }
+
+constructor TEditorDesktopFile.Create(ACollection: TCollection);
+begin
+  inherited Create(ACollection);
+  CaretX := 1;
+  CaretY := 1;
+  TopLine := 1;
+end;
+
+{ TRecentItem }
+
+constructor TRecentItem.Create(AName: string; AParams: string);
+begin
+  Create;
+  Name := AName;
+  Params := AParams;
+end;
+
+procedure TRecentItem.Assign(Source: TPersistent);
+begin
+  if Source is TRecentItem then
+  begin
+    FName := (Source as TRecentItem).Name;
+    FParams := (Source as TRecentItem).Params;
+  end
+  else
+    inherited;
+end;
+
+constructor TRecentItem.Create;
+begin
+  inherited Create;
+end;
+
+{ TRecentItems }
+
+constructor TRecentItems.Create(AMax: Integer);
+begin
+  inherited Create;
+  FMax := AMax;
+end;
+
+function TRecentItems.IndexOf(AName: string): Integer;
+var
+  i: Integer;
+begin
+  Result := -1;
+  for i := 0 to Count - 1 do
+  begin
+    if SameText(Items[i].Name, AName) then
+    begin
+      Result := i;
+      break;
+    end;
+  end;
+end;
+
+function TRecentItems.Find(AName: string): TRecentItem;
+var
+  i: Integer;
+begin
+  Result := nil;
+  for i := 0 to Count - 1 do
+  begin
+    if SameText(Items[i].Name, AName) then
+    begin
+      Result := Items[i];
+      break;
+    end;
+  end;
+end;
+
+procedure TRecentItems.Insert(AName: string; AParams: string);
+begin
+  inherited Insert(0, TRecentItem.Create(AName, AParams));
+  while Count > Max do
+    Delete(Max);
+end;
+
+procedure TRecentItems.Add(AName: string; AParams: string);
+var
+  i: integer;
+begin
+  i := IndexOf(AName);
+  if i >= 0 then
+    Move(i, 0)
+  else
+    Insert(AName, AParams);
 end;
 
 { TTextEditorFile }
@@ -3125,6 +3252,12 @@ begin
 end;
 
 procedure TEditorOptions.Load(vWorkspace: string);
+  procedure SafeLoad(s: TRecentItems; vName:string);
+  begin
+    if FileExists(vName) then
+      s.LoadFromFile(vName);
+  end;
+
   procedure SafeLoad(s: TStringList; vName:string);
   begin
     if FileExists(vName) then
@@ -3134,10 +3267,10 @@ begin
   SafeLoadFromFile(vWorkspace + 'mne-options.xml');
   Profile.SafeLoadFromFile(vWorkspace + 'mne-editor.xml');
 
-  SafeLoad(RecentFiles, vWorkspace + 'mne-recent-files.ini');
-  SafeLoad(RecentFolders, vWorkspace + 'mne-recent-folders.ini');
-  SafeLoad(RecentProjects, vWorkspace + 'mne-recent-projects.ini');
-  SafeLoad(Projects, vWorkspace + 'mne-projects.ini');
+  SafeLoad(RecentFiles, vWorkspace + 'mne-recent-files.xml');
+  SafeLoad(RecentFolders, vWorkspace + 'mne-recent-folders.xml');
+  SafeLoad(RecentProjects, vWorkspace + 'mne-recent-projects.xml');
+  SafeLoad(Projects, vWorkspace + 'mne-projects.xml');
 
   SafeLoad(SearchHistory, vWorkspace + 'mne-search-history.ini');
   SafeLoad(ReplaceHistory, vWorkspace + 'mne-replace-history.ini');
@@ -3372,57 +3505,27 @@ begin
   end;
 end;
 
-procedure TEditorEngine.ProcessRecentFile(const FileName: string);
-var
-  i: integer;
+procedure TEditorEngine.ProcessRecentFile(const FileName: string; FileParams: string);
 begin
-  i := Options.RecentFiles.IndexOf(FileName);
-  if i >= 0 then
-    Options.RecentFiles.Move(i, 0)
-  else
-    Options.RecentFiles.Insert(0, FileName);
-  while Options.RecentFiles.Count > 50 do
-    Options.RecentFiles.Delete(50);
+  Options.RecentFiles.Add(FileName, FileParams);
   UpdateState([ecsRecents]);
 end;
 
-procedure TEditorEngine.ProcessRecentFolder(const FileName: string);
-var
-  i: integer;
+procedure TEditorEngine.ProcessRecentFolder(const FileName: string; FileParams: string);
 begin
-  i := Options.RecentFolders.IndexOf(FileName);
-  if i >= 0 then
-    Options.RecentFolders.Move(i, 0)
-  else
-    Options.RecentFolders.Insert(0, FileName);
-  while Options.RecentFolders.Count > 50 do
-    Options.RecentFolders.Delete(50);
+  Options.RecentFolders.Add(FileName, FileParams);
   UpdateState([ecsRecents]);
 end;
 
-procedure TEditorEngine.ProcessRecentProject(const FileName: string);
-var
-  i: integer;
+procedure TEditorEngine.ProcessRecentProject(const FileName: string; FileParams: string);
 begin
-  i := Options.RecentProjects.IndexOf(FileName);
-  if i >= 0 then
-    Options.RecentProjects.Move(i, 0)
-  else
-    Options.RecentProjects.Insert(0, FileName);
-  while Options.RecentProjects.Count > 50 do
-    Options.RecentProjects.Delete(50);
+  Options.RecentProjects.Add(FileName, FileParams);
   UpdateState([ecsRecents]);
 end;
 
-procedure TEditorEngine.ProcessProject(const FileName: string);
-var
-  i: integer;
+procedure TEditorEngine.ProcessProject(const FileName: string; FileParams: string);
 begin
-  i := Options.Projects.IndexOf(FileName);
-  if i >= 0 then
-    Options.Projects.Move(i, 0)
-  else
-    Options.Projects.Insert(0, FileName);
+  Options.Projects.Add(FileName, FileParams);
   UpdateState([ecsRecents]);
 end;
 
@@ -3474,10 +3577,10 @@ begin
   begin
     Profile.SaveToFile(vWorkspace + 'mne-editor.xml');
     SaveToFile(vWorkspace + 'mne-options.xml');
-    RecentFiles.SaveToFile(vWorkspace + 'mne-recent-files.ini');
-    RecentFolders.SaveToFile(vWorkspace + 'mne-recent-folders.ini');
-    RecentProjects.SaveToFile(vWorkspace + 'mne-recent-projects.ini');
-    Projects.SaveToFile(vWorkspace + 'mne-projects.ini');
+    RecentFiles.SaveToFile(vWorkspace + 'mne-recent-files.xml');
+    RecentFolders.SaveToFile(vWorkspace + 'mne-recent-folders.xml');
+    RecentProjects.SaveToFile(vWorkspace + 'mne-recent-projects.xml');
+    Projects.SaveToFile(vWorkspace + 'mne-projects.xml');
 
     SearchHistory.SaveToFile(vWorkspace + 'mne-search-history.ini');
     ReplaceHistory.SaveToFile(vWorkspace + 'mne-replace-history.ini');
@@ -3627,6 +3730,47 @@ begin
   if i >= 0 then
     Options.Projects.Delete(i);
   UpdateState([ecsRecents]);
+end;
+
+function TEditorEngine.ChooseTendency(var vTendency: TEditorTendency): Boolean;
+var
+  aName: string;
+begin
+  if (vTendency <> nil) then
+    aName := vTendency.Name
+  else
+    aName := '';
+  Result := ShowSelectList('Select project type', Tendencies, [], aName); //slfIncludeNone
+  if Result then
+    vTendency := Tendencies.Find(aName);
+end;
+
+function TEditorEngine.NewProject: Boolean;
+var
+  aProject: TEditorProject;
+  aTendency: TEditorTendency;
+begin
+  Result := False;
+  Engine.BeginUpdate;
+  try
+    if (not Engine.Session.Active) or (Engine.Session.Save) then
+    begin
+      aTendency := nil;
+      if ChooseTendency(aTendency) then
+      begin
+        aProject := Engine.Session.New(aTendency);
+        if ShowProjectForm(aProject) then
+        begin
+          Engine.Session.SetProject(aProject);
+          Result := True;
+        end
+        else
+          aProject.Free;
+      end;
+    end;
+  finally
+    Engine.EndUpdate;
+  end;
 end;
 
 function SortGroupsByTitle(Item1, Item2: Pointer): Integer;
@@ -4896,10 +5040,10 @@ begin
   FSearchFolderHistory := TStringList.Create;
   FProfile := TEditorProfile.Create;
   FExtraExtensions := TStringList.Create;
-  FRecentFiles := TStringList.Create;
-  FRecentFolders := TStringList.Create;
-  FRecentProjects := TStringList.Create;
-  FProjects := TStringList.Create;
+  FRecentFiles := TRecentItems.Create(50);
+  FRecentFolders := TRecentItems.Create(50);
+  FRecentProjects := TRecentItems.Create(50);
+  FProjects := TRecentItems.Create(50);
   FShowFolder := True;
   FSortFolderFiles := srtfByNames;
   FShowMessages := False;
@@ -4923,13 +5067,13 @@ begin
   inherited;
 end;
 
-procedure TEditorOptions.SetProjects(const Value: TStringList);
+procedure TEditorOptions.SetProjects(const Value: TRecentItems);
 begin
   if FProjects <> Value then
     FProjects.Assign(Value);
 end;
 
-procedure TEditorOptions.SetRecentFiles(const Value: TStringList);
+procedure TEditorOptions.SetRecentFiles(const Value: TRecentItems);
 begin
   if FRecentFiles <> Value then
     FRecentFiles.Assign(Value);
@@ -4945,13 +5089,13 @@ begin
   SystemAnsiCodePage := AValue;
 end;
 
-procedure TEditorOptions.SetRecentFolders(AValue: TStringList);
+procedure TEditorOptions.SetRecentFolders(AValue: TRecentItems);
 begin
   if FRecentFolders <> AValue then
     FRecentFolders.Assign(AValue);
 end;
 
-procedure TEditorOptions.SetRecentProjects(const Value: TStringList);
+procedure TEditorOptions.SetRecentProjects(const Value: TRecentItems);
 begin
   if FRecentProjects <> Value then
     FRecentProjects.Assign(Value);
@@ -5723,7 +5867,7 @@ var
   var
     r: TRect;
   begin
-    Line := TSynEdit(SynEdit).RowToScreenRow(Line);
+    Line := TSynEdit(SynEdit).RowToScreenRow(Line);//TODO use TextXYToScreenXY
     if (Line >= FirstLine) and (Line <= LastLine) then
     begin
       aRect := AClip;

@@ -78,12 +78,12 @@ type
     procedure Changed;
     procedure Reload;
   public
+    FLoading: Boolean;
     EditorFile: TEditorFile;
     TextEdit: TmnSynEdit;
     IsRTL: Boolean;
     CSVOptions: TmncCSVOptions;
     FInteractive: Boolean;
-    FLoading: Boolean;
     FConfigLoaded: Boolean;
     constructor Create(TheOwner: TComponent); override;
     procedure RenameHeader(Index: Integer);
@@ -233,8 +233,7 @@ end;
 
 procedure TCSVForm.PageControlTabSelect(Sender: TObject; OldTab, NewTab: TntvTabItem; var CanSelect: boolean);
 begin
-  {if OldTab <> nil then
-    EditorFile.Save;}
+  CanSelect := not FLoading;
 end;
 
 procedure TCSVForm.PageControlTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
@@ -472,8 +471,10 @@ var
 begin
   StopBtn.Enabled := True;
   Steps := 100;
+
   if not FInteractive then
     DataGrid.BeginUpdate;
+
   try
     IsNumbers := nil;
     if Title = '' then
@@ -578,6 +579,7 @@ var
 begin
   t := GetTickCount64;
   FLoading := True;
+  Screen.Cursor := crHourGlass;
   try
     ClearGrid;
     csvCnn := TmncCSVConnection.Create;
@@ -600,6 +602,7 @@ begin
     end;
   finally
     FLoading := False;
+    Screen.Cursor := crDefault;
   end;
   {if DataGrid.Columns.Count >0 then
     DataGrid.Columns[1].Alignment := taRightJustify;}
@@ -616,6 +619,7 @@ var
 begin
   csvCnn := TmncCSVConnection.Create;
   csvSes := TmncCSVSession.Create(csvCnn);
+  Screen.Cursor := crHourGlass;
   try
     csvSes.CSVOptions := CSVOptions;
     csvCnn.Connect;
@@ -640,6 +644,7 @@ begin
   finally
     csvSes.Free;
     csvCnn.Free;
+    Screen.Cursor := crDefault;
   end;
   if IsConfigFileExists then
     SaveConfigFile;
@@ -648,6 +653,8 @@ end;
 constructor TCSVForm.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
+  //FInteractive := True; //ewww
+
   PageControl.ItemIndex := 0;
   TextEdit := TmnSynEdit.Create(Self);
   TextEdit.Parent := TextPnl;

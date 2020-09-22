@@ -569,7 +569,6 @@ type
     procedure UpdateFileHeaderPanel;
     procedure UpdateCallStack;
     procedure OptionsChanged;
-    function ChooseTendency(var vTendency: TEditorTendency): Boolean;
     function ChooseSCM(var vSCM: TEditorSCM): Boolean;
 
     procedure EngineChanged;
@@ -1318,7 +1317,7 @@ begin
     if not MsgBox.Msg.No('You cannot change the type without losing project setting, are you sure?') then
     begin
       lTendency := Engine.Session.Project.Tendency;
-      if ChooseTendency(lTendency) then
+      if Engine.ChooseTendency(lTendency) then
         Engine.Session.Project.TendencyName := lTendency.Name;
     end;
   end
@@ -1447,29 +1446,8 @@ begin
 end;
 
 procedure TMainForm.NewProjectActExecute(Sender: TObject);
-var
-  aProject: TEditorProject;
-  aTendency: TEditorTendency;
 begin
-  Engine.BeginUpdate;
-  try
-    if (not Engine.Session.Active) or (Engine.Session.Save) then
-    begin
-      aTendency := nil;
-      if ChooseTendency(aTendency) then
-      begin
-        aProject := Engine.Session.New(aTendency);
-        if ShowProjectForm(aProject) then
-        begin
-          Engine.Session.SetProject(aProject);
-        end
-        else
-          aProject.Free;
-      end;
-    end;
-  finally
-    Engine.EndUpdate;
-  end;
+  Engine.NewProject;
 end;
 
 procedure TMainForm.OpenProjectActExecute(Sender: TObject);
@@ -1503,7 +1481,7 @@ begin
   for i := 0 to c - 1 do
   begin
     aMenuItem := TMenuItem.Create(Self);
-    aMenuItem.Caption := Engine.Options.RecentFiles[i];
+    aMenuItem.Caption := Engine.Options.RecentFiles[i].Name;
     aMenuItem.Hint := aMenuItem.Caption;
     aMenuItem.OnClick := @ReopenClick;
     aMenuItem.ImageIndex :=  EditorResource.GetFileImageIndex(aMenuItem.Caption, 1);
@@ -1523,7 +1501,7 @@ begin
   for i := 0 to c - 1 do
   begin
     aMenuItem := TMenuItem.Create(Self);
-    aMenuItem.Caption := Engine.Options.RecentFolders[i];
+    aMenuItem.Caption := Engine.Options.RecentFolders[i].Name;
     aMenuItem.Hint := aMenuItem.Caption;
     aMenuItem.OnClick := @ReopenFolderClick;
     RecentFoldersMnu.Add(aMenuItem);
@@ -1573,7 +1551,7 @@ begin
   for i := 0 to c - 1 do
   begin
     aMenuItem := TMenuItem.Create(Self);
-    aMenuItem.Caption := Engine.Options.RecentProjects[i];
+    aMenuItem.Caption := Engine.Options.RecentProjects[i].Name;
     aMenuItem.Hint := aMenuItem.Caption;
     aMenuItem.OnClick := @ReopenProjectClick;
     aMenuItem.ImageIndex :=  EditorResource.GetFileImageIndex(aMenuItem.Caption, 1);
@@ -1689,7 +1667,7 @@ begin
     lTendency := Engine.Files.Current.Tendency
   else
     lTendency := nil;
-  if ChooseTendency(lTendency) then
+  if Engine.ChooseTendency(lTendency) then
     if (lTendency <> nil) then
       ShowTendencyForm(lTendency);
 end;
@@ -2363,19 +2341,6 @@ begin
       LogEdit.CaretY := LogEdit.Lines.Count;
     end;
   end;
-end;
-
-function TMainForm.ChooseTendency(var vTendency: TEditorTendency): Boolean;
-var
-  aName: string;
-begin
-  if (vTendency <> nil) then
-    aName := vTendency.Name
-  else
-    aName := '';
-  Result := ShowSelectList('Select project type', Engine.Tendencies, [], aName); //slfIncludeNone
-  if Result then
-    vTendency := Engine.Tendencies.Find(aName);
 end;
 
 function TMainForm.ChooseSCM(var vSCM: TEditorSCM): Boolean;
