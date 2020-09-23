@@ -493,6 +493,7 @@ type
     FFileAge: Integer;
     FFileSize: int64;
     FGroup: TFileGroup;
+    FParams: string;
     FRelated: string;
     FLinesMode: TEditorLinesMode;
     FIsTemporary: Boolean;
@@ -592,6 +593,7 @@ type
     property LinesModeAsText: string read GetLinesModeAsText;
     property IsText: Boolean read GetIsText;
     property Name: string read FName write FName;
+    property Params: string read FParams write FParams;
     property Title: string read FTitle write FTitle; //used only if Name is empty for temporary files
     property NakeName: string read GetNakeName write SetNakeName; //no path with ext
     property PureName: string read GetPureName write SetPureName; //no path no ext
@@ -703,12 +705,12 @@ type
     function FindFile(const vFileName: string): TEditorFile;
     function IsExist(vName: string): Boolean;
 
-    function InternalOpenFile(FileName: string; AppendToRecent: Boolean): TEditorFile;
+    function InternalOpenFile(FileName, FileParams: string; AppendToRecent: Boolean): TEditorFile;
     function CreateEditorFile(vExtension: string): TEditorFile;
-    function LoadFile(vFileName: string; AppendToRecent: Boolean = True): TEditorFile;
+    function LoadFile(vFileName, vFileParams: string; AppendToRecent: Boolean = true): TEditorFile;
     function ShowFile(vFileName: string): TEditorFile; overload; //open it without add to recent, for debuging
     function ShowFile(const FileName: string; Line: integer): TEditorFile; overload;
-    function OpenFile(vFileName: string; ActivateIt: Boolean = false): TEditorFile;
+    function OpenFile(vFileName: string; vFileParams: string = ''; ActivateIt: Boolean = false): TEditorFile;
     procedure SetCurrentIndex(Index: integer; vRefresh: Boolean);
     function New(vGroup: TFileGroup = nil): TEditorFile; overload;
     function New(GroupName: string): TEditorFile; overload;
@@ -3206,7 +3208,7 @@ begin
   end
 end;
 
-function TEditorFiles.InternalOpenFile(FileName: string; AppendToRecent: Boolean): TEditorFile;
+function TEditorFiles.InternalOpenFile(FileName, FileParams: string; AppendToRecent: Boolean): TEditorFile;
 var
   aExt, lFileName: string;
 begin
@@ -3372,7 +3374,7 @@ begin
         aFile := nil;
         for i := 0 to aDialog.Files.Count - 1 do
         begin
-          aFile := InternalOpenFile(aDialog.Files[i], True);
+          aFile := InternalOpenFile(aDialog.Files[i], '', True);
           //aFile.IsReadOnly := aDialog. TODO
         end;
         if aFile <> nil then
@@ -3387,7 +3389,7 @@ begin
   end;
 end;
 
-function TEditorFiles.OpenFile(vFileName: string; ActivateIt: Boolean): TEditorFile;
+function TEditorFiles.OpenFile(vFileName, vFileParams: string; ActivateIt: Boolean): TEditorFile;
 begin
   if SameText(ExtractFileExt(vFileName), '.' + Engine.Extenstion) then
   begin
@@ -3396,7 +3398,7 @@ begin
   end
   else
   begin
-    Result := LoadFile(vFileName);
+    Result := LoadFile(vFileName, vFileParams);
     if Result <> nil then
     begin
       Current := Result;
@@ -3810,7 +3812,7 @@ begin
     BrowseFolder := ExtractFilePath(lFilePath);
     //The filename is expanded, if necessary, in EditorEngine.TEditorFiles.InternalOpenFile
     Session.SetProject(DefaultProject, False);
-    Files.OpenFile(lFilePath);
+    Files.OpenFile(lFilePath, '');
   end
   else
   begin
@@ -4123,11 +4125,11 @@ begin
     InternalChangedState(State);
 end;
 
-function TEditorFiles.LoadFile(vFileName: string; AppendToRecent: Boolean): TEditorFile;
+function TEditorFiles.LoadFile(vFileName, vFileParams: string; AppendToRecent: Boolean): TEditorFile;
 begin
   try
     try
-      Result := InternalOpenFile(vFileName, AppendToRecent);
+      Result := InternalOpenFile(vFileName, vFileParams, AppendToRecent);
     finally
       Engine.UpdateState([ecsChanged]);
     end;
@@ -4223,7 +4225,7 @@ end;
 
 function TEditorFiles.ShowFile(vFileName: string): TEditorFile;
 begin
-  Result := InternalOpenFile(vFileName, False);
+  Result := InternalOpenFile(vFileName, '', False);
   Engine.UpdateState([ecsChanged]);
   if Result <> nil then
     Current := Result;
@@ -4238,7 +4240,7 @@ end;
 
 function TEditorFiles.ShowFile(const FileName: string; Line: integer): TEditorFile;
 begin
-  Result := InternalOpenFile(FileName, False);
+  Result := InternalOpenFile(FileName, '', False);
   Result.SetLine(Line);
   Engine.UpdateState([ecsChanged]);
   if Result <> nil then
@@ -5940,7 +5942,7 @@ begin
         aItem := Files[i];
         if FileExists(aItem.FileName) then
         begin
-          aFile := Engine.Files.LoadFile(aItem.FileName, False);
+          aFile := Engine.Files.LoadFile(aItem.FileName, aItem.FileParams, False);
           if aFile <> nil then
             aFile.Assign(aItem);
         end;

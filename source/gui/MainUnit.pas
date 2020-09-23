@@ -692,7 +692,7 @@ var
 begin
   if CallStackGrid.Row > 0 then
   begin
-    Engine.Files.OpenFile(CallStackGrid.Cells[1, CallStackGrid.Row]);
+    Engine.Files.OpenFile(CallStackGrid.Cells[1, CallStackGrid.Row], '');
     s := CallStackGrid.Cells[2, CallStackGrid.Row];
     if s <> '' then
     begin
@@ -875,7 +875,7 @@ begin
       if DirectoryExists(A) and (i = 0) then
         aFolder := A
       else if FileExists(A) then
-        Engine.Files.OpenFile(A, True);
+        Engine.Files.OpenFile(A, '', True);
     end;
     if aFolder <> '' then
       Folder := aFolder;
@@ -917,7 +917,7 @@ begin
     0: ForceForegroundWindow;
     1:
     begin
-      if Engine.Files.OpenFile(IPCServer.StringMessage) <> nil then
+      if Engine.Files.OpenFile(IPCServer.StringMessage, '') <> nil then
       begin
         ForceForegroundWindow;
       end;
@@ -933,7 +933,7 @@ end;
 procedure TMainForm.MainFileActExecute(Sender: TObject);
 begin
   if Engine.Session.Project.RunOptions.MainFile <> '' then
-    Engine.Files.OpenFile(Engine.Session.MainFile);
+    Engine.Files.OpenFile(Engine.Session.MainFile, '');
 end;
 
 procedure TMainForm.MenuItem22Click(Sender: TObject);
@@ -1234,7 +1234,7 @@ var
 begin
   if SearchGrid.Row > 0 then
   begin
-    Engine.Files.OpenFile(SearchGrid.Cells[1, SearchGrid.Row]);
+    Engine.Files.OpenFile(SearchGrid.Cells[1, SearchGrid.Row], '');
     s := SearchGrid.Cells[2, SearchGrid.Row];
     if s <> '' then
     begin
@@ -1389,7 +1389,7 @@ begin
     if FileList.Selected.Data = nil then
       FollowFolder(FileList.Selected.Caption, FileList.Focused)
     else
-      Engine.Files.OpenFile(Folder + FileList.Selected.Caption, True);
+      Engine.Files.OpenFile(Folder + FileList.Selected.Caption, '', True);
   end;
 end;
 
