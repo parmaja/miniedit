@@ -5,8 +5,7 @@ unit sqlvOpenDatabases;
 interface
 
 uses
-  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, FileUtil, mncDB,
-  sqlvConsts;
+  Classes, SysUtils, Forms, Controls, Graphics, Dialogs, StdCtrls, FileUtil, mncDB;
 
 type
 

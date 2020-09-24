@@ -18,11 +18,11 @@ interface
 uses
   Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, Grids,
   dateutils, LCLType, LCLIntf, Types, mncConnections, LCLProc, contnrs,
-  ExtCtrls, StdCtrls, SynEdit, FileUtil, Buttons, Menus, sqlvSessions, mncCSV,
+  ExtCtrls, StdCtrls, SynEdit, FileUtil, Buttons, Menus, mncCSV,
   mncSQL, SynCompletion, SynEditAutoComplete, SynHighlighterHashEntries,
   mnUtils, mncMeta, mncCSVExchanges, mnSynHighlighterStdSQL, mncMySQL,
   mncPostgre, mncSQLite, mncSQLiteMeta, mncPGMeta, mncFBMeta, ntvGrids,
-  ntvPanels, sqlvConsts, sqlvEngines, sqlvStdClasses, LMessages, ComCtrls,
+  ntvPanels, sqlvEngines, sqlvStdClasses, LMessages, ComCtrls,
   EditorEngine;
 
 type
