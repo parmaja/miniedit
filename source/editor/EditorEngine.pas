@@ -791,10 +791,9 @@ type
     FIgnoreNames: string;
     FLastFolder: string;
     FLastProject: string;
-    FRecentFolders: TRecentItems;
     FShowFolder: Boolean;
-    FShowFolderFiles: TShowFolderFiles;
     FShowToolbar: Boolean;
+    FShowFolderFiles: TShowFolderFiles;
     FSortFolderFiles: TSortFolderFiles;
     FWindowMaxmized: Boolean;
     FBoundRect: TRect;
@@ -813,11 +812,14 @@ type
     FProfile: TEditorProfile;
 
     FRecentFiles: TRecentItems;
+    FRecentDatabases: TRecentItems;
+    FRecentFolders: TRecentItems;
     FRecentProjects: TRecentItems;
     FProjects: TRecentItems;
     function GetAnsiCodePage: Integer;
     procedure SetAnsiCodePage(AValue: Integer);
     procedure SetRecentFiles(const Value: TRecentItems);
+    procedure SetRecentDatabases(AValue: TRecentItems);
     procedure SetRecentFolders(AValue: TRecentItems);
     procedure SetRecentProjects(const Value: TRecentItems);
     procedure SetProjects(const Value: TRecentItems);
@@ -833,6 +835,7 @@ type
 
     property BoundRect: TRect read FBoundRect write FBoundRect; //not saved yet
     property RecentFiles: TRecentItems read FRecentFiles write SetRecentFiles;
+    property RecentDatabases: TRecentItems read FRecentDatabases write SetRecentDatabases;
     property RecentFolders: TRecentItems read FRecentFolders write SetRecentFolders;
     property RecentProjects: TRecentItems read FRecentProjects write SetRecentProjects;
     property Projects: TRecentItems read FProjects write SetProjects;
@@ -5043,6 +5046,7 @@ begin
   FProfile := TEditorProfile.Create;
   FExtraExtensions := TStringList.Create;
   FRecentFiles := TRecentItems.Create(50);
+  FRecentDatabases := TRecentItems.Create(50);
   FRecentFolders := TRecentItems.Create(50);
   FRecentProjects := TRecentItems.Create(50);
   FProjects := TRecentItems.Create(50);
@@ -5063,6 +5067,7 @@ begin
   FExtraExtensions.Free;
   FProfile.Free;
   FRecentFiles.Free;
+  FRecentDatabases.Free;
   FRecentFolders.Free;
   FRecentProjects.Free;
   FProjects.Free;
@@ -5089,6 +5094,12 @@ end;
 procedure TEditorOptions.SetAnsiCodePage(AValue: Integer);
 begin
   SystemAnsiCodePage := AValue;
+end;
+
+procedure TEditorOptions.SetRecentDatabases(AValue: TRecentItems);
+begin
+  if FRecentDatabases <> AValue then
+    FRecentDatabases.Assign(AValue);
 end;
 
 procedure TEditorOptions.SetRecentFolders(AValue: TRecentItems);

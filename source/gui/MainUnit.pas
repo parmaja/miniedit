@@ -32,7 +32,7 @@ uses
   {$endif}
   mnePHPIniForm,
   //end of addons
-  sqlvClasses, sqlvManagerForms,
+  sqlvEngines, sqlvManagerForms,
   mneTendencyOptions, mneResources, IniFiles, mnFields, simpleipc, mnUtils,
   ntvTabs, ntvPageControls, SynEditMiscClasses, SynEditMarkupSpecialLine,
   mncDB,
@@ -73,12 +73,12 @@ type
     BrowserPnl: TntvPanel;
     LogEdit: TSynEdit;
     LogSyn: TSynAnySyn;
-    MenuItem23: TMenuItem;
     MenuItem33: TMenuItem;
     MenuItem45: TMenuItem;
     CloseFileMnu: TMenuItem;
     MenuItem46: TMenuItem;
     MenuItem48: TMenuItem;
+    ReconnectDatabasesMnu: TMenuItem;
     MenuItem50: TMenuItem;
     SepN8: TMenuItem;
     N6: TMenuItem;
@@ -206,7 +206,7 @@ type
     About1: TMenuItem;
     OptionsMnu: TMenuItem;
     ShowTree1: TMenuItem;
-    ReopenMnu: TMenuItem;
+    ReopenFilesMnu: TMenuItem;
     TopToolbar: TToolBar;
     MainBar: TToolBar;
     BackBtn: TToolButton;
@@ -585,13 +585,15 @@ type
     procedure UpdateMenuItems;
     procedure UpdatePanel;
     procedure SetFolder(const Value: string);
-    procedure ReopenClick(Sender: TObject);
+    procedure ReopenFileClick(Sender: TObject);
+    procedure ReopenDatabaseClick(Sender: TObject);
     procedure ReopenFolderClick(Sender: TObject);
     procedure ReopenProjectClick(Sender: TObject);
     procedure AddWatch(s: string);
     procedure DeleteWatch(s: string);
     procedure EnumRecents;
     procedure EnumRecentFiles;
+    procedure EnumRecentDatbases;
     procedure EnumRecentFolders;
     procedure EnumRecentProjects;
     function GetCurrentColorText: string;
@@ -782,7 +784,7 @@ end;
 
 procedure TMainForm.DBCreateDatabaseActExecute(Sender: TObject);
 begin
-  DBEngine.CreateDatabase;
+
 end;
 
 procedure TMainForm.DBDisconnectMnuClick(Sender: TObject);
@@ -1473,8 +1475,8 @@ var
   i, c: integer;
   aMenuItem: TMenuItem;
 begin
-  ReopenMnu.SubMenuImages := EditorResource.FileImages;
-  ReopenMnu.Clear;
+  ReopenFilesMnu.SubMenuImages := EditorResource.FileImages;
+  ReopenFilesMnu.Clear;
   c := Engine.Options.RecentFiles.Count;
   if c > 10 then
     c := 10;
@@ -1483,9 +1485,30 @@ begin
     aMenuItem := TMenuItem.Create(Self);
     aMenuItem.Caption := Engine.Options.RecentFiles[i].Name;
     aMenuItem.Hint := aMenuItem.Caption;
-    aMenuItem.OnClick := @ReopenClick;
+    aMenuItem.OnClick := @ReopenFileClick;
     aMenuItem.ImageIndex :=  EditorResource.GetFileImageIndex(aMenuItem.Caption, 1);
-    ReopenMnu.Add(aMenuItem);
+    ReopenFilesMnu.Add(aMenuItem);
+  end;
+end;
+
+procedure TMainForm.EnumRecentDatbases;
+var
+  i, c: integer;
+  aMenuItem: TMenuItem;
+begin
+  ReconnectDatabasesMnu.SubMenuImages := EditorResource.FileImages;
+  ReconnectDatabasesMnu.Clear;
+  c := Engine.Options.RecentFiles.Count;
+  if c > 10 then
+    c := 10;
+  for i := 0 to c - 1 do
+  begin
+    aMenuItem := TMenuItem.Create(Self);
+    aMenuItem.Caption := Engine.Options.RecentDatabases[i].Name;
+    aMenuItem.Hint := aMenuItem.Caption;
+    aMenuItem.OnClick := @ReopenDatabaseClick;
+    //aMenuItem.ImageIndex :=  EditorResource.GetFileImageIndex(aMenuItem.Caption, 1);
+    ReopenFilesMnu.Add(aMenuItem);
   end;
 end;
 
@@ -1508,7 +1531,7 @@ begin
   end;
 end;
 
-procedure TMainForm.ReopenClick(Sender: TObject);
+procedure TMainForm.ReopenFileClick(Sender: TObject);
 var
   aFile: string;
 begin
@@ -1519,6 +1542,11 @@ begin
       aFile := ExpandToPath(aFile, Engine.Session.Project.RunOptions.MainFolder);
     Engine.Files.OpenFile(aFile);
   end;
+end;
+
+procedure TMainForm.ReopenDatabaseClick(Sender: TObject);
+begin
+  //DBEngine.OpenDatabase;
 end;
 
 procedure TMainForm.ReopenFolderClick(Sender: TObject);

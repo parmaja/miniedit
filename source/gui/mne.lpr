@@ -54,7 +54,7 @@ uses
   gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneClasses, mneDBClasses,
   mneRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils, mnStreams,
   mncCSV, sqlvOpenDatabases,
-  sqlvSQLForms, sqlvClasses, sqlvStdClasses, sqlvSessions, sqlvConnectServers;
+  sqlvSQLForms, sqlvEngines, sqlvStdClasses, sqlvSessions, sqlvConnectServers;
 
 {$R *.res}
 {$i '..\lib\mne.inc'}

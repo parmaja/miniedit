@@ -31,7 +31,7 @@ uses
   mnUtils, mncMeta,
   mncCSV, mncPostgre, mncMySQL, mncFirebird, mncSQLite,
   mncPGMeta, mncMySQLMeta, mncFBMeta, mncSQLiteMeta,
-  sqlvSessions, sqlvClasses;
+  sqlvSessions, sqlvEngines;
 
 type
 

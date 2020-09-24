@@ -1785,7 +1785,7 @@ object MainForm: TMainForm
         Action = SaveAsAct
         OnClick = SaveAsActExecute
       end
-      object ReopenMnu: TMenuItem
+      object ReopenFilesMnu: TMenuItem
         Caption = 'Reopen'
       end
       object MenuItem48: TMenuItem
@@ -1853,15 +1853,15 @@ object MainForm: TMainForm
         Action = DBConnectAct
         OnClick = DBConnectMnuClick
       end
+      object ReconnectDatabasesMnu: TMenuItem
+        Caption = 'Reconnect'
+      end
       object DBDisconnectMnu: TMenuItem
         Action = DBDisconnectAct
         OnClick = DBDisconnectMnuClick
       end
       object MenuItem50: TMenuItem
         Caption = '-'
-      end
-      object MenuItem23: TMenuItem
-        Action = DBCreateDatabaseAct
       end
     end
     object ProjectMnu: TMenuItem

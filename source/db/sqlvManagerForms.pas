@@ -22,7 +22,7 @@ uses
   mncSQL, SynCompletion, SynEditAutoComplete, SynHighlighterHashEntries,
   mnUtils, mncMeta, mncCSVExchanges, mnSynHighlighterStdSQL, mncMySQL,
   mncPostgre, mncSQLite, mncSQLiteMeta, mncPGMeta, mncFBMeta, ntvGrids,
-  ntvPanels, sqlvConsts, sqlvClasses, sqlvStdClasses, LMessages, ComCtrls,
+  ntvPanels, sqlvConsts, sqlvEngines, sqlvStdClasses, LMessages, ComCtrls,
   EditorEngine;
 
 type

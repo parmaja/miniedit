@@ -23,7 +23,7 @@ uses
   Classes, SysUtils, Forms, Controls, ExtCtrls, StdCtrls, FileUtil,
   mncSQL,
   LCLType, Graphics, Menus, Buttons, ComCtrls, EditorEngine, sqlvManagerForms,
-  sqlvClasses, IniFiles, ntvTabSets, MsgBox, mnStreams, ntvGrids,
+  sqlvEngines, IniFiles, ntvTabSets, MsgBox, mnStreams, ntvGrids,
   ntvPageControls, mncConnections, mncCSV;
 
 type

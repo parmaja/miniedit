@@ -242,8 +242,8 @@ object ProjectForm: TProjectForm
     end
   end
   object PathPopupMenu: TPopupMenu
-    left = 399
-    top = 101
+    Left = 399
+    Top = 101
     object MenuItem3: TMenuItem
       Caption = 'Select Folder'
       OnClick = MenuItem3Click
