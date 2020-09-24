@@ -1,4 +1,4 @@
-unit sqlvClasses;
+unit sqlvEngines;
 {**
  *  This file is part of the "Mini Connections"
  *
@@ -320,6 +320,7 @@ type
     destructor Destroy; override;
 
     procedure ConnectServer;
+    procedure OpenDatabase(FileName: string; FileParam: string);
     procedure OpenDatabase;
     procedure CreateDatabase;
 
@@ -905,6 +906,18 @@ begin
       ServerChanged;
     end;
   end;
+end;
+
+procedure TDBEngine.OpenDatabase(FileName: string; FileParam: string);
+begin
+  if DB.IsActive then
+    DB.Close;
+
+  //DBEngine.Setting.CacheMetas := CacheMetaChk.Checked;
+  //DBEngine.DB.Open(False, (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name, DatabaseCbo.Text, UserEdit.Text, PasswordEdit.Text, RoleEdit.Text, ExclusiveChk.Checked, VacuumChk.Checked);
+  Stack.Clear;
+  //Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabaseCbo.Text));
+  Run;
 end;
 
 procedure TDBEngine.OpenDatabase;
