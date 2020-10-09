@@ -468,43 +468,43 @@
         <ResourceBaseClass Value="Frame"/>
       </Unit52>
       <Unit53>
-        <Filename Value="..\db\sqlvClasses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit53>
-      <Unit54>
         <Filename Value="..\db\sqlvManagerForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="sqlvManagerForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit54>
-      <Unit55>
+      </Unit53>
+      <Unit54>
         <Filename Value="..\db\sqlvOpenDatabases.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="OpenDatabaseForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit55>
-      <Unit56>
-        <Filename Value="..\db\sqlvSessions.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit56>
-      <Unit57>
+      </Unit54>
+      <Unit55>
         <Filename Value="..\db\sqlvStdClasses.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit57>
-      <Unit58>
+      </Unit55>
+      <Unit56>
         <Filename Value="..\db\sqlvConnectServers.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ConnectDBServerForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit58>
-      <Unit59>
+      </Unit56>
+      <Unit57>
         <Filename Value="mneAssociateForm.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="AssociateForm"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit57>
+      <Unit58>
+        <Filename Value="..\db\sqlvEngines.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit58>
+      <Unit59>
+        <Filename Value="..\db\sqlvConnectServers.lfm"/>
+        <IsPartOfProject Value="True"/>
       </Unit59>
     </Units>
   </ProjectOptions>

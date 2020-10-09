@@ -1498,7 +1498,7 @@ var
 begin
   ReconnectDatabasesMnu.SubMenuImages := EditorResource.FileImages;
   ReconnectDatabasesMnu.Clear;
-  c := Engine.Options.RecentFiles.Count;
+  c := Engine.Options.RecentDatabases.Count;
   if c > 10 then
     c := 10;
   for i := 0 to c - 1 do
@@ -1508,7 +1508,7 @@ begin
     aMenuItem.Hint := aMenuItem.Caption;
     aMenuItem.OnClick := @ReopenDatabaseClick;
     //aMenuItem.ImageIndex :=  EditorResource.GetFileImageIndex(aMenuItem.Caption, 1);
-    ReopenFilesMnu.Add(aMenuItem);
+    ReconnectDatabasesMnu.Add(aMenuItem);
   end;
 end;
 
@@ -1545,8 +1545,17 @@ begin
 end;
 
 procedure TMainForm.ReopenDatabaseClick(Sender: TObject);
+var
+  aFile: string;
+  Index: Integer;
 begin
-  //DBEngine.OpenDatabase;
+  if Sender is TMenuItem then
+  begin
+    //aFile := (Sender as TMenuItem).Tag;
+    //if Engine.Session.Active then
+    //  aFile := ExpandToPath(aFile, Engine.Session.Project.RunOptions.MainFolder);
+    //DBEngine.OpenDatabase();
+  end;
 end;
 
 procedure TMainForm.ReopenFolderClick(Sender: TObject);
@@ -2956,6 +2965,7 @@ end;
 procedure TMainForm.EnumRecents;
 begin
   EnumRecentFiles;
+  EnumRecentDatbases;
   EnumRecentFolders;
   EnumRecentProjects;
 end;

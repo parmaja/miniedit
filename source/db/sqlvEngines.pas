@@ -364,7 +364,7 @@ type
     destructor Destroy; override;
 
     procedure ConnectServer;
-    procedure OpenDatabase(FileName: string; FileParam: string);
+    procedure OpenDatabase(FileName: string; FileParams: string);
     procedure OpenDatabase;
     procedure CreateDatabase;
 
@@ -960,19 +960,26 @@ begin
   end;
 end;
 
-procedure TDBEngine.OpenDatabase(FileName: string; FileParam: string);
+procedure TDBEngine.OpenDatabase(FileName: string; FileParams: string);
+var
+  EngineName, Resource, Host, User, Password, Role: string;
 begin
   if DB.IsActive then
     DB.Close;
+  mncDB.Engines.DecomposeConnectionString(FileParams, EngineName, Resource, Host, User, Password, Role);
+  Engine.ProcessRecentDatabase(Resource, FileParams);
 
-  //DBEngine.Setting.CacheMetas := CacheMetaChk.Checked;
-  //DBEngine.DB.Open(False, (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name, DatabaseCbo.Text, UserEdit.Text, PasswordEdit.Text, RoleEdit.Text, ExclusiveChk.Checked, VacuumChk.Checked);
+  //Setting.CacheMetas := CacheMetaChk.Checked;
+  DB.Open(False, EngineName, Resource, User, Password, Role, False, False);
   Stack.Clear;
-  //Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabaseCbo.Text));
+  Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', Resource));
   Run;
 end;
 
 procedure TDBEngine.OpenDatabase;
+var
+  EngineName, Resource, Host, User, Password, Role: string;
+  FileParams: string;
 begin
   with TOpenDatabaseForm.Create(Application) do
   begin
@@ -982,7 +989,19 @@ begin
         DBEngine.DB.Close;
 
       DBEngine.Setting.CacheMetas := CacheMetaChk.Checked;
-      DBEngine.DB.Open(False, (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name, DatabaseCbo.Text, UserEdit.Text, PasswordEdit.Text, RoleEdit.Text, ExclusiveChk.Checked, VacuumChk.Checked);
+
+      EngineName := (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name;
+
+      Host := HostEdit.Text;
+      Resource := DatabaseCbo.Text;
+      User := UserEdit.Text;
+      Password := PasswordEdit.Text;
+      Role := RoleEdit.Text;
+      //ExclusiveChk.Checked,
+      //VacuumChk.Checked,
+      FileParams := mncDB.Engines.ComposeConnectionString(EngineName, Resource, Host, User, Password, Role);
+      Engine.ProcessRecentDatabase(Resource, FileParams);
+      DB.Open(False, EngineName, Resource, User, Password, Role, False, False);
       DBEngine.Stack.Clear;
       DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabaseCbo.Text));
       DBEngine.Run;

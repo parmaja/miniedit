@@ -1225,6 +1225,8 @@ type
     //Recent
     procedure ProcessRecentFile(const FileName: string; FileParams: string = '');
     procedure RemoveRecentFile(const FileName: string);
+    procedure ProcessRecentDatabase(const FileName: string; FileParams: string = '');
+    procedure RemoveRecentDatabase(const FileName: string);
     procedure ProcessRecentFolder(const FileName: string; FileParams: string = '');
     procedure RemoveRecentFolder(const FileName: string);
     procedure ProcessRecentProject(const FileName: string; FileParams: string = '');
@@ -3273,6 +3275,7 @@ begin
   Profile.SafeLoadFromFile(vWorkspace + 'mne-editor.xml');
 
   SafeLoad(RecentFiles, vWorkspace + 'mne-recent-files.xml');
+  SafeLoad(RecentDatabases, vWorkspace + 'mne-recent-database.xml');
   SafeLoad(RecentFolders, vWorkspace + 'mne-recent-folders.xml');
   SafeLoad(RecentProjects, vWorkspace + 'mne-recent-projects.xml');
   SafeLoad(Projects, vWorkspace + 'mne-projects.xml');
@@ -3583,6 +3586,7 @@ begin
     Profile.SaveToFile(vWorkspace + 'mne-editor.xml');
     SaveToFile(vWorkspace + 'mne-options.xml');
     RecentFiles.SaveToFile(vWorkspace + 'mne-recent-files.xml');
+    RecentDatabases.SaveToFile(vWorkspace + 'mne-recent-database.xml');
     RecentFolders.SaveToFile(vWorkspace + 'mne-recent-folders.xml');
     RecentProjects.SaveToFile(vWorkspace + 'mne-recent-projects.xml');
     Projects.SaveToFile(vWorkspace + 'mne-projects.xml');
@@ -3952,6 +3956,21 @@ var
   i: integer;
 begin
   i := Options.RecentFiles.IndexOf(FileName);
+  Options.RecentFiles.Delete(i);
+  UpdateState([ecsRecents]);
+end;
+
+procedure TEditorEngine.ProcessRecentDatabase(const FileName: string; FileParams: string);
+begin
+  Options.RecentDatabases.Add(FileName, FileParams);
+  UpdateState([ecsRecents]);
+end;
+
+procedure TEditorEngine.RemoveRecentDatabase(const FileName: string);
+var
+  i: integer;
+begin
+  i := Options.RecentDatabases.IndexOf(FileName);
   Options.RecentFiles.Delete(i);
   UpdateState([ecsRecents]);
 end;

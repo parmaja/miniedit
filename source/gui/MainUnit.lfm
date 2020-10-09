@@ -360,12 +360,12 @@ object MainForm: TMainForm
           Top = 21
           Width = 254
           Anchors = [akTop, akLeft, akRight, akBottom]
+          AutoWidthLastColumn = True
           BorderSpacing.Around = 3
           Columns = <          
             item
-              AutoSize = True
               Caption = 'File Name'
-              Width = 68
+              Width = 250
             end>
           HideSelection = False
           ParentColor = True
