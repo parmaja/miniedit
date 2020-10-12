@@ -19,7 +19,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
     Default = True
     ModalResult = 1
     OnClick = OkBtnClick
-    TabOrder = 11
+    TabOrder = 9
   end
   object CancelBtn: TButton
     Left = 249
@@ -31,7 +31,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
     Caption = '&Cancel'
     ModalResult = 2
     OnClick = CancelBtnClick
-    TabOrder = 12
+    TabOrder = 10
   end
   object Label1: TLabel
     Left = 7
@@ -69,47 +69,27 @@ object OpenDatabaseForm: TOpenDatabaseForm
     Anchors = [akTop, akRight]
     Caption = '...'
     OnClick = BrowseBtnClick
-    TabOrder = 13
-  end
-  object CacheMetaChk: TCheckBox
-    Left = 10
-    Height = 19
-    Top = 175
-    Width = 181
-    BidiMode = bdRightToLeftReadingOnly
-    Caption = 'Cache Meta for auto complete'
-    ParentBidiMode = False
-    TabOrder = 7
+    TabOrder = 11
   end
   object ExclusiveChk: TCheckBox
     Left = 10
     Height = 19
-    Top = 196
+    Top = 170
     Width = 99
     BidiMode = bdRightToLeftReadingOnly
     Caption = 'Open exclusive'
     ParentBidiMode = False
-    TabOrder = 8
-  end
-  object VacuumChk: TCheckBox
-    Left = 10
-    Height = 19
-    Top = 217
-    Width = 142
-    BidiMode = bdRightToLeftReadingOnly
-    Caption = 'Vacuum when connect'
-    ParentBidiMode = False
-    TabOrder = 9
+    TabOrder = 7
   end
   object AnsiCodePageChk: TCheckBox
     Left = 10
     Height = 19
-    Top = 238
+    Top = 190
     Width = 164
     BidiMode = bdRightToLeftReadingOnly
     Caption = 'Ansi CodePage (current os)'
     ParentBidiMode = False
-    TabOrder = 10
+    TabOrder = 8
   end
   object Label3: TLabel
     Left = 7
@@ -212,7 +192,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
     BidiMode = bdRightToLeftReadingOnly
     Caption = 'Save password'
     ParentBidiMode = False
-    TabOrder = 14
+    TabOrder = 12
   end
   object OpenDialog: TOpenDialog
     DefaultExt = '.sql'

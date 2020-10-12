@@ -1225,8 +1225,8 @@ type
     //Recent
     procedure ProcessRecentFile(const FileName: string; FileParams: string = '');
     procedure RemoveRecentFile(const FileName: string);
-    procedure ProcessRecentDatabase(const FileName: string; FileParams: string = '');
-    procedure RemoveRecentDatabase(const FileName: string);
+    procedure ProcessRecentDatabase(const AliasName: string; FileParams: string = '');
+    procedure RemoveRecentDatabase(const AliasName: string);
     procedure ProcessRecentFolder(const FileName: string; FileParams: string = '');
     procedure RemoveRecentFolder(const FileName: string);
     procedure ProcessRecentProject(const FileName: string; FileParams: string = '');
@@ -3960,17 +3960,17 @@ begin
   UpdateState([ecsRecents]);
 end;
 
-procedure TEditorEngine.ProcessRecentDatabase(const FileName: string; FileParams: string);
+procedure TEditorEngine.ProcessRecentDatabase(const AliasName: string; FileParams: string);
 begin
-  Options.RecentDatabases.Add(FileName, FileParams);
+  Options.RecentDatabases.Add(AliasName, FileParams);
   UpdateState([ecsRecents]);
 end;
 
-procedure TEditorEngine.RemoveRecentDatabase(const FileName: string);
+procedure TEditorEngine.RemoveRecentDatabase(const AliasName: string);
 var
   i: integer;
 begin
-  i := Options.RecentDatabases.IndexOf(FileName);
+  i := Options.RecentDatabases.IndexOf(AliasName);
   Options.RecentFiles.Delete(i);
   UpdateState([ecsRecents]);
 end;

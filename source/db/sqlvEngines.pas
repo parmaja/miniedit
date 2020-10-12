@@ -65,7 +65,7 @@ type
     property InternalLoginSQL:string read FInternalLoginSQL write FInternalLoginSQL;
     property InternalLogoutSQL:string read FInternalLogoutSQL write FInternalLogoutSQL;
   published
-    property CacheMetas: Boolean read FCacheMetas write FCacheMetas default False;
+    property CacheMetas: Boolean read FCacheMetas write FCacheMetas default True;
     property OpenSaveDialogFilters:string read FOpenSaveDialogFilters write FOpenSaveDialogFilters;
     property LoginSQL: string read FLoginSQL write FLoginSQL;
     property LogoutSQL: string read FLogoutSQL write FLogoutSQL;
@@ -363,8 +363,10 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    procedure ConnectServer;
-    procedure OpenDatabase(FileName: string; FileParams: string);
+    procedure OpenServer(FileParams: string);
+    procedure OpenServer;
+    procedure OpenDatabase(AliasName: string; FileParams: string);
+    procedure OpenDatabase(Resource: string; EngineName, Host, Port, User, Password, Role: string);
     procedure OpenDatabase;
     procedure CreateDatabase;
 
@@ -932,79 +934,109 @@ begin
   inherited;
 end;
 
-procedure TDBEngine.ConnectServer;
+procedure TDBEngine.OpenServer(FileParams: string);
+var
+  EngineName, Resource, Host, Port, User, Password, Role: string;
+  AliasName: string;
+begin
+  mncDB.Engines.DecomposeConnectionString(FileParams, EngineName, Resource, Host, Port, User, Password, Role);
+  Server.Engine := mncDB.Engines.Find(EngineName);
+
+  Server.Info.Host := Host;
+  if Server.Info.Host = '' then
+  begin
+    if (ccPath in Server.Engine.ConnectionClass.Capabilities) then
+      Server.Info.Host := Engine.BrowseFolder
+    else
+      Server.Info.Host := 'localhost';
+  end;
+  //Server.Info.Port := Port;
+  Server.Info.UserName := User;
+  Server.Info.Role := Role;
+  Server.Info.Password := Password;
+
+  AliasName := EngineName + '@' + Server.Info.Host;
+  if Server.Info.Port <> '' then
+    AliasName := AliasName + ':' + Server.Info.Port;
+  Engine.ProcessRecentDatabase(AliasName, FileParams);
+
+//  Stack.Clear;
+  ServerChanged;
+end;
+
+procedure TDBEngine.OpenServer;
+var
+  FileParams: string;
+  EngineName, Host, Port, User, Password, Role: string;
 begin
   with TConnectDBServerForm.Create(Application) do
   begin
     if ShowModal = mrOK then
     begin
-      if DB.IsActive then
-        DB.Close;
+      EngineName := (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name;
 
-      Server.Engine := (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine);
-      Server.Info.Host := HostEdit.Text;
-      if Server.Info.Host = '' then
-      begin
-        if (ccPath in Server.Engine.ConnectionClass.Capabilities) then
-          Server.Info.Host := Engine.BrowseFolder
-        else
-          Server.Info.Host := '127.0.0.1';
-      end;
-      Server.Info.Port := PortEdit.Text;
-      Server.Info.UserName := UserEdit.Text;
-      Server.Info.Role := RoleEdit.Text;
-      Server.Info.Password := PasswordEdit.Text;
-      Stack.Clear;
-      ServerChanged;
+      Host := HostEdit.Text;
+      Port := PortEdit.Text;
+      User := UserEdit.Text;
+      Role := RoleEdit.Text;
+      Password := PasswordEdit.Text;
+
+      FileParams := mncDB.Engines.ComposeConnectionString(EngineName, '', Host, Port, User, Password, Role);
+      OpenServer(FileParams);
     end;
   end;
 end;
 
-procedure TDBEngine.OpenDatabase(FileName: string; FileParams: string);
+procedure TDBEngine.OpenDatabase(AliasName: string; FileParams: string);
 var
-  EngineName, Resource, Host, User, Password, Role: string;
+  EngineName, Resource, Host, Port, User, Password, Role: string;
 begin
+  mncDB.Engines.DecomposeConnectionString(FileParams, EngineName, Resource, Host, Port, User, Password, Role);
+  if Resource = '' then
+  begin
+    OpenServer(FileParams);
+    Exit;
+  end;
+
+  Engine.ProcessRecentDatabase(Resource, FileParams);
+
   if DB.IsActive then
     DB.Close;
-  mncDB.Engines.DecomposeConnectionString(FileParams, EngineName, Resource, Host, User, Password, Role);
-  Engine.ProcessRecentDatabase(Resource, FileParams);
 
   //Setting.CacheMetas := CacheMetaChk.Checked;
   DB.Open(False, EngineName, Resource, User, Password, Role, False, False);
+
   Stack.Clear;
   Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', Resource));
   Run;
 end;
 
+procedure TDBEngine.OpenDatabase(Resource: string; EngineName, Host, Port, User, Password, Role: string);
+var
+  FileParams: string;
+begin
+  FileParams := mncDB.Engines.ComposeConnectionString(EngineName, Resource, Host, Port, User, Password, Role);
+  OpenDatabase(Resource, FileParams);
+end;
+
 procedure TDBEngine.OpenDatabase;
 var
-  EngineName, Resource, Host, User, Password, Role: string;
-  FileParams: string;
+  EngineName, Resource, Host, Port, User, Password, Role: string;
 begin
   with TOpenDatabaseForm.Create(Application) do
   begin
     if ShowModal = mrOK then
     begin
-      if DBEngine.DB.IsActive then
-        DBEngine.DB.Close;
-
-      DBEngine.Setting.CacheMetas := CacheMetaChk.Checked;
-
       EngineName := (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name;
 
       Host := HostEdit.Text;
+      Port := PortEdit.Text;
       Resource := DatabaseCbo.Text;
       User := UserEdit.Text;
       Password := PasswordEdit.Text;
       Role := RoleEdit.Text;
       //ExclusiveChk.Checked,
-      //VacuumChk.Checked,
-      FileParams := mncDB.Engines.ComposeConnectionString(EngineName, Resource, Host, User, Password, Role);
-      Engine.ProcessRecentDatabase(Resource, FileParams);
-      DB.Open(False, EngineName, Resource, User, Password, Role, False, False);
-      DBEngine.Stack.Clear;
-      DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabaseCbo.Text));
-      DBEngine.Run;
+      OpenDatabase(EngineName, Resource, Host, Port, User, Password, Role);
     end;
   end;
 end;
@@ -1018,8 +1050,7 @@ begin
       if DBEngine.DB.IsActive then
         DBEngine.DB.Close;
 
-      DBEngine.Setting.CacheMetas := CacheMetaChk.Checked;
-      DBEngine.DB.Open(True, (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name, DatabaseCbo.Text, UserEdit.Text, PasswordEdit.Text, RoleEdit.Text, ExclusiveChk.Checked, VacuumChk.Checked);
+      DBEngine.DB.Open(True, (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name, DatabaseCbo.Text, UserEdit.Text, PasswordEdit.Text, RoleEdit.Text, ExclusiveChk.Checked);
       DBEngine.Stack.Clear;
       DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabaseCbo.Text));
       DBEngine.Run(DBEngine.Stack);
@@ -1194,6 +1225,7 @@ begin
   inherited Create;
   FCSVQuoteChar := '"';
   FCSVDelimiterChar := ';';
+  FCacheMetas := True;
 end;
 
 { TsqlvDB }

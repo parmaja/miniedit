@@ -172,7 +172,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item10>
     </RequiredPackages>
-    <Units Count="60">
+    <Units Count="59">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -502,10 +502,6 @@
         <Filename Value="..\db\sqlvEngines.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit58>
-      <Unit59>
-        <Filename Value="..\db\sqlvConnectServers.lfm"/>
-        <IsPartOfProject Value="True"/>
-      </Unit59>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

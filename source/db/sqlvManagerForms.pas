@@ -62,7 +62,6 @@ type
     procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
     procedure GroupsListKeyPress(Sender: TObject; var Key: char);
     procedure GroupsListSelect(Sender: TObject);
-    procedure MembersGridClick(Sender: TObject);
     procedure MembersGridDblClick(Sender: TObject);
     procedure MembersGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure MembersGridUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
@@ -271,10 +270,7 @@ begin
   if (DatabasesGrid.RowsCount > 0) and (DatabasesGrid.Current.Row >= 0) then
   begin
     aDatabase := DatabasesGrid.Values[0, DatabasesGrid.Current.Row];
-    DBEngine.DB.Open(False, DBEngine.Server.Engine.Name, aDatabase, DBEngine.Server.Info.UserName, DBEngine.Server.Info.Password, DBEngine.Server.Info.Role);
-    DBEngine.Stack.Clear;
-    DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', aDatabase));
-    DBEngine.Run;
+    DBEngine.OpenDatabase(aDatabase, DBEngine.Server.Engine.Name, DBEngine.Server.Info.Host, DBEngine.Server.Info.Port, DBEngine.Server.Info.UserName, DBEngine.Server.Info.Password, DBEngine.Server.Info.Role);
   end;
 end;
 
@@ -313,11 +309,6 @@ end;
 procedure TsqlvManagerForm.GroupsListSelect(Sender: TObject);
 begin
   OpenGroup(GroupsNames[GroupsList.ItemIndex].Name);
-end;
-
-procedure TsqlvManagerForm.MembersGridClick(Sender: TObject);
-begin
-
 end;
 
 procedure TsqlvManagerForm.MembersGridDblClick(Sender: TObject);

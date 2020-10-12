@@ -55,6 +55,11 @@ type
     TabIndex: integer;
   end;
 
+  TRecentMenuItem = class(TMenuItem)
+  public
+    Params: string;
+  end;
+
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine, IEditorNotifyEngine)
@@ -753,7 +758,7 @@ end;
 
 procedure TMainForm.DBBrowseActExecute(Sender: TObject);
 begin
-  DBEngine.ConnectServer;
+  DBEngine.OpenServer;
 end;
 
 procedure TMainForm.DBConnectActExecute(Sender: TObject);
@@ -1473,7 +1478,7 @@ end;
 procedure TMainForm.EnumRecentFiles;
 var
   i, c: integer;
-  aMenuItem: TMenuItem;
+  aMenuItem: TRecentMenuItem;
 begin
   ReopenFilesMnu.SubMenuImages := EditorResource.FileImages;
   ReopenFilesMnu.Clear;
@@ -1482,9 +1487,13 @@ begin
     c := 10;
   for i := 0 to c - 1 do
   begin
-    aMenuItem := TMenuItem.Create(Self);
+    aMenuItem := TRecentMenuItem.Create(Self);
     aMenuItem.Caption := Engine.Options.RecentFiles[i].Name;
-    aMenuItem.Hint := aMenuItem.Caption;
+    aMenuItem.Params := Engine.Options.RecentFiles[i].Params;
+    if aMenuItem.Params <> '' then
+      aMenuItem.Hint := aMenuItem.Params
+    else
+      aMenuItem.Hint := aMenuItem.Caption;
     aMenuItem.OnClick := @ReopenFileClick;
     aMenuItem.ImageIndex :=  EditorResource.GetFileImageIndex(aMenuItem.Caption, 1);
     ReopenFilesMnu.Add(aMenuItem);
@@ -1494,7 +1503,7 @@ end;
 procedure TMainForm.EnumRecentDatbases;
 var
   i, c: integer;
-  aMenuItem: TMenuItem;
+  aMenuItem: TRecentMenuItem;
 begin
   ReconnectDatabasesMnu.SubMenuImages := EditorResource.FileImages;
   ReconnectDatabasesMnu.Clear;
@@ -1503,9 +1512,10 @@ begin
     c := 10;
   for i := 0 to c - 1 do
   begin
-    aMenuItem := TMenuItem.Create(Self);
+    aMenuItem := TRecentMenuItem.Create(Self);
     aMenuItem.Caption := Engine.Options.RecentDatabases[i].Name;
-    aMenuItem.Hint := aMenuItem.Caption;
+    aMenuItem.Params := Engine.Options.RecentDatabases[i].Params;
+    aMenuItem.Hint := aMenuItem.Params;
     aMenuItem.OnClick := @ReopenDatabaseClick;
     //aMenuItem.ImageIndex :=  EditorResource.GetFileImageIndex(aMenuItem.Caption, 1);
     ReconnectDatabasesMnu.Add(aMenuItem);
@@ -1545,17 +1555,9 @@ begin
 end;
 
 procedure TMainForm.ReopenDatabaseClick(Sender: TObject);
-var
-  aFile: string;
-  Index: Integer;
 begin
-  if Sender is TMenuItem then
-  begin
-    //aFile := (Sender as TMenuItem).Tag;
-    //if Engine.Session.Active then
-    //  aFile := ExpandToPath(aFile, Engine.Session.Project.RunOptions.MainFolder);
-    //DBEngine.OpenDatabase();
-  end;
+  if Sender is TRecentMenuItem then
+    DBEngine.OpenDatabase((Sender as TRecentMenuItem).Caption, (Sender as TRecentMenuItem).Params);
 end;
 
 procedure TMainForm.ReopenFolderClick(Sender: TObject);

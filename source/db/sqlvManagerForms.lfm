@@ -112,7 +112,6 @@ object sqlvManagerForm: TsqlvManagerForm
       RowSelect = True
       TabOrder = 1
       FullHeader = True
-      OnClick = MembersGridClick
       OnDblClick = MembersGridDblClick
       OnKeyDown = MembersGridKeyDown
     end
@@ -146,6 +145,7 @@ object sqlvManagerForm: TsqlvManagerForm
       EvenColor = clWindow
       FixedFontColor = clBlack
       Gutter = False
+      ParentShowHint = False
       PopupMenu = ActionsPopupMenu
       OddColor = clWindow
       ReadOnly = True
@@ -155,7 +155,6 @@ object sqlvManagerForm: TsqlvManagerForm
       RowSelect = True
       TabOrder = 0
       FullHeader = True
-      OnClick = MembersGridClick
       OnDblClick = DatabasesGridDblClick
       OnKeyDown = MembersGridKeyDown
     end

@@ -14,7 +14,6 @@ type
   TOpenDatabaseForm = class(TForm)
     AnsiCodePageChk: TCheckBox;
     BrowseBtn: TButton;
-    CacheMetaChk: TCheckBox;
     SavePasswordChk: TCheckBox;
     CancelBtn: TButton;
     DatabaseCbo: TComboBox;
@@ -34,7 +33,6 @@ type
     UserEdit: TEdit;
     PasswordEdit: TEdit;
     RoleEdit: TEdit;
-    VacuumChk: TCheckBox;
     procedure BrowseBtnClick(Sender: TObject);
     procedure CancelBtnClick(Sender: TObject);
     procedure DatabaseCboSelect(Sender: TObject);
@@ -74,12 +72,12 @@ end;
 
 procedure TOpenDatabaseForm.DatabaseCboSelect(Sender: TObject);
 var
-  EngineName, Resource, Host, User, Password, Role: string;
+  EngineName, Resource, Host, Port, User, Password, Role: string;
   aEngine: TmncEngine;
 begin
   if DatabaseCbo.ItemIndex >=0 then
   begin
-    Engines.DecomposeConnectionString(DBEngine.Recents[DatabaseCbo.ItemIndex], EngineName, Resource, Host, User, Password, Role);
+    Engines.DecomposeConnectionString(DBEngine.Recents[DatabaseCbo.ItemIndex], EngineName, Resource, Host, Port, User, Password, Role);
     if EngineName <> '' then
     begin
       aEngine := Engines.Find(EngineName);
@@ -103,12 +101,12 @@ end;
 constructor TOpenDatabaseForm.Create(TheOwner: TComponent);
 var
   i: Integer;
-  EngineName, Resource, Host, User, Password, Role: string;
+  EngineName, Resource, Host, Port, User, Password, Role: string;
 begin
   inherited Create(TheOwner);
   for i := 0 to DBEngine.Recents.Count -1 do
   begin
-    Engines.DecomposeConnectionString(DBEngine.Recents[i], EngineName, Resource, Host, User, Password, Role);
+    Engines.DecomposeConnectionString(DBEngine.Recents[i], EngineName, Resource, Host, Port, User, Password, Role);
     DatabaseCbo.Items.Add(Resource);
   end;
 end;

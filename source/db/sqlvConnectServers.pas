@@ -37,7 +37,7 @@ type
 implementation
 
 uses
-  sqlvEngines;
+  EditorEngine, sqlvEngines;
 
 {$R *.lfm}
 
