@@ -1844,7 +1844,7 @@ object MainForm: TMainForm
       end
     end
     object DatabaseMnu: TMenuItem
-      Caption = 'Data'
+      Caption = 'Database'
       object MenuItem33: TMenuItem
         Action = DBBrowseAct
         Caption = 'Connect Server'
@@ -3045,6 +3045,7 @@ object MainForm: TMainForm
   object ApplicationProperties: TApplicationProperties
     ExceptionDialog = aedOkMessageBox
     OnActivate = ApplicationPropertiesActivate
+    OnHint = ApplicationPropertiesHint
     OnShowHint = ApplicationPropertiesShowHint
     Left = 73
     Top = 116

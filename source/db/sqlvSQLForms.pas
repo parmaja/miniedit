@@ -284,7 +284,7 @@ begin
     HaveHeader := cols > 0;
     if not HaveHeader then
     begin
-      cols := SQLCMD.Fields.Count;
+      cols := SQLCMD.Columns.Count;
     end;
     setLength(max, cols);
     setLength(IsNumbers, cols);

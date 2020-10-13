@@ -3,11 +3,12 @@ object sqlvManagerForm: TsqlvManagerForm
   Height = 445
   Top = 0
   Width = 275
+  Align = alLeft
   ClientHeight = 445
   ClientWidth = 275
   TabOrder = 0
-  DesignLeft = 197
-  DesignTop = 249
+  DesignLeft = 462
+  DesignTop = 257
   object GroupPanel: TPanel
     Left = 0
     Height = 314
@@ -21,19 +22,19 @@ object sqlvManagerForm: TsqlvManagerForm
     TabOrder = 0
     object GroupsPanel: TPanel
       Left = 3
-      Height = 49
+      Height = 76
       Top = 3
       Width = 269
       Align = alTop
       BorderSpacing.Around = 1
       BevelOuter = bvNone
-      ClientHeight = 49
+      ClientHeight = 76
       ClientWidth = 269
       TabOrder = 0
       object GroupsList: TComboBox
         Left = 0
         Height = 23
-        Top = 26
+        Top = 53
         Width = 269
         Align = alBottom
         Anchors = [akTop, akLeft, akRight]
@@ -45,8 +46,8 @@ object sqlvManagerForm: TsqlvManagerForm
       end
       object BackBtn: TButton
         Left = 171
-        Height = 26
-        Top = 0
+        Height = 29
+        Top = 24
         Width = 51
         Align = alRight
         Anchors = [akTop, akRight]
@@ -57,8 +58,8 @@ object sqlvManagerForm: TsqlvManagerForm
       end
       object FirstBtn: TButton
         Left = 222
-        Height = 26
-        Top = 0
+        Height = 29
+        Top = 24
         Width = 47
         Align = alRight
         Anchors = [akTop, akRight]
@@ -69,8 +70,8 @@ object sqlvManagerForm: TsqlvManagerForm
       end
       object OpenBtn: TButton
         Left = 0
-        Height = 26
-        Top = 0
+        Height = 29
+        Top = 24
         Width = 55
         Align = alLeft
         AutoSize = True
@@ -78,23 +79,44 @@ object sqlvManagerForm: TsqlvManagerForm
         OnClick = OpenBtnClick
         TabOrder = 3
       end
-    end
-    object MetaLbl: TLabel
-      Left = 4
-      Height = 22
-      Top = 54
-      Width = 267
-      Align = alTop
-      AutoSize = False
-      BorderSpacing.Around = 2
-      Caption = 'Title'
-      Layout = tlCenter
-      ParentColor = False
+      object Panel1: TPanel
+        Left = 0
+        Height = 24
+        Top = 0
+        Width = 269
+        Align = alTop
+        BevelOuter = bvNone
+        ClientHeight = 24
+        ClientWidth = 269
+        TabOrder = 4
+        object DatabaseLbl: TLabel
+          Left = 26
+          Height = 20
+          Top = 2
+          Width = 241
+          Align = alClient
+          AutoSize = False
+          BorderSpacing.Around = 2
+          Caption = 'No database opened'
+          Layout = tlCenter
+          ParentColor = False
+        end
+        object DatabaseImage: TntvImgBtn
+          Left = 0
+          Height = 24
+          Top = 0
+          Width = 24
+          Images = EditorResource.FileImages
+          ImageIndex = 13
+          Align = alLeft
+          AutoCheck = False
+        end
+      end
     end
     object MembersGrid: TntvGrid
       Left = 4
-      Height = 209
-      Top = 78
+      Height = 206
+      Top = 81
       Width = 267
       Align = alClient
       BorderSpacing.Around = 2
@@ -133,34 +155,44 @@ object sqlvManagerForm: TsqlvManagerForm
     Align = alTop
     Constraints.MinHeight = 100
     ResizeStyle = nrsUpdate
-    object DatabasesGrid: TntvGrid
-      Left = 2
-      Height = 119
-      Top = 2
-      Width = 271
+    object DatabasesList: TListView
+      Left = 3
+      Height = 117
+      Top = 3
+      Width = 269
       Align = alClient
-      BorderSpacing.Around = 2
-      BorderStyle = bsSingle
-      ColWidth = 80
-      EvenColor = clWindow
-      FixedFontColor = clBlack
-      Gutter = False
-      ParentShowHint = False
-      PopupMenu = ActionsPopupMenu
-      OddColor = clWindow
+      AutoWidthLastColumn = True
+      BorderSpacing.Around = 3
+      Columns = <      
+        item
+          Caption = 'File Name'
+          Width = 265
+        end>
+      HideSelection = False
+      ParentColor = True
+      PopupMenu = DatabaseMenu
       ReadOnly = True
-      RowHeight = 22
-      ScrollBars = ssAutoVertical
-      Selected.TextColor = clHighlightText
       RowSelect = True
+      ShowColumnHeaders = False
+      SmallImages = EditorResource.FileImages
       TabOrder = 0
-      FullHeader = True
-      OnDblClick = DatabasesGridDblClick
-      OnKeyDown = MembersGridKeyDown
+      ViewStyle = vsReport
+      OnDblClick = DatabasesListDblClick
     end
   end
   object ActionsPopupMenu: TPopupMenu
     Left = 79
     Top = 274
+  end
+  object DatabaseMenu: TPopupMenu
+    Left = 52
+    Top = 37
+    object MenuItem1: TMenuItem
+      Caption = 'Open'
+      OnClick = MenuItem1Click
+    end
+    object MenuItem2: TMenuItem
+      Caption = 'Close'
+    end
   end
 end

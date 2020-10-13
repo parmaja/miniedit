@@ -289,6 +289,7 @@ type
   IsqlvNotify = Interface(IInterface)
     ['{E6F8D9BD-F716-4758-8B08-DDDBD3FA1732}']
     procedure ServerChanged; virtual; abstract;
+    procedure DatabaseChanged; virtual; abstract;
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean); virtual; abstract;
     procedure LoadEditor(vAddon: TsqlvAddon; S: string); virtual; abstract;
   end;
@@ -352,7 +353,6 @@ type
     FDB: TsqlvDB;
     FEngines: TStringLIst;
     FSetting: TsqlvSetting;
-    FRecents: TStringList;
     FStack: TsqlvStack;
     FHistory: TsqlvAddonHistory;
     FSQLHistory: TsqlvSQLHistory;
@@ -368,6 +368,7 @@ type
     procedure OpenDatabase(AliasName: string; FileParams: string);
     procedure OpenDatabase(Resource: string; EngineName, Host, Port, User, Password, Role: string);
     procedure OpenDatabase;
+    procedure CloseDatabase;
     procedure CreateDatabase;
 
     procedure LoadOptions;
@@ -381,18 +382,17 @@ type
     //procedure Run(vGroup, vName, vValue: string; vSelect: string = '');
     procedure RegisterFilter(Filter: string);
     procedure RegisterViewer(Classes: array of TsqlvAddonClass);
-    procedure AddRecent(Name:string);
     procedure LoadFile(FileName:string; Strings: TStrings);
     procedure SaveFile(FileName:string; Strings: TStrings);
     function GetAllSupportedFiles: string;
 
     procedure ServerChanged;
+    procedure DatabaseChanged;
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
     procedure LoadEditor(vAddon: TsqlvAddon; S: string);
     procedure LoadEditor(vAddon: TsqlvAddon; S: TStringList);
 
     property Setting: TsqlvSetting read FSetting;
-    property Recents: TStringList read FRecents;
     property Engines: TStringLIst read FEngines;
     property DB: TsqlvDB read FDB;
     property History: TsqlvAddonHistory read FHistory;
@@ -411,7 +411,6 @@ const
   sFileNameFilter = '*.sqlite; *.fdb';
   sFileExtFilter = 'sqlite';
   sqlvConfig = 'mne.sqlviewer.config';
-  sqlvRecents = 'mne.sqlviewer.recents';
 
 implementation
 
@@ -651,20 +650,6 @@ begin
     Add(Classes[i].Create);
 end;
 
-procedure TDBEngine.AddRecent(Name: string);
-var
-  i: Integer;
-begin
-  i := Recents.IndexOf(Name);
-  if i > 0 then
-    Recents.Move(i, 0)
-  else if i < 0 then
-    Recents.Insert(0, Name);
-  if Recents.Count > 10 then
-    Recents.Capacity := 10;
-  FRecents.SaveToFile(Engine.WorkSpace + sqlvRecents);
-end;
-
 procedure TDBEngine.LoadFile(FileName: string; Strings: TStrings);
 begin
   if FileExists(Engine.WorkSpace + FileName) then
@@ -679,7 +664,6 @@ end;
 procedure TDBEngine.SaveOptions;
 begin
   FSetting.SaveToFile(Engine.WorkSpace + sqlvConfig);
-  FRecents.SaveToFile(Engine.WorkSpace + sqlvRecents);
 end;
 
 procedure TDBEngine.ChangeState(State: TEditorChangeStates);
@@ -915,7 +899,6 @@ begin
   FStack := TsqlvStack.Create;
   FSQLHistory := TsqlvSQLHistory.Create;
   FSetting := TsqlvSetting.Create;
-  FRecents := TStringList.Create;
   FDB := TsqlvDB.Create;
   Engine.RegisterNotify(Self);
   FEngines:=TStringList.Create;
@@ -927,7 +910,6 @@ begin
   Engine.UnregisterNotify(Self);
   FreeAndNil(FDB);
   FreeAndNil(FSetting);
-  FreeAndNil(FRecents);
   FreeAndNil(FHistory);
   FreeAndNil(FSQLHistory);
   FreeAndNil(FEngines);
@@ -943,24 +925,26 @@ begin
   Server.Engine := mncDB.Engines.Find(EngineName);
 
   Server.Info.Host := Host;
-  if Server.Info.Host = '' then
-  begin
-    if (ccPath in Server.Engine.ConnectionClass.Capabilities) then
-      Server.Info.Host := Engine.BrowseFolder
-    else
-      Server.Info.Host := 'localhost';
-  end;
-  //Server.Info.Port := Port;
+  Server.Info.Port := Port;
   Server.Info.UserName := User;
-  Server.Info.Role := Role;
   Server.Info.Password := Password;
+  Server.Info.Role := Role;
 
-  AliasName := EngineName + '@' + Server.Info.Host;
-  if Server.Info.Port <> '' then
-    AliasName := AliasName + ':' + Server.Info.Port;
+  if Server.Info.Host = '' then
+    Server.Info.Host := 'localhost';
+
+  if (ccPath in Server.Engine.ConnectionClass.Capabilities) and not (ccNetwork in Server.Engine.ConnectionClass.Capabilities) then
+  begin
+    AliasName := ExtractFilePath(Resource);
+  end
+  else
+  begin
+    AliasName := '@' + EngineName + ':' + Server.Info.Host;
+    if Server.Info.Port <> '' then
+      AliasName := AliasName + ':' + Server.Info.Port;
+  end;
   Engine.ProcessRecentDatabase(AliasName, FileParams);
 
-//  Stack.Clear;
   ServerChanged;
 end;
 
@@ -978,8 +962,8 @@ begin
       Host := HostEdit.Text;
       Port := PortEdit.Text;
       User := UserEdit.Text;
-      Role := RoleEdit.Text;
       Password := PasswordEdit.Text;
+      Role := RoleEdit.Text;
 
       FileParams := mncDB.Engines.ComposeConnectionString(EngineName, '', Host, Port, User, Password, Role);
       OpenServer(FileParams);
@@ -990,6 +974,8 @@ end;
 procedure TDBEngine.OpenDatabase(AliasName: string; FileParams: string);
 var
   EngineName, Resource, Host, Port, User, Password, Role: string;
+  aName: string;
+  AEngine: TmncEngine;
 begin
   mncDB.Engines.DecomposeConnectionString(FileParams, EngineName, Resource, Host, Port, User, Password, Role);
   if Resource = '' then
@@ -998,14 +984,31 @@ begin
     Exit;
   end;
 
-  Engine.ProcessRecentDatabase(Resource, FileParams);
+  AEngine := mncDB.Engines.Find(EngineName);
+
+  if (ccPath in AEngine.ConnectionClass.Capabilities) and
+     (not (ccNetwork in AEngine.ConnectionClass.Capabilities) or (Host = '')) then
+  begin
+    Engine.ProcessRecentDatabase(Resource, FileParams); //sqlite, or firebird as file
+  end
+  else
+  begin
+    aName := Resource + '@' + EngineName + ':';
+    if Host = '' then
+      aName := aName + 'localhost'
+    else if Port <> '' then
+      aName := aName + Host + ':' + Port
+    else
+      aName := aName + Host;
+    Engine.ProcessRecentDatabase(aName, FileParams);//sqlite, or firebird as file
+  end;
 
   if DB.IsActive then
     DB.Close;
 
   //Setting.CacheMetas := CacheMetaChk.Checked;
   DB.Open(False, EngineName, Resource, User, Password, Role, False, False);
-
+  DatabaseChanged;
   Stack.Clear;
   Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', Resource));
   Run;
@@ -1031,14 +1034,21 @@ begin
 
       Host := HostEdit.Text;
       Port := PortEdit.Text;
-      Resource := DatabaseCbo.Text;
+      Resource := DatabaseEdit.Text;
       User := UserEdit.Text;
       Password := PasswordEdit.Text;
       Role := RoleEdit.Text;
       //ExclusiveChk.Checked,
-      OpenDatabase(EngineName, Resource, Host, Port, User, Password, Role);
+      OpenDatabase(Resource, EngineName, Host, Port, User, Password, Role);
     end;
   end;
+end;
+
+procedure TDBEngine.CloseDatabase;
+begin
+  if DB.IsActive then
+    DB.Close;
+  DatabaseChanged;
 end;
 
 procedure TDBEngine.CreateDatabase;
@@ -1050,9 +1060,9 @@ begin
       if DBEngine.DB.IsActive then
         DBEngine.DB.Close;
 
-      DBEngine.DB.Open(True, (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name, DatabaseCbo.Text, UserEdit.Text, PasswordEdit.Text, RoleEdit.Text, ExclusiveChk.Checked);
+      DBEngine.DB.Open(True, (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name, DatabaseEdit.Text, UserEdit.Text, PasswordEdit.Text, RoleEdit.Text, ExclusiveChk.Checked);
       DBEngine.Stack.Clear;
-      DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabaseCbo.Text));
+      DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabaseEdit.Text));
       DBEngine.Run(DBEngine.Stack);
     end;
   end;
@@ -1102,6 +1112,11 @@ begin
   FNotifyObject.ServerChanged;
 end;
 
+procedure TDBEngine.DatabaseChanged;
+begin
+  FNotifyObject.DatabaseChanged;
+end;
+
 procedure TDBEngine.ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
 begin
   FNotifyObject.ShowMeta(vAddon, vSelectDefault);
@@ -1120,8 +1135,6 @@ end;
 procedure TDBEngine.LoadOptions;
 begin
   FSetting.SafeLoadFromFile(Engine.WorkSpace + sqlvConfig);
-  if FileExists(Engine.WorkSpace + sqlvRecents) then
-    FRecents.LoadFromFile(Engine.WorkSpace + sqlvRecents);
 end;
 
 { TsqlvCustomHistory }
@@ -1314,8 +1327,6 @@ begin
   Connection.Role := Role;
   //Connection.AutoCreate := vAutoCreate;
   //DBConnection.Exclusive := FExclusive;//TODO
-
-  DBEngine.AddRecent(Engines.ComposeConnectionString(Connection));
 
   FSession := FConnection.CreateSession;
 

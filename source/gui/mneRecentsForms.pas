@@ -11,8 +11,8 @@ unit mneRecentsForms;
 interface
 
 uses
-  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Menus, Dialogs, ComCtrls, StdCtrls, mneClasses, sqlvEngines, Types;
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, Menus,
+  Dialogs, ComCtrls, StdCtrls, mneClasses, sqlvEngines, EditorClasses, Types;
 
 type
 
@@ -198,11 +198,12 @@ begin
       if RDatabasesList.ItemIndex >= 0 then
       begin
         Old := RDatabasesList.ItemIndex;
-        DBEngine.Recents.Delete(RDatabasesList.ItemIndex);
+        Engine.Options.RecentDatabases.Delete(RDatabasesList.ItemIndex);
         EnumRecentDatabases;
         ChangeToIndex(RDatabasesList, Old);
       end;
   end;
+  Engine.UpdateState([ecsRecents]);
 end;
 
 procedure TManageRecentsForm.OpenNow;
@@ -294,9 +295,9 @@ var
   i: integer;
 begin
   RDatabasesList.Clear;
-  for i := 0 to DBEngine.Recents.Count - 1 do
+  for i := 0 to Engine.Options.RecentDatabases.Count - 1 do
   begin
-    RDatabasesList.Items.Add(DBEngine.Recents[i]);
+    RDatabasesList.Items.Add(Engine.Options.RecentDatabases[i].Name);
   end;
 end;
 

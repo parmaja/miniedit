@@ -400,6 +400,7 @@ type
     N16: TMenuItem;
     procedure AnsiMnuClick(Sender: TObject);
     procedure ApplicationPropertiesActivate(Sender: TObject);
+    procedure ApplicationPropertiesHint(Sender: TObject);
     procedure ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
     procedure CallStackGridDblClick(Sender: TObject);
     procedure ChangeExtActExecute(Sender: TObject);
@@ -845,6 +846,14 @@ procedure TMainForm.ApplicationPropertiesActivate(Sender: TObject);
 begin
   if not (csLoading in ComponentState) then
     Engine.Files.CheckChanged;
+end;
+
+procedure TMainForm.ApplicationPropertiesHint(Sender: TObject);
+begin
+  //if  is TMenuItem then
+  begin
+    //MessageLabel.Caption := Application.Hint; //TODO
+  end;
 end;
 
 procedure TMainForm.AnsiMnuClick(Sender: TObject);
@@ -1504,6 +1513,7 @@ procedure TMainForm.EnumRecentDatbases;
 var
   i, c: integer;
   aMenuItem: TRecentMenuItem;
+  EngineName, Resource, Host, Port, User, Password, Role: string;
 begin
   ReconnectDatabasesMnu.SubMenuImages := EditorResource.FileImages;
   ReconnectDatabasesMnu.Clear;
@@ -1512,12 +1522,14 @@ begin
     c := 10;
   for i := 0 to c - 1 do
   begin
+    mncDB.Engines.DecomposeConnectionString(Engine.Options.RecentDatabases[i].Params, EngineName, Resource, Host, Port, User, Password, Role);
+
     aMenuItem := TRecentMenuItem.Create(Self);
     aMenuItem.Caption := Engine.Options.RecentDatabases[i].Name;
     aMenuItem.Params := Engine.Options.RecentDatabases[i].Params;
     aMenuItem.Hint := aMenuItem.Params;
     aMenuItem.OnClick := @ReopenDatabaseClick;
-    //aMenuItem.ImageIndex :=  EditorResource.GetFileImageIndex(aMenuItem.Caption, 1);
+    aMenuItem.ImageIndex :=  EditorResource.GetImageIndex(EngineName, cDatabaseImage);
     ReconnectDatabasesMnu.Add(aMenuItem);
   end;
 end;
@@ -2062,7 +2074,12 @@ procedure TMainForm.ManageActExecute(Sender: TObject);
 begin
   with TManageRecentsForm.Create(Application) do
   begin
-    ShowModal;
+    Engine.BeginUpdate;
+    try
+      ShowModal;
+    finally
+      Engine.EndUpdate;
+    end;
   end;
 end;
 

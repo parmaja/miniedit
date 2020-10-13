@@ -18,9 +18,9 @@ object ManageRecentsForm: TManageRecentsForm
     Height = 298
     Top = 3
     Width = 468
-    ActivePage = TabSheet1
+    ActivePage = TabSheet4
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 0
+    TabIndex = 3
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Projects'
@@ -99,7 +99,7 @@ object ManageRecentsForm: TManageRecentsForm
       end
     end
     object TabSheet3: TTabSheet
-      Caption = 'Recent files'
+      Caption = 'Recent Files'
       ClientHeight = 272
       ClientWidth = 460
       ImageIndex = 2
@@ -116,7 +116,7 @@ object ManageRecentsForm: TManageRecentsForm
       end
     end
     object TabSheet4: TTabSheet
-      Caption = 'Databases'
+      Caption = 'Recent Databases'
       ClientHeight = 272
       ClientWidth = 460
       object RDatabasesList: TListBox

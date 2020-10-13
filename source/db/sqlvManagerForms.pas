@@ -22,20 +22,22 @@ uses
   mncSQL, SynCompletion, SynEditAutoComplete, SynHighlighterHashEntries,
   mnUtils, mncMeta, mncCSVExchanges, mnSynHighlighterStdSQL, mncMySQL,
   mncPostgre, mncSQLite, mncSQLiteMeta, mncPGMeta, mncFBMeta, ntvGrids,
-  ntvPanels, sqlvEngines, sqlvStdClasses, LMessages, ComCtrls,
-  EditorEngine;
+  ntvPanels, ntvImgBtns, sqlvEngines, sqlvStdClasses, LMessages, ComCtrls,
+  EditorEngine, mneResources;
 
 type
 
   { TsqlvManagerForm }
 
   TsqlvManagerForm = class(TFrame, IsqlvNotify)
+    DatabaseImage: TntvImgBtn;
+    DatabaseLbl: TLabel;
+    DatabaseMenu: TPopupMenu;
     BackBtn: TButton;
     CacheMetaChk1: TCheckBox;
     Edit1: TEdit;
+    DatabasesList: TListView;
     MembersGrid: TntvGrid;
-    DatabasesGrid: TntvGrid;
-    MetaLbl: TLabel;
     OpenBtn: TButton;
     FileMnu: TMenuItem;
     ExitMnu: TMenuItem;
@@ -47,6 +49,7 @@ type
     HelpMnu: TMenuItem;
     ActionsPopupMenu: TPopupMenu;
     DatabasesPnl: TntvPanel;
+    Panel1: TPanel;
     SaveMnu: TMenuItem;
     SaveAsMnu: TMenuItem;
     OpenMnu: TMenuItem;
@@ -56,7 +59,7 @@ type
     GroupPanel: TPanel;
     procedure BackBtnClick(Sender: TObject);
     procedure ConnectBtnClick(Sender: TObject);
-    procedure DatabasesGridDblClick(Sender: TObject);
+    procedure DatabasesListDblClick(Sender: TObject);
     procedure DisconnectBtnClick(Sender: TObject);
     procedure FirstBtnClick(Sender: TObject);
     procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
@@ -65,6 +68,7 @@ type
     procedure MembersGridDblClick(Sender: TObject);
     procedure MembersGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure MembersGridUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
+    procedure MenuItem1Click(Sender: TObject);
     procedure RefreshBtnClick(Sender: TObject);
     procedure MembersListDblClick(Sender: TObject);
     procedure MembersListKeyPress(Sender: TObject; var Key: char);
@@ -94,6 +98,7 @@ type
     procedure LoadActions(vGroup: string; Append: Boolean = False);
 
     procedure ServerChanged;
+    procedure DatabaseChanged;
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
     procedure LoadEditor(vAddon: TsqlvAddon; S: string);
   end;
@@ -116,7 +121,10 @@ var
   b: Boolean;
   aGroups: TsqlvAddons;
   aGroup: TsqlvAddon;
+  MetaName: string;
 begin
+  DatabaseLbl.Caption := DBEngine.DB.Connection.Resource;
+  MetaName := vAddon.Title + ': ' + DBEngine.Stack.Current.Attributes[DBEngine.Stack.Current.Addon.Name];
   aGroups := TsqlvAddons.Create;
   try
     DBEngine.Enum(vAddon.Name, aGroups, DBEngine.DB.IsActive);
@@ -164,7 +172,6 @@ begin
   finally
     aGroups.Free;
   end;
-  MetaLbl.Caption := vAddon.Title + ': ' + DBEngine.Stack.Current.Attributes[DBEngine.Stack.Current.Addon.Name];
 
   if aGroup <> nil then
     DBEngine.Stack.Current.Select := aGroup.Name;
@@ -263,13 +270,13 @@ procedure TsqlvManagerForm.ConnectBtnClick(Sender: TObject);
 begin
 end;
 
-procedure TsqlvManagerForm.DatabasesGridDblClick(Sender: TObject);
+procedure TsqlvManagerForm.DatabasesListDblClick(Sender: TObject);
 var
   aDatabase: string;
 begin
-  if (DatabasesGrid.RowsCount > 0) and (DatabasesGrid.Current.Row >= 0) then
+  if (DatabasesList.Selected <> nil) then
   begin
-    aDatabase := DatabasesGrid.Values[0, DatabasesGrid.Current.Row];
+    aDatabase := DatabasesList.Selected.Caption;
     DBEngine.OpenDatabase(aDatabase, DBEngine.Server.Engine.Name, DBEngine.Server.Info.Host, DBEngine.Server.Info.Port, DBEngine.Server.Info.UserName, DBEngine.Server.Info.Password, DBEngine.Server.Info.Role);
   end;
 end;
@@ -338,6 +345,11 @@ begin
   CheckSearch;
   FSearch := FSearch + UTF8Key;
   SearchFor(FSearch);
+end;
+
+procedure TsqlvManagerForm.MenuItem1Click(Sender: TObject);
+begin
+  DatabasesListDblClick(Sender);
 end;
 
 procedure TsqlvManagerForm.RefreshBtnClick(Sender: TObject);
@@ -461,20 +473,26 @@ var
   Meta: TmncMeta;
   Items: TmncMetaItems;
   Item: TmncMetaItem;
+  aListItem: TListItem;
+  EngineName: string;
 begin
+  DatabasesList.Items.BeginUpdate;
   Strings := TStringList.Create;
   try
+    DatabasesList.Clear;
     if (DBEngine.Server.Engine <> nil) and (DBEngine.Server.Engine.MetaClass <> nil) then
     begin
+      EngineName := DBEngine.Server.Engine.Name;
       Meta := DBEngine.Server.Engine.MetaClass.Create;
       Meta.ServerInfo := DBEngine.Server.Info;
       Items := TmncMetaItems.Create;
       try
         Meta.EnumDatabases(Items, [ekSort]);
-        DatabasesGrid.ColumnsCount := 1;
         for Item in Items do
         begin
-          DatabasesGrid.AddItem(Item.Name);
+          aListItem := DatabasesList.Items.Add;
+          aListItem.Caption := Item.Name;
+          aListItem.ImageIndex := EditorResource.GetImageIndex(EngineName, cDatabaseImage);
         end;
       finally
         Items.Free;
@@ -484,7 +502,22 @@ begin
     begin
     end;
   finally
-    Strings.Free
+    DatabasesList.EndUpdate;
+    Strings.Free;
+  end;
+end;
+
+procedure TsqlvManagerForm.DatabaseChanged;
+begin
+  if DBEngine.DB.IsActive then
+  begin
+    DatabaseLbl.Caption := DBEngine.DB.Connection.Resource;
+    DatabaseImage.ImageIndex := EditorResource.GetImageIndex(DBEngine.DB.Connection.EngineName, cDatabaseImage);
+  end
+  else
+  begin
+    DatabaseLbl.Caption := '';
+    DatabaseImage.ImageIndex := cDatabaseImage;
   end;
 end;
 

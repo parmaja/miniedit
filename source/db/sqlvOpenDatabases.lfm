@@ -19,7 +19,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
     Default = True
     ModalResult = 1
     OnClick = OkBtnClick
-    TabOrder = 9
+    TabOrder = 8
   end
   object CancelBtn: TButton
     Left = 249
@@ -31,7 +31,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
     Caption = '&Cancel'
     ModalResult = 2
     OnClick = CancelBtnClick
-    TabOrder = 10
+    TabOrder = 9
   end
   object Label1: TLabel
     Left = 7
@@ -41,16 +41,6 @@ object OpenDatabaseForm: TOpenDatabaseForm
     Caption = 'Database Name'
     ParentColor = False
   end
-  object DatabaseCbo: TComboBox
-    Left = 5
-    Height = 23
-    Top = 28
-    Width = 364
-    Anchors = [akTop, akLeft, akRight]
-    ItemHeight = 15
-    OnSelect = DatabaseCboSelect
-    TabOrder = 0
-  end
   object DatabaseEngineCbo: TComboBox
     Left = 94
     Height = 23
@@ -59,7 +49,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 15
     Style = csDropDownList
-    TabOrder = 1
+    TabOrder = 0
   end
   object BrowseBtn: TButton
     Left = 373
@@ -69,7 +59,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
     Anchors = [akTop, akRight]
     Caption = '...'
     OnClick = BrowseBtnClick
-    TabOrder = 11
+    TabOrder = 10
   end
   object ExclusiveChk: TCheckBox
     Left = 10
@@ -79,7 +69,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
     BidiMode = bdRightToLeftReadingOnly
     Caption = 'Open exclusive'
     ParentBidiMode = False
-    TabOrder = 7
+    TabOrder = 6
   end
   object AnsiCodePageChk: TCheckBox
     Left = 10
@@ -89,7 +79,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
     BidiMode = bdRightToLeftReadingOnly
     Caption = 'Ansi CodePage (current os)'
     ParentBidiMode = False
-    TabOrder = 8
+    TabOrder = 7
   end
   object Label3: TLabel
     Left = 7
@@ -105,7 +95,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
     Top = 86
     Width = 184
     Anchors = [akTop, akLeft, akRight]
-    TabOrder = 2
+    TabOrder = 1
   end
   object Label2: TLabel
     Left = 11
@@ -121,7 +111,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
     Top = 86
     Width = 102
     Anchors = [akTop, akRight]
-    TabOrder = 3
+    TabOrder = 2
   end
   object Label4: TLabel
     Left = 267
@@ -138,7 +128,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
     Top = 113
     Width = 184
     Anchors = [akTop, akLeft, akRight]
-    TabOrder = 4
+    TabOrder = 3
   end
   object Label5: TLabel
     Left = 11
@@ -156,7 +146,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
     Anchors = [akTop, akLeft, akRight]
     EchoMode = emPassword
     PasswordChar = '*'
-    TabOrder = 5
+    TabOrder = 4
   end
   object Label6: TLabel
     Left = 11
@@ -172,7 +162,7 @@ object OpenDatabaseForm: TOpenDatabaseForm
     Top = 113
     Width = 102
     Anchors = [akTop, akRight]
-    TabOrder = 6
+    TabOrder = 5
   end
   object Label7: TLabel
     Left = 268
@@ -192,6 +182,14 @@ object OpenDatabaseForm: TOpenDatabaseForm
     BidiMode = bdRightToLeftReadingOnly
     Caption = 'Save password'
     ParentBidiMode = False
+    TabOrder = 11
+  end
+  object DatabaseEdit: TEdit
+    Left = 5
+    Height = 23
+    Top = 28
+    Width = 364
+    Anchors = [akTop, akLeft, akRight]
     TabOrder = 12
   end
   object OpenDialog: TOpenDialog

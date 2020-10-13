@@ -32,6 +32,7 @@ type
   public
     Extensions: TEditorExtensions;
     function GetFileImageIndex(const FileName: string; DefaultImage: Integer): integer;
+    function GetImageIndex(const AName: string; DefaultImage: Integer): integer;
     procedure Switch(Style: TThemeStyle);
   end;
 
@@ -39,6 +40,8 @@ const
   DEBUG_IMAGE_EXECUTE = 0;
   DEBUG_IMAGE_BREAKPOINT = 1;
   DEBUG_IMAGE_MARGINES = 0;
+
+  cDatabaseImage = 13;
 
 var
   EditorResource: TEditorResource = nil;
@@ -66,8 +69,19 @@ begin
     if Extension <> nil then
       Result := Extension.ImageIndex
     else
-      Result := 1;
+      Result := DefaultImage;
   end;
+end;
+
+function TEditorResource.GetImageIndex(const AName: string; DefaultImage: Integer): integer;
+var
+  Extension: TEditorExtension;
+begin
+  Extension := Extensions.Find(LowerCase(AName));
+  if Extension <> nil then
+    Result := Extension.ImageIndex
+  else
+    Result := DefaultImage;
 end;
 
 procedure TEditorResource.Switch(Style: TThemeStyle);
@@ -112,6 +126,11 @@ end;
 
 {$R *.lfm}
 
+procedure TEditorResource.DataModuleDestroy(Sender: TObject);
+begin
+  FreeAndNil(Extensions);
+end;
+
 procedure TEditorResource.DataModuleCreate(Sender: TObject);
 begin
   Extensions := TEditorExtensions.Create(true);
@@ -131,13 +150,14 @@ begin
   Extensions.Add('bat', 10);
   Extensions.Add('go', 11);
   Extensions.Add('sql', 12);
-  Extensions.Add('sqlite', 13);
-  Extensions.Add('fdb', 13);
-end;
-
-procedure TEditorResource.DataModuleDestroy(Sender: TObject);
-begin
-  FreeAndNil(Extensions);
+  Extensions.Add('db', cDatabaseImage);
+  Extensions.Add('postgresql', 14);
+  Extensions.Add('postgre', 14);
+  Extensions.Add('sqlite', 15);
+  Extensions.Add('fdb', 16);
+  Extensions.Add('firebirdsql', 16);
+  Extensions.Add('firebird', 16);
+  Extensions.Add('mysql', 17);
 end;
 
 end.
