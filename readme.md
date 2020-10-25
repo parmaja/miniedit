@@ -80,6 +80,9 @@ Open each package in Lazarus and compile it in order.
 #### Competitions
 
 Notepad++ https://notepad-plus-plus.org/
+
 Geany https://www.geany.org/
+
 Textadept https://foicica.com/textadept/
+
 CudaText http://uvviewsoft.com/cudatext/
