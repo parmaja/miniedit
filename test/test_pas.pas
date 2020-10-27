@@ -1,10 +1,10 @@
-Program zaher;
-Uses
+program test_pas;
+uses
   SysUtils;
-Var
+var
   s: String;
   x: Integer;
-Begin
+begin
   x := 10;
   Writeln(x);
   x := x + 10;
@@ -14,4 +14,4 @@ Begin
   Writeln('Bye');
   Writeln('Press Enter to exit');
   //ReadLn();
-End.
+end.
