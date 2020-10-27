@@ -22,7 +22,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, ExtCtrls, StdCtrls, FileUtil,
   mncSQL,
-  LCLType, Graphics, Menus, Buttons, ComCtrls, EditorEngine, sqlvManagerForms,
+  LCLType, Graphics, Menus, Buttons, ComCtrls, EditorEngine, sqlvManagerForms, ParamsForms,
   sqlvEngines, IniFiles, ntvTabSets, MsgBox, mnStreams, ntvGrids,
   ntvPageControls, mncConnections, mncCSV;
 
@@ -394,10 +394,14 @@ begin
   begin
     CMD := DBEngine.DB.Session.CreateCommand;
     CMD.SQL.Text := SQLEdit.Text;
-    CMD.Execute;
     try
-      PageControl.ActiveControl := DataPnl;
-      FillGrid(CMD, 'Data');
+      CMD.Prepare;
+      if (CMD.Params.Count = 0) or ShowSQLParams(CMD) then
+      begin
+        CMD.Execute;
+        PageControl.ActiveControl := DataPnl;
+        FillGrid(CMD, 'Data');
+      end;
     finally
       CMD.Close;
       CMD.Free;
