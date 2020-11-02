@@ -946,6 +946,7 @@ begin
   Engine.ProcessRecentDatabase(AliasName, FileParams);
 
   ServerChanged;
+  Engine.SendAction(eaShowDatabases);
 end;
 
 procedure TDBEngine.OpenServer;
@@ -1012,6 +1013,7 @@ begin
   Stack.Clear;
   Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', Resource));
   Run;
+  Engine.SendAction(eaShowDatabases);
 end;
 
 procedure TDBEngine.OpenDatabase(Resource: string; EngineName, Host, Port, User, Password, Role: string);

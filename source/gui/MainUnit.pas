@@ -73,7 +73,7 @@ type
     DatabasePnl: TntvPanel;
     FileList: TListView;
     FolderCloseBtn1: TntvImgBtn;
-    FolderPanel: TPanel;
+    FolderPnl: TPanel;
     FolderPathLbl: TLabel;
     BrowserPnl: TntvPanel;
     LogEdit: TSynEdit;
@@ -2564,6 +2564,19 @@ end;
 procedure TMainForm.EngineAction(EngineAction: TEditorAction);
 begin
   case EngineAction of
+    eaShowFolders:
+    begin
+      BrowserTabs.ActiveControl := FolderPnl;
+    end;
+    eaShowDatabases:
+    begin
+      BrowserTabs.ActiveControl := DatabasePnl;
+    end;
+    eaShowProject:
+    begin
+      if ProjectPnl.IsVisible then
+        BrowserTabs.ActiveControl := ProjectPnl;
+    end;
     eaClearOutput :
     begin
       FOutputs.Clear;
@@ -3253,14 +3266,14 @@ begin
   begin
     if (Engine.Files.Current <> nil) then
       Engine.Files.Current.Activate
-    else if FolderPanel.Visible then
+    else if FolderPnl.Visible then
     begin
       FileList.SetFocus;
     end
   end
   else
   begin
-    if FolderPanel.Visible then
+    if FolderPnl.Visible then
       FileList.SetFocus
     else if MessagesPnl.Visible then
       MessagesTabs.ActivateControl;

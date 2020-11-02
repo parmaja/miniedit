@@ -221,28 +221,27 @@ begin
           for i := 0 to aHeader.Count -1 do
           begin
             MembersGrid.Columns[i].Title := aHeader[i];
-{            if i = 0 then
-              MembersGrid.Columns[i].AutoSize := True;}
           end;
-
           aCols := aHeader.Count;
+          if aCols = 1 then
+            MembersGrid.Columns[0].AutoFit := True;
         finally
           aHeader.Free;
         end;
 
         vGroup.EnumMeta(aItems, vAttributes);
-          MembersGrid.Capacity := aItems.Count;
-          MembersGrid.RowsCount := aItems.Count;
-          for i := 0 to aItems.Count -1 do
+        MembersGrid.Capacity := aItems.Count;
+        MembersGrid.RowsCount := aItems.Count;
+        for i := 0 to aItems.Count -1 do
+        begin
+          for j := 0 to aCols - 1 do
           begin
-            for j := 0 to aCols - 1 do
-            begin
-              if j = 0 then
-                MembersGrid.Values[j, i] := aItems[i].Name
-              else if (j - 1) < aItems[i].Attributes.Count then //maybe Attributes not have all data
-                MembersGrid.Values[j, i] := aItems[i].Attributes.Items[j - 1].Value; //TODO must be assigned my name not by index
-            end;
+            if j = 0 then
+              MembersGrid.Values[j, i] := aItems[i].Name
+            else if (j - 1) < aItems[i].Attributes.Count then //maybe Attributes not have all data
+              MembersGrid.Values[j, i] := aItems[i].Attributes.Items[j - 1].Value; //TODO must be assigned my name not by index
           end;
+        end;
         MembersGrid.Current.Row := 0;
         CurrentGroup := nil; //reduce flicker when fill Actions
         CurrentGroup := vGroup;

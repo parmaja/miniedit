@@ -313,7 +313,7 @@ object MainForm: TMainForm
           Caption = 'Folder'
           Name = 'Folder1Tab'
           AutoWidth = True
-          Control = FolderPanel
+          Control = FolderPnl
         end      
         item
           Caption = 'Database'
@@ -343,14 +343,14 @@ object MainForm: TMainForm
         Width = 255
         Align = alClient
       end
-      object FolderPanel: TPanel
+      object FolderPnl: TPanel
         Left = 3
         Height = 284
         Top = 23
         Width = 255
         Align = alClient
         BevelOuter = bvNone
-        Caption = 'FolderPanel'
+        Caption = 'FolderPnl'
         ClientHeight = 284
         ClientWidth = 255
         TabOrder = 0

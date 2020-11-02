@@ -13,7 +13,7 @@ uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
   LCLintf, LCLType, ExtCtrls, SynHighlighterSQL, EditorProfiles, GUIMsgBox, MsgBox,
   Dialogs, EditorEngine, EditorClasses, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit, EditorRun,
-  sqlvManagerForms, sqlvSQLForms;
+  sqlvManagerForms, sqlvSQLForms, sqlvEngines;
 
 type
 
@@ -158,7 +158,8 @@ end;
 function TDBFileCategory.OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile;
 begin
   Result := nil;
-  MsgBox.Msg.Show(vFileName + ' is a database'); //TODO open database
+  //MsgBox.Msg.Show(vFileName + ' is a database'); //TODO open database
+  DBEngine.OpenDatabase(vFileName, 'sqlite', '', '', '', '', '');
 end;
 
 initialization
