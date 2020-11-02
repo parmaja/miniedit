@@ -112,4 +112,3 @@ initialization
     Groups.Add(TBoardFile, 'board', 'board', TBoardFileCategory, ['board'], [fgkAssociated, fgkExecutable, fgkBrowsable]);
   end;
 end.
-

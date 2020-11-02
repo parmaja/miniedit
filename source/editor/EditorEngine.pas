@@ -40,7 +40,7 @@ type
   TSynCompletionType = (ctCode, ctHint, ctParams);
 
   TEditorEngine = class;
-  TFileCategory = class;
+  TVirtualCategory = class;
   TFileGroup = class;
   TFileGroups = class;
   TEditorFile = class;
@@ -706,7 +706,6 @@ type
     function IsExist(vName: string): Boolean;
 
     function InternalOpenFile(FileName, FileParams: string; AppendToRecent: Boolean): TEditorFile;
-    function CreateEditorFile(vExtension: string): TEditorFile;
     function LoadFile(vFileName, vFileParams: string; AppendToRecent: Boolean = true): TEditorFile;
     function ShowFile(vFileName: string): TEditorFile; overload; //open it without add to recent, for debuging
     function ShowFile(const FileName: string; Line: integer): TEditorFile; overload;
@@ -887,9 +886,9 @@ type
   TFileCategoryKind = (fckPublish);
   TFileCategoryKinds = set of TFileCategoryKind;
 
-  { TFileCategory }
+  { TVirtualCategory }
 
-  TFileCategory = class(TEditorElements)
+  TVirtualCategory = class(TEditorElements)
   private
     FName: string;
     FHighlighter: TSynCustomHighlighter;
@@ -912,6 +911,8 @@ type
 
     procedure InitEdit(vSynEdit: TCustomSynEdit); virtual;
     function GetIsText: Boolean; virtual;
+
+    function OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile; virtual;
   public
     constructor Create(ATendency: TEditorTendency; const vName, vTitle: string; vKind: TFileCategoryKinds = []); virtual;
     constructor Create(ATendency: TEditorTendencyClass; const vName, vTitle: string; vKind: TFileCategoryKinds = []); virtual;
@@ -937,14 +938,22 @@ type
     property Items[Index: Integer]: TFileGroup read GetItem; default;
   end;
 
-  TFileCategoryClass = class of TFileCategory;
+  TFileCategoryClass = class of TVirtualCategory;
 
   { TFileCategories }
 
-  TFileCategories = class(specialize TmnNamedObjectList<TFileCategory>)
+  TFileCategories = class(specialize TmnNamedObjectList<TVirtualCategory>)
   public
-    function FindByClass(CategoryClass: TFileCategoryClass): TFileCategory;
-    function Add(vCategory: TFileCategory): Integer;
+    function FindByClass(CategoryClass: TFileCategoryClass): TVirtualCategory;
+    function Add(vCategory: TVirtualCategory): Integer;
+  end;
+
+  { TFileCategory }
+
+  TFileCategory = class(TVirtualCategory) //base class
+  protected
+    function OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile; override;
+  public
   end;
 
   { TTextFileCategory }
@@ -974,22 +983,22 @@ type
     FFileClass: TEditorFileClass;
     FExtensions: TEditorExtensions;
     FKind: TFileGroupKinds;
-    FCategory: TFileCategory;
+    FCategory: TVirtualCategory;
     FStyle: TFileGroupStyles;
-    procedure SetCategory(AValue: TFileCategory);
+    procedure SetCategory(AValue: TVirtualCategory);
   protected
   public
     constructor Create; override;
     destructor Destroy; override;
-    function CreateEditorFile(vFiles: TEditorFiles): TEditorFile;
+    function OpenFile(vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile; virtual;
     procedure EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds = []);
     procedure EnumExtensions(vExtensions: TEditorElements);
-    property Category: TFileCategory read FCategory write SetCategory;
+    property Category: TVirtualCategory read FCategory write SetCategory;
     property Extensions: TEditorExtensions read FExtensions;
     property ExtraExtensions: TEditorExtensions read FExtraExtensions;
     property Kind: TFileGroupKinds read FKind write FKind;
     property Style: TFileGroupStyles read FStyle write FStyle;
-    property FileClass: TEditorFileClass read FFileClass;
+    property FileClass: TEditorFileClass read FFileClass; //TODO move to TFileCategory
   end;
 
   TFileGroupClass = class of TFileGroup;
@@ -1010,6 +1019,7 @@ type
     procedure EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds = []);
     procedure EnumExtensions(vExtensions: TEditorElements);
     function FindExtension(vExtension: string; vKind: TFileGroupKinds = []): TFileGroup;
+    function OpenFile(vFiles: TEditorFiles; vExtension: string; vFileName, vFileParams: string): TEditorFile;
     //FullFilter return title of that filter for open/save dialog boxes
     function CreateFilter(FullFilter: Boolean = True; FirstExtension: string = ''; vGroup: TFileGroup = nil; OnlyThisGroup: Boolean = true): string;
     function CreateMask(CreateMaskProc: TCreateMaskProc): string;
@@ -1448,6 +1458,18 @@ begin
   end;
 end;
 
+{ TFileCategory }
+
+function TFileCategory.OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile;
+begin
+  Result := vGroup.FFileClass.Create(vFiles);
+  Result.Group := vGroup;
+  if (vFileName <> '') then
+    Result.LoadFromFile(vFileName);
+end;
+
+{ TControlFileGroup }
+
 { TEditorDesktopFile }
 
 constructor TEditorDesktopFile.Create(ACollection: TCollection);
@@ -1598,7 +1620,7 @@ end;
 
 { TFileCategories }
 
-function TFileCategories.FindByClass(CategoryClass: TFileCategoryClass): TFileCategory;
+function TFileCategories.FindByClass(CategoryClass: TFileCategoryClass): TVirtualCategory;
 var
   i: Integer;
 begin
@@ -1613,7 +1635,7 @@ begin
   end;
 end;
 
-function TFileCategories.Add(vCategory: TFileCategory): Integer;
+function TFileCategories.Add(vCategory: TVirtualCategory): Integer;
 begin
   if FindByClass(TFileCategoryClass(vCategory.ClassType)) <> nil then
     raise Exception.Create('Category is already exists: ' + vCategory.ClassName);
@@ -2456,7 +2478,7 @@ end;
 procedure TEditorTendency.AddGroup(vName, vCategory: string);
 var
   G: TFileGroup;
-  C: TFileCategory;
+  C: TVirtualCategory;
 begin
   if vCategory = '' then
     C := nil
@@ -3231,31 +3253,12 @@ begin
     if LeftStr(aExt, 1) = '.' then
       aExt := Copy(aExt, 2, MaxInt);
 
-    Result := CreateEditorFile(aExt);
+    Result := Engine.Groups.OpenFile(Self, aExt, FileName, FileParams);
     if (Result = nil) and (Engine.Options.FallbackToText) then
-      Result := CreateEditorFile(cFallbackGroup);
-    if Result <> nil then
-      Result.LoadFromFile(lFileName);
+      Result := Engine.Groups.OpenFile(Self, cFallbackGroup, FileName, FileParams);
   end;
   if (Result <> nil) and AppendToRecent then
     Engine.ProcessRecentFile(lFileName);
-end;
-
-function TEditorFiles.CreateEditorFile(vExtension: string): TEditorFile;
-var
-  aGroup: TFileGroup;
-begin
-  aGroup := Engine.Groups.FindExtension(vExtension);
-
-  {if aGroup = nil then
-    raise EEditorException.Create('Cannot open this file type: ' + vExtension);}
-  if aGroup = nil then
-  begin
-    Engine.SendMessage('Cannot open this file type: ' + vExtension, msgtLog);
-    Result := nil;
-  end
-  else
-    Result := aGroup.CreateEditorFile(Self);
 end;
 
 procedure TEditorOptions.Load(vWorkspace: string);
@@ -3317,7 +3320,7 @@ begin
   try
     if vGroup = nil then
       raise Exception.Create('Group is not defined');
-    Result := vGroup.CreateEditorFile(Self);
+    Result := vGroup.OpenFile(Self, '', ''); //New file
     Result.NewContent;
     Result.Edit;
     Current := Result;
@@ -5297,9 +5300,26 @@ begin
   end;
 end;
 
-{ TFileCategory }
+function TFileGroups.OpenFile(vFiles: TEditorFiles; vExtension: string; vFileName, vFileParams: string): TEditorFile;
+var
+  aGroup: TFileGroup;
+begin
+  aGroup := Engine.Groups.FindExtension(vExtension);
 
-constructor TFileCategory.Create(ATendency: TEditorTendency; const vName, vTitle: string; vKind: TFileCategoryKinds);
+  {if aGroup = nil then
+    raise EEditorException.Create('Cannot open this file type: ' + vExtension);}
+  if aGroup = nil then
+  begin
+    Engine.SendMessage('Cannot open this file type: ' + vExtension, msgtLog);
+    Result := nil;
+  end
+  else
+    Result := aGroup.OpenFile(vFiles, vFileName, vFileParams);
+end;
+
+{ TVirtualCategory }
+
+constructor TVirtualCategory.Create(ATendency: TEditorTendency; const vName, vTitle: string; vKind: TFileCategoryKinds);
 begin
   inherited Create(False); //childs is groups and already added to Groups and freed by it
   FTendency := ATendency;
@@ -5308,7 +5328,7 @@ begin
   FKind := vKind;
 end;
 
-constructor TFileCategory.Create(ATendency: TEditorTendencyClass; const vName, vTitle: string; vKind: TFileCategoryKinds);
+constructor TVirtualCategory.Create(ATendency: TEditorTendencyClass; const vName, vTitle: string; vKind: TFileCategoryKinds);
 var
   lTendency: TEditorTendency;
 begin
@@ -5316,7 +5336,7 @@ begin
   Create(lTendency, vName, vTitle, vKind);
 end;
 
-procedure TFileCategory.EnumExtensions(vExtensions: TStringList);
+procedure TVirtualCategory.EnumExtensions(vExtensions: TStringList);
 var
   i: Integer;
 begin
@@ -5326,7 +5346,7 @@ begin
   end;
 end;
 
-function TFileCategory.GetExtensions: string;
+function TVirtualCategory.GetExtensions: string;
 var
   i: Integer;
   strings: TStringList;
@@ -5349,22 +5369,22 @@ begin
   end;
 end;
 
-function TFileCategory.GetColorPrefix: string;
+function TVirtualCategory.GetColorPrefix: string;
 begin
   Result := '';
 end;
 
-function TFileCategory.FormatColor(Color: TColor): string;
+function TVirtualCategory.FormatColor(Color: TColor): string;
 begin
   Result := ColorToRGBHex(Color, GetColorPrefix);
 end;
 
-function TFileCategory.DeformatColor(Str: string): TColor;
+function TVirtualCategory.DeformatColor(Str: string): TColor;
 begin
   Result := RGBHexToColor(Str, GetColorPrefix, false);
 end;
 
-procedure TFileCategory.Apply(AHighlighter: TSynCustomHighlighter; Attributes: TGlobalAttributes);
+procedure TVirtualCategory.Apply(AHighlighter: TSynCustomHighlighter; Attributes: TGlobalAttributes);
 var
   i: Integer;
   M: TMap;
@@ -5389,7 +5409,7 @@ begin
   end;
 end;
 
-procedure TFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
+procedure TVirtualCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   if FCompletion = nil then
   begin
@@ -5403,20 +5423,20 @@ begin
   FCompletion.AddEditor(vSynEdit);
 end;
 
-procedure TFileCategory.DoAddKeywords;
+procedure TVirtualCategory.DoAddKeywords;
 begin
 end;
 
-procedure TFileCategory.DoAddCompletion(AKeyword: string; AKind: integer);
+procedure TVirtualCategory.DoAddCompletion(AKeyword: string; AKind: integer);
 begin
   Completion.ItemList.Add(AKeyword);
 end;
 
-procedure TFileCategory.InitEdit(vSynEdit: TCustomSynEdit);
+procedure TVirtualCategory.InitEdit(vSynEdit: TCustomSynEdit);
 begin
 end;
 
-destructor TFileCategory.Destroy;
+destructor TVirtualCategory.Destroy;
 begin
   FreeAndNil(FMapper);
   FreeAndNil(FCompletion);
@@ -5424,16 +5444,16 @@ begin
   inherited;
 end;
 
-procedure TFileCategory.EnumMenuItems(AddItems: TAddClickCallBack);
+procedure TVirtualCategory.EnumMenuItems(AddItems: TAddClickCallBack);
 begin
 end;
 
-function TFileCategory.CreateHighlighter: TSynCustomHighlighter;
+function TVirtualCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := DoCreateHighlighter;
 end;
 
-procedure TFileCategory.InitHighlighter;
+procedure TVirtualCategory.InitHighlighter;
 var
   i: integer;
 begin
@@ -5457,35 +5477,40 @@ begin
   end;
 end;
 
-function TFileCategory.Find(vName: string): TFileGroup;
+function TVirtualCategory.Find(vName: string): TFileGroup;
 begin
   Result := inherited Find(vName) as TFileGroup;
 end;
 
-function TFileCategory.GetItem(Index: Integer): TFileGroup;
+function TVirtualCategory.GetItem(Index: Integer): TFileGroup;
 begin
   Result := inherited Items[Index] as TFileGroup;
 end;
 
-function TFileCategory.GetMapper: TMapper;
+function TVirtualCategory.GetMapper: TMapper;
 begin
   Result := FMapper;
   if FMapper = nil then
     raise Exception.Create('Mapper is null');
 end;
 
-function TFileCategory.GetHighlighter: TSynCustomHighlighter;
+function TVirtualCategory.GetHighlighter: TSynCustomHighlighter;
 begin
   InitHighlighter;
   Result := FHighlighter;
 end;
 
-function TFileCategory.GetIsText: Boolean;
+function TVirtualCategory.GetIsText: Boolean;
 begin
   Result := True;
 end;
 
-procedure TFileCategory.DoExecuteCompletion(Sender: TObject);
+function TVirtualCategory.OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile;
+begin
+  Result := nil;
+end;
+
+procedure TVirtualCategory.DoExecuteCompletion(Sender: TObject);
 begin
 end;
 
@@ -5620,7 +5645,7 @@ end;
 
 { TFileGroup }
 
-procedure TFileGroup.SetCategory(AValue: TFileCategory);
+procedure TFileGroup.SetCategory(AValue: TVirtualCategory);
 begin
   if FCategory <> AValue then
   begin
@@ -5714,17 +5739,16 @@ begin
   inherited;
 end;
 
-function TFileGroup.CreateEditorFile(vFiles: TEditorFiles): TEditorFile;
+function TFileGroup.OpenFile(vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile;
 begin
-  Result := FFileClass.Create(vFiles);
-  Result.Group := Self;
+  Result := Category.OpenFile(Self, vFiles, vFileName, vFileParams);
 end;
 
 { TFileGroups }
 
 procedure TFileGroups.InternalAdd(GroupClass: TFileGroupClass; FileClass: TEditorFileClass; const Name, Title:string; Category: TFileCategoryClass; Extensions: array of string; Kind: TFileGroupKinds; Style: TFileGroupStyles);
 var
-  aCategory: TFileCategory;
+  aCategory: TVirtualCategory;
   aGroup: TFileGroup;
   i: integer;
 begin

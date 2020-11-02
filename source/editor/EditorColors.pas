@@ -116,7 +116,7 @@ function TEditorColorsForm.Execute(Profile: TEditorProfile; Select: string): boo
 var
   i: integer;
   n: Integer;
-  aFileCategory: TFileCategory;
+  aFileCategory: TVirtualCategory;
   S: string;
 begin
   if (Profile <> nil) then
@@ -387,7 +387,7 @@ var
   G: TGlobalAttribute;
   p: TPoint;
   s: string;
-  aFileCategory: TFileCategory;
+  aFileCategory: TVirtualCategory;
 begin
   p := SampleEdit.PixelsToRowColumn(Point(X, Y));
   if p.x > 0 then //not in the gutter
@@ -399,7 +399,7 @@ begin
       Attributes := SampleEdit.Highlighter.WhitespaceAttribute;
     if Attributes <> nil then
     begin
-      aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
+      aFileCategory := TVirtualCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
       s := Attributes.Name;
       M := aFileCategory.Mapper.Find(s);
       if M <> nil then
@@ -594,11 +594,11 @@ end;
 procedure TEditorColorsForm.ChangeEdit;
 var
   i: integer;
-  aFileCategory: TFileCategory;
+  aFileCategory: TVirtualCategory;
   sp: TSynGutterSeparator;
 begin
   FProfile.Attributes.Correct;
-  aFileCategory := TFileCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
+  aFileCategory := TVirtualCategory(CategoryCbo.Items.Objects[CategoryCbo.ItemIndex]);
 
   PanelPnl.Color := FProfile.Attributes.Panel.BackColor;
   ExampleLbl.Font.Color := FProfile.Attributes.Panel.ForeColor;

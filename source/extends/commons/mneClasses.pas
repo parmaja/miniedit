@@ -22,17 +22,12 @@ type
 
   { TmneProjectFileCategory }
 
-  TmneProjectFileCategory = class(TFileCategory)
+  TmneProjectFileCategory = class(TVirtualCategory)
   protected
     function GetIsText: Boolean; override;
   public
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
-  end;
-
-  TmneProjectFile = class(TEditorFile)
-  protected
-  public
   end;
 
   TApacheFile = class(TTextEditorFile)
@@ -424,7 +419,7 @@ initialization
     Categories.Add(TYamlFileCategory.Create(DefaultProject.Tendency, 'Yaml', 'YAML'));
     Categories.Add(TMDFileCategory.Create(DefaultProject.Tendency, 'md', 'Markdown'));
 
-    Groups.Add(TmneProjectFile, 'mne-project', 'Project', TmneProjectFileCategory, ['mne-project'], [fgkAssociated, fgkBrowsable, fgkUneditable]);
+    Groups.Add(nil, 'mne-project', 'Project', TmneProjectFileCategory, ['mne-project'], [fgkAssociated, fgkBrowsable, fgkUneditable]);
     Groups.Add(TTXTFile, 'txt', 'Text', TTXTFileCategory, ['txt', 'text', 'log'], [fgkDefault]);
     Groups.Add(TTXTFile, 'motd', 'motd', TTXTFileCategory, ['motd'], []);
     Groups.Add(TTXTFile, 'md', 'MarkDown', TMDFileCategory, ['md'], []);

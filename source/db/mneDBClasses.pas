@@ -11,7 +11,7 @@ interface
 
 uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
-  LCLintf, LCLType, ExtCtrls, SynHighlighterSQL, EditorProfiles,
+  LCLintf, LCLType, ExtCtrls, SynHighlighterSQL, EditorProfiles, GUIMsgBox, MsgBox,
   Dialogs, EditorEngine, EditorClasses, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit, EditorRun,
   sqlvManagerForms, sqlvSQLForms;
 
@@ -45,11 +45,12 @@ type
 
   { TDBFileCategory }
 
-  TDBFileCategory = class(TFileCategory)
+  TDBFileCategory = class(TVirtualCategory)
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     function GetIsText: Boolean; override;
+    function OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile; override;
   public
   end;
 
@@ -154,13 +155,19 @@ begin
   Result := False;
 end;
 
+function TDBFileCategory.OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile;
+begin
+  Result := nil;
+  MsgBox.Msg.Show(vFileName + ' is a database'); //TODO open database
+end;
+
 initialization
   with Engine do
   begin
     Categories.Add(TSQLFileCategory.Create(DefaultProject.Tendency, 'sql', 'SQL'));
     Groups.Add(TSQLFile, 'sql', 'SQL', TSQLFileCategory, ['sql'], [fgkAssociated, fgkExecutable, fgkBrowsable]);
     Categories.Add(TDBFileCategory.Create(DefaultProject.Tendency, 'DB', 'Database connection'));
-    //Groups.Add(TDBFile, 'SQLite', 'SQLite', TDBFileCategory, ['sqlite'], [fgkAssociated, fgkBinary, fgkBrowsable]);
+    Groups.Add(nil, 'SQLite', 'SQLite', TDBFileCategory, ['sqlite'], [fgkAssociated, fgkBinary, fgkBrowsable]);
     //Groups.Add(TDBFile, 'Firebird', 'Firebird', TDBFileCategory, ['firebird'], [fgkAssociated, fgkBinary, fgkBrowsable]);
   end;
 end.

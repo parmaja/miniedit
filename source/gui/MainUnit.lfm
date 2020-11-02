@@ -2428,7 +2428,7 @@ object MainForm: TMainForm
     end
     object SelectSCMTypeAct: TAction
       Category = 'Project'
-      Caption = 'Select SCM'
+      Caption = 'Select Source Manager'
       Hint = 'Source control managment type'
       OnExecute = SelectSCMTypeActExecute
     end
