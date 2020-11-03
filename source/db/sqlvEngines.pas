@@ -173,7 +173,6 @@ type
     procedure Execute(const Value: string);
     procedure Enum(Addons: TsqlvAddons);
     procedure EnumDefaults(Addons: TsqlvAddons);
-    procedure EnumHeader(Header: TStringList); virtual;
     procedure EnumMeta(vItems: TmncMetaItems; vAttributes: TsqlvAttributes = nil); virtual; abstract;
     property CanExecute: Boolean read GetCanExecute;
     property Group: string read FGroup write FGroup; //Group is parent Addon like Tabkes.Group = 'Database'
@@ -283,10 +282,9 @@ type
     property Current: TsqlvAddonHistoryItem read GetCurrent;
   end;
 
-
   { TsqlvNotify }
 
-  IsqlvNotify = Interface(IInterface)
+  IsqlvNotify = Interface(INotifyEngine)
     ['{E6F8D9BD-F716-4758-8B08-DDDBD3FA1732}']
     procedure ServerChanged; virtual; abstract;
     procedure DatabaseChanged; virtual; abstract;
@@ -348,7 +346,7 @@ type
 
   { TDBEngine }
 
-  TDBEngine = class(TsqlvCustomAddons, IsqlvNotify, INotifyEngine, ISettingNotifyEngine)
+  TDBEngine = class(TsqlvCustomAddons, IsqlvNotify, INotifyEngine, INotifyEngineSetting)
   private
     FDB: TsqlvDB;
     FEngines: TStringLIst;
@@ -835,15 +833,6 @@ begin
   DBEngine.Enum(Name, Addons, DBEngine.DB.IsActive, True);
 end;
 
-procedure TsqlvAddon.EnumHeader(Header: TStringList);
-begin
-  Header.Clear;
-  if ItemName = '' then
-    Header.Add(Title)
-  else
-    Header.Add(ItemName);
-end;
-
 procedure TsqlvAddon.Execute(vAttributes: TsqlvAttributes; FallDefault: Boolean = False);
 var
   aAddons: TsqlvAddons;
@@ -901,7 +890,7 @@ begin
   FSetting := TsqlvSetting.Create;
   FDB := TsqlvDB.Create;
   Engine.RegisterNotify(Self);
-  FEngines:=TStringList.Create;
+  FEngines := TStringList.Create;
   mncDB.Engines.EnumConnections(FEngines);
 end;
 

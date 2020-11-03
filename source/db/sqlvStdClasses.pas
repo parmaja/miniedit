@@ -84,7 +84,6 @@ type
   public
     constructor Create; override;
     procedure DoExecute(vAttributes: TsqlvAttributes); override;
-    procedure EnumHeader(Header: TStringList); override;
     procedure EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvAttributes); override;
   end;
 
@@ -179,7 +178,6 @@ type
   TsqlvIndices = class(TsqlvMembers)
   public
     constructor Create; override;
-    procedure EnumHeader(Header: TStringList); override;
     procedure EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvAttributes); override;
   end;
 
@@ -188,7 +186,6 @@ type
   TsqlvTableIndices = class(TsqlvMembers)
   public
     constructor Create; override;
-    procedure EnumHeader(Header: TStringList); override;
     procedure EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvAttributes); override;
   end;
 
@@ -205,7 +202,6 @@ type
   TsqlvTableFields = class(TsqlvMembers)
   public
     constructor Create; override;
-    procedure EnumHeader(Header: TStringList); override;
     procedure EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvAttributes); override;
   end;
 
@@ -625,12 +621,6 @@ begin
   ImageIndex := IMG_INDEX;
 end;
 
-procedure TsqlvTableIndices.EnumHeader(Header: TStringList);
-begin
-  inherited EnumHeader(Header);
-  Header.Add('Unique');
-end;
-
 procedure TsqlvTableIndices.EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvAttributes);
 var
   aMeta: TmncMeta;
@@ -673,15 +663,6 @@ begin
   ItemName := 'Field';
   Kind := sokField;
   ImageIndex := IMG_FIELD;
-end;
-
-procedure TsqlvTableFields.EnumHeader(Header: TStringList);
-begin
-  inherited;
-  Header.Add('Type');
-  Header.Add('PK');//primiry key
-  Header.Add('NN');//not null
-  Header.Add('Default');
 end;
 
 procedure TsqlvTableFields.EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvAttributes);
@@ -847,12 +828,6 @@ begin
   //DBEngine.EnumMembers(Self, Value);
 end;
 
-procedure TsqlvIndex.EnumHeader(Header: TStringList);
-begin
-  inherited EnumHeader(Header);
-  Header.Add('Value');
-end;
-
 procedure TsqlvIndex.EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvAttributes);
 var
   aMeta: TmncMeta;
@@ -876,11 +851,6 @@ begin
   ItemName := 'Index';
   Kind := sokIndex;
   ImageIndex := IMG_INDEX;
-end;
-
-procedure TsqlvIndices.EnumHeader(Header: TStringList);
-begin
-  inherited;
 end;
 
 procedure TsqlvIndices.EnumMeta(MetaItems: TmncMetaItems; vAttributes: TsqlvAttributes);

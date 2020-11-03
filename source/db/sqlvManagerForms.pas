@@ -23,15 +23,17 @@ uses
   mnUtils, mncMeta, mncCSVExchanges, mnSynHighlighterStdSQL, mncMySQL,
   mncPostgre, mncSQLite, mncSQLiteMeta, mncPGMeta, mncFBMeta, ntvGrids,
   ntvPanels, ntvImgBtns, sqlvEngines, sqlvStdClasses, LMessages, ComCtrls,
-  EditorEngine, mneResources;
+  EditorClasses, EditorEngine, mneResources;
 
 type
 
   { TsqlvManagerForm }
 
-  TsqlvManagerForm = class(TFrame, IsqlvNotify)
+  TsqlvManagerForm = class(TFrame, INotifyEngine, INotifyEngineSetting, IsqlvNotify)
     DatabaseImage: TntvImgBtn;
+    ServerImage: TntvImgBtn;
     DatabaseLbl: TLabel;
+    ServerLbl: TLabel;
     DatabaseMenu: TPopupMenu;
     BackBtn: TButton;
     CacheMetaChk1: TCheckBox;
@@ -50,6 +52,7 @@ type
     ActionsPopupMenu: TPopupMenu;
     DatabasesPnl: TntvPanel;
     Panel1: TPanel;
+    Panel2: TPanel;
     SaveMnu: TMenuItem;
     SaveAsMnu: TMenuItem;
     OpenMnu: TMenuItem;
@@ -97,6 +100,9 @@ type
     procedure OpenGroup(AValue: string);
     procedure LoadActions(vGroup: string; Append: Boolean = False);
 
+    procedure SaveOptions;
+    procedure LoadOptions;
+
     procedure ServerChanged;
     procedure DatabaseChanged;
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
@@ -109,7 +115,6 @@ implementation
 
 uses
   CSVOptionsForms, ParamsForms, SynEditMiscProcs;
-
 
 { TsqlvManagerForm }
 
@@ -196,7 +201,7 @@ end;
 procedure TsqlvManagerForm.LoadMembers(vGroup: TsqlvAddon; vAttributes: TsqlvAttributes);
 var
   i, j: Integer;
-  aHeader: TStringList;
+  //aHeader: TStringList;
   aCols: Integer;
   aItems: TmncMetaItems;
 begin
@@ -212,29 +217,26 @@ begin
   begin
     aItems := TmncMetaItems.Create;
     try
-      aHeader := TStringList.Create;
+      //aHeader := TStringList.Create;
       MembersGrid.BeginUpdate;
+      MembersGrid.Reset;
       try
-        try
-          vGroup.EnumHeader(aHeader);
-          MembersGrid.ColumnsCount := aHeader.Count;
-          for i := 0 to aHeader.Count -1 do
-          begin
-            MembersGrid.Columns[i].Title := aHeader[i];
-          end;
-          aCols := aHeader.Count;
-          if aCols = 1 then
-            MembersGrid.Columns[0].AutoFit := True;
-        finally
-          aHeader.Free;
-        end;
-
         vGroup.EnumMeta(aItems, vAttributes);
+
+        MembersGrid.ColumnsCount := aItems.Header.Count + 1;
+        MembersGrid.Columns[0].Title := 'Name';
+        for i := 1 to MembersGrid.ColumnsCount -1 do
+        begin
+          MembersGrid.Columns[i].Title := aItems.Header.Items[i - 1].Value;
+        end;
+        if MembersGrid.ColumnsCount > 0 then
+          MembersGrid.Columns[0].AutoFit := True;
+
         MembersGrid.Capacity := aItems.Count;
         MembersGrid.RowsCount := aItems.Count;
         for i := 0 to aItems.Count -1 do
         begin
-          for j := 0 to aCols - 1 do
+          for j := 0 to MembersGrid.ColumnsCount - 1 do
           begin
             if j = 0 then
               MembersGrid.Values[j, i] := aItems[i].Name
@@ -466,6 +468,16 @@ begin
   MembersGrid.PopupMenu := ActionsPopupMenu;
 end;
 
+procedure TsqlvManagerForm.SaveOptions;
+begin
+  Engine.Options.Custom.Values['Databases.Height'] := IntToStr(DatabasesPnl.Height);
+end;
+
+procedure TsqlvManagerForm.LoadOptions;
+begin
+  DatabasesPnl.Height := StrToIntDef(Engine.Options.Custom.Values['Databases.Height'], DatabasesPnl.Height);
+end;
+
 procedure TsqlvManagerForm.ServerChanged;
 var
   Strings: TStringList;
@@ -482,6 +494,10 @@ begin
     if (DBEngine.Server.Engine <> nil) and (DBEngine.Server.Engine.MetaClass <> nil) then
     begin
       EngineName := DBEngine.Server.Engine.Name;
+
+      ServerLbl.Caption := EngineName;
+      ServerImage.ImageIndex := EditorResource.GetImageIndex(EngineName, cDatabaseImage);
+
       Meta := DBEngine.Server.Engine.MetaClass.Create;
       Meta.ServerInfo := DBEngine.Server.Info;
       Items := TmncMetaItems.Create;
@@ -499,6 +515,8 @@ begin
     end
     else
     begin
+      ServerLbl.Caption := 'No server connected';
+      DatabaseImage.ImageIndex := cDatabaseImage;
     end;
   finally
     DatabasesList.EndUpdate;
@@ -535,6 +553,7 @@ begin
   inherited Create(TheOwner);
   GroupsNames := TsqlvAddons.Create;
   DBEngine.NotifyObject := Self;
+  Engine.RegisterNotify(Self);
   StateChanged;
 end;
 

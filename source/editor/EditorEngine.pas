@@ -278,7 +278,6 @@ type
 
   TEditorTendency = class abstract(TEditorDebugTendency)
   private
-    //FEditorOptions: TSynEditorOptions;
     FGroups: TFileGroups;
     FOutputExtension: string;
     FRunOptions: TRunProjectOptions;
@@ -321,7 +320,6 @@ type
     property TabWidth: Integer read FTabWidth write FTabWidth default 4;
     property IndentMode: TIndentMode read FIndentMode write FIndentMode default idntTabsToSpaces;
 
-    //property EditorOptions: TSynEditorOptions read FEditorOptions write FEditorOptions;
     property RunOptions: TRunProjectOptions read FRunOptions;// write FRunOptions;
   end;
 
@@ -794,6 +792,7 @@ type
     FShowToolbar: Boolean;
     FShowFolderFiles: TShowFolderFiles;
     FSortFolderFiles: TSortFolderFiles;
+    FCustom: TStringList;
     FWindowMaxmized: Boolean;
     FBoundRect: TRect;
     FShowMessages: Boolean;
@@ -866,6 +865,7 @@ type
     property WindowLeft: Integer read FBoundRect.Left write FBoundRect.Left;
     property WindowRight: Integer read FBoundRect.Right write FBoundRect.Right;
     property WindowBottom: Integer read FBoundRect.Bottom write FBoundRect.Bottom;
+    property Custom: TStringList read FCustom;
   end;
 
   TmneSynCompletion = class;
@@ -3144,8 +3144,8 @@ var
 begin
   for i := 0 to FNotifyObjects.Count -1 do
   begin
-    if FNotifyObjects[i] is IEditorNotifyEngine then
-      (FNotifyObjects[i] as IEditorNotifyEngine).EngineReplaceText(Sender, ASearch, AReplace, Line, Column, ReplaceAction);
+    if FNotifyObjects[i] is INotifyEngineEditor then
+      (FNotifyObjects[i] as INotifyEngineEditor).EngineReplaceText(Sender, ASearch, AReplace, Line, Column, ReplaceAction);
   end;
 end;
 
@@ -3262,6 +3262,7 @@ begin
 end;
 
 procedure TEditorOptions.Load(vWorkspace: string);
+
   procedure SafeLoad(s: TRecentItems; vName:string);
   begin
     if FileExists(vName) then
@@ -3286,6 +3287,7 @@ begin
   SafeLoad(SearchHistory, vWorkspace + 'mne-search-history.ini');
   SafeLoad(ReplaceHistory, vWorkspace + 'mne-replace-history.ini');
   SafeLoad(SearchFolderHistory, vWorkspace + 'mne-folder-history.ini');
+  SafeLoad(Custom, vWorkspace + 'mne-custom-options.ini');
 
   Apply;
 end;
@@ -3597,6 +3599,7 @@ begin
     SearchHistory.SaveToFile(vWorkspace + 'mne-search-history.ini');
     ReplaceHistory.SaveToFile(vWorkspace + 'mne-replace-history.ini');
     SearchFolderHistory.SaveToFile(vWorkspace + 'mne-folder-history.ini');
+    Custom.SaveToFile(vWorkspace + 'mne-custom-options.ini');
 
     Engine.UpdateState([ecsFolder]);
   end;
@@ -3854,10 +3857,11 @@ begin
           XMLReadObjectFile(Tendencies[i], aFile);
       end;
     end;
+    //After loading options
     for i := 0 to FNotifyObjects.Count-1 do
     begin
-      if (FNotifyObjects[i] is ISettingNotifyEngine) then
-        (FNotifyObjects[i] as ISettingNotifyEngine).LoadOptions;
+      if (FNotifyObjects[i] is INotifyEngineSetting) then
+        (FNotifyObjects[i] as INotifyEngineSetting).LoadOptions;
     end;
 
     UpdateOptions;
@@ -3906,6 +3910,11 @@ var
   i: integer;
 begin
   ForceDirectories(Workspace);
+  for i := 0 to FNotifyObjects.Count-1 do //before Options.Save(WorkSpace) maybe it save into options
+  begin
+    if (FNotifyObjects[i] is INotifyEngineSetting) then
+      (FNotifyObjects[i] as INotifyEngineSetting).SaveOptions;
+  end;
   Options.Save(WorkSpace);
   Session.Options.SaveToFile(Workspace + 'mne-options-' + SysPlatform + '.xml');
   for i := 0 to Tendencies.Count - 1 do
@@ -3915,11 +3924,6 @@ begin
       aFile := Workspace + 'mne-tendency-' + LowerCase(Tendencies[i].Name) + '.xml';
       XMLWriteObjectFile(Tendencies[i], aFile);
     end;
-  end;
-  for i := 0 to FNotifyObjects.Count-1 do
-  begin
-    if (FNotifyObjects[i] is ISettingNotifyEngine) then
-      (FNotifyObjects[i] as ISettingNotifyEngine).SaveOptions;
   end;
 end;
 
@@ -4090,8 +4094,8 @@ begin
   if not IsShutdown then
     for i := 0 to FNotifyObjects.Count -1 do
     begin
-      if FNotifyObjects[i] is IEditorNotifyEngine then
-        (FNotifyObjects[i] as IEditorNotifyEngine).EngineMessage(S, vMessageType, vError);
+      if FNotifyObjects[i] is INotifyEngineEditor then
+        (FNotifyObjects[i] as INotifyEngineEditor).EngineMessage(S, vMessageType, vError);
     end;
 end;
 
@@ -4103,8 +4107,8 @@ begin
   begin
     for i := 0 to FNotifyObjects.Count -1 do
     begin
-      if (FNotifyObjects[i] is IEditorNotifyEngine) then
-        (FNotifyObjects[i] as IEditorNotifyEngine).EngineAction(EditorAction);
+      if (FNotifyObjects[i] is INotifyEngineEditor) then
+        (FNotifyObjects[i] as INotifyEngineEditor).EngineAction(EditorAction);
     end;
   end;
 end;
@@ -4137,7 +4141,8 @@ begin
   begin
     for i := 0 to FNotifyObjects.Count -1 do
     begin
-      FNotifyObjects[i].ChangeState(State);
+      if FNotifyObjects[i] is INotifyEngineState then
+        (FNotifyObjects[i] as INotifyEngineState).ChangeState(State);
     end;
 end;
 end;
@@ -5062,6 +5067,7 @@ end;
 constructor TEditorOptions.Create;
 begin
   inherited Create;
+  FCustom := TStringList.Create;
   FSearchHistory := TStringList.Create;
   FReplaceHistory := TStringList.Create;
   FSearchFolderHistory := TStringList.Create;
@@ -5093,6 +5099,7 @@ begin
   FRecentFolders.Free;
   FRecentProjects.Free;
   FProjects.Free;
+  FCustom.Free;
   inherited;
 end;
 

@@ -97,16 +97,20 @@ uses
 
     INotifyEngine = interface(IInterface)
       ['{1BFF59EA-1B50-483D-A34C-9C925ABCD88C}']
+    end;
+
+    INotifyEngineState = interface(INotifyEngine)
+      ['{F5088D63-9DA3-4957-B6DA-A79577665B7A}']
       procedure ChangeState(State: TEditorChangeStates);
     end;
 
-    ISettingNotifyEngine = interface(INotifyEngine)
+    INotifyEngineSetting = interface(INotifyEngine)
       ['{371F2173-3169-4C93-9EDC-206BDDA9903F}']
       procedure SaveOptions;
       procedure LoadOptions;
     end;
 
-    IEditorNotifyEngine = interface(INotifyEngine)
+    INotifyEngineEditor = interface(INotifyEngine)
       ['{B3ACF9DF-2A37-4693-A7A5-FBF47DCAFC92}']
       procedure EngineAction(EngineAction: TEditorAction);
       procedure EngineMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);

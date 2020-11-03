@@ -157,8 +157,8 @@ object sqlvManagerForm: TsqlvManagerForm
     ResizeStyle = nrsUpdate
     object DatabasesList: TListView
       Left = 3
-      Height = 117
-      Top = 3
+      Height = 93
+      Top = 27
       Width = 269
       Align = alClient
       AutoWidthLastColumn = True
@@ -178,6 +178,39 @@ object sqlvManagerForm: TsqlvManagerForm
       TabOrder = 0
       ViewStyle = vsReport
       OnDblClick = DatabasesListDblClick
+    end
+    object Panel2: TPanel
+      Left = 0
+      Height = 24
+      Top = 0
+      Width = 275
+      Align = alTop
+      BevelOuter = bvNone
+      ClientHeight = 24
+      ClientWidth = 275
+      TabOrder = 1
+      object ServerLbl: TLabel
+        Left = 26
+        Height = 20
+        Top = 2
+        Width = 247
+        Align = alClient
+        AutoSize = False
+        BorderSpacing.Around = 2
+        Caption = 'No server connected'
+        Layout = tlCenter
+        ParentColor = False
+      end
+      object ServerImage: TntvImgBtn
+        Left = 0
+        Height = 24
+        Top = 0
+        Width = 24
+        Images = EditorResource.FileImages
+        ImageIndex = 13
+        Align = alLeft
+        AutoCheck = False
+      end
     end
   end
   object ActionsPopupMenu: TPopupMenu

@@ -62,7 +62,7 @@ type
 
   { TMainForm }
 
-  TMainForm = class(TForm, INotifyEngine, IEditorNotifyEngine)
+  TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
     DBCreateDatabaseAct: TAction;
     DBBrowseAct: TAction;
     DBDisconnectAct: TAction;
@@ -1783,15 +1783,15 @@ begin
   Engine.FilePanel := EditorsPnl;
   Engine.ProjectPanel := ProjectPnl;
 
-  FDatabaseFrame := TsqlvManagerForm.Create(Self);
+  Engine.RegisterNotify(Self);
+
+  FDatabaseFrame := TsqlvManagerForm.Create(Self); //before Engine.Prepare, to register notify
   with FDatabaseFrame do
   begin
     Parent := DatabasePnl;
     Align := alClient;
     Visible := True;
   end;
-
-  Engine.RegisterNotify(Self);
 
   Engine.Prepare(GetKeyShiftState = [ssShift]);
 
