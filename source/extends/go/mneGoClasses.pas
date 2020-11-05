@@ -16,7 +16,7 @@ uses
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   gdbClasses, mnSynHighlighterGo,
-  EditorClasses, mneClasses, MsgBox,
+  EditorClasses, mneClasses, mnMsgBox,
   mneCompilerProjectFrames, mneGoTendencyFrames, EditorRun,
   mneRunFrames;
 

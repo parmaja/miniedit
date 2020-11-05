@@ -10,7 +10,7 @@ unit MainUnit;
 interface
 
 uses
-  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, MsgBox, contnrs, LConvEncoding,
+  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, mnMsgBox, contnrs, LConvEncoding,
   LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorRun, process,
   Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus,
   ToolWin, Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses,
@@ -738,7 +738,7 @@ begin
     s := Engine.Files.Current.Extension;
     if LeftStr(s, 1) = '.' then
       s := MidStr(s, 2, MaxInt);
-    if MsgBox.Msg.Input(s, 'Please enter new file type for ' + s) then
+    if MsgBox.Input(s, 'Please enter new file type for ' + s) then
     begin
       Engine.Files.Current.Extension := s;
     end;
@@ -772,7 +772,7 @@ var
   s: string;
 begin
   s := '';
-  if MsgBox.Msg.Input(s, 'Enter name for new folder') and (s <> '') then
+  if MsgBox.Input(s, 'Enter name for new folder') and (s <> '') then
   begin
     CreateDir(Folder + s);
     UpdateFolder;
@@ -807,7 +807,7 @@ procedure TMainForm.DeleteActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
   begin
-    if not MsgBox.Msg.No('Are you sure want delete ' + Engine.Files.Current.NakeName) then
+    if not MsgBox.No('Are you sure want delete ' + Engine.Files.Current.NakeName) then
       Engine.Files.Current.Delete;
   end;
 end;
@@ -1206,7 +1206,7 @@ var
 begin
   if Engine.Files.GetEditedCount > 0 then
   begin
-    mr := MsgBox.Msg.YesNoCancel('There a files changed but not saved'#13'Save it all?');
+    mr := MsgBox.YesNoCancel('There a files changed but not saved'#13'Save it all?');
     if mr = msgcCancel then
       CanClose := False
     else if mr = msgcYes then
@@ -1217,7 +1217,7 @@ begin
   begin
     if (Engine.Session.Project.FileName = '') then
     begin
-      mr := MsgBox.Msg.YesNoCancel('Save project ' + Engine.Session.Project.Name + ' before close?');
+      mr := MsgBox.YesNoCancel('Save project ' + Engine.Session.Project.Name + ' before close?');
       if mr = msgcCancel then
         CanClose := False
       else if mr = msgcYes then
@@ -1330,7 +1330,7 @@ var
 begin
   if Engine.Session.Active then
   begin
-    if not MsgBox.Msg.No('You cannot change the type without losing project setting, are you sure?') then
+    if not MsgBox.No('You cannot change the type without losing project setting, are you sure?') then
     begin
       lTendency := Engine.Session.Project.Tendency;
       if Engine.ChooseTendency(lTendency) then
@@ -1351,7 +1351,7 @@ begin
   if Engine.Files.Current <> nil then
   begin
     s := Engine.Files.Current.PureName;
-    if MsgBox.Msg.Input(s, 'Please enter new name for ' + s) then
+    if MsgBox.Input(s, 'Please enter new name for ' + s) then
       Engine.Files.Current.PureName := s;
   end;
 end;
@@ -2962,7 +2962,7 @@ var
   S: string;
 begin
   S := '';
-  if MsgBox.Msg.Input(S, 'Add Watch, Enter variable name') then
+  if MsgBox.Input(S, 'Add Watch, Enter variable name') then
     if S <> '' then
       AddWatch(S);
 end;
@@ -3292,7 +3292,7 @@ end;
 
 procedure TMainForm.EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
 begin
-  case MsgBox.Msg.Ask(Format('Replace this ocurrence of "%s" with "%s"?', [ASearch, AReplace]), [msgcYes, msgcNo, msgcAll, msgcCancel], msgcYes, msgcCancel, msgkConfirmation) of
+  case MsgBox.Ask(Format('Replace this ocurrence of "%s" with "%s"?', [ASearch, AReplace]), [msgcYes, msgcNo, msgcAll, msgcCancel], msgcYes, msgcCancel, msgkConfirmation) of
     msgcYes: ReplaceAction := raReplace;
     msgcNo: ReplaceAction := raSkip;
     msgcAll: ReplaceAction := raReplaceAll;
@@ -3303,7 +3303,7 @@ end;
 
 procedure TMainForm.CatchErr(Sender: TObject; e: exception);
 begin
-  MsgBox.Msg.Error(e.Message);
+  MsgBox.Error(e.Message);
 end;
 
 end.

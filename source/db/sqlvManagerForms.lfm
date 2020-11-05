@@ -143,6 +143,7 @@ object sqlvManagerForm: TsqlvManagerForm
       Top = 289
       Width = 271
       Align = alBottom
+      OnKeyPress = Edit1KeyPress
       TabOrder = 2
       TextHint = 'Search'
     end
@@ -227,5 +228,11 @@ object sqlvManagerForm: TsqlvManagerForm
     object MenuItem2: TMenuItem
       Caption = 'Close'
     end
+  end
+  object Timer1: TTimer
+    Enabled = False
+    OnTimer = Timer1Timer
+    Left = 197
+    Top = 398
   end
 end

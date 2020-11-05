@@ -15,7 +15,7 @@ uses
   Contnrs, LazFileUtils, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  mnSynHighlighterD, mnSynHighlighterCpp, EditorClasses, mneClasses, MsgBox,
+  mnSynHighlighterD, mnSynHighlighterCpp, EditorClasses, mneClasses, mnMsgBox,
   mneCompilerProjectFrames, EditorRun,
   mneRunFrames;
 

@@ -23,7 +23,7 @@ uses
   Classes, SysUtils, Forms, Controls, ExtCtrls, StdCtrls, FileUtil,
   mncSQL,
   LCLType, Graphics, Menus, Buttons, ComCtrls, EditorEngine, sqlvManagerForms, ParamsForms,
-  sqlvEngines, IniFiles, ntvTabSets, MsgBox, mnStreams, ntvGrids,
+  sqlvEngines, IniFiles, ntvTabSets, mnMsgBox, mnStreams, ntvGrids,
   ntvPageControls, mncConnections, mncCSV;
 
 type
@@ -112,7 +112,7 @@ procedure TSQLEditForm.MenuItem1Click(Sender: TObject);
 var
   r: Integer;
 begin
-  if not Msg.No('Are you sure you want to clear cells') then
+  if not MsgBox.No('Are you sure you want to clear cells') then
   begin
     with DataGrid do
     begin
@@ -136,7 +136,7 @@ var
   i: Integer;
 begin
   s := '1';
-  if Msg.Input(s, 'Enter columns count to add') then
+  if MsgBox.Input(s, 'Enter columns count to add') then
   begin
     for i := 0 to StrToInt(s) -1 do
       DataGrid.AddColumn;
@@ -156,7 +156,7 @@ var
   s: string;
 begin
   s := '1';
-  if Msg.Input(s, 'Enter rows count to add') then
+  if MsgBox.Input(s, 'Enter rows count to add') then
   begin
     DataGrid.RowsCount := DataGrid.RowsCount + StrToIntDef(s, 0);
     Changed;
@@ -184,7 +184,7 @@ end;
 
 procedure TSQLEditForm.StopBtn2Click(Sender: TObject);
 begin
-  if not Msg.No('Are you sure you want to clear it') then
+  if not MsgBox.No('Are you sure you want to clear it') then
   begin
     ClearGrid;
     Changed;

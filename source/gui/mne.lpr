@@ -49,7 +49,7 @@ uses
   mneBoardClasses, mneBoardForms, mneSelectComponents, mneBoardComponents,
   mneFontGenForm, mneCppClasses, mneVerilogClasses, SynHighlighterVerilog,
   mneCustomClasses, mnePasProjectFrames, mnePASClasses, mneCSVClasses,
-  mneDClasses, mneLuaClasses, LuaDBGServers, MsgBox, GUIMsgBox, Classes,
+  mneDClasses, mneLuaClasses, LuaDBGServers, mnMsgBox, GUIMsgBox, Classes,
   PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses, EditorColors,
   gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneClasses, mneDBClasses,
   mneRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils, mnStreams,

@@ -513,7 +513,7 @@ begin
     finally
       aMeta.Free;
     end;
-    DBEngine.LoadEditor(Self, aStrings);
+    DBEngine.ShowEditor(Self, aStrings);
   finally
     aStrings.Free;
   end;
@@ -546,7 +546,7 @@ begin
     finally
       aMeta.Free;
     end;
-    DBEngine.LoadEditor(Self, aStrings);
+    DBEngine.ShowEditor(Self, aStrings);
   finally
     aStrings.Free;
   end;
@@ -602,7 +602,7 @@ begin
     finally
       aMeta.Free;
     end;
-    DBEngine.LoadEditor(Self, aStrings);
+    DBEngine.ShowEditor(Self, aStrings);
   finally
     aStrings.Free;
   end;
@@ -701,7 +701,7 @@ begin
     //aStrings.Text := 'alter table ' + vStack['Table'] + ' drop column ' + Value;
     aStrings.Text := 'alter table ' + vAttributes['Table'] + ' add ?FieldName ?FieldType';
 
-    DBEngine.LoadEditor(Self, aStrings);
+    DBEngine.ShowEditor(Self, aStrings);
   finally
     aStrings.Free;
   end;
@@ -735,7 +735,7 @@ begin
   inherited;
   aStrings := TStringList.Create;
   aStrings.Text := 'delete from ' + vAttributes['Table'];
-  DBEngine.LoadEditor(Self, aStrings);
+  DBEngine.ShowEditor(Self, aStrings);
   aStrings.Free;
 end;
 
@@ -760,7 +760,7 @@ begin
   aStrings := TStringList.Create;
   try
     aStrings.Text := 'alter table ' + vAttributes['Table'] + ' drop column ' + vAttributes['Field'];
-    DBEngine.LoadEditor(Self, aStrings);
+    DBEngine.ShowEditor(Self, aStrings);
   finally
     aStrings.Free;
   end;
@@ -881,7 +881,7 @@ end;
 procedure TsqlvDropTable.DoExecute(vAttributes: TsqlvAttributes);
 begin
   inherited;
-  DBEngine.LoadEditor(Self, 'drop table ' + vAttributes['Table']);
+  DBEngine.ShowEditor(Self, 'drop table ' + vAttributes['Table']);
 end;
 
 { TsqlvSelectTable }
@@ -900,7 +900,7 @@ end;
 procedure TsqlvSelectTable.DoExecute(vAttributes: TsqlvAttributes);
 begin
   inherited;
-  DBEngine.LoadEditor(Self, 'select * from ' + vAttributes['Table']);
+  DBEngine.ShowEditor(Self, 'select * from ' + vAttributes['Table']);
 end;
 
 { TsqlvInsertTable }
@@ -947,7 +947,7 @@ begin
   finally
     aItems.Free;
   end;
-  DBEngine.LoadEditor(Self, 'insert into ' + vAttributes['Table'] + '(' + s1 + ') values (' + s2 +')');
+  DBEngine.ShowEditor(Self, 'insert into ' + vAttributes['Table'] + '(' + s1 + ') values (' + s2 +')');
 end;
 
 { TsqlvExportSQL }

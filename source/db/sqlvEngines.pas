@@ -289,7 +289,7 @@ type
     procedure ServerChanged; virtual; abstract;
     procedure DatabaseChanged; virtual; abstract;
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean); virtual; abstract;
-    procedure LoadEditor(vAddon: TsqlvAddon; S: string); virtual; abstract;
+    procedure ShowEditor(vAddon: TsqlvAddon; S: string); virtual; abstract;
   end;
 
   {TsqlvNotifyObjects = class(specialize TmnObjectList<TsqlvNotify>)
@@ -387,8 +387,8 @@ type
     procedure ServerChanged;
     procedure DatabaseChanged;
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
-    procedure LoadEditor(vAddon: TsqlvAddon; S: string);
-    procedure LoadEditor(vAddon: TsqlvAddon; S: TStringList);
+    procedure ShowEditor(vAddon: TsqlvAddon; S: string);
+    procedure ShowEditor(vAddon: TsqlvAddon; S: TStringList);
 
     property Setting: TsqlvSetting read FSetting;
     property Engines: TStringLIst read FEngines;
@@ -1113,14 +1113,14 @@ begin
   FNotifyObject.ShowMeta(vAddon, vSelectDefault);
 end;
 
-procedure TDBEngine.LoadEditor(vAddon: TsqlvAddon; S: string);
+procedure TDBEngine.ShowEditor(vAddon: TsqlvAddon; S: string);
 begin
-  FNotifyObject.LoadEditor(vAddon, S);
+  FNotifyObject.ShowEditor(vAddon, S);
 end;
 
-procedure TDBEngine.LoadEditor(vAddon: TsqlvAddon; S: TStringList);
+procedure TDBEngine.ShowEditor(vAddon: TsqlvAddon; S: TStringList);
 begin
-  FNotifyObject.LoadEditor(vAddon, S.Text);
+  FNotifyObject.ShowEditor(vAddon, S.Text);
 end;
 
 procedure TDBEngine.LoadOptions;

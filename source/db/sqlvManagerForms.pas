@@ -58,12 +58,14 @@ type
     OpenMnu: TMenuItem;
     GroupsPanel: TPanel;
     AboutMnu: TMenuItem;
+    Timer1: TTimer;
     ToolsMnu: TMenuItem;
     GroupPanel: TPanel;
     procedure BackBtnClick(Sender: TObject);
     procedure ConnectBtnClick(Sender: TObject);
     procedure DatabasesListDblClick(Sender: TObject);
     procedure DisconnectBtnClick(Sender: TObject);
+    procedure Edit1KeyPress(Sender: TObject; var Key: char);
     procedure FirstBtnClick(Sender: TObject);
     procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
     procedure GroupsListKeyPress(Sender: TObject; var Key: char);
@@ -76,6 +78,7 @@ type
     procedure MembersListDblClick(Sender: TObject);
     procedure MembersListKeyPress(Sender: TObject; var Key: char);
     procedure OpenBtnClick(Sender: TObject);
+    procedure Timer1Timer(Sender: TObject);
   private
     FSearching: Boolean;
     FFirstSearch: Boolean;
@@ -83,6 +86,7 @@ type
     FSearchTime: TDateTime;
     procedure CheckSearch;
     procedure SearchFor(S: string);
+    procedure ApplyFilter;
     procedure CollectAttributes(vAttributes: TsqlvAttributes);
   private
     function LogTime(Start: TDateTime): string;
@@ -106,7 +110,7 @@ type
     procedure ServerChanged;
     procedure DatabaseChanged;
     procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
-    procedure LoadEditor(vAddon: TsqlvAddon; S: string);
+    procedure ShowEditor(vAddon: TsqlvAddon; S: string);
   end;
 
 implementation
@@ -184,7 +188,7 @@ begin
   LoadMembers(aGroup, DBEngine.Stack.Current.Attributes); //if group is nil it must clear the member grid
 end;
 
-procedure TsqlvManagerForm.LoadEditor(vAddon: TsqlvAddon; S: string);
+procedure TsqlvManagerForm.ShowEditor(vAddon: TsqlvAddon; S: string);
 begin
   Engine.BeginUpdate;
   try
@@ -201,8 +205,6 @@ end;
 procedure TsqlvManagerForm.LoadMembers(vGroup: TsqlvAddon; vAttributes: TsqlvAttributes);
 var
   i, j: Integer;
-  //aHeader: TStringList;
-  aCols: Integer;
   aItems: TmncMetaItems;
 begin
   MembersGrid.Clear;
@@ -217,7 +219,6 @@ begin
   begin
     aItems := TmncMetaItems.Create;
     try
-      //aHeader := TStringList.Create;
       MembersGrid.BeginUpdate;
       MembersGrid.Reset;
       try
@@ -284,6 +285,11 @@ end;
 
 procedure TsqlvManagerForm.DisconnectBtnClick(Sender: TObject);
 begin
+end;
+
+procedure TsqlvManagerForm.Edit1KeyPress(Sender: TObject; var Key: char);
+begin
+  Timer1.Enabled := True;
 end;
 
 procedure TsqlvManagerForm.FirstBtnClick(Sender: TObject);
@@ -378,6 +384,12 @@ begin
     OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
 end;
 
+procedure TsqlvManagerForm.Timer1Timer(Sender: TObject);
+begin
+  Timer1.Enabled := False;
+  ApplyFilter;
+end;
+
 procedure TsqlvManagerForm.CheckSearch;
 begin
   if (FSearch = '') or (SecondsBetween(Now, FSearchTime) > 3) then
@@ -411,6 +423,11 @@ begin
     end;
   end;
   FSearchTime := Now;
+end;
+
+procedure TsqlvManagerForm.ApplyFilter;
+begin
+
 end;
 
 procedure TsqlvManagerForm.CollectAttributes(vAttributes: TsqlvAttributes);

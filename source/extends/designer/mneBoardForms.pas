@@ -14,7 +14,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Grids, ExtCtrls, StdCtrls, FileUtil,
   LCLType, Graphics, Menus, Buttons, ComCtrls, ValEdit, EditorEngine,
-  SelectList, mneSelectComponents, mneBoardComponents, IniFiles, MsgBox,
+  SelectList, mneSelectComponents, mneBoardComponents, IniFiles, mnMsgBox,
   ntvBoard;
 
 type

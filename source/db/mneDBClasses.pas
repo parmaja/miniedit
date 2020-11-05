@@ -11,7 +11,7 @@ interface
 
 uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
-  LCLintf, LCLType, ExtCtrls, SynHighlighterSQL, EditorProfiles, GUIMsgBox, MsgBox,
+  LCLintf, LCLType, ExtCtrls, SynHighlighterSQL, EditorProfiles, GUIMsgBox, mnMsgBox,
   Dialogs, EditorEngine, EditorClasses, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit, EditorRun,
   sqlvManagerForms, sqlvSQLForms, sqlvEngines;
 
@@ -158,7 +158,7 @@ end;
 function TDBFileCategory.OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile;
 begin
   Result := nil;
-  //MsgBox.Msg.Show(vFileName + ' is a database'); //TODO open database
+  //MsgBox.Show(vFileName + ' is a database'); //TODO open database
   DBEngine.OpenDatabase(vFileName, 'sqlite', '', '', '', '', '');
 end;
 

@@ -40,7 +40,7 @@ implementation
 {$R *.lfm}
 
 uses
-  EditorEngine, MsgBox;
+  EditorEngine, mnMsgBox;
 
 procedure TEditorSetupForm.Button1Click(Sender: TObject);
 var
@@ -59,7 +59,7 @@ var
 begin
   if WorkspaceEdit.Text = '' then
   begin
-    MsgBox.Msg.Show('You must enter valid path for workspace directory');
+    MsgBox.Show('You must enter valid path for workspace directory');
     WorkspaceEdit.SetFocus;
     Abort;
   end

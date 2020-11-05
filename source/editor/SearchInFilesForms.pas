@@ -9,7 +9,7 @@ unit SearchInFilesForms;
 interface
 
 uses
-  Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, MsgBox,
+  Messages, SysUtils, Classes, Graphics, Controls, Forms, Dialogs, mnMsgBox,
   StdCtrls, ExtCtrls, SynEdit, SynEditTypes, SynEditRegexSearch, SynEditMiscClasses,
   SynEditSearch, SearchProgressForms, EditorEngine, ComCtrls, Menus, ntvImgBtns;
 
@@ -103,7 +103,7 @@ begin
   if (Engine.Files.Count > 0) and (ssoReplace in FSearchOptions) then
   begin
     Engine.Files.CheckingChanged := True; //stop auto check file age, we will reload them all
-    if MsgBox.Msg.Yes('Replace in files need to save all changed files, do you want to save it?') then
+    if MsgBox.Yes('Replace in files need to save all changed files, do you want to save it?') then
       Engine.Files.SaveAll(False)
     else
       Abort;

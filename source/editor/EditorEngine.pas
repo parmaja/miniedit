@@ -1365,7 +1365,7 @@ uses
   SynHighlighterHashEntries, SynGutterCodeFolding,
   Registry, SearchForms, SynEditTextBuffer, GotoForms, mneClasses,
   SelectList, mneProjectOptions,
-  mneResources, MsgBox, GUIMsgBox;
+  mneResources, mnMsgBox, GUIMsgBox;
 
 type
   TEngineLife  = (engnNone, engnStarting, engnStarted, engnShutdowning, engnShutdowned);
@@ -4178,7 +4178,7 @@ procedure TEditorFiles.Revert;
 begin
   if Current <> nil then
   begin
-    if MsgBox.Msg.Yes('Revert file ' + Current.Name) then
+    if MsgBox.Yes('Revert file ' + Current.Name) then
       Current.Load;
   end;
 end;
@@ -4296,7 +4296,7 @@ begin
   begin
     if IsEdited then
     begin
-      mr := MsgBox.Msg.YesNoCancel('Save file ' + Name + ' before close?');
+      mr := MsgBox.YesNoCancel('Save file ' + Name + ' before close?');
       if mr = msgcCancel then
         Abort
       else if mr = msgcYes then
@@ -4564,7 +4564,7 @@ begin
         if Force then
           mr := msgcYes
         else
-          mr := MsgBox.Msg.YesNoCancel(Name + #13' was changed, update it?');
+          mr := MsgBox.YesNoCancel(Name + #13' was changed, update it?');
         if mr = msgcYes then
           Load;
         if mr = msgcCancel then
@@ -4578,7 +4578,7 @@ begin
       if Force then
         n := -1 //nothing
       else
-        n := MsgBox.Msg.Ask(Name + #13' was not found, what do want?', [Choice('&Keep It', msgcYes), Choice('&Close', msgcCancel), Choice('Read only', msgcNo)], 0, 2);
+        n := MsgBox.Ask(Name + #13' was not found, what do want?', [Choice('&Keep It', msgcYes), Choice('&Close', msgcCancel), Choice('Read only', msgcNo)], 0, 2);
       if n = -1 then //do nothing
       else if n = 0 then //Keep It
         IsNew := True
