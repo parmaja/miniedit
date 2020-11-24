@@ -3755,7 +3755,7 @@ begin
     aName := vTendency.Name
   else
     aName := '';
-  Result := ShowSelectList('Select project type', Tendencies, [], aName); //slfIncludeNone
+  Result := ShowSelectList('Select project type', Tendencies, [slfSearch], aName); //slfIncludeNone
   if Result then
     vTendency := Tendencies.Find(aName);
 end;

@@ -6,9 +6,9 @@ if you are editing multiple files, e.g. Python, PHP it can run this files into c
 
 ### Target
 
- * Simple (especially for beginners or kids)
+ * Simple (beginners or kids)
  * Portable
- * Fast   
+ * Fast
 
 ### Features
 
@@ -86,3 +86,7 @@ Geany https://www.geany.org/
 Textadept https://foicica.com/textadept/
 
 CudaText http://uvviewsoft.com/cudatext/
+
+PINote https://pinote.sourceforge.io/
+
+Micro https://micro-editor.github.io/

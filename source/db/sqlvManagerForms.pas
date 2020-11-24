@@ -31,6 +31,9 @@ type
 
   TsqlvManagerForm = class(TFrame, INotifyEngine, INotifyEngineSetting, IsqlvNotify)
     DatabaseImage: TntvImgBtn;
+    DatabaseImage1: TntvImgBtn;
+    DatabaseLbl1: TLabel;
+    Panel3: TPanel;
     ServerImage: TntvImgBtn;
     DatabaseLbl: TLabel;
     ServerLbl: TLabel;
