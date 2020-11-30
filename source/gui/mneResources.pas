@@ -158,6 +158,8 @@ begin
   Extensions.Add('firebirdsql', 16);
   Extensions.Add('firebird', 16);
   Extensions.Add('mysql', 17);
+  Extensions.Add('csv', 18);
+  Extensions.Add('tsv', 18);
 end;
 
 end.

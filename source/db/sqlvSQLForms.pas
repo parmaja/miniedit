@@ -118,7 +118,7 @@ begin
     begin
       BeginUpdate;
       try
-        for r := Selected.StartRow to Selected.EndRow do
+        for r := Selected.Start.Row to Selected.Stop.Row do
           begin
             ClearRow(r);
           end;
