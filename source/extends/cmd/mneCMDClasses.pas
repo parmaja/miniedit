@@ -147,7 +147,8 @@ begin
     aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.Run.Console := Info.Console;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
-    aRunItem.Info.CurrentDirectory := Info.Root;
+    //aRunItem.Info.CurrentDirectory := Info.Root;
+    aRunItem.Info.CurrentDirectory := ExtractFileDir(Info.MainFile);//command need to run in same dir
     aRunItem.Info.StatusMessage := 'Runing ' + Info.MainFile;
     //aRunItem.Info.Run.Command := Info.Command;//not acceptable
 
