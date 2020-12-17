@@ -48,6 +48,8 @@ type
 
   TdbgpActionClass = class of TdbgpAction;
 
+  { TdbgpSpool }
+
   TdbgpSpool = class(specialize TmnObjectList<TdbgpAction>)
   private
   public
@@ -61,6 +63,8 @@ type
   public
     procedure Added(Action: TdbgpAction); override;
   end;
+
+  { TdbgpInit }
 
   TdbgpInit = class(TdbgpAction)
   protected
@@ -94,7 +98,6 @@ type
     function GetCommand: string; override;
   end;
 
-
   { TdbgpGetCurrent }
 
   TdbgpGetCurrent = class(TdbgpAction)
@@ -111,11 +114,15 @@ type
     procedure DoExecute(Respond: TDebugCommandRespond); override;
   end;
 
+  { TdbgpStepOver }
+
   TdbgpStepOver = class(TdbgpAction)
   public
     function GetCommand: string; override;
     procedure DoExecute(Respond: TDebugCommandRespond); override;
   end;
+
+  { TdbgpStepInto }
 
   TdbgpStepInto = class(TdbgpAction)
   public
@@ -123,11 +130,15 @@ type
     procedure DoExecute(Respond: TDebugCommandRespond); override;
   end;
 
+  { TdbgpStepOut }
+
   TdbgpStepOut = class(TdbgpAction)
   public
     function GetCommand: string; override;
     procedure DoExecute(Respond: TDebugCommandRespond); override;
   end;
+
+  { TdbgpRun }
 
   TdbgpRun = class(TdbgpAction)
   public
@@ -144,11 +155,15 @@ type
     destructor Destroy; override;
   end;
 
+  { TdbgpStop }
+
   TdbgpStop = class(TdbgpAction)
   public
     function GetCommand: string; override;
     procedure DoExecute(Respond: TDebugCommandRespond); override;
   end;
+
+  { TdbgpCustomGet }
 
   TdbgpCustomGet = class(TdbgpAction)
   public
@@ -156,12 +171,16 @@ type
   end;
   // Watches
 
+  { TdbgpCustomGetWatch }
+
   TdbgpCustomGetWatch = class(TdbgpCustomGet)
   protected
   public
     function GetCommand: string; override;
     procedure DoExecute(Respond: TDebugCommandRespond); override;
   end;
+
+  { TdbgpGetWatch }
 
   TdbgpGetWatch = class(TdbgpCustomGetWatch)
   protected
@@ -187,6 +206,8 @@ type
   public
   end;
 
+  { TdbgpGetWatches }
+
   TdbgpGetWatches = class(TdbgpCustomGetWatch)
   protected
   public
@@ -198,6 +219,8 @@ type
 
   // Breakpoints
 
+  { TdbgpSetBreakpoint }
+
   TdbgpSetBreakpoint = class(TdbgpAction)
   protected
   public
@@ -207,6 +230,8 @@ type
     function GetCommand: string; override;
     procedure DoExecute(Respond: TDebugCommandRespond); override;
   end;
+
+  { TdbgpSetBreakpoints }
 
   TdbgpSetBreakpoints = class(TdbgpSetBreakpoint)
   protected
@@ -228,6 +253,8 @@ type
 
 //* Watches
 
+  { TdbgpWatch }
+
   TdbgpWatch = class(TObject)
   private
     FHandle: integer;
@@ -236,6 +263,8 @@ type
     property Handle: integer read FHandle write FHandle;
   published
   end;
+
+  { TdbgpWatches }
 
   TdbgpWatches = class(specialize TmnObjectList<TdbgpWatch>)
   private
@@ -256,6 +285,8 @@ type
 
 //* Breakpoints
 
+  { TdbgpBreakpoint }
+
   TdbgpBreakpoint = class(TObject)
   private
     FID: integer;
@@ -269,6 +300,8 @@ type
     property FileName: string read FFileName write FFileName;
     property Line: integer read FLine write FLine;
   end;
+
+  { TdbgpBreakpoints }
 
   TdbgpBreakpoints = class(specialize TmnObjectList<TdbgpBreakpoint>)
   private
