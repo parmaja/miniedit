@@ -231,16 +231,6 @@ type
     procedure DoExecute(Respond: TDebugCommandRespond); override;
   end;
 
-  { TdbgpSetBreakpoints }
-
-  TdbgpSetBreakpoints = class(TdbgpSetBreakpoint)
-  protected
-  public
-    Current: integer;
-    function Enabled: boolean; override;
-    function Stay: boolean; override;
-  end;
-
   { TdbgpRemoveBreakpoint }
 
   TdbgpRemoveBreakpoint = class(TdbgpAction)
@@ -249,6 +239,16 @@ type
   public
     BreakpointID: integer;
     function GetCommand: string; override;
+  end;
+
+  { TdbgpSetBreakpoints }
+
+  TdbgpSetBreakpoints = class(TdbgpSetBreakpoint)
+  protected
+  public
+    Current: Integer;
+    function Enabled: Boolean; override;
+    function Stay: Boolean; override;
   end;
 
 //* Watches
@@ -1620,6 +1620,7 @@ end;
 
 procedure TdbgpDebug.StepInto;
 begin
+  FServer.AddAction(TdbgpSetBreakpoints.Create);
   FServer.AddAction(TdbgpStepInto.Create);
   FServer.AddAction(TdbgpGetWatches.Create);
   FServer.AddAction(TdbgpGetCurrent.Create);
@@ -1628,6 +1629,7 @@ end;
 
 procedure TdbgpDebug.StepOver;
 begin
+  FServer.AddAction(TdbgpSetBreakpoints.Create);
   FServer.AddAction(TdbgpStepOver.Create);
   FServer.AddAction(TdbgpGetWatches.Create);
   FServer.AddAction(TdbgpGetCurrent.Create);
@@ -1636,6 +1638,7 @@ end;
 
 procedure TdbgpDebug.StepOut;
 begin
+  FServer.AddAction(TdbgpSetBreakpoints.Create);
   FServer.AddAction(TdbgpStepOut.Create);
   FServer.AddAction(TdbgpGetWatches.Create);
   FServer.AddAction(TdbgpGetCurrent.Create);
@@ -1644,6 +1647,7 @@ end;
 
 procedure TdbgpDebug.Run;
 begin
+  FServer.AddAction(TdbgpSetBreakpoints.Create);
   FServer.AddAction(TdbgpRun.Create);
   FServer.AddAction(TdbgpGetWatches.Create);
   FServer.AddAction(TdbgpGetCurrent.Create);
