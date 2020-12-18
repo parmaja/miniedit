@@ -21,6 +21,10 @@ uses
 
 type
 
+  TDDebugger = class(TGDBDebug)
+  public
+  end;
+
   { TDFile }
 
   TDFile = class(TSourceEditorFile)
@@ -264,7 +268,7 @@ begin
     aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
   end;
 
-  Engine.Session.Run.Start(Self, Info.Root);
+  Engine.Session.Run.Start(Debugger, Info.Root);
 end;
 
 constructor TDTendency.Create;

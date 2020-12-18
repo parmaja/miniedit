@@ -256,7 +256,7 @@ begin
     aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
   end;
 
-  Engine.Session.Run.Start(Self, Info.Root);
+  Engine.Session.Run.Start(Debugger, Info.Root);
 end;
 
 constructor TGoTendency.Create;

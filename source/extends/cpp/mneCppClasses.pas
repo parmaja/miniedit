@@ -278,7 +278,7 @@ begin
     aRunItem.Info.Run.AddParam(Engine.Session.Project.RunOptions.Params);
   end;
 
-  Engine.Session.Run.Start(Self);
+  Engine.Session.Run.Start(Debugger);
 end;
 
 constructor TCppTendency.Create;

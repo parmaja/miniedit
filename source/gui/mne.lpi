@@ -30,6 +30,9 @@
       <Attributes pvaPreRelease="True"/>
       <StringTable CompanyName="PARMAJA" FileDescription="mini Edit IDE" InternalName="MiniEdit" ProductName="MiniEdit" ProductVersion="1.6.1.1"/>
     </VersionInfo>
+    <MacroValues Count="1">
+      <Macro2 Name="LCLWidgetType" Value="win32"/>
+    </MacroValues>
     <BuildModes Count="3">
       <Item1 Name="Debug" Default="True"/>
       <Item2 Name="Linux">
@@ -125,7 +128,7 @@
       </Item3>
       <SharedMatrixOptions Count="3">
         <Item1 ID="404340325604" Modes="Linux" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
-        <Item2 ID="413993458804" Modes="Windows" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+        <Item2 ID="142010062422" Modes="Debug,Windows" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
         <Item3 ID="971028019367" Modes="Debug" Value="-dDEBUG"/>
       </SharedMatrixOptions>
     </BuildModes>

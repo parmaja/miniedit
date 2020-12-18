@@ -18,8 +18,6 @@ uses
 {$i '..\lib\mne.inc'}
 
 type
-  TEditorDebugTendency = class;
-
   { TRunCommand }
 
   TRunCommand = record
@@ -142,12 +140,14 @@ type
     property Current: TmneRunItem read FCurrent;
   end;
 
+  TEditorDebugger = class;
+
   { TmneRun }
 
   TmneRun = class(TObject)
   private
     FPool: TmneRunPool;
-    FTendency: TEditorDebugTendency;
+    FDebugger: TEditorDebugger;
     FCurrentDirectory: string;
     function GetActive: Boolean;
   protected
@@ -159,12 +159,12 @@ type
     destructor Destroy; override;
     function Add(AItemClass: TmneRunItemClass = nil): TmneRunItem; //Return same as parameter
     procedure Clear;
-    procedure Start(ATendency: TEditorDebugTendency; vCurrentDirectory: string = ''); //move vCurrentDirectory to RunItem
+    procedure Start(ADebugger: TEditorDebugger; vCurrentDirectory: string = ''); //move vCurrentDirectory to RunItem
     procedure Show;
     procedure Stop;
     property Active: Boolean read GetActive;
     property Pool: TmneRunPool read FPool;
-    property Tendency: TEditorDebugTendency read FTendency;
+    property Debugger: TEditorDebugger read FDebugger;
     property CurrentDirectory: string read FCurrentDirectory write FCurrentDirectory;
   end;
 
@@ -338,6 +338,8 @@ type
     procedure Launch(vFileName: string); virtual;
     procedure Stop; virtual;
 
+    procedure SendMessage(S: string; vMessageType: TNotifyMessageType); virtual;
+
     function GetState: TDebugStates; virtual; abstract;
     procedure Action(AAction: TDebugAction); virtual; abstract;
     function GetKey: string; virtual;
@@ -349,16 +351,17 @@ type
     property Watches: TEditorWatches read FWatches;
   end;
 
-  { TEditorDebugTendency }
+  { TTendency }
 
-  TEditorDebugTendency = class(TEditorElement)
+  TTendency = class(TEditorElement)
   private
   protected
-    FDebug: TEditorDebugger;
-    procedure SetDebug(AValue: TEditorDebugger);
+    FDebugger: TEditorDebugger;
+    procedure SetDebugger(AValue: TEditorDebugger);
   public
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType); virtual; abstract;
-    property Debug: TEditorDebugger read FDebug write SetDebug;
+
+    property Debugger: TEditorDebugger read FDebugger write SetDebugger;
   end;
 
   { TDebugManager }
@@ -477,15 +480,15 @@ end;
 
 procedure TmneRun.SendMessage(S: string; vMessageType: TNotifyMessageType);
 begin
-  if FTendency <> nil then
-    FTendency.SendMessage(S, vMessageType)
-  else
-    Engine.SendMessage(S, vMessageType);
+{  if FDebug <> nil then
+    FDebug.SendMessage(S, vMessageType)
+  else}
+    Engine.CurrentTendency.SendMessage(S, vMessageType); //TODO wrong, send it using Debugger
 end;
 
 procedure TmneRun.Finish;
 begin
-  FTendency := nil;
+  FDebugger := nil;
   FCurrentDirectory := '';
   Engine.SendAction(eaEnd);
 end;
@@ -501,10 +504,10 @@ begin
   inherited Destroy;
 end;
 
-procedure TmneRun.Start(ATendency: TEditorDebugTendency; vCurrentDirectory: string);
+procedure TmneRun.Start(ADebugger: TEditorDebugger; vCurrentDirectory: string);
 begin
   FCurrentDirectory := vCurrentDirectory;
-  FTendency := ATendency;
+  FDebugger := ADebugger;
   if FPool = nil then
     raise Exception.Create('There is no thread Pool');
   FPool.Start;
@@ -550,19 +553,19 @@ end;
 
 procedure TmneRunItem.Attach;
 begin
-  if Engine.Tendency.Debug <> nil then
+  if Engine.Tendency.Debugger <> nil then
   begin
-    Engine.Tendency.Debug.Start;
-    Engine.Tendency.Debug.Attach(Process);
+    Engine.Tendency.Debugger.Start;
+    Engine.Tendency.Debugger.Attach(Process);
   end;
 end;
 
 procedure TmneRunItem.Launch;
 begin
-  if Engine.Tendency.Debug <> nil then
+  if Engine.Tendency.Debugger <> nil then
   begin
-    Engine.Tendency.Debug.Start;
-    Engine.Tendency.Debug.Launch(Info.Run.Command);
+    Engine.Tendency.Debugger.Start;
+    Engine.Tendency.Debugger.Launch(Info.Run.Command);
   end;
 end;
 
@@ -929,6 +932,10 @@ begin
 
 end;
 
+procedure TEditorDebugger.SendMessage(S: string; vMessageType: TNotifyMessageType);
+begin
+end;
+
 function TEditorDebugger.GetActive: Boolean;
 begin
   Result := (Self <> nil) and (dbsActive in GetState);
@@ -1027,11 +1034,11 @@ begin
   inherited Destroy;
 end;
 
-procedure TEditorDebugTendency.SetDebug(AValue: TEditorDebugger);
+procedure TTendency.SetDebugger(AValue: TEditorDebugger);
 begin
-  if FDebug =AValue then
+  if FDebugger =AValue then
     Exit;
-  FDebug :=AValue;
+  FDebugger :=AValue;
 end;
 
 initialization

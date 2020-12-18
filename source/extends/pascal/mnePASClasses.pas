@@ -265,7 +265,7 @@ begin
     aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
   end;
 
-  Engine.Session.Run.Start(Self);
+  Engine.Session.Run.Start(Debugger);
 end;
 
 procedure TPasTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);

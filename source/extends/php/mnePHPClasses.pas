@@ -273,7 +273,7 @@ begin
     aRunItem.Info.Run.AddParam(RunOptions.Params);
     aRunItem.Info.Run.AddParam(Engine.Session.Project.RunOptions.Params);
 
-    Engine.Session.Run.Start(Self);
+    Engine.Session.Run.Start(Debugger);
   end;
 end;
 
@@ -295,7 +295,7 @@ end;
 
 function TPHPTendency.CreateDebugger: TEditorDebugger;
 begin
-  Result := TdbgpDebug.Create;
+  Result := TdbgpDebugger.Create;
 end;
 
 function TPHPTendency.CreateOptions: TEditorProjectOptions;

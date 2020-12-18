@@ -216,7 +216,7 @@ begin
     aRunItem.Info.Run.AddParam(Info.MainFile);
   end;
 
-  Engine.Session.Run.Start(Self);
+  Engine.Session.Run.Start(Debugger);
 end;
 
 constructor TPyTendency.Create;
@@ -236,7 +236,7 @@ end;
 
 function TPyTendency.CreateDebugger: TEditorDebugger;
 begin
-  Result := TdbgpDebug.Create;
+  Result := TdbgpDebugger.Create;
 end;
 
 function TPyTendency.CreateOptions: TEditorProjectOptions;

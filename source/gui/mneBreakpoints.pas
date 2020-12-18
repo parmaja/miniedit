@@ -66,13 +66,13 @@ var
   aItem: TListItem;
 begin
   BreakpointList.Clear;
-  for i := 0 to FTendency.Debug.Breakpoints.Count - 1 do
+  for i := 0 to FTendency.Debugger.Breakpoints.Count - 1 do
   begin
     aItem := BreakpointList.Items.Add;
     aItem.ImageIndex := 40;
-    aItem.Data := Pointer(PtrInt(FTendency.Debug.Breakpoints[i].Handle));
-    aItem.Caption := FTendency.Debug.Breakpoints[i].FileName;
-    aItem.SubItems.Add(IntToStr(FTendency.Debug.Breakpoints[i].Line));
+    aItem.Data := Pointer(PtrInt(FTendency.Debugger.Breakpoints[i].Handle));
+    aItem.Caption := FTendency.Debugger.Breakpoints[i].FileName;
+    aItem.SubItems.Add(IntToStr(FTendency.Debugger.Breakpoints[i].Line));
   end;
 end;
 
@@ -82,7 +82,7 @@ begin
   begin
     DebugManager.Enter;
     try
-      FTendency.Debug.Breakpoints.Remove(IntPtr(BreakpointList.Selected.Data));
+      FTendency.Debugger.Breakpoints.Remove(IntPtr(BreakpointList.Selected.Data));
       Reload;
       Engine.UpdateState([ecsDebug]);
     finally
@@ -95,7 +95,7 @@ procedure TBreakpointsForm.Button1Click(Sender: TObject);
 begin
   DebugManager.Enter;
   try
-    FTendency.Debug.Breakpoints.Clear;
+    FTendency.Debugger.Breakpoints.Clear;
     Reload;
     Engine.UpdateState([ecsDebug]);
   finally

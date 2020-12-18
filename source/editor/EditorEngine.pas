@@ -276,7 +276,7 @@ type
 
   { TEditorTendency }
 
-  TEditorTendency = class abstract(TEditorDebugTendency)
+  TEditorTendency = class abstract(TTendency)
   private
     FGroups: TFileGroups;
     FOutputExtension: string;
@@ -2011,12 +2011,12 @@ procedure TSyntaxEditorFile.DoGutterClickEvent(Sender: TObject; X, Y, Line: inte
 var
   aLine: integer;
 begin
-  if (Tendency.Debug <> nil) and (fgkExecutable in Group.Kind) then
+  if (Tendency.Debugger <> nil) and (fgkExecutable in Group.Kind) then
   begin
     aLine := SynEdit.PixelsToRowColumn(Point(X, Y)).y;
     DebugManager.Enter;
     try
-      Tendency.Debug.Breakpoints.Toggle(Name, aLine);
+      Tendency.Debugger.Breakpoints.Toggle(Name, aLine);
     finally
       DebugManager.Leave;
     end;
@@ -2257,7 +2257,7 @@ var
   l: variant;
   lp: TPoint;
 begin
-  if Tendency.Debug <> nil then
+  if Tendency.Debugger <> nil then
   begin
     if SynEdit.SelAvail then
       v := SynEdit.SelText
@@ -2267,7 +2267,7 @@ begin
       v := Trim(SynEdit.GetWordAtRowCol(lp));
       //v := Trim(SynEdit.GetWordAtRowCol(SynEdit.LogicalCaretXY));
     end;
-    Result := (v <> '') and Tendency.Debug.Watches.GetValue(v, l, t, False);
+    Result := (v <> '') and Tendency.Debugger.Watches.GetValue(v, l, t, False);
     s := VarToStrDef(l, '');
   end
   else
@@ -2278,13 +2278,13 @@ function TSyntaxEditorFile.EvalByCursor(out v, s, t: string): boolean;
 var
   l: variant;
 begin
-  if Tendency.Debug <> nil then
+  if Tendency.Debugger <> nil then
   begin
     if not SynEdit.SelAvail then
       v := Trim(SynEdit.GetWordAtRowCol(SynEdit.LogicalCaretXY))
     else
       v := SynEdit.SelText;
-    Result := (v <> '') and Tendency.Debug.Watches.GetValue(v, l, t, False);
+    Result := (v <> '') and Tendency.Debugger.Watches.GetValue(v, l, t, False);
     s := VarToStrDef(l, '');
   end
   else
@@ -2448,21 +2448,21 @@ procedure TEditorTendency.Prepare;
 begin
   if not IsPrepared then
   begin
-    Debug := CreateDebugger;
-    if (Debug <> nil) and Engine.Options.AutoStartDebugServer then
-      Debug.Active := True;
+    Debugger := CreateDebugger;
+    if (Debugger <> nil) and Engine.Options.AutoStartDebugServer then
+      Debugger.Active := True;
     IsPrepared := True;
   end;
 end;
 
 procedure TEditorTendency.Unprepare;
 begin
-  if Debug <> nil then
+  if Debugger <> nil then
   begin
-    Debug.Action(dbaResume);
-    Debug.Stop;
+    Debugger.Action(dbaResume);
+    Debugger.Stop;
   end;
-  FreeAndNil(FDebug);
+  FreeAndNil(FDebugger);
 end;
 
 function TEditorTendency.CanExecute: Boolean;
@@ -2541,19 +2541,19 @@ begin
       AOptions.Merge(Engine.Session.Project.RunOptions);
 
     p.Actions := RunActions;
-    if (Debug <> nil) and (Debug.Running) then
+    if (Debugger <> nil) and (Debugger.Running) then
     begin
       if rnaKill in RunActions then
-        Engine.CurrentTendency.Debug.Action(dbaReset)
+        Engine.CurrentTendency.Debugger.Action(dbaReset)
       else if Engine.Session.Run.Active then
         Engine.Session.Run.Show;
 
       if rnaExecute in RunActions then
       begin
         if rnaCompile in RunActions then
-          Debug.Action(dbaRun)
+          Debugger.Action(dbaRun)
         else
-          Debug.Action(dbaResume);
+          Debugger.Action(dbaResume);
       end;
     end
     else
@@ -2568,7 +2568,7 @@ begin
       end
       else
       begin
-        if Debug.Active then
+        if Debugger.Active then
           p.Actions := p.Actions + [rnaDebug];
         if rnaCompile in RunActions then
           Engine.SendAction(eaClearOutput);
@@ -5948,17 +5948,17 @@ var
 begin
   aTendency := FEditorFile.Tendency; //from file Tendency
   //inherited;
-  if aTendency.Debug <> nil then
+  if aTendency.Debugger <> nil then
   begin
     lh := TSynEdit(SynEdit).LineHeight;
     iw := EditorResource.DebugImages.Width;
 
     DebugManager.Enter;
     try
-      for i := 0 to aTendency.Debug.Breakpoints.Count - 1 do
+      for i := 0 to aTendency.Debugger.Breakpoints.Count - 1 do
       begin
-        if SameText(aTendency.Debug.Breakpoints[i].FileName, FEditorFile.Name) then//need improve
-          DrawIndicator(aTendency.Debug.Breakpoints[i].Line, DEBUG_IMAGE_BREAKPOINT);
+        if SameText(aTendency.Debugger.Breakpoints[i].FileName, FEditorFile.Name) then//need improve
+          DrawIndicator(aTendency.Debugger.Breakpoints[i].Line, DEBUG_IMAGE_BREAKPOINT);
       end;
     finally
       DebugManager.Leave;
@@ -6011,20 +6011,20 @@ begin
       Engine.Files.SetActiveFile(Files.CurrentFile);
       Engine.BrowseFolder := Files.CurrentFolder;
 
-      if (FProject.Tendency <> nil) and (Project.Tendency.Debug <> nil) then
+      if (FProject.Tendency <> nil) and (Project.Tendency.Debugger <> nil) then
       begin
         DebugManager.Enter;
         try
-         Project.Tendency.Debug.Breakpoints.Clear;
+         Project.Tendency.Debugger.Breakpoints.Clear;
           for i := 0 to Breakpoints.Count - 1 do
           begin
-            Project.Tendency.Debug.Breakpoints.Add(Breakpoints[i].FileName, Breakpoints[i].LineNo);
+            Project.Tendency.Debugger.Breakpoints.Add(Breakpoints[i].FileName, Breakpoints[i].LineNo);
           end;
 
-          Project.Tendency.Debug.Watches.Clear;
+          Project.Tendency.Debugger.Watches.Clear;
           for i := 0 to Watches.Count - 1 do
           begin
-            Project.Tendency.Debug.Watches.Add(Watches[i].Name);
+            Project.Tendency.Debugger.Watches.Add(Watches[i].Name);
           end;
         finally
           DebugManager.Leave;
@@ -6046,18 +6046,18 @@ var
 begin
   Breakpoints.Clear;
   Watches.Clear;
-  if (FProject.Tendency <> nil) and (Project.Tendency.Debug <> nil) then
+  if (FProject.Tendency <> nil) and (Project.Tendency.Debugger <> nil) then
   begin
     DebugManager.Enter;
     try
-      for i := 0 to Project.Tendency.Debug.Breakpoints.Count - 1 do
+      for i := 0 to Project.Tendency.Debugger.Breakpoints.Count - 1 do
       begin
-        Breakpoints.Add(Project.Tendency.Debug.Breakpoints[i].FileName, Project.Tendency.Debug.Breakpoints[i].Line);
+        Breakpoints.Add(Project.Tendency.Debugger.Breakpoints[i].FileName, Project.Tendency.Debugger.Breakpoints[i].Line);
       end;
 
-      for i := 0 to Project.Tendency.Debug.Watches.Count - 1 do
+      for i := 0 to Project.Tendency.Debugger.Watches.Count - 1 do
       begin
-        Watches.Add(Project.Tendency.Debug.Watches[i].Name);
+        Watches.Add(Project.Tendency.Debugger.Watches[i].Name);
       end;
     finally
       DebugManager.Leave;
