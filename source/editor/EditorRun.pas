@@ -285,6 +285,8 @@ type
   TDebugCommandFlag = (dafSend, dafCheckError, dafStopOnError);
   TDebugCommandFlags = set of TDebugCommandFlag;
 
+  { TDebugCommand }
+
   TDebugCommand = class(TObject)
   private
     FKeepAlive: Boolean;

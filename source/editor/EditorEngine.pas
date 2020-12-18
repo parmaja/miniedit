@@ -5930,7 +5930,6 @@ var
   var
     r: TRect;
   begin
-    Line := TSynEdit(SynEdit).RowToScreenRow(Line);//TODO use TextXYToScreenXY
     if (Line >= FirstLine) and (Line <= LastLine) then
     begin
       aRect := AClip;
@@ -5945,6 +5944,7 @@ var
   end;
 var
   aTendency: TEditorTendency;
+  aLine: Integer;
 begin
   aTendency := FEditorFile.Tendency; //from file Tendency
   //inherited;
@@ -5955,17 +5955,22 @@ begin
 
     DebugManager.Enter;
     try
-      for i := 0 to aTendency.Debugger.Breakpoints.Count - 1 do
+      for i := FirstLine to LastLine do
       begin
-        if SameText(aTendency.Debugger.Breakpoints[i].FileName, FEditorFile.Name) then//need improve
-          DrawIndicator(aTendency.Debugger.Breakpoints[i].Line, DEBUG_IMAGE_BREAKPOINT);
+        aLine := TSynEdit(SynEdit).ScreenRowToRow(i);
+        if aTendency.Debugger.Breakpoints.IsExists(FEditorFile.Name, aLine) then
+          DrawIndicator(i, DEBUG_IMAGE_BREAKPOINT);
       end;
+
     finally
       DebugManager.Leave;
     end;
 
     if (Engine.DebugLink.ExecutedControl = SynEdit) and (Engine.DebugLink.ExecutedLine >= 0) then
-      DrawIndicator(Engine.DebugLink.ExecutedLine, DEBUG_IMAGE_EXECUTE);
+    begin
+      aLine := TSynEdit(SynEdit).RowToScreenRow(Engine.DebugLink.ExecutedLine);//TODO use TextXYToScreenXY
+      DrawIndicator(aLine, DEBUG_IMAGE_EXECUTE);
+    end;
   end;
 end;
 

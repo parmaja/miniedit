@@ -703,7 +703,7 @@ var
   i, f: Integer;
 begin
   f := -1;
-  for i := 0 to Count - 1 do
+  for i := 0 to BreakPoints.Count - 1 do
   begin
     if BreakPoints[i].Info.Handle = Handle then
     begin

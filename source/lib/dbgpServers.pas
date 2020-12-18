@@ -219,16 +219,25 @@ type
 
   // Breakpoints
 
-  { TdbgpSetBreakpoint }
+  { TdbgpModifyBreakpoint }
 
-  TdbgpSetBreakpoint = class(TdbgpAction)
+  TdbgpModifyBreakpoint = class(TdbgpAction)
   protected
   public
-    BreakpointID: cardinal;
+    Handle: Integer;
+    Delete: Boolean;
     FileName: string;
     FileLine: integer;
+    BreakpointID: cardinal;
     function GetCommand: string; override;
     procedure DoExecute(Respond: TDebugCommandRespond); override;
+  end;
+
+  { TdbgpSetBreakpoint }
+
+  TdbgpSetBreakpoint = class(TdbgpModifyBreakpoint)
+  protected
+  public
   end;
 
   { TdbgpRemoveBreakpoint }
@@ -243,12 +252,14 @@ type
 
   { TdbgpSetBreakpoints }
 
-  TdbgpSetBreakpoints = class(TdbgpSetBreakpoint)
+  TdbgpSetBreakpoints = class(TdbgpModifyBreakpoint)
   protected
+    procedure CopyInfo;
   public
     Current: Integer;
     function Enabled: Boolean; override;
     function Stay: Boolean; override;
+    procedure DoExecute(Respond: TDebugCommandRespond); override;
   end;
 
 //* Watches
@@ -289,13 +300,15 @@ type
 
   TdbgpBreakpoint = class(TObject)
   private
+    FDeleted: Boolean;
     FID: integer;
     FLine: integer;
-    FHandle: integer;
+    FHandle: Integer;
     FFileName: string;
   public
-    property Handle: integer read FHandle write FHandle;
+    property Handle: Integer read FHandle write FHandle;
     property ID: integer read FID write FID;
+    property Deleted: Boolean read FDeleted write FDeleted;
   published
     property FileName: string read FFileName write FFileName;
     property Line: integer read FLine write FLine;
@@ -305,15 +318,15 @@ type
 
   TdbgpBreakpoints = class(specialize TmnObjectList<TdbgpBreakpoint>)
   private
-    CurrentHandle: integer;
+    CurrentHandle: Integer;
     FServer: TdbgpServer;
   protected
     property Server: TdbgpServer read FServer;
   public
-    function Remove(Breakpoint: TdbgpBreakpoint): integer; overload;
-    procedure Remove(Handle: integer); overload;
     function Add(FileName: string; Line: integer): integer; overload;
-    function Find(Name: string; Line: integer): TdbgpBreakpoint;
+    procedure Remove(Handle: Integer); overload;
+    procedure ForceRemove(Handle: Integer); overload;
+    function Find(Name: string; Line: integer; WithDeleted: Boolean = False): TdbgpBreakpoint; overload;
     procedure Toggle(FileName: string; Line: integer);
   end;
 
@@ -402,15 +415,19 @@ type
   TdbgpDebuggerBreakPoints = class(TEditorBreakPoints)
   protected
     FDebug: TdbgpDebugger;
+    FBreakpoints: TdbgpBreakpoints; //Cache of undeleted breakpoints
     function GetCount: integer; override;
     function GetItems(Index: integer): TDebugBreakpointInfo; override;
+    procedure UpdateBreakpoints;
   public
+    constructor Create;
+    destructor Destroy; override;
     procedure Clear; override;
     procedure Toggle(FileName: string; LineNo: integer); override;
     function IsExists(FileName: string; LineNo: integer): boolean; override;
     procedure Add(FileName: string; LineNo: integer); override;
-    procedure Remove(FileName: string; Line: integer); override; overload;
     procedure Remove(Handle: integer); override; overload;
+    procedure Remove(FileName: string; Line: integer); override; overload;
   end;
 
   { TdbgpDebuggerWatches }
@@ -1121,34 +1138,52 @@ var
   aBreakpoint: TdbgpBreakpoint;
 begin
   Inc(CurrentHandle);
-  aBreakpoint := TdbgpBreakpoint.Create;
-  aBreakpoint.Handle := CurrentHandle;
-  aBreakpoint.FileName := FileName;
-  aBreakpoint.Line := Line;
-  Result := Add(aBreakpoint);
+  aBreakpoint := Find(FileName, Line, True);
+  if aBreakpoint = nil then
+  begin
+    aBreakpoint := TdbgpBreakpoint.Create;
+    aBreakpoint.Handle := CurrentHandle;
+    aBreakpoint.FileName := FileName;
+    aBreakpoint.Line := Line;
+    Result := Add(aBreakpoint);
+  end
+  else
+    Raise Exception.Create('Break point already exists');
 end;
 
-function TdbgpBreakpoints.Find(Name: string; Line: integer): TdbgpBreakpoint;
+function TdbgpBreakpoints.Find(Name: string; Line: integer; WithDeleted: Boolean): TdbgpBreakpoint;
 var
-  i: integer;
+  aItem: TdbgpBreakpoint;
 begin
   Result := nil;
-  for i := 0 to Count - 1 do
+  for aItem in Self do
   begin
-    if (Items[i].line = Line) and SameText(Items[i].FileName, Name) then
+    if (not aItem.Deleted or WithDeleted) and (aItem.line = Line) and SameText(aItem.FileName, Name) then
     begin
-      Result := Items[i];
+      Result := aItem;
       break;
     end;
   end;
 end;
 
-function TdbgpBreakpoints.Remove(Breakpoint: TdbgpBreakpoint): integer;
+procedure TdbgpBreakpoints.Remove(Handle: Integer);
+var
+  i: integer;
 begin
-  Result := inherited Remove(Breakpoint);
+  for i := 0 to Count - 1 do
+  begin
+    if Items[i].Handle = Handle then
+    begin
+      if Items[i].ID > 0 then
+        Items[i].Deleted := True
+      else
+        Delete(i);
+      break;
+    end;
+  end;
 end;
 
-procedure TdbgpBreakpoints.Remove(Handle: integer);
+procedure TdbgpBreakpoints.ForceRemove(Handle: Integer);
 var
   i: integer;
 begin
@@ -1165,33 +1200,23 @@ end;
 procedure TdbgpBreakpoints.Toggle(FileName: string; Line: integer);
 var
   aBreakpoint: TdbgpBreakpoint;
-  aSetBreakpoint: TdbgpSetBreakpoint;
-  aRemoveBreakpoint: TdbgpRemoveBreakpoint;
+  //aSetBreakpoint: TdbgpSetBreakpoint;
+  //aRemoveBreakpoint: TdbgpRemoveBreakpoint;
 begin
-  aBreakpoint := Find(FileName, Line);
-  if aBreakpoint <> nil then
+  aBreakpoint := Find(FileName, Line, True); //lookup it as normal
+  if (aBreakpoint <> nil) and (not aBreakpoint.Deleted) then
   begin
-    Remove(aBreakpoint);
-    if Server.IsRuning then
-    begin
-      if aBreakpoint.ID <> 0 then
-      begin
-        aRemoveBreakpoint := TdbgpRemoveBreakpoint.Create;
-        aRemoveBreakpoint.BreakpointID := aBreakpoint.ID;
-        Server.Queue.Add(aRemoveBreakpoint);
-      end;
-    end;
+    if aBreakpoint.ID > 0 then
+      aBreakpoint.Deleted := True //Will be removed by action
+    else
+      Remove(ABreakpoint);
   end
   else
   begin
-    Add(FileName, Line);
-    if Server.IsRuning then
-    begin
-      aSetBreakpoint := TdbgpSetBreakpoint.Create;
-      aSetBreakpoint.FileName := FileName;
-      aSetBreakpoint.FileLine := Line;
-      Server.Queue.Add(aSetBreakpoint);
-    end;
+    if aBreakpoint <> nil then
+      aBreakpoint.Deleted := False
+    else
+      Add(FileName, Line);
   end;
 end;
 
@@ -1234,44 +1259,67 @@ end;
 
 { TdbgpSetBreakpoints }
 
-function TdbgpSetBreakpoints.Enabled: boolean;
+procedure TdbgpSetBreakpoints.CopyInfo;
+begin
+  FileName := Connection.Server.Breakpoints[Current].FileName;
+  FileLine := Connection.Server.Breakpoints[Current].Line;
+  Delete := Connection.Server.Breakpoints[Current].Deleted;
+  Handle := Connection.Server.Breakpoints[Current].Handle;
+end;
+
+function TdbgpSetBreakpoints.Enabled: Boolean;
 begin
   DebugManager.Enter;
   try
     Result := Current < Connection.Server.Breakpoints.Count;
     if Result then
-    begin
-      FileName := Connection.Server.Breakpoints[Current].FileName;
-      FileLine := Connection.Server.Breakpoints[Current].Line;
-    end;
+      CopyInfo;
   finally
     DebugManager.Leave;
   end;
 end;
 
-function TdbgpSetBreakpoints.Stay: boolean;
+function TdbgpSetBreakpoints.Stay: Boolean;
 begin
   DebugManager.Enter;
   try
     Connection.Server.Breakpoints[Current].ID := BreakpointID;
     Inc(Current);
     Result := Current < Connection.Server.Breakpoints.Count;
+    {if Result then
+      CopyInfo;}
   finally
     DebugManager.Leave;
   end;
 end;
 
-{ TdbgpSetBreakpoint }
-
-function TdbgpSetBreakpoint.GetCommand: string;
+procedure TdbgpSetBreakpoints.DoExecute(Respond: TDebugCommandRespond);
 begin
-  Result := 'breakpoint_set -t line -n ' + IntToStr(FileLine) + ' -f ' + FileNameToURI(FileName) + '';
+  inherited;
+  if Delete then
+    Connection.Server.Breakpoints[Current].ID := 0
+  else
+    Connection.Server.Breakpoints[Current].ID := BreakpointID;
 end;
 
-procedure TdbgpSetBreakpoint.DoExecute(Respond: TDebugCommandRespond);
+{ TdbgpSetBreakpoint }
+
+function TdbgpModifyBreakpoint.GetCommand: string;
 begin
-  CheckError(Respond);
-  BreakpointID := StrToInt(Respond.Root.Attributes['id']);
+  if Delete then
+    Result := 'breakpoint_remove -d ' + IntToStr(BreakpointID)
+  else
+    Result := 'breakpoint_set -t line -n ' + IntToStr(FileLine) + ' -f ' + FileNameToURI(FileName) + '';
+end;
+
+procedure TdbgpModifyBreakpoint.DoExecute(Respond: TDebugCommandRespond);
+begin
+  if Delete then
+  else
+  begin
+    CheckError(Respond);
+    BreakpointID := StrToInt(Respond.Root.Attributes['id']);
+  end;
 end;
 
 { TdbgpRemoveBreakpoint }
@@ -1472,43 +1520,65 @@ end;
 
 function TdbgpDebuggerBreakPoints.GetCount: integer;
 begin
-  with FDebug.FServer do
-    Result := Breakpoints.Count;
+  Result := FBreakpoints.Count;
 end;
 
 function TdbgpDebuggerBreakPoints.GetItems(Index: integer): TDebugBreakpointInfo;
 var
   aBP: TdbgpBreakpoint;
 begin
-  with FDebug.FServer do
-    aBP := Breakpoints[Index];
+  aBP := FBreakpoints[Index];
   Result.FileName := aBP.FileName;
   Result.Handle := aBP.Handle;
   Result.Line := aBP.Line;
+end;
+
+procedure TdbgpDebuggerBreakPoints.UpdateBreakpoints;
+var
+  aItem: TdbgpBreakpoint;
+begin
+  FBreakpoints.Clear;
+  for aItem in FDebug.FServer.Breakpoints do
+    if not aItem.Deleted then
+      FBreakpoints.Add(aItem);
+end;
+
+constructor TdbgpDebuggerBreakPoints.Create;
+begin
+  inherited Create;
+  FBreakpoints := TdbgpBreakpoints.Create(False);
+end;
+
+destructor TdbgpDebuggerBreakPoints.Destroy;
+begin
+  FreeAndNil(FBreakpoints);
+  inherited Destroy;
 end;
 
 procedure TdbgpDebuggerBreakPoints.Clear;
 begin
   with FDebug.FServer do
     Breakpoints.Clear;
+  UpdateBreakpoints;
 end;
 
 procedure TdbgpDebuggerBreakPoints.Toggle(FileName: string; LineNo: integer);
 begin
   with FDebug.FServer do
     Breakpoints.Toggle(FileName, LineNo);
+  UpdateBreakpoints;
 end;
 
 function TdbgpDebuggerBreakPoints.IsExists(FileName: string; LineNo: integer): boolean;
 begin
-  with FDebug.FServer do
-    Result := Breakpoints.Find(FileName, LineNo) <> nil;
+  Result := FBreakpoints.Find(FileName, LineNo) <> nil;
 end;
 
 procedure TdbgpDebuggerBreakPoints.Add(FileName: string; LineNo: integer);
 begin
   with FDebug.FServer do
     Breakpoints.Add(FileName, LineNo);
+  UpdateBreakpoints;
 end;
 
 procedure TdbgpDebuggerBreakPoints.Remove(FileName: string; Line: integer);
@@ -1517,15 +1587,16 @@ var
 begin
   with FDebug.FServer do
     aBP := Breakpoints.Find(FileName, Line);
+
   if aBP <> nil then
-    with FDebug.FServer do
-      Breakpoints.Remove(aBP);
+      Remove(aBP.Handle);
 end;
 
 procedure TdbgpDebuggerBreakPoints.Remove(Handle: integer);
 begin
   with FDebug.FServer do
     Breakpoints.Remove(Handle);
+  UpdateBreakpoints;
 end;
 
 { TdbgpDebugger }
