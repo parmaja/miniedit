@@ -2013,6 +2013,7 @@ begin
     DBGLintAct.Enabled := capLint in Capabilities;
 
     DBGDebugModeAct.Enabled := (capDebug in Capabilities);
+    DBGDebugModeAct.Checked :=  (Engine.CurrentTendency.Debugger <> nil) and Engine.CurrentTendency.Debugger.Active;
 
     DBGAddWatchAct.Enabled := capTrace in Capabilities;
     DBGBreakpointsAct.Enabled := capTrace in Capabilities;
@@ -2647,8 +2648,9 @@ procedure TMainForm.DBGDebugModeActExecute(Sender: TObject);
 begin
   if Engine.CurrentTendency.Debugger <> nil then
   begin
-    DBGDebugModeAct.Checked := not DBGDebugModeAct.Checked;
-    Engine.CurrentTendency.Debugger.Active := DBGDebugModeAct.Checked;
+    Engine.CurrentTendency.Debugger.Active := not Engine.CurrentTendency.Debugger.Active;
+//    DBGDebugModeAct.Checked := not DBGDebugModeAct.Checked;
+//    Engine.CurrentTendency.Debugger.Active := DBGDebugModeAct.Checked;
   end
   else
     DBGDebugModeAct.Checked := False;

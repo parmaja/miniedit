@@ -776,6 +776,7 @@ type
   TSortFolderFiles = (srtfByNames, srtfByExt);
   TShowFolderFiles = (sffRelated, sffKnown, sffAll);
   TEditorFileClass = class of TEditorFile;
+  TAutoStartDebug = (asdNo, asdStartup, asdRun);
 
   TOnEngineChanged = procedure of object;
 
@@ -799,7 +800,7 @@ type
     FCollectAutoComplete: Boolean;
     FCollectTimeout: QWORD;
     FReplaceHistory: TStringList;
-    FAutoStartDebugServer: Boolean;
+    FAutoStartDebug: TAutoStartDebug;
 
     FMessagesHeight: integer;
     FFoldersPanelWidth: integer;
@@ -857,7 +858,7 @@ type
     property ShowToolbar: Boolean read FShowToolbar write FShowToolbar default True;
     property MessagesHeight: integer read FMessagesHeight write FMessagesHeight default 100;
     property FoldersPanelWidth: integer read FFoldersPanelWidth write FFoldersPanelWidth default 180;
-    property AutoStartDebugServer: Boolean read FAutoStartDebugServer write FAutoStartDebugServer default False;
+    property AutoStartDebug: TAutoStartDebug read FAutoStartDebug write FAutoStartDebug default asdNo;
     property FallbackToText: Boolean read FFallbackToText write FFallbackToText default False;
     property AnsiCodePage: Integer read GetAnsiCodePage write SetAnsiCodePage;
     property WindowMaxmized: Boolean read FWindowMaxmized write FWindowMaxmized default False;
@@ -2449,7 +2450,7 @@ begin
   if not IsPrepared then
   begin
     Debugger := CreateDebugger;
-    if (Debugger <> nil) and Engine.Options.AutoStartDebugServer then
+    if (Debugger <> nil) and (Engine.Options.AutoStartDebug = asdStartup) then
       Debugger.Active := True;
     IsPrepared := True;
   end;
@@ -2534,6 +2535,9 @@ var
   p: TmneRunInfo;
   AOptions: TRunProjectOptions;
 begin
+  if (Debugger <> nil) and (Engine.Options.AutoStartDebug = asdRun) then
+    Debugger.Active := True;
+
   AOptions := TRunProjectOptions.Create;//Default options
   try
     AOptions.Copy(RunOptions);
@@ -5941,6 +5945,7 @@ var
       CenterRect(r, aRect);
       EditorResource.DebugImages.Draw(Canvas, r.Left, r.Top, ImageIndex);
     end;
+
   end;
 var
   aTendency: TEditorTendency;

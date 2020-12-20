@@ -39,9 +39,9 @@ object ProjectForm: TProjectForm
     Height = 249
     Top = 5
     Width = 463
-    ActivePage = GeneralOptionsSheet
+    ActivePage = GeneralSheet
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     OnChanging = PageControlChanging
     Options = [nboKeyboardTabSwitch]

@@ -12,7 +12,7 @@ interface
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   EditorEngine, EditorClasses, ntvGrids, Dialogs, StdCtrls,
-  ComCtrls;
+  ComCtrls, ExtCtrls;
 
 type
 
@@ -32,12 +32,12 @@ type
     OkBtn: TButton;
     CancelBtn: TButton;
     PageControl: TPageControl;
+    AutoStartDebugGrp: TRadioGroup;
     TabSheet2: TTabSheet;
     Label3: TLabel;
     CollectTimeoutEdit: TEdit;
     CollectTimeoutSpn: TUpDown;
     CollectAutoCompleteChk: TCheckBox;
-    AutoStartDebugServerChk: TCheckBox;
     PHPManualEdit: TEdit;
     Label2: TLabel;
     Button1: TButton;
@@ -174,7 +174,7 @@ begin
   FEngine.Options.AutoOpenProject := AutoOpenProjectChk.Checked;
   FEngine.Options.CollectAutoComplete := CollectAutoCompleteChk.Checked;
   FEngine.Options.CollectTimeout := CollectTimeoutSpn.Position;
-  FEngine.Options.AutoStartDebugServer := AutoStartDebugServerChk.Checked;
+  FEngine.Options.AutoStartDebug := TAutoStartDebug(AutoStartDebugGrp.ItemIndex);
   c := 0;
   for i := 0 to FEngine.Groups.Count - 1 do
   begin
@@ -199,7 +199,7 @@ begin
   AutoOpenProjectChk.Checked := FEngine.Options.AutoOpenProject;
   CollectAutoCompleteChk.Checked := FEngine.Options.CollectAutoComplete;
   CollectTimeoutSpn.Position := FEngine.Options.CollectTimeout;
-  AutoStartDebugServerChk.Checked := FEngine.Options.AutoStartDebugServer;
+  AutoStartDebugGrp.ItemIndex := Integer(FEngine.Options.AutoStartDebug);
   c := 0;
   for i := 0 to FEngine.Groups.Count - 1 do
   begin

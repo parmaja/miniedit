@@ -146,20 +146,19 @@ end;
 
 procedure TXHTMLFile.NewContent;
 begin
-  SynEdit.Text :=   '<?xml version="1.0" encoding="UTF-8"?>';
-  SynEdit.Lines.Add('<!DOCTYPE html PUBLIC');
-  SynEdit.Lines.Add('  "-//W3C//DTD XHTML 1.0 Strict//EN"');
-  SynEdit.Lines.Add('  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">');
-  SynEdit.Lines.Add('<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">');
+  SynEdit.Lines.Text := '<!DOCTYPE html>';
+  SynEdit.Lines.Add('<html lang="en">');
   SynEdit.Lines.Add('  <head>');
   SynEdit.Lines.Add('    <title></title>');
+  SynEdit.Lines.Add('    <meta charset="utf-8">');
   SynEdit.Lines.Add('  </head>');
   SynEdit.Lines.Add('  <body>');
+  SynEdit.Lines.Add('  ');
   SynEdit.Lines.Add('  </body>');
   SynEdit.Lines.Add('</html>');
 
   SynEdit.CaretY := 2;
-  SynEdit.CaretX := 9;
+  SynEdit.CaretX := 7;
 end;
 
 { TPHPFile }
