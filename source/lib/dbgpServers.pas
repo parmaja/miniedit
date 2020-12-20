@@ -1123,7 +1123,7 @@ begin
   inherited;
   DebugManager.Enter;
   try
-    Connection.Server.Watches[Index].Info.Value := Info.Value;
+    Connection.Server.Watches[Index].Info.Value := StringReplace(Info.Value, #13, '; ', [rfReplaceAll]);
     Connection.Server.Watches[Index].Info.VarType := Info.VarType;
   finally
     DebugManager.Leave;
@@ -1256,7 +1256,7 @@ begin
   inherited;
   DebugManager.Enter;
   try
-    Connection.Server.Watches[Current].Info.Value := Info.Value;
+    Connection.Server.Watches[Current].Info.Value := StringReplace(Info.Value, #13, '; ', [rfReplaceAll]);
     Connection.Server.Watches[Current].Info.VarType := Info.VarType;
   finally
     DebugManager.Leave;
@@ -1469,22 +1469,59 @@ begin
   //Result := 'property_get -n "' + Name + '" -m 1024';
 end;
 
+(*
+<?xml version="1.0" encoding="iso-8859-1"?>'#10'
+<response
+    xmlns="urn:debugger_protocol_v1"
+    xmlns:xdebug="https://xdebug.org/dbgp/xdebug" command="property_value" transaction_id="13" type="array" children="1" numchildren="2" page="0" pagesize="100">
+    <property name="0" fullname="$a[0]" type="string" size="2" encoding="base64">
+        <![CDATA[dDE=]]>
+    </property>
+    <property name="1" fullname="$a[1]" type="string" size="2" encoding="base64">
+        <![CDATA[dDI=]]>
+    </property>
+</response>
+*)
 procedure TdbgpCustomGetWatch.DoExecute(Respond: TDebugCommandRespond);
 const
   //sCmd = 'property';
   sCmd = 'response';
 var
   S: string;
+  v: string;
+  i: integer;
 begin
   if Respond[sCmd] <> nil then
   begin
     S := Respond[sCmd].Value;
-    if (S <> '') and (Respond[sCmd].Attributes['encoding'] = 'base64') then //bug DecodeStringBase64 when S = ''
-      Info.Value := DecodeStringBase64(S)
-    else
-      Info.Value := S;
+    if S = '' then
+    begin
+      if StrToIntDef(Respond[sCmd].Attributes['numchildren'], 0) > 0 then
+      begin
+        for i := 0 to Respond.Root.Count -1 do
+        begin
+          if Respond.Root[i].Name = 'property' then
+          begin
+            v := Respond.Root[i].Value;
+            if (Respond.Root[i].Attributes['encoding'] = 'base64') then
+              v := DecodeStringBase64(v);
+            if S <> '' then
+              S := S + #13;
+            if Respond.Root[i].Attributes['type'] = 'string' then
+              v := '''' + v + '''';
+            S := S + Respond.Root[i].Attributes['fullname'] + ': ' + Respond.Root[i].Attributes['type'] + '= '+ v;
+          end;
+        end;
+      end;
+    end
+    else if (Respond[sCmd].Attributes['encoding'] = 'base64') then
+      S := DecodeStringBase64(S);
 
     Info.VarType := Respond[sCmd].Attributes['type'];
+    if Info.VarType = 'string' then
+      Info.Value := '''' + S + ''''
+    else
+      Info.Value := S;
   end
   else
   begin

@@ -2233,7 +2233,7 @@ begin
   begin
     Result := EvalByMouse(CursorPos, v, s, t);
     if Result then
-      vHint := v + ':' + t + '=' + #13#10 + s;
+      vHint := v + ': ' + t + '=' + #13#10 + s;
   end
   else
     Result := False;
