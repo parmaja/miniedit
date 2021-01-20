@@ -158,7 +158,7 @@ begin
   s := '1';
   if MsgBox.Input(s, 'Enter rows count to add') then
   begin
-    DataGrid.RowsCount := DataGrid.RowsCount + StrToIntDef(s, 0);
+    DataGrid.Count := DataGrid.Count + StrToIntDef(s, 0);
     Changed;
   end;
 end;
@@ -310,12 +310,12 @@ begin
 
     while not SQLCMD.Done do
     begin
-      if DataGrid.RowsCount <= r then
+      if DataGrid.Count <= r then
       begin
         if not FInteractive or (r >= Steps) then
-          DataGrid.RowsCount := r + Steps
+          DataGrid.Count := r + Steps
         else
-          DataGrid.RowsCount := r;
+          DataGrid.Count := r;
       end;
       for i := 0 to cols - 1 do
       begin
@@ -355,7 +355,7 @@ begin
     CalcWidths;
     if not MergeColumns then
     begin
-      DataGrid.RowsCount := r;
+      DataGrid.Count := r;
       DataGrid.Capacity := r;
     end;
     FetchCountLbl.Caption := IntToStr(r);

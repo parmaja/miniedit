@@ -202,7 +202,7 @@ begin
   s := '1';
   if MsgBox.Input(s, 'Enter rows count to add') then
   begin
-    DataGrid.RowsCount := DataGrid.RowsCount + StrToIntDef(s, 0);
+    DataGrid.Count := DataGrid.Count + StrToIntDef(s, 0);
     Changed;
   end;
 end;
@@ -517,12 +517,12 @@ begin
 
     while not SQLCMD.Done do
     begin
-      if DataGrid.RowsCount <= (c + 1) then
+      if DataGrid.Count <= (c + 1) then
       begin
         if not FInteractive or (c >= Steps) then
-          DataGrid.RowsCount := c + Steps
+          DataGrid.Count := c + Steps
         else
-          DataGrid.RowsCount := c + 1;
+          DataGrid.Count := c + 1;
       end;
       DataGrid.Values[0, c] := IntToStr(c);
       for i := 0 to cols - 1 do
@@ -561,7 +561,7 @@ begin
       SQLCMD.Next;
     end;
     CalcWidths;
-    DataGrid.RowsCount := c;
+    DataGrid.Count := c;
     FetchCountLbl.Caption := IntToStr(c - 1);
   finally
     if not FInteractive then
@@ -632,7 +632,7 @@ begin
     end;
     csvCMD.Prepare; //generate Params and save header
     r := 0; //first row of data
-    while r < DataGrid.RowsCount do
+    while r < DataGrid.Count do
     begin
       for c := 0 to DataGrid.Columns.Count - 1 do
       begin

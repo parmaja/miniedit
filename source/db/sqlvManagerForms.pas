@@ -216,7 +216,7 @@ begin
     MembersGrid.ColumnsCount := 1;
     MembersGrid.Columns[0].Title := '';
     MembersGrid.Capacity := 1;
-    MembersGrid.RowsCount := 1;
+    MembersGrid.Count := 1;
   end
   else
   begin
@@ -237,7 +237,7 @@ begin
           MembersGrid.Columns[0].AutoFit := True;
 
         MembersGrid.Capacity := aItems.Count;
-        MembersGrid.RowsCount := aItems.Count;
+        MembersGrid.Count := aItems.Count;
         for i := 0 to aItems.Count -1 do
         begin
           for j := 0 to MembersGrid.ColumnsCount - 1 do
@@ -330,7 +330,7 @@ end;
 
 procedure TsqlvManagerForm.MembersGridDblClick(Sender: TObject);
 begin
-  if (MembersGrid.RowsCount > 0) and (MembersGrid.Current.Row >= 0) then
+  if (MembersGrid.Count > 0) and (MembersGrid.Current.Row >= 0) then
     OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
 end;
 
@@ -383,7 +383,7 @@ end;
 
 procedure TsqlvManagerForm.OpenBtnClick(Sender: TObject);
 begin
-  if MembersGrid.Current.Row < MembersGrid.RowsCount then
+  if MembersGrid.Current.Row < MembersGrid.Count then
     OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
 end;
 
@@ -409,7 +409,7 @@ var
   f: Integer;
 begin
   f := ord(not FFirstSearch);
-  for i := MembersGrid.Current.Row + f to MembersGrid.RowsCount -1 do
+  for i := MembersGrid.Current.Row + f to MembersGrid.Count -1 do
   begin
     t := LeftStr(MembersGrid.Values[0, i], Length(S));
     if SameText(S, t) then

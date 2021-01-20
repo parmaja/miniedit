@@ -43,6 +43,10 @@ type
     destructor Destroy; override;
   end;
 
+  TTSVFile = class(TCSVFile)
+  public
+  end;
+
   { TCSVFileCategory }
 
   TCSVFileCategory = class(TTextFileCategory)
@@ -182,5 +186,6 @@ initialization
     Tendencies.Add(TCSVTendency);
     Categories.Add(TCSVFileCategory.Create(TCSVTendency, 'csv', 'CSV comma seperated files'));
     Groups.Add(TCSVFile, 'csv', 'CSV', TCSVFileCategory, ['csv'], [fgkBrowsable], []);
+    Groups.Add(TTSVFile, 'tsv', 'TSV', TCSVFileCategory, ['tsv'], [fgkBrowsable], []);
   end;
 end.

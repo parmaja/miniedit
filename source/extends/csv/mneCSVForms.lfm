@@ -67,7 +67,6 @@ object CSVForm: TCSVForm
         PopupMenu = GridPopupMenu
         RowHeight = 22
         Capacity = 100000
-        Selected.TextColor = clHighlightText
         TabOrder = 0
         OnChanged = DataGridChanged
         OnColClick = DataGridColClick

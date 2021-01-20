@@ -180,7 +180,7 @@ begin
   begin
     if not FEngine.Groups[i].Category.Tendency.IsDefault then
     begin
-      ExtensionsGrid.ActiveRow := c;
+      ExtensionsGrid.ActiveIndex := c;
       FEngine.Options.ExtraExtensions.Values[FExtraExtensions[c]] := ExtensionCol.AsString;
       Inc(c);
     end;
@@ -205,7 +205,7 @@ begin
   begin
     if not FEngine.Groups[i].Category.Tendency.IsDefault then
     begin
-      ExtensionsGrid.ActiveRow := c;
+      ExtensionsGrid.ActiveIndex := c;
       GroupCol.AsString := FEngine.Groups[i].Title;
       ExtensionCol.AsString := FEngine.Options.ExtraExtensions.Values[FEngine.Groups[i].Name];
       SetLength(FExtraExtensions, c + 1);
