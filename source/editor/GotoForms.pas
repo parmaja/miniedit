@@ -16,16 +16,14 @@ type
 
   { TGotoLineForm }
 
-TGotoLineForm = class(TForm)
+  TGotoLineForm = class(TForm)
     NumberEdit: TEdit;
     Label1: TLabel;
     OkBtn: TButton;
     CancelBtn: TButton;
     procedure NumberEditKeyPress(Sender: TObject; var Key: char);
   private
-    { Private declarations }
   public
-    { Public declarations }
   end;
 
 implementation

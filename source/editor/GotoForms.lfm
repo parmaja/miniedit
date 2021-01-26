@@ -10,18 +10,18 @@ object GotoLineForm: TGotoLineForm
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Position = poMainFormCenter
-  LCLVersion = '1.7'
+  LCLVersion = '2.1.0.0'
   object Label1: TLabel
     Left = 17
     Height = 13
     Top = 16
-    Width = 102
+    Width = 82
     Caption = 'Enter line number'
     ParentColor = False
   end
   object NumberEdit: TEdit
     Left = 110
-    Height = 23
+    Height = 21
     Top = 13
     Width = 123
     OnKeyPress = NumberEditKeyPress
