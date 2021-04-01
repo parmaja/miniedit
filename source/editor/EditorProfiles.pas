@@ -14,7 +14,7 @@ interface
 uses
   Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, Registry,
   ExtCtrls, Buttons, ImgList, LCLType, mnXMLRttiProfile, SynEditMarkupWordGroup,
-  Contnrs, Menus, SynEdit, SynEditHighlighter, SynEditMiscClasses,
+  Contnrs, Menus, SynEdit, SynEditTypes, SynEditHighlighter, SynEditMiscClasses,
   SynEditPointClasses, SynGutterCodeFolding, mnClasses, SynGutter,
   SynEditKeyCmds, Classes, SysUtils;
 
