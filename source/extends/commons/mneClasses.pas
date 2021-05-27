@@ -66,12 +66,12 @@ type
 
   { TINIFileCategory }
 
-  TINIFileCategory = class(TTextFileCategory)
+{  TINIFileCategory = class(TTextFileCategory)
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
-  end;
+  end;}
 
   { TCFGFileCategory }
 
@@ -338,7 +338,7 @@ end;
 
 { TINIFileCategory }
 
-function TINIFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+{function TINIFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynINISyn.Create(nil);
 end;
@@ -356,7 +356,7 @@ begin
     Mapper.Add(SymbolAttri, attSymbol);
     Mapper.Add(SectionAttri, attDirective);
   end;
-end;
+end;}
 
 { TTXTFileCategory }
 
@@ -413,7 +413,7 @@ initialization
     Categories.Add(TmneProjectFileCategory.Create(DefaultProject.Tendency, 'mne-project', 'MiniEdit project'));
     Categories.Add(TTXTFileCategory.Create(DefaultProject.Tendency, 'txt', 'Text'));
     Categories.Add(TApacheFileCategory.Create(DefaultProject.Tendency, 'apache', 'Apache Config', []));
-    Categories.Add(TINIFileCategory.Create(DefaultProject.Tendency, 'ini', 'INI config'));
+    //Categories.Add(TINIFileCategory.Create(DefaultProject.Tendency, 'ini', 'INI config'));
     Categories.Add(TXMLFileCategory.Create(DefaultProject.Tendency, 'xml', 'XML files'));
     Categories.Add(TCFGFileCategory.Create(DefaultProject.Tendency, 'CFG', 'CFG Condif'));
     Categories.Add(TYamlFileCategory.Create(DefaultProject.Tendency, 'Yaml', 'YAML'));
@@ -425,8 +425,8 @@ initialization
     Groups.Add(TTXTFile, 'md', 'MarkDown', TMDFileCategory, ['md'], []);
     Groups.Add(TApacheFile, 'htaccess', 'htaccess', TApacheFileCategory, ['htaccess', 'conf'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TXMLFile, 'xml', 'XML', TXMLFileCategory, ['xml', 'lpi'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TINIConfigFile, 'ini', 'INI', TINIFileCategory, ['ini'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TCFGConfigFile, 'cfg', 'Config', TCFGFileCategory, ['cfg'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TINIConfigFile, 'ini', 'INI', TCFGFileCategory, ['ini'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TCFGConfigFile, 'cfg', 'Config', TCFGFileCategory, ['cfg', 'conf', 'config'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TYamlConfigFile, 'yaml', 'YAML', TYamlFileCategory, ['yaml'], [fgkAssociated, fgkBrowsable]);
   end;
 end.

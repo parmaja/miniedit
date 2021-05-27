@@ -1385,10 +1385,12 @@ end;
 
 function Engine: TEditorEngine;
 begin
-  if FEngineLife = engnShutdowned  then
-    raise Exception.Create('Engine in shutdown?');
   if FEngine = nil then
+  begin
+    if FEngineLife = engnShutdowned  then
+      raise Exception.Create('Engine in shutdown?');
     FEngine := TEditorEngine.Create;
+  end;
   Result := FEngine;
 end;
 
@@ -2484,7 +2486,7 @@ begin
   if vCategory = '' then
     C := nil
   else
-    C := Engine.Categories.Find(vName);
+    C := Engine.Categories.Find(vCategory);
   if C = nil then
     G := Engine.Groups.Find(vName)
   else
@@ -5778,6 +5780,8 @@ begin
   for i := 0 to Length(Extensions) - 1 do
     aGroup.Extensions.Add(Extensions[i]);
   aGroup.Category := aCategory;
+  if aCategory.Tendency = nil then
+    raise Exception.Create(Name + ' have not Tendency');
   if fgkDefault in Kind then
     aCategory.Tendency.Groups.Insert(0, aGroup)
   else
