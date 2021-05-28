@@ -547,7 +547,6 @@
     </Other>
   </CompilerOptions>
   <Debugging>
-    <Exceptions Count="1">
-    </Exceptions>
+    <Exceptions Count="1"/>
   </Debugging>
 </CONFIG>

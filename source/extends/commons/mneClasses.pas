@@ -304,13 +304,14 @@ begin
   with Highlighter as TSynConfigSyn do
   begin
     Mapper.Add(SpaceAttri, attDefault);
-    Mapper.Add(TextAttri, attComment);
     Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(DocumentAttri, attDocument);
+    Mapper.Add(SectionAttri, attDirective);
     Mapper.Add(KeyAttri, attKeyword);
+    Mapper.Add(TextAttri, attText);
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
-    Mapper.Add(SectionAttri, attDirective);
   end;
 end;
 

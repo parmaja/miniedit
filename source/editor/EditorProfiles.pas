@@ -32,6 +32,7 @@ type
     attText,
     attEmbedText,
     attQuotedString,
+
     attDocument,
     attComment,
     attSymbol,
