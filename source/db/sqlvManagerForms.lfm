@@ -153,8 +153,8 @@ object sqlvManagerForm: TsqlvManagerForm
       Align = alClient
       BorderSpacing.Around = 2
       BorderStyle = bsSingle
+      Color = clWindow
       ColWidth = 80
-      EvenColor = clWindow
       FixedFontColor = clBlack
       Gutter = False
       PopupMenu = ActionsPopupMenu
@@ -162,7 +162,6 @@ object sqlvManagerForm: TsqlvManagerForm
       ReadOnly = True
       RowHeight = 22
       ScrollBars = ssAutoBoth
-      Selected.TextColor = clHighlightText
       RowSelect = True
       TabOrder = 1
       FullHeader = True

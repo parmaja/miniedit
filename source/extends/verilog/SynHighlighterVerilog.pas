@@ -611,7 +611,7 @@ end;
 
 function TSynVerilogSyn.GetRange: Pointer;
 begin
-  Result := Pointer(PtrUInt(FRange));
+  Result := Pointer(PtrUInt(Ord(FRange)));
 end;
 
 function TSynVerilogSyn.GetToken: string;
@@ -668,7 +668,7 @@ end;
 
 procedure TSynVerilogSyn.SetRange(Value: Pointer);
 begin
-  FRange := TRangeState(PtrUInt(Value));
+  FRange := TRangeState(Value);
 end;
 
 function TSynVerilogSyn.GetIdentChars: TSynIdentChars;

@@ -373,6 +373,7 @@ type
     Require: string;
     ConfigFile: string;
     ExpandPaths: Boolean;
+    SharedLib: Boolean;
   end;
 
   TRunProjectOptions = class(TPersistent)
@@ -398,6 +399,8 @@ type
     property ExpandPaths: Boolean read FInfo.ExpandPaths write FInfo.ExpandPaths;
     property ConfigFile: string read FInfo.ConfigFile write FInfo.ConfigFile;
     property Paths: TStrings read FPaths write SetPaths;
+
+    property SharedLib: Boolean read FInfo.SharedLib write FInfo.SharedLib; //dll or so shared lib
   end;
 
   { TEditorProject }

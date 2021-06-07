@@ -18,7 +18,8 @@ program mne;
 }
 
 {
-  ..\..\bin\mne
+  output debug
+    ..\..\bin\mne
 }
 
 {$WARN 5044 off : Symbol "$1" is not portable}

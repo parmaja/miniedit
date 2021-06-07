@@ -494,6 +494,8 @@ type
     procedure ToolButton4Click(Sender: TObject);
     procedure ToolsMnuClick(Sender: TObject);
     procedure TypeOptionsActExecute(Sender: TObject);
+    procedure TypePnlClick(Sender: TObject);
+    procedure TypePnlDblClick(Sender: TObject);
     procedure TypesOptionsActExecute(Sender: TObject);
     procedure UC16BEBOMMnuClick(Sender: TObject);
     procedure UC16LEBOMMnuClick(Sender: TObject);
@@ -1334,9 +1336,12 @@ begin
     begin
       lTendency := Engine.Session.Project.Tendency;
       if Engine.ChooseTendency(lTendency) then
+      begin
         Engine.Session.Project.TendencyName := lTendency.Name;
+        ProjectOptionsAct.Execute;
+      end;
     end;
-  end
+  end;
 end;
 
 procedure TMainForm.RefreshFilesActExecute(Sender: TObject);
@@ -1706,6 +1711,15 @@ end;
 procedure TMainForm.TypeOptionsActExecute(Sender: TObject);
 begin
   ShowTendencyForm(Engine.Tendency);
+end;
+
+procedure TMainForm.TypePnlClick(Sender: TObject);
+begin
+end;
+
+procedure TMainForm.TypePnlDblClick(Sender: TObject);
+begin
+  SelectProjectTypeAct.Execute;
 end;
 
 procedure TMainForm.TypesOptionsActExecute(Sender: TObject);

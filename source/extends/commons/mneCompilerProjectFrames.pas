@@ -19,6 +19,7 @@ type
 
   TCompilerProjectFrame = class(TFrame, IEditorOptions, IEditorProjectFrame)
     Bevel1: TBevel;
+    SharedChk: TCheckBox;
     RunParamsEdit: TEdit;
     Label4: TLabel;
     ConfigFileEdit: TEdit;
@@ -61,6 +62,7 @@ begin
   Project.RunOptions.Params := RunParamsEdit.Text;
   Project.RunOptions.ConfigFile := ConfigFileEdit.Text;
   Project.RunOptions.ExpandPaths := ExpandPathsChk.Checked;
+  Project.RunOptions.SharedLib := SharedChk.Checked;
   Project.RunOptions.Paths.Assign(PathsEdit.Lines);
 end;
 
@@ -70,6 +72,7 @@ begin
   RunParamsEdit.Text := Project.RunOptions.Params;
   ConfigFileEdit.Text := Project.RunOptions.ConfigFile;
   ExpandPathsChk.Checked := Project.RunOptions.ExpandPaths;
+  SharedChk.Checked := Project.RunOptions.SharedLib;
   PathsEdit.Lines.Assign(Project.RunOptions.Paths);
 end;
 

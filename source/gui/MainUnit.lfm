@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 273
+  Left = 262
   Height = 568
-  Top = 191
+  Top = 170
   Width = 1021
   ActiveControl = LogEdit
   AllowDropFiles = True
@@ -291,6 +291,7 @@ object MainForm: TMainForm
       BevelOuter = bvLowered
       BorderWidth = 2
       TabOrder = 3
+      OnDblClick = TypePnlDblClick
     end
   end
   object BrowserPnl: TntvPanel

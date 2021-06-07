@@ -1,17 +1,17 @@
 object CompilerProjectFrame: TCompilerProjectFrame
   Left = 0
-  Height = 267
+  Height = 298
   Top = 0
   Width = 462
-  ClientHeight = 267
+  ClientHeight = 298
   ClientWidth = 462
   TabOrder = 0
   DesignLeft = 363
   DesignTop = 223
   inline PathsEdit: TSynEdit
     Left = 5
-    Height = 111
-    Top = 150
+    Height = 116
+    Top = 176
     Width = 451
     Anchors = [akTop, akLeft, akRight, akBottom]
     Constraints.MinHeight = 60
@@ -578,9 +578,9 @@ object CompilerProjectFrame: TCompilerProjectFrame
     end
   end
   object ExpandPathsChk: TCheckBox
-    Left = 10
+    Left = 11
     Height = 19
-    Top = 122
+    Top = 152
     Width = 96
     Caption = 'Expand pathes'
     TabOrder = 1
@@ -588,7 +588,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
   object ExpandPathsChk1: TCheckBox
     Left = 11
     Height = 19
-    Top = 95
+    Top = 131
     Width = 217
     Caption = 'Auto include files from included path'
     TabOrder = 2
@@ -596,7 +596,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
   object ExpandPathsChk2: TCheckBox
     Left = 11
     Height = 19
-    Top = 75
+    Top = 111
     Width = 203
     Caption = 'Auto include path from root folder'
     TabOrder = 3
@@ -604,7 +604,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
   object Label4: TLabel
     Left = 209
     Height = 15
-    Top = 123
+    Top = 76
     Width = 57
     Caption = 'Config File'
     ParentColor = False
@@ -612,7 +612,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
   object ConfigFileEdit: TEdit
     Left = 272
     Height = 23
-    Top = 119
+    Top = 72
     Width = 185
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 4
@@ -629,7 +629,8 @@ object CompilerProjectFrame: TCompilerProjectFrame
     Left = 93
     Height = 23
     Top = 11
-    Width = 185
+    Width = 364
+    Anchors = [akTop, akLeft, akRight]
     TabOrder = 5
   end
   object Label6: TLabel
@@ -644,15 +645,24 @@ object CompilerProjectFrame: TCompilerProjectFrame
     Left = 93
     Height = 23
     Top = 37
-    Width = 185
+    Width = 364
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 6
   end
   object Bevel1: TBevel
     Left = 9
     Height = 2
-    Top = 67
-    Width = 441
+    Top = 66
+    Width = 448
+    Anchors = [akTop, akLeft, akRight]
     OnChangeBounds = Bevel1ChangeBounds
+  end
+  object SharedChk: TCheckBox
+    Left = 12
+    Height = 19
+    Top = 76
+    Width = 97
+    Caption = 'Shared (dll/so)'
+    TabOrder = 7
   end
 end

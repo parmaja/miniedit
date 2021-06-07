@@ -20,15 +20,15 @@ object SelectFileForm: TSelectFileForm
     Width = 358
     Anchors = [akTop, akLeft, akRight, akBottom]
     AutoSort = False
+    AutoWidthLastColumn = True
     Columns = <    
       item
         Caption = 'File Name'
         Width = 200
       end    
       item
-        AutoSize = True
         Caption = 'Path'
-        Width = 39
+        Width = 154
       end>
     HideSelection = False
     ReadOnly = True
