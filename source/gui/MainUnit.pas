@@ -614,6 +614,7 @@ type
     FOutputs: TOutputs;
     FMenuItemsList: TObjectList;
     procedure ExploreFolder(AFolder: string);
+    procedure ExploreFile(AFileName: string);
     procedure RunFile;
     procedure CompileFile;
     //
@@ -2501,7 +2502,7 @@ procedure TMainForm.ExploreFileFolderMnuClick(Sender: TObject);
 begin
   if FileList.Selected <> nil then
   begin
-    ExploreFolder(Folder + FileList.Selected.Caption);
+    ExploreFile(Folder + FileList.Selected.Caption);
   end;
 end;
 
@@ -3204,19 +3205,24 @@ begin
 end;
 
 procedure TMainForm.ExploreFolder(AFolder: string);
-var
-  s: string;
 begin
   if Engine.Files.Current <> nil then
   begin
-    s := '';
-  {$ifdef WINDOWS}
-    //ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Files.Current.Name + '"'), nil, SW_SHOW);
-    RunCommand('Explorer', ['/select,"' + Engine.Files.Current.Name + '"'], s);
-  {$else}
-    RunCommand('xdg-open', [Engine.Files.Current.Path], s);
-  {$endif}
+    ExploreFile(Engine.Files.Current.Name);
   end;
+end;
+
+procedure TMainForm.ExploreFile(AFileName: string);
+var
+  s: string;
+begin
+  s := '';
+{$ifdef WINDOWS}
+  //ShellExecute(0, 'open', 'explorer.exe', PChar('/select,"' + Engine.Files.Current.Name + '"'), nil, SW_SHOW);
+  RunCommand('Explorer', ['/select,"' + AFileName + '"'], s);
+{$else}
+  RunCommand('xdg-open', [ExtractFilePath(AFileName)], s);
+{$endif}
 end;
 
 procedure TMainForm.PriorMessageActExecute(Sender: TObject);
