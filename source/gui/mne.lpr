@@ -16,6 +16,11 @@ program mne;
   good fonts
   http://www.lowing.org/fonts/
 }
+
+{
+  ..\..\bin\mne
+}
+
 {$WARN 5044 off : Symbol "$1" is not portable}
 uses
   {$IFDEF UNIX}
@@ -47,8 +52,8 @@ uses
   SearchProgressForms, SelectList, IniFiles, mneAssociateForm, mneExtends,
   mneCMDClasses, mneGoClasses, mneSARDClasses, mneLSLClasses, sqlvManagerForms,
   mneBoardClasses, mneBoardForms, mneSelectComponents, mneBoardComponents,
-  mneFontGenForm, mneGccClasses, mneVerilogClasses, SynHighlighterVerilog,
-  mneCustomClasses, mnePasProjectFrames, mnePASClasses, mneCSVClasses,
+  mneFontGenForm, mneVerilogClasses, SynHighlighterVerilog,
+  mneCustomClasses, mnePasProjectFrames, mnePASClasses, mneGccClasses, mneCSVClasses,
   mneDClasses, mneLuaClasses, LuaDBGServers, mnMsgBox, GUIMsgBox, Classes,
   PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses, EditorColors,
   gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneClasses, mneDBClasses,
@@ -144,7 +149,14 @@ begin
   {$ENDIF DEBUG}
   Application.CreateForm(TEditorResource, EditorResource);
   Application.CreateForm(TMainForm, MainForm);
-  Engine.Start;
+  try
+    Engine.Start;
+  except
+    on E: Exception do
+    begin
+      Engine.SendLog(E.Message);
+    end;
+  end;
   // Open any files passed in the command line
 end;
 
