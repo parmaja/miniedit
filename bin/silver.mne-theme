@@ -69,21 +69,16 @@
       <ForeColor>12224027</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Variable>
-    <Standard Class="TGlobalAttribute">
+    <Common Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
       <ForeColor>12910937</ForeColor>
       <Options>gaoDefaultBackground</Options>
-    </Standard>
+    </Common>
     <DataType Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
       <ForeColor>3111647</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </DataType>
-    <DataName Class="TGlobalAttribute">
-      <BackColor>2758927</BackColor>
-      <ForeColor>1491229</ForeColor>
-      <Options>gaoDefaultBackground</Options>
-    </DataName>
     <Document Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
       <ForeColor>1851672</ForeColor>

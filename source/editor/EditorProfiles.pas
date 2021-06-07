@@ -25,25 +25,26 @@ type
     attLink,
     attGutter,
     attSeparator,
+
+    attText,
     attSelected,
     attHighlighted,
     attActive,
     attModified,
-    attText,
-    attEmbedText,
     attQuotedString,
 
     attDocument,
     attComment,
     attSymbol,
     attNumber,
-    attDirective,
+    attDirective, //Directive, Section,
     attKeyword,
-    attStandard, //common functions
+    attCommon, //common functions and procedure names
+    attEmbed,  //any sub language, SQL inside code or ASM etc
     attIdentifier,
     attVariable,
-    attDataType,
-    attDataName //object, namespace
+    attDataType
+    //attDataName //object, namespace
     //attDataValue
    );
 
@@ -75,6 +76,7 @@ type
   TGlobalAttribute = class(TPersistent)
   private
     FBackground: TColor;
+    FDescription: string;
     FForeground: TColor;
     FIndex: Integer;
     FParent: TGlobalAttributes;
@@ -94,6 +96,7 @@ type
     procedure Correct;
     property Index: Integer read FIndex;
     property Title: string read FTitle write FTitle;
+    property Description: string read FDescription write FDescription;
     property IsDefault: Boolean read GetIsDefault;
     property AttType: TAttributeType read FAttType write FAttType;
     property Info: TGlobalAttributeInfo read FInfo write FInfo;
@@ -423,11 +426,12 @@ begin
 end;
 
 procedure TGlobalAttributes.Prepare;
-  procedure Add(var Item: TGlobalAttribute; AttType: TAttributeType; Title: string; Foreground, Background: TColor; Options: TGlobalAttributeOptions = []);
+  procedure Add(var Item: TGlobalAttribute; AttType: TAttributeType; Title, Description: string; Foreground, Background: TColor; Options: TGlobalAttributeOptions = []);
   begin
     Item := TGlobalAttribute.Create;
     Item.AttType := AttType;
     Item.Title := Title;
+    Item.Description := Description;
     Item.ForeColor := Foreground;
     Item.BackColor := Background;
     if (Item.Foreground = clDefault) then
@@ -443,29 +447,30 @@ procedure TGlobalAttributes.Prepare;
 begin
   FList.Clear;
   Init;
-  Add(FDefault, attDefault, 'Default', clBlack, $00DFDFDF, []);
-  Add(FPanel, attPanel, 'Panel', clBlack, $00CFCFCF, []);
-  Add(FLink, attLink, 'Link', clWhite, $002A190F, [gaoDefaultBackground,gaoDefaultForeground]);
-  Add(FSelected, attSelected, 'Selected', clBlack, $00CAA586, []);
-  Add(FHighlighted, attHighlighted, 'Highlighted', $00150FFF, clNone, [gaoDefaultBackground]);
-  Add(FActive, attActive, 'Active', clBlack, $00755B4A, []);
-  Add(FModified, attModified, 'Modified', clYellow, clGreen, []);
-  Add(FGutter, attGutter, 'Gutter', clBlack, $00E9E9E9, []);
-  Add(FSeparator, attSeparator, 'Separator', $00D8D8D8, $00CDCDCD, []);
-  Add(FKeyword, attKeyword, 'Keyword', $00BB4A00, $002A190F, [gaoDefaultBackground]);
-  Add(FQuotedString, attQuotedString, 'String', $00008C20, $002A190F, [gaoDefaultBackground]);
-  Add(FDocument, attDocument, 'Document', $001C4118, $002A190F, [gaoDefaultBackground]);
-  Add(FComment, attComment, 'Comment', $00565658, $002A190F, [gaoDefaultBackground]);
-  Add(FSymbol, attSymbol, 'Symbol', $006C4100, $002A190F, [gaoDefaultBackground]);
-  Add(FStandard, attStandard, 'Standard', $00C50159, $002A190F, [gaoDefaultBackground]);
-  Add(FNumber, attNumber, 'Number', $000052A4, $002A190F, [gaoDefaultBackground]);
-  Add(FDirective, attDirective, 'Directive', $002525AD, $002A190F, [gaoDefaultBackground]);
-  Add(FIdentifier, attIdentifier, 'Identifier', clBlack, $002A190F, [gaoDefaultBackground]);
-  Add(FText, attText, 'Text', clWhite, $002A190F, [gaoDefaultBackground,gaoDefaultForeground]);
-  Add(FEmbedText, attEmbedText, 'Embed Text', clWhite, $002A190F, [gaoDefaultBackground,gaoDefaultForeground]);
-  Add(FVariable, attVariable, 'Variable', clSkyBlue, $002A190F, [gaoDefaultBackground]);
-  Add(FDataType, attDataType, 'Type', $002F7ADF, $002A190F, [gaoDefaultBackground]);
-  Add(FDataName, attDataName, 'Name', $0016C11D, $002A190F, [gaoDefaultBackground]);
+  Add(FDefault, attDefault, 'Default', 'Default colors', clBlack, $00DFDFDF, []);
+  Add(FPanel, attPanel, 'Panel', 'GUI Panel', clBlack, $00CFCFCF, []);
+  Add(FLink, attLink, 'Link', 'URL Links of follow defines highlight', clWhite, $002A190F, [gaoDefaultBackground,gaoDefaultForeground]);
+  Add(FSelected, attSelected, 'Selected', 'Selected text', clBlack, $00CAA586, []);
+  Add(FHighlighted, attHighlighted, 'Highlighted', 'Highlighted important line, like running line', $00150FFF, clNone, [gaoDefaultBackground]);
+  Add(FActive, attActive, 'Active', 'Like debugging line', clBlack, $00755B4A, []);
+  Add(FModified, attModified, 'Modified', 'Modified lines mark colors', clYellow, clGreen, []);
+  Add(FGutter, attGutter, 'Gutter', 'Gutter',clBlack, $00E9E9E9, []);
+  Add(FSeparator, attSeparator, 'Separator', 'Seperators, between Gutter of Editor and Line numbers', $00D8D8D8, $00CDCDCD, []);
+
+  Add(FDirective, attDirective, 'Directive', 'Directive or Section, Special keywords', $002525AD, $002A190F, [gaoDefaultBackground]);
+  Add(FKeyword, attKeyword, 'Keyword', 'Keyword of language', $00BB4A00, $002A190F, [gaoDefaultBackground]);
+  Add(FQuotedString, attQuotedString, 'String', 'Double or single quoted string', $00008C20, $002A190F, [gaoDefaultBackground]);
+  Add(FDocument, attDocument, 'Document', 'Commented line with special for reading as documentation', $001C4118, $002A190F, [gaoDefaultBackground]);
+  Add(FComment, attComment, 'Comment', 'Commmented line, ignored by eyes and compiler', $00565658, $002A190F, [gaoDefaultBackground]);
+  Add(FSymbol, attSymbol, 'Symbol', 'Symbols non text characters', $006C4100, $002A190F, [gaoDefaultBackground]);
+  Add(FStandard, attCommon, 'Common', 'Common functions and procedure names, like print', $00C50159, $002A190F, [gaoDefaultBackground]);
+  Add(FEmbedText, attEmbed, 'Embed', 'Embed Text or language, like CDATA in XML or ASM in Pascal, C', clWhite, $002A190F, [gaoDefaultBackground,gaoDefaultForeground]);
+  Add(FNumber, attNumber, 'Number', 'Numbers', $000052A4, $002A190F, [gaoDefaultBackground]);
+  Add(FIdentifier, attIdentifier, 'Identifier', 'Identifiers, text too but for language', clBlack, $002A190F, [gaoDefaultBackground]);
+  Add(FText, attText, 'Text', 'Non code text, or any text', clWhite, $002A190F, [gaoDefaultBackground,gaoDefaultForeground]);
+  Add(FVariable, attVariable, 'Variable', 'Variables or Data names', clSkyBlue, $002A190F, [gaoDefaultBackground]);
+  Add(FDataType, attDataType, 'Type', 'Variable or Data type', $002F7ADF, $002A190F, [gaoDefaultBackground]);
+  //Add(FDataName, attDataName, 'Name', 'Data Name', $0016C11D, $002A190F, [gaoDefaultBackground]);
   Correct;
 end;
 

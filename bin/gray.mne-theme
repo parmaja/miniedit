@@ -70,21 +70,16 @@
       <ForeColor>clSkyBlue</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Variable>
-    <Standard Class="TGlobalAttribute">
+    <Common Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
       <ForeColor>4126207</ForeColor>
       <Options>gaoDefaultBackground</Options>
-    </Standard>
+    </Common>
     <DataType Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
       <ForeColor>4227327</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </DataType>
-    <DataName Class="TGlobalAttribute">
-      <BackColor>2758927</BackColor>
-      <ForeColor>1491229</ForeColor>
-      <Options>gaoDefaultBackground</Options>
-    </DataName>
     <Document Class="TGlobalAttribute">
       <BackColor>3420206</BackColor>
       <ForeColor>5159011</ForeColor>

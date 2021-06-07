@@ -293,7 +293,7 @@ begin
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(SymbolAttri, attSymbol);
-    Mapper.Add(ASMAttri, attEmbedText);
+    Mapper.Add(ASMAttri, attEmbed);
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(IDEDirectiveAttri, attDirective);
     Mapper.Add(IdentifierAttri, attIdentifier);

@@ -1,4 +1,4 @@
-unit mneSardClasses;
+unit mneLSLClasses;
 {$mode objfpc}{$H+}
 {**
  * Mini Edit
@@ -15,27 +15,27 @@ uses
   EditorOptions, EditorRun, EditorClasses, mneRunFrames,
   SynEditHighlighter, SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  mnSynHighlighterSard, SynHighlighterLFM;
+  mnSynHighlighterLSL, SynHighlighterLFM;
 
 type
 
-  { TmneSynSardSyn }
+  { TmneSynLSLSyn }
 
-  TmneSynSardSyn = class(TSynSardSyn)
+  TmneSynLSLSyn = class(TSynLSLSyn)
   public
   end;
 
-  { TSardFile }
+  { TLSLFile }
 
-  TSardFile = class(TSourceEditorFile)
+  TLSLFile = class(TSourceEditorFile)
   protected
     procedure NewContent; override;
   public
   end;
 
-  { TSardFileCategory }
+  { TLSLFileCategory }
 
-  TSardFileCategory = class(TTextFileCategory)
+  TLSLFileCategory = class(TTextFileCategory)
   private
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
@@ -43,12 +43,12 @@ type
   public
   end;
 
-  TSardEditorDebugger = class(TEditorDebugger)
+  TLSLEditorDebugger = class(TEditorDebugger)
   end;
 
-  { TSardTendency }
+  { TLSLTendency }
 
-  TSardTendency = class(TEditorTendency)
+  TLSLTendency = class(TEditorTendency)
   protected
     procedure Created; override;
     function CreateDebugger: TEditorDebugger; override;
@@ -62,24 +62,24 @@ implementation
 uses
   IniFiles, mnStreams, mnUtils;
 
-{ TSardTendency }
+{ TLSLTendency }
 
-procedure TSardTendency.Created;
+procedure TLSLTendency.Created;
 begin
   FCapabilities := [capExecute, capOptions];
-  FName := 'Sard';
-  FTitle := 'Sard project';
-  FDescription := 'Sard Files, *.sard';
+  FName := 'LSL';
+  FTitle := 'LSL project';
+  FDescription := 'LSL Files, *.LSL';
   FImageIndex := -1;
 end;
 
-function TSardTendency.CreateDebugger: TEditorDebugger;
+function TLSLTendency.CreateDebugger: TEditorDebugger;
 begin
-  //Result := TSardEditorDebugger.Create;
+  //Result := TLSLEditorDebugger.Create;
   Result := inherited CreateDebugger;
 end;
 
-procedure TSardTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+procedure TLSLTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
   aFrame: TRunFrameOptions;
 begin
@@ -90,7 +90,7 @@ begin
   AddFrame(aFrame);
 end;
 
-procedure TSardTendency.DoRun(Info: TmneRunInfo);
+procedure TLSLTendency.DoRun(Info: TmneRunInfo);
 var
   aRunItem: TmneRunItem;
 begin
@@ -116,9 +116,9 @@ begin
     if Info.Command = '' then
     begin
       {$ifdef windows}
-        aRunItem.Info.Run.Command := 'sard.exe';
+        aRunItem.Info.Run.Command := 'LSL.exe';
       {$else}
-        aRunItem.Info.Run.Command := 'sard';
+        aRunItem.Info.Run.Command := 'LSL';
       {$endif}
     end;
     aRunItem.Info.Run.AddParam(' "' + Info.MainFile + '"');
@@ -137,9 +137,9 @@ begin
     aRunItem.Info.Run.AddParam('-l ');
 
     {$ifdef windows}
-      aRunItem.Info.Run.Command := 'sard.exe';
+      aRunItem.Info.Run.Command := 'LSL.exe';
     {$else}
-      aRunItem.Info.Run.Command := 'sard';
+      aRunItem.Info.Run.Command := 'LSL';
     {$endif}
     aRunItem.Info.Run.AddParam(' "' + Info.MainFile + '"');
   end;
@@ -148,16 +148,16 @@ begin
     Engine.Session.Run.Start(Debugger);
 end;
 
-{ TSardFileCategory }
+{ TLSLFileCategory }
 
-function TSardFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TLSLFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
-  Result := TmneSynSardSyn.Create(nil);
+  Result := TmneSynLSLSyn.Create(nil);
 end;
 
-procedure TSardFileCategory.InitMappers;
+procedure TLSLFileCategory.InitMappers;
 begin
-  with Highlighter as TSynSardSyn do
+  with Highlighter as TSynLSLSyn do
   begin
     Mapper.Add(WhitespaceAttri, attDefault);
     Mapper.Add(CommentAttri, attComment);
@@ -175,9 +175,9 @@ begin
   end
 end;
 
-{ TSardFile }
+{ TLSLFile }
 
-procedure TSardFile.NewContent;
+procedure TLSLFile.NewContent;
 begin
   inherited NewContent;
 end;
@@ -185,8 +185,8 @@ end;
 initialization
   with Engine do
   begin
-    Tendencies.Add(TSardTendency);
-    Categories.Add(TSardFileCategory.Create(TSardTendency, 'Sard', 'Sard lang'));
-    Groups.Add(TSardFile, 'sard', 'Sard', TSardFileCategory, ['sard'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
+    Tendencies.Add(TLSLTendency);
+    Categories.Add(TLSLFileCategory.Create(TLSLTendency, 'LSL', 'LSL lang'));
+    Groups.Add(TLSLFile, 'LSL', 'LSL', TLSLFileCategory, ['LSL'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
   end;
 end.

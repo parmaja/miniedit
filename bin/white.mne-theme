@@ -67,10 +67,10 @@
       <Style>fsBold</Style>
       <Options>gaoDefaultForeground</Options>
     </Variable>
-    <Standard Class="TGlobalAttribute">
+    <Common Class="TGlobalAttribute">
       <BackColor>clWhite</BackColor>
       <ForeColor>1325648</ForeColor>
-    </Standard>
+    </Common>
     <Value Class="TGlobalAttribute">
       <BackColor>clWhite</BackColor>
       <ForeColor>clGreen</ForeColor>
@@ -79,10 +79,6 @@
       <BackColor>clWhite</BackColor>
       <ForeColor>3111647</ForeColor>
     </DataType>
-    <DataName Class="TGlobalAttribute">
-      <BackColor>clWhite</BackColor>
-      <ForeColor>743695</ForeColor>
-    </DataName>
     <Document Class="TGlobalAttribute">
       <BackColor>clWhite</BackColor>
       <ForeColor>3690</ForeColor>

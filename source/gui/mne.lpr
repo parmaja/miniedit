@@ -16,7 +16,7 @@ program mne;
   good fonts
   http://www.lowing.org/fonts/
 }
-
+{$WARN 5044 off : Symbol "$1" is not portable}
 uses
   {$IFDEF UNIX}
   cthreads,
@@ -45,9 +45,9 @@ uses
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
 
   SearchProgressForms, SelectList, IniFiles, mneAssociateForm, mneExtends,
-  mneCMDClasses, mneGoClasses, mneSARDClasses, sqlvManagerForms,
+  mneCMDClasses, mneGoClasses, mneSARDClasses, mneLSLClasses, sqlvManagerForms,
   mneBoardClasses, mneBoardForms, mneSelectComponents, mneBoardComponents,
-  mneFontGenForm, mneCppClasses, mneVerilogClasses, SynHighlighterVerilog,
+  mneFontGenForm, mneGccClasses, mneVerilogClasses, SynHighlighterVerilog,
   mneCustomClasses, mnePasProjectFrames, mnePASClasses, mneCSVClasses,
   mneDClasses, mneLuaClasses, LuaDBGServers, mnMsgBox, GUIMsgBox, Classes,
   PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses, EditorColors,

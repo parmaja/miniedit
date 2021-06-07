@@ -66,7 +66,7 @@ object EditorColorsForm: TEditorColorsForm
     Left = 105
     Height = 22
     Top = 101
-    Width = 260
+    Width = 262
     DefaultColorColor = clWhite
     NoneColorColor = clWhite
     Selected = clWhite
@@ -81,7 +81,7 @@ object EditorColorsForm: TEditorColorsForm
     Left = 105
     Height = 22
     Top = 74
-    Width = 260
+    Width = 262
     Style = [cbStandardColors, cbExtendedColors, cbCustomColor, cbPrettyNames, cbCustomColors]
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 16
@@ -91,10 +91,10 @@ object EditorColorsForm: TEditorColorsForm
     TabOrder = 4
   end
   object AttributeCbo: TComboBox
-    Left = 74
+    Left = 64
     Height = 21
     Top = 45
-    Width = 191
+    Width = 303
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 13
     OnSelect = AttributeCboSelect
@@ -131,16 +131,16 @@ object EditorColorsForm: TEditorColorsForm
     Left = 370
     Height = 25
     Top = 14
-    Width = 54
+    Width = 68
     Anchors = [akTop, akRight]
     Caption = 'Font'
     OnClick = FontBtnClick
     TabOrder = 8
   end
   object AntialiasingChk: TCheckBox
-    Left = 357
+    Left = 377
     Height = 19
-    Top = 45
+    Top = 43
     Width = 73
     Anchors = [akTop, akRight]
     Caption = '&Antialiasing'
@@ -178,7 +178,7 @@ object EditorColorsForm: TEditorColorsForm
     TabOrder = 12
   end
   object ForegroundBtn: TButton
-    Left = 367
+    Left = 370
     Height = 22
     Top = 74
     Width = 22
@@ -189,7 +189,7 @@ object EditorColorsForm: TEditorColorsForm
     TabOrder = 13
   end
   object BackgroundBtn: TButton
-    Left = 367
+    Left = 370
     Height = 22
     Top = 101
     Width = 22

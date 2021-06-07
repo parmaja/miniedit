@@ -144,6 +144,7 @@ begin
       for i := 0 to FProfile.Attributes.Count - 1 do
         AttributeCbo.Items.AddObject(FProfile.Attributes.Items[i].Title, FProfile.Attributes.Items[i]);
       AttributeCbo.ItemIndex := 0;
+      AttributeCbo.Hint := '';
 
       Retrieve;
       //Show the form
@@ -413,7 +414,10 @@ begin
       AttributeCbo.ItemIndex := G.Index;
     end
     else
+    begin
       AttributeCbo.ItemIndex := -1;
+      AttributeCbo.Hint := '';
+    end;
     RetrieveAttribute;
   end;
 end;
@@ -426,6 +430,7 @@ begin
   begin
     NameEdit.Text := FProfile.Attributes.Name;
     aGlobalAttribute := (AttributeCbo.Items.Objects[AttributeCbo.ItemIndex] as TGlobalAttribute);
+    AttributeCbo.Hint := aGlobalAttribute.Description;
     InChanging := True;
     try
       ForegroundCbo.Selected := aGlobalAttribute.ForeColor;

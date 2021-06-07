@@ -359,7 +359,7 @@ begin
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(IdentifierAttri, attIdentifier);
     Mapper.Add(SpaceAttri, attDefault);
-    Mapper.Add(InbuiltFuncAttri, attStandard);
+    Mapper.Add(InbuiltFuncAttri, attCommon);
   end;
 end;
 

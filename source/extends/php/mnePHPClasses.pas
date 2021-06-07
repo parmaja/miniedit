@@ -332,7 +332,7 @@ begin
     {.$if declared(LCL_FULLVERSION) and (LCL_FULLVERSION > 1060000) }
     {.$if (LCLVersion > 1060000) }
     {$if (LCL_FULLVERSION > 1060000) }
-    Mapper.Add(SelectorAttri, attDataName);
+    Mapper.Add(SelectorAttri, attVariable);
     Mapper.Add(MeasurementUnitAttri, attVariable);
     {$endif}
   end;
@@ -539,7 +539,7 @@ begin
     Mapper.Add(DocumentAttri, attDocument);
     Mapper.Add(KeywordAttri, attKeyword);
     Mapper.Add(TypeAttri, attDataType);
-    Mapper.Add(FunctionAttri, attStandard);
+    Mapper.Add(FunctionAttri, attCommon);
     Mapper.Add(IdentifierAttri, attIdentifier);
     Mapper.Add(TextAttri, attText);
     Mapper.Add(NumberAttri, attNumber);
@@ -581,7 +581,7 @@ begin
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(IdentifierAttri, attIdentifier);
-    Mapper.Add(NonReservedKeyAttri, attDataName);
+    Mapper.Add(NonReservedKeyAttri, attVariable);
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);

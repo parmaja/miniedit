@@ -307,7 +307,7 @@ begin
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(DocumentAttri, attDocument);
     Mapper.Add(SectionAttri, attDirective);
-    Mapper.Add(KeyAttri, attKeyword);
+    Mapper.Add(KeyAttri, attVariable);
     Mapper.Add(TextAttri, attText);
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(StringAttri, attQuotedString);
@@ -381,16 +381,16 @@ procedure TXMLFileCategory.InitMappers;
 begin
   with Highlighter as TSynXMLSyn do
   begin
-    Mapper.Add(ElementAttri, attDataName);
+    Mapper.Add(ElementAttri, attVariable);
     Mapper.Add(SpaceAttri, attDefault);
     Mapper.Add(TextAttri, attText);
     Mapper.Add(EntityRefAttri, attIdentifier);
     Mapper.Add(ProcessingInstructionAttri, attDirective);
-    Mapper.Add(CDATAAttri, attEmbedText);
+    Mapper.Add(CDATAAttri, attEmbed);
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(DocTypeAttri, attComment);
-    Mapper.Add(AttributeAttri, attDataName);
-    Mapper.Add(NamespaceAttributeAttri, attDataName);
+    Mapper.Add(AttributeAttri, attVariable);
+    Mapper.Add(NamespaceAttributeAttri, attVariable);
     Mapper.Add(AttributeValueAttri, attQuotedString);
     Mapper.Add(NamespaceAttributeAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
@@ -416,7 +416,7 @@ initialization
     Categories.Add(TApacheFileCategory.Create(DefaultProject.Tendency, 'apache', 'Apache Config', []));
     //Categories.Add(TINIFileCategory.Create(DefaultProject.Tendency, 'ini', 'INI config'));
     Categories.Add(TXMLFileCategory.Create(DefaultProject.Tendency, 'xml', 'XML files'));
-    Categories.Add(TCFGFileCategory.Create(DefaultProject.Tendency, 'CFG', 'CFG Condif'));
+    Categories.Add(TCFGFileCategory.Create(DefaultProject.Tendency, 'CFG', 'Config and INI'));
     Categories.Add(TYamlFileCategory.Create(DefaultProject.Tendency, 'Yaml', 'YAML'));
     Categories.Add(TMDFileCategory.Create(DefaultProject.Tendency, 'md', 'Markdown'));
 

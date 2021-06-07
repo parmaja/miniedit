@@ -28,8 +28,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure TimerTimer(Sender: TObject);
     procedure FilterEditChange(Sender: TObject);
-    procedure FilterEditKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
+    procedure FilterEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure OkBtnClick(Sender: TObject);
   private
     FFiles: TStringList;
@@ -106,7 +105,7 @@ begin
     for i := 0 to FFiles.Count - 1 do
     begin
       aFileName := ExtractFileName(FFiles[i]);
-      if (s = '')  or (FindPart(s, aFileName) > 0) then
+      if (s = '')  or (FindPart(LowerCase(s), LowerCase(aFileName)) > 0) then
       //if (s = '') or IsMatch(s, aFileName) then
       begin
         aItem := FilesList.Items.Add;

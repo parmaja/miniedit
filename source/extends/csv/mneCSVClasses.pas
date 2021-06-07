@@ -167,7 +167,7 @@ begin
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(IdentifierAttri, attIdentifier);
     Mapper.Add(KeyAttri, attKeyword);
-    Mapper.Add(ConstantAttri, attDataName);
+    Mapper.Add(ConstantAttri, attVariable);
     Mapper.Add(ObjectAttri, attIdentifier);
     Mapper.Add(EntityAttri, attQuotedString);
     Mapper.Add(DotAttri, attIdentifier);

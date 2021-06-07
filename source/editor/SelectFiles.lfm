@@ -75,7 +75,7 @@ object SelectFileForm: TSelectFileForm
   object Timer: TTimer
     Interval = 300
     OnTimer = TimerTimer
-    left = 96
-    top = 79
+    Left = 96
+    Top = 79
   end
 end

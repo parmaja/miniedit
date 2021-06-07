@@ -399,8 +399,7 @@ begin
     Mapper.Add(KeywordAttri, attKeyword);
     Mapper.Add(DocumentAttri, attDocument);
     Mapper.Add(TypeAttri, attDataType);
-    //Mapper.Add(ValueAttri, attDataValue);
-    Mapper.Add(FunctionAttri, attStandard);
+    Mapper.Add(FunctionAttri, attCommon);
     Mapper.Add(IdentifierAttri, attIdentifier);
     Mapper.Add(TextAttri, attText);
     Mapper.Add(NumberAttri, attNumber);

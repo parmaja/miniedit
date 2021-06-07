@@ -127,8 +127,8 @@ begin
   begin
     Mapper.Add(CommentAttri, attComment);
     Mapper.Add(TypeAttri, attDataType);
-    Mapper.Add(ObjectAttri, attDataName);
-    Mapper.Add(FunctionAttri, attStandard);
+    Mapper.Add(ObjectAttri, attVariable);
+    Mapper.Add(FunctionAttri, attCommon);
     Mapper.Add(IdentifierAttri, attIdentifier);
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(NumberAttri, attNumber);
