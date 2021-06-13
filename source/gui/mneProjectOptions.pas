@@ -28,6 +28,7 @@ type
     Label10: TLabel;
     Label2: TLabel;
     Label6: TLabel;
+    Label7: TLabel;
     Label8: TLabel;
     Label9: TLabel;
     MainEdit: TEdit;
@@ -40,6 +41,7 @@ type
     MenuItem3: TMenuItem;
     MainPathMnu: TMenuItem;
     NameEdit: TEdit;
+    FileFilterEdit: TEdit;
     OverrideOptionsChk: TCheckBox;
     RootDirEdit: TEdit;
     SaveDesktopChk: TCheckBox;
@@ -179,6 +181,7 @@ begin
   OverrideOptionsChk.Checked := FProject.Options.OverrideEditorOptions;
   TabWidthEdit.Text := IntToStr(FProject.Options.TabWidth);
   IndentModeCbo.ItemIndex := Ord(FProject.Options.IndentMode);
+  FileFilterEdit.Text := FProject.FileFilter;
 end;
 
 procedure TProjectForm.Apply;
@@ -195,6 +198,7 @@ begin
   FProject.Options.OverrideEditorOptions := OverrideOptionsChk.Checked;
   FProject.Options.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
   FProject.Options.IndentMode := TIndentMode(IndentModeCbo.ItemIndex);
+  FProject.FileFilter := FileFilterEdit.Text;
 end;
 
 procedure TProjectForm.Button3Click(Sender: TObject);

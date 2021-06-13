@@ -8,6 +8,10 @@ unit mneGccClasses;
  *
  *}
 
+ {
+    gcc zkfp.c -o zkfp.dll -shared -static-libgcc -m32 -DBUILD_DLL -I.\libs\include -L D:\programs\win-builds\lib -L .\libs\x86lib -llibzkfp -Wl,-export-all-symbols -Wl,-out-implib,libzkfp.dll.a
+ }
+
 interface
 
 uses
@@ -31,7 +35,6 @@ type
     function CanOpenInclude: Boolean; override;
     procedure OpenInclude; override;
   end;
-
 
   { TCppFileCategory }
 
@@ -332,6 +335,6 @@ initialization
   begin
     Tendencies.Add(TGccTendency);
     Categories.Add(TCppFileCategory.Create(TGccTendency, 'Gcc', 'GCC C/C++', [fckPublish]));
-    Groups.Add(TCppFile, 'cpp', 'C/C++', TCppFileCategory, ['cpp', 'c', 'ino', 'h'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
+    Groups.Add(TCppFile, 'cpp', 'C/C++', TCppFileCategory, ['cpp', 'c', 'ino', 'h', 'def'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
   end;
 end.

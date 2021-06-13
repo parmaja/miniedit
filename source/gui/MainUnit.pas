@@ -63,6 +63,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
+    ShowProjectFilterAct: TAction;
     DBCreateDatabaseAct: TAction;
     DBBrowseAct: TAction;
     DBDisconnectAct: TAction;
@@ -78,6 +79,7 @@ type
     BrowserPnl: TntvPanel;
     LogEdit: TSynEdit;
     LogSyn: TSynAnySyn;
+    ProjectFilterMnu: TMenuItem;
     MenuItem33: TMenuItem;
     MenuItem45: TMenuItem;
     CloseFileMnu: TMenuItem;
@@ -191,16 +193,16 @@ type
     MenuItem7: TMenuItem;
     MenuItem8: TMenuItem;
     MenuItem9: TMenuItem;
-    ShowAllAct: TAction;
-    ShowKnownAct: TAction;
-    ShowRelatedAct: TAction;
+    ShowAllFilterAct: TAction;
+    ShowKnownFilterAct: TAction;
+    ShowTendencyFilterAct: TAction;
     ApplicationProperties: TApplicationProperties;
     MainMenu: TMainMenu;
     file1: TMenuItem;
     MenuItem2: TMenuItem;
-    MenuItem3: TMenuItem;
-    MenuItem4: TMenuItem;
-    MenuItem5: TMenuItem;
+    AllKnownFilterMnu: TMenuItem;
+    AllFilterMnu: TMenuItem;
+    TendencyFilterMnu: TMenuItem;
     IPCServer: TSimpleIPCServer;
     veiw1: TMenuItem;
     Help1: TMenuItem;
@@ -484,9 +486,10 @@ type
     procedure MessagesActExecute(Sender: TObject);
     procedure SetAsMainFileAcExecute(Sender: TObject);
     procedure SetAsRootFolderActExecute(Sender: TObject);
-    procedure ShowAllActExecute(Sender: TObject);
-    procedure ShowRelatedActExecute(Sender: TObject);
-    procedure ShowKnownActExecute(Sender: TObject);
+    procedure ShowAllFilterActExecute(Sender: TObject);
+    procedure ShowProjectFilterActExecute(Sender: TObject);
+    procedure ShowTendencyFilterActExecute(Sender: TObject);
+    procedure ShowKnownFilterActExecute(Sender: TObject);
     procedure ShowSpecialCharsActExecute(Sender: TObject);
     procedure SortByExtensionsActExecute(Sender: TObject);
     procedure SortByNamesActExecute(Sender: TObject);
@@ -1658,17 +1661,22 @@ begin
   Engine.Session.Project.RunOptions.MainFolder:= Folder;
 end;
 
-procedure TMainForm.ShowAllActExecute(Sender: TObject);
+procedure TMainForm.ShowAllFilterActExecute(Sender: TObject);
 begin
   ShowFolderFiles := sffAll;
 end;
 
-procedure TMainForm.ShowRelatedActExecute(Sender: TObject);
+procedure TMainForm.ShowProjectFilterActExecute(Sender: TObject);
+begin
+  ShowFolderFiles := sffProject;
+end;
+
+procedure TMainForm.ShowTendencyFilterActExecute(Sender: TObject);
 begin
   ShowFolderFiles := sffRelated;
 end;
 
-procedure TMainForm.ShowKnownActExecute(Sender: TObject);
+procedure TMainForm.ShowKnownFilterActExecute(Sender: TObject);
 begin
   ShowFolderFiles := sffKnown;
 end;
@@ -1960,6 +1968,7 @@ begin
   else
     SCMMnu.Caption := '';
 
+  UpdateFolder;
   UpdateMenu;
   UpdateMenuItems;
   UpdatePanel;
@@ -2163,9 +2172,10 @@ begin
   if FoldersAct.Checked then
     UpdateFolder;
   case FShowFolderFiles of
-    sffRelated: ShowRelatedAct.Checked := True;
-    sffKnown: ShowKnownAct.Checked := True;
-    sffAll: ShowAllAct.Checked := True;
+    sffRelated: ShowTendencyFilterAct.Checked := True;
+    sffProject: ShowProjectFilterAct.Checked := True;
+    sffKnown: ShowKnownFilterAct.Checked := True;
+    sffAll: ShowAllFilterAct.Checked := True;
   end;
 end;
 
@@ -2220,6 +2230,7 @@ var
 var
   aFiles: TStringList;
   SaveSelected: Integer;
+  i: Integer;
 begin
   FolderPathLbl.Caption := Folder;
   FolderPathLbl.Hint := Folder;
@@ -2230,6 +2241,7 @@ begin
 
     All := False;
     AExtensions := TStringList.Create;
+    AExtensions.Delimiter := ';';
     try
       case ShowFolderFiles of
         sffRelated:
@@ -2237,10 +2249,26 @@ begin
             Engine.Session.Project.Tendency.Groups.EnumExtensions(AExtensions)
           else
             Engine.Groups.EnumExtensions(AExtensions);
+        sffProject:
+          if Engine.Session.Active then
+          begin
+            if Engine.Session.Project.FileFilter = '' then
+              Engine.Session.Project.Tendency.Groups.EnumExtensions(AExtensions)
+            else
+             AExtensions.DelimitedText := Engine.Session.Project.FileFilter
+          end
+          else
+            Engine.Groups.EnumExtensions(AExtensions);
         sffKnown: Engine.Groups.EnumExtensions(AExtensions);
         sffAll: All := True;
       end;
       AExtensions.Add('mne-project');
+
+      for i := 0 to AExtensions.Count -1 do
+      begin
+        if LeftStr(AExtensions[i], 1) = '.' then //that correct if some one added dot to the first char of extension
+          AExtensions[i]:= Copy(AExtensions[i], 2, MaxInt);
+      end;
 
       aFiles := THashedStringList.Create;
       try

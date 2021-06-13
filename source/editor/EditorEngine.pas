@@ -303,6 +303,7 @@ type
 
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); virtual;
     function CreateOptions: TEditorProjectOptions; virtual;
+    function CreateProject: TEditorProject; virtual;
     procedure EnumRunCommands(Items: TStrings); virtual;
     function GetDefaultGroup: TFileGroup;
     //OSDepended: When save to file, the filename changed depend on the os system name
@@ -405,8 +406,9 @@ type
 
   { TEditorProject }
 
-  TEditorProject = class(TmnXMLProfile)
+  TEditorProject = class abstract(TmnXMLProfile)
   private
+    FFileFilter: string;
     FOptions: TEditorProjectOptions;
     FRunOptions: TRunProjectOptions;
     FTendencyName: string;
@@ -450,9 +452,17 @@ type
     property SaveDesktop: Boolean read FSaveDesktop write FSaveDesktop default True;
     property Desktop: TEditorDesktop read FDesktop stored FSaveDesktop;
     property Options: TEditorProjectOptions read FOptions write FOptions default nil;
+
+    property FileFilter: string read FFileFilter write FFileFilter;
   end;
 
-  TRunProject = class(TEditorProject)
+  TTendencyProject = class(TEditorProject)
+  public
+  published
+    property FileFilter;
+  end;
+
+  TRunProject = class(TTendencyProject)
   published
     property RunOptions;
   end;
@@ -777,7 +787,7 @@ type
   end;
 
   TSortFolderFiles = (srtfByNames, srtfByExt);
-  TShowFolderFiles = (sffRelated, sffKnown, sffAll);
+  TShowFolderFiles = (sffRelated, sffProject, sffKnown, sffAll);
   TEditorFileClass = class of TEditorFile;
   TAutoStartDebug = (asdNo, asdStartup, asdRun);
 
@@ -2635,6 +2645,11 @@ begin
   Result := TEditorProjectOptions.Create;
 end;
 
+function TEditorTendency.CreateProject: TEditorProject;
+begin
+  Result := TRunProject.Create;
+end;
+
 procedure TEditorTendency.EnumRunCommands(Items: TStrings);
 begin
 
@@ -3350,9 +3365,13 @@ end;
 
 function TEditorSession.New(Tendency: TEditorTendency): TEditorProject;
 begin
-  Result := TRunProject.Create;
   if Tendency <> nil then
+  begin
+    Result := Tendency.CreateProject;
     Result.TendencyName := Tendency.Name;
+  end
+  else
+    Result := TRunProject.Create;
 end;
 
 procedure TEditorFiles.Next;

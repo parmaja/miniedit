@@ -1968,13 +1968,13 @@ object MainForm: TMainForm
         Caption = '-'
       end
       object MenuItem9: TMenuItem
-        Action = ShowRelatedAct
+        Action = ShowTendencyFilterAct
       end
       object MenuItem8: TMenuItem
-        Action = ShowKnownAct
+        Action = ShowKnownFilterAct
       end
       object MenuItem7: TMenuItem
-        Action = ShowAllAct
+        Action = ShowAllFilterAct
       end
       object MenuItem10: TMenuItem
         Action = RefreshFilesAct
@@ -2554,47 +2554,29 @@ object MainForm: TMainForm
       OnExecute = SwitchFocusActExecute
       ShortCut = 117
     end
-    object ShowRelatedAct: TAction
+    object ShowTendencyFilterAct: TAction
       Category = 'Files'
       Caption = 'Show Related'
       Checked = True
       GroupIndex = 5
-      OnExecute = ShowRelatedActExecute
+      OnExecute = ShowTendencyFilterActExecute
     end
-    object ShowKnownAct: TAction
+    object ShowKnownFilterAct: TAction
       Category = 'Files'
       Caption = 'Show Known'
       GroupIndex = 5
-      OnExecute = ShowKnownActExecute
+      OnExecute = ShowKnownFilterActExecute
     end
-    object ShowAllAct: TAction
+    object ShowAllFilterAct: TAction
       Category = 'Files'
       Caption = 'Show All'
       GroupIndex = 5
-      OnExecute = ShowAllActExecute
-    end
-    object RefreshFilesAct: TAction
-      Category = 'Files'
-      Caption = 'Refresh'
-      OnExecute = RefreshFilesActExecute
+      OnExecute = ShowAllFilterActExecute
     end
     object NewAct: TAction
       Category = 'File'
       Caption = 'New'
       OnExecute = NewActExecute
-    end
-    object SortByNamesAct: TAction
-      Category = 'Files'
-      Caption = 'Sort By Names'
-      Checked = True
-      GroupIndex = 6
-      OnExecute = SortByNamesActExecute
-    end
-    object SortByExtensionsAct: TAction
-      Category = 'Files'
-      Caption = 'Sort By Extensions'
-      GroupIndex = 6
-      OnExecute = SortByExtensionsActExecute
     end
     object FindPreviousAct: TAction
       Category = 'Edit'
@@ -2793,6 +2775,30 @@ object MainForm: TMainForm
       Caption = 'Browse'
       OnExecute = DBBrowseActExecute
     end
+    object ShowProjectFilterAct: TAction
+      Category = 'Files'
+      Caption = 'Project Filter'
+      GroupIndex = 5
+      OnExecute = ShowProjectFilterActExecute
+    end
+    object RefreshFilesAct: TAction
+      Category = 'Files'
+      Caption = 'Refresh'
+      OnExecute = RefreshFilesActExecute
+    end
+    object SortByNamesAct: TAction
+      Category = 'Files'
+      Caption = 'Sort By Names'
+      Checked = True
+      GroupIndex = 6
+      OnExecute = SortByNamesActExecute
+    end
+    object SortByExtensionsAct: TAction
+      Category = 'Files'
+      Caption = 'Sort By Extensions'
+      GroupIndex = 6
+      OnExecute = SortByExtensionsActExecute
+    end
   end
   object FolderMenu: TPopupMenu
     Images = EditorResource.ToolbarImageList
@@ -2843,14 +2849,17 @@ object MainForm: TMainForm
     object MenuItem2: TMenuItem
       Caption = '-'
     end
-    object MenuItem5: TMenuItem
-      Action = ShowRelatedAct
+    object TendencyFilterMnu: TMenuItem
+      Action = ShowTendencyFilterAct
     end
-    object MenuItem3: TMenuItem
-      Action = ShowKnownAct
+    object ProjectFilterMnu: TMenuItem
+      Action = ShowProjectFilterAct
     end
-    object MenuItem4: TMenuItem
-      Action = ShowAllAct
+    object AllKnownFilterMnu: TMenuItem
+      Action = ShowKnownFilterAct
+    end
+    object AllFilterMnu: TMenuItem
+      Action = ShowAllFilterAct
     end
     object MenuItem11: TMenuItem
       Caption = '-'
