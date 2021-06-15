@@ -186,7 +186,7 @@ initialization
   with Engine do
   begin
     Tendencies.Add(TLSLTendency);
-    Categories.Add(TLSLFileCategory.Create(TLSLTendency, 'LSL', 'LSL lang'));
-    Groups.Add(TLSLFile, 'LSL', 'LSL', TLSLFileCategory, ['LSL'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
+    Categories.Add(TLSLFileCategory.Create(TLSLTendency, 'LSL', 'OpenSIM Script'));
+    Groups.Add(TLSLFile, 'LSL', 'OpenSIM Script', TLSLFileCategory, ['lsl'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
   end;
 end.

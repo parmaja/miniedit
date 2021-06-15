@@ -63,6 +63,9 @@ uses SearchForms;
 
 {$R *.lfm}
 
+var
+  LastFilesIndex: Integer = 0;
+
 procedure DoSearchInFileCallback(AObject: TObject; const FileName: string; Count, Level:Integer; IsDirectory: Boolean; var Resume: Boolean);
 begin
   with (AObject as TSearchInFilesForm) do
@@ -84,6 +87,8 @@ var
 begin
   if Engine.Session.Active and (SearchFilesGrp.ItemIndex = 0) then
     aMasks := Engine.Session.Project.Tendency.Groups.CreateMask(@CreateMask)
+  else if Engine.Session.Active and (SearchFilesGrp.ItemIndex = 1) then
+    aMasks := Engine.Session.Project.CreateMask(@CreateMask)
   else
     aMasks := Engine.Groups.CreateMask(@CreateMask);
 
@@ -140,6 +145,8 @@ begin
       ReplaceWithEdit.Items.Assign(ReplaceHistory);
     if SearchFolderHistory <> nil then
       SearchFolderEdit.Items.Assign(SearchFolderHistory);
+
+    SearchFilesGrp.ItemIndex := LastFilesIndex;
 
     UpdateReplace;
 
@@ -198,6 +205,7 @@ begin
             end;
           end;
       end;
+      LastFilesIndex := SearchFilesGrp.ItemIndex;
     end;
   finally
     aForm.Free;

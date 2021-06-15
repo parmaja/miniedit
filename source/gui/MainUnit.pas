@@ -63,6 +63,8 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
+    MenuItem3: TMenuItem;
+    MenuItem4: TMenuItem;
     ShowProjectFilterAct: TAction;
     DBCreateDatabaseAct: TAction;
     DBBrowseAct: TAction;
@@ -317,7 +319,7 @@ type
     EditorOptions2: TMenuItem;
     GotoLineAct: TAction;
     GotoLine1: TMenuItem;
-    SelectFolderMnu: TMenuItem;
+    BrowseFolderMnu: TMenuItem;
     ReplaceAct: TAction;
     Replace1: TMenuItem;
     RevertAct: TAction;
@@ -528,7 +530,7 @@ type
     procedure OpenIncludeActUpdate(Sender: TObject);
     procedure GotoLineActUpdate(Sender: TObject);
     procedure GotoLineActExecute(Sender: TObject);
-    procedure SelectFolderMnuClick(Sender: TObject);
+    procedure BrowseFolderMnuClick(Sender: TObject);
     procedure ReplaceActExecute(Sender: TObject);
     procedure RevertActExecute(Sender: TObject);
     procedure FileListKeyDown(Sender: TObject; var Key: word; Shift: TShiftState);
@@ -2344,7 +2346,7 @@ begin
   end;
 end;
 
-procedure TMainForm.SelectFolderMnuClick(Sender: TObject);
+procedure TMainForm.BrowseFolderMnuClick(Sender: TObject);
 var
   aFolder: string;
 begin

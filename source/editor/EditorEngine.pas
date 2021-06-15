@@ -404,6 +404,8 @@ type
     property SharedLib: Boolean read FInfo.SharedLib write FInfo.SharedLib; //dll or so shared lib
   end;
 
+  TCreateMaskProc = function(vGroup: TFileGroup): Boolean of object;
+
   { TEditorProject }
 
   TEditorProject = class abstract(TmnXMLProfile)
@@ -437,6 +439,7 @@ type
     property FileName: string read FFileName write FFileName;
     property Path: string read GetPath;
     procedure SetSCMClass(SCMClass: TEditorSCM);
+    function CreateMask(CreateMaskProc: TCreateMaskProc): string;
     //Tendency here point to one of Engine.Tendencies so it is not owned by project
     property Tendency: TEditorTendency read FTendency write SetTendency;
     property RunOptions: TRunProjectOptions read FRunOptions write FRunOptions;
@@ -1016,8 +1019,6 @@ type
   end;
 
   TFileGroupClass = class of TFileGroup;
-
-  TCreateMaskProc = function(vGroup: TFileGroup): Boolean of object;
 
   { TFileGroups }
 
@@ -5171,36 +5172,37 @@ begin
     FRecentProjects.Assign(Value);
 end;
 
+procedure GroupAddFitler(var Result: string; AGroup: TFileGroup);
+var
+  i: integer;
+  s: string;
+  AExtensions: TStringList;
+begin
+  if fgkBrowsable in AGroup.Kind then
+  begin
+    s := '';
+    AExtensions := TStringList.Create;
+    try
+      AGroup.EnumExtensions(AExtensions);
+
+      for i := 0 to AExtensions.Count - 1 do
+      begin
+        if s <> '' then
+          s := s + ';';
+        s := s + '*.' + AExtensions[i];
+        if Result <> '' then
+          Result := Result + ';';
+        Result := Result + '*.' + AExtensions[i];
+      end;
+    finally
+      AExtensions.Free;
+    end;
+  end;
+end;
+
 { TFileCategories }
 
 function TFileGroups.CreateMask(CreateMaskProc: TCreateMaskProc): string;
-  procedure AddIt(AGroup: TFileGroup);
-  var
-    i: integer;
-    s: string;
-    AExtensions: TStringList;
-  begin
-    if fgkBrowsable in AGroup.Kind then
-    begin
-      s := '';
-      AExtensions := TStringList.Create;
-      try
-        AGroup.EnumExtensions(AExtensions);
-
-        for i := 0 to AExtensions.Count - 1 do
-        begin
-          if s <> '' then
-            s := s + ';';
-          s := s + '*.' + AExtensions[i];
-          if Result <> '' then
-            Result := Result + ';';
-          Result := Result + '*.' + AExtensions[i];
-        end;
-      finally
-        AExtensions.Free;
-      end;
-    end;
-  end;
 var
   i: integer;
 begin
@@ -5208,7 +5210,7 @@ begin
   for i := 0 to Count - 1 do
   begin
     if (CreateMaskProc = nil) or (CreateMaskProc(Items[i])) then
-      AddIt(Items[i]);
+      GroupAddFitler(Result, Items[i]);
   end;
 end;
 
@@ -5669,6 +5671,32 @@ begin
     SCM := nil;
   if (SCMClass <> nil) then
     SCM := TEditorSCMClass(SCMClass.ClassType).Create;
+end;
+
+function TEditorProject.CreateMask(CreateMaskProc: TCreateMaskProc): string;
+var
+  AExtension, S: String;
+  AExtensions: TStringList;
+  aGroup: TFileGroup;
+begin
+  Result := '';
+  AExtensions := TStringList.Create;
+  AExtensions.Delimiter := ';';
+  AExtensions.DelimitedText := Engine.Session.Project.FileFilter;
+  for AExtension in AExtensions do
+  begin
+    //GroupAddFitler
+    S := AExtension;
+    if LeftStr(S, 1) = '.' then
+      S := Copy(S, 2, MaxInt);
+    aGroup := Engine.Tendency.Groups.FindExtension(S);
+    if aGroup <> nil then
+    begin
+      GroupAddFitler(Result, aGroup);
+      CreateMaskProc(aGroup);
+    end;
+  end;
+  AExtensions.Free;
 end;
 
 procedure TEditorProject.Saving;

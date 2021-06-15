@@ -1105,47 +1105,6 @@ object MainForm: TMainForm
           'Variable'
         )
       end
-      object SearchGrid: TStringGrid
-        Left = 1
-        Height = 151
-        Top = 21
-        Width = 1019
-        Align = alClient
-        ColCount = 4
-        Flat = True
-        MouseWheelOption = mwGrid
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking, goDblClickAutoSize, goSmoothScroll, goFixedRowNumbering, goCellHints, goRowHighlight]
-        ParentColor = True
-        PopupMenu = MessagesPopup
-        RowCount = 1
-        TabOrder = 0
-        TitleFont.CharSet = ANSI_CHARSET
-        TitleFont.Height = -13
-        TitleFont.Name = 'Tahoma'
-        TitleFont.Pitch = fpVariable
-        TitleFont.Quality = fqDraft
-        OnDblClick = SearchGridDblClick
-        OnDrawCell = SearchGridDrawCell
-        OnKeyDown = SearchGridKeyDown
-        ColWidths = (
-          21
-          184
-          53
-          548
-        )
-        Cells = (
-          3
-          1
-          0
-          'File'
-          2
-          0
-          'Line'
-          3
-          0
-          'Result'
-        )
-      end
       object WatchesGrid: TStringGrid
         Left = 1
         Height = 151
@@ -1754,6 +1713,47 @@ object MainForm: TMainForm
           end
         end
       end
+      object SearchGrid: TStringGrid
+        Left = 1
+        Height = 151
+        Top = 21
+        Width = 1019
+        Align = alClient
+        ColCount = 4
+        Flat = True
+        MouseWheelOption = mwGrid
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing, goRowSelect, goThumbTracking, goDblClickAutoSize, goSmoothScroll, goFixedRowNumbering, goCellHints, goRowHighlight]
+        ParentColor = True
+        PopupMenu = MessagesPopup
+        RowCount = 1
+        TabOrder = 0
+        TitleFont.CharSet = ANSI_CHARSET
+        TitleFont.Height = -13
+        TitleFont.Name = 'Tahoma'
+        TitleFont.Pitch = fpVariable
+        TitleFont.Quality = fqDraft
+        OnDblClick = SearchGridDblClick
+        OnDrawCell = SearchGridDrawCell
+        OnKeyDown = SearchGridKeyDown
+        ColWidths = (
+          21
+          184
+          53
+          548
+        )
+        Cells = (
+          3
+          1
+          0
+          'File'
+          2
+          0
+          'Line'
+          3
+          0
+          'Result'
+        )
+      end
     end
   end
   object MainMenu: TMainMenu
@@ -1819,12 +1819,12 @@ object MainForm: TMainForm
       object N1: TMenuItem
         Caption = '-'
       end
+      object MenuItem1: TMenuItem
+        Action = CreateFolderAct
+      end
       object OpenFolder1: TMenuItem
         Action = ExploreFolderAct
         OnClick = ExploreFolderActExecute
-      end
-      object MenuItem1: TMenuItem
-        Action = CreateFolderAct
       end
       object MenuItem36: TMenuItem
         Action = CopyFileNameAct
@@ -1969,6 +1969,9 @@ object MainForm: TMainForm
       end
       object MenuItem9: TMenuItem
         Action = ShowTendencyFilterAct
+      end
+      object MenuItem4: TMenuItem
+        Action = ShowProjectFilterAct
       end
       object MenuItem8: TMenuItem
         Action = ShowKnownFilterAct
@@ -2341,7 +2344,7 @@ object MainForm: TMainForm
     object FolderOpenAllAct: TAction
       Category = 'Folder'
       Caption = 'Open All'
-      ImageIndex = 2
+      ImageIndex = 6
       OnExecute = FolderOpenAllActExecute
     end
     object FindAct: TAction
@@ -2556,14 +2559,14 @@ object MainForm: TMainForm
     end
     object ShowTendencyFilterAct: TAction
       Category = 'Files'
-      Caption = 'Show Related'
+      Caption = 'Project Type Filter'
       Checked = True
       GroupIndex = 5
       OnExecute = ShowTendencyFilterActExecute
     end
     object ShowKnownFilterAct: TAction
       Category = 'Files'
-      Caption = 'Show Known'
+      Caption = 'Known Files Filter'
       GroupIndex = 5
       OnExecute = ShowKnownFilterActExecute
     end
@@ -2754,6 +2757,7 @@ object MainForm: TMainForm
     object GotoFileFolderAct: TAction
       Category = 'File'
       Caption = 'Goto File Folder'
+      ImageIndex = 34
       OnExecute = GotoFileFolderActExecute
     end
     object DBCreateDatabaseAct: TAction
@@ -2823,16 +2827,25 @@ object MainForm: TMainForm
     object RecentFoldersMnu: TMenuItem
       Caption = 'Recents'
     end
-    object SelectFolderMnu: TMenuItem
-      Caption = 'Select Folder'
-      OnClick = SelectFolderMnuClick
+    object BrowseFolderMnu: TMenuItem
+      Caption = 'Browse Folder'
+      OnClick = BrowseFolderMnuClick
     end
     object GotoFileFolderMnu: TMenuItem
       Action = GotoFileFolderAct
     end
     object MenuItem22: TMenuItem
       Caption = 'Go to Project Folder'
+      ImageIndex = 34
       OnClick = MenuItem22Click
+    end
+    object ExploreFileFolderMnu: TMenuItem
+      Caption = 'Explore Folder'
+      ImageIndex = 33
+      OnClick = ExploreFileFolderMnuClick
+    end
+    object MenuItem3: TMenuItem
+      Caption = '-'
     end
     object MenuItem44: TMenuItem
       Action = CreateFolderAct
@@ -2840,11 +2853,6 @@ object MainForm: TMainForm
     object MenuItem24: TMenuItem
       Caption = 'Copy File Name'
       OnClick = MenuItem24Click
-    end
-    object ExploreFileFolderMnu: TMenuItem
-      Caption = 'Explore Folder'
-      ImageIndex = 33
-      OnClick = ExploreFileFolderMnuClick
     end
     object MenuItem2: TMenuItem
       Caption = '-'
