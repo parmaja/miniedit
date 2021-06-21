@@ -41,7 +41,7 @@
     </Modified>
     <Keyword Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>2124754</ForeColor>
+      <ForeColor>14123565</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Keyword>
     <Symbol Class="TGlobalAttribute">
@@ -69,19 +69,19 @@
       <ForeColor>12224027</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Variable>
-    <Common Class="TGlobalAttribute">
-      <BackColor>2758927</BackColor>
-      <ForeColor>12910937</ForeColor>
-      <Options>gaoDefaultBackground</Options>
-    </Common>
+    <Standard Class="TGlobalAttribute">
+    </Standard>
+    <DataValue Class="TGlobalAttribute">
+      <ForeColor>11352717</ForeColor>
+    </DataValue>
     <DataType Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>3111647</ForeColor>
+      <ForeColor>2712254</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </DataType>
     <Document Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>1851672</ForeColor>
+      <ForeColor>35466</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Document>
     <Text Class="TGlobalAttribute">

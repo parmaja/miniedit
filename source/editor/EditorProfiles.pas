@@ -43,9 +43,9 @@ type
     attEmbed,  //any sub language, SQL inside code or ASM etc
     attIdentifier,
     attVariable,
-    attDataType
+    attDataType,
+    attDataValue
     //attDataName //object, namespace
-    //attDataValue
    );
 
   TIndentMode = (idntNone, idntTabsToSpaces, idntSpacesToTabs);
@@ -132,7 +132,7 @@ type
     FInfo: TGlobalAttributesInfo;
     FDataName: TGlobalAttribute;
     FDataType: TGlobalAttribute;
-    //FDataValue: TGlobalAttribute;
+    FDataValue: TGlobalAttribute;
 
     FDocument: TGlobalAttribute;
     FQuotedString: TGlobalAttribute;
@@ -197,7 +197,7 @@ type
     property Identifier: TGlobalAttribute read FIdentifier;
     property Variable: TGlobalAttribute read FVariable;
     property Standard: TGlobalAttribute read FStandard;
-    //property DataValue: TGlobalAttribute read FDataValue;
+    property DataValue: TGlobalAttribute read FDataValue;
     property DataType: TGlobalAttribute read FDataType;
     property DataName: TGlobalAttribute read FDataName;
     property Document: TGlobalAttribute read FDocument;
@@ -468,8 +468,9 @@ begin
   Add(FNumber, attNumber, 'Number', 'Numbers', $000052A4, $002A190F, [gaoDefaultBackground]);
   Add(FIdentifier, attIdentifier, 'Identifier', 'Identifiers, text too but for language', clBlack, $002A190F, [gaoDefaultBackground]);
   Add(FText, attText, 'Text', 'Non code text, or any text', clWhite, $002A190F, [gaoDefaultBackground,gaoDefaultForeground]);
-  Add(FVariable, attVariable, 'Variable', 'Variables or Data names', clSkyBlue, $002A190F, [gaoDefaultBackground]);
-  Add(FDataType, attDataType, 'Type', 'Variable or Data type', $002F7ADF, $002A190F, [gaoDefaultBackground]);
+  Add(FVariable, attVariable, 'Variable', 'Variables/Data names', clSkyBlue, $002A190F, [gaoDefaultBackground]);
+  Add(FDataType, attDataType, 'Type', 'Variable/Data type', $002F7ADF, $002A190F, [gaoDefaultBackground]);
+  Add(FDataValue, attDataValue, 'Value', 'Variable/Data Value', $002F7ADF, $002A190F, [gaoDefaultBackground]);
   //Add(FDataName, attDataName, 'Name', 'Data Name', $0016C11D, $002A190F, [gaoDefaultBackground]);
   Correct;
 end;

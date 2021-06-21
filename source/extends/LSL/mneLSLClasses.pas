@@ -161,17 +161,18 @@ begin
   begin
     Mapper.Add(WhitespaceAttri, attDefault);
     Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(ProcessorAttri, attDirective);
     Mapper.Add(KeywordAttri, attKeyword);
     Mapper.Add(DocumentAttri, attDocument);
-    Mapper.Add(TypeAttri, attDataType);
-    Mapper.Add(FunctionAttri, attCommon);
     Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(VariableAttri, attVariable);
+    Mapper.Add(TypeAttri, attDataType);
+    Mapper.Add(ValueAttri, attDataValue);
+    Mapper.Add(FunctionAttri, attCommon);
     Mapper.Add(TextAttri, attText);
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
-    Mapper.Add(VariableAttri, attVariable);
-    Mapper.Add(ProcessorAttri, attDirective);
   end
 end;
 
