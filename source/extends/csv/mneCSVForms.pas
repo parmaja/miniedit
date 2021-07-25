@@ -74,6 +74,7 @@ type
     function GetMode: TCSVFileMode;
   protected
     FCancel: Boolean;
+    FGridChanged: Boolean;
     IsNumbers: array of boolean;
     procedure Changed;
     procedure Reload;
@@ -306,7 +307,10 @@ end;
 procedure TCSVForm.Changed;
 begin
   if not FLoading and Assigned(FOnChanged) then
+  begin
     FOnChanged(Self);
+    FGridChanged := True;
+  end;
 end;
 
 procedure TCSVForm.Reload;
@@ -469,6 +473,7 @@ var
   Steps: Integer;
   HaveHeader: Boolean;
 begin
+  FGridChanged := False;
   StopBtn.Enabled := True;
   Steps := 100;
 
@@ -524,7 +529,7 @@ begin
         else
           DataGrid.Count := c + 1;
       end;
-      DataGrid.Values[0, c] := IntToStr(c);
+
       for i := 0 to cols - 1 do
       begin
         if i < SQLCMD.Fields.Count then
@@ -589,7 +594,11 @@ begin
       csvCnn.Connect;
       csvSes.Start;
       csvCMD := TmncCSVCommand.Create(csvSes, AStream, csvmRead);
-      csvCMD.EmptyLine := elSkip;
+      if CSVOptions.SkipEmptyLines then
+        csvCMD.EmptyLine := elSkip
+      else
+        csvCMD.EmptyLine := elFetch;
+
       try
         if csvCMD.Execute then //not empty, or eof
           FillGrid(csvCMD, 'File: ' + EditorFile.Name);

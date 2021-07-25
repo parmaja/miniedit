@@ -314,7 +314,7 @@ procedure TPASFileCategory.DoAddKeywords;
 begin
   inherited DoAddKeywords;
   //EnumerateKeywords(Ord(tkKeyword), sPasKeywords, Highlighter.IdentChars, @DoAddCompletion);
-  //EnumerateKeywords(Ord(tkFunction), sDFunctions, Highlighter.IdentChars, @DoAddCompletion);
+  //EnumerateKeywords(Ord(tkFunction), sPasFunctions, Highlighter.IdentChars, @DoAddCompletion);
 end;
 
 function TPASFileCategory.GetColorPrefix: string;
@@ -337,7 +337,7 @@ end;
 procedure TPASFile.NewContent;
 begin
   inherited NewContent;
-  SynEdit.Text := 'program newprogram;';
+  SynEdit.Text := 'program test;';
   SynEdit.Lines.Add('');
   SynEdit.Lines.Add('uses');
   SynEdit.Lines.Add('  SysUtils;');
@@ -356,7 +356,7 @@ initialization
     Categories.Add(TPASFileCategory.Create(TPasTendency, 'pas', 'Pascal'));
     Categories.Add(TLFMFileCategory.Create(TPasTendency, 'lfm', 'Lazarus form lfm'));
 
-    Groups.Add(TPASFile, 'pas', 'Pascal', TPASFileCategory, ['pas', 'pp', 'p', 'dpk', 'inc'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
+    Groups.Add(TPASFile, 'pas', 'Pascal', TPASFileCategory, ['pas', 'pp', 'p', 'dpk', 'inc', 'rops', 'pascal'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
     Groups.Add(TPASFile, 'ppr', 'Pascal Project', TPASFileCategory, ['dpr', 'lpr', 'ppr'], [fgkAssociated, fgkMain, fgkExecutable, fgkBrowsable], [fgsFolding]);//PPR meant Pascal project
     Groups.Add(TLFMFile, 'lfm', 'Delphi, Lazarus Form', TLFMFileCategory, ['dfm', 'lfm'], [fgkAssociated, fgkBrowsable], [fgsFolding]);
   end;

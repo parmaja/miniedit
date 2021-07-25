@@ -63,8 +63,10 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
+    MenuItem23: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
+    ExploreFileFolder2Act: TMenuItem;
     ShowProjectFilterAct: TAction;
     DBCreateDatabaseAct: TAction;
     DBBrowseAct: TAction;

@@ -62,6 +62,7 @@ object CSVForm: TCSVForm
         Width = 741
         Align = alClient
         BorderStyle = bsSingle
+        Color = clWindow
         ColWidth = 80
         FixedFontColor = clBlack
         PopupMenu = GridPopupMenu

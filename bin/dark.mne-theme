@@ -33,7 +33,7 @@
     </Gutter>
     <Separator Class="TGlobalAttribute">
       <BackColor>6243892</BackColor>
-      <ForeColor>4140835</ForeColor>
+      <ForeColor>9924691</ForeColor>
     </Separator>
     <Modified Class="TGlobalAttribute">
       <BackColor>clGreen</BackColor>
@@ -41,7 +41,7 @@
     </Modified>
     <Keyword Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>14456102</ForeColor>
+      <ForeColor>15641118</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Keyword>
     <Symbol Class="TGlobalAttribute">
@@ -51,7 +51,7 @@
     </Symbol>
     <Number Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>181757</ForeColor>
+      <ForeColor>1491229</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Number>
     <Directive Class="TGlobalAttribute">
@@ -69,14 +69,15 @@
       <ForeColor>14182588</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Variable>
-    <Common Class="TGlobalAttribute">
-      <BackColor>2758927</BackColor>
-      <ForeColor>12447988</ForeColor>
-      <Options>gaoDefaultBackground</Options>
-    </Common>
+    <Standard Class="TGlobalAttribute">
+      <ForeColor>15895214</ForeColor>
+    </Standard>
+    <DataValue Class="TGlobalAttribute">
+      <ForeColor>14408491</ForeColor>
+    </DataValue>
     <DataType Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>6447852</ForeColor>
+      <ForeColor>6725096</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </DataType>
     <Document Class="TGlobalAttribute">
