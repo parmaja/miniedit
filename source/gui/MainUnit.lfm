@@ -19,7 +19,7 @@ object MainForm: TMainForm
   ParentFont = True
   Position = poDefaultPosOnly
   ShowHint = True
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object TopToolbar: TToolBar
     Left = 0
     Height = 29
@@ -175,7 +175,6 @@ object MainForm: TMainForm
         Align = alClient
         AutoSize = False
         Layout = tlCenter
-        ParentColor = False
         PopupMenu = FilePopupMenu
       end
       object FileCloseBtn: TntvImgBtn
@@ -391,7 +390,6 @@ object MainForm: TMainForm
           AutoSize = False
           BorderSpacing.Around = 2
           Caption = 'Path:'
-          ParentColor = False
           PopupMenu = FolderMenu
         end
         object FolderCloseBtn1: TntvImgBtn

@@ -902,6 +902,7 @@ begin
   FreeAndNil(FHistory);
   FreeAndNil(FSQLHistory);
   FreeAndNil(FEngines);
+  FreeAndNil(FStack);
   inherited;
 end;
 

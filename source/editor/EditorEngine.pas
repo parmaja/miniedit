@@ -3027,9 +3027,9 @@ var
               not ((MaskList = nil) or (MaskList.Matches(sr.Name))) then
                 continue;
             if ReturnFullPath then
-              f := Root + IncludePathSeparator(Path) + sr.Name
+              f := Root + IncludePathDelimiter(Path) + sr.Name
             else
-              f := IncludePathSeparator(Path) + sr.Name;
+              f := IncludePathDelimiter(Path) + sr.Name;
             Callback(AObject, f, aCount, vLevel, False, Resume);
             if (vMaxCount > 0) and (aCount > vMaxCount) then
               Resume := False;
@@ -3056,16 +3056,16 @@ var
               if fftDir in Types then
               begin
                 if ReturnFullPath then
-                  f := Root + IncludePathSeparator(Path) + sr.Name
+                  f := Root + IncludePathDelimiter(Path) + sr.Name
                 else
-                  f := IncludePathSeparator(Path) + sr.Name;
+                  f := IncludePathDelimiter(Path) + sr.Name;
                 if fftDir in Types then
                   Callback(AObject, f, aCount, vLevel, True, Resume);
                 if not Resume then
                   break;
               end;
               if (vMaxLevel = 0) or (vLevel < vMaxLevel) then
-                DoFind(Root, IncludePathSeparator(Path + sr.Name), vLevel);
+                DoFind(Root, IncludePathDelimiter(Path + sr.Name), vLevel);
             end;
           until (FindNext(sr) <> 0);
         end;
@@ -3531,7 +3531,7 @@ begin
     Result := Engine.BrowseFolder
   else
     Result := Application.Location;
-  Result := ExpandFileName(IncludePathSeparator(Result));
+  Result := ExpandFileName(IncludePathDelimiter(Result));
 end;
 
 procedure TEditorFiles.Prior;

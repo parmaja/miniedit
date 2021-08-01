@@ -100,25 +100,29 @@ begin
     else
       new := $FF;
     Bmp := TBitmap.Create;
-    PanelImages.GetFullBitmap(Bmp);
-    PanelImages.Clear;
-    Bmp.TransparentColor := clFuchsia;
-    Bmp.Transparent := True;
-    Bmp.BeginUpdate;
-    Img := Bmp.RawImage;
-    p := PRGBAQuad(img.Data);
-    c := img.DataSize div SizeOf(p^);
-    i := 0;
-    while i < c do
-    begin
-      p^.Red := new;
-      p^.Green := new;
-      p^.Blue := new;
-      inc(p);
-      inc(i);
+    try
+      PanelImages.GetFullBitmap(Bmp);
+      PanelImages.Clear;
+      Bmp.TransparentColor := clFuchsia;
+      Bmp.Transparent := True;
+      Bmp.BeginUpdate;
+      Img := Bmp.RawImage;
+      p := PRGBAQuad(img.Data);
+      c := img.DataSize div SizeOf(p^);
+      i := 0;
+      while i < c do
+      begin
+        p^.Red := new;
+        p^.Green := new;
+        p^.Blue := new;
+        inc(p);
+        inc(i);
+      end;
+      Bmp.EndUpdate;
+      PanelImages.AddSliced(Bmp, Bmp.Width div PanelImages.Width, Bmp.Height div PanelImages.Height);
+    finally
+      Bmp.Free;
     end;
-    Bmp.EndUpdate;
-    PanelImages.AddSliced(Bmp, Bmp.Width div PanelImages.Width, Bmp.Height div PanelImages.Height);
   finally
     PanelImages.EndUpdate;
   end;

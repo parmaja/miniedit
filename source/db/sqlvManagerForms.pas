@@ -582,6 +582,7 @@ begin
   DBEngine.NotifyObject := nil;
   DBEngine.DB.Close;
   FreeAndNil(GroupsNames);
+  Engine.UnregisterNotify(Self);
   inherited Destroy;
 end;
 
