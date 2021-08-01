@@ -594,12 +594,12 @@ begin
       csvCnn.Connect;
       csvSes.Start;
       csvCMD := TmncCSVCommand.Create(csvSes, AStream, csvmRead);
-      if CSVOptions.SkipEmptyLines then
-        csvCMD.EmptyLine := elSkip
-      else
-        csvCMD.EmptyLine := elFetch;
-
       try
+        if CSVOptions.SkipEmptyLines then
+          csvCMD.EmptyLine := elSkip
+        else
+          csvCMD.EmptyLine := elFetch;
+
         if csvCMD.Execute then //not empty, or eof
           FillGrid(csvCMD, 'File: ' + EditorFile.Name);
       finally
@@ -634,21 +634,25 @@ begin
     csvCnn.Connect;
     csvSes.Start;
     csvCMD := TmncCSVCommand.Create(csvSes, AStream, csvmWrite);
-    //adding header, even if we will not save it
-    for c := 0 to DataGrid.Columns.Count - 1 do
-    begin
-      csvCMD.Columns.Add(DataGrid.Columns[c].Title, dtString);
-    end;
-    csvCMD.Prepare; //generate Params and save header
-    r := 0; //first row of data
-    while r < DataGrid.Count do
-    begin
+    try
+      //adding header, even if we will not save it
       for c := 0 to DataGrid.Columns.Count - 1 do
       begin
-        csvCMD.Params.Items[c].Value := DataGrid.Values[c, r];
+        csvCMD.Columns.Add(DataGrid.Columns[c].Title, dtString);
       end;
-      csvCMD.Execute;
-      r := r + 1;
+      csvCMD.Prepare; //generate Params and save header
+      r := 0; //first row of data
+      while r < DataGrid.Count do
+      begin
+        for c := 0 to DataGrid.Columns.Count - 1 do
+        begin
+          csvCMD.Params.Items[c].Value := DataGrid.Values[c, r];
+        end;
+        csvCMD.Execute;
+        r := r + 1;
+      end;
+    finally
+      csvCMD.Free;
     end;
   finally
     csvSes.Free;
