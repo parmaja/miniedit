@@ -405,6 +405,6 @@ initialization
   begin
     Tendencies.Add(TVerilogTendency);
     Categories.Add(TVerilogFileCategory.Create(TVerilogTendency, 'Verilog', 'Verilog'));
-    Groups.Add(TVerilogFile, 'v', 'Verilog', TVerilogFileCategory, ['v', 'vh'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain], [fgsFolding]);
+    Groups.Add(TVerilogFile, 'v', 'Verilog', TVerilogFileCategory, ['.v', '.vh'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain], [fgsFolding]);
   end;
 end.

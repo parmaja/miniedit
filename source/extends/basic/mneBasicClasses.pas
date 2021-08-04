@@ -340,6 +340,6 @@ initialization
   begin
     Tendencies.Add(TBasicTendency);
     Categories.Add(TBasicFileCategory.Create(TBasicTendency, 'Basic', 'Basic', [fckPublish]));
-    Groups.Add(TBasicFile, 'Basic', 'Basic', TBasicFileCategory, ['bas'], [fgkDefault, fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
+    Groups.Add(TBasicFile, 'Basic', 'Basic', TBasicFileCategory, ['.bas'], [fgkDefault, fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
   end;
 end.

@@ -353,6 +353,6 @@ initialization
   begin
     Tendencies.Add(TLuaTendency);
     Categories.Add(TLuaFileCategory.Create(TLuaTendency, 'Lua', 'Lua', [fckPublish]));
-    Groups.Add(TLuaFile, 'lua', 'Lua', TLuaFileCategory, ['lua'], [fgkDefault, fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
+    Groups.Add(TLuaFile, 'lua', 'Lua', TLuaFileCategory, ['.lua'], [fgkDefault, fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
   end;
 end.

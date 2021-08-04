@@ -187,6 +187,6 @@ initialization
   begin
     Tendencies.Add(TSardTendency);
     Categories.Add(TSardFileCategory.Create(TSardTendency, 'Sard', 'Sard lang'));
-    Groups.Add(TSardFile, 'sard', 'Sard', TSardFileCategory, ['sard'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
+    Groups.Add(TSardFile, 'sard', 'Sard', TSardFileCategory, ['.sard'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
   end;
 end.

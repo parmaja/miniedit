@@ -185,7 +185,7 @@ initialization
   begin
     Tendencies.Add(TCSVTendency);
     Categories.Add(TCSVFileCategory.Create(TCSVTendency, 'csv', 'CSV comma seperated files'));
-    Groups.Add(TCSVFile, 'csv', 'CSV', TCSVFileCategory, ['csv'], [fgkBrowsable], []);
-    Groups.Add(TTSVFile, 'tsv', 'TSV', TCSVFileCategory, ['tsv'], [fgkBrowsable], []);
+    Groups.Add(TCSVFile, 'csv', 'CSV', TCSVFileCategory, ['.csv'], [fgkBrowsable], []);
+    Groups.Add(TTSVFile, 'tsv', 'TSV', TCSVFileCategory, ['.tsv'], [fgkBrowsable], []);
   end;
 end.

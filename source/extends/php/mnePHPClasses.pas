@@ -603,10 +603,10 @@ initialization
     Categories.Add(TCSSFileCategory.Create(TPHPTendency, 'css', 'CSS', [fckPublish]));
     Categories.Add(TJSFileCategory.Create(TPHPTendency, 'js', 'Javascript JS', [fckPublish]));
 
-    Groups.Add(TPHPFile, 'php', 'PHP', TXHTMLFileCategory, ['php', 'inc'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
-    Groups.Add(TXHTMLFile, 'html', 'HTML', TXHTMLFileCategory, ['html', 'xhtml', 'htm', 'tpl'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TCssFile, 'css', 'CSS', TCSSFileCategory, ['css'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TJSFile,'js', 'Java Script', TJSFileCategory, ['js'], [fgkAssociated, fgkExecutable, fgkBrowsable]);
-    Groups.Add(TJSFile,'json', 'JSON', TJSFileCategory, ['json'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TPHPFile, 'php', 'PHP', TXHTMLFileCategory, ['.php', '.inc'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
+    Groups.Add(TXHTMLFile, 'html', 'HTML', TXHTMLFileCategory, ['.html', '.xhtml', '.htm', '.tpl'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TCssFile, 'css', 'CSS', TCSSFileCategory, ['.css'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TJSFile,'js', 'Java Script', TJSFileCategory, ['.js'], [fgkAssociated, fgkExecutable, fgkBrowsable]);
+    Groups.Add(TJSFile,'json', 'JSON', TJSFileCategory, ['.json'], [fgkAssociated, fgkBrowsable]);
   end;
 end.

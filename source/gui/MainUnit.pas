@@ -1063,9 +1063,7 @@ begin
   try
     FileTabs.Items.Clear;
     for i := 0 to Engine.Files.Count - 1 do
-    begin
       FileTabs.Items.AddItem(ExtractFileName(Engine.Files[i].Name), Engine.Files[i].GetCaption);
-    end;
   finally
     FileTabs.Items.EndUpdate;
   end;
@@ -1101,7 +1099,7 @@ begin
       FileTabs.Items[FileTabs.ItemIndex].Caption := ExtractFileName(Engine.Files.Current.Name);
     if Folder = '' then
       Folder := ExtractFilePath(Engine.Files.Current.Name);
-    SaveAct.Enabled := Engine.Files.Current.IsEdited;
+    SaveAct.Enabled := Engine.Files.Current.IsChanged;
     SaveAllAct.Enabled := Engine.GetIsChanged;
   end
   else
@@ -1378,8 +1376,8 @@ procedure TMainForm.EngineEdited;
 begin
   if Engine.Files.Current <> nil then
   begin
-    SaveAct.Enabled := Engine.Files.Current.IsEdited;
-    if Engine.Files.Current.IsEdited then
+    SaveAct.Enabled := Engine.Files.Current.IsChanged;
+    if Engine.Files.Current.IsChanged then
       SaveAllAct.Enabled := True;
   end
   else
@@ -2223,8 +2221,6 @@ var
   begin
     if not All then
     begin
-      if LeftStr(vExtension, 1) = '.' then //that correct if some one added dot to the first char of extension
-        vExtension := Copy(vExtension, 2, MaxInt);
       Result := AExtensions.IndexOf(vExtension) >= 0;
     end
     else
@@ -2234,7 +2230,6 @@ var
 var
   aFiles: TStringList;
   SaveSelected: Integer;
-  i: Integer;
 begin
   FolderPathLbl.Caption := Folder;
   FolderPathLbl.Hint := Folder;
@@ -2267,12 +2262,6 @@ begin
         sffAll: All := True;
       end;
       AExtensions.Add('mne-project');
-
-      for i := 0 to AExtensions.Count -1 do
-      begin
-        if LeftStr(AExtensions[i], 1) = '.' then //that correct if some one added dot to the first char of extension
-          AExtensions[i]:= Copy(AExtensions[i], 2, MaxInt);
-      end;
 
       aFiles := THashedStringList.Create;
       try

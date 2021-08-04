@@ -335,6 +335,6 @@ initialization
   begin
     Tendencies.Add(TGccTendency);
     Categories.Add(TCppFileCategory.Create(TGccTendency, 'Gcc', 'GCC C/C++', [fckPublish]));
-    Groups.Add(TCppFile, 'cpp', 'C/C++', TCppFileCategory, ['cpp', 'c', 'ino', 'h', 'def'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
+    Groups.Add(TCppFile, 'cpp', 'C/C++', TCppFileCategory, ['.cpp', '.c', '.ino', '.h', '.def'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
   end;
 end.

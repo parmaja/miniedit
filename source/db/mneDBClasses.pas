@@ -166,9 +166,9 @@ initialization
   with Engine do
   begin
     Categories.Add(TSQLFileCategory.Create(DefaultProject.Tendency, 'sql', 'SQL'));
-    Groups.Add(TSQLFile, 'sql', 'SQL', TSQLFileCategory, ['sql'], [fgkAssociated, fgkExecutable, fgkBrowsable]);
+    Groups.Add(TSQLFile, 'sql', 'SQL', TSQLFileCategory, ['.sql'], [fgkAssociated, fgkExecutable, fgkBrowsable]);
     Categories.Add(TDBFileCategory.Create(DefaultProject.Tendency, 'DB', 'Database connection'));
-    Groups.Add(nil, 'SQLite', 'SQLite', TDBFileCategory, ['sqlite'], [fgkAssociated, fgkBinary, fgkBrowsable]);
-    //Groups.Add(TDBFile, 'Firebird', 'Firebird', TDBFileCategory, ['firebird'], [fgkAssociated, fgkBinary, fgkBrowsable]);
+    Groups.Add(nil, 'SQLite', 'SQLite', TDBFileCategory, ['.sqlite'], [fgkAssociated, fgkBinary, fgkBrowsable]);
+    //Groups.Add(TDBFile, 'Firebird', 'Firebird', TDBFileCategory, ['.firebird'], [fgkAssociated, fgkBinary, fgkBrowsable]);
   end;
 end.

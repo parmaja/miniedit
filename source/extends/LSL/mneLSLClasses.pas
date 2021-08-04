@@ -188,6 +188,6 @@ initialization
   begin
     Tendencies.Add(TLSLTendency);
     Categories.Add(TLSLFileCategory.Create(TLSLTendency, 'LSL', 'OpenSIM Script'));
-    Groups.Add(TLSLFile, 'LSL', 'OpenSIM Script', TLSLFileCategory, ['lsl'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
+    Groups.Add(TLSLFile, 'LSL', 'OpenSIM Script', TLSLFileCategory, ['.lsl'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
   end;
 end.

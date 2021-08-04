@@ -342,7 +342,7 @@ initialization
   with Engine do
   begin
 {    Categories.Add(TCustomFileCategory.Create('Custom', [fckPublish]));
-    Groups.Add(TCustomFile, 'Custom', 'Custom Files', 'Custom', ['d', 'inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
+    Groups.Add(TCustomFile, 'Custom', 'Custom Files', 'Custom', ['.d', '.inc'], [fgkAssociated, fgkExecutable, fgkMember, fgkBrowsable, fgkMain]);
     Tendencies.Add(TCustomTendency);}
   end;
 end.

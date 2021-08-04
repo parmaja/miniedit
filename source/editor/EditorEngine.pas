@@ -503,7 +503,7 @@ type
     FFileEncoding: string;
     FName: string;
     FIsNew: Boolean;
-    FIsEdited: Boolean;
+    FIsChanged: Boolean;
     FFileAge: Integer;
     FFileSize: int64;
     FGroup: TFileGroup;
@@ -521,7 +521,7 @@ type
     function GetTendency: TEditorTendency;
     procedure SetFileEncoding(AValue: string);
     procedure SetGroup(const Value: TFileGroup);
-    procedure SetIsEdited(const Value: Boolean);
+    procedure SetIsChanged(const Value: Boolean);
     procedure SetIsNew(AValue: Boolean);
     function GetLinesModeAsText: string;
     procedure SetLinesMode(const Value: TEditorLinesMode);
@@ -615,7 +615,7 @@ type
     property Path: string read GetPath;
     property Tendency: TEditorTendency read GetTendency;
     property Related: string read FRelated write FRelated;
-    property IsEdited: Boolean read FIsEdited write SetIsEdited; //TODO rename to IsChanged
+    property IsChanged: Boolean read FIsChanged write SetIsChanged;
     property IsNew: Boolean read FIsNew write SetIsNew default False;
     property IsTemporary: Boolean read FIsTemporary write FIsTemporary default False;
     property IsReadOnly: Boolean read GetIsReadonly write SetIsReadonly;
@@ -1002,6 +1002,7 @@ type
     FKind: TFileGroupKinds;
     FCategory: TVirtualCategory;
     FStyle: TFileGroupStyles;
+    function GetExtension: string;
     procedure SetCategory(AValue: TVirtualCategory);
   protected
   public
@@ -1010,6 +1011,7 @@ type
     function OpenFile(vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile; virtual;
     procedure EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds = []);
     procedure EnumExtensions(vExtensions: TEditorElements);
+    property Extension: string read GetExtension; //first one as default extension, do not use the name of group
     property Category: TVirtualCategory read FCategory write SetCategory;
     property Extensions: TEditorExtensions read FExtensions;
     property ExtraExtensions: TEditorExtensions read FExtraExtensions;
@@ -1031,14 +1033,17 @@ type
     function Find(vName: string): TFileGroup;
     function Find(vName, vCategory: string): TFileGroup;
     function IsExists(AGroup: TFileGroup): Boolean;
+
     procedure EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds = []);
     procedure EnumExtensions(vExtensions: TEditorElements);
-    function FindExtension(vExtension: string; vKind: TFileGroupKinds = []): TFileGroup;
-    function OpenFile(vFiles: TEditorFiles; vExtension: string; vFileName, vFileParams: string): TEditorFile;
+
+    function FindFullName(vFullName: string; vKind: TFileGroupKinds = []): TFileGroup;
+    function OpenFile(vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile;
     //FullFilter return title of that filter for open/save dialog boxes
     function CreateFilter(FullFilter: Boolean = True; FirstExtension: string = ''; vGroup: TFileGroup = nil; OnlyThisGroup: Boolean = true): string;
     function CreateMask(CreateMaskProc: TCreateMaskProc): string;
     procedure Add(vGroup: TFileGroup);
+    //First extension in array, is the default extension for the group, do not use name of group as extension
     procedure Add(FileClass: TEditorFileClass; const Name, Title: string; Category: TFileCategoryClass; Extensions: array of string; Kind: TFileGroupKinds = []; Style: TFileGroupStyles = []);
     property Items[Index: integer]: TFileGroup read GetItem; default;
   end;
@@ -2967,7 +2972,7 @@ begin
   FDefaultProject.Tendency := aDefaultTendency;
 
   FSession := TEditorSession.Create;
-  Extenstion := 'mne-project';
+  Extenstion := '.mne-project';
 end;
 
 destructor TEditorEngine.Destroy;
@@ -3213,7 +3218,7 @@ begin
   Result := 0;
   for i := 0 to Count - 1 do
   begin
-    if Items[i].IsEdited and not Items[i].IsTemporary then
+    if Items[i].IsChanged and not Items[i].IsTemporary then
       Result := Result + 1;
   end;
 end;
@@ -3262,7 +3267,7 @@ end;
 
 function TEditorFiles.InternalOpenFile(FileName, FileParams: string; AppendToRecent: Boolean): TEditorFile;
 var
-  aExt, lFileName: string;
+  lFileName: string;
 begin
   {$ifdef windows}
   lFileName := ExpandFileName(FileName);
@@ -3274,13 +3279,9 @@ begin
   Result := FindFile(lFileName);
   if Result = nil then
   begin
-    aExt := ExtractFileExt(lFileName);
-    if LeftStr(aExt, 1) = '.' then
-      aExt := Copy(aExt, 2, MaxInt);
-
-    Result := Engine.Groups.OpenFile(Self, aExt, FileName, FileParams);
+    Result := Engine.Groups.OpenFile(Self, FileName, FileParams);
     if (Result = nil) and (Engine.Options.FallbackToText) then
-      Result := Engine.Groups.OpenFile(Self, cFallbackGroup, FileName, FileParams);
+      Result := Engine.Groups.OpenFile(Self, FileName, FileParams);
   end;
   if (Result <> nil) and AppendToRecent then
     Engine.ProcessRecentFile(lFileName);
@@ -3431,7 +3432,7 @@ end;
 
 function TEditorFiles.OpenFile(vFileName, vFileParams: string; ActivateIt: Boolean): TEditorFile;
 begin
-  if SameText(ExtractFileExt(vFileName), '.' + Engine.Extenstion) then
+  if SameText(ExtractFileExt(vFileName), Engine.Extenstion) then //zaher need dot
   begin
     Engine.Session.Load(vFileName);
     Result := nil; //it is a project not a file.
@@ -3908,13 +3909,14 @@ var
 begin
   for i := 0 to Groups.Count - 1 do
   begin
-    if not Groups[i].Category.Tendency.IsDefault then
+    //if not Groups[i].Category.Tendency.IsDefault then //some text and cfg must loaded
     begin
       Groups[i].ExtraExtensions.Clear;
 
       lStrings := TStringList.Create;
       try
-        s := Options.ExtraExtensions.Values[Groups[i].Name];
+        s := Groups[i].Name;
+        s := Options.ExtraExtensions.Values[s];
         if s <> '' then
         begin
           StrToStrings(s, lStrings, [';'], [' ']);
@@ -4237,7 +4239,7 @@ begin
     if (not SameText(FCache.MainFile, Session.Project.RunOptions.MainFile)) then
     begin
       FCache.MainFile := Session.Project.RunOptions.MainFile;
-      FCache.MainGroup := Engine.Groups.FindExtension(ExtractFileExt(FCache.MainFile));
+      FCache.MainGroup := Engine.Groups.FindFullName(ExtractFileName(FCache.MainFile));
     end;
     Result := FCache.MainGroup.Category.Tendency;
   end
@@ -4312,7 +4314,7 @@ end;
 procedure TEditorFile.Edit;
 begin
   if not IsReadOnly then
-    IsEdited := True;
+    IsChanged := True;
 end;
 
 procedure TEditorFile.Close;
@@ -4323,7 +4325,7 @@ var
 begin
   if (Name <> '') or not IsTemporary then
   begin
-    if IsEdited then
+    if IsChanged then
     begin
       mr := MsgBox.YesNoCancel('Save file ' + Name + ' before close?');
       if mr = msgcCancel then
@@ -4358,7 +4360,7 @@ constructor TEditorFile.Create(ACollection: TCollection);
 begin
   inherited;
   FIsNew := True;
-  FIsEdited := False;
+  FIsChanged := False;
   FIsTemporary := False;
   FFileEncoding := 'UTF8';
   FLinesMode := efmUnix;
@@ -4396,7 +4398,7 @@ begin
       Engine.SendMessage('Can not load :' + FileName + ' : ' + E.Message, msgtLog);
     end;
   end;
-  IsEdited := False;
+  IsChanged := False;
   IsTemporary := False;
   IsNew := False;
   UpdateAge;
@@ -4425,7 +4427,7 @@ procedure TEditorFile.SaveToFile(FileName: string);
 begin
   DoSave(FileName);
   Name := FileName;
-  IsEdited := False;
+  IsChanged := False;
   IsTemporary := False;
   IsNew := False;
   Engine.UpdateState([ecsFolder]);
@@ -4450,9 +4452,9 @@ begin
         Engine.ProcessRecentFile(Name);
 
         aExt := Extension;
-        if LeftStr(aExt, 1) = '.' then
-          aExt := MidStr(aExt, 2, MaxInt);
-        aGroup := Engine.Groups.FindExtension(aExt);
+        if LeftStr(aExt, 1) <> '.' then
+          aExt := '.' + aExt;
+        aGroup := Engine.Groups.FindFullName(aExt);
         Group := aGroup;
       end;
     end
@@ -4475,7 +4477,7 @@ begin
         Engine.RemoveRecentFile(Name);
         Name := ExtractFileName(Name);
         IsNew := True;
-        IsEdited := True;
+        IsChanged := True;
       end;
     end;
     Engine.UpdateState([ecsRefresh, ecsFolder, ecsState, ecsChanged]);
@@ -4492,9 +4494,9 @@ begin
     Result := fgkExecutable in Group.Kind;
 end;
 
-procedure TEditorFile.SetIsEdited(const Value: Boolean);
+procedure TEditorFile.SetIsChanged(const Value: Boolean);
 begin
-  FIsEdited := Value;
+  FIsChanged := Value;
 end;
 
 procedure TEditorFile.Show;
@@ -4613,7 +4615,7 @@ begin
         IsNew := True
       else if n = 2 then //Keep It
       begin
-        IsEdited := False;
+        IsChanged := False;
         IsTemporary := False;
         IsReadOnly := True
       end
@@ -5220,7 +5222,7 @@ var
   procedure AddIt(AGroup: TFileGroup);
   var
     i, n: integer;
-    s: string;
+    s, e: string;
     AExtensions: TStringList;
   begin
     if fgkBrowsable in AGroup.Kind then
@@ -5241,15 +5243,24 @@ var
 
         for i := 0 to AExtensions.Count - 1 do
         begin
+          e := AExtensions[i];
+
           if s <> '' then
             s := s + ';';
-          s := s + '*.' + AExtensions[i];
-          if aSupported <> '' then
-            aSupported := aSupported + ';';
-          aSupported := aSupported + '*.' + AExtensions[i];
+
+          if LeftStr(e, 1) = '.' then
+            s := s + '*' + e
+          else
+            s := s + e;
         end;
+
         if FullFilter then
           Result := Result + AGroup.Title + ' (' + s + ')|' + s;
+
+        if aSupported <> '' then
+          aSupported := aSupported + ';';
+        aSupported := aSupported + s;
+
       finally
         AExtensions.Free;
       end;
@@ -5261,8 +5272,6 @@ var
 begin
   aSupported := '';
   Result := '';
-  if LeftStr(FirstExtension, 1) = '.' then
-    FirstExtension := MidStr(FirstExtension, 2, MaxInt);
   if (vGroup <> nil) and OnlyThisGroup then
     AddIt(vGroup)
   else
@@ -5300,35 +5309,34 @@ begin
   inherited Add(vGroup);
 end;
 
-function TFileGroups.FindExtension(vExtension: string; vKind: TFileGroupKinds): TFileGroup;
+function TFileGroups.FindFullName(vFullName: string; vKind: TFileGroupKinds): TFileGroup;
 var
   i, j: integer;
+  s: string;
+  p: Integer;
 begin
   Result := nil;
-  if LeftStr(vExtension, 1) = '.' then
-    vExtension := Copy(vExtension, 2, MaxInt);
-  if vExtension <> '' then
+  if vFullName <> '' then
   begin
+    p := Pos('.', vFullName); //if have extension we will search for extension only, if not, we will search for name
+    if p > 0 then //
+      s := MidStr(vFullName, p, MaxInt)  //externsion only with dot
+    else
+      s := vFullName;
     for i := 0 to Count - 1 do
     begin
       if (vKind = []) or (vKind <= Items[i].Kind) then
       begin
-        for j := 0 to Items[i].Extensions.Count - 1 do
+        if Items[i].Extensions.Find(s) <> nil then
         begin
-          if SameText(Items[i].Extensions[j].Name, vExtension) then
+          Result := Items[i];
+          break;
+        end;
+        if Result = nil then
+          if Items[i].ExtraExtensions.Find(s) <> nil then
           begin
             Result := Items[i];
             break;
-          end;
-        end;
-        if Result = nil then
-          for j := 0 to Items[i].ExtraExtensions.Count - 1 do
-          begin
-            if SameText(Items[i].ExtraExtensions[j].Name, vExtension) then
-            begin
-              Result := Items[i];
-              break;
-            end;
           end;
       end;
       if Result <> nil then
@@ -5337,17 +5345,19 @@ begin
   end;
 end;
 
-function TFileGroups.OpenFile(vFiles: TEditorFiles; vExtension: string; vFileName, vFileParams: string): TEditorFile;
+function TFileGroups.OpenFile(vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile;
 var
   aGroup: TFileGroup;
+  s: string;
 begin
-  aGroup := Engine.Groups.FindExtension(vExtension);
+  s := ExtractFileName(vFileName);
+  aGroup := Engine.Groups.FindFullName(s);
 
   {if aGroup = nil then
     raise EEditorException.Create('Cannot open this file type: ' + vExtension);}
   if aGroup = nil then
   begin
-    Engine.SendMessage('Cannot open this file type: ' + vExtension, msgtLog);
+    Engine.SendMessage('Cannot open this file type: ' + s, msgtLog);
     Result := nil;
   end
   else
@@ -5675,7 +5685,7 @@ end;
 
 function TEditorProject.CreateMask(CreateMaskProc: TCreateMaskProc): string;
 var
-  AExtension, S: String;
+  AExtension: String;
   AExtensions: TStringList;
   aGroup: TFileGroup;
 begin
@@ -5685,11 +5695,7 @@ begin
   AExtensions.DelimitedText := Engine.Session.Project.FileFilter;
   for AExtension in AExtensions do
   begin
-    //GroupAddFitler
-    S := AExtension;
-    if LeftStr(S, 1) = '.' then
-      S := Copy(S, 2, MaxInt);
-    aGroup := Engine.Tendency.Groups.FindExtension(S);
+    aGroup := Engine.Tendency.Groups.FindFullName(AExtension);
     if aGroup <> nil then
     begin
       GroupAddFitler(Result, aGroup);
@@ -5718,6 +5724,13 @@ begin
     if FCategory <> nil then
       FCategory.Add(Self);
   end;
+end;
+
+function TFileGroup.GetExtension: string;
+begin
+  if Extensions.Count = 0 then
+    raise Exception.Create('no default extention for group: ' + Name);
+  Result := Extensions[0].Name;
 end;
 
 constructor TFileGroup.Create;

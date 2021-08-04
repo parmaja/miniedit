@@ -388,14 +388,14 @@ initialization
     Categories.Add(TYamlFileCategory.Create(DefaultProject.Tendency, 'Yaml', 'YAML'));
     Categories.Add(TMDFileCategory.Create(DefaultProject.Tendency, 'md', 'Markdown'));
 
-    Groups.Add(nil, 'mne-project', 'Project', TmneProjectFileCategory, ['mne-project'], [fgkAssociated, fgkBrowsable, fgkUneditable]);
-    Groups.Add(TTXTFile, 'txt', 'Text', TTXTFileCategory, ['txt', 'text', 'log'], [fgkDefault]);
-    Groups.Add(TTXTFile, 'motd', 'motd', TTXTFileCategory, ['motd'], []);
-    Groups.Add(TTXTFile, 'md', 'MarkDown', TMDFileCategory, ['md'], []);
-    Groups.Add(TApacheFile, 'htaccess', 'htaccess', TApacheFileCategory, ['htaccess', 'conf'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TXMLFile, 'xml', 'XML', TXMLFileCategory, ['xml', 'lpi'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TINIConfigFile, 'ini', 'INI', TCFGFileCategory, ['ini', 'pls'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TCFGConfigFile, 'cfg', 'Config', TCFGFileCategory, ['cfg', 'conf', 'config'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TYamlConfigFile, 'yaml', 'YAML', TYamlFileCategory, ['yaml'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(nil, 'mne-project', 'Project', TmneProjectFileCategory, ['.mne-project'], [fgkAssociated, fgkBrowsable, fgkUneditable]);
+    Groups.Add(TTXTFile, 'txt', 'Text', TTXTFileCategory, ['.txt', '.text', '.log', 'readme'], [fgkDefault]);
+    Groups.Add(TTXTFile, 'motd', 'motd', TTXTFileCategory, ['.motd'], []);
+    Groups.Add(TTXTFile, 'md', 'MarkDown', TMDFileCategory, ['.md'], []);
+    Groups.Add(TApacheFile, 'htaccess', 'htaccess', TApacheFileCategory, ['.htaccess', '.conf'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TXMLFile, 'xml', 'XML', TXMLFileCategory, ['.xml', '.lpi'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TINIConfigFile, 'ini', 'INI', TCFGFileCategory, ['.ini', '.pls'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TCFGConfigFile, 'cfg', 'Config', TCFGFileCategory, ['.cfg', '.conf', '.config', 'config'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TYamlConfigFile, 'yaml', 'YAML', TYamlFileCategory, ['.yaml'], [fgkAssociated, fgkBrowsable]);
   end;
 end.

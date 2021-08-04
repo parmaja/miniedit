@@ -403,6 +403,6 @@ initialization
   begin
     Tendencies.Add(TGoTendency);
     Categories.Add(TGoFileCategory.Create(TGoTendency, 'Go', 'Go language',[fckPublish]));
-    Groups.Add(TGoFile, 'Go', 'Go', TGoFileCategory, ['go'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
+    Groups.Add(TGoFile, 'Go', 'Go', TGoFileCategory, ['.go'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
   end;
 end.

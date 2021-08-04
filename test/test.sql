@@ -1,2 +1,2 @@
 select * from Companies
-where id < 30
+here id < 30

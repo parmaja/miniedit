@@ -209,7 +209,7 @@ initialization
     Tendencies.Add(TConsoleTendency);
     Categories.Add(TCMDFileCategory.Create(TConsoleTendency, 'CMD', 'Command prompt cmd, bat'));
     Categories.Add(TSHFileCategory.Create(TConsoleTendency, 'SH', 'Shell script SH'));
-    Groups.Add(TCMDFile, 'CMD', 'CMD', TCMDFileCategory, ['cmd', 'bat'], [fgkExecutable, fgkBrowsable], []);
-    Groups.Add(TCMDFile, 'sh', 'sh', TSHFileCategory, ['sh'], [fgkExecutable, fgkBrowsable], []);
+    Groups.Add(TCMDFile, 'CMD', 'CMD', TCMDFileCategory, ['.cmd', '.bat'], [fgkExecutable, fgkBrowsable], []);
+    Groups.Add(TCMDFile, 'sh', 'sh', TSHFileCategory, ['.sh'], [fgkExecutable, fgkBrowsable], []);
   end;
 end.

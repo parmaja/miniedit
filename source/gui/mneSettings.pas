@@ -178,7 +178,7 @@ begin
   c := 0;
   for i := 0 to FEngine.Groups.Count - 1 do
   begin
-    if not FEngine.Groups[i].Category.Tendency.IsDefault then
+    //if not FEngine.Groups[i].Category.Tendency.IsDefault then
     begin
       ExtensionsGrid.ActiveIndex := c;
       FEngine.Options.ExtraExtensions.Values[FExtraExtensions[c]] := ExtensionCol.AsString;
@@ -203,7 +203,7 @@ begin
   c := 0;
   for i := 0 to FEngine.Groups.Count - 1 do
   begin
-    if not FEngine.Groups[i].Category.Tendency.IsDefault then
+  //  if not FEngine.Groups[i].Category.Tendency.IsDefault then
     begin
       ExtensionsGrid.ActiveIndex := c;
       GroupCol.AsString := FEngine.Groups[i].Title;
