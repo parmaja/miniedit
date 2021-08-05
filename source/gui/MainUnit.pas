@@ -11,7 +11,7 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, mnMsgBox, contnrs, LConvEncoding,
-  LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorRun, process,
+  LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorRun, process, fgl,
   Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus,
   ToolWin, Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses,
   StdActns, Grids, SynEditHighlighter, SynEdit, IAddons, ntvThemes, ntvSplitters,
@@ -3297,30 +3297,39 @@ begin
 end;
 
 procedure TMainForm.SwitchFocusActExecute(Sender: TObject);
+var
+  aList: specialize TFPGList<TWinControl>;
+  i, cur: Integer;
 begin
-  if FileList.Focused then
-  begin
+  aList := specialize TFPGList<TWinControl>.Create;
+  try
+    if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control <> nil) then
+      aList.Add(Engine.Files.Current.Control);
     if MessagesPnl.Visible then
-      MessagesTabs.ActivateControl
-    else if (Engine.Files.Current <> nil) then
-      Engine.Files.Current.Activate;
-  end
-  else if MessagesTabs.IsParentOf(ActiveControl) then
-  begin
-    if (Engine.Files.Current <> nil) then
-      Engine.Files.Current.Activate
-    else if FolderPnl.Visible then
+      aList.Add(MessagesTabs.ActivableControl);
+    if BrowserPnl.Visible then
+      aList.Add(BrowserTabs.ActivableControl);
+
+    if aList.Count = 0 then
+      exit;
+
+    cur := 0;
+    for i := 0 to aList.Count - 1 do
     begin
-      FileList.SetFocus;
-    end
-  end
-  else
-  begin
-    if FolderPnl.Visible then
-      FileList.SetFocus
-    else if MessagesPnl.Visible then
-      MessagesTabs.ActivateControl;
-  end
+      if aList[i].Focused or (aList[i] = ActiveControl) then
+      begin
+        cur := i;
+        break;
+      end;
+    end;
+
+    inc(cur);
+    if cur > aList.Count -1 then
+      cur := 0;
+    aList[cur].SetFocus;
+  finally
+    aList.Free;
+  end;
 end;
 
 procedure TMainForm.WorkspaceMnuClick(Sender: TObject);
