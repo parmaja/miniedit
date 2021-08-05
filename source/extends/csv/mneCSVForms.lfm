@@ -92,7 +92,6 @@ object CSVForm: TCSVForm
           AutoSize = False
           Caption = 'Fetched: '
           Layout = tlCenter
-          ParentColor = False
         end
         object FetchCountLbl: TLabel
           Left = 585
@@ -103,7 +102,6 @@ object CSVForm: TCSVForm
           AutoSize = False
           Caption = '0'
           Layout = tlCenter
-          ParentColor = False
         end
         object ClearBtn: TButton
           Left = 638

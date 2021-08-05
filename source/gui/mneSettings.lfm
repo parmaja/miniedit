@@ -3,7 +3,7 @@ object EditorSettingForm: TEditorSettingForm
   Height = 321
   Top = 215
   Width = 426
-  BorderStyle = bsDialog
+  BorderStyle = bsSingle
   Caption = 'General Options'
   ClientHeight = 321
   ClientWidth = 426
@@ -160,8 +160,8 @@ object EditorSettingForm: TEditorSettingForm
         Left = 5
         Height = 13
         Top = 36
-        Width = 338
-        Caption = 'You can add extra extension files to open and browse, do not use DOT.'
+        Width = 305
+        Caption = 'You can add extra extension files to open and browse, use DOT.'
       end
       object Label10: TLabel
         Left = 4

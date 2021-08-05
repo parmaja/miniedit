@@ -328,16 +328,10 @@ object MainForm: TMainForm
           AutoWidth = True
           Control = ProjectPnl
         end>
+      TabStyle = tbsSheet
       Align = alClient
       TabOrder = 0
       object ProjectPnl: TntvPanel
-        Left = 3
-        Height = 284
-        Top = 23
-        Width = 255
-        Align = alClient
-      end
-      object DatabasePnl: TntvPanel
         Left = 3
         Height = 284
         Top = 23
@@ -406,6 +400,13 @@ object MainForm: TMainForm
           AutoCheck = False
         end
       end
+      object DatabasePnl: TntvPanel
+        Left = 3
+        Height = 284
+        Top = 23
+        Width = 255
+        Align = alClient
+      end
     end
   end
   object MessagesPnl: TntvPanel
@@ -461,6 +462,7 @@ object MainForm: TMainForm
           AutoWidth = True
           Control = LogEdit
         end>
+      TabStyle = tbsSheet
       Align = alClient
       Constraints.MinHeight = 60
       TabOrder = 0

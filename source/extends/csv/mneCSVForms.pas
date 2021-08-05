@@ -92,14 +92,17 @@ type
     function IsConfigFileExists: Boolean;
     procedure SaveConfigFile;
     property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
+
     procedure ClearGrid;
     procedure FillGrid(SQLCMD: TmncCommand; Title: String);
+
     procedure LoadFromStream(AStream: TStream);
     procedure SaveToStream(AStream: TStream);
     procedure LoadFromFile(FileName: string);
     procedure SaveToFile(FileName: string);
     procedure Load(FileName: string);
     procedure Save(FileName: string);
+
     property Mode: TCSVFileMode read GetMode;
   end;
 

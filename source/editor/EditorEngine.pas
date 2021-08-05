@@ -2115,6 +2115,7 @@ begin
   SynEdit.OnReplaceText := @Engine.DoReplaceText;
   SynEdit.OnKeyDown := @SynEditKeyDown;
 
+  SynEdit.Lines.SkipLastLineBreak := True;
   SynEdit.TrimSpaceType := settLeaveLine;
   SynEdit.BoundsRect := Engine.FilePanel.ClientRect;
   SynEdit.Font.Quality := fqDefault;
@@ -5356,7 +5357,7 @@ begin
   s := ExtractFileName(vFileName);
   aGroup := Engine.Groups.FindFullName(s);
 
-  if FallBackGroup <> '' then
+  if (aGroup <> nil) and (FallBackGroup <> '') then
     aGroup := Engine.Groups.Find(FallBackGroup);
 
   {if aGroup = nil then
