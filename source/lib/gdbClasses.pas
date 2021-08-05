@@ -703,13 +703,15 @@ var
   i, f: Integer;
 begin
   f := -1;
-  for i := 0 to BreakPoints.Count - 1 do
+  i := 0;
+  while i < BreakPoints.Count do
   begin
     if BreakPoints[i].Info.Handle = Handle then
     begin
       f := i;
       break;
     end;
+    inc(i);
   end;
   if f >= 0 then
     BreakPoints.Delete(i);
@@ -799,6 +801,7 @@ var
   ResType: TMIRespondType;
 begin
   Result := TMIResponds.Create;
+  S := '';
   while ReadStream.ReadLine(S, True) do
   begin
     OutputDebugString(PChar('<[MNE]RAW:' + S));

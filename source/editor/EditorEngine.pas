@@ -1038,7 +1038,7 @@ type
     procedure EnumExtensions(vExtensions: TEditorElements);
 
     function FindFullName(vFullName: string; vKind: TFileGroupKinds = []): TFileGroup;
-    function OpenFile(vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile;
+    function OpenFile(vFiles: TEditorFiles; vFileName, vFileParams: string; FallBackGroup: string): TEditorFile;
     //FullFilter return title of that filter for open/save dialog boxes
     function CreateFilter(FullFilter: Boolean = True; FirstExtension: string = ''; vGroup: TFileGroup = nil; OnlyThisGroup: Boolean = true): string;
     function CreateMask(CreateMaskProc: TCreateMaskProc): string;
@@ -3268,6 +3268,7 @@ end;
 function TEditorFiles.InternalOpenFile(FileName, FileParams: string; AppendToRecent: Boolean): TEditorFile;
 var
   lFileName: string;
+  FallbackGroup: string;
 begin
   {$ifdef windows}
   lFileName := ExpandFileName(FileName);
@@ -3279,9 +3280,11 @@ begin
   Result := FindFile(lFileName);
   if Result = nil then
   begin
-    Result := Engine.Groups.OpenFile(Self, FileName, FileParams);
-    if (Result = nil) and (Engine.Options.FallbackToText) then
-      Result := Engine.Groups.OpenFile(Self, FileName, FileParams);
+    if (Engine.Options.FallbackToText) then
+      FallbackGroup := cFallbackGroup
+    else
+      FallbackGroup := '';
+    Result := Engine.Groups.OpenFile(Self, FileName, FileParams, FallbackGroup);
   end;
   if (Result <> nil) and AppendToRecent then
     Engine.ProcessRecentFile(lFileName);
@@ -4523,10 +4526,10 @@ var
   aSave, DoRecent: Boolean;
   aName: string;
 begin
+  DoRecent := False;
+  aName := '';
   if (((Name <> '') or not IsTemporary) or Force) then
   begin
-    DoRecent := False;
-    aName := '';
     if (IsNew or (FName = '') or AsNewFile) then
     begin
       aDialog := TSaveDialog.Create(nil);
@@ -5345,13 +5348,16 @@ begin
   end;
 end;
 
-function TFileGroups.OpenFile(vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile;
+function TFileGroups.OpenFile(vFiles: TEditorFiles; vFileName, vFileParams: string; FallBackGroup: string): TEditorFile;
 var
   aGroup: TFileGroup;
   s: string;
 begin
   s := ExtractFileName(vFileName);
   aGroup := Engine.Groups.FindFullName(s);
+
+  if FallBackGroup <> '' then
+    aGroup := Engine.Groups.Find(FallBackGroup);
 
   {if aGroup = nil then
     raise EEditorException.Create('Cannot open this file type: ' + vExtension);}

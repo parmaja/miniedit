@@ -1136,6 +1136,7 @@ function TdbgpBreakpoints.Add(FileName: string; Line: integer): integer;
 var
   aBreakpoint: TdbgpBreakpoint;
 begin
+  Result := -1;
   Inc(CurrentHandle);
   aBreakpoint := Find(FileName, Line, True);
   if aBreakpoint = nil then
