@@ -136,7 +136,7 @@ procedure TCSVForm.ConfigFileBtnClick(Sender: TObject);
 begin
   SaveConfigFile;
   RefreshControls;
-  Engine.UpdateState([ecsFolder]);
+  Engine.Update([ecsFolder]);
 end;
 
 procedure TCSVForm.DataGridChanged(Sender: TObject);
@@ -153,7 +153,7 @@ procedure TCSVForm.DelConfigFileBtnClick(Sender: TObject);
 begin
   DeleteFile(EditorFile.Name + '.conf');
   RefreshControls;
-  Engine.UpdateState([ecsFolder]);
+  Engine.Update([ecsFolder]);
 end;
 
 procedure TCSVForm.MenuItem1Click(Sender: TObject);

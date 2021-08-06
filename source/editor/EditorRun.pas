@@ -129,7 +129,7 @@ type
     FRun: TmneRun;
     FItems: TmneRunItems;
     FCurrent: TmneRunItem;
-    procedure UpdateState;
+    procedure Update;
   public
     constructor Create(ARun: TmneRun);
     destructor Destroy; override;
@@ -402,7 +402,7 @@ begin
     if Current.BreakOnFail and (Current.Status > 0) then
       Items.Clear;
     FreeAndNil(FCurrent);
-    //Synchronize(@UpdateState); //not yet
+    //Synchronize(@Update); //not yet
   end
 end;
 
@@ -448,9 +448,9 @@ begin
   {$endif}
 end;
 
-procedure TmneRunPool.UpdateState;
+procedure TmneRunPool.Update;
 begin
-  Engine.UpdateState([ecsDebug]);
+  Engine.Update([ecsDebug]);
 end;
 
 constructor TmneRunPool.Create(ARun: TmneRun);
@@ -476,7 +476,7 @@ end;
 procedure TmneRun.PoolTerminated(Sender: TObject);
 begin
   FPool := nil;
-  Engine.UpdateState([ecsDebug]);
+  Engine.Update([ecsDebug]);
   Finish;
 end;
 
@@ -973,16 +973,16 @@ begin
       ExecutedControl.InvalidateLine(ExecutedLine);
     end;
     if Line >= 0 then
-      Engine.UpdateState([ecsDebug, ecsShow])
+      Engine.Update([ecsDebug, ecsShow])
     else
     begin
-      Engine.UpdateState([ecsDebug]); //Do not show mainform if there is no line to set
+      Engine.Update([ecsDebug]); //Do not show mainform if there is no line to set
       Engine.Session.Run.Show;
     end;
   end
   else
   begin
-    Engine.UpdateState([ecsDebug]);//needed for update watches
+    Engine.Update([ecsDebug]);//needed for update watches
     Engine.Session.Run.Show;
   end;
 end;

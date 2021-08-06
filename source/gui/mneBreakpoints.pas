@@ -84,7 +84,7 @@ begin
     try
       FTendency.Debugger.Breakpoints.Remove(IntPtr(BreakpointList.Selected.Data));
       Reload;
-      Engine.UpdateState([ecsDebug]);
+      Engine.Update([ecsDebug]);
     finally
       DebugManager.Leave;
     end;
@@ -97,7 +97,7 @@ begin
   try
     FTendency.Debugger.Breakpoints.Clear;
     Reload;
-    Engine.UpdateState([ecsDebug]);
+    Engine.Update([ecsDebug]);
   finally
     DebugManager.Leave;
   end;

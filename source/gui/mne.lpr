@@ -51,16 +51,16 @@ uses
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
 
   SearchProgressForms, SelectList, IniFiles, mneAssociateForm, mneExtends,
-  mneCMDClasses, mneGoClasses, mneSARDClasses, mneLSLClasses, sqlvManagerForms,
-  mneBoardClasses, mneBoardForms, mneSelectComponents, mneBoardComponents,
-  mneFontGenForm, mneVerilogClasses, SynHighlighterVerilog,
-  mneCustomClasses, mnePasProjectFrames, mnePASClasses, mneGccClasses, mneCSVClasses,
-  mneDClasses, mneLuaClasses, LuaDBGServers, mnMsgBox, GUIMsgBox, Classes,
-  PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses, EditorColors,
-  gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneClasses, mneDBClasses,
-  mneRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils, mnStreams,
-  mncCSV, sqlvOpenDatabases,
-  sqlvSQLForms, sqlvEngines, sqlvStdClasses, sqlvConnectServers;
+  mneViewClasses, mneCMDClasses, mneGoClasses, mneSARDClasses, mneLSLClasses,
+  sqlvManagerForms, mneBoardClasses, mneBoardForms, mneSelectComponents,
+  mneBoardComponents, mneFontGenForm, mneVerilogClasses, SynHighlighterVerilog,
+  mneCustomClasses, mnePasProjectFrames, mnePASClasses, mneGccClasses,
+  mneCSVClasses, mneDClasses, mneLuaClasses, LuaDBGServers, mnMsgBox, GUIMsgBox,
+  Classes, PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses,
+  EditorColors, gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneClasses,
+  mneDBClasses, mneRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils,
+  mnStreams, mncCSV, sqlvOpenDatabases, sqlvSQLForms, sqlvEngines,
+  sqlvStdClasses, sqlvConnectServers;
 
 {$R *.res}
 {$i '..\lib\mne.inc'}
@@ -148,15 +148,20 @@ begin
     DeleteFile(Application.Location+'heap.trc');
   //SetHeapTraceOutput(Application.Location+'heap.trc');
   {$ENDIF DEBUG}
-  Application.CreateForm(TEditorResource, EditorResource);
-  Application.CreateForm(TMainForm, MainForm);
+  Engine.BeginUpdate;
   try
-    Engine.Start;
-  except
-    on E: Exception do
-    begin
-      Engine.SendLog(E.Message);
+    Application.CreateForm(TEditorResource, EditorResource);
+    Application.CreateForm(TMainForm, MainForm);
+    try
+      Engine.Start;
+    except
+      on E: Exception do
+      begin
+        Engine.SendLog(E.Message);
+      end;
     end;
+  finally
+    Engine.EndUpdate;
   end;
   // Open any files passed in the command line
 end;
@@ -166,9 +171,9 @@ begin
   if not IsAnotherInstance then
   begin
     //DefaultSystemCodePage := widestringmanager.GetStandardCodePageProc(scpAnsi); //I fix it temporary that needed for AnsiToUtf8; //i commented cuz i cant convert to ansi in TTextEditorFile.DoSave
-  Application.Scaled :=True;
+    Application.Scaled :=True;
     Application.MainFormOnTaskBar := True; //this will resolve mainform sent to last application, when using Alt+Tab to back to it, it is the last one on tasks, now it is normal, idk why
-  Application.Title :='miniEdit';
+    Application.Title :='miniEdit';
     Application.Name := 'miniEdit';
     Application.BidiMode := bdLeftToRight;
     Application.Initialize;

@@ -109,7 +109,7 @@ begin
         Apply;
         ApplyFrames;
         Engine.Options.Apply;
-        Engine.UpdateState([ecsOptions]);
+        Engine.Update([ecsOptions]);
       end;
     finally
       Engine.EndUpdate;

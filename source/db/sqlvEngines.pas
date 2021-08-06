@@ -1325,7 +1325,7 @@ begin
   Connection.Connect;
   Connected;
   //Engine.SendLog()
-  Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsRecents, ecsProject, ecsProjectLoaded]);
+  Engine.Update([ecsChanged, ecsState, ecsRefresh, ecsRecents, ecsProject, ecsProjectLoaded]);
 end;
 
 procedure TsqlvDB.Close;

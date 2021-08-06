@@ -51,37 +51,6 @@ implementation
 uses
   Graphics, GraphType;
 
-function TEditorResource.GetFileImageIndex(const FileName: string; DefaultImage: Integer): integer;
-var
-  Extension: TEditorExtension;
-  s: string;
-  g: TFileGroup;
-begin
-  s := ExtractFileName(FileName);
-  g := Engine.Groups.FindFullName(s);
-  if g = nil then
-    Result := DefaultImage
-  else
-  begin
-    Extension := Extensions.Find(g.Extension);
-    if Extension <> nil then
-      Result := Extension.ImageIndex
-    else
-      Result := DefaultImage;
-  end;
-end;
-
-function TEditorResource.GetImageIndex(const AName: string; DefaultImage: Integer): integer;
-var
-  Extension: TEditorExtension;
-begin
-  Extension := Extensions.Find(LowerCase(AName));
-  if Extension <> nil then
-    Result := Extension.ImageIndex
-  else
-    Result := DefaultImage;
-end;
-
 procedure TEditorResource.Switch(Style: TThemeStyle);
 var
   img: TRawImage;
@@ -136,32 +105,71 @@ end;
 procedure TEditorResource.DataModuleCreate(Sender: TObject);
 begin
   Extensions := TEditorExtensions.Create(true);
-  Extensions.Add('.text', 1);
-  Extensions.Add('.txt', 1);
-  Extensions.Add('.md', 1);
-  Extensions.Add('.php', 3);
-  Extensions.Add('.pas', 4);
-  Extensions.Add('.d', 5);
-  Extensions.Add('.py', 6);
-  Extensions.Add('.lua', 7);
-  Extensions.Add('.mne-project', 8);
-  Extensions.Add('.png', 9);
-  Extensions.Add('.jpg', 9);
-  Extensions.Add('.cmd', 10);
-  Extensions.Add('.sh', 10);
-  Extensions.Add('.bat', 10);
-  Extensions.Add('.go', 11);
-  Extensions.Add('.sql', 12);
-  Extensions.Add('.db', cDatabaseImage);
-  Extensions.Add('.postgresql', 14);
-  Extensions.Add('.postgre', 14);
-  Extensions.Add('.sqlite', 15);
-  Extensions.Add('.fdb', 16);
-  Extensions.Add('.firebirdsql', 16);
-  Extensions.Add('.firebird', 16);
-  Extensions.Add('.mysql', 17);
-  Extensions.Add('.csv', 18);
-  Extensions.Add('.tsv', 18);
+
+  //Group or Category name not extension
+  Extensions.Add('txt', 1);
+  Extensions.Add('md', 1);
+  Extensions.Add('php', 3);
+  Extensions.Add('pas', 4);
+  Extensions.Add('d', 5);
+  Extensions.Add('py', 6);
+  Extensions.Add('lua', 7);
+  Extensions.Add('mne-project', 8);
+  Extensions.Add('Image', 9);
+  Extensions.Add('cmd', 10);
+  Extensions.Add('sh', 10);
+  Extensions.Add('bat', 10);
+  Extensions.Add('go', 11);
+  Extensions.Add('sql', 12);
+  Extensions.Add('db', cDatabaseImage);
+  Extensions.Add('postgre', 14);
+  Extensions.Add('sqlite', 15);
+  Extensions.Add('firebird', 16);
+  Extensions.Add('mysql', 17);
+  Extensions.Add('csv', 18);
+end;
+
+function TEditorResource.GetFileImageIndex(const FileName: string; DefaultImage: Integer): integer;
+var
+  Extension: TEditorExtension;
+  s: string;
+  g: TFileGroup;
+begin
+  s := ExtractFileName(FileName);
+  g := Engine.Groups.FindGroup(s);
+  if g = nil then
+    Result := DefaultImage //have no group
+  else
+  begin
+    Extension := Extensions.Find(g.Name);
+    if Extension <> nil then
+      Result := Extension.ImageIndex
+    else
+    begin
+      if g.Category <> nil then
+      begin
+        Extension := Extensions.Find(g.Category.ImageName);
+        if Extension <> nil then
+          Extension := Extensions.Find(g.Category.Name);
+      end;
+
+      if Extension <> nil then
+        Result := Extension.ImageIndex
+      else
+        Result := 1; //our default beause it have a group
+    end;
+  end;
+end;
+
+function TEditorResource.GetImageIndex(const AName: string; DefaultImage: Integer): integer;
+var
+  Extension: TEditorExtension;
+begin
+  Extension := Extensions.Find(LowerCase(AName));
+  if Extension <> nil then
+    Result := Extension.ImageIndex
+  else
+    Result := DefaultImage;
 end;
 
 end.

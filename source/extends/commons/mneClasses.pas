@@ -381,21 +381,26 @@ initialization
   with Engine do
   begin
     Categories.Add(TmneProjectFileCategory.Create(DefaultProject.Tendency, 'mne-project', 'MiniEdit project'));
-    Categories.Add(TTXTFileCategory.Create(DefaultProject.Tendency, 'txt', 'Text'));
-    Categories.Add(TApacheFileCategory.Create(DefaultProject.Tendency, 'apache', 'Apache Config', []));
-    Categories.Add(TXMLFileCategory.Create(DefaultProject.Tendency, 'xml', 'XML files'));
-    Categories.Add(TCFGFileCategory.Create(DefaultProject.Tendency, 'CFG', 'Config and INI'));
-    Categories.Add(TYamlFileCategory.Create(DefaultProject.Tendency, 'Yaml', 'YAML'));
-    Categories.Add(TMDFileCategory.Create(DefaultProject.Tendency, 'md', 'Markdown'));
-
     Groups.Add(nil, 'mne-project', 'Project', TmneProjectFileCategory, ['.mne-project'], [fgkAssociated, fgkBrowsable, fgkUneditable]);
+
+    Categories.Add(TTXTFileCategory.Create(DefaultProject.Tendency, 'txt', 'Text'));
     Groups.Add(TTXTFile, 'txt', 'Text', TTXTFileCategory, ['.txt', '.text', '.log', 'readme'], [fgkDefault]);
     Groups.Add(TTXTFile, 'motd', 'motd', TTXTFileCategory, ['.motd'], []);
+
+    Categories.Add(TMDFileCategory.Create(DefaultProject.Tendency, 'md', 'Markdown'));
     Groups.Add(TTXTFile, 'md', 'MarkDown', TMDFileCategory, ['.md'], []);
+
+    Categories.Add(TApacheFileCategory.Create(DefaultProject.Tendency, 'apache', 'Apache Config', []));
     Groups.Add(TApacheFile, 'htaccess', 'htaccess', TApacheFileCategory, ['.htaccess', '.conf'], [fgkAssociated, fgkBrowsable]);
+
+    Categories.Add(TXMLFileCategory.Create(DefaultProject.Tendency, 'xml', 'XML files'));
     Groups.Add(TXMLFile, 'xml', 'XML', TXMLFileCategory, ['.xml', '.lpi'], [fgkAssociated, fgkBrowsable]);
+
+    Categories.Add(TCFGFileCategory.Create(DefaultProject.Tendency, 'cfg', 'Config and INI'));
     Groups.Add(TINIConfigFile, 'ini', 'INI', TCFGFileCategory, ['.ini', '.pls'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TCFGConfigFile, 'cfg', 'Config', TCFGFileCategory, ['.cfg', '.conf', '.config', 'config'], [fgkAssociated, fgkBrowsable]);
+
+    Categories.Add(TYamlFileCategory.Create(DefaultProject.Tendency, 'yaml', 'YAML'));
     Groups.Add(TYamlConfigFile, 'yaml', 'YAML', TYamlFileCategory, ['.yaml'], [fgkAssociated, fgkBrowsable]);
   end;
 end.

@@ -900,13 +900,16 @@ type
     function Add(Attribute: TSynHighlighterAttributes; AttType: TAttributeType): TMap;
   end;
 
-  TFileCategoryKind = (fckPublish);
+  TFileCategoryKind = (
+    fckPublish //idk not used
+  );
   TFileCategoryKinds = set of TFileCategoryKind;
 
   { TVirtualCategory }
 
   TVirtualCategory = class(TEditorElements)
   private
+    FImageName: string;
     FName: string;
     FHighlighter: TSynCustomHighlighter;
     FKind: TFileCategoryKinds;
@@ -931,8 +934,8 @@ type
 
     function OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile; virtual;
   public
-    constructor Create(ATendency: TEditorTendency; const vName, vTitle: string; vKind: TFileCategoryKinds = []); virtual;
-    constructor Create(ATendency: TEditorTendencyClass; const vName, vTitle: string; vKind: TFileCategoryKinds = []); virtual;
+    constructor Create(ATendency: TEditorTendency; const vName, vTitle: string; vKind: TFileCategoryKinds = []; vImageName: string = ''); virtual;
+    constructor Create(ATendency: TEditorTendencyClass; const vName, vTitle: string; vKind: TFileCategoryKinds = []; vImageName: string = ''); virtual;
     destructor Destroy; override;
     procedure EnumMenuItems(AddItems: TAddClickCallBack); virtual;
     function CreateHighlighter: TSynCustomHighlighter; //todo replace with doCreate....
@@ -952,6 +955,7 @@ type
     property Highlighter: TSynCustomHighlighter read GetHighlighter;
     property Completion: TmneSynCompletion read FCompletion;
     property Kind: TFileCategoryKinds read FKind;
+    property ImageName: string read FImageName write FImageName;
     property Items[Index: Integer]: TFileGroup read GetItem; default;
   end;
 
@@ -1037,13 +1041,14 @@ type
     procedure EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds = []);
     procedure EnumExtensions(vExtensions: TEditorElements);
 
-    function FindFullName(vFullName: string; vKind: TFileGroupKinds = []): TFileGroup;
+    function FindGroup(vFullName: string; vKind: TFileGroupKinds = []): TFileGroup;
     function OpenFile(vFiles: TEditorFiles; vFileName, vFileParams: string; FallBackGroup: string): TEditorFile;
     //FullFilter return title of that filter for open/save dialog boxes
     function CreateFilter(FullFilter: Boolean = True; FirstExtension: string = ''; vGroup: TFileGroup = nil; OnlyThisGroup: Boolean = true): string;
     function CreateMask(CreateMaskProc: TCreateMaskProc): string;
     procedure Add(vGroup: TFileGroup);
     //First extension in array, is the default extension for the group, do not use name of group as extension
+    //ImageName is group name extension already registered in resource
     procedure Add(FileClass: TEditorFileClass; const Name, Title: string; Category: TFileCategoryClass; Extensions: array of string; Kind: TFileGroupKinds = []; Style: TFileGroupStyles = []);
     property Items[Index: integer]: TFileGroup read GetItem; default;
   end;
@@ -1268,9 +1273,11 @@ type
     function ChooseTendency(var vTendency: TEditorTendency): Boolean;
 
     procedure BeginUpdate;
-    procedure UpdateState(State: TEditorChangeStates);
-    property Updating: Boolean read GetUpdating;
+    //Silent do not trigger just set the flag
+    procedure Update(State: TEditorChangeStates; Silent: Boolean = False);
     procedure EndUpdate;
+    property Updating: Boolean read GetUpdating;
+    property UpdateState: TEditorChangeStates read FUpdateState;
 
     function EnvReplace(S: string; NoRoot: Boolean = False): string; //NoRoot root can be recucrly or not needed
     procedure EnvList(List: TStringList; NoRoot: Boolean = False);
@@ -1335,6 +1342,8 @@ type
   public
     List: TStringList;
   end;
+
+function ResetUpdate(State: TEditorChangeState; var InStates: TEditorChangeStates): Boolean;
 
 function SelectFolder(const Caption: string; const Root: string; var Directory: string): Boolean;
 procedure SpliteStr(S, Separator: string; var Name, Value: string);
@@ -1411,6 +1420,12 @@ begin
     FEngine := TEditorEngine.Create;
   end;
   Result := FEngine;
+end;
+
+function ResetUpdate(State: TEditorChangeState; var InStates: TEditorChangeStates): Boolean;
+begin
+  Result := State in InStates;
+  InStates := InStates - [State];
 end;
 
 function SelectFolder(const Caption: string; const Root: string; var Directory: string): Boolean;
@@ -2635,7 +2650,7 @@ begin
         if (Engine.Session.Project.RunOptions.MainFile <> '') or (Engine.Files.Current = nil) or not Engine.Files.Current.Execute(p) then
           if (p.MainFile <> '') then
             DoRun(p);
-        Engine.UpdateState([ecsDebug]);
+        Engine.Update([ecsDebug]);
       end;
     end;
   finally
@@ -2936,7 +2951,7 @@ begin
     FreeAndNil(FProject);
     SetProject(Engine.DefaultProject);
   end;
-  Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
+  Engine.Update([ecsChanged, ecsState, ecsRefresh, ecsProject]);
 end;
 
 constructor TEditorEngine.Create;
@@ -3147,20 +3162,21 @@ end;
 
 procedure TEditorFiles.Edited;
 begin
-  Engine.UpdateState([ecsEdit]);
+  Engine.Update([ecsEdit]);
 end;
 
 procedure TEditorEngine.EndUpdate;
 begin
-  if (FUpdateCount = 1) and (Files.Current <> nil) and not (Files.Current.Visible) then
-    Files.Current.Show;
-  Dec(FUpdateCount);
-  if FUpdateCount = 0 then
+  if FUpdateCount = 1 then
   begin
+    if {(FUpdateCount = 1) and } (Files.Current <> nil) and not (Files.Current.Visible) then
+      Files.Current.Show;
+
     if FUpdateState <> [] then
       InternalChangedState(FUpdateState);
     FUpdateState := [];
   end;
+  Dec(FUpdateCount);
 end;
 
 procedure TEditorFiles.Find;
@@ -3340,7 +3356,7 @@ begin
     FIsChanged := False;
     if Active then  //sure if not default project
       Engine.ProcessRecentProject(FileName);
-    Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject, ecsProjectLoaded]);
+    Engine.Update([ecsChanged, ecsState, ecsRefresh, ecsProject, ecsProjectLoaded]);
   finally
     Engine.EndUpdate;
   end;
@@ -3358,7 +3374,7 @@ begin
     Current := Result;
     Current.Show;
     Current.Activate;
-    Engine.UpdateState([ecsChanged, ecsDebug, ecsState, ecsRefresh]);
+    Engine.Update([ecsChanged, ecsDebug, ecsState, ecsRefresh]);
   finally
     Engine.EndUpdate;
   end;
@@ -3424,7 +3440,7 @@ begin
         end;
         if aFile <> nil then
           Current := aFile;
-        Engine.UpdateState([ecsChanged, ecsDebug, ecsState, ecsRefresh]);
+        Engine.Update([ecsChanged, ecsDebug, ecsState, ecsRefresh]);
       finally
         Engine.EndUpdate;
       end;
@@ -3480,7 +3496,7 @@ begin
     AProject.SaveToFile(AProject.FileName);
     if AProject.IsActive then
       Engine.ProcessRecentProject(AProject.FileName);
-    Engine.UpdateState([ecsFolder, ecsChanged, ecsState, ecsRefresh]);
+    Engine.Update([ecsFolder, ecsChanged, ecsState, ecsRefresh]);
     Result := True;
     FIsChanged := False;
   end;
@@ -3555,25 +3571,25 @@ end;
 procedure TEditorEngine.ProcessRecentFile(const FileName: string; FileParams: string);
 begin
   Options.RecentFiles.Add(FileName, FileParams);
-  UpdateState([ecsRecents]);
+  Update([ecsRecents]);
 end;
 
 procedure TEditorEngine.ProcessRecentFolder(const FileName: string; FileParams: string);
 begin
   Options.RecentFolders.Add(FileName, FileParams);
-  UpdateState([ecsRecents]);
+  Update([ecsRecents]);
 end;
 
 procedure TEditorEngine.ProcessRecentProject(const FileName: string; FileParams: string);
 begin
   Options.RecentProjects.Add(FileName, FileParams);
-  UpdateState([ecsRecents]);
+  Update([ecsRecents]);
 end;
 
 procedure TEditorEngine.ProcessProject(const FileName: string; FileParams: string);
 begin
   Options.Projects.Add(FileName, FileParams);
-  UpdateState([ecsRecents]);
+  Update([ecsRecents]);
 end;
 
 procedure TEditorFiles.Save(Force: Boolean);
@@ -3635,7 +3651,7 @@ begin
     SearchFolderHistory.SaveToFile(vWorkspace + 'mne-folder-history.ini');
     Custom.SaveToFile(vWorkspace + 'mne-custom-options.ini');
 
-    Engine.UpdateState([ecsFolder]);
+    Engine.Update([ecsFolder]);
   end;
 end;
 
@@ -3647,7 +3663,7 @@ begin
     FCurrent.Show;
     if not Engine.Updating then
       FCurrent.Activate;
-    Engine.UpdateState([ecsDebug, ecsRefresh]);
+    Engine.Update([ecsDebug, ecsRefresh]);
   end;
 end;
 
@@ -3673,7 +3689,7 @@ begin
         begin
           if a then
             Current.Activate;
-          Engine.UpdateState([ecsState, ecsDebug, ecsRefresh]);
+          Engine.Update([ecsState, ecsDebug, ecsRefresh]);
         end;
       end;
     finally
@@ -3696,7 +3712,7 @@ begin
       if FProject.SaveDesktop and LoadFiles then
         FProject.Desktop.Load;
       Changed;
-      Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject, ecsProjectLoaded]);
+      Engine.Update([ecsChanged, ecsState, ecsRefresh, ecsProject, ecsProjectLoaded]);
     finally
       Engine.EndUpdate;
     end;
@@ -3738,7 +3754,7 @@ begin
         Apply;
         Engine.SaveOptions;
       end;
-      Engine.UpdateState([ecsOptions]);
+      Engine.Update([ecsOptions]);
     finally
       Engine.EndUpdate;
       Free;
@@ -3763,7 +3779,7 @@ begin
         Apply;
         Engine.SaveOptions;
       end;
-      Engine.UpdateState([ecsOptions]);
+      Engine.Update([ecsOptions]);
     finally
       Engine.EndUpdate;
       Free;
@@ -3778,7 +3794,7 @@ begin
   i := Options.Projects.IndexOf(FileName);
   if i >= 0 then
     Options.Projects.Delete(i);
-  UpdateState([ecsRecents]);
+  Update([ecsRecents]);
 end;
 
 function TEditorEngine.ChooseTendency(var vTendency: TEditorTendency): Boolean;
@@ -3867,8 +3883,13 @@ begin
       Session.Load(Options.LastProject)
     else
     begin
-      BrowseFolder := Options.LastFolder;
-      Session.SetProject(DefaultProject);
+      BeginUpdate;
+      try
+        BrowseFolder := Options.LastFolder;
+        Session.SetProject(DefaultProject);
+      finally
+        EndUpdate;
+      end;
     end;
   end;
 end;
@@ -3899,7 +3920,7 @@ begin
     end;
 
     UpdateOptions;
-    UpdateState([ecsOptions]);
+    Update([ecsOptions]);
   finally
     EndUpdate;
   end;
@@ -3990,7 +4011,7 @@ begin
   i := Options.RecentProjects.IndexOf(FileName);
   if i >= 0 then
     Options.RecentProjects.Delete(i);
-  UpdateState([ecsRecents]);
+  Update([ecsRecents]);
 end;
 
 procedure TEditorEngine.RemoveRecentFile(const FileName: string);
@@ -3999,13 +4020,13 @@ var
 begin
   i := Options.RecentFiles.IndexOf(FileName);
   Options.RecentFiles.Delete(i);
-  UpdateState([ecsRecents]);
+  Update([ecsRecents]);
 end;
 
 procedure TEditorEngine.ProcessRecentDatabase(const AliasName: string; FileParams: string);
 begin
   Options.RecentDatabases.Add(AliasName, FileParams);
-  UpdateState([ecsRecents]);
+  Update([ecsRecents]);
 end;
 
 procedure TEditorEngine.RemoveRecentDatabase(const AliasName: string);
@@ -4014,7 +4035,7 @@ var
 begin
   i := Options.RecentDatabases.IndexOf(AliasName);
   Options.RecentFiles.Delete(i);
-  UpdateState([ecsRecents]);
+  Update([ecsRecents]);
 end;
 
 procedure TEditorEngine.RemoveRecentFolder(const FileName: string);
@@ -4023,7 +4044,7 @@ var
 begin
   i := Options.RecentFolders.IndexOf(FileName);
   Options.RecentFolders.Delete(i);
-  UpdateState([ecsRecents]);
+  Update([ecsRecents]);
 end;
 
 function TEditorEngine.GetUpdating: Boolean;
@@ -4182,9 +4203,9 @@ begin
 end;
 end;
 
-procedure TEditorEngine.UpdateState(State: TEditorChangeStates);
+procedure TEditorEngine.Update(State: TEditorChangeStates; Silent: Boolean);
 begin
-  if Updating then
+  if Updating or Silent then
     FUpdateState := FUpdateState + State
   else //if (FInUpdateState = 0) or not (State in FUpdateState) then
     InternalChangedState(State);
@@ -4196,10 +4217,10 @@ begin
     try
       Result := InternalOpenFile(vFileName, vFileParams, AppendToRecent);
     finally
-      Engine.UpdateState([ecsChanged]);
+      Engine.Update([ecsChanged]);
     end;
   finally
-    Engine.UpdateState([ecsState, ecsDebug, ecsRefresh]);
+    Engine.Update([ecsState, ecsDebug, ecsRefresh]);
   end;
 end;
 
@@ -4223,12 +4244,12 @@ begin
   FBrowseFolder := Value;
   if FBrowseFolder <> '' then
     FBrowseFolder := IncludeTrailingPathDelimiter(FBrowseFolder);
-  UpdateState([ecsFolder]);
+  Update([ecsFolder]);
 end;
 
 procedure TEditorEngine.DoMacroRecorderChanged(Sender: TObject);
 begin
-  UpdateState([ecsState]);
+  Update([ecsState]);
 end;
 
 function TEditorEngine.GetWorkSpace: string;
@@ -4243,7 +4264,7 @@ begin
     if (not SameText(FCache.MainFile, Session.Project.RunOptions.MainFile)) then
     begin
       FCache.MainFile := Session.Project.RunOptions.MainFile;
-      FCache.MainGroup := Engine.Groups.FindFullName(ExtractFileName(FCache.MainFile));
+      FCache.MainGroup := Engine.Groups.FindGroup(ExtractFileName(FCache.MainFile));
     end;
     Result := FCache.MainGroup.Category.Tendency;
   end
@@ -4291,10 +4312,10 @@ end;
 function TEditorFiles.ShowFile(vFileName: string): TEditorFile;
 begin
   Result := InternalOpenFile(vFileName, '', False);
-  Engine.UpdateState([ecsChanged]);
+  Engine.Update([ecsChanged]);
   if Result <> nil then
     Current := Result;
-  Engine.UpdateState([ecsState, ecsRefresh]);
+  Engine.Update([ecsState, ecsRefresh]);
 end;
 
 procedure TEditorFiles.Refresh;
@@ -4307,10 +4328,10 @@ function TEditorFiles.ShowFile(const FileName: string; Line: integer): TEditorFi
 begin
   Result := InternalOpenFile(FileName, '', False);
   Result.SetLine(Line);
-  Engine.UpdateState([ecsChanged]);
+  Engine.Update([ecsChanged]);
   if Result <> nil then
     Current := Result;
-  Engine.UpdateState([ecsState, ecsRefresh]);
+  Engine.Update([ecsState, ecsRefresh]);
 end;
 
 { TEditorFile }
@@ -4348,7 +4369,7 @@ begin
   Engine.Files.SetCurrentIndex(i, False);
   if a and (Engine.Files.Current <> nil) then
     Engine.Files.Current.Activate;
-  Engine.UpdateState([ecsChanged, ecsState, ecsRefresh]);
+  Engine.Update([ecsChanged, ecsState, ecsRefresh]);
 end;
 
 procedure TEditorFile.OpenInclude;
@@ -4434,7 +4455,7 @@ begin
   IsChanged := False;
   IsTemporary := False;
   IsNew := False;
-  Engine.UpdateState([ecsFolder]);
+  Engine.Update([ecsFolder]);
   UpdateAge;
 end;
 
@@ -4458,13 +4479,13 @@ begin
         aExt := Extension;
         if LeftStr(aExt, 1) <> '.' then
           aExt := '.' + aExt;
-        aGroup := Engine.Groups.FindFullName(aExt);
+        aGroup := Engine.Groups.FindGroup(aExt);
         Group := aGroup;
       end;
     end
     else
       Name := ToNakeName;
-    Engine.UpdateState([ecsRefresh, ecsFolder, ecsState, ecsChanged]);
+    Engine.Update([ecsRefresh, ecsFolder, ecsState, ecsChanged]);
   finally
     Engine.EndUpdate;
   end;
@@ -4484,7 +4505,7 @@ begin
         IsChanged := True;
       end;
     end;
-    Engine.UpdateState([ecsRefresh, ecsFolder, ecsState, ecsChanged]);
+    Engine.Update([ecsRefresh, ecsFolder, ecsState, ecsChanged]);
   finally
     Engine.EndUpdate;
   end;
@@ -4572,10 +4593,10 @@ begin
     if DoRecent then
     begin
       Engine.ProcessRecentFile(aName);
-      Engine.UpdateState([ecsRefresh, ecsState, ecsChanged]);
+      Engine.Update([ecsRefresh, ecsState, ecsChanged]);
     end
     else
-      Engine.UpdateState([ecsState, ecsRefresh]);
+      Engine.Update([ecsState, ecsRefresh]);
   end;
 end;
 
@@ -4803,7 +4824,7 @@ begin
   begin
     FFileEncoding := AValue;
     Edit;
-    Engine.UpdateState([ecsState, ecsRefresh]);
+    Engine.Update([ecsState, ecsRefresh]);
   end;
 end;
 
@@ -5067,7 +5088,7 @@ begin
   begin
     FLinesMode := Value;
     Edit;
-    Engine.UpdateState([ecsState, ecsRefresh]);
+    Engine.Update([ecsState, ecsRefresh]);
   end;
 end;
 
@@ -5094,7 +5115,7 @@ end;
 procedure TEditorFile.DoStatusChange(Sender: TObject; Changes: TSynStatusChanges);
 begin
   if ([scReadOnly, scCaretX, scCaretY, scLeftChar, scTopLine, scSelection] * Changes) <> [] then
-    Engine.UpdateState([ecsState]);
+    Engine.Update([ecsState]);
 end;
 
 { TEditorOptions }
@@ -5313,18 +5334,17 @@ begin
   inherited Add(vGroup);
 end;
 
-function TFileGroups.FindFullName(vFullName: string; vKind: TFileGroupKinds): TFileGroup;
+function TFileGroups.FindGroup(vFullName: string; vKind: TFileGroupKinds): TFileGroup;
 var
   i, j: integer;
   s: string;
-  p: Integer;
 begin
   Result := nil;
   if vFullName <> '' then
   begin
-    p := Pos('.', vFullName); //if have extension we will search for extension only, if not, we will search for name
-    if p > 0 then //
-      s := MidStr(vFullName, p, MaxInt)  //externsion only with dot
+    //if have extension we will search for extension only, if not, we will search for name
+    if Pos('.', vFullName) > 0 then //
+      s := ExtractFileExt(vFullName)  //externsion only with dot
     else
       s := vFullName;
     for i := 0 to Count - 1 do
@@ -5355,7 +5375,7 @@ var
   s: string;
 begin
   s := ExtractFileName(vFileName);
-  aGroup := Engine.Groups.FindFullName(s);
+  aGroup := Engine.Groups.FindGroup(s);
 
   if (aGroup <> nil) and (FallBackGroup <> '') then
     aGroup := Engine.Groups.Find(FallBackGroup);
@@ -5373,21 +5393,22 @@ end;
 
 { TVirtualCategory }
 
-constructor TVirtualCategory.Create(ATendency: TEditorTendency; const vName, vTitle: string; vKind: TFileCategoryKinds);
+constructor TVirtualCategory.Create(ATendency: TEditorTendency; const vName, vTitle: string; vKind: TFileCategoryKinds; vImageName: string);
 begin
   inherited Create(False); //childs is groups and already added to Groups and freed by it
   FTendency := ATendency;
   FName := vName;
   FTitle := vTitle;
   FKind := vKind;
+  FImageName := vImageName;
 end;
 
-constructor TVirtualCategory.Create(ATendency: TEditorTendencyClass; const vName, vTitle: string; vKind: TFileCategoryKinds);
+constructor TVirtualCategory.Create(ATendency: TEditorTendencyClass; const vName, vTitle: string; vKind: TFileCategoryKinds; vImageName: string);
 var
   lTendency: TEditorTendency;
 begin
   lTendency := Engine.Tendencies.FindByClass(ATendency);
-  Create(lTendency, vName, vTitle, vKind);
+  Create(lTendency, vName, vTitle, vKind, ImageName);
 end;
 
 procedure TVirtualCategory.EnumExtensions(vExtensions: TStringList);
@@ -5605,7 +5626,7 @@ begin
 
   Tendency := aTendency;
 
-  Engine.UpdateState([ecsChanged, ecsProject]); //TODO move to caller
+  Engine.Update([ecsChanged, ecsProject]); //TODO move to caller
 end;
 
 procedure TEditorProject.SetTendency(AValue: TEditorTendency);
@@ -5657,7 +5678,7 @@ begin
   if FSCM =AValue then exit;
   FreeAndNil(FSCM);
   FSCM :=AValue;
-  Engine.UpdateState([ecsChanged, ecsProject]);
+  Engine.Update([ecsChanged, ecsProject]);
 end;
 
 procedure TEditorProject.RecreateOptions;
@@ -5702,7 +5723,7 @@ begin
   AExtensions.DelimitedText := Engine.Session.Project.FileFilter;
   for AExtension in AExtensions do
   begin
-    aGroup := Engine.Tendency.Groups.FindFullName(AExtension);
+    aGroup := Engine.Tendency.Groups.FindGroup(AExtension);
     if aGroup <> nil then
     begin
       GroupAddFitler(Result, aGroup);
@@ -5919,7 +5940,7 @@ end;
 procedure TEditorSession.Changed;
 begin
   FIsChanged := True;
-  Engine.UpdateState([ecsChanged, ecsState, ecsRefresh, ecsProject]);
+  Engine.Update([ecsChanged, ecsState, ecsRefresh, ecsProject]);
 end;
 
 procedure TEditorSession.SetRun(AValue: TmneRun);
@@ -6113,7 +6134,7 @@ begin
         finally
           DebugManager.Leave;
         end;
-        Engine.UpdateState([ecsDebug]);
+        Engine.Update([ecsDebug]);
       end;
     finally
       Engine.EndUpdate;

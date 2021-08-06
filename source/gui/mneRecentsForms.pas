@@ -203,7 +203,7 @@ begin
         ChangeToIndex(RDatabasesList, Old);
       end;
   end;
-  Engine.UpdateState([ecsRecents]);
+  Engine.Update([ecsRecents]);
 end;
 
 procedure TManageRecentsForm.OpenNow;

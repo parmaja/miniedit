@@ -12,7 +12,7 @@ interface
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   EditorEngine, EditorClasses, ntvGrids, Dialogs, StdCtrls,
-  ComCtrls, ExtCtrls;
+  ComCtrls, ExtCtrls, Grids;
 
 type
 
@@ -33,6 +33,7 @@ type
     CancelBtn: TButton;
     PageControl: TPageControl;
     AutoStartDebugGrp: TRadioGroup;
+    StringGrid1: TStringGrid;
     TabSheet2: TTabSheet;
     Label3: TLabel;
     CollectTimeoutEdit: TEdit;
@@ -188,7 +189,7 @@ begin
   FEngine.Options.IgnoreNames := IgnoreNamesEdit.Text;
   FEngine.Options.AnsiCodePage := CodePageNames[CodePagesCbo.ItemIndex].cp;
   Engine.UpdateOptions;
-  Engine.UpdateState([ecsOptions]);
+  Engine.Update([ecsOptions]);
 end;
 
 procedure TEditorSettingForm.Retrieve;

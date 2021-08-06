@@ -63,10 +63,13 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
+    FilesFilterEdit: TEdit;
+    LinesModeBtn1: TntvImgBtn;
     MenuItem23: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
     ExploreFileFolder2Act: TMenuItem;
+    Panel1: TPanel;
     ShowProjectFilterAct: TAction;
     DBCreateDatabaseAct: TAction;
     DBBrowseAct: TAction;
@@ -114,6 +117,7 @@ type
     DatabaseMnu: TMenuItem;
     DBConnectMnu: TMenuItem;
     DBDisconnectMnu: TMenuItem;
+    FilesSearchTimer: TTimer;
     UTF8BOMMnu: TMenuItem;
     UC16BEBOMMnu: TMenuItem;
     MainFileAct: TAction;
@@ -426,6 +430,10 @@ type
     procedure EditorsPnlClick(Sender: TObject);
     procedure FetchCallStackBtnClick(Sender: TObject);
     procedure FileCloseBtnClick(Sender: TObject);
+    procedure FilesFilterEditChange(Sender: TObject);
+
+    procedure FilesFilterEditKeyPress(Sender: TObject; var Key: char);
+    procedure FilesSearchTimerTimer(Sender: TObject);
     procedure FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
     procedure FindPreviousActExecute(Sender: TObject);
     procedure FoldersActExecute(Sender: TObject);
@@ -436,13 +444,11 @@ type
     procedure HelpKeywordActExecute(Sender: TObject);
     procedure IPCServerMessage(Sender: TObject);
     procedure IPCServerMessageQueued(Sender: TObject);
+    procedure LinesModeBtn1Click(Sender: TObject);
     procedure MainFileActExecute(Sender: TObject);
     procedure MenuItem22Click(Sender: TObject);
-    procedure GotoFileFolderMnuClick(Sender: TObject);
     procedure MenuItem24Click(Sender: TObject);
     procedure MenuItem42Click(Sender: TObject);
-    procedure MenuItem49Click(Sender: TObject);
-    procedure MessageLabelClick(Sender: TObject);
     procedure MessagesGridDblClick(Sender: TObject);
 
     procedure MessagesGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -595,8 +601,9 @@ type
     procedure ProjectLoaded;
     procedure UpdateFolder;
     procedure ProjectChanged;
+    procedure UpdateMenus;
     procedure AddMenuItem(AName, ACaption: string; AOnClickEvent: TNotifyEvent; AShortCut: TShortCut = 0);
-    procedure UpdateMenu;
+    procedure UpdateFileMenu;
     procedure UpdateMenuItems;
     procedure UpdatePanel;
     procedure SetFolder(const Value: string);
@@ -625,7 +632,7 @@ type
     procedure RunFile;
     procedure CompileFile;
     //
-    procedure ChangeState(State: TEditorChangeStates);
+    procedure ChangeState(var State: TEditorChangeStates);
     procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
     procedure EngineMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);
     procedure AddError(vError: TErrorInfo); overload;
@@ -676,7 +683,7 @@ procedure TMainForm.UpdateBrowsePnl;
 begin
   BrowserPnl.Visible := FoldersAct.Checked;
   if FoldersAct.Checked then
-    UpdateFolder;
+    Engine.Update([ecsFolder]);
 end;
 
 procedure TMainForm.ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
@@ -785,7 +792,7 @@ begin
   if MsgBox.Input(s, 'Enter name for new folder') and (s <> '') then
   begin
     CreateDir(Folder + s);
-    UpdateFolder;
+    Engine.Update([ecsFolder]);
   end;
 end;
 
@@ -850,6 +857,34 @@ end;
 procedure TMainForm.FileCloseBtnClick(Sender: TObject);
 begin
   CloseAct.Execute;
+end;
+
+procedure TMainForm.FilesFilterEditChange(Sender: TObject);
+begin
+  FilesSearchTimer.Enabled := False;
+  FilesSearchTimer.Enabled := True;
+end;
+
+procedure TMainForm.FilesFilterEditKeyPress(Sender: TObject; var Key: char);
+begin
+  if Key = #13 then
+  begin
+    FileList.SetFocus;
+    Engine.BeginUpdate;
+    try
+      FolderOpenAct.Execute;
+      FilesFilterEdit.Clear;
+    finally
+      Engine.EndUpdate;
+    end;
+    Key := #0;
+  end;
+end;
+
+procedure TMainForm.FilesSearchTimerTimer(Sender: TObject);
+begin
+  FilesSearchTimer.Enabled := False;
+  Engine.Update([ecsFolder]);
 end;
 
 procedure TMainForm.ApplicationPropertiesActivate(Sender: TObject);
@@ -956,6 +991,11 @@ begin
   IPCServer.PeekMessage(IPCServer.ThreadTimeOut, True); //not sure if it a bug in FPC
 end;
 
+procedure TMainForm.LinesModeBtn1Click(Sender: TObject);
+begin
+  FilesFilterEdit.Clear;
+end;
+
 procedure TMainForm.MainFileActExecute(Sender: TObject);
 begin
   if Engine.Session.Project.RunOptions.MainFile <> '' then
@@ -971,11 +1011,6 @@ begin
   end;
 end;
 
-procedure TMainForm.GotoFileFolderMnuClick(Sender: TObject);
-begin
-
-end;
-
 procedure TMainForm.MenuItem24Click(Sender: TObject);
 begin
   if FileList.Selected <> nil then
@@ -985,16 +1020,6 @@ end;
 procedure TMainForm.MenuItem42Click(Sender: TObject);
 begin
   ExploreFolder(Engine.Session.Project.RunOptions.MainFile);
-end;
-
-procedure TMainForm.MenuItem49Click(Sender: TObject);
-begin
-
-end;
-
-procedure TMainForm.MessageLabelClick(Sender: TObject);
-begin
-
 end;
 
 procedure TMainForm.MessagesGridDblClick(Sender: TObject);
@@ -1119,8 +1144,9 @@ begin
   else
     TypePnl.Caption := 'Undefined';
   //  DebugPnl.Visible := DebugPnl.Caption <> '';
-  UpdateMenu;
-  UpdateMenuItems;
+
+  Engine.Update([ecsMenu]);
+
   UpdateFileHeaderPanel;
 end;
 
@@ -1199,7 +1225,7 @@ begin
     else
       Engine.BrowseFolder := IncludeTrailingPathDelimiter(ExpandFileName(Value));
     if FoldersAct.Checked then
-      UpdateFolder;
+      Engine.Update([ecsFolder]);
   end;
 end;
 
@@ -1241,7 +1267,7 @@ begin
   if Engine.Session.Project.RunOptions.MainFile <> '' then
   begin
     Engine.Session.Project.RunOptions.MainFile := '';
-    Engine.UpdateState([ecsRefresh]);
+    Engine.Update([ecsRefresh]);
   end;
 end;
 
@@ -1352,7 +1378,7 @@ end;
 
 procedure TMainForm.RefreshFilesActExecute(Sender: TObject);
 begin
-  UpdateFolder;
+  Engine.Update([ecsFolder]);
 end;
 
 procedure TMainForm.RenameActExecute(Sender: TObject);
@@ -1654,7 +1680,7 @@ begin
   if Engine.Files.Current <> nil then
   begin
     Engine.Session.Project.RunOptions.MainFile := Engine.Files.Current.Name;
-    Engine.UpdateState([ecsRefresh]);
+    Engine.Update([ecsRefresh]);
   end;
 end;
 
@@ -1820,19 +1846,24 @@ begin
 
   Engine.Prepare(GetKeyShiftState = [ssShift]);
 
-  ShowFolderFiles := Engine.Options.ShowFolderFiles;
-  SortFolderFiles := Engine.Options.SortFolderFiles;
-  FoldersAct.Checked := Engine.Options.ShowFolder;
-  MessagesAct.Checked := Engine.Options.ShowMessages;
-  BrowserPnl.Width := Engine.Options.FoldersPanelWidth;
-  ShowToolbarAct.Checked := Engine.Options.ShowToolbar;
+  Engine.BeginUpdate;
+  try
+    ShowFolderFiles := Engine.Options.ShowFolderFiles;
+    SortFolderFiles := Engine.Options.SortFolderFiles;
+    FoldersAct.Checked := Engine.Options.ShowFolder;
+    MessagesAct.Checked := Engine.Options.ShowMessages;
+    BrowserPnl.Width := Engine.Options.FoldersPanelWidth;
+    ShowToolbarAct.Checked := Engine.Options.ShowToolbar;
 
-  with MessagesPnl, BoundsRect do
-    BoundsRect := Rect(Left, Bottom - Engine.Options.MessagesHeight, Right, Bottom);
-  MessagesPnl.Visible := False;
-  UpdateBrowsePnl;
-  UpdateMessagesPnl;
-  UpdateToolbars;
+    with MessagesPnl, BoundsRect do
+      BoundsRect := Rect(Left, Bottom - Engine.Options.MessagesHeight, Right, Bottom);
+    MessagesPnl.Visible := False;
+    UpdateBrowsePnl;
+    UpdateMessagesPnl;
+    UpdateToolbars;
+  finally
+    Engine.EndUpdate;
+  end;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -1970,10 +2001,15 @@ begin
   else
     SCMMnu.Caption := '';
 
-  UpdateFolder;
-  UpdateMenu;
-  UpdateMenuItems;
   UpdatePanel;
+  Engine.Update([ecsMenu]);
+  Engine.Update([ecsFolder]);
+end;
+
+procedure TMainForm.UpdateMenus;
+begin
+  UpdateFileMenu;
+  UpdateMenuItems;
 end;
 
 procedure TMainForm.AddMenuItem(AName, ACaption: string; AOnClickEvent: TNotifyEvent; AShortCut: TShortCut);
@@ -2011,7 +2047,7 @@ begin
   FMenuItemsList.Add(MenuItem);
 end;
 
-procedure TMainForm.UpdateMenu;
+procedure TMainForm.UpdateFileMenu;
 begin
   if Engine.Files.Current <> nil then
   begin
@@ -2172,7 +2208,7 @@ begin
   if FShowFolderFiles =AValue then exit;
   FShowFolderFiles :=AValue;
   if FoldersAct.Checked then
-    UpdateFolder;
+    Engine.Update([ecsFolder]);
   case FShowFolderFiles of
     sffRelated: ShowTendencyFilterAct.Checked := True;
     sffProject: ShowProjectFilterAct.Checked := True;
@@ -2183,10 +2219,11 @@ end;
 
 procedure TMainForm.SetSortFolderFiles(AValue: TSortFolderFiles);
 begin
-  if FSortFolderFiles =AValue then Exit;
+  if FSortFolderFiles =AValue then
+    Exit;
   FSortFolderFiles :=AValue;
   if FoldersAct.Checked then
-    UpdateFolder;
+    Engine.Update([ecsFolder]);
   case FSortFolderFiles of
     srtfByNames: SortByNamesAct.Checked := True;
     srtfByExt: SortByExtensionsAct.Checked := True;
@@ -2230,6 +2267,7 @@ var
 var
   aFiles: TStringList;
   SaveSelected: Integer;
+  Filter: string;
 begin
   FolderPathLbl.Caption := Folder;
   FolderPathLbl.Hint := Folder;
@@ -2269,7 +2307,15 @@ begin
         if (Folder <> '') and DirectoryExists(Folder) then
         begin
           aFiles.Clear;
-          r := FindFirst(Folder + '*', faAnyFile or faDirectory, SearchRec);
+          if FilesFilterEdit.Text <> '' then
+          begin
+            Filter := FilesFilterEdit.Text;
+            if Pos('*', Filter) <= 0 then
+              Filter := '*' + Filter + '*'
+          end
+          else
+            Filter := '*';
+          r := FindFirst(Folder + Filter, faAnyFile or faDirectory, SearchRec);
           while r = 0 do
           begin
             if (SearchRec.Name <> '.') then
@@ -2293,7 +2339,7 @@ begin
 
           //Files
           aFiles.Clear;
-          r := FindFirst(Folder + '*', faAnyFile, SearchRec);
+          r := FindFirst(Folder + Filter, faAnyFile, SearchRec);
           while r = 0 do
           begin
             //if (SearchRec.Name <> '.') and (SearchRec.Name <> '..') then
@@ -2349,11 +2395,9 @@ begin
   end;
 end;
 
-procedure TMainForm.ChangeState(State: TEditorChangeStates);
+procedure TMainForm.ChangeState(var State: TEditorChangeStates);
 begin
-  if ecsFolder in State then
-    UpdateFolder;
-  if ecsChanged in State then
+  if ResetUpdate(ecsChanged, State) then
     EngineChanged;
   if ecsRefresh in State then
     EngineRefresh;
@@ -2373,6 +2417,8 @@ begin
     EngineState;
   if ecsOptions in State then
     OptionsChanged;
+  if ecsFolder in State then
+    UpdateFolder;
 end;
 
 procedure AddOutput(Sender: Pointer; Index: Integer; S: string; var Resume: Boolean);
@@ -2478,7 +2524,7 @@ begin
     case Key of
       VK_F5:
       begin
-        UpdateFolder;
+        Engine.Update([ecsFolder]);
       end;
       VK_BACK:
       begin

@@ -67,7 +67,7 @@ uses
     public
     end;
 
-    TEditorChangeStates = set of (
+    TEditorChangeState = (
       ecsChanged,
       ecsState,
       ecsRefresh,
@@ -77,9 +77,12 @@ uses
       ecsShow,
       ecsEdit,
       ecsFolder,
+      ecsMenu,
       ecsProject,
       ecsProjectLoaded
     ); //ecsShow bring to front
+
+    TEditorChangeStates = set of TEditorChangeState;
 
     TNotifyMessageType = (msgtStatus, msgtEndStatus, msgtLog, msgtOutput, msgtError);
     TEditorAction = (eaShowFolders, eaShowDatabases, eaShowProject, eaClearOutput, eaClearLog, eaEnd);
@@ -101,7 +104,7 @@ uses
 
     INotifyEngineState = interface(INotifyEngine)
       ['{F5088D63-9DA3-4957-B6DA-A79577665B7A}']
-      procedure ChangeState(State: TEditorChangeStates);
+      procedure ChangeState(var State: TEditorChangeStates);
     end;
 
     INotifyEngineSetting = interface(INotifyEngine)

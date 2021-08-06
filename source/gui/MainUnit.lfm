@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 262
+  Left = 524
   Height = 568
-  Top = 170
+  Top = 185
   Width = 1021
   ActiveControl = LogEdit
   AllowDropFiles = True
@@ -252,7 +252,6 @@ object MainForm: TMainForm
       BevelOuter = bvLowered
       BorderWidth = 2
       TabOrder = 0
-      OnClick = MessageLabelClick
     end
     object CursorPnl: TPanel
       Left = 865
@@ -338,6 +337,13 @@ object MainForm: TMainForm
         Width = 255
         Align = alClient
       end
+      object DatabasePnl: TntvPanel
+        Left = 3
+        Height = 284
+        Top = 23
+        Width = 255
+        Align = alClient
+      end
       object FolderPnl: TPanel
         Left = 3
         Height = 284
@@ -346,21 +352,22 @@ object MainForm: TMainForm
         Align = alClient
         BevelOuter = bvNone
         Caption = 'FolderPnl'
+        ChildSizing.HorizontalSpacing = 3
+        ChildSizing.VerticalSpacing = 3
         ClientHeight = 284
         ClientWidth = 255
         TabOrder = 0
         object FileList: TListView
-          Left = 1
-          Height = 263
-          Top = 21
-          Width = 254
-          Anchors = [akTop, akLeft, akRight, akBottom]
+          Left = 0
+          Height = 259
+          Top = 0
+          Width = 255
+          Align = alClient
           AutoWidthLastColumn = True
-          BorderSpacing.Around = 3
           Columns = <          
             item
               Caption = 'File Name'
-              Width = 250
+              Width = 251
             end>
           HideSelection = False
           ParentColor = True
@@ -399,13 +406,44 @@ object MainForm: TMainForm
           PopupMenu = FolderMenu
           AutoCheck = False
         end
-      end
-      object DatabasePnl: TntvPanel
-        Left = 3
-        Height = 284
-        Top = 23
-        Width = 255
-        Align = alClient
+        object Panel1: TPanel
+          Left = 0
+          Height = 22
+          Top = 262
+          Width = 255
+          Align = alBottom
+          BevelOuter = bvNone
+          ClientHeight = 22
+          ClientWidth = 255
+          TabOrder = 1
+          object FilesFilterEdit: TEdit
+            Left = 0
+            Height = 22
+            Top = 0
+            Width = 224
+            Align = alClient
+            OnChange = FilesFilterEditChange
+            OnKeyPress = FilesFilterEditKeyPress
+            TabOrder = 0
+            TextHint = 'Files filter'
+          end
+          object LinesModeBtn1: TntvImgBtn
+            AnchorSideTop.Control = BugSignBtn
+            AnchorSideRight.Control = BugSignBtn
+            AnchorSideBottom.Control = BugSignBtn
+            AnchorSideBottom.Side = asrBottom
+            Left = 224
+            Height = 22
+            Top = 0
+            Width = 31
+            Caption = 'C'
+            Images = EditorResource.ToolbarImageList
+            Align = alRight
+            PopupMenu = LineModeMenu
+            OnClick = LinesModeBtn1Click
+            AutoCheck = False
+          end
+        end
       end
     end
   end
@@ -3113,5 +3151,12 @@ object MainForm: TMainForm
       Caption = 'UC16LE - BOM'
       OnClick = UC16LEBOMMnuClick
     end
+  end
+  object FilesSearchTimer: TTimer
+    Enabled = False
+    Interval = 500
+    OnTimer = FilesSearchTimerTimer
+    Left = 181
+    Top = 327
   end
 end
