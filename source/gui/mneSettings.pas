@@ -12,7 +12,7 @@ interface
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   EditorEngine, EditorClasses, ntvGrids, Dialogs, StdCtrls,
-  ComCtrls, ExtCtrls, Grids;
+  ComCtrls, ExtCtrls;
 
 type
 
@@ -33,7 +33,6 @@ type
     CancelBtn: TButton;
     PageControl: TPageControl;
     AutoStartDebugGrp: TRadioGroup;
-    StringGrid1: TStringGrid;
     TabSheet2: TTabSheet;
     Label3: TLabel;
     CollectTimeoutEdit: TEdit;
@@ -226,6 +225,7 @@ end;
 procedure TEditorSettingForm.FormCreate(Sender: TObject);
 begin
   GroupCol := TntvStandardColumn.Create(ExtensionsGrid, 'Group', 'GroupCol');
+  GroupCol.ReadOnly := True;
   ExtensionCol := TntvStandardColumn.Create(ExtensionsGrid, 'Extension', 'ExtensionCol');
   ExtensionCol.AutoFit := True;
   PageControl.ActivePageIndex := CurrentPage;

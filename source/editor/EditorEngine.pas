@@ -348,6 +348,7 @@ type
     procedure Execute(App, Cmd:string); virtual; abstract;
   public
     constructor Create; override;
+    destructor Destroy; override;
     procedure CommitDirectory(Directory: string); virtual; abstract;
     procedure CommitFile(FileName: string); virtual; abstract;
     procedure UpdateDirectory(Directory: string); virtual; abstract;
@@ -2402,6 +2403,11 @@ end;
 constructor TEditorSCM.Create;
 begin
   inherited Create;
+end;
+
+destructor TEditorSCM.Destroy;
+begin
+  inherited Destroy;
 end;
 
 { TSourceManagements }
@@ -5377,7 +5383,7 @@ begin
   s := ExtractFileName(vFileName);
   aGroup := Engine.Groups.FindGroup(s);
 
-  if (aGroup <> nil) and (FallBackGroup <> '') then
+  if (aGroup = nil) and (FallBackGroup <> '') then
     aGroup := Engine.Groups.Find(FallBackGroup);
 
   {if aGroup = nil then
@@ -5605,6 +5611,7 @@ begin
   FreeAndNil(FRunOptions);
   FreeAndNil(FDesktop);
   FreeAndNil(FOptions);
+  FreeAndNil(FSCM);
   inherited;
 end;
 

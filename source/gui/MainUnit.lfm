@@ -330,14 +330,14 @@ object MainForm: TMainForm
       TabStyle = tbsSheet
       Align = alClient
       TabOrder = 0
-      object ProjectPnl: TntvPanel
+      object DatabasePnl: TntvPanel
         Left = 3
         Height = 284
         Top = 23
         Width = 255
         Align = alClient
       end
-      object DatabasePnl: TntvPanel
+      object ProjectPnl: TntvPanel
         Left = 3
         Height = 284
         Top = 23
@@ -359,8 +359,8 @@ object MainForm: TMainForm
         TabOrder = 0
         object FileList: TListView
           Left = 0
-          Height = 259
-          Top = 0
+          Height = 238
+          Top = 21
           Width = 255
           Align = alClient
           AutoWidthLastColumn = True
@@ -381,30 +381,6 @@ object MainForm: TMainForm
           OnDblClick = FileListDblClick
           OnKeyDown = FileListKeyDown
           OnKeyPress = FileListKeyPress
-        end
-        object FolderPathLbl: TLabel
-          Left = 1
-          Height = 20
-          Top = 0
-          Width = 236
-          Anchors = [akTop, akLeft, akRight]
-          AutoSize = False
-          BorderSpacing.Around = 2
-          Caption = 'Path:'
-          PopupMenu = FolderMenu
-        end
-        object FolderCloseBtn1: TntvImgBtn
-          Left = 239
-          Height = 20
-          Top = 0
-          Width = 16
-          Images = EditorResource.PanelImages
-          ImageIndex = 1
-          ParentColor = False
-          Anchors = [akTop, akRight]
-          Color = clWindow
-          PopupMenu = FolderMenu
-          AutoCheck = False
         end
         object Panel1: TPanel
           Left = 0
@@ -427,20 +403,57 @@ object MainForm: TMainForm
             TabOrder = 0
             TextHint = 'Files filter'
           end
-          object LinesModeBtn1: TntvImgBtn
+          object FilesFilterClearBtn: TntvImgBtn
             AnchorSideTop.Control = BugSignBtn
             AnchorSideRight.Control = BugSignBtn
             AnchorSideBottom.Control = BugSignBtn
             AnchorSideBottom.Side = asrBottom
             Left = 224
             Height = 22
+            Hint = 'Clear files filter'
             Top = 0
             Width = 31
-            Caption = 'C'
             Images = EditorResource.ToolbarImageList
+            ImageIndex = 35
             Align = alRight
-            PopupMenu = LineModeMenu
-            OnClick = LinesModeBtn1Click
+            OnClick = FilesFilterClearBtnClick
+            AutoCheck = False
+          end
+        end
+        object Panel2: TPanel
+          Left = 0
+          Height = 18
+          Top = 0
+          Width = 255
+          Align = alTop
+          BevelOuter = bvNone
+          ClientHeight = 18
+          ClientWidth = 255
+          TabOrder = 2
+          object FolderPathLbl: TLabel
+            Left = 2
+            Height = 14
+            Top = 2
+            Width = 235
+            Align = alClient
+            Anchors = [akTop, akLeft, akRight]
+            AutoSize = False
+            BorderSpacing.Around = 2
+            Caption = 'Path:'
+            PopupMenu = FolderMenu
+          end
+          object FolderCloseBtn1: TntvImgBtn
+            Left = 239
+            Height = 18
+            Top = 0
+            Width = 16
+            Images = EditorResource.PanelImages
+            ImageIndex = 1
+            ParentColor = False
+            Anchors = [akTop, akRight]
+            Align = alRight
+            Color = clWindow
+            PopupMenu = FolderMenu
             AutoCheck = False
           end
         end

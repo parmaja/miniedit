@@ -111,7 +111,7 @@ object CSVForm: TCSVForm
           Align = alRight
           Caption = '&Clear'
           OnClick = ClearBtnClick
-          TabOrder = 1
+          TabOrder = 4
         end
         object StopBtn: TButton
           Left = 691
@@ -121,7 +121,7 @@ object CSVForm: TCSVForm
           Align = alRight
           Caption = 'S&top'
           OnClick = StopBtnClick
-          TabOrder = 0
+          TabOrder = 3
         end
         object OptionsBtn: TButton
           Left = 0
@@ -131,7 +131,7 @@ object CSVForm: TCSVForm
           Align = alLeft
           Caption = '&Options'
           OnClick = OptionsBtnClick
-          TabOrder = 4
+          TabOrder = 0
         end
         object DelConfigFileBtn: TButton
           Left = 60
@@ -141,7 +141,7 @@ object CSVForm: TCSVForm
           Align = alLeft
           Caption = '&Delete Config'
           OnClick = DelConfigFileBtnClick
-          TabOrder = 2
+          TabOrder = 1
           Visible = False
         end
         object SaveConfigFileBtn: TButton
@@ -152,7 +152,7 @@ object CSVForm: TCSVForm
           Align = alLeft
           Caption = '&Save Config'
           OnClick = ConfigFileBtnClick
-          TabOrder = 3
+          TabOrder = 2
         end
       end
     end

@@ -64,12 +64,15 @@ type
 
   TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
     FilesFilterEdit: TEdit;
-    LinesModeBtn1: TntvImgBtn;
+    FilesFilterClearBtn: TntvImgBtn;
+    FolderCloseBtn1: TntvImgBtn;
+    FolderPathLbl: TLabel;
     MenuItem23: TMenuItem;
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
     ExploreFileFolder2Act: TMenuItem;
     Panel1: TPanel;
+    Panel2: TPanel;
     ShowProjectFilterAct: TAction;
     DBCreateDatabaseAct: TAction;
     DBBrowseAct: TAction;
@@ -80,9 +83,7 @@ type
     CallStackGrid: TStringGrid;
     DatabasePnl: TntvPanel;
     FileList: TListView;
-    FolderCloseBtn1: TntvImgBtn;
     FolderPnl: TPanel;
-    FolderPathLbl: TLabel;
     BrowserPnl: TntvPanel;
     LogEdit: TSynEdit;
     LogSyn: TSynAnySyn;
@@ -430,8 +431,8 @@ type
     procedure EditorsPnlClick(Sender: TObject);
     procedure FetchCallStackBtnClick(Sender: TObject);
     procedure FileCloseBtnClick(Sender: TObject);
+    procedure FilesFilterClearBtnClick(Sender: TObject);
     procedure FilesFilterEditChange(Sender: TObject);
-
     procedure FilesFilterEditKeyPress(Sender: TObject; var Key: char);
     procedure FilesSearchTimerTimer(Sender: TObject);
     procedure FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
@@ -859,6 +860,11 @@ begin
   CloseAct.Execute;
 end;
 
+procedure TMainForm.FilesFilterClearBtnClick(Sender: TObject);
+begin
+  FilesFilterEdit.Clear;
+end;
+
 procedure TMainForm.FilesFilterEditChange(Sender: TObject);
 begin
   FilesSearchTimer.Enabled := False;
@@ -867,16 +873,10 @@ end;
 
 procedure TMainForm.FilesFilterEditKeyPress(Sender: TObject; var Key: char);
 begin
-  if Key = #13 then
+  if Key=#13 then
   begin
     FileList.SetFocus;
-    Engine.BeginUpdate;
-    try
-      FolderOpenAct.Execute;
-      FilesFilterEdit.Clear;
-    finally
-      Engine.EndUpdate;
-    end;
+    FileListKeyPress(Sender, Key);
     Key := #0;
   end;
 end;
@@ -993,7 +993,6 @@ end;
 
 procedure TMainForm.LinesModeBtn1Click(Sender: TObject);
 begin
-  FilesFilterEdit.Clear;
 end;
 
 procedure TMainForm.MainFileActExecute(Sender: TObject);
@@ -3351,10 +3350,10 @@ begin
   try
     if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control <> nil) then
       aList.Add(Engine.Files.Current.Control);
-    if MessagesPnl.Visible then
-      aList.Add(MessagesTabs.ActivableControl);
     if BrowserPnl.Visible then
       aList.Add(BrowserTabs.ActivableControl);
+    if MessagesPnl.Visible then
+      aList.Add(MessagesTabs.ActivableControl);
 
     if aList.Count = 0 then
       exit;

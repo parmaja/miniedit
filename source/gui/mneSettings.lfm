@@ -220,14 +220,6 @@ object EditorSettingForm: TEditorSettingForm
         FullHeader = True
         OnClick = ExtensionsGridClick
       end
-      object StringGrid1: TStringGrid
-        Left = 190
-        Height = 100
-        Top = 30
-        Width = 200
-        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goEditing, goSmoothScroll]
-        TabOrder = 3
-      end
     end
   end
 end
