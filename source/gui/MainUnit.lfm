@@ -396,7 +396,7 @@ object MainForm: TMainForm
             Left = 0
             Height = 22
             Top = 0
-            Width = 224
+            Width = 234
             Align = alClient
             OnChange = FilesFilterEditChange
             OnKeyPress = FilesFilterEditKeyPress
@@ -408,11 +408,11 @@ object MainForm: TMainForm
             AnchorSideRight.Control = BugSignBtn
             AnchorSideBottom.Control = BugSignBtn
             AnchorSideBottom.Side = asrBottom
-            Left = 224
+            Left = 234
             Height = 22
             Hint = 'Clear files filter'
             Top = 0
-            Width = 31
+            Width = 21
             Images = EditorResource.ToolbarImageList
             ImageIndex = 35
             Align = alRight

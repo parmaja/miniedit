@@ -886,7 +886,20 @@ type
     property Custom: TStringList read FCustom;
   end;
 
-  TmneSynCompletion = class;
+  { TmneSynBaseCompletionForm }
+
+  TmneSynBaseCompletionForm = class(TSynCompletionForm)
+  public
+  end;
+
+  { TmneSynCompletion }
+
+  TmneSynCompletion = class(TSynCompletion)
+  protected
+    function OwnedByEditor: Boolean; override;
+    function GetCompletionFormClass: TSynBaseCompletionFormClass; override;
+  public
+  end;
 
   TMap = class(TObject)
     Name: string;
@@ -929,6 +942,7 @@ type
     procedure DoAddKeywords; virtual;
     procedure DoAddCompletion(AKeyword: string; AKind: integer); virtual;
     procedure DoExecuteCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
+    function DoPaintItem(const AKey: string; ACanvas: TCanvas; X, Y: integer; ASelected: boolean; AIndex: integer): Boolean;
 
     procedure InitEdit(vSynEdit: TCustomSynEdit); virtual;
     function GetIsText: Boolean; virtual;
@@ -941,7 +955,7 @@ type
     procedure EnumMenuItems(AddItems: TAddClickCallBack); virtual;
     function CreateHighlighter: TSynCustomHighlighter; //todo replace with doCreate....
     procedure InitHighlighter;
-    property Mapper:TMapper read GetMapper write FMapper;
+    property Mapper: TMapper read GetMapper write FMapper;
     procedure Apply(AHighlighter: TSynCustomHighlighter; Attributes: TGlobalAttributes);
     property Name: string read FName write FName;
     property Title: string read FTitle write FTitle;
@@ -1326,14 +1340,6 @@ type
   published
   end;
 
-  { TmneSynCompletion }
-
-  TmneSynCompletion = class(TSynCompletion)
-  protected
-    function OwnedByEditor: Boolean; override;
-  public
-  end;
-
   { TListFileSearcher }
 
   TListFileSearcher = class(TFileSearcher)
@@ -1505,8 +1511,6 @@ begin
   if (vFileName <> '') then
     Result.LoadFromFile(vFileName);
 end;
-
-{ TControlFileGroup }
 
 { TEditorDesktopFile }
 
@@ -1785,22 +1789,11 @@ begin
     Completion.ItemList.Clear;
     DoAddKeywords; //TODO check timeout before refill it for speeding
 
-    aSynEdit := (Sender as TSynCompletion).TheForm.CurrentEditor as TCustomSynEdit;
+    aSynEdit := Completion.TheForm.CurrentEditor as TCustomSynEdit;
     if (aSynEdit <> nil) and (Highlighter <> nil) then
     begin
       aLine := aSynEdit.CaretY;
       aCurrent := aSynEdit.GetWordAtRowCol(aSynEdit.LogicalCaretXY);
-
-      Completion.TheForm.Font.Size := aSynEdit.Font.Size;
-      Completion.TheForm.Font.Color := aSynEdit.Font.Color;
-      Completion.TheForm.Color := aSynEdit.Color;
-      Completion.TheForm.Caption := Name;
-      Completion.SelectedColor := aSynEdit.SelectedColor.Background;
-      Completion.TheForm.BackgroundColor := aSynEdit.Color;
-      Completion.TheForm.TextColor := aSynEdit.Font.Color;
-      Completion.TheForm.DrawBorderColor := aSynEdit.Font.Color;
-
-      Completion.AutoUseSingleIdent := True;
 
       //load keyowrds
       aIdentifiers := THashedStringList.Create;
@@ -2398,6 +2391,11 @@ begin
   Result := False;
 end;
 
+function TmneSynCompletion.GetCompletionFormClass: TSynBaseCompletionFormClass;
+begin
+  Result := TmneSynBaseCompletionForm;
+end;
+
 { TEditorSCM }
 
 constructor TEditorSCM.Create;
@@ -2511,7 +2509,7 @@ end;
 
 function TEditorTendency.CanExecute: Boolean;
 begin
-  Result := (capExecute in Capabilities) or ((Engine.Files.Current <> nil) and Engine.Files.Current.CanExecute);
+  Result := (capExecute in Capabilities) and ((Engine.Files.Current <> nil) and Engine.Files.Current.CanExecute);
 end;
 
 function TEditorTendency.GetIsDefault: Boolean;
@@ -5495,13 +5493,26 @@ begin
   if FCompletion = nil then
   begin
     FCompletion := TmneSynCompletion.Create(nil);
-    FCompletion.Width := 340;
-    FCompletion.OnExecute := @DoExecuteCompletion;
-    FCompletion.ShortCut := scCtrl + VK_SPACE;
-    FCompletion.CaseSensitive := False;
-    //FCompletion.OnPaintItem
+    Completion.Width := 340;
+    Completion.OnExecute := @DoExecuteCompletion;
+    Completion.OnPaintItem := @DoPaintItem;
+    Completion.ShortCut := scCtrl + VK_SPACE;
+    Completion.CaseSensitive := False;
+    Completion.SelectedColor := vSynEdit.SelectedColor.Background;
   end;
   FCompletion.AddEditor(vSynEdit);
+
+  Completion.TheForm.Caption := Name;
+
+  Completion.TheForm.Font.Size := vSynEdit.Font.Size;
+  Completion.TheForm.Font.Color := vSynEdit.Font.Color;
+  Completion.TheForm.Color := vSynEdit.Color;
+  Completion.TheForm.BackgroundColor := vSynEdit.Color;
+  Completion.TheForm.TextColor := vSynEdit.Font.Color;
+  Completion.TheForm.DrawBorderColor := vSynEdit.Font.Color;
+  Completion.TheForm.DrawBorderWidth := 2;
+
+  Completion.AutoUseSingleIdent := True;
 end;
 
 procedure TVirtualCategory.DoAddKeywords;
@@ -5510,7 +5521,7 @@ end;
 
 procedure TVirtualCategory.DoAddCompletion(AKeyword: string; AKind: integer);
 begin
-  Completion.ItemList.Add(AKeyword);
+  Completion.ItemList.AddObject(AKeyword, TObject(AKind));
 end;
 
 procedure TVirtualCategory.InitEdit(vSynEdit: TCustomSynEdit);
@@ -5594,6 +5605,20 @@ end;
 procedure TVirtualCategory.DoExecuteCompletion(Sender: TObject);
 begin
 end;
+
+function TVirtualCategory.DoPaintItem(const AKey: string; ACanvas: TCanvas; X, Y: integer; ASelected: boolean; AIndex: integer): Boolean;
+var
+  aType: TAttributeType;
+  att: TGlobalAttribute;
+begin
+  aType := TAttributeType(Completion.ItemList.Objects[AIndex]);
+  att := Engine.Options.Profile.Attributes.Find(aType);
+  if att <> nil then
+    ACanvas.Font.Color := att.ForeColor;
+  ACanvas.TextOut(X + 4, Y, AKey);
+  Result := True;
+end;
+
 
 { TEditorProject }
 

@@ -15,7 +15,7 @@ uses
   EditorOptions, EditorRun, EditorClasses, mneRunFrames,
   SynEditHighlighter, SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  mnSynHighlighterLSL, SynHighlighterLFM;
+  mnSynHighlighterMultiProc, mnSynHighlighterLSL;
 
 type
 
@@ -40,6 +40,8 @@ type
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
+    procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
+    procedure DoExecuteCompletion(Sender: TObject); override;
   public
   end;
 
@@ -66,7 +68,7 @@ uses
 
 procedure TLSLTendency.Created;
 begin
-  FCapabilities := [capExecute, capOptions];
+  FCapabilities := [{capExecute, } capLint, capOptions];
   FName := 'LSL';
   FTitle := 'LSL project';
   FDescription := 'LSL Files, *.LSL';
@@ -96,7 +98,7 @@ var
 begin
   Engine.Session.Run.Clear;
 
-  if rnaExecute in Info.Actions then
+  if rnaExecute in Info.Actions then //not yet
   begin
     Engine.SendAction(eaClearOutput);
 
@@ -134,12 +136,13 @@ begin
     aRunItem.Info.Run.Console := False;
 
     aRunItem.Info.StatusMessage := 'Linting ' + Info.MainFile;
-    aRunItem.Info.Run.AddParam('-l ');
+    aRunItem.Info.Run.AddParam('-p ');
+    //aRunItem.Info.Run.AddParam('-l ');
 
     {$ifdef windows}
-      aRunItem.Info.Run.Command := 'LSL.exe';
+      aRunItem.Info.Run.Command := 'lslint.exe';
     {$else}
-      aRunItem.Info.Run.Command := 'LSL';
+      aRunItem.Info.Run.Command := 'lslint';
     {$endif}
     aRunItem.Info.Run.AddParam(' "' + Info.MainFile + '"');
   end;
@@ -176,6 +179,36 @@ begin
   end
 end;
 
+procedure TLSLFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
+begin
+  inherited;
+  Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;';//what about $
+end;
+
+procedure TLSLFileCategory.DoExecuteCompletion(Sender: TObject);
+var
+  aSynEdit: TCustomSynEdit;
+begin
+  inherited;
+  Screen.Cursor := crHourGlass;
+  Completion.ItemList.BeginUpdate;
+  try
+    Completion.ItemList.Clear;
+    aSynEdit := (Sender as TSynCompletion).TheForm.CurrentEditor as TCustomSynEdit;
+    if (aSynEdit <> nil) and (Highlighter is TSynMultiProcSyn) then
+    begin
+      EnumerateKeywords(Ord(attKeyword), sLSLKeywords, Highlighter.IdentChars, @DoAddCompletion);
+      EnumerateKeywords(Ord(attDataType), sLSLTypes, Highlighter.IdentChars, @DoAddCompletion);
+      EnumerateKeywords(Ord(attDataValue), sLSLValues, Highlighter.IdentChars, @DoAddCompletion);
+      EnumerateKeywords(Ord(attCommon), sLSLFunctions, Highlighter.IdentChars, @DoAddCompletion);
+      EnumerateKeywords(Ord(attCommon), sOpenSIMFunctions, Highlighter.IdentChars, @DoAddCompletion);
+    end;
+  finally
+    Completion.ItemList.EndUpdate;
+    Screen.Cursor := crDefault;
+  end;
+end;
+
 { TLSLFile }
 
 procedure TLSLFile.NewContent;
@@ -187,7 +220,7 @@ initialization
   with Engine do
   begin
     Tendencies.Add(TLSLTendency);
-    Categories.Add(TLSLFileCategory.Create(TLSLTendency, 'LSL', 'OpenSIM Script'));
-    Groups.Add(TLSLFile, 'LSL', 'OpenSIM Script', TLSLFileCategory, ['.lsl'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
+    Categories.Add(TLSLFileCategory.Create(TLSLTendency, 'LSL', 'SecondLife/OpenSIM Script'));
+    Groups.Add(TLSLFile, 'LSL', 'OpenSIM Script', TLSLFileCategory, ['.lsl', '.ossl'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
   end;
 end.
