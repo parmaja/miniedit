@@ -6145,7 +6145,13 @@ begin
             aFile.Assign(aItem);
         end;
       end;
-      Engine.Files.SetActiveFile(Files.CurrentFile);
+
+      if (Engine.Files.SetActiveFile(Files.CurrentFile) = nil) and (Engine.Files.Count > 0) then
+      begin
+        Engine.Files.Current := Engine.Files[0];
+        Engine.Files.Current.Activate;
+      end;
+
       Engine.BrowseFolder := Files.CurrentFolder;
 
       if (FProject.Tendency <> nil) and (Project.Tendency.Debugger <> nil) then
@@ -6204,7 +6210,7 @@ begin
   Files.CurrentFolder := Engine.BrowseFolder;
   Files.Clear;
 
-  if Engine.Files.Current <> nil then
+  if (Engine.Files.Current <> nil) and (not Engine.Files.Current.IsNew) then
     Files.CurrentFile := Engine.Files.Current.Name
   else
     Files.CurrentFile := '';
