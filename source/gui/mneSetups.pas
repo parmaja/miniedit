@@ -79,8 +79,11 @@ procedure TEditorSetupForm.FormCreate(Sender: TObject);
 var
   aIniFile: TIniFile;
 begin
-  WorkspaceEdit.Items.Add('.');
   WorkspaceEdit.Items.Add('.' + DirectorySeparator + 'config');
+  WorkspaceEdit.Items.Add('.');
+  WorkspaceEdit.Items.Add(GetAppConfigDir(False));
+  WorkspaceEdit.Items.Add(GetAppConfigDir(True));
+  WorkspaceEdit.Items.Add(GetUserDir);
   WorkspaceEdit.Items.Add('.' + DirectorySeparator + 'setting');
   WorkspaceEdit.Items.Add('.' + DirectorySeparator + '.miniedit');
   {$ifdef windows}
@@ -94,6 +97,7 @@ begin
   {$endif}
   WorkspaceEdit.Items.Add('?home' + DirectorySeparator + 'miniedit');
   WorkspaceEdit.Items.Add(Application.Location);
+  WorkspaceEdit.ItemIndex := 0;
   aIniFile := TIniFile.Create(ExtractFilePath(Application.ExeName) + 'setting.ini');
   try
     WorkspaceEdit.Text := aIniFile.ReadString('options', 'Workspace', '');

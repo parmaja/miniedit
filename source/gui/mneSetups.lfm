@@ -11,14 +11,13 @@ object EditorSetupForm: TEditorSetupForm
   Font.Name = 'MS Sans Serif'
   OnCreate = FormCreate
   Position = poWorkAreaCenter
-  LCLVersion = '1.9.0.0'
+  LCLVersion = '2.3.0.0'
   object Label1: TLabel
     Left = 17
     Height = 13
     Top = 18
     Width = 269
     Caption = 'Please, type your workspace folder for save your options.'
-    ParentColor = False
   end
   object Label2: TLabel
     Left = 17
@@ -26,7 +25,6 @@ object EditorSetupForm: TEditorSetupForm
     Top = 54
     Width = 87
     Caption = 'Workspace Folder'
-    ParentColor = False
   end
   object Button1: TButton
     Left = 399
@@ -54,6 +52,7 @@ object EditorSetupForm: TEditorSetupForm
     Top = 248
     Width = 75
     Anchors = [akLeft, akBottom]
+    Cancel = True
     Caption = '&Cancel'
     ModalResult = 2
     TabOrder = 3
@@ -72,7 +71,6 @@ object EditorSetupForm: TEditorSetupForm
     Top = 136
     Width = 346
     Caption = 'For portable use, You can use dot "." without quotes for local workspace.'
-    ParentColor = False
   end
   object NeedToRestartLbl: TLabel
     Left = 16
@@ -80,7 +78,6 @@ object EditorSetupForm: TEditorSetupForm
     Top = 152
     Width = 222
     Caption = 'You need to restart ur application to take effect'
-    ParentColor = False
     Visible = False
   end
 end
