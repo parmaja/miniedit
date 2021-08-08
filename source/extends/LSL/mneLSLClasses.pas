@@ -68,7 +68,8 @@ uses
 
 procedure TLSLTendency.Created;
 begin
-  FCapabilities := [{capExecute, } capLint, capOptions];
+  FCapabilities := [{capExecute, } capLint];
+  FHaveOptions := True;
   FName := 'LSL';
   FTitle := 'LSL project';
   FDescription := 'LSL Files, *.LSL';
@@ -221,6 +222,6 @@ initialization
   begin
     Tendencies.Add(TLSLTendency);
     Categories.Add(TLSLFileCategory.Create(TLSLTendency, 'LSL', 'SecondLife/OpenSIM Script'));
-    Groups.Add(TLSLFile, 'LSL', 'OpenSIM Script', TLSLFileCategory, ['.lsl', '.ossl'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
+    Groups.Add(TLSLFile, 'LSL', 'OpenSIM Script', TLSLFileCategory, ['.lsl', '.ossl'], [fgkAssociated, fgkFolding, fgkBrowsable], [capLint]);
   end;
 end.

@@ -246,7 +246,8 @@ end;
 
 procedure TPyTendency.Created;
 begin
-  FCapabilities := [capDebug, capTrace, capDebugServer, capExecute, capCompile, capLink, capOptions];
+  FCapabilities := [capDebug, capTrace, capDebugServer, capExecute, capCompile, capLink];
+  FHaveOptions := True;
   FTitle := 'Python Lang';
   FDescription := 'Python Files, *.py';
   FName := 'Python';
@@ -326,6 +327,6 @@ initialization
   begin
     Tendencies.Add(TPyTendency);
     Categories.Add(TPyFileCategory.Create(TPyTendency, 'Python', 'Python', [fckPublish]));
-    Groups.Add(TPyFile, 'py', 'Python', TPyFileCategory, ['.py'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
+    Groups.Add(TPyFile, 'py', 'Python', TPyFileCategory, ['.py'], [fgkAssociated, fgkBrowsable, fgkMain], [capExecute, capDebug]);
   end;
 end.

@@ -115,7 +115,8 @@ end;
 
 procedure TConsoleTendency.Created;
 begin
-  FCapabilities := [capExecute, capOptions];
+  FCapabilities := [capExecute];
+  FHaveOptions := True;
   FName := 'CMD';
   FTitle := 'CMD project';
   FDescription := 'CMD Files, *.CMD';
@@ -208,9 +209,9 @@ initialization
   begin
     Tendencies.Add(TConsoleTendency);
     Categories.Add(TCMDFileCategory.Create(TConsoleTendency, 'CMD', 'Command prompt cmd, bat', [], 'Shell'));
-    Groups.Add(TCMDFile, 'CMD', 'CMD', TCMDFileCategory, ['.cmd', '.bat'], [fgkExecutable, fgkBrowsable], []);
+    Groups.Add(TCMDFile, 'CMD', 'CMD', TCMDFileCategory, ['.cmd', '.bat'], [fgkBrowsable], [capExecute]);
 
     Categories.Add(TSHFileCategory.Create(TConsoleTendency, 'SH', 'Shell script SH'));
-    Groups.Add(TCMDFile, 'sh', 'sh', TSHFileCategory, ['.sh'], [fgkExecutable, fgkBrowsable], []);
+    Groups.Add(TCMDFile, 'sh', 'sh', TSHFileCategory, ['.sh'], [fgkBrowsable], [capExecute]);
   end;
 end.

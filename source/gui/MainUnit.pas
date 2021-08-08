@@ -2067,11 +2067,11 @@ procedure TMainForm.UpdateMenuItems;
 begin
   with Engine.CurrentTendency do
   begin
-    DBGRunAct.Enabled := CanExecute; //(capExecute in Capabilities) {and (not Engine.Session.Run.Active)};
-    DBGExecuteAct.Enabled := CanExecute;
-    DBGCompileAct.Visible := capCompile in Capabilities;
-    DBGResetAct.Enabled := capStop in Capabilities;
-    DBGLintAct.Enabled := capLint in Capabilities;
+    DBGRunAct.Enabled := Can(capExecute);
+    DBGExecuteAct.Enabled := Can(capExecute);
+    DBGCompileAct.Visible := Can(capCompile);
+    DBGResetAct.Enabled := Can(capStop);
+    DBGLintAct.Enabled := Can(capLint);
 
     DBGDebugModeAct.Enabled := (capDebug in Capabilities);
     DBGDebugModeAct.Checked :=  (Engine.CurrentTendency.Debugger <> nil) and Engine.CurrentTendency.Debugger.Active;
@@ -3091,7 +3091,7 @@ var
 begin
   if (Engine.Files.Current <> nil) and (Engine.Files.Current.Tendency.Debugger <> nil) then
   begin
-    if (Engine.Files.Current.SynEdit <> nil) and (ActiveControl = Engine.Files.Current.SynEdit) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
+    if (Engine.Files.Current.SynEdit <> nil) and (ActiveControl = Engine.Files.Current.SynEdit) and (capDebug in Engine.Files.Current.Group.Capapility) then
       with Engine.Files do
       begin
         aLine := Current.SynEdit.CaretY;

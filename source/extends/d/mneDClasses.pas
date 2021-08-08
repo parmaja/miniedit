@@ -357,7 +357,8 @@ end;
 
 procedure TDTendency.Created;
 begin
-  FCapabilities := [capExecute, capDebug, capTrace, capCompile, capLink, capOptions];
+  FCapabilities := [capExecute, capDebug, capTrace, capCompile, capLink];
+  FHaveOptions := True;
   FTitle := 'D Lang';
   FDescription := 'D Files, *.D, *.inc';
   FName := 'D';
@@ -415,6 +416,6 @@ initialization
   begin
     Tendencies.Add(TDTendency);
     Categories.Add(TDFileCategory.Create(TDTendency, 'D', 'D lang', [fckPublish]));
-    Groups.Add(TDFile, 'd', 'D', TDFileCategory, ['.d', '.inc'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
+    Groups.Add(TDFile, 'd', 'D', TDFileCategory, ['.d', '.inc'], [fgkAssociated, fgkBrowsable, fgkMain], [capExecute, capDebug]);
   end;
 end.

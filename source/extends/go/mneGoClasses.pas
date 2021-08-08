@@ -345,7 +345,8 @@ end;
 
 procedure TGoTendency.Created;
 begin
-  FCapabilities := [capExecute, capDebug, capTrace, capCompile, capLink, capOptions];
+  FCapabilities := [capExecute, capDebug, capTrace, capCompile, capLink];
+  FHaveOptions := True;
   FTitle := 'Go Lang';
   FDescription := 'Go Files, *.Go';
   FName := 'Go';
@@ -403,6 +404,6 @@ initialization
   begin
     Tendencies.Add(TGoTendency);
     Categories.Add(TGoFileCategory.Create(TGoTendency, 'Go', 'Go language',[fckPublish]));
-    Groups.Add(TGoFile, 'Go', 'Go', TGoFileCategory, ['.go'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
+    Groups.Add(TGoFile, 'Go', 'Go', TGoFileCategory, ['.go'], [fgkAssociated, fgkBrowsable, fgkMain], [capExecute, capDebug]);
   end;
 end.

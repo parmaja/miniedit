@@ -66,7 +66,8 @@ uses
 
 procedure TSardTendency.Created;
 begin
-  FCapabilities := [capExecute, capOptions];
+  FCapabilities := [capExecute];
+  FHaveOptions := True;
   FName := 'Sard';
   FTitle := 'Sard project';
   FDescription := 'Sard Files, *.sard';
@@ -187,6 +188,6 @@ initialization
   begin
     Tendencies.Add(TSardTendency);
     Categories.Add(TSardFileCategory.Create(TSardTendency, 'Sard', 'Sard lang'));
-    Groups.Add(TSardFile, 'sard', 'Sard', TSardFileCategory, ['.sard'], [fgkAssociated, fgkExecutable, fgkBrowsable], [fgsFolding]);
+    Groups.Add(TSardFile, 'sard', 'Sard', TSardFileCategory, ['.sard'], [fgkAssociated, fgkFolding, fgkBrowsable], [capExecute, capDebug]);
   end;
 end.

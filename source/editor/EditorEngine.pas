@@ -214,47 +214,38 @@ type
     fgkText, //Is it an Text Editor like SQL or PHP
     fgkUneditable, // Can't be editable
     fgkBinary, // Like Database SQLite
-    fgkExecutable,//You can guess what is it :P
     fgkShell,//TODO: Executable but hi priority, override the main file or project tendency
-    fgkDebugee, //TODO
     fgkMain,//this can be the main file for project
     fgkResult,//Result file, generated, like: exe or .o or .hex
     fgkBrowsable,//When open file show it in the extension list
     fgkAssociated, //Editor can be the editor of this files, like .php, .inc, but .txt is not
     //fgkTemporary, //No need to save it to run, but save it when user ask to save
+    fgkFolding,
     fgkVirtual //Not a real file, like output console
   );
 
   TFileGroupKinds = set of TFileGroupKind;
-
-  TFileGroupStyle = (
-    fgsFolding
-  );
-
-  TFileGroupStyles = set of TFileGroupStyle;
 
   {
     Tendency
     Run, Compile, Collect file groups and have special properties
   }
 
-  TEditorCapability = (
+  TRunCapability = (
     capErrors,
-    capBrowser,
-    capOptions,
     capExecute, //Can run this file
     capStop, //Stop executing or compiling
     capCompile, //Can compile this file
     capLink, //Can need link before run
     capLint, //Check error of file without compiling or run
-    capUpload, //Have upload, like avr projects need to upload to mcu
     capDebug, //we can debug the project/file
     capEval, //Debugger can evaluate
     capTrace, //Steps (Step Into, Step Over etc...)
+    capUpload, //Have upload, like avr projects need to upload to mcu
     capDebugServer //PHP style need to start debug server
   );
 
-  TEditorCapabilities = set of TEditorCapability;
+  TRunCapabilities = set of TRunCapability;
 
   { TEditorProjectOptions }
 
@@ -288,7 +279,8 @@ type
     function GetIsDefault: Boolean; virtual; //Keep it private
   protected
     IsPrepared: Boolean;
-    FCapabilities: TEditorCapabilities;
+    FCapabilities: TRunCapabilities;
+    FHaveOptions: Boolean;
     procedure AddGroup(vName, vCategory: string);
     function CreateDebugger: TEditorDebugger; virtual;
     procedure Init; virtual;
@@ -304,14 +296,17 @@ type
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); virtual;
     function CreateOptions: TEditorProjectOptions; virtual;
     function CreateProject: TEditorProject; virtual;
+    property HaveOptions: Boolean read FHaveOptions;
+
     procedure EnumRunCommands(Items: TStrings); virtual;
     function GetDefaultGroup: TFileGroup;
     //OSDepended: When save to file, the filename changed depend on the os system name
     procedure Prepare;
     procedure Unprepare;
     //
-    property Capabilities: TEditorCapabilities read FCapabilities;
-    function CanExecute: Boolean;
+    property Capabilities: TRunCapabilities read FCapabilities;
+    function Can(ACapability: TRunCapability): Boolean;
+
     property Groups: TFileGroups read FGroups;
     property IsDefault: Boolean read GetIsDefault;
     property OutputExtension: string read FOutputExtension write FOutputExtension;
@@ -495,7 +490,7 @@ type
   end;
 
   TEditorLinesMode = (efmUnix, efmWindows, efmMac);
-  TEditCapability = set of (ecpAllowCopy, ecpAllowPaste, ecpAllowCut, ecpAllowUndo, ecpAllowRedo);
+  TEditCapabilities = set of (ecpAllowCopy, ecpAllowPaste, ecpAllowCut, ecpAllowUndo, ecpAllowRedo);
 
   { TEditorFile }
 
@@ -513,7 +508,8 @@ type
     FLinesMode: TEditorLinesMode;
     FIsTemporary: Boolean;
     FTitle: string;
-    function GetCapability: TEditCapability;
+    function GetEditCapability: TEditCapabilities;
+    function GetRunCapability: TRunCapabilities;
     function GetIsText: Boolean;
     function GetNakeName: string;
     function GetPureName: string;
@@ -537,8 +533,8 @@ type
     function GetContent: TWinControl; virtual;
     function GetControl: TWinControl; virtual;
     function GetSynEdit: TSynEdit; virtual;
-    procedure DoGetCapability(var vCapability: TEditCapability); virtual;
-
+    procedure DoGetEditCapability(var vEditCapability: TEditCapabilities); virtual;
+    procedure DoGetRunCapability(var vRunCapability: TRunCapabilities); virtual;
   protected
     procedure Edit;
     procedure DoEdit(Sender: TObject); virtual;
@@ -567,7 +563,6 @@ type
 
     procedure Rename(ToNakeName: string); //only name not with the path
     procedure Delete; //only name not with the path
-    function CanExecute: Boolean;
 
     procedure Show; virtual; //Need to activate it after show to focus editor
     function Visible: Boolean;
@@ -595,7 +590,8 @@ type
     //Clipboard
     function CanCopy: Boolean;
     function CanPaste: Boolean;
-    property Capability: TEditCapability read GetCapability;
+    property EditCapability: TEditCapabilities read GetEditCapability;
+    property RunCapability: TRunCapabilities read GetRunCapability;
 
     procedure Paste; virtual;
     procedure Copy; virtual;
@@ -654,7 +650,7 @@ type
     procedure DoStatusChange(Sender: TObject; Changes: TSynStatusChanges); override;
     procedure DoGutterClickEvent(Sender: TObject; X, Y, Line: integer; Mark: TSynEditMark);
     procedure DoSpecialLineMarkup(Sender: TObject; Line: integer; var Special: Boolean; Markup: TSynSelectedColor);
-    procedure DoGetCapability(var vCapability: TEditCapability); override;
+    procedure DoGetEditCapability(var vEditCapability: TEditCapabilities); override;
     procedure SynEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   public
     constructor Create(ACollection: TCollection); override;
@@ -1015,12 +1011,12 @@ type
 
   TFileGroup = class(TEditorElement)
   private
+    FCapapility: TRunCapabilities;
     FExtraExtensions: TEditorExtensions;
     FFileClass: TEditorFileClass;
     FExtensions: TEditorExtensions;
     FKind: TFileGroupKinds;
     FCategory: TVirtualCategory;
-    FStyle: TFileGroupStyles;
     function GetExtension: string;
     procedure SetCategory(AValue: TVirtualCategory);
   protected
@@ -1035,7 +1031,7 @@ type
     property Extensions: TEditorExtensions read FExtensions;
     property ExtraExtensions: TEditorExtensions read FExtraExtensions;
     property Kind: TFileGroupKinds read FKind write FKind;
-    property Style: TFileGroupStyles read FStyle write FStyle;
+    property Capapility : TRunCapabilities read FCapapility write FCapapility;
     property FileClass: TEditorFileClass read FFileClass; //TODO move to TFileCategory
   end;
 
@@ -1047,7 +1043,7 @@ type
   private
     function GetItem(Index: integer): TFileGroup;
   protected
-    procedure InternalAdd(GroupClass: TFileGroupClass; FileClass: TEditorFileClass; const Name, Title: string; Category: TFileCategoryClass; Extensions: array of string; Kind: TFileGroupKinds = []; Style: TFileGroupStyles = []);
+    procedure InternalAdd(GroupClass: TFileGroupClass; FileClass: TEditorFileClass; const Name, Title: string; Category: TFileCategoryClass; Extensions: array of string; Kind: TFileGroupKinds = []; Capapility: TRunCapabilities = []);
   public
     function Find(vName: string): TFileGroup;
     function Find(vName, vCategory: string): TFileGroup;
@@ -1064,7 +1060,7 @@ type
     procedure Add(vGroup: TFileGroup);
     //First extension in array, is the default extension for the group, do not use name of group as extension
     //ImageName is group name extension already registered in resource
-    procedure Add(FileClass: TEditorFileClass; const Name, Title: string; Category: TFileCategoryClass; Extensions: array of string; Kind: TFileGroupKinds = []; Style: TFileGroupStyles = []);
+    procedure Add(FileClass: TEditorFileClass; const Name, Title: string; Category: TFileCategoryClass; Extensions: array of string; Kind: TFileGroupKinds = []; Capapility: TRunCapabilities = []);
     property Items[Index: integer]: TFileGroup read GetItem; default;
   end;
 
@@ -2042,7 +2038,7 @@ procedure TSyntaxEditorFile.DoGutterClickEvent(Sender: TObject; X, Y, Line: inte
 var
   aLine: integer;
 begin
-  if (Tendency.Debugger <> nil) and (fgkExecutable in Group.Kind) then
+  if (Tendency.Debugger <> nil) and (capDebug in Group.Capapility) then
   begin
     aLine := SynEdit.PixelsToRowColumn(Point(X, Y)).y;
     DebugManager.Enter;
@@ -2085,15 +2081,15 @@ begin
   end;}
 end;
 
-procedure TSyntaxEditorFile.DoGetCapability(var vCapability: TEditCapability);
+procedure TSyntaxEditorFile.DoGetEditCapability(var vEditCapability: TEditCapabilities);
 begin
   inherited;
 
   if SynEdit.SelAvail then
-    vCapability := vCapability + [ecpAllowCopy];
+    vEditCapability := vEditCapability + [ecpAllowCopy];
 
   if SynEdit.CanPaste then
-    vCapability := vCapability + [ecpAllowPaste];
+    vEditCapability := vEditCapability + [ecpAllowPaste];
 end;
 
 procedure TSyntaxEditorFile.SynEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -2507,9 +2503,9 @@ begin
   FreeAndNil(FDebugger);
 end;
 
-function TEditorTendency.CanExecute: Boolean;
+function TEditorTendency.Can(ACapability: TRunCapability): Boolean;
 begin
-  Result := (capExecute in Capabilities) and ((Engine.Files.Current <> nil) and Engine.Files.Current.CanExecute);
+  Result := (ACapability in Capabilities) or ((Engine.Files.Current <> nil) and (ACapability in Engine.Files.Current.Group.Capapility))
 end;
 
 function TEditorTendency.GetIsDefault: Boolean;
@@ -2629,7 +2625,7 @@ begin
           raise Exception.Create('No Project opened!');
         p.MainFile := Engine.ExpandFile(Engine.Session.Project.RunOptions.MainFile); //TODO: here need to care about expand file to be similar to env variable
 
-        if (p.MainFile = '') and (Engine.Files.Current <> nil) and (fgkExecutable in Engine.Files.Current.Group.Kind) then
+        if (p.MainFile = '') and (Engine.Files.Current <> nil) then
           p.MainFile := Engine.Files.Current.Name;
 
         if (p.Root = '') then
@@ -3909,7 +3905,7 @@ begin
     Session.Options.SafeLoadFromFile(Workspace + 'mne-options-' + SysPlatform + '.xml');
     for i := 0 to Tendencies.Count - 1 do
     begin
-      if capOptions in Tendencies[i].Capabilities then
+      if Tendencies[i].HaveOptions then
       begin
         aFile := Workspace + 'mne-tendency-' + LowerCase(Tendencies[i].Name) + '.xml';
         if FileExists(aFile) then
@@ -3979,7 +3975,7 @@ begin
   Session.Options.SaveToFile(Workspace + 'mne-options-' + SysPlatform + '.xml');
   for i := 0 to Tendencies.Count - 1 do
   begin
-    if capOptions in Tendencies[i].Capabilities then
+    if Tendencies[i].HaveOptions then
     begin
       aFile := Workspace + 'mne-tendency-' + LowerCase(Tendencies[i].Name) + '.xml';
       XMLWriteObjectFile(Tendencies[i], aFile);
@@ -4515,14 +4511,6 @@ begin
   end;
 end;
 
-function TEditorFile.CanExecute: Boolean;
-begin
-  if Group = nil then
-    Result := False
-  else
-    Result := fgkExecutable in Group.Kind;
-end;
-
 procedure TEditorFile.SetIsChanged(const Value: Boolean);
 begin
   FIsChanged := Value;
@@ -4734,12 +4722,12 @@ end;
 
 function TEditorFile.CanCopy: Boolean;
 begin
-  Result := ecpAllowCopy in Capability;
+  Result := ecpAllowCopy in EditCapability;
 end;
 
 function TEditorFile.CanPaste: Boolean;
 begin
-  Result := ecpAllowPaste in Capability
+  Result := ecpAllowPaste in EditCapability
 end;
 
 procedure TEditorFile.Paste;
@@ -4778,10 +4766,16 @@ begin
   end;
 end;
 
-function TEditorFile.GetCapability: TEditCapability;
+function TEditorFile.GetEditCapability: TEditCapabilities;
 begin
   Result := [];
-  DoGetCapability(Result);
+  DoGetEditCapability(Result);
+end;
+
+function TEditorFile.GetRunCapability: TRunCapabilities;
+begin
+  Result := [];
+  DoGetRunCapability(Result);
 end;
 
 function TEditorFile.GetControl: TWinControl;
@@ -4849,9 +4843,14 @@ begin
   Result := nil;
 end;
 
-procedure TEditorFile.DoGetCapability(var vCapability: TEditCapability);
+procedure TEditorFile.DoGetEditCapability(var vEditCapability: TEditCapabilities);
 begin
-  vCapability := [];
+  vEditCapability := [];
+end;
+
+procedure TEditorFile.DoGetRunCapability(var vRunCapability: TRunCapabilities);
+begin
+  vRunCapability := [];
 end;
 
 procedure TEditorFile.ContentsLoadFromStream(SynEdit: TSynEdit; AStream: TStream);
@@ -5882,7 +5881,7 @@ end;
 
 { TFileGroups }
 
-procedure TFileGroups.InternalAdd(GroupClass: TFileGroupClass; FileClass: TEditorFileClass; const Name, Title:string; Category: TFileCategoryClass; Extensions: array of string; Kind: TFileGroupKinds; Style: TFileGroupStyles);
+procedure TFileGroups.InternalAdd(GroupClass: TFileGroupClass; FileClass: TEditorFileClass; const Name, Title:string; Category: TFileCategoryClass; Extensions: array of string; Kind: TFileGroupKinds; Capapility: TRunCapabilities);
 var
   aCategory: TVirtualCategory;
   aGroup: TFileGroup;
@@ -5899,7 +5898,7 @@ begin
   aGroup.FTitle := Title;
   aGroup.FName := Name;
   aGroup.FKind := Kind;
-  aGroup.FStyle := Style;
+  aGroup.FCapapility := Capapility;
   for i := 0 to Length(Extensions) - 1 do
     aGroup.Extensions.Add(Extensions[i]);
   aGroup.Category := aCategory;
@@ -5912,9 +5911,9 @@ begin
   inherited Add(aGroup);
 end;
 
-procedure TFileGroups.Add(FileClass: TEditorFileClass; const Name, Title: string; Category: TFileCategoryClass; Extensions: array of string; Kind: TFileGroupKinds; Style: TFileGroupStyles);
+procedure TFileGroups.Add(FileClass: TEditorFileClass; const Name, Title: string; Category: TFileCategoryClass; Extensions: array of string; Kind: TFileGroupKinds; Capapility: TRunCapabilities);
 begin
-  InternalAdd(TFileGroup, FileClass, Name, Title, Category, Extensions, Kind, Style);
+  InternalAdd(TFileGroup, FileClass, Name, Title, Category, Extensions, Kind, Capapility);
 end;
 
 function TFileGroups.Find(vName: string): TFileGroup;

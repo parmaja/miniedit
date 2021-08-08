@@ -304,7 +304,8 @@ end;
 
 procedure TPHPTendency.Created;
 begin
-  FCapabilities := [capExecute, capDebug, capEval, capTrace, capDebugServer, capOptions];
+  FCapabilities := [capExecute, capDebug, capEval, capTrace, capDebugServer];
+  FHaveOptions := True;
   FTitle := 'PHP project';
   FDescription := 'PHP Files, *.php, *.inc';
   FName := 'PHP';
@@ -600,10 +601,10 @@ initialization
     Categories.Add(TCSSFileCategory.Create(TPHPTendency, 'css', 'CSS', [fckPublish]));
     Categories.Add(TJSFileCategory.Create(TPHPTendency, 'js', 'Javascript JS', [fckPublish]));
 
-    Groups.Add(TPHPFile, 'php', 'PHP', TXHTMLFileCategory, ['.php', '.inc'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
+    Groups.Add(TPHPFile, 'php', 'PHP', TXHTMLFileCategory, ['.php', '.inc'], [fgkAssociated, fgkBrowsable, fgkMain], [capExecute, capDebug]);
     Groups.Add(TXHTMLFile, 'html', 'HTML', TXHTMLFileCategory, ['.html', '.xhtml', '.htm', '.tpl'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TCssFile, 'css', 'CSS', TCSSFileCategory, ['.css'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TJSFile,'js', 'Java Script', TJSFileCategory, ['.js'], [fgkAssociated, fgkExecutable, fgkBrowsable]);
+    Groups.Add(TJSFile,'js', 'Java Script', TJSFileCategory, ['.js'], [fgkAssociated, fgkBrowsable], [capExecute]);
     Groups.Add(TJSFile,'json', 'JSON', TJSFileCategory, ['.json'], [fgkAssociated, fgkBrowsable]);
   end;
 end.

@@ -275,7 +275,8 @@ end;
 
 procedure TLuaTendency.Created;
 begin
-  FCapabilities := [capDebug, capTrace, capDebugServer, capExecute, capCompile, capLint, capOptions];
+  FCapabilities := [capDebug, capTrace, capDebugServer, capExecute, capCompile, capLint];
+  FHaveOptions := True;
   Title := 'Lua Lang';
   FDescription := 'Lua Files, *.lua';
   FName := 'Lua';
@@ -353,6 +354,6 @@ initialization
   begin
     Tendencies.Add(TLuaTendency);
     Categories.Add(TLuaFileCategory.Create(TLuaTendency, 'Lua', 'Lua', [fckPublish]));
-    Groups.Add(TLuaFile, 'lua', 'Lua', TLuaFileCategory, ['.lua'], [fgkDefault, fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain]);
+    Groups.Add(TLuaFile, 'lua', 'Lua', TLuaFileCategory, ['.lua'], [fgkDefault, fgkAssociated, fgkBrowsable, fgkMain], [capExecute, capDebug]);
   end;
 end.

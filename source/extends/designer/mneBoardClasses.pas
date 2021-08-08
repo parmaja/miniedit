@@ -109,6 +109,6 @@ initialization
   with Engine do
   begin
     Categories.Add(TBoardFileCategory.Create(DefaultProject.Tendency, 'Board', 'Board diagram'));
-    Groups.Add(TBoardFile, 'board', 'board', TBoardFileCategory, ['.board'], [fgkAssociated, fgkExecutable, fgkBrowsable]);
+    Groups.Add(TBoardFile, 'board', 'board', TBoardFileCategory, ['.board'], [fgkAssociated, fgkBrowsable], []);
   end;
 end.

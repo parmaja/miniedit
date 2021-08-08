@@ -287,7 +287,8 @@ end;
 
 procedure TCustomTendency.Created;
 begin
-  FCapabilities := [capExecute, capCompile, capLink, capOptions];
+  FCapabilities := [capExecute, capCompile, capLink];
+  FHaveOptions := True;
   FTitle := 'D Lang';
   FDescription := 'D Files, *.D, *.inc';
   FName := 'D';

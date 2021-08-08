@@ -147,7 +147,8 @@ end;
 
 procedure TVerilogTendency.Created;
 begin
-  FCapabilities := [capExecute, capCompile, capLink, capOptions];
+  FCapabilities := [capExecute, capCompile, capLink];
+  FHaveOptions := True;
   FName := 'Verilog';
   FTitle := 'Verilog project';
   FDescription := 'Verilog Files, *.v, *.vh';
@@ -405,6 +406,6 @@ initialization
   begin
     Tendencies.Add(TVerilogTendency);
     Categories.Add(TVerilogFileCategory.Create(TVerilogTendency, 'Verilog', 'Verilog'));
-    Groups.Add(TVerilogFile, 'v', 'Verilog', TVerilogFileCategory, ['.v', '.vh'], [fgkAssociated, fgkExecutable, fgkBrowsable, fgkMain], [fgsFolding]);
+    Groups.Add(TVerilogFile, 'v', 'Verilog', TVerilogFileCategory, ['.v', '.vh'], [fgkAssociated, fgkFolding, fgkBrowsable, fgkMain], [capExecute]);
   end;
 end.
