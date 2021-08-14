@@ -49,12 +49,12 @@ object SQLEditForm: TSQLEditForm
         Width = 697
         Align = alClient
         BorderStyle = bsSingle
+        Color = clWindow
         ColWidth = 80
         FixedFontColor = clBlack
         PopupMenu = GridPopupMenu
         RowHeight = 22
         Capacity = 100000
-        Selected.TextColor = clHighlightText
         TabOrder = 0
       end
       object Panel4: TPanel
@@ -77,7 +77,6 @@ object SQLEditForm: TSQLEditForm
           AutoSize = False
           Caption = 'Fetched: '
           Layout = tlCenter
-          ParentColor = False
         end
         object FetchCountLbl: TLabel
           Left = 541
@@ -88,7 +87,6 @@ object SQLEditForm: TSQLEditForm
           AutoSize = False
           Caption = '0'
           Layout = tlCenter
-          ParentColor = False
         end
         object ClearBtn: TButton
           Left = 594

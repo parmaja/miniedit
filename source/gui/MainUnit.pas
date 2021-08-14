@@ -63,6 +63,8 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
+    DBRollbackBtn: TAction;
+    DBCommitAct: TAction;
     FilesFilterEdit: TEdit;
     FilesFilterClearBtn: TntvImgBtn;
     FolderCloseBtn1: TntvImgBtn;
@@ -71,6 +73,8 @@ type
     MenuItem3: TMenuItem;
     MenuItem4: TMenuItem;
     ExploreFileFolder2Act: TMenuItem;
+    MenuItem49: TMenuItem;
+    MenuItem5: TMenuItem;
     Panel1: TPanel;
     Panel2: TPanel;
     ShowProjectFilterAct: TAction;
@@ -119,6 +123,9 @@ type
     DBConnectMnu: TMenuItem;
     DBDisconnectMnu: TMenuItem;
     FilesSearchTimer: TTimer;
+    CommitBtn: TToolButton;
+    RollbackBtn: TToolButton;
+    ToolButton9: TToolButton;
     UTF8BOMMnu: TMenuItem;
     UC16BEBOMMnu: TMenuItem;
     MainFileAct: TAction;
@@ -2072,6 +2079,8 @@ begin
     DBGCompileAct.Visible := Can(capCompile);
     DBGResetAct.Enabled := Can(capStop);
     DBGLintAct.Enabled := Can(capLint);
+    DBCommitAct.Enabled := Can(capTransaction);
+    DBRollbackBtn.Enabled := Can(capTransaction);
 
     DBGDebugModeAct.Enabled := (capDebug in Capabilities);
     DBGDebugModeAct.Checked :=  (Engine.CurrentTendency.Debugger <> nil) and Engine.CurrentTendency.Debugger.Active;

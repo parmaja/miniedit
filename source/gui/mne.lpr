@@ -144,9 +144,9 @@ procedure Run;
 begin
   {$IFDEF DEBUG}
   //* http://wiki.freepascal.org/leakview
-  if FileExists(Application.Location+'heap.trc') then
+  {if FileExists(Application.Location+'heap.trc') then
     DeleteFile(Application.Location+'heap.trc');
-  //SetHeapTraceOutput(Application.Location+'heap.trc');
+  SetHeapTraceOutput(Application.Location+'heap.trc');}
   {$ENDIF DEBUG}
   Engine.BeginUpdate;
   try

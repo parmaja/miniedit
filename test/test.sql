@@ -1,2 +1,1 @@
-select * from Companies
-here id < 30
+select * from Plants

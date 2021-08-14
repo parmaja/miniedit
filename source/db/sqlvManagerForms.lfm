@@ -98,7 +98,6 @@ object sqlvManagerForm: TsqlvManagerForm
           BorderSpacing.Around = 2
           Caption = 'No database opened'
           Layout = tlCenter
-          ParentColor = False
         end
         object DatabaseImage: TntvImgBtn
           Left = 0
@@ -131,7 +130,6 @@ object sqlvManagerForm: TsqlvManagerForm
           BorderSpacing.Around = 2
           Caption = 'Element'
           Layout = tlCenter
-          ParentColor = False
         end
         object DatabaseImage1: TntvImgBtn
           Left = 0
@@ -231,7 +229,6 @@ object sqlvManagerForm: TsqlvManagerForm
         BorderSpacing.Around = 2
         Caption = 'No server connected'
         Layout = tlCenter
-        ParentColor = False
       end
       object ServerImage: TntvImgBtn
         Left = 0

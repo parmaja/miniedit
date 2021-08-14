@@ -66,7 +66,7 @@ object MainForm: TMainForm
         Action = SaveAllAct
       end
       object RunBtn: TToolButton
-        Left = 544
+        Left = 702
         Top = 0
         Action = DBGRunAct
       end
@@ -100,16 +100,36 @@ object MainForm: TMainForm
         Style = tbsSeparator
       end
       object MainFileBtn: TToolButton
-        Left = 619
+        Left = 777
         Top = 0
         Action = MainFileAct
         AutoSize = True
         PopupMenu = MainFilePopupMnu
       end
       object ToolButton3: TToolButton
-        Left = 469
+        Left = 627
         Top = 0
         Action = DBGDebugModeAct
+        Style = tbsCheck
+      end
+      object ToolButton9: TToolButton
+        Left = 619
+        Height = 23
+        Top = 0
+        Caption = 'ToolButton9'
+        ImageIndex = 28
+        Style = tbsSeparator
+      end
+      object CommitBtn: TToolButton
+        Left = 469
+        Top = 0
+        Action = DBCommitAct
+        Style = tbsCheck
+      end
+      object RollbackBtn: TToolButton
+        Left = 544
+        Top = 0
+        Action = DBRollbackBtn
         Style = tbsCheck
       end
     end
@@ -1908,6 +1928,12 @@ object MainForm: TMainForm
       object MenuItem50: TMenuItem
         Caption = '-'
       end
+      object MenuItem5: TMenuItem
+        Action = DBCommitAct
+      end
+      object MenuItem49: TMenuItem
+        Action = DBRollbackBtn
+      end
     end
     object ProjectMnu: TMenuItem
       Caption = 'Project'
@@ -2854,6 +2880,14 @@ object MainForm: TMainForm
       Caption = 'Sort By Extensions'
       GroupIndex = 6
       OnExecute = SortByExtensionsActExecute
+    end
+    object DBCommitAct: TAction
+      Category = 'Database'
+      Caption = 'Commit'
+    end
+    object DBRollbackBtn: TAction
+      Category = 'Database'
+      Caption = 'Rollback'
     end
   end
   object FolderMenu: TPopupMenu

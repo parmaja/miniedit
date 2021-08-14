@@ -242,7 +242,9 @@ type
     capEval, //Debugger can evaluate
     capTrace, //Steps (Step Into, Step Over etc...)
     capUpload, //Have upload, like avr projects need to upload to mcu
-    capDebugServer //PHP style need to start debug server
+    capDebugServer, //PHP style need to start debug server
+    capTransaction //Database
+
   );
 
   TRunCapabilities = set of TRunCapability;

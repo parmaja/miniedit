@@ -394,31 +394,38 @@ begin
   if DBEngine.DB.IsActive then
   begin
     Session := DBEngine.DB.Connection.CreateSession;
-    CMD := Session.CreateCommand;
-    CMD.SQL.Text := SQLEdit.Text;
     try
-      Session.Start;
+      CMD := Session.CreateCommand;
       try
-        CMD.Prepare;
-        if (CMD.Params.Count = 0) or ShowSQLParams(CMD) then
-        begin
-          CMD.Execute;
-          PageControl.ActiveControl := DataPnl;
-          FillGrid(CMD, 'Data');
+        CMD.SQL.Text := SQLEdit.Text;
+        try
+          Session.Start;
+          try
+            CMD.Prepare;
+            if (CMD.Params.Count = 0) or ShowSQLParams(CMD) then
+            begin
+              CMD.Execute;
+              PageControl.ActiveControl := DataPnl;
+              FillGrid(CMD, 'Data');
+            end;
+            Session.Commit;
+          except
+            on E: Exception do
+            begin
+              Engine.SendLog(E.Message);
+              Session.Rollback;
+              raise;
+            end;
+          end;
+        finally
+          if CMD.Active then
+            CMD.Close;
         end;
-        Session.Commit;
-      except
-        on E: Exception do
-        begin
-          Engine.SendLog(E.Message);
-          Session.Rollback;
-          raise;
-        end;
+      finally
+        CMD.Free;
       end;
     finally
-      if CMD.Active then
-        CMD.Close;
-      CMD.Free;
+      Session.Free;
     end;
   end;
 end;
