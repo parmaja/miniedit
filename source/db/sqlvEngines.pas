@@ -39,16 +39,16 @@ const
 type
   EsqlvException = class(Exception);
 
-  TsqlvExecuteType = (execNormal, execExport, execImport);
+  TmndExecuteType = (execNormal, execExport, execImport);
 
   TMetaInfo = record
     Name: string;
     Value: string;
   end;
 
-  { TsqlvSetting }
+  { TmndSetting }
 
-  TsqlvSetting = class(TmnXMLProfile)
+  TmndSetting = class(TmnXMLProfile)
   private
     FCSVANSIContents: Boolean;
     FCSVDelimiterChar: Char;
@@ -75,53 +75,53 @@ type
     property CSVANSIContents: Boolean read FCSVANSIContents write FCSVANSIContents default False;
   end;
 
-  TsqlvShow = (shwnElement, shwnBrowse, shwnFile);
+  TmndShow = (shwnElement, shwnBrowse, shwnFile);
 
-  TsqlvAddon = class;
+  TmndAddon = class;
 
-  { TsqlvProcess }
+  { TmndProcess }
 
-  TsqlvProcess = class(TObject)
+  TmndProcess = class(TObject)
   private
-    FAddon: TsqlvAddon;
+    FAddon: TmndAddon;
     FMetaItems: TmncMetaItems;
     FSelect: string;
-    FShowIn: TsqlvShow;
+    FShowIn: TmndShow;
   strict protected
-    property Addon: TsqlvAddon read FAddon write FAddon;
+    property Addon: TmndAddon read FAddon write FAddon;
     function GetDisplayName: string; virtual;
   public
     constructor Create;
-    constructor Create(vAddon: TsqlvAddon; vSelect: string; vMetaItems: TmncMetaItems = nil; AShowIn: TsqlvShow = shwnElement);
-    constructor Create(Group, Name: string; vSelect: string; vMetaItems: TmncMetaItems = nil; AShowIn: TsqlvShow = shwnElement);
-    constructor Create(Group, Name: string; vSelect: string; vValue: string; AShowIn: TsqlvShow = shwnElement);
+    constructor Create(vAddon: TmndAddon; vSelect: string; vMetaItems: TmncMetaItems = nil; AShowIn: TmndShow = shwnElement);
+    constructor Create(Group, Name: string; vSelect: string; vMetaItems: TmncMetaItems = nil; AShowIn: TmndShow = shwnElement);
+    constructor Create(Group, Name: string; vSelect: string; vValue: string; AShowIn: TmndShow = shwnElement);
 
     destructor Destroy; override;
 
     procedure Execute(vMetaItems: TmncMetaItems; FallDefault: Boolean = False);
     property DisplayName: string read GetDisplayName;
-    function CurrentAddon: TsqlvAddon;
+    function CurrentAddon: TmndAddon; deprecated;
     property MetaItems: TmncMetaItems read FMetaItems write FMetaItems;
     property Select: string read FSelect write FSelect;
-    property ShowIn: TsqlvShow read FShowIn write FShowIn;
+    property ShowIn: TmndShow read FShowIn write FShowIn;
   end;
 
-  { TsqlvStack }
+  { TmndStack }
 
-  TsqlvStack = class(specialize TmnObjectList<TsqlvProcess>)
+  TmndStack = class(specialize TmnObjectList<TmndProcess>)
   private
-    function GetCurrent: TsqlvProcess;
+    function GetCurrent: TmndProcess;
   public
     constructor Create;
-    function Add(AItem: TsqlvProcess): Integer; overload;
-    function Push(AItem: TsqlvProcess): Integer;
+    function Add(AItem: TmndProcess): Integer; overload;
+    function Push(AItem: TmndProcess): Integer;
     procedure Pop;
     procedure Top; //pop all to top
     procedure Trim(ToCount: Integer); //Similar to SetCount
-    property Current: TsqlvProcess read GetCurrent;
+    property Current: TmndProcess read GetCurrent;
   end;
 
-  TsqlvAddons = class;
+  TmndAddons = class;
 
 {
   nsDefault: Default Addon for execute parent when parent can not parent
@@ -131,19 +131,19 @@ type
   nsNeedSession: Enum only when session is active
 }
 
-  TsqlvAddonStyle = set of (nsDefault, nsGroup, nsCommand, nsEditor, nsButton, nsNeedSession);
+  TmndAddonStyle = set of (nsDefault, nsGroup, nsCommand, nsEditor, nsButton, nsNeedSession);
 
   IsqlvAddon = interface(IInterface)
-    function GetAddon: TsqlvAddon;
+    function GetAddon: TmndAddon;
   end;
 
-  { TsqlvAddon }
+  { TmndAddon }
 
-  TsqlvAddon = class(TmnNamedObject)
+  TmndAddon = class(TmnNamedObject)
   private
     FItemName: string;
     FGroup: string;
-    FStyle: TsqlvAddonStyle;
+    FStyle: TmndAddonStyle;
     FTitle: string;
     FKind: TmetaKind;
     FImageIndex: TImageIndex;
@@ -156,73 +156,73 @@ type
     procedure ShowProperty; virtual;
     procedure Execute(vMetaItems: TmncMetaItems; FallDefault: Boolean = False);
     procedure Execute(const Value: string);
-    procedure Enum(Addons: TsqlvAddons);
-    procedure EnumDefaults(Addons: TsqlvAddons);
+    procedure Enum(Addons: TmndAddons);
+    procedure EnumDefaults(Addons: TmndAddons);
     procedure EnumMeta(vItems: TmncMetaItems; vMetaItems: TmncMetaItems = nil); virtual; abstract;
     property CanExecute: Boolean read GetCanExecute;
     property Group: string read FGroup write FGroup; //Group is parent Addon like Tabkes.Group = 'Database'
     //property Name: string read FName write FName; //Name = 'Tables'
     property ItemName: string read FItemName write FItemName; //Item name eg  Tables.Item = 'Table'
     property Kind: TmetaKind read FKind write FKind default sokNone;
-    property Style: TsqlvAddonStyle read FStyle write FStyle;
+    property Style: TmndAddonStyle read FStyle write FStyle;
     property Title: string read FTitle write FTitle;
     property ImageIndex: TImageIndex read FImageIndex write FImageIndex default -1;
   end;
 
-  TsqlvAddonClass = class of TsqlvAddon;
+  TmndAddonClass = class of TmndAddon;
 
-  { TsqlvCustomAddons }
+  { TmndCustomAddons }
 
-  TsqlvCustomAddons = class(specialize TmnNamedObjectList<TsqlvAddon>)
+  TmndCustomAddons = class(specialize TmnNamedObjectList<TmndAddon>)
   private
   public
-    procedure Enum(GroupName: string; Addons: TsqlvAddons; SessionActive: Boolean; OnlyDefaults: Boolean = False); overload;
-    function Find(const Group, Name: string): TsqlvAddon;
-    function Find(const Group, Name: string; Deep: Boolean): TsqlvAddon;
-    function IsExists(vAddon: TsqlvAddon): Boolean;
+    procedure Enum(GroupName: string; Addons: TmndAddons; SessionActive: Boolean; OnlyDefaults: Boolean = False); overload;
+    function Find(const Group, Name: string): TmndAddon;
+    function Find(const Group, Name: string; Deep: Boolean): TmndAddon;
+    function IsExists(vAddon: TmndAddon): Boolean;
   end;
 
-  { TsqlvAddons }
+  { TmndAddons }
 
-  TsqlvAddons = class(TsqlvCustomAddons)
+  TmndAddons = class(TmndCustomAddons)
   public
     constructor Create; virtual;
-    function Add(vAddon: TsqlvAddon): Integer;
+    function Add(vAddon: TmndAddon): Integer;
   end;
 
-  { TsqlvCustomHistoryItem }
+  { TmndCustomHistoryItem }
 
-  TsqlvCustomHistoryItem = class(TObject)
+  TmndCustomHistoryItem = class(TObject)
   private
   public
     constructor Create; virtual;
     destructor Destroy; override;
   end;
 
-  { TsqlvHistory }
+  { TmndHistory }
 
-  TsqlvCustomHistory = class(specialize TmnObjectList<TsqlvCustomHistoryItem>)
+  TmndCustomHistory = class(specialize TmnObjectList<TmndCustomHistoryItem>)
   private
     FIndex: Integer;
     FMaxCount: Integer;
     FOnChanged: TNotifyEvent;
-    function GetCurrent: TsqlvCustomHistoryItem;
+    function GetCurrent: TmndCustomHistoryItem;
   protected
   public
     constructor Create;
-    function Add(History: TsqlvCustomHistoryItem): Integer;
+    function Add(History: TmndCustomHistoryItem): Integer;
     function HaveBackward: Boolean;
     function Backward: Boolean;
     function HaveForward: Boolean;
     function Forward: Boolean;
     procedure Changed; virtual;
-    property Current: TsqlvCustomHistoryItem read GetCurrent;
+    property Current: TmndCustomHistoryItem read GetCurrent;
     property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
     property MaxCount: Integer read FMaxCount write FMaxCount;
     property Index: Integer read FIndex write FIndex;
   end;
 
-  TsqlvSQLHistoryItem = class(TsqlvCustomHistoryItem)
+  TmndSQLHistoryItem = class(TmndCustomHistoryItem)
   private
     FStrings: TStringList;
     function GetText: string;
@@ -234,62 +234,62 @@ type
     property Strings: TStringList read FStrings;
   end;
 
-  { TsqlvSQLHistory }
+  { TmndSQLHistory }
 
-  TsqlvSQLHistory = class(TsqlvCustomHistory)
+  TmndSQLHistory = class(TmndCustomHistory)
   private
-    function GetCurrent: TsqlvSQLHistoryItem;
+    function GetCurrent: TmndSQLHistoryItem;
   protected
-    function RequireItem: TsqlvCustomHistoryItem; override;
+    function RequireItem: TmndCustomHistoryItem; override;
   public
     procedure Add(const Text: string; Silent: Boolean);
-    property Current: TsqlvSQLHistoryItem read GetCurrent;
+    property Current: TmndSQLHistoryItem read GetCurrent;
   end;
 
-  { TsqlvAddonHistoryItem }
+  { TmndAddonHistoryItem }
 
-  TsqlvAddonHistoryItem = class(TsqlvCustomHistoryItem)
+  TmndAddonHistoryItem = class(TmndCustomHistoryItem)
   private
-    FAddon: TsqlvAddon;
+    FAddon: TmndAddon;
   public
     constructor Create; override;
     destructor Destroy; override;
-    property Addon: TsqlvAddon read FAddon write FAddon;
+    property Addon: TmndAddon read FAddon write FAddon;
   end;
 
-  TsqlvAddonHistory = class(TsqlvCustomHistory)
+  TmndAddonHistory = class(TmndCustomHistory)
   private
-    function GetCurrent: TsqlvAddonHistoryItem;
+    function GetCurrent: TmndAddonHistoryItem;
   protected
-    function RequireItem: TsqlvCustomHistoryItem; override;
+    function RequireItem: TmndCustomHistoryItem; override;
   public
-    procedure Add(const Addon: TsqlvAddon; Silent: Boolean);
-    property Current: TsqlvAddonHistoryItem read GetCurrent;
+    procedure Add(const Addon: TmndAddon; Silent: Boolean);
+    property Current: TmndAddonHistoryItem read GetCurrent;
   end;
 
-  { TsqlvNotify }
+  { TmndNotify }
 
   IsqlvNotify = Interface(INotifyEngine)
     ['{E6F8D9BD-F716-4758-8B08-DDDBD3FA1732}']
     procedure ServerChanged; virtual; abstract;
     procedure DatabaseChanged; virtual; abstract;
-    procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean); virtual; abstract;
-    procedure ShowEditor(vAddon: TsqlvAddon; S: string); virtual; abstract;
+    procedure ShowMeta(vAddon: TmndAddon; vSelectDefault: Boolean); virtual; abstract;
+    procedure ShowEditor(vAddon: TmndAddon; S: string); virtual; abstract;
   end;
 
-  {TsqlvNotifyObjects = class(specialize TmnObjectList<TsqlvNotify>)
+  {TmndNotifyObjects = class(specialize TmnObjectList<TmndNotify>)
   end;}
 
-  TsqlvServerInfo = record
+  TmndServerInfo = record
     Engine: TmncEngine;
     Info: TmncServerInfo;
   end;
 
-  //TsqlvOnNotifySession = procedure of object;
+  //TmndOnNotifySession = procedure of object;
 
-  { TsqlvDB }
+  { TmndDB }
 
-  TsqlvDB = class(TObject)
+  TmndDB = class(TObject)
   private
     FConnection: TmncSQLConnection;
     FSession: TmncSQLSession;
@@ -331,18 +331,18 @@ type
 
   { TDBEngine }
 
-  TDBEngine = class(TsqlvCustomAddons, IsqlvNotify, INotifyEngine, INotifyEngineSetting)
+  TDBEngine = class(TmndCustomAddons, IsqlvNotify, INotifyEngine, INotifyEngineSetting)
   private
-    FDB: TsqlvDB;
+    FDB: TmndDB;
     FEngines: TStringLIst;
-    FSetting: TsqlvSetting;
-    FStack: TsqlvStack;
-    FHistory: TsqlvAddonHistory;
-    FSQLHistory: TsqlvSQLHistory;
+    FSetting: TmndSetting;
+    FStack: TmndStack;
+    FHistory: TmndAddonHistory;
+    FSQLHistory: TmndSQLHistory;
     FNotifyObject: IsqlvNotify;
     procedure SetNotifyObject(AValue: IsqlvNotify);
   public
-    Server: TsqlvServerInfo;
+    Server: TmndServerInfo;
     constructor Create;
     destructor Destroy; override;
 
@@ -359,28 +359,28 @@ type
 
     procedure ChangeState(State: TEditorChangeStates);
 
-    procedure Run(vStack: TsqlvStack);
-    procedure Run(vAddon: TsqlvAddon; vMetaItems: TmncMetaItems);
+    procedure Run(vStack: TmndStack);
+    procedure Run(vAddon: TmndAddon; vMetaItems: TmncMetaItems);
     procedure Run;
     //procedure Run(vGroup, vName, vValue: string; vSelect: string = '');
     procedure RegisterFilter(Filter: string);
-    procedure RegisterViewer(Classes: array of TsqlvAddonClass);
+    procedure RegisterViewer(Classes: array of TmndAddonClass);
     procedure LoadFile(FileName:string; Strings: TStrings);
     procedure SaveFile(FileName:string; Strings: TStrings);
     function GetAllSupportedFiles: string;
 
     procedure ServerChanged;
     procedure DatabaseChanged;
-    procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
-    procedure ShowEditor(vAddon: TsqlvAddon; S: string);
-    procedure ShowEditor(vAddon: TsqlvAddon; S: TStringList);
+    procedure ShowMeta(vAddon: TmndAddon; vSelectDefault: Boolean);
+    procedure ShowEditor(vAddon: TmndAddon; S: string);
+    procedure ShowEditor(vAddon: TmndAddon; S: TStringList);
 
-    property Setting: TsqlvSetting read FSetting;
+    property Setting: TmndSetting read FSetting;
     property Engines: TStringLIst read FEngines;
-    property DB: TsqlvDB read FDB;
-    property History: TsqlvAddonHistory read FHistory;
-    property Stack: TsqlvStack read FStack;
-    property SQLHistory: TsqlvSQLHistory read FSQLHistory;
+    property DB: TmndDB read FDB;
+    property History: TmndAddonHistory read FHistory;
+    property Stack: TmndStack read FStack;
+    property SQLHistory: TmndSQLHistory read FSQLHistory;
     property NotifyObject: IsqlvNotify read FNotifyObject write SetNotifyObject {implements IsqlvNotify};
   end;
 
@@ -423,9 +423,9 @@ begin
   Result := FDBEngine;
 end;
 
-{ TsqlvProcess }
+{ TmndProcess }
 
-function TsqlvProcess.GetDisplayName: string;
+function TmndProcess.GetDisplayName: string;
 begin
   if Addon <> nil then
     Result := Addon.Name
@@ -433,13 +433,13 @@ begin
     Result := '';
 end;
 
-constructor TsqlvProcess.Create;
+constructor TmndProcess.Create;
 begin
   inherited Create;
   FMetaItems := TmncMetaItems.Create;
 end;
 
-constructor TsqlvProcess.Create(vAddon: TsqlvAddon; vSelect: string; vMetaItems: TmncMetaItems; AShowIn: TsqlvShow);
+constructor TmndProcess.Create(vAddon: TmndAddon; vSelect: string; vMetaItems: TmncMetaItems; AShowIn: TmndShow);
 begin
   Create;
   Addon := vAddon;
@@ -448,9 +448,9 @@ begin
   FShowIn := AShowIn;
 end;
 
-constructor TsqlvProcess.Create(Group, Name: string; vSelect: string; vMetaItems: TmncMetaItems; AShowIn: TsqlvShow);
+constructor TmndProcess.Create(Group, Name: string; vSelect: string; vMetaItems: TmncMetaItems; AShowIn: TmndShow);
 var
-  aAddon: TsqlvAddon;
+  aAddon: TmndAddon;
 begin
   aAddon := DBEngine.Find(Group, Name, True);
   if aAddon = nil then
@@ -458,7 +458,7 @@ begin
   Create(aAddon, Select, vMetaItems, AShowIn);
 end;
 
-constructor TsqlvProcess.Create(Group, Name: string; vSelect: string; vValue: string; AShowIn: TsqlvShow);
+constructor TmndProcess.Create(Group, Name: string; vSelect: string; vValue: string; AShowIn: TmndShow);
 var
   a: TmncMetaItems;
 begin
@@ -471,13 +471,13 @@ begin
   end;
 end;
 
-destructor TsqlvProcess.Destroy;
+destructor TmndProcess.Destroy;
 begin
   FreeAndNil(FMetaItems);
   inherited;
 end;
 
-procedure TsqlvProcess.Execute(vMetaItems: TmncMetaItems; FallDefault: Boolean);
+procedure TmndProcess.Execute(vMetaItems: TmncMetaItems; FallDefault: Boolean);
 begin
   if Addon <> nil then
   begin
@@ -488,68 +488,68 @@ begin
   end;
 end;
 
-function TsqlvProcess.CurrentAddon: TsqlvAddon;
+function TmndProcess.CurrentAddon: TmndAddon;
 begin
   Result := Addon;
 end;
 
-{ TsqlvStack }
+{ TmndStack }
 
-function TsqlvStack.GetCurrent: TsqlvProcess;
+function TmndStack.GetCurrent: TmndProcess;
 begin
-  Result := Last as TsqlvProcess;
+  Result := Last as TmndProcess;
 end;
 
-constructor TsqlvStack.Create;
+constructor TmndStack.Create;
 begin
   inherited Create(True);
 end;
 
-function TsqlvStack.Add(AItem: TsqlvProcess): Integer;
+function TmndStack.Add(AItem: TmndProcess): Integer;
 begin
   Result := inherited Add(AItem);
 end;
 
-function TsqlvStack.Push(AItem: TsqlvProcess): Integer;
+function TmndStack.Push(AItem: TmndProcess): Integer;
 begin
   Result := Add(AItem);
 end;
 
-procedure TsqlvStack.Trim(ToCount: Integer);
+procedure TmndStack.Trim(ToCount: Integer);
 begin
   SetCount(ToCount);
 end;
 
-procedure TsqlvStack.Pop;
+procedure TmndStack.Pop;
 begin
   if Count > 0 then
     Delete(Count - 1);
 end;
 
-procedure TsqlvStack.Top;
+procedure TmndStack.Top;
 begin
   if Count > 0  then
     SetCount(1);
 end;
 
-{ TsqlvAddonHistory }
+{ TmndAddonHistory }
 
-function TsqlvAddonHistory.GetCurrent: TsqlvAddonHistoryItem;
+function TmndAddonHistory.GetCurrent: TmndAddonHistoryItem;
 begin
-  REsult := inherited GetCurrent as TsqlvAddonHistoryItem;
+  REsult := inherited GetCurrent as TmndAddonHistoryItem;
 end;
 
-function TsqlvAddonHistory.RequireItem: TsqlvCustomHistoryItem;
+function TmndAddonHistory.RequireItem: TmndCustomHistoryItem;
 begin
-  Result := TsqlvAddonHistoryItem.Create;
+  Result := TmndAddonHistoryItem.Create;
 end;
 
-procedure TsqlvAddonHistory.Add(const Addon: TsqlvAddon; Silent: Boolean);
+procedure TmndAddonHistory.Add(const Addon: TmndAddon; Silent: Boolean);
 var
   i: Integer;
-  aHistory: TsqlvAddonHistoryItem;
+  aHistory: TmndAddonHistoryItem;
 begin
-  aHistory := TsqlvAddonHistoryItem.Create;
+  aHistory := TmndAddonHistoryItem.Create;
   aHistory.Addon := Addon;
   i := inherited Add(aHistory);
   if not Silent then
@@ -557,62 +557,62 @@ begin
   Changed;
 end;
 
-{ TsqlvAddonHistoryItem }
+{ TmndAddonHistoryItem }
 
-constructor TsqlvAddonHistoryItem.Create;
+constructor TmndAddonHistoryItem.Create;
 begin
   inherited Create;
 end;
 
-destructor TsqlvAddonHistoryItem.Destroy;
+destructor TmndAddonHistoryItem.Destroy;
 begin
   inherited;
 end;
 
-{ TsqlvCustomHistoryItem }
+{ TmndCustomHistoryItem }
 
-constructor TsqlvCustomHistoryItem.Create;
+constructor TmndCustomHistoryItem.Create;
 begin
   inherited Create;
 end;
 
-destructor TsqlvCustomHistoryItem.Destroy;
+destructor TmndCustomHistoryItem.Destroy;
 begin
   inherited;
 end;
 
-{ TsqlvSQLHistory }
+{ TmndSQLHistory }
 
-function TsqlvSQLHistory.RequireItem: TsqlvCustomHistoryItem;
+function TmndSQLHistory.RequireItem: TmndCustomHistoryItem;
 begin
-  Result := TsqlvSQLHistoryItem.Create;
+  Result := TmndSQLHistoryItem.Create;
 end;
 
-{ TsqlvCustomHistoryItem }
+{ TmndCustomHistoryItem }
 
-function TsqlvSQLHistoryItem.GetText: string;
+function TmndSQLHistoryItem.GetText: string;
 begin
   Result := FStrings.Text;
 end;
 
-procedure TsqlvSQLHistoryItem.SetText(AValue: string);
+procedure TmndSQLHistoryItem.SetText(AValue: string);
 begin
   FStrings.Text := AValue;
 end;
 
-constructor TsqlvSQLHistoryItem.Create;
+constructor TmndSQLHistoryItem.Create;
 begin
   inherited;
   FStrings := TStringList.Create;
 end;
 
-destructor TsqlvSQLHistoryItem.Destroy;
+destructor TmndSQLHistoryItem.Destroy;
 begin
   FreeAndNil(FStrings);
   inherited;
 end;
 
-procedure TDBEngine.RegisterViewer(Classes: array of TsqlvAddonClass);
+procedure TDBEngine.RegisterViewer(Classes: array of TmndAddonClass);
 var
   i: Integer;
 begin
@@ -640,14 +640,14 @@ procedure TDBEngine.ChangeState(State: TEditorChangeStates);
 begin
 end;
 
-procedure TDBEngine.Run(vStack: TsqlvStack);
+procedure TDBEngine.Run(vStack: TmndStack);
 begin
   if (vStack = nil) and (vStack.Count = 0) then
     raise Exception.Create('Stack is empty');
   vStack.Current.Execute(vStack.Current.MetaItems, True);
 end;
 
-procedure TDBEngine.Run(vAddon: TsqlvAddon; vMetaItems:TmncMetaItems);
+procedure TDBEngine.Run(vAddon: TmndAddon; vMetaItems:TmncMetaItems);
 begin
   if vAddon = nil then
     raise Exception.Create('Addon not found');
@@ -659,9 +659,9 @@ begin
   Run(Stack);
 end;
 
-{ TsqlvAddons }
+{ TmndAddons }
 
-procedure TsqlvCustomAddons.Enum(GroupName: string; Addons: TsqlvAddons; SessionActive: Boolean; OnlyDefaults:Boolean = False);
+procedure TmndCustomAddons.Enum(GroupName: string; Addons: TmndAddons; SessionActive: Boolean; OnlyDefaults:Boolean = False);
 var
   i: Integer;
   aDefault: Integer;
@@ -685,7 +685,7 @@ begin
     Addons.Move(aDefault, 0);
 end;
 
-function TsqlvCustomAddons.Find(const Group, Name: string): TsqlvAddon;
+function TmndCustomAddons.Find(const Group, Name: string): TmndAddon;
 var
   i: Integer;
 begin
@@ -700,9 +700,9 @@ begin
   end;
 end;
 
-function TsqlvCustomAddons.Find(const Group, Name: string; Deep: Boolean): TsqlvAddon;
+function TmndCustomAddons.Find(const Group, Name: string; Deep: Boolean): TmndAddon;
 var
-  aAddons: TsqlvAddons;
+  aAddons: TmndAddons;
 begin
   Result := Find(Group, Name);
   if Deep then
@@ -711,7 +711,7 @@ begin
       Result := Find(Group, Name);
       if (Result = nil) then
       begin
-        aAddons := TsqlvAddons.Create;
+        aAddons := TmndAddons.Create;
         try
           Enum(Name, aAddons, True);
           if aAddons.Count > 0 then
@@ -723,7 +723,7 @@ begin
     end;
 end;
 
-function TsqlvCustomAddons.IsExists(vAddon: TsqlvAddon): Boolean;
+function TmndCustomAddons.IsExists(vAddon: TmndAddon): Boolean;
 var
   i: Integer;
 begin
@@ -738,32 +738,32 @@ begin
   end;
 end;
 
-{ TsqlvAddons }
+{ TmndAddons }
 
-constructor TsqlvAddons.Create;
+constructor TmndAddons.Create;
 begin
   inherited Create(False);
 end;
 
-function TsqlvAddons.Add(vAddon: TsqlvAddon): Integer;
+function TmndAddons.Add(vAddon: TmndAddon): Integer;
 begin
   Result := inherited Add(vAddon);
 end;
 
-{ TsqlvAddon }
+{ TmndAddon }
 
-constructor TsqlvAddon.Create;
+constructor TmndAddon.Create;
 begin
   inherited;
   FImageIndex := -1;
 end;
 
-destructor TsqlvAddon.Destroy;
+destructor TmndAddon.Destroy;
 begin
   inherited Destroy;
 end;
 
-{procedure TsqlvAddon.Enum(Session: TsqlvDB; Strings: TStrings);
+{procedure TmndAddon.Enum(Session: TmndDB; Strings: TStrings);
 var
   i: Integer;
   aDefault: Integer;
@@ -786,26 +786,26 @@ begin
     Strings.Move(aDefault, 0);
 end;}
 
-procedure TsqlvAddon.Enum(Addons: TsqlvAddons);
+procedure TmndAddon.Enum(Addons: TmndAddons);
 begin
   DBEngine.Enum(Name, Addons, DBEngine.DB.IsActive);
 end;
 
-procedure TsqlvAddon.EnumDefaults(Addons: TsqlvAddons);
+procedure TmndAddon.EnumDefaults(Addons: TmndAddons);
 begin
   DBEngine.Enum(Name, Addons, DBEngine.DB.IsActive, True);
 end;
 
-procedure TsqlvAddon.Execute(vMetaItems: TmncMetaItems; FallDefault: Boolean = False);
+procedure TmndAddon.Execute(vMetaItems: TmncMetaItems; FallDefault: Boolean = False);
 var
-  aAddons: TsqlvAddons;
+  aAddons: TmndAddons;
 begin
   if CanExecute then
     DoExecute(vMetaItems)
   else if FallDefault then
   begin
     //if Addon.CanRunDefault then //TODO
-    aAddons := TsqlvAddons.Create; //It only contain live Addons, not freed when free this list
+    aAddons := TmndAddons.Create; //It only contain live Addons, not freed when free this list
     try
       EnumDefaults(aAddons);
 {      if vValue = '' then
@@ -818,25 +818,25 @@ begin
   end;
 end;
 
-procedure TsqlvAddon.Execute(const Value: string);
+procedure TmndAddon.Execute(const Value: string);
 begin
   DoExecute(nil);
 end;
 
-function TsqlvAddon.GetCanExecute: Boolean;
+function TmndAddon.GetCanExecute: Boolean;
 begin
   Result := True;
 end;
 
-procedure TsqlvAddon.DoExecute(vMetaItems: TmncMetaItems);
+procedure TmndAddon.DoExecute(vMetaItems: TmncMetaItems);
 begin
 end;
 
-procedure TsqlvAddon.ShowProperty;
+procedure TmndAddon.ShowProperty;
 begin
 end;
 
-{ TsqlvClass }
+{ TmndClass }
 
 procedure TDBEngine.SetNotifyObject(AValue: IsqlvNotify);
 begin
@@ -847,11 +847,11 @@ end;
 constructor TDBEngine.Create;
 begin
   inherited Create(True);
-  FHistory := TsqlvAddonHistory.Create;
-  FStack := TsqlvStack.Create;
-  FSQLHistory := TsqlvSQLHistory.Create;
-  FSetting := TsqlvSetting.Create;
-  FDB := TsqlvDB.Create;
+  FHistory := TmndAddonHistory.Create;
+  FStack := TmndStack.Create;
+  FSQLHistory := TmndSQLHistory.Create;
+  FSetting := TmndSetting.Create;
+  FDB := TmndDB.Create;
   Engine.RegisterNotify(Self);
   FEngines := TStringList.Create;
   mncDB.Engines.EnumConnections(FEngines);
@@ -964,7 +964,7 @@ begin
   DB.Open(False, EngineName, Resource, User, Password, Role, False, False);
   DatabaseChanged;
   Stack.Clear;
-  Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', Resource));
+  Stack.Push(TmndProcess.Create('Databases', 'Database', 'Tables', Resource));
   Run;
   Engine.SendAction(eaShowDatabases);
 end;
@@ -1017,7 +1017,7 @@ begin
 
       DBEngine.DB.Open(True, (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name, DatabaseEdit.Text, UserEdit.Text, PasswordEdit.Text, RoleEdit.Text, ExclusiveChk.Checked);
       DBEngine.Stack.Clear;
-      DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabaseEdit.Text));
+      DBEngine.Stack.Push(TmndProcess.Create('Databases', 'Database', 'Tables', DatabaseEdit.Text));
       DBEngine.Run(DBEngine.Stack);
     end;
   end;
@@ -1072,17 +1072,17 @@ begin
   FNotifyObject.DatabaseChanged;
 end;
 
-procedure TDBEngine.ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
+procedure TDBEngine.ShowMeta(vAddon: TmndAddon; vSelectDefault: Boolean);
 begin
   FNotifyObject.ShowMeta(vAddon, vSelectDefault);
 end;
 
-procedure TDBEngine.ShowEditor(vAddon: TsqlvAddon; S: string);
+procedure TDBEngine.ShowEditor(vAddon: TmndAddon; S: string);
 begin
   FNotifyObject.ShowEditor(vAddon, S);
 end;
 
-procedure TDBEngine.ShowEditor(vAddon: TsqlvAddon; S: TStringList);
+procedure TDBEngine.ShowEditor(vAddon: TmndAddon; S: TStringList);
 begin
   FNotifyObject.ShowEditor(vAddon, S.Text);
 end;
@@ -1092,15 +1092,15 @@ begin
   FSetting.SafeLoadFromFile(Engine.WorkSpace + sqlvConfig);
 end;
 
-{ TsqlvCustomHistory }
+{ TmndCustomHistory }
 
-procedure TsqlvCustomHistory.Changed;
+procedure TmndCustomHistory.Changed;
 begin
   if Assigned(OnChanged) then
     OnChanged(Self);
 end;
 
-function TsqlvCustomHistory.GetCurrent: TsqlvCustomHistoryItem;
+function TmndCustomHistory.GetCurrent: TmndCustomHistoryItem;
 begin
   if (Index < Count) and (FIndex >=0) then
     Result := Items[Index]
@@ -1108,14 +1108,14 @@ begin
     Result := nil;
 end;
 
-constructor TsqlvCustomHistory.Create;
+constructor TmndCustomHistory.Create;
 begin
   inherited Create(True);
   Index := 0;
   MaxCount := 50;
 end;
 
-function TsqlvCustomHistory.Add(History: TsqlvCustomHistoryItem): Integer;
+function TmndCustomHistory.Add(History: TmndCustomHistoryItem): Integer;
 begin
   if (Count > MaxCount) and (Count > 0) then
   begin
@@ -1125,29 +1125,29 @@ begin
   Result := inherited Add(History);
 end;
 
-function TsqlvSQLHistory.GetCurrent: TsqlvSQLHistoryItem;
+function TmndSQLHistory.GetCurrent: TmndSQLHistoryItem;
 begin
-  Result := inherited GetCurrent as TsqlvSQLHistoryItem;
+  Result := inherited GetCurrent as TmndSQLHistoryItem;
 end;
 
-procedure TsqlvSQLHistory.Add(const Text: string; Silent: Boolean);
+procedure TmndSQLHistory.Add(const Text: string; Silent: Boolean);
 var
   i: Integer;
-  aHistory: TsqlvSQLHistoryItem;
+  aHistory: TmndSQLHistoryItem;
 begin
   if (Count > 0) then
   begin
-    aHistory := Items[Count - 1] as TsqlvSQLHistoryItem;
+    aHistory := Items[Count - 1] as TmndSQLHistoryItem;
     if (aHistory.Text = Text) then
       exit;//do not duplicate the last one
     if (Index < Count) and (Index >= 0) then
     begin
-      aHistory := Items[Index] as TsqlvSQLHistoryItem;
+      aHistory := Items[Index] as TmndSQLHistoryItem;
       if (aHistory.Text = Text) then
         exit;//do not duplicate the current one
     end;
   end;
-  aHistory := TsqlvSQLHistoryItem.Create;
+  aHistory := TmndSQLHistoryItem.Create;
   aHistory.Text := Text;
   //aHistory.Addon := AAddon;
   i := inherited Add(aHistory);
@@ -1156,17 +1156,17 @@ begin
   Changed;
 end;
 
-function TsqlvCustomHistory.HaveForward: Boolean;
+function TmndCustomHistory.HaveForward: Boolean;
 begin
   Result := (Count > 0) and (Index < Count - 1);
 end;
 
-function TsqlvCustomHistory.HaveBackward: Boolean;
+function TmndCustomHistory.HaveBackward: Boolean;
 begin
   Result := (Count> 0) and (FIndex > 0);
 end;
 
-function TsqlvCustomHistory.Forward: Boolean;
+function TmndCustomHistory.Forward: Boolean;
 begin
   Result := HaveForward;
   if Result then
@@ -1176,7 +1176,7 @@ begin
   end;
 end;
 
-function TsqlvCustomHistory.Backward: Boolean;
+function TmndCustomHistory.Backward: Boolean;
 begin
   Result := HaveBackward;
   if Result then
@@ -1186,9 +1186,9 @@ begin
   end;
 end;
 
-{ TsqlvSetting }
+{ TmndSetting }
 
-constructor TsqlvSetting.Create;
+constructor TmndSetting.Create;
 begin
   inherited Create;
   FCSVQuoteChar := '"';
@@ -1196,9 +1196,9 @@ begin
   FCacheMetas := True;
 end;
 
-{ TsqlvDB }
+{ TmndDB }
 
-procedure TsqlvDB.Connected;
+procedure TmndDB.Connected;
 begin
   if FVacuum then
     Connection.Vacuum;
@@ -1207,7 +1207,7 @@ begin
   RunLoginSQL;
 end;
 
-constructor TsqlvDB.Create;
+constructor TmndDB.Create;
 begin
   inherited;
   FTables := TmncMetaItems.Create;
@@ -1220,7 +1220,7 @@ begin
   FFields := TmncMetaItems.Create;
 end;
 
-destructor TsqlvDB.Destroy;
+destructor TmndDB.Destroy;
 begin
   FreeAndNil(FTables);
   FreeAndNil(FProceduers);
@@ -1235,18 +1235,18 @@ begin
   inherited;
 end;
 
-function TsqlvDB.CreateMeta: TmncMeta;
+function TmndDB.CreateMeta: TmncMeta;
 begin
   Result := Engines.CreateMeta(Connection);
   Result.Link := Session;
 end;
 
-procedure TsqlvDB.Disconnected;
+procedure TmndDB.Disconnected;
 begin
   RunLogoutSQL;
 end;
 
-procedure TsqlvDB.LoadMeta;
+procedure TmndDB.LoadMeta;
 var
   AMeta: TmncMeta;
 begin
@@ -1269,7 +1269,7 @@ begin
   end;
 end;
 
-procedure TsqlvDB.Open(vCreate: Boolean; DatabaseEngine, DatabaseName, UserName, Password, Role: string; vExclusive: Boolean; vVacuum: Boolean);
+procedure TmndDB.Open(vCreate: Boolean; DatabaseEngine, DatabaseName, UserName, Password, Role: string; vExclusive: Boolean; vVacuum: Boolean);
 begin
   FConnection := Engines.CreateConnection(DatabaseEngine) as TmncSQLConnection;
 
@@ -1291,7 +1291,7 @@ begin
   Engine.Update([ecsChanged, ecsState, ecsRefresh, ecsRecents, ecsProject, ecsProjectLoaded]);
 end;
 
-procedure TsqlvDB.Close;
+procedure TmndDB.Close;
 begin
   if IsActive then
     Disconnected;
@@ -1303,12 +1303,12 @@ begin
   FreeAndNil(FConnection);
 end;
 
-function TsqlvDB.IsActive: Boolean;
+function TmndDB.IsActive: Boolean;
 begin
   Result := (Connection <> nil) and Connection.Active;
 end;
 
-procedure TsqlvDB.RunLoginSQL;
+procedure TmndDB.RunLoginSQL;
 var
   CMD: TmncSQLCommand;
 begin
@@ -1332,7 +1332,7 @@ begin
   end;
 end;
 
-procedure TsqlvDB.RunLogoutSQL;
+procedure TmndDB.RunLogoutSQL;
 var
   CMD: TmncSQLCommand;
 begin

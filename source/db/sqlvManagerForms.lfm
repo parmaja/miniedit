@@ -1,4 +1,4 @@
-object sqlvManagerForm: TsqlvManagerForm
+object DBManagerForm: TDBManagerForm
   Left = 0
   Height = 445
   Top = 0

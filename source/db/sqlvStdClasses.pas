@@ -35,27 +35,27 @@ uses
 
 type
 
-  { TsqlvDatabases }
+  { TDatabasesAddon }
 
-  TsqlvDatabases = class(TsqlvAddon)
+  TDatabasesAddon = class(TmndAddon)
   private
   public
     constructor Create; override;
     procedure DoExecute(vMetaItems: TmncMetaItems); override;
   end;
          
-  { TsqlvDatabase }
+  { TDatabaseAddon }
 
-  TsqlvDatabase = class(TsqlvAddon)
+  TDatabaseAddon = class(TmndAddon)
   private
   public
     constructor Create; override;
     procedure DoExecute(vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvMembers }
+  { TMembersAddon }
 
-  TsqlvMembers = class(TsqlvAddon)
+  TMembersAddon = class(TmndAddon)
   private
   protected
     function GetCanExecute: Boolean; override;
@@ -64,190 +64,190 @@ type
     procedure DoExecute(vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvTables }
+  { TTablesAddon }
 
-  TsqlvTables = class(TsqlvMembers)
+  TTablesAddon = class(TMembersAddon)
   public
     constructor Create; override;
     procedure EnumMeta(vItems: TmncMetaItems; vMetaItems: TmncMetaItems); override;
   end;
 
-  TsqlvTable = class(TsqlvAddon)
+  TTableAddon = class(TmndAddon)
   public
     constructor Create; override;
     procedure DoExecute(vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvIndex }
+  { TIndexAddon }
 
-  TsqlvIndex = class(TsqlvAddon)
+  TIndexAddon = class(TmndAddon)
   public
     constructor Create; override;
     procedure DoExecute(vMetaItems: TmncMetaItems); override;
     procedure EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvProcedures }
+  { TProceduresAddon }
 
-  TsqlvProcedures = class(TsqlvMembers)
+  TProceduresAddon = class(TMembersAddon)
   public
     constructor Create; override;
     procedure EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvProcedure }
+  { TProcedureAddon }
 
-  TsqlvProcedure = class(TsqlvAddon)
+  TProcedureAddon = class(TmndAddon)
   public
     constructor Create; override;
     procedure DoExecute(vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvViews }
+  { TViewsAddon }
 
-  TsqlvViews = class(TsqlvMembers)
+  TViewsAddon = class(TMembersAddon)
   public
     procedure EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems); override;
     constructor Create; override;
   end;
 
-  { TsqlvView }
+  { TViewAddon }
 
-  TsqlvView = class(TsqlvAddon)
+  TViewAddon = class(TmndAddon)
   public
     constructor Create; override;
     procedure DoExecute(vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvSequences }
+  { TSequencesAddon }
 
-  TsqlvSequences = class(TsqlvMembers)
+  TSequencesAddon = class(TMembersAddon)
   public
     procedure EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems); override;
     constructor Create; override;
   end;
 
-  { TsqlvDomains }
+  { TDomainsAddon }
 
-  TsqlvDomains = class(TsqlvMembers)
+  TDomainsAddon = class(TMembersAddon)
   public
     procedure EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems); override;
     constructor Create; override;
   end;
 
-  { TsqlvExceptions }
+  { TExceptionsAddon }
 
-  TsqlvExceptions = class(TsqlvMembers)
+  TExceptionsAddon = class(TMembersAddon)
   public
     constructor Create; override;
     procedure EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvFunctions }
+  { TFunctionsAddon }
 
-  TsqlvFunctions = class(TsqlvMembers)
+  TFunctionsAddon = class(TMembersAddon)
   public
     constructor Create; override;
     procedure EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvTriggers }
+  { TTriggersAddon }
 
-  TsqlvTriggers = class(TsqlvMembers)
+  TTriggersAddon = class(TMembersAddon)
   public
     constructor Create; override;
     procedure EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvTableTriggers }
+  { TTableTriggersAddon }
 
-  TsqlvTableTriggers = class(TsqlvMembers)
+  TTableTriggersAddon = class(TMembersAddon)
   public
     constructor Create; override;
     procedure EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems); override;
   end;
 
-  TsqlvTrigger = class(TsqlvAddon)
+  TTriggerAddon = class(TmndAddon)
   public
     constructor Create; override;
     procedure DoExecute(vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvIndices }
+  { TIndicesAddon }
 
-  TsqlvIndices = class(TsqlvMembers)
+  TIndicesAddon = class(TMembersAddon)
   public
     constructor Create; override;
     procedure EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvTableIndices }
+  { TTableIndicesAddon }
 
-  TsqlvTableIndices = class(TsqlvMembers)
+  TTableIndicesAddon = class(TMembersAddon)
   public
     constructor Create; override;
     procedure EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvDropIndex }
+  { TDropIndexAddon }
 
-  TsqlvDropIndex = class(TsqlvAddon)
+  TDropIndexAddon = class(TmndAddon)
   public
     constructor Create; override;
     procedure DoExecute(vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvTableFields }
+  { TTableFieldsAddon }
 
-  TsqlvTableFields = class(TsqlvMembers)
+  TTableFieldsAddon = class(TMembersAddon)
   public
     constructor Create; override;
     procedure EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvDropTable }
+  { TDropTableAddon }
 
-  TsqlvDropTable = class(TsqlvAddon)
+  TDropTableAddon = class(TmndAddon)
   public
     constructor Create; override;
     procedure DoExecute(vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvSelectTable }
+  { TSelectTableAddon }
 
-  TsqlvSelectTable = class(TsqlvAddon)
+  TSelectTableAddon = class(TmndAddon)
   public
     constructor Create; override;
     procedure DoExecute(vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvInsertTable }
+  { TInsertTableAddon }
 
-  TsqlvInsertTable = class(TsqlvAddon)
+  TInsertTableAddon = class(TmndAddon)
   public
     constructor Create; override;
     procedure DoExecute(vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvDropField }
+  { TDropFieldAddon }
 
-  TsqlvDropField = class(TsqlvAddon)
+  TDropFieldAddon = class(TmndAddon)
   public
     constructor Create; override;
     procedure DoExecute(vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvNewField }
+  { TNewFieldAddon }
 
-  TsqlvNewField = class(TsqlvAddon)
+  TNewFieldAddon = class(TmndAddon)
   public
     constructor Create; override;
     procedure DoExecute(vMetaItems: TmncMetaItems); override;
   end;
 
-  { TsqlvEmptyTable }
+  { TEmptyTableAddon }
 
-  TsqlvEmptyTable = class(TsqlvAddon)
+  TEmptyTableAddon = class(TmndAddon)
   public
     constructor Create; override;
     procedure DoExecute(vMetaItems: TmncMetaItems); override;
@@ -258,9 +258,9 @@ implementation
 uses
   Contnrs;
 
-{ TsqlvDatabases }
+{ TDatabasesAddon }
 
-constructor TsqlvDatabases.Create;
+constructor TDatabasesAddon.Create;
 begin
   inherited Create;
   Group := 'Server';
@@ -270,14 +270,14 @@ begin
   ImageIndex := IMG_DATABASE;
 end;
 
-procedure TsqlvDatabases.DoExecute(vMetaItems: TmncMetaItems);
+procedure TDatabasesAddon.DoExecute(vMetaItems: TmncMetaItems);
 begin
   inherited DoExecute(vMetaItems);
 end;
 
-{ TsqlvDatabase }
+{ TDatabaseAddon }
 
-constructor TsqlvDatabase.Create;
+constructor TDatabaseAddon.Create;
 begin
   inherited;
   Group := 'Databases';
@@ -287,15 +287,15 @@ begin
   ImageIndex := IMG_DATABASES;
 end;
 
-procedure TsqlvDatabase.DoExecute(vMetaItems: TmncMetaItems);
+procedure TDatabaseAddon.DoExecute(vMetaItems: TmncMetaItems);
 begin
   inherited;
   DBEngine.ShowMeta(Self, True);
 end;
 
-{ TsqlvTables }
+{ TTablesAddon }
 
-constructor TsqlvTables.Create;
+constructor TTablesAddon.Create;
 begin
   inherited;
   Group := 'Database';
@@ -306,7 +306,7 @@ begin
   ImageIndex := IMG_TABLE;
 end;
 
-procedure TsqlvTables.EnumMeta(vItems: TmncMetaItems; vMetaItems: TmncMetaItems);
+procedure TTablesAddon.EnumMeta(vItems: TmncMetaItems; vMetaItems: TmncMetaItems);
 var
   aMeta: TmncMeta;
 begin
@@ -318,9 +318,9 @@ begin
   end;
 end;
 
-{ TsqlvProcedures }
+{ TProceduresAddon }
 
-constructor TsqlvProcedures.Create;
+constructor TProceduresAddon.Create;
 begin
   inherited;
   Group := 'Database';
@@ -331,7 +331,7 @@ begin
   ImageIndex := IMG_PROCEDURE;
 end;
 
-procedure TsqlvProcedures.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
+procedure TProceduresAddon.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
 var
   aMeta: TmncMeta;
 begin
@@ -343,9 +343,9 @@ begin
   end;
 end;
 
-{ TsqlvViews }
+{ TViewsAddon }
 
-constructor TsqlvViews.Create;
+constructor TViewsAddon.Create;
 begin
   inherited;
   Group := 'Database';
@@ -356,7 +356,7 @@ begin
   ImageIndex := IMG_VIEW;
 end;
 
-procedure TsqlvViews.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
+procedure TViewsAddon.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
 var
   aMeta: TmncMeta;
 begin
@@ -368,9 +368,9 @@ begin
   end;
 end;
 
-{ TsqlvSequences }
+{ TSequencesAddon }
 
-constructor TsqlvSequences.Create;
+constructor TSequencesAddon.Create;
 begin
   inherited;
   Group := 'Database';
@@ -381,7 +381,7 @@ begin
   ImageIndex := IMG_GENERATOR;
 end;
 
-procedure TsqlvSequences.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
+procedure TSequencesAddon.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
 var
   aMeta: TmncMeta;
 begin
@@ -393,9 +393,9 @@ begin
   end;
 end;
 
-{ TsqlvDomains }
+{ TDomainsAddon }
 
-constructor TsqlvDomains.Create;
+constructor TDomainsAddon.Create;
 begin
   inherited;
   Group := 'Database';
@@ -406,7 +406,7 @@ begin
   ImageIndex := IMG_DOMAIN;
 end;
 
-procedure TsqlvDomains.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
+procedure TDomainsAddon.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
 var
   aMeta: TmncMeta;
 begin
@@ -418,9 +418,9 @@ begin
   end;
 end;
 
-{ TsqlvExceptions }
+{ TExceptionsAddon }
 
-constructor TsqlvExceptions.Create;
+constructor TExceptionsAddon.Create;
 begin
   inherited;
   Group := 'Database';
@@ -431,7 +431,7 @@ begin
   ImageIndex := IMG_EXCEPTION;
 end;
 
-procedure TsqlvExceptions.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
+procedure TExceptionsAddon.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
 var
   aMeta: TmncMeta;
 begin
@@ -443,9 +443,9 @@ begin
   end;
 end;
 
-{ TsqlvFunctions }
+{ TFunctionsAddon }
 
-constructor TsqlvFunctions.Create;
+constructor TFunctionsAddon.Create;
 begin
   inherited;
   Group := 'Database';
@@ -456,7 +456,7 @@ begin
   ImageIndex := IMG_FUNCTION;
 end;
 
-procedure TsqlvFunctions.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
+procedure TFunctionsAddon.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
 var
   aMeta: TmncMeta;
 begin
@@ -468,27 +468,27 @@ begin
   end;
 end;
 
-{ TsqlvMembers }
+{ TMembersAddon }
 
-constructor TsqlvMembers.Create;
+constructor TMembersAddon.Create;
 begin
   inherited;
 end;
 
-procedure TsqlvMembers.DoExecute(vMetaItems: TmncMetaItems);
+procedure TMembersAddon.DoExecute(vMetaItems: TmncMetaItems);
 begin
   inherited;
   //sqlvGui.ShowMeta(Self, Value);
 end;
 
-function TsqlvMembers.GetCanExecute: Boolean;
+function TMembersAddon.GetCanExecute: Boolean;
 begin
   Result := True;
 end;
 
-{ TsqlvProcedure }
+{ TProcedureAddon }
 
-constructor TsqlvProcedure.Create;
+constructor TProcedureAddon.Create;
 begin
   inherited;
   Group := 'Procedure';
@@ -499,7 +499,7 @@ begin
   ImageIndex := IMG_PROCEDURE;
 end;
 
-procedure TsqlvProcedure.DoExecute(vMetaItems: TmncMetaItems);
+procedure TProcedureAddon.DoExecute(vMetaItems: TmncMetaItems);
 var
   aMeta: TmncMeta;
   aStrings: TStringList;
@@ -519,9 +519,9 @@ begin
   end;
 end;
 
-{ TsqlvView }
+{ TViewAddon }
 
-constructor TsqlvView.Create;
+constructor TViewAddon.Create;
 begin
   inherited;
   Group := 'View';
@@ -532,7 +532,7 @@ begin
   ImageIndex := IMG_VIEW;
 end;
 
-procedure TsqlvView.DoExecute(vMetaItems: TmncMetaItems);
+procedure TViewAddon.DoExecute(vMetaItems: TmncMetaItems);
 var
   aMeta: TmncMeta;
   aStrings: TStringList;
@@ -552,9 +552,9 @@ begin
   end;
 end;
 
-{ TsqlvTableTriggers }
+{ TTableTriggersAddon }
 
-constructor TsqlvTableTriggers.Create;
+constructor TTableTriggersAddon.Create;
 begin
   inherited;
   Group := 'Table';
@@ -564,7 +564,7 @@ begin
   ImageIndex := IMG_TRIGGER;
 end;
 
-procedure TsqlvTableTriggers.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
+procedure TTableTriggersAddon.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
 var
   aMeta: TmncMeta;
 begin
@@ -576,9 +576,9 @@ begin
   end;
 end;
 
-{ TsqlvTrigger }
+{ TTriggerAddon }
 
-constructor TsqlvTrigger.Create;
+constructor TTriggerAddon.Create;
 begin
   inherited;
   Group := 'Triggers';
@@ -588,7 +588,7 @@ begin
   ImageIndex := IMG_TRIGGER;
 end;
 
-procedure TsqlvTrigger.DoExecute(vMetaItems: TmncMetaItems);
+procedure TTriggerAddon.DoExecute(vMetaItems: TmncMetaItems);
 var
   aMeta: TmncMeta;
   aStrings: TStringList;
@@ -608,9 +608,9 @@ begin
   end;
 end;
 
-{ TsqlvTableIndices }
+{ TTableIndicesAddon }
 
-constructor TsqlvTableIndices.Create;
+constructor TTableIndicesAddon.Create;
 begin
   inherited;
   Group := 'Table';
@@ -621,7 +621,7 @@ begin
   ImageIndex := IMG_INDEX;
 end;
 
-procedure TsqlvTableIndices.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
+procedure TTableIndicesAddon.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
 var
   aMeta: TmncMeta;
 begin
@@ -633,9 +633,9 @@ begin
   end;
 end;
 
-{ TsqlvDropIndex }
+{ TDropIndexAddon }
 
-constructor TsqlvDropIndex.Create;
+constructor TDropIndexAddon.Create;
 begin
   inherited;
   Group := 'Index';
@@ -646,15 +646,15 @@ begin
   ImageIndex := IMG_INDEX;
 end;
 
-procedure TsqlvDropIndex.DoExecute(vMetaItems: TmncMetaItems);
+procedure TDropIndexAddon.DoExecute(vMetaItems: TmncMetaItems);
 begin
   inherited;
 
 end;
 
-{ TsqlvTableFields }
+{ TTableFieldsAddon }
 
-constructor TsqlvTableFields.Create;
+constructor TTableFieldsAddon.Create;
 begin
   inherited;
   Group := 'Table';
@@ -665,7 +665,7 @@ begin
   ImageIndex := IMG_FIELD;
 end;
 
-procedure TsqlvTableFields.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
+procedure TTableFieldsAddon.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
 var
   aMeta: TmncMeta;
 begin
@@ -677,9 +677,9 @@ begin
   end;
 end;
 
-{ TsqlvNewField }
+{ TNewFieldAddon }
 
-constructor TsqlvNewField.Create;
+constructor TNewFieldAddon.Create;
 begin
   inherited;
   Group := 'Table';
@@ -690,7 +690,7 @@ begin
   ImageIndex := IMG_FIELD;
 end;
 
-procedure TsqlvNewField.DoExecute(vMetaItems: TmncMetaItems);
+procedure TNewFieldAddon.DoExecute(vMetaItems: TmncMetaItems);
 var
   aStrings: TStringList;
 //  aFieldName: string;
@@ -715,9 +715,9 @@ begin
   end;}
 end;
 
-{ TsqlvEmptyTable }
+{ TEmptyTableAddon }
 
-constructor TsqlvEmptyTable.Create;
+constructor TEmptyTableAddon.Create;
 begin
   inherited;
   Group := 'Table';
@@ -728,7 +728,7 @@ begin
   ImageIndex := IMG_COMMAND;
 end;
 
-procedure TsqlvEmptyTable.DoExecute(vMetaItems: TmncMetaItems);
+procedure TEmptyTableAddon.DoExecute(vMetaItems: TmncMetaItems);
 var
   aStrings: TStringList;
 begin
@@ -739,9 +739,9 @@ begin
   aStrings.Free;
 end;
 
-{ TsqlvDropField }
+{ TDropFieldAddon }
 
-constructor TsqlvDropField.Create;
+constructor TDropFieldAddon.Create;
 begin
   inherited;
   Group := 'Field';
@@ -752,7 +752,7 @@ begin
   ImageIndex := IMG_FIELD;
 end;
 
-procedure TsqlvDropField.DoExecute(vMetaItems: TmncMetaItems);
+procedure TDropFieldAddon.DoExecute(vMetaItems: TmncMetaItems);
 var
   aStrings: TStringList;
 begin
@@ -766,9 +766,9 @@ begin
   end;
 end;
 
-{ TsqlvTriggers }
+{ TTriggersAddon }
 
-constructor TsqlvTriggers.Create;
+constructor TTriggersAddon.Create;
 begin
   inherited Create;
   Group := 'Database';
@@ -779,7 +779,7 @@ begin
   ImageIndex := IMG_TRIGGER;
 end;
 
-procedure TsqlvTriggers.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
+procedure TTriggersAddon.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
 var
   aMeta: TmncMeta;
 begin
@@ -791,9 +791,9 @@ begin
   end;
 end;
 
-{ TsqlvTable }
+{ TTableAddon }
 
-constructor TsqlvTable.Create;
+constructor TTableAddon.Create;
 begin
   inherited Create;
   Group := 'Tables';
@@ -804,15 +804,15 @@ begin
   ImageIndex := IMG_TABLE;
 end;
 
-procedure TsqlvTable.DoExecute(vMetaItems: TmncMetaItems);
+procedure TTableAddon.DoExecute(vMetaItems: TmncMetaItems);
 begin
   inherited;
   DBEngine.ShowMeta(Self, True);
 end;
 
-{ TsqlvIndex }
+{ TIndexAddon }
 
-constructor TsqlvIndex.Create;
+constructor TIndexAddon.Create;
 begin
   inherited Create;
   Group := 'Indices';
@@ -822,13 +822,13 @@ begin
   ImageIndex := IMG_INDEX;
 end;
 
-procedure TsqlvIndex.DoExecute(vMetaItems: TmncMetaItems);
+procedure TIndexAddon.DoExecute(vMetaItems: TmncMetaItems);
 begin
   inherited;
   //DBEngine.EnumMembers(Self, Value);
 end;
 
-procedure TsqlvIndex.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
+procedure TIndexAddon.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
 var
   aMeta: TmncMeta;
 begin
@@ -840,9 +840,9 @@ begin
   end;
 end;
 
-{ TsqlvIndices }
+{ TIndicesAddon }
 
-constructor TsqlvIndices.Create;
+constructor TIndicesAddon.Create;
 begin
   inherited Create;
   Group := 'Database';
@@ -853,7 +853,7 @@ begin
   ImageIndex := IMG_INDEX;
 end;
 
-procedure TsqlvIndices.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
+procedure TIndicesAddon.EnumMeta(MetaItems: TmncMetaItems; vMetaItems: TmncMetaItems);
 var
   aMeta: TmncMeta;
 begin
@@ -865,9 +865,9 @@ begin
   end;
 end;
 
-{ TsqlvDropTable }
+{ TDropTableAddon }
 
-constructor TsqlvDropTable.Create;
+constructor TDropTableAddon.Create;
 begin
   inherited Create;
   Group := 'Table';
@@ -878,15 +878,15 @@ begin
   ImageIndex := IMG_TABLE;
 end;
 
-procedure TsqlvDropTable.DoExecute(vMetaItems: TmncMetaItems);
+procedure TDropTableAddon.DoExecute(vMetaItems: TmncMetaItems);
 begin
   inherited;
   DBEngine.ShowEditor(Self, 'drop table ' + vMetaItems.Values['Table']);
 end;
 
-{ TsqlvSelectTable }
+{ TSelectTableAddon }
 
-constructor TsqlvSelectTable.Create;
+constructor TSelectTableAddon.Create;
 begin
   inherited Create;
   Group := 'Table';
@@ -897,16 +897,16 @@ begin
   ImageIndex := IMG_TABLE;
 end;
 
-procedure TsqlvSelectTable.DoExecute(vMetaItems: TmncMetaItems);
+procedure TSelectTableAddon.DoExecute(vMetaItems: TmncMetaItems);
 begin
   inherited;
   DumpMetaItems(vMetaItems);
   DBEngine.ShowEditor(Self, 'select * from ' + vMetaItems.Values['Table']);
 end;
 
-{ TsqlvInsertTable }
+{ TInsertTableAddon }
 
-constructor TsqlvInsertTable.Create;
+constructor TInsertTableAddon.Create;
 begin
   inherited Create;
   Group := 'Table';
@@ -917,7 +917,7 @@ begin
   ImageIndex := IMG_TABLE;
 end;
 
-procedure TsqlvInsertTable.DoExecute(vMetaItems: TmncMetaItems);
+procedure TInsertTableAddon.DoExecute(vMetaItems: TmncMetaItems);
 var
   aMeta: TmncMeta;
   aItems: TmncMetaItems;
@@ -951,17 +951,17 @@ begin
   DBEngine.ShowEditor(Self, 'insert into ' + vMetaItems.Values['Table'] + '(' + s1 + ') values (' + s2 +')');
 end;
 
-{ TsqlvExportSQL }
+{ TExportSQLAddon }
 
 initialization
-  DBEngine.RegisterViewer([TsqlvDatabase]);
-  DBEngine.RegisterViewer([TsqlvTables, TsqlvTable, TsqlvTableFields]);
-  DBEngine.RegisterViewer([TsqlvSelectTable, TsqlvInsertTable, TsqlvEmptyTable, TsqlvDropTable]);
-  DBEngine.RegisterViewer([TsqlvIndices, TsqlvTableIndices, TsqlvIndex, TsqlvDropIndex]);
-  DBEngine.RegisterViewer([TsqlvDropField, TsqlvNewField]);
-  DBEngine.RegisterViewer([TsqlvViews, TsqlvView]);
-  DBEngine.RegisterViewer([TsqlvTriggers, TsqlvTrigger, TsqlvTableTriggers]);
-  //DBEngine.RegisterViewer([TsqlvDomains, TsqlvExceptions, TsqlvFunctions]);
-  //DBEngine.RegisterViewer([TsqlvProcedures, TsqlvProcedure]);
-  //DBEngine.RegisterViewer([TsqlvSequences]);
+  DBEngine.RegisterViewer([TDatabaseAddon]);
+  DBEngine.RegisterViewer([TTablesAddon, TTableAddon, TTableFieldsAddon]);
+  DBEngine.RegisterViewer([TSelectTableAddon, TInsertTableAddon, TEmptyTableAddon, TDropTableAddon]);
+  DBEngine.RegisterViewer([TIndicesAddon, TTableIndicesAddon, TIndexAddon, TDropIndexAddon]);
+  DBEngine.RegisterViewer([TDropFieldAddon, TNewFieldAddon]);
+  DBEngine.RegisterViewer([TViewsAddon, TViewAddon]);
+  DBEngine.RegisterViewer([TTriggersAddon, TTriggerAddon, TTableTriggersAddon]);
+  //DBEngine.RegisterViewer([TDomainsAddon, TExceptionsAddon, TFunctionsAddon]);
+  //DBEngine.RegisterViewer([TProceduresAddon, TProcedureAddon]);
+  //DBEngine.RegisterViewer([TSequencesAddon]);
 end.

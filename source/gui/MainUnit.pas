@@ -632,7 +632,7 @@ type
     procedure MoveListIndex(vDirection: Integer);
   protected
     FProjectFrame: TFrame;
-    FDatabaseFrame: TsqlvManagerForm;
+    FDatabaseFrame: TmndManagerForm;
     FOutputs: TOutputs;
     FMenuItemsList: TObjectList;
     procedure ExploreFolder(AFolder: string);
@@ -1842,7 +1842,7 @@ begin
 
   Engine.RegisterNotify(Self);
 
-  FDatabaseFrame := TsqlvManagerForm.Create(Self); //before Engine.Prepare, to register notify
+  FDatabaseFrame := TmndManagerForm.Create(Self); //before Engine.Prepare, to register notify
   with FDatabaseFrame do
   begin
     Parent := DatabasePnl;

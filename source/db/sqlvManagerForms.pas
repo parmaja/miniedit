@@ -27,9 +27,9 @@ uses
 
 type
 
-  { TsqlvManagerForm }
+  { TDBManagerForm }
 
-  TsqlvManagerForm = class(TFrame, INotifyEngine, INotifyEngineSetting, IsqlvNotify)
+  TDBManagerForm = class(TFrame, INotifyEngine, INotifyEngineSetting, IsqlvNotify)
     DatabaseImage: TntvImgBtn;
     DatabaseImage1: TntvImgBtn;
     DatabaseLbl1: TLabel;
@@ -90,19 +90,19 @@ type
     procedure CheckSearch;
     procedure SearchFor(S: string);
     procedure ApplyFilter;
-    procedure CollectAttributes(vMetaItems: TmncMetaItems);
+    procedure CollectMetaItems(vMetaItems: TmncMetaItems);
   private
     function LogTime(Start: TDateTime): string;
     procedure StateChanged;
-    procedure LoadMembers(vGroup: TsqlvAddon; vMetaItems: TmncMetaItems);
+    procedure LoadMembers(vGroup: TmndAddon; vMetaItems: TmncMetaItems);
   public
-    Actions: TsqlvAddons;
-    GroupsNames: TsqlvAddons;//Fields, Indexes
-    CurrentGroup: TsqlvAddon;
+    Actions: TmndAddons;
+    GroupsNames: TmndAddons;//Fields, Indexes
+    CurrentGroup: TmndAddon;
     procedure ActionsMenuSelect(Sender: TObject);
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
-    procedure OpenAction(vAction: TsqlvAddon; aValue: string);
+    procedure OpenAction(vAction: TmndAddon; aValue: string);
     procedure OpenMember(AValue: string);
     procedure OpenGroup(AValue: string);
     procedure LoadActions(vGroup: string; Append: Boolean = False);
@@ -112,8 +112,8 @@ type
 
     procedure ServerChanged;
     procedure DatabaseChanged;
-    procedure ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
-    procedure ShowEditor(vAddon: TsqlvAddon; S: string);
+    procedure ShowMeta(vAddon: TmndAddon; vSelectDefault: Boolean);
+    procedure ShowEditor(vAddon: TmndAddon; S: string);
   end;
 
 implementation
@@ -123,21 +123,21 @@ implementation
 uses
   CSVOptionsForms, ParamsForms, SynEditMiscProcs;
 
-{ TsqlvManagerForm }
+{ TDBManagerForm }
 
-procedure TsqlvManagerForm.ShowMeta(vAddon: TsqlvAddon; vSelectDefault: Boolean);
+procedure TDBManagerForm.ShowMeta(vAddon: TmndAddon; vSelectDefault: Boolean);
 var
   i, c: Integer;
   d: Integer;
   g: string;
   b: Boolean;
-  aGroups: TsqlvAddons;
-  aGroup: TsqlvAddon;
+  aGroups: TmndAddons;
+  aGroup: TmndAddon;
   MetaName: string;
 begin
   DatabaseLbl.Caption := DBEngine.DB.Connection.Resource;
   MetaName := vAddon.Title + ': ' + DBEngine.Stack.Current.MetaItems.Values[DBEngine.Stack.Current.DisplayName];
-  aGroups := TsqlvAddons.Create;
+  aGroups := TmndAddons.Create;
   try
     DBEngine.Enum(vAddon.Name, aGroups, DBEngine.DB.IsActive);
 
@@ -191,7 +191,7 @@ begin
   LoadMembers(aGroup, DBEngine.Stack.Current.MetaItems); //if group is nil it must clear the member grid
 end;
 
-procedure TsqlvManagerForm.ShowEditor(vAddon: TsqlvAddon; S: string);
+procedure TDBManagerForm.ShowEditor(vAddon: TmndAddon; S: string);
 begin
   Engine.BeginUpdate;
   try
@@ -205,7 +205,7 @@ begin
   end;
 end;
 
-procedure TsqlvManagerForm.LoadMembers(vGroup: TsqlvAddon; vMetaItems: TmncMetaItems);
+procedure TDBManagerForm.LoadMembers(vGroup: TmndAddon; vMetaItems: TmncMetaItems);
 var
   i, j: Integer;
   aItems: TmncMetaItems;
@@ -261,7 +261,7 @@ begin
   end;
 end;
 
-procedure TsqlvManagerForm.BackBtnClick(Sender: TObject);
+procedure TDBManagerForm.BackBtnClick(Sender: TObject);
 begin
   if DBEngine.Stack.Count > 1 then
   begin
@@ -271,11 +271,11 @@ begin
   end;
 end;
 
-procedure TsqlvManagerForm.ConnectBtnClick(Sender: TObject);
+procedure TDBManagerForm.ConnectBtnClick(Sender: TObject);
 begin
 end;
 
-procedure TsqlvManagerForm.DatabasesListDblClick(Sender: TObject);
+procedure TDBManagerForm.DatabasesListDblClick(Sender: TObject);
 var
   aDatabase: string;
 begin
@@ -286,24 +286,24 @@ begin
   end;
 end;
 
-procedure TsqlvManagerForm.DisconnectBtnClick(Sender: TObject);
+procedure TDBManagerForm.DisconnectBtnClick(Sender: TObject);
 begin
 end;
 
-procedure TsqlvManagerForm.Edit1KeyPress(Sender: TObject; var Key: char);
+procedure TDBManagerForm.Edit1KeyPress(Sender: TObject; var Key: char);
 begin
   Timer1.Enabled := True;
 end;
 
-procedure TsqlvManagerForm.FirstBtnClick(Sender: TObject);
+procedure TDBManagerForm.FirstBtnClick(Sender: TObject);
 begin
   DBEngine.Stack.Top;
   //DBEngine.Stack.Clear;
-  //DBEngine.Stack.Push(TsqlvProcess.Create('Databases', 'Database', 'Tables', DatabasesCbo.Text));
+  //DBEngine.Stack.Push(TmndProcess.Create('Databases', 'Database', 'Tables', DatabasesCbo.Text));
   DBEngine.Run;
 end;
 
-procedure TsqlvManagerForm.FormShortCut(var Msg: TLMKey; var Handled: Boolean);
+procedure TDBManagerForm.FormShortCut(var Msg: TLMKey; var Handled: Boolean);
 begin
   case Msg.CharCode of
     VK_F6:
@@ -317,24 +317,24 @@ begin
   end;
 end;
 
-procedure TsqlvManagerForm.GroupsListKeyPress(Sender: TObject; var Key: char);
+procedure TDBManagerForm.GroupsListKeyPress(Sender: TObject; var Key: char);
 begin
   if Key = #13 then
     MembersGrid.SetFocus;
 end;
 
-procedure TsqlvManagerForm.GroupsListSelect(Sender: TObject);
+procedure TDBManagerForm.GroupsListSelect(Sender: TObject);
 begin
   OpenGroup(GroupsNames[GroupsList.ItemIndex].Name);
 end;
 
-procedure TsqlvManagerForm.MembersGridDblClick(Sender: TObject);
+procedure TDBManagerForm.MembersGridDblClick(Sender: TObject);
 begin
   if (MembersGrid.Count > 0) and (MembersGrid.Current.Row >= 0) then
     OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
 end;
 
-procedure TsqlvManagerForm.MembersGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+procedure TDBManagerForm.MembersGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   case Key of
     VK_F3:
@@ -349,7 +349,7 @@ begin
   end;
 end;
 
-procedure TsqlvManagerForm.MembersGridUTF8KeyPress(Sender: TObject;
+procedure TDBManagerForm.MembersGridUTF8KeyPress(Sender: TObject;
   var UTF8Key: TUTF8Char);
 begin
   CheckSearch;
@@ -357,22 +357,22 @@ begin
   SearchFor(FSearch);
 end;
 
-procedure TsqlvManagerForm.MenuItem1Click(Sender: TObject);
+procedure TDBManagerForm.MenuItem1Click(Sender: TObject);
 begin
   DatabasesListDblClick(Sender);
 end;
 
-procedure TsqlvManagerForm.RefreshBtnClick(Sender: TObject);
+procedure TDBManagerForm.RefreshBtnClick(Sender: TObject);
 begin
 
 end;
 
-procedure TsqlvManagerForm.MembersListDblClick(Sender: TObject);
+procedure TDBManagerForm.MembersListDblClick(Sender: TObject);
 begin
   OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
 end;
 
-procedure TsqlvManagerForm.MembersListKeyPress(Sender: TObject; var Key: char);
+procedure TDBManagerForm.MembersListKeyPress(Sender: TObject; var Key: char);
 begin
   if (Key = #13) then
   begin
@@ -381,19 +381,19 @@ begin
   end;
 end;
 
-procedure TsqlvManagerForm.OpenBtnClick(Sender: TObject);
+procedure TDBManagerForm.OpenBtnClick(Sender: TObject);
 begin
   if MembersGrid.Current.Row < MembersGrid.Count then
     OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
 end;
 
-procedure TsqlvManagerForm.Timer1Timer(Sender: TObject);
+procedure TDBManagerForm.Timer1Timer(Sender: TObject);
 begin
   Timer1.Enabled := False;
   ApplyFilter;
 end;
 
-procedure TsqlvManagerForm.CheckSearch;
+procedure TDBManagerForm.CheckSearch;
 begin
   if (FSearch = '') or (SecondsBetween(Now, FSearchTime) > 3) then
   begin
@@ -402,7 +402,7 @@ begin
   end;
 end;
 
-procedure TsqlvManagerForm.SearchFor(S: string);
+procedure TDBManagerForm.SearchFor(S: string);
 var
   i: Integer;
   t: string;
@@ -428,12 +428,12 @@ begin
   FSearchTime := Now;
 end;
 
-procedure TsqlvManagerForm.ApplyFilter;
+procedure TDBManagerForm.ApplyFilter;
 begin
 
 end;
 
-procedure TsqlvManagerForm.CollectAttributes(vMetaItems: TmncMetaItems);
+procedure TDBManagerForm.CollectMetaItems(vMetaItems: TmncMetaItems);
 var
   aItemName: string;
 begin
@@ -444,7 +444,7 @@ begin
   DumpMetaItems(vMetaItems);
 end;
 
-procedure TsqlvManagerForm.StateChanged;
+procedure TDBManagerForm.StateChanged;
 begin
   if CurrentGroup <> nil then
     LoadActions(CurrentGroup.ItemName);
@@ -452,10 +452,10 @@ begin
     MembersGrid.SetFocus;
 end;
 
-procedure TsqlvManagerForm.LoadActions(vGroup: string; Append: Boolean);
+procedure TDBManagerForm.LoadActions(vGroup: string; Append: Boolean);
 var
   i, c: Integer;
-  aList: TsqlvAddons;
+  aList: TmndAddons;
   aMenuItem: TMenuItem;
 begin
   if (vGroup = '') or not Append then
@@ -465,8 +465,8 @@ begin
   end;
   if vGroup <> '' then
   begin
-    Actions := TsqlvAddons.Create;
-    aList := TsqlvAddons.Create;
+    Actions := TmndAddons.Create;
+    aList := TmndAddons.Create;
     try
       DBEngine.Enum(vGroup, aList, DBEngine.DB.IsActive);
       c := 0;
@@ -488,17 +488,17 @@ begin
   MembersGrid.PopupMenu := ActionsPopupMenu;
 end;
 
-procedure TsqlvManagerForm.SaveOptions;
+procedure TDBManagerForm.SaveOptions;
 begin
   Engine.Options.Custom.Values['Databases.Height'] := IntToStr(DatabasesPnl.Height);
 end;
 
-procedure TsqlvManagerForm.LoadOptions;
+procedure TDBManagerForm.LoadOptions;
 begin
   DatabasesPnl.Height := StrToIntDef(Engine.Options.Custom.Values['Databases.Height'], DatabasesPnl.Height);
 end;
 
-procedure TsqlvManagerForm.ServerChanged;
+procedure TDBManagerForm.ServerChanged;
 var
   Strings: TStringList;
   Meta: TmncMeta;
@@ -544,7 +544,7 @@ begin
   end;
 end;
 
-procedure TsqlvManagerForm.DatabaseChanged;
+procedure TDBManagerForm.DatabaseChanged;
 begin
   if DBEngine.DB.IsActive then
   begin
@@ -558,26 +558,26 @@ begin
   end;
 end;
 
-procedure TsqlvManagerForm.ActionsMenuSelect(Sender: TObject);
+procedure TDBManagerForm.ActionsMenuSelect(Sender: TObject);
 var
   aValue: string;
-  aAddon: TsqlvAddon;
+  aAddon: TmndAddon;
 begin
   aAddon := Actions[(Sender as TMenuItem).Tag];
   aValue := MembersGrid.Values[0, MembersGrid.Current.Row];
   OpenAction(aAddon, aValue);
 end;
 
-constructor TsqlvManagerForm.Create(TheOwner: TComponent);
+constructor TDBManagerForm.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
-  GroupsNames := TsqlvAddons.Create;
+  GroupsNames := TmndAddons.Create;
   DBEngine.NotifyObject := Self;
   Engine.RegisterNotify(Self);
   StateChanged;
 end;
 
-destructor TsqlvManagerForm.Destroy;
+destructor TDBManagerForm.Destroy;
 begin
   DBEngine.NotifyObject := nil;
   DBEngine.DB.Close;
@@ -587,7 +587,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TsqlvManagerForm.OpenMember(AValue: string);
+procedure TDBManagerForm.OpenMember(AValue: string);
 var
   a: TmncMetaItems;
 begin
@@ -598,11 +598,11 @@ begin
     DebugLn('CurrentGroup.ItemName='+CurrentGroup.ItemName);
     DebugLn('AValue='+AValue);
     {$endif}
-    CollectAttributes(a);
+    CollectMetaItems(a);
     with DBEngine.Stack do
       //if Current.Addon <> nil then
       //begin
-        DBEngine.Stack.Push(TsqlvProcess.Create(CurrentGroup.Name, CurrentGroup.ItemName, AValue, a));
+        DBEngine.Stack.Push(TmndProcess.Create(CurrentGroup.Name, CurrentGroup.ItemName, AValue, a));
         DBEngine.Run;
       //end;
         //what if Addon <> nil or what if Current.Addon.Item = ''
@@ -611,7 +611,7 @@ begin
   end;
 end;
 
-procedure TsqlvManagerForm.OpenGroup(AValue: string);
+procedure TDBManagerForm.OpenGroup(AValue: string);
 var
   a: TmncMetaItems;
 begin
@@ -622,11 +622,11 @@ begin
     DebugLn('CurrentGroup.ItemName='+CurrentGroup.ItemName);
     DebugLn('OpenGroup.AValue='+AValue);
     {$endif}
-    //CollectAttributes(a);
+    //CollectMetaItems(a);
     with DBEngine.Stack do
       if (Current <> nil) and (GroupsList.Items.Count > 0) and (GroupsList.ItemIndex >=0) then
       begin
-        DBEngine.Stack.Push(TsqlvProcess.Create(Current.CurrentAddon, AValue, Current.MetaItems));
+        DBEngine.Stack.Push(TmndProcess.Create(Current.CurrentAddon, AValue, Current.MetaItems));
         DBEngine.Run;
       end;
   finally
@@ -634,7 +634,7 @@ begin
   end;
 end;
 
-procedure TsqlvManagerForm.OpenAction(vAction: TsqlvAddon; aValue: string);
+procedure TDBManagerForm.OpenAction(vAction: TmndAddon; aValue: string);
 var
   a: TmncMetaItems;
 begin
@@ -645,7 +645,7 @@ begin
     DebugLn('CurrentGroup.ItemName='+CurrentGroup.ItemName);
     DebugLn('AValue=' + AValue);
     {$endif}
-    CollectAttributes(a);
+    CollectMetaItems(a);
     if vAction <> nil then
       vAction.Execute(a);
   finally
@@ -653,7 +653,7 @@ begin
   end;
 end;
 
-function TsqlvManagerForm.LogTime(Start: TDateTime): string;
+function TDBManagerForm.LogTime(Start: TDateTime): string;
 var
   ms, m, s: Cardinal;
 begin

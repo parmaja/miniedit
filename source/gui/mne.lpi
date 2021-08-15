@@ -469,7 +469,7 @@
       <Unit52>
         <Filename Value="..\db\sqlvManagerForms.pas"/>
         <IsPartOfProject Value="True"/>
-        <ComponentName Value="sqlvManagerForm"/>
+        <ComponentName Value="DBManagerForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
       </Unit52>
