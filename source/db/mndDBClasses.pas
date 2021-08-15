@@ -1,4 +1,4 @@
-unit mneDBClasses;
+unit mndDBClasses;
 {$mode objfpc}{$H+}
 {**
  * Mini Edit

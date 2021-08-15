@@ -12,7 +12,7 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, Menus,
-  Dialogs, ComCtrls, StdCtrls, mneClasses, sqlvEngines, EditorClasses, Types;
+  Dialogs, ComCtrls, StdCtrls, mneClasses, mndEngines, EditorClasses, Types;
 
 type
 

@@ -52,15 +52,15 @@ uses
 
   SearchProgressForms, SelectList, IniFiles, mneAssociateForm, mneExtends,
   mneViewClasses, mneCMDClasses, mneGoClasses, mneSARDClasses, mneLSLClasses,
-  sqlvManagerForms, mneBoardClasses, mneBoardForms, mneSelectComponents,
+  mndManagerForms, mneBoardClasses, mneBoardForms, mneSelectComponents,
   mneBoardComponents, mneFontGenForm, mneVerilogClasses, SynHighlighterVerilog,
   mneCustomClasses, mnePasProjectFrames, mnePASClasses, mneGccClasses,
   mneCSVClasses, mneDClasses, mneLuaClasses, LuaDBGServers, mnMsgBox, GUIMsgBox,
   Classes, PHPUtils, ntvThemes, mneSetups, mneSettings, EditorClasses,
   EditorColors, gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneClasses,
-  mneDBClasses, mneRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils,
-  mnStreams, mncCSV, sqlvOpenDatabases, sqlvSQLForms, sqlvEngines,
-  sqlvStdClasses, sqlvConnectServers;
+  mneRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils,
+  mnStreams, mncCSV, mndOpenDatabases, mndSQLForms, mndEngines,
+  mndStdAddons, mndConnectServers;
 
 {$R *.res}
 {$i '..\lib\mne.inc'}
@@ -184,4 +184,3 @@ begin
     end;
   end;
 end.
-

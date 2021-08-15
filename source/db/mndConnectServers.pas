@@ -1,4 +1,4 @@
-unit sqlvOpenDatabases;
+unit mndConnectServers;
 
 {$mode objfpc}{$H+}
 
@@ -9,12 +9,9 @@ uses
 
 type
 
-  { TOpenDatabaseForm }
+  { TConnectDBServerForm }
 
-  TOpenDatabaseForm = class(TForm)
-    AnsiCodePageChk: TCheckBox;
-    BrowseBtn: TButton;
-    DatabaseEdit: TEdit;
+  TConnectDBServerForm = class(TForm)
     SavePasswordChk: TCheckBox;
     CancelBtn: TButton;
     Label4: TLabel;
@@ -22,18 +19,14 @@ type
     Label6: TLabel;
     Label7: TLabel;
     HostEdit: TEdit;
-    ExclusiveChk: TCheckBox;
-    Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     OkBtn: TButton;
-    OpenDialog: TOpenDialog;
     DatabaseEngineCbo: TComboBox;
     PortEdit: TEdit;
     UserEdit: TEdit;
     PasswordEdit: TEdit;
     RoleEdit: TEdit;
-    procedure BrowseBtnClick(Sender: TObject);
     procedure CancelBtnClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure OkBtnClick(Sender: TObject);
@@ -44,41 +37,27 @@ type
 implementation
 
 uses
-  sqlvEngines;
+  EditorEngine, mndEngines;
 
 {$R *.lfm}
 
-{ TOpenDatabaseForm }
+{ TConnectDBServerForm }
 
-procedure TOpenDatabaseForm.BrowseBtnClick(Sender: TObject);
-begin
-  OpenDialog.FileName := sFileNameFilter;
-  OpenDialog.DefaultExt := sFileExtFilter;
-  OpenDialog.Filter := sFileNameFilter;
-  if DatabaseEdit.Text <> '' then
-    OpenDialog.InitialDir := DatabaseEdit.Text;
-  if OpenDialog.Execute then
-  begin
-    DatabaseEdit.Text := OpenDialog.FileName;
-  end;
-end;
-
-procedure TOpenDatabaseForm.CancelBtnClick(Sender: TObject);
+procedure TConnectDBServerForm.CancelBtnClick(Sender: TObject);
 begin
   ModalResult := mrCancel;
 end;
 
-procedure TOpenDatabaseForm.FormCreate(Sender: TObject);
+procedure TConnectDBServerForm.FormCreate(Sender: TObject);
 begin
   Engines.EnumConnections(DatabaseEngineCbo.Items);
   DatabaseEngineCbo.Sorted := True;
   DatabaseEngineCbo.ItemIndex := 0;
 end;
 
-procedure TOpenDatabaseForm.OkBtnClick(Sender: TObject);
+procedure TConnectDBServerForm.OkBtnClick(Sender: TObject);
 begin
   ModalResult := mrOk;
 end;
 
 end.
-

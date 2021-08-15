@@ -32,7 +32,7 @@ uses
   {$endif}
   mnePHPIniForm,
   //end of addons
-  sqlvEngines, sqlvManagerForms,
+  mndEngines, mndManagerForms,
   mneTendencyOptions, mneResources, IniFiles, mnFields, simpleipc, mnUtils,
   ntvTabs, ntvPageControls, SynEditMiscClasses, SynEditMarkupSpecialLine,
   mncDB,
@@ -632,7 +632,7 @@ type
     procedure MoveListIndex(vDirection: Integer);
   protected
     FProjectFrame: TFrame;
-    FDatabaseFrame: TmndManagerForm;
+    FDatabaseFrame: TDBManagerForm;
     FOutputs: TOutputs;
     FMenuItemsList: TObjectList;
     procedure ExploreFolder(AFolder: string);
@@ -1842,7 +1842,7 @@ begin
 
   Engine.RegisterNotify(Self);
 
-  FDatabaseFrame := TmndManagerForm.Create(Self); //before Engine.Prepare, to register notify
+  FDatabaseFrame := TDBManagerForm.Create(Self); //before Engine.Prepare, to register notify
   with FDatabaseFrame do
   begin
     Parent := DatabasePnl;

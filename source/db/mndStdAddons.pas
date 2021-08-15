@@ -1,6 +1,6 @@
-unit sqlvStdClasses;
+unit mndStdAddons;
 {**
- *  This file is part of the "Mini Connections"
+ *  This file is part of the "MiniEdit"
  *
  * @license   modifiedLGPL (modified of http://www.gnu.org/licenses/lgpl.html)
  *            See the file COPYING.MLGPL, included in this distribution,
@@ -31,7 +31,7 @@ uses
   mnUtils, mncMeta,
   mncCSV, mncPostgre, mncMySQL, mncFirebird, mncSQLite,
   mncPGMeta, mncMySQLMeta, mncFBMeta, mncSQLiteMeta,
-  sqlvEngines;
+  mndEngines;
 
 type
 
@@ -478,7 +478,7 @@ end;
 procedure TMembersAddon.DoExecute(vMetaItems: TmncMetaItems);
 begin
   inherited;
-  //sqlvGui.ShowMeta(Self, Value);
+  //mndGui.ShowMeta(Self, Value);
 end;
 
 function TMembersAddon.GetCanExecute: Boolean;

@@ -175,7 +175,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item10>
     </RequiredPackages>
-    <Units Count="61">
+    <Units Count="60">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -456,63 +456,60 @@
         <IsPartOfProject Value="True"/>
       </Unit49>
       <Unit50>
-        <Filename Value="..\db\mneDBClasses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit50>
-      <Unit51>
-        <Filename Value="..\db\sqlvSQLForms.pas"/>
+        <Filename Value="..\db\mndSQLForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SQLEditForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit51>
-      <Unit52>
-        <Filename Value="..\db\sqlvManagerForms.pas"/>
+      </Unit50>
+      <Unit51>
+        <Filename Value="..\db\mndManagerForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="DBManagerForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit52>
-      <Unit53>
-        <Filename Value="..\db\sqlvOpenDatabases.pas"/>
+      </Unit51>
+      <Unit52>
+        <Filename Value="..\db\mndOpenDatabases.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="OpenDatabaseForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit52>
+      <Unit53>
+        <Filename Value="..\db\mndStdAddons.pas"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="mndStdClasses"/>
       </Unit53>
       <Unit54>
-        <Filename Value="..\db\sqlvStdClasses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit54>
-      <Unit55>
-        <Filename Value="..\db\sqlvConnectServers.pas"/>
+        <Filename Value="..\db\mndConnectServers.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ConnectDBServerForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit55>
-      <Unit56>
+      </Unit54>
+      <Unit55>
         <Filename Value="mneAssociateForm.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="AssociateForm"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit55>
+      <Unit56>
+        <Filename Value="..\db\mndEngines.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit56>
       <Unit57>
-        <Filename Value="..\db\sqlvEngines.pas"/>
+        <Filename Value="..\extends\gcc\mneGccClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit57>
       <Unit58>
-        <Filename Value="..\extends\gcc\mneGccClasses.pas"/>
+        <Filename Value="..\extends\LSL\mneLSLClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit58>
       <Unit59>
-        <Filename Value="..\extends\LSL\mneLSLClasses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit59>
-      <Unit60>
         <Filename Value="..\extends\image\mneViewClasses.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit60>
+      </Unit59>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

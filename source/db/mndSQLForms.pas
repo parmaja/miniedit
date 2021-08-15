@@ -1,4 +1,4 @@
-unit sqlvSQLForms;
+unit mndSQLForms;
 {**
  *  This file is part of the "Mini Library"
  *
@@ -22,8 +22,8 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, ExtCtrls, StdCtrls, FileUtil,
   mncSQL,
-  LCLType, Graphics, Menus, Buttons, ComCtrls, EditorEngine, sqlvManagerForms, ParamsForms,
-  sqlvEngines, IniFiles, ntvTabSets, mnMsgBox, mnStreams, ntvGrids,
+  LCLType, Graphics, Menus, Buttons, ComCtrls, EditorEngine, mndManagerForms, ParamsForms,
+  mndEngines, IniFiles, ntvTabSets, mnMsgBox, mnStreams, ntvGrids,
   ntvPageControls, mncConnections, mncCSV;
 
 type
@@ -431,4 +431,3 @@ begin
 end;
 
 end.
-

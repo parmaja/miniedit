@@ -1,4 +1,4 @@
-unit sqlvManagerForms;
+unit mndManagerForms;
 {**
  *  This file is part of the "Mini Connections"
  *
@@ -22,14 +22,14 @@ uses
   mncSQL, SynCompletion, SynEditAutoComplete, SynHighlighterHashEntries,
   mnUtils, mncMeta, mncCSVExchanges, mnSynHighlighterStdSQL, mncMySQL,
   mncPostgre, mncSQLite, mncSQLiteMeta, mncPGMeta, mncFBMeta, ntvGrids,
-  ntvPanels, ntvImgBtns, sqlvEngines, sqlvStdClasses, LMessages, ComCtrls,
+  ntvPanels, ntvImgBtns, mndEngines, mndStdAddons, LMessages, ComCtrls,
   EditorClasses, EditorEngine, mneResources;
 
 type
 
   { TDBManagerForm }
 
-  TDBManagerForm = class(TFrame, INotifyEngine, INotifyEngineSetting, IsqlvNotify)
+  TDBManagerForm = class(TFrame, INotifyEngine, INotifyEngineSetting, ImndNotify)
     DatabaseImage: TntvImgBtn;
     DatabaseImage1: TntvImgBtn;
     DatabaseLbl1: TLabel;

@@ -1,4 +1,4 @@
-unit sqlvEngines;
+unit mndEngines;
 {**
  *  This file is part of the "Mini Connections"
  *
@@ -16,7 +16,7 @@ uses
   mnClasses, mnUtils, mnXMLRttiProfile,
   mncConnections, mncCSVExchanges, mncSQL, mncCSV, mncDB, mncMeta, mnParams, mnFields,
   EditorEngine, EditorClasses, fgl,
-  sqlvOpenDatabases, sqlvConnectServers;
+  mndOpenDatabases, mndConnectServers;
 
 const
   IMG_UNKOWN = 0;
@@ -37,7 +37,7 @@ const
   IMG_DATABASES = 15;
 
 type
-  EsqlvException = class(Exception);
+  EmndException = class(Exception);
 
   TmndExecuteType = (execNormal, execExport, execImport);
 
@@ -133,7 +133,7 @@ type
 
   TmndAddonStyle = set of (nsDefault, nsGroup, nsCommand, nsEditor, nsButton, nsNeedSession);
 
-  IsqlvAddon = interface(IInterface)
+  ImndAddon = interface(IInterface)
     function GetAddon: TmndAddon;
   end;
 
@@ -269,7 +269,7 @@ type
 
   { TmndNotify }
 
-  IsqlvNotify = Interface(INotifyEngine)
+  ImndNotify = Interface(INotifyEngine)
     ['{E6F8D9BD-F716-4758-8B08-DDDBD3FA1732}']
     procedure ServerChanged; virtual; abstract;
     procedure DatabaseChanged; virtual; abstract;
@@ -331,7 +331,7 @@ type
 
   { TDBEngine }
 
-  TDBEngine = class(TmndCustomAddons, IsqlvNotify, INotifyEngine, INotifyEngineSetting)
+  TDBEngine = class(TmndCustomAddons, ImndNotify, INotifyEngine, INotifyEngineSetting)
   private
     FDB: TmndDB;
     FEngines: TStringLIst;
@@ -339,8 +339,8 @@ type
     FStack: TmndStack;
     FHistory: TmndAddonHistory;
     FSQLHistory: TmndSQLHistory;
-    FNotifyObject: IsqlvNotify;
-    procedure SetNotifyObject(AValue: IsqlvNotify);
+    FNotifyObject: ImndNotify;
+    procedure SetNotifyObject(AValue: ImndNotify);
   public
     Server: TmndServerInfo;
     constructor Create;
@@ -381,7 +381,7 @@ type
     property History: TmndAddonHistory read FHistory;
     property Stack: TmndStack read FStack;
     property SQLHistory: TmndSQLHistory read FSQLHistory;
-    property NotifyObject: IsqlvNotify read FNotifyObject write SetNotifyObject {implements IsqlvNotify};
+    property NotifyObject: ImndNotify read FNotifyObject write SetNotifyObject {implements ImndNotify};
   end;
 
 function DBEngine: TDBEngine;
@@ -393,7 +393,7 @@ const
   sAllFilesFilter = 'All files (*.*)|*.*';
   sFileNameFilter = '*.sqlite; *.fdb';
   sFileExtFilter = 'sqlite';
-  sqlvConfig = 'mne.sqlviewer.config';
+  mndConfig = 'mne.mndiewer.config';
 
 implementation
 
@@ -633,7 +633,7 @@ end;
 
 procedure TDBEngine.SaveOptions;
 begin
-  FSetting.SaveToFile(Engine.WorkSpace + sqlvConfig);
+  FSetting.SaveToFile(Engine.WorkSpace + mndConfig);
 end;
 
 procedure TDBEngine.ChangeState(State: TEditorChangeStates);
@@ -772,13 +772,13 @@ begin
   inherited;
   aDefault := -1;
   c := 0;
-  for i := 0 to sqlvClasses.Count - 1 do
+  for i := 0 to mndClasses.Count - 1 do
   begin
-    if SameText(sqlvClasses[i].Group, Name) then
+    if SameText(mndClasses[i].Group, Name) then
     begin
-      if (aDefault < 0) and sqlvClasses[i].IsDefault then
+      if (aDefault < 0) and mndClasses[i].IsDefault then
         aDefault := c;
-      Strings.AddObject(sqlvClasses[i].Title, sqlvClasses[i]);
+      Strings.AddObject(mndClasses[i].Title, mndClasses[i]);
       Inc(c);
     end;
   end;
@@ -838,7 +838,7 @@ end;
 
 { TmndClass }
 
-procedure TDBEngine.SetNotifyObject(AValue: IsqlvNotify);
+procedure TDBEngine.SetNotifyObject(AValue: ImndNotify);
 begin
   if FNotifyObject =AValue then Exit;
   FNotifyObject :=AValue;
@@ -1026,7 +1026,7 @@ end;
 procedure TDBEngine.RegisterFilter(Filter: string);
 begin
   if AnsiPos('|', Filter) = 0 then
-    raise EsqlvException.Create('Invalid sqlviewer filter');
+    raise EmndException.Create('Invalid mndiewer filter');
   if AnsiPos(Filter, Setting.OpenSaveDialogFilters) = 0 then
   begin
     if Setting.OpenSaveDialogFilters <> '' then
@@ -1089,7 +1089,7 @@ end;
 
 procedure TDBEngine.LoadOptions;
 begin
-  FSetting.SafeLoadFromFile(Engine.WorkSpace + sqlvConfig);
+  FSetting.SafeLoadFromFile(Engine.WorkSpace + mndConfig);
 end;
 
 { TmndCustomHistory }
