@@ -47,7 +47,7 @@ type
     FileMnu: TMenuItem;
     ExitMnu: TMenuItem;
     FirstBtn: TButton;
-    GroupsList: TComboBox;
+    MasterList: TComboBox;
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
@@ -71,8 +71,8 @@ type
     procedure Edit1KeyPress(Sender: TObject; var Key: char);
     procedure FirstBtnClick(Sender: TObject);
     procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
-    procedure GroupsListKeyPress(Sender: TObject; var Key: char);
-    procedure GroupsListSelect(Sender: TObject);
+    procedure MasterListKeyPress(Sender: TObject; var Key: char);
+    procedure MasterListSelect(Sender: TObject);
     procedure MembersGridDblClick(Sender: TObject);
     procedure MembersGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure MembersGridUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
@@ -94,18 +94,21 @@ type
   private
     function LogTime(Start: TDateTime): string;
     procedure StateChanged;
-    procedure LoadMembers(vGroup: TmndAddon; vMetaItems: TmncMetaItems);
+    procedure LoadMembers(vMaster: TmndAddon; vMetaItems: TmncMetaItems);
   public
-    Actions: TmndAddons;
-    GroupsNames: TmndAddons;//Fields, Indexes
-    CurrentGroup: TmndAddon;
+    MenuActions: TmndAddons;
+
+    Masters: TmndAddons;//Fields, Indexes
+    Members: TmncMetaItems; //Grid
+    CurrentMaster: TmndAddon;
+
     procedure ActionsMenuSelect(Sender: TObject);
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
     procedure OpenAction(vAction: TmndAddon; aValue: string);
-    procedure OpenMember(AValue: string);
-    procedure OpenGroup(AValue: string);
-    procedure LoadActions(vGroup: string; Append: Boolean = False);
+    procedure OpenMember(AMember: TmncMetaItem);
+    procedure OpenMaster(AValue: string);
+    procedure LoadActions(vMaster: string; Append: Boolean = False);
 
     procedure SaveOptions;
     procedure LoadOptions;
@@ -131,43 +134,43 @@ var
   d: Integer;
   g: string;
   b: Boolean;
-  aGroups: TmndAddons;
-  aGroup: TmndAddon;
+  aMasters: TmndAddons;
+  aMaster: TmndAddon;
   MetaName: string;
 begin
   DatabaseLbl.Caption := DBEngine.DB.Connection.Resource;
   MetaName := vAddon.Title + ': ' + DBEngine.Stack.Current.MetaItems.Values[DBEngine.Stack.Current.DisplayName];
-  aGroups := TmndAddons.Create;
+  aMasters := TmndAddons.Create;
   try
-    DBEngine.Enum(vAddon.Name, aGroups, DBEngine.DB.IsActive);
+    DBEngine.Enum(vAddon.Name, aMasters, DBEngine.DB.IsActive);
 
     g := DBEngine.Stack.Current.Select;
-    aGroup := nil;
+    aMaster := nil;
     d := -1;
     c := 0;
     b := false;
-    GroupsList.Items.BeginUpdate;
+    MasterList.Items.BeginUpdate;
     try
-      GroupsList.Clear;
-      GroupsNames.Clear;
-      for i := 0 to aGroups.Count -1 do
+      MasterList.Clear;
+      Masters.Clear;
+      for i := 0 to aMasters.Count -1 do
       begin
-        if not (nsCommand in aGroups[i].Style) then //Group in style
+        if not (nsCommand in aMasters[i].Style) then //Group in style
         begin
-          GroupsList.Items.Add(aGroups[i].Title);
-          GroupsNames.Add(aGroups[i]);
+          MasterList.Items.Add(aMasters[i].Title);
+          Masters.Add(aMasters[i]);
           //if (d < 0) then
           begin
             if (d < 0) then //select first one
             begin
               d := c;
-              aGroup := aGroups[i];
+              aMaster := aMasters[i];
             end;
             //b mean already selected and override privouse assigb
-            if not b and (((g = '') and (nsDefault in aGroups[i].Style))) or (((g <>'') and SameText(g, aGroups[i].Name))) then
+            if not b and (((g = '') and (nsDefault in aMasters[i].Style))) or (((g <>'') and SameText(g, aMasters[i].Name))) then
             begin
               d := c;
-              aGroup := aGroups[i];
+              aMaster := aMasters[i];
               b := true;
             end;
           end;
@@ -175,20 +178,20 @@ begin
         end;
       end;
     finally
-      GroupsList.Items.EndUpdate;
+      MasterList.Items.EndUpdate;
     end;
     if d < 0 then
       d := 0;
-    if aGroups.Count > 0 then
-      GroupsList.ItemIndex := d;
+    if aMasters.Count > 0 then
+      MasterList.ItemIndex := d;
   finally
-    aGroups.Free;
+    aMasters.Free;
   end;
 
-  if aGroup <> nil then
-    DBEngine.Stack.Current.Select := aGroup.Name;
+  if aMaster <> nil then
+    DBEngine.Stack.Current.Select := aMaster.Name;
 
-  LoadMembers(aGroup, DBEngine.Stack.Current.MetaItems); //if group is nil it must clear the member grid
+  LoadMembers(aMaster, DBEngine.Stack.Current.MetaItems); //if Master is nil it must clear the member grid
 end;
 
 procedure TDBManagerForm.ShowEditor(vAddon: TmndAddon; S: string);
@@ -205,13 +208,12 @@ begin
   end;
 end;
 
-procedure TDBManagerForm.LoadMembers(vGroup: TmndAddon; vMetaItems: TmncMetaItems);
+procedure TDBManagerForm.LoadMembers(vMaster: TmndAddon; vMetaItems: TmncMetaItems);
 var
   i, j: Integer;
-  aItems: TmncMetaItems;
 begin
   MembersGrid.Clear;
-  if vGroup = nil then
+  if vMaster = nil then
   begin
     MembersGrid.ColumnsCount := 1;
     MembersGrid.Columns[0].Title := '';
@@ -220,43 +222,41 @@ begin
   end
   else
   begin
-    aItems := TmncMetaItems.Create;
+    FreeAndNil(Members);
+    Members := TmncMetaItems.Create;
+
+    MembersGrid.BeginUpdate;
+    MembersGrid.Reset;
     try
-      MembersGrid.BeginUpdate;
-      MembersGrid.Reset;
-      try
-        vGroup.EnumMeta(aItems, vMetaItems);
+      vMaster.EnumMeta(Members, vMetaItems);
 
-        MembersGrid.ColumnsCount := aItems.Header.Count + 1;
-        MembersGrid.Columns[0].Title := 'Name';
-        for i := 1 to MembersGrid.ColumnsCount -1 do
-        begin
-          MembersGrid.Columns[i].Title := aItems.Header.Items[i - 1].Value;
-        end;
-        if MembersGrid.ColumnsCount > 0 then
-          MembersGrid.Columns[0].AutoFit := True;
-
-        MembersGrid.Capacity := aItems.Count;
-        MembersGrid.Count := aItems.Count;
-        for i := 0 to aItems.Count -1 do
-        begin
-          for j := 0 to MembersGrid.ColumnsCount - 1 do
-          begin
-            if j = 0 then
-              MembersGrid.Values[j, i] := aItems[i].Name
-            else if (j - 1) < aItems[i].Attributes.Count then //maybe Attributes not have all data
-              MembersGrid.Values[j, i] := aItems[i].Attributes.Items[j - 1].Value; //TODO must be assigned my name not by index
-          end;
-        end;
-        MembersGrid.Current.Row := 0;
-        CurrentGroup := nil; //reduce flicker when fill Actions
-        CurrentGroup := vGroup;
-        LoadActions(vGroup.ItemName);
-      finally
-        MembersGrid.EndUpdate;
+      MembersGrid.ColumnsCount := Members.Header.Count + 1;
+      MembersGrid.Columns[0].Title := 'Name';
+      for i := 1 to MembersGrid.ColumnsCount -1 do
+      begin
+        MembersGrid.Columns[i].Title := Members.Header.Items[i - 1].Value;
       end;
+      if MembersGrid.ColumnsCount > 0 then
+        MembersGrid.Columns[0].AutoFit := True;
+
+      MembersGrid.Capacity := Members.Count;
+      MembersGrid.Count := Members.Count;
+      for i := 0 to Members.Count -1 do
+      begin
+        for j := 0 to MembersGrid.ColumnsCount - 1 do
+        begin
+          if j = 0 then
+            MembersGrid.Values[j, i] := Members[i].Name
+          else if (j - 1) < Members[i].Attributes.Count then //maybe Attributes not have all data
+            MembersGrid.Values[j, i] := Members[i].Attributes.Items[j - 1].Value; //TODO must be assigned my name not by index
+        end;
+      end;
+      MembersGrid.Current.Row := 0;
+      CurrentMaster := nil; //reduce flicker when fill Actions
+      CurrentMaster := vMaster;
+      LoadActions(vMaster.ItemName);
     finally
-      aItems.Free;
+      MembersGrid.EndUpdate;
     end;
   end;
 end;
@@ -309,7 +309,7 @@ begin
     VK_F6:
     begin
       if MembersGrid.Focused then
-        GroupsList.SetFocus
+        MasterList.SetFocus
       else
         MembersGrid.SetFocus;
       Handled := True;
@@ -317,21 +317,21 @@ begin
   end;
 end;
 
-procedure TDBManagerForm.GroupsListKeyPress(Sender: TObject; var Key: char);
+procedure TDBManagerForm.MasterListKeyPress(Sender: TObject; var Key: char);
 begin
   if Key = #13 then
     MembersGrid.SetFocus;
 end;
 
-procedure TDBManagerForm.GroupsListSelect(Sender: TObject);
+procedure TDBManagerForm.MasterListSelect(Sender: TObject);
 begin
-  OpenGroup(GroupsNames[GroupsList.ItemIndex].Name);
+  OpenMaster(Masters[MasterList.ItemIndex].Name);
 end;
 
 procedure TDBManagerForm.MembersGridDblClick(Sender: TObject);
 begin
   if (MembersGrid.Count > 0) and (MembersGrid.Current.Row >= 0) then
-    OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
+    OpenMember(Members[MembersGrid.Current.Row]);
 end;
 
 procedure TDBManagerForm.MembersGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -344,7 +344,7 @@ begin
     end;
     VK_RETURN:
     begin
-      OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
+      OpenMember(Members[MembersGrid.Current.Row]);
     end;
   end;
 end;
@@ -369,14 +369,14 @@ end;
 
 procedure TDBManagerForm.MembersListDblClick(Sender: TObject);
 begin
-  OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
+  OpenMember(Members[MembersGrid.Current.Row]);
 end;
 
 procedure TDBManagerForm.MembersListKeyPress(Sender: TObject; var Key: char);
 begin
   if (Key = #13) then
   begin
-    OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
+    OpenMember(Members[MembersGrid.Current.Row]);
     Key := #0;
   end;
 end;
@@ -384,7 +384,7 @@ end;
 procedure TDBManagerForm.OpenBtnClick(Sender: TObject);
 begin
   if MembersGrid.Current.Row < MembersGrid.Count then
-    OpenMember(MembersGrid.Values[0, MembersGrid.Current.Row]);
+    OpenMember(Members[MembersGrid.Current.Row]);
 end;
 
 procedure TDBManagerForm.Timer1Timer(Sender: TObject);
@@ -440,35 +440,35 @@ begin
   vMetaItems.Clone(DBEngine.Stack.Current.MetaItems);
   //vMetaItems.Values[DBEngine.Stack.Current.Addon.Name] := DBEngine.Stack.Current.Value;
   aItemName := MembersGrid.Values[0, MembersGrid.Current.Row];
-  vMetaItems.Values[CurrentGroup.ItemName] := aItemName;
+  vMetaItems.Values[CurrentMaster.ItemName] := aItemName;
   DumpMetaItems(vMetaItems);
 end;
 
 procedure TDBManagerForm.StateChanged;
 begin
-  if CurrentGroup <> nil then
-    LoadActions(CurrentGroup.ItemName);
+  if CurrentMaster <> nil then
+    LoadActions(CurrentMaster.ItemName);
   if Visible then //prevent from setfocus non visible control
     MembersGrid.SetFocus;
 end;
 
-procedure TDBManagerForm.LoadActions(vGroup: string; Append: Boolean);
+procedure TDBManagerForm.LoadActions(vMaster: string; Append: Boolean);
 var
   i, c: Integer;
   aList: TmndAddons;
   aMenuItem: TMenuItem;
 begin
-  if (vGroup = '') or not Append then
+  if (vMaster = '') or not Append then
   begin
     ActionsPopupMenu.Items.Clear;
-    FreeAndNil(Actions);
+    FreeAndNil(MenuActions);
   end;
-  if vGroup <> '' then
+  if vMaster <> '' then
   begin
-    Actions := TmndAddons.Create;
+    MenuActions := TmndAddons.Create;
     aList := TmndAddons.Create;
     try
-      DBEngine.Enum(vGroup, aList, DBEngine.DB.IsActive);
+      DBEngine.Enum(vMaster, aList, DBEngine.DB.IsActive);
       c := 0;
       for i := 0 to aList.Count - 1 do
         if nsCommand in aList[i].Style then
@@ -478,7 +478,7 @@ begin
           aMenuItem.OnClick := @ActionsMenuSelect;
           aMenuItem.Tag := c;
           ActionsPopupMenu.Items.Add(aMenuItem);
-          Actions.Add(aList[i]);
+          MenuActions.Add(aList[i]);
           Inc(c);
         end;
     finally
@@ -563,7 +563,7 @@ var
   aValue: string;
   aAddon: TmndAddon;
 begin
-  aAddon := Actions[(Sender as TMenuItem).Tag];
+  aAddon := MenuActions[(Sender as TMenuItem).Tag];
   aValue := MembersGrid.Values[0, MembersGrid.Current.Row];
   OpenAction(aAddon, aValue);
 end;
@@ -571,7 +571,7 @@ end;
 constructor TDBManagerForm.Create(TheOwner: TComponent);
 begin
   inherited Create(TheOwner);
-  GroupsNames := TmndAddons.Create;
+  Masters := TmndAddons.Create;
   DBEngine.NotifyObject := Self;
   Engine.RegisterNotify(Self);
   StateChanged;
@@ -581,28 +581,28 @@ destructor TDBManagerForm.Destroy;
 begin
   DBEngine.NotifyObject := nil;
   DBEngine.DB.Close;
-  FreeAndNil(GroupsNames);
-  FreeAndNil(Actions);
+  FreeAndNil(Masters);
+  FreeAndNil(Members);
+  FreeAndNil(MenuActions);
   Engine.UnregisterNotify(Self);
   inherited Destroy;
 end;
 
-procedure TDBManagerForm.OpenMember(AValue: string);
+procedure TDBManagerForm.OpenMember(AMember: TmncMetaItem);
 var
   a: TmncMetaItems;
 begin
   a := TmncMetaItems.Create;
   try
     {$ifdef DEBUG}
-    DebugLn('CurrentGroup.Name='+CurrentGroup.Name);
-    DebugLn('CurrentGroup.ItemName='+CurrentGroup.ItemName);
-    DebugLn('AValue='+AValue);
+    DebugLn('CurrentMaster.Name='+CurrentMaster.Name);
+    DebugLn('CurrentMaster.ItemName='+CurrentMaster.ItemName);
     {$endif}
     CollectMetaItems(a);
     with DBEngine.Stack do
       //if Current.Addon <> nil then
       //begin
-        DBEngine.Stack.Push(TmndProcess.Create(CurrentGroup.Name, CurrentGroup.ItemName, AValue, a));
+        DBEngine.Stack.Push(TmndProcess.Create(CurrentMaster.Name, CurrentMaster.ItemName, AMember.Name, a));
         DBEngine.Run;
       //end;
         //what if Addon <> nil or what if Current.Addon.Item = ''
@@ -611,20 +611,20 @@ begin
   end;
 end;
 
-procedure TDBManagerForm.OpenGroup(AValue: string);
+procedure TDBManagerForm.OpenMaster(AValue: string);
 var
   a: TmncMetaItems;
 begin
   a := TmncMetaItems.Create;
   try
     {$ifdef DEBUG}
-    DebugLn('CurrentGroup.Name='+CurrentGroup.Name);
-    DebugLn('CurrentGroup.ItemName='+CurrentGroup.ItemName);
-    DebugLn('OpenGroup.AValue='+AValue);
+    DebugLn('CurrentMaster.Name='+CurrentMaster.Name);
+    DebugLn('CurrentMaster.ItemName='+CurrentMaster.ItemName);
+    DebugLn('OpenMaster.AValue='+AValue);
     {$endif}
     //CollectMetaItems(a);
     with DBEngine.Stack do
-      if (Current <> nil) and (GroupsList.Items.Count > 0) and (GroupsList.ItemIndex >=0) then
+      if (Current <> nil) and (MasterList.Items.Count > 0) and (MasterList.ItemIndex >=0) then
       begin
         DBEngine.Stack.Push(TmndProcess.Create(Current.CurrentAddon, AValue, Current.MetaItems));
         DBEngine.Run;
@@ -641,8 +641,8 @@ begin
   a := TmncMetaItems.Create;
   try
     {$ifdef DEBUG}
-    DebugLn('CurrentGroup.Name='+CurrentGroup.Name);
-    DebugLn('CurrentGroup.ItemName='+CurrentGroup.ItemName);
+    DebugLn('CurrentMaster.Name='+CurrentMaster.Name);
+    DebugLn('CurrentMaster.ItemName='+CurrentMaster.ItemName);
     DebugLn('AValue=' + AValue);
     {$endif}
     CollectMetaItems(a);

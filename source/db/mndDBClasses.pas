@@ -13,7 +13,7 @@ uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
   LCLintf, LCLType, ExtCtrls, SynHighlighterSQL, EditorProfiles, GUIMsgBox, mnMsgBox,
   Dialogs, EditorEngine, EditorClasses, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit, EditorRun,
-  sqlvManagerForms, sqlvSQLForms, sqlvEngines;
+  mndManagerForms, mndSQLForms, mndEngines;
 
 type
 
