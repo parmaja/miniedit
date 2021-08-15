@@ -75,27 +75,6 @@ type
     property CSVANSIContents: Boolean read FCSVANSIContents write FCSVANSIContents default False;
   end;
 
-  { TsqlvAttribute }
-
-  TsqlvAttribute = class(TmnField)
-  private
-  protected
-  public
-    procedure Clone(Attribute: TsqlvAttribute); virtual;
-  end;
-
-  { TsqlvAttributes }
-
-  TsqlvAttributes = class(TmnFields)
-  private
-    function GetItem(Index: Integer): TsqlvAttribute;
-  protected
-    function CreateField: TmnField; override;
-  public
-    procedure Clone(vAttributes: TsqlvAttributes);//Assign procedure used in parent class :(
-    property Items[Index: Integer]: TsqlvAttribute read GetItem;
-  end;
-
   TsqlvShow = (shwnElement, shwnBrowse, shwnFile);
 
   TsqlvAddon = class;
@@ -105,18 +84,24 @@ type
   TsqlvProcess = class(TObject)
   private
     FAddon: TsqlvAddon;
-    FAttributes: TsqlvAttributes;
+    FMetaItems: TmncMetaItems;
     FSelect: string;
     FShowIn: TsqlvShow;
+  strict protected
+    property Addon: TsqlvAddon read FAddon write FAddon;
+    function GetDisplayName: string; virtual;
   public
     constructor Create;
-    constructor Create(vAddon: TsqlvAddon; vSelect: string; vAttributes: TsqlvAttributes = nil; AShowIn: TsqlvShow = shwnElement);
-    constructor Create(Group, Name: string; vSelect: string; vAttributes: TsqlvAttributes = nil; AShowIn: TsqlvShow = shwnElement);
+    constructor Create(vAddon: TsqlvAddon; vSelect: string; vMetaItems: TmncMetaItems = nil; AShowIn: TsqlvShow = shwnElement);
+    constructor Create(Group, Name: string; vSelect: string; vMetaItems: TmncMetaItems = nil; AShowIn: TsqlvShow = shwnElement);
     constructor Create(Group, Name: string; vSelect: string; vValue: string; AShowIn: TsqlvShow = shwnElement);
 
     destructor Destroy; override;
-    property Addon: TsqlvAddon read FAddon write FAddon;
-    property Attributes: TsqlvAttributes read FAttributes write FAttributes;
+
+    procedure Execute(vMetaItems: TmncMetaItems; FallDefault: Boolean = False);
+    property DisplayName: string read GetDisplayName;
+    function CurrentAddon: TsqlvAddon;
+    property MetaItems: TmncMetaItems read FMetaItems write FMetaItems;
     property Select: string read FSelect write FSelect;
     property ShowIn: TsqlvShow read FShowIn write FShowIn;
   end;
@@ -164,16 +149,16 @@ type
     FImageIndex: TImageIndex;
   protected
     function GetCanExecute: Boolean; virtual;
-    procedure DoExecute(vAttributes: TsqlvAttributes); virtual;
+    procedure DoExecute(vMetaItems: TmncMetaItems); virtual;
   public
     constructor Create; virtual;
     destructor Destroy; override;
     procedure ShowProperty; virtual;
-    procedure Execute(vAttributes: TsqlvAttributes; FallDefault: Boolean = False);
+    procedure Execute(vMetaItems: TmncMetaItems; FallDefault: Boolean = False);
     procedure Execute(const Value: string);
     procedure Enum(Addons: TsqlvAddons);
     procedure EnumDefaults(Addons: TsqlvAddons);
-    procedure EnumMeta(vItems: TmncMetaItems; vAttributes: TsqlvAttributes = nil); virtual; abstract;
+    procedure EnumMeta(vItems: TmncMetaItems; vMetaItems: TmncMetaItems = nil); virtual; abstract;
     property CanExecute: Boolean read GetCanExecute;
     property Group: string read FGroup write FGroup; //Group is parent Addon like Tabkes.Group = 'Database'
     //property Name: string read FName write FName; //Name = 'Tables'
@@ -375,7 +360,7 @@ type
     procedure ChangeState(State: TEditorChangeStates);
 
     procedure Run(vStack: TsqlvStack);
-    procedure Run(vAddon: TsqlvAddon; vAttributes: TsqlvAttributes);
+    procedure Run(vAddon: TsqlvAddon; vMetaItems: TmncMetaItems);
     procedure Run;
     //procedure Run(vGroup, vName, vValue: string; vSelect: string = '');
     procedure RegisterFilter(Filter: string);
@@ -401,7 +386,7 @@ type
 
 function DBEngine: TDBEngine;
 
-procedure DumpAttributes(a: TsqlvAttributes);
+procedure DumpMetaItems(a: TmncMetaItems);
 
 const
   sSqliteFilter = 'Sqlite (*.sqlite)|*.sqlite|FirebirdSQL (*.fdb)|*.fdb';
@@ -415,10 +400,10 @@ implementation
 uses
   LCLproc;
 
-procedure DumpAttributes(a: TsqlvAttributes);
+procedure DumpMetaItems(a: TmncMetaItems);
 var
   i: Integer;
-  t: TsqlvAttribute;
+  t: TmncMetaItem;
 begin
   for i := 0 to a.Count -1 do
   begin
@@ -438,46 +423,46 @@ begin
   Result := FDBEngine;
 end;
 
-{ TsqlvAttribute }
-
-procedure TsqlvAttribute.Clone(Attribute: TsqlvAttribute);
-begin
-  Name := Attribute.Name;
-  Value := Attribute.Value;
-end;
-
 { TsqlvProcess }
+
+function TsqlvProcess.GetDisplayName: string;
+begin
+  if Addon <> nil then
+    Result := Addon.Name
+  else
+    Result := '';
+end;
 
 constructor TsqlvProcess.Create;
 begin
   inherited Create;
-  FAttributes := TsqlvAttributes.Create;
+  FMetaItems := TmncMetaItems.Create;
 end;
 
-constructor TsqlvProcess.Create(vAddon: TsqlvAddon; vSelect: string; vAttributes: TsqlvAttributes; AShowIn: TsqlvShow);
+constructor TsqlvProcess.Create(vAddon: TsqlvAddon; vSelect: string; vMetaItems: TmncMetaItems; AShowIn: TsqlvShow);
 begin
   Create;
   Addon := vAddon;
   Select := vSelect;
-  Attributes.Clone(vAttributes);
+  MetaItems.Clone(vMetaItems);
   FShowIn := AShowIn;
 end;
 
-constructor TsqlvProcess.Create(Group, Name: string; vSelect: string; vAttributes: TsqlvAttributes; AShowIn: TsqlvShow);
+constructor TsqlvProcess.Create(Group, Name: string; vSelect: string; vMetaItems: TmncMetaItems; AShowIn: TsqlvShow);
 var
   aAddon: TsqlvAddon;
 begin
   aAddon := DBEngine.Find(Group, Name, True);
   if aAddon = nil then
     raise Exception.Create('Addon not found' + Group + '\' + Name);
-  Create(aAddon, Select, vAttributes, AShowIn);
+  Create(aAddon, Select, vMetaItems, AShowIn);
 end;
 
 constructor TsqlvProcess.Create(Group, Name: string; vSelect: string; vValue: string; AShowIn: TsqlvShow);
 var
-  a: TsqlvAttributes;
+  a: TmncMetaItems;
 begin
-  a := TsqlvAttributes.Create;
+  a := TmncMetaItems.Create;
   try
     a.Add(Name, vValue);
     Create(Group, Name, Select, a, AShowIn);
@@ -488,37 +473,24 @@ end;
 
 destructor TsqlvProcess.Destroy;
 begin
-  FreeAndNil(FAttributes);
+  FreeAndNil(FMetaItems);
   inherited;
 end;
 
-{ TsqlvAttributes }
-
-function TsqlvAttributes.GetItem(Index: Integer): TsqlvAttribute;
+procedure TsqlvProcess.Execute(vMetaItems: TmncMetaItems; FallDefault: Boolean);
 begin
-  Result := (inherited Items[Index]) as TsqlvAttribute;
-end;
-
-function TsqlvAttributes.CreateField: TmnField;
-begin
-  Result := TsqlvAttribute.Create;
-end;
-
-procedure TsqlvAttributes.Clone(vAttributes: TsqlvAttributes);
-var
-  i: Integer;
-  a: TsqlvAttribute;
-begin
-  Clear;
-  if vAttributes <> nil then
+  if Addon <> nil then
   begin
-    for i := 0 to vAttributes.Count -1 do
-    begin
-      a := TsqlvAttribute.Create;
-      a.Clone(vAttributes.Items[i]);
-      Add(a);
-    end;
+    {$ifdef DEBUG}
+    DebugLn('>>>Run Addon:' + Addon.Name);
+    {$endif}
+    Addon.Execute(vMetaItems, FallDefault);
   end;
+end;
+
+function TsqlvProcess.CurrentAddon: TsqlvAddon;
+begin
+  Result := Addon;
 end;
 
 { TsqlvStack }
@@ -672,19 +644,10 @@ procedure TDBEngine.Run(vStack: TsqlvStack);
 begin
   if (vStack = nil) and (vStack.Count = 0) then
     raise Exception.Create('Stack is empty');
-  with vStack.Current do
-  begin
-    if Addon <> nil then
-    begin
-      {$ifdef DEBUG}
-      DebugLn('>>>Run Addon:' + Addon.Name);
-      {$endif}
-      Addon.Execute(vStack.Current.Attributes, True);
-    end;
-  end;
+  vStack.Current.Execute(vStack.Current.MetaItems, True);
 end;
 
-procedure TDBEngine.Run(vAddon: TsqlvAddon; vAttributes:TsqlvAttributes);
+procedure TDBEngine.Run(vAddon: TsqlvAddon; vMetaItems:TmncMetaItems);
 begin
   if vAddon = nil then
     raise Exception.Create('Addon not found');
@@ -833,12 +796,12 @@ begin
   DBEngine.Enum(Name, Addons, DBEngine.DB.IsActive, True);
 end;
 
-procedure TsqlvAddon.Execute(vAttributes: TsqlvAttributes; FallDefault: Boolean = False);
+procedure TsqlvAddon.Execute(vMetaItems: TmncMetaItems; FallDefault: Boolean = False);
 var
   aAddons: TsqlvAddons;
 begin
   if CanExecute then
-    DoExecute(vAttributes)
+    DoExecute(vMetaItems)
   else if FallDefault then
   begin
     //if Addon.CanRunDefault then //TODO
@@ -848,7 +811,7 @@ begin
 {      if vValue = '' then
         vValue := Addon.Name;}//TODO
       if aAddons.Count > 0 then
-        aAddons[0].Execute(vAttributes);
+        aAddons[0].Execute(vMetaItems);
     finally
       aAddons.Free;
     end;
@@ -865,7 +828,7 @@ begin
   Result := True;
 end;
 
-procedure TsqlvAddon.DoExecute(vAttributes: TsqlvAttributes);
+procedure TsqlvAddon.DoExecute(vMetaItems: TmncMetaItems);
 begin
 end;
 

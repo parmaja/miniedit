@@ -90,11 +90,11 @@ type
     procedure CheckSearch;
     procedure SearchFor(S: string);
     procedure ApplyFilter;
-    procedure CollectAttributes(vAttributes: TsqlvAttributes);
+    procedure CollectAttributes(vMetaItems: TmncMetaItems);
   private
     function LogTime(Start: TDateTime): string;
     procedure StateChanged;
-    procedure LoadMembers(vGroup: TsqlvAddon; vAttributes: TsqlvAttributes);
+    procedure LoadMembers(vGroup: TsqlvAddon; vMetaItems: TmncMetaItems);
   public
     Actions: TsqlvAddons;
     GroupsNames: TsqlvAddons;//Fields, Indexes
@@ -136,7 +136,7 @@ var
   MetaName: string;
 begin
   DatabaseLbl.Caption := DBEngine.DB.Connection.Resource;
-  MetaName := vAddon.Title + ': ' + DBEngine.Stack.Current.Attributes[DBEngine.Stack.Current.Addon.Name];
+  MetaName := vAddon.Title + ': ' + DBEngine.Stack.Current.MetaItems.Values[DBEngine.Stack.Current.DisplayName];
   aGroups := TsqlvAddons.Create;
   try
     DBEngine.Enum(vAddon.Name, aGroups, DBEngine.DB.IsActive);
@@ -188,7 +188,7 @@ begin
   if aGroup <> nil then
     DBEngine.Stack.Current.Select := aGroup.Name;
 
-  LoadMembers(aGroup, DBEngine.Stack.Current.Attributes); //if group is nil it must clear the member grid
+  LoadMembers(aGroup, DBEngine.Stack.Current.MetaItems); //if group is nil it must clear the member grid
 end;
 
 procedure TsqlvManagerForm.ShowEditor(vAddon: TsqlvAddon; S: string);
@@ -205,7 +205,7 @@ begin
   end;
 end;
 
-procedure TsqlvManagerForm.LoadMembers(vGroup: TsqlvAddon; vAttributes: TsqlvAttributes);
+procedure TsqlvManagerForm.LoadMembers(vGroup: TsqlvAddon; vMetaItems: TmncMetaItems);
 var
   i, j: Integer;
   aItems: TmncMetaItems;
@@ -225,7 +225,7 @@ begin
       MembersGrid.BeginUpdate;
       MembersGrid.Reset;
       try
-        vGroup.EnumMeta(aItems, vAttributes);
+        vGroup.EnumMeta(aItems, vMetaItems);
 
         MembersGrid.ColumnsCount := aItems.Header.Count + 1;
         MembersGrid.Columns[0].Title := 'Name';
@@ -433,15 +433,15 @@ begin
 
 end;
 
-procedure TsqlvManagerForm.CollectAttributes(vAttributes: TsqlvAttributes);
+procedure TsqlvManagerForm.CollectAttributes(vMetaItems: TmncMetaItems);
 var
   aItemName: string;
 begin
-  vAttributes.Clone(DBEngine.Stack.Current.Attributes);
-  //vAttributes.Values[DBEngine.Stack.Current.Addon.Name] := DBEngine.Stack.Current.Value;
+  vMetaItems.Clone(DBEngine.Stack.Current.MetaItems);
+  //vMetaItems.Values[DBEngine.Stack.Current.Addon.Name] := DBEngine.Stack.Current.Value;
   aItemName := MembersGrid.Values[0, MembersGrid.Current.Row];
-  vAttributes.Values[CurrentGroup.ItemName] := aItemName;
-  DumpAttributes(vAttributes);
+  vMetaItems.Values[CurrentGroup.ItemName] := aItemName;
+  DumpMetaItems(vMetaItems);
 end;
 
 procedure TsqlvManagerForm.StateChanged;
@@ -589,9 +589,9 @@ end;
 
 procedure TsqlvManagerForm.OpenMember(AValue: string);
 var
-  a: TsqlvAttributes;
+  a: TmncMetaItems;
 begin
-  a := TsqlvAttributes.Create;
+  a := TmncMetaItems.Create;
   try
     {$ifdef DEBUG}
     DebugLn('CurrentGroup.Name='+CurrentGroup.Name);
@@ -600,11 +600,11 @@ begin
     {$endif}
     CollectAttributes(a);
     with DBEngine.Stack do
-      if Current.Addon <> nil then
-      begin
+      //if Current.Addon <> nil then
+      //begin
         DBEngine.Stack.Push(TsqlvProcess.Create(CurrentGroup.Name, CurrentGroup.ItemName, AValue, a));
         DBEngine.Run;
-      end;
+      //end;
         //what if Addon <> nil or what if Current.Addon.Item = ''
   finally
     a.Free;
@@ -613,9 +613,9 @@ end;
 
 procedure TsqlvManagerForm.OpenGroup(AValue: string);
 var
-  a: TsqlvAttributes;
+  a: TmncMetaItems;
 begin
-  a := TsqlvAttributes.Create;
+  a := TmncMetaItems.Create;
   try
     {$ifdef DEBUG}
     DebugLn('CurrentGroup.Name='+CurrentGroup.Name);
@@ -626,7 +626,7 @@ begin
     with DBEngine.Stack do
       if (Current <> nil) and (GroupsList.Items.Count > 0) and (GroupsList.ItemIndex >=0) then
       begin
-        DBEngine.Stack.Push(TsqlvProcess.Create(Current.Addon, AValue, Current.Attributes));
+        DBEngine.Stack.Push(TsqlvProcess.Create(Current.CurrentAddon, AValue, Current.MetaItems));
         DBEngine.Run;
       end;
   finally
@@ -636,9 +636,9 @@ end;
 
 procedure TsqlvManagerForm.OpenAction(vAction: TsqlvAddon; aValue: string);
 var
-  a: TsqlvAttributes;
+  a: TmncMetaItems;
 begin
-  a := TsqlvAttributes.Create;
+  a := TmncMetaItems.Create;
   try
     {$ifdef DEBUG}
     DebugLn('CurrentGroup.Name='+CurrentGroup.Name);
