@@ -84,25 +84,26 @@ type
   TmndProcess = class(TObject)
   private
     FAddon: TmndAddon;
-    FMetaItems: TmncMetaItems;
-    FSelect: string;
+    FMetaItem: TmncMetaItem;
+    //FMetaItems: TmncMetaItems;
     FShowIn: TmndShow;
   strict protected
     property Addon: TmndAddon read FAddon write FAddon;
     function GetDisplayName: string; virtual;
   public
+    Value: string;
     constructor Create;
-    constructor Create(vAddon: TmndAddon; vSelect: string; vMetaItems: TmncMetaItems = nil; AShowIn: TmndShow = shwnElement);
-    constructor Create(Master, Name: string; vSelect: string; vMetaItems: TmncMetaItems = nil; AShowIn: TmndShow = shwnElement);
-    constructor Create(Master, Name: string; vSelect: string; vValue: string; AShowIn: TmndShow = shwnElement);
+    constructor Create(vAddon: TmndAddon; vMetaItem: TmncMetaItem = nil; AShowIn: TmndShow = shwnElement);
+    constructor Create(AddonName: string; vMetaItem: TmncMetaItem = nil; AShowIn: TmndShow = shwnElement);
+    constructor Create(AddonName: string; vValue: string; AShowIn: TmndShow = shwnElement);
 
     destructor Destroy; override;
 
-    procedure Execute(vMetaItems: TmncMetaItems; FallDefault: Boolean = False);
+    procedure Execute(vMetaItem: TmncMetaItem; FallDefault: Boolean = False);
     property DisplayName: string read GetDisplayName;
     function CurrentAddon: TmndAddon; deprecated;
-    property MetaItems: TmncMetaItems read FMetaItems write FMetaItems;
-    property Select: string read FSelect write FSelect;
+    //property MetaItems: TmncMetaItems read FMetaItems write FMetaItems;
+    property MetaItem: TmncMetaItem read FMetaItem write FMetaItem;
     property ShowIn: TmndShow read FShowIn write FShowIn;
   end;
 
@@ -131,7 +132,7 @@ type
   nsNeedSession: Enum only when session is active
 }
 
-  TmndAddonStyle = set of (nsDefault, nsMaster, nsCommand, nsEditor, nsButton, nsNeedSession);
+  TmndAddonStyle = set of (nsDefault, nsMember, nsCommand, nsEditor, nsButton, nsNeedSession);
 
   ImndAddon = interface(IInterface)
     function GetAddon: TmndAddon;
@@ -149,19 +150,18 @@ type
     FImageIndex: TImageIndex;
   protected
     function GetCanExecute: Boolean; virtual;
-    procedure DoExecute(vMetaItems: TmncMetaItems); virtual;
+    procedure DoExecute(vMetaItem: TmncMetaItem); virtual;
   public
     constructor Create; virtual;
     destructor Destroy; override;
     procedure ShowProperty; virtual;
-    procedure Execute(vMetaItems: TmncMetaItems; FallDefault: Boolean = False);
-    procedure Execute(const Value: string);
+    procedure Execute(vMetaItem: TmncMetaItem = nil; FallDefault: Boolean = False);
     procedure EnumAddons(Addons: TmndAddons);
     procedure EnumDefaults(Addons: TmndAddons);
-    procedure EnumMeta(vItems: TmncMetaItems; vMetaItems: TmncMetaItems = nil); virtual; abstract;
+    procedure EnumMeta(vItems: TmncMetaItems; vMetaItem: TmncMetaItem = nil); virtual;
     property CanExecute: Boolean read GetCanExecute;
+    //property Name: string read FName write FName; //Name = 'Tables' it is already exists in TmnNamedObject
     property Master: string read FMaster write FMaster; //Master is parent Addon like Tables.Master = 'Database'
-    //property Name: string read FName write FName; //Name = 'Tables'
     property ItemName: string read FItemName write FItemName; //Item name eg  Tables.Item = 'Table'
     property Kind: TmetaKind read FKind write FKind default sokNone;
     property Style: TmndAddonStyle read FStyle write FStyle;
@@ -177,8 +177,6 @@ type
   private
   public
     procedure EnumAddons(MasterName: string; Addons: TmndAddons; SessionActive: Boolean; OnlyDefaults: Boolean = False); overload;
-    function Find(const Master, Name: string): TmndAddon;
-    function Find(const Master, Name: string; Deep: Boolean): TmndAddon;
     function IsExists(vAddon: TmndAddon): Boolean;
   end;
 
@@ -186,7 +184,7 @@ type
 
   TmndAddons = class(TmndCustomAddons)
   public
-    constructor Create; virtual;
+    constructor Create(FreeObjects : Boolean = False); virtual;
     function Add(vAddon: TmndAddon): Integer;
   end;
 
@@ -273,7 +271,7 @@ type
     ['{E6F8D9BD-F716-4758-8B08-DDDBD3FA1732}']
     procedure ServerChanged; virtual; abstract;
     procedure DatabaseChanged; virtual; abstract;
-    procedure ShowMeta(vAddon: TmndAddon; vSelectDefault: Boolean); virtual; abstract;
+    procedure ShowMeta(vAddon: TmndAddon; vMetaItem: TmncMetaItem; vSelectDefault: Boolean); virtual; abstract;
     procedure ShowEditor(vAddon: TmndAddon; S: string); virtual; abstract;
   end;
 
@@ -364,14 +362,14 @@ type
     procedure Run;
     //procedure Run(vMaster, vName, vValue: string; vSelect: string = '');
     procedure RegisterFilter(Filter: string);
-    procedure RegisterViewer(Classes: array of TmndAddonClass);
+    procedure RegisterAddon(Classes: array of TmndAddonClass);
     procedure LoadFile(FileName:string; Strings: TStrings);
     procedure SaveFile(FileName:string; Strings: TStrings);
     function GetAllSupportedFiles: string;
 
     procedure ServerChanged;
     procedure DatabaseChanged;
-    procedure ShowMeta(vAddon: TmndAddon; vSelectDefault: Boolean);
+    procedure ShowMeta(vAddon: TmndAddon; vMetaItem: TmncMetaItem; vSelectDefault: Boolean);
     procedure ShowEditor(vAddon: TmndAddon; S: string);
     procedure ShowEditor(vAddon: TmndAddon; S: TStringList);
 
@@ -387,6 +385,7 @@ type
 function DBEngine: TDBEngine;
 
 procedure DumpMetaItems(a: TmncMetaItems);
+procedure DumpMetaItem(a: TmncMetaItem);
 
 const
   sSqliteFilter = 'Sqlite (*.sqlite)|*.sqlite|FirebirdSQL (*.fdb)|*.fdb';
@@ -408,9 +407,14 @@ begin
   for i := 0 to a.Count -1 do
   begin
     t := a.Items[i];
-    DebugLn(AlignStr(t.Name, 20, [alsCut, alsLeft]) + ': ' + t.Value);
+    DumpMetaItem(t);
   end;
   DebugLn('-----------------------------------------------------');
+end;
+
+procedure DumpMetaItem(a: TmncMetaItem);
+begin
+  DebugLn(AlignStr(a.Name, 20, [alsCut, alsLeft]) + ': ' + a.Value);
 end;
 
 var
@@ -436,55 +440,50 @@ end;
 constructor TmndProcess.Create;
 begin
   inherited Create;
-  FMetaItems := TmncMetaItems.Create;
+//  FMetaItems := TmncMetaItems.Create;
+  FMetaItem := TmncMetaItem.Create;
 end;
 
-constructor TmndProcess.Create(vAddon: TmndAddon; vSelect: string; vMetaItems: TmncMetaItems; AShowIn: TmndShow);
+constructor TmndProcess.Create(vAddon: TmndAddon; vMetaItem: TmncMetaItem; AShowIn: TmndShow);
 begin
   Create;
   Addon := vAddon;
-  Select := vSelect;
-  MetaItems.Clone(vMetaItems);
+  //MetaItems.Clone(vMetaItems);
+  MetaItem.Clone(vMetaItem);
   FShowIn := AShowIn;
 end;
 
-constructor TmndProcess.Create(Master, Name: string; vSelect: string; vMetaItems: TmncMetaItems; AShowIn: TmndShow);
+constructor TmndProcess.Create(AddonName: string; vMetaItem: TmncMetaItem; AShowIn: TmndShow);
 var
   aAddon: TmndAddon;
 begin
-  aAddon := DBEngine.Find(Master, Name, True);
+  aAddon := DBEngine.Find(AddonName);
   if aAddon = nil then
-    raise Exception.Create('Addon not found' + Master + '\' + Name);
-  Create(aAddon, Select, vMetaItems, AShowIn);
+    raise Exception.Create('Addon not found: ' + AddonName);
+  Create(aAddon, vMetaItem, AShowIn);
 end;
 
-constructor TmndProcess.Create(Master, Name: string; vSelect: string; vValue: string; AShowIn: TmndShow);
-var
-  a: TmncMetaItems;
+constructor TmndProcess.Create(AddonName: string; vValue: string; AShowIn: TmndShow);
 begin
-  a := TmncMetaItems.Create;
-  try
-    a.Add(Name, vValue);
-    Create(Master, Name, Select, a, AShowIn);
-  finally
-    a.Free;
-  end;
+  Create(AddonName, nil, AShowIn);
+  Value := vValue;
 end;
 
 destructor TmndProcess.Destroy;
 begin
-  FreeAndNil(FMetaItems);
+  FreeAndNil(FMetaItem);
+  //FreeAndNil(FMetaItems);
   inherited;
 end;
 
-procedure TmndProcess.Execute(vMetaItems: TmncMetaItems; FallDefault: Boolean);
+procedure TmndProcess.Execute(vMetaItem: TmncMetaItem; FallDefault: Boolean);
 begin
   if Addon <> nil then
   begin
     {$ifdef DEBUG}
     DebugLn('>>>Run Addon:' + Addon.Name);
     {$endif}
-    Addon.Execute(vMetaItems, FallDefault);
+    Addon.Execute(vMetaItem, FallDefault);
   end;
 end;
 
@@ -612,7 +611,7 @@ begin
   inherited;
 end;
 
-procedure TDBEngine.RegisterViewer(Classes: array of TmndAddonClass);
+procedure TDBEngine.RegisterAddon(Classes: array of TmndAddonClass);
 var
   i: Integer;
 begin
@@ -644,7 +643,7 @@ procedure TDBEngine.Run(vStack: TmndStack);
 begin
   if (vStack = nil) and (vStack.Count = 0) then
     raise Exception.Create('Stack is empty');
-  vStack.Current.Execute(vStack.Current.MetaItems, True);
+  vStack.Current.Execute(vStack.Current.MetaItem, True);
 end;
 
 procedure TDBEngine.Run(vAddon: TmndAddon; vMetaItems:TmncMetaItems);
@@ -685,44 +684,6 @@ begin
     Addons.Move(aDefault, 0);
 end;
 
-function TmndCustomAddons.Find(const Master, Name: string): TmndAddon;
-var
-  i: Integer;
-begin
-  Result := nil;
-  for i := 0 to Count - 1 do
-  begin
-    if SameText(Master, Items[i].Master) and SameText(Name, Items[i].Name) then
-    begin
-      Result := Items[i];
-      break;
-    end;
-  end;
-end;
-
-function TmndCustomAddons.Find(const Master, Name: string; Deep: Boolean): TmndAddon;
-var
-  aAddons: TmndAddons;
-begin
-  Result := Find(Master, Name);
-  if Deep then
-    if Result = nil then
-    begin
-      Result := Find(Master, Name);
-      if (Result = nil) then
-      begin
-        aAddons := TmndAddons.Create;
-        try
-          EnumAddons(Name, aAddons, True);
-          if aAddons.Count > 0 then
-            Result := aAddons[0];
-        finally
-          aAddons.Free;
-        end;
-      end;
-    end;
-end;
-
 function TmndCustomAddons.IsExists(vAddon: TmndAddon): Boolean;
 var
   i: Integer;
@@ -740,9 +701,9 @@ end;
 
 { TmndAddons }
 
-constructor TmndAddons.Create;
+constructor TmndAddons.Create(FreeObjects: boolean);
 begin
-  inherited Create(False);
+  inherited Create(FreeObjects);
 end;
 
 function TmndAddons.Add(vAddon: TmndAddon): Integer;
@@ -796,31 +757,28 @@ begin
   DBEngine.EnumAddons(Name, Addons, DBEngine.DB.IsActive, True);
 end;
 
-procedure TmndAddon.Execute(vMetaItems: TmncMetaItems; FallDefault: Boolean = False);
+procedure TmndAddon.EnumMeta(vItems: TmncMetaItems; vMetaItem: TmncMetaItem);
+begin
+end;
+
+procedure TmndAddon.Execute(vMetaItem: TmncMetaItem; FallDefault: Boolean = False);
 var
   aAddons: TmndAddons;
 begin
   if CanExecute then
-    DoExecute(vMetaItems)
+    DoExecute(vMetaItem)
   else if FallDefault then
   begin
     //if Addon.CanRunDefault then //TODO
     aAddons := TmndAddons.Create; //It only contain live Addons, not freed when free this list
     try
       EnumDefaults(aAddons);
-{      if vValue = '' then
-        vValue := Addon.Name;}//TODO
       if aAddons.Count > 0 then
-        aAddons[0].Execute(vMetaItems);
+        aAddons[0].Execute(vMetaItem);
     finally
       aAddons.Free;
     end;
   end;
-end;
-
-procedure TmndAddon.Execute(const Value: string);
-begin
-  DoExecute(nil);
 end;
 
 function TmndAddon.GetCanExecute: Boolean;
@@ -828,7 +786,7 @@ begin
   Result := True;
 end;
 
-procedure TmndAddon.DoExecute(vMetaItems: TmncMetaItems);
+procedure TmndAddon.DoExecute(vMetaItem: TmncMetaItem);
 begin
 end;
 
@@ -964,7 +922,7 @@ begin
   DB.Open(False, EngineName, Resource, User, Password, Role, False, False);
   DatabaseChanged;
   Stack.Clear;
-  Stack.Push(TmndProcess.Create('Databases', 'Database', 'Tables', Resource));
+  Stack.Push(TmndProcess.Create('Tables', ''));
   Run;
   Engine.SendAction(eaShowDatabases);
 end;
@@ -1017,7 +975,7 @@ begin
 
       DBEngine.DB.Open(True, (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name, DatabaseEdit.Text, UserEdit.Text, PasswordEdit.Text, RoleEdit.Text, ExclusiveChk.Checked);
       DBEngine.Stack.Clear;
-      DBEngine.Stack.Push(TmndProcess.Create('Databases', 'Database', 'Tables', DatabaseEdit.Text));
+      DBEngine.Stack.Push(TmndProcess.Create('Tables', DatabaseEdit.Text));
       DBEngine.Run(DBEngine.Stack);
     end;
   end;
@@ -1072,9 +1030,9 @@ begin
   FNotifyObject.DatabaseChanged;
 end;
 
-procedure TDBEngine.ShowMeta(vAddon: TmndAddon; vSelectDefault: Boolean);
+procedure TDBEngine.ShowMeta(vAddon: TmndAddon; vMetaItem: TmncMetaItem; vSelectDefault: Boolean);
 begin
-  FNotifyObject.ShowMeta(vAddon, vSelectDefault);
+  FNotifyObject.ShowMeta(vAddon, vMetaItem, vSelectDefault);
 end;
 
 procedure TDBEngine.ShowEditor(vAddon: TmndAddon; S: string);

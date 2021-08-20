@@ -41,7 +41,7 @@ type
   TDBManagerForm = class(TFrame, INotifyEngine, INotifyEngineSetting, ImndNotify)
     DatabaseImage: TntvImgBtn;
     DatabaseImage1: TntvImgBtn;
-    DatabaseLbl1: TLabel;
+    MasterLbl: TLabel;
     Panel3: TPanel;
     ServerImage: TntvImgBtn;
     DatabaseLbl: TLabel;
@@ -56,7 +56,7 @@ type
     FileMnu: TMenuItem;
     ExitMnu: TMenuItem;
     FirstBtn: TButton;
-    MasterList: TComboBox;
+    AddonsList: TComboBox;
     MenuItem1: TMenuItem;
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
@@ -80,8 +80,8 @@ type
     procedure Edit1KeyPress(Sender: TObject; var Key: char);
     procedure FirstBtnClick(Sender: TObject);
     procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
-    procedure MasterListKeyPress(Sender: TObject; var Key: char);
-    procedure MasterListSelect(Sender: TObject);
+    procedure AddonsListKeyPress(Sender: TObject; var Key: char);
+    procedure AddonsListSelect(Sender: TObject);
     procedure MembersGridDblClick(Sender: TObject);
     procedure MembersGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure MembersGridUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
@@ -103,10 +103,9 @@ type
     function LogTime(Start: TDateTime): string;
     procedure StateChanged;
     procedure ActionsMenuSelect(Sender: TObject);
-    procedure CollectMetaItems(vMetaItems: TmncMetaItems);
   public
     Masters: TmndAddons;//Fields, Indexes
-    CurrentMaster: TmndAddon;
+    Current: TmndAddon;
     Members: TmncMetaItems; //Grid
     MenuActions: TmndAddons;
     constructor Create(TheOwner: TComponent); override;
@@ -116,11 +115,11 @@ type
 
     procedure OpenMaster(AValue: string);
 
-    procedure LoadMembers(vMaster: TmndAddon; vMetaItems: TmncMetaItems);
+    procedure LoadMembers(vAddon: TmndAddon; vMetaItem: TmncMetaItem);
     procedure OpenMember(AMember: TmncMetaItem);
 
     procedure LoadActions(vMaster: string; Append: Boolean = False);
-    procedure OpenAction(vAction: TmndAddon; aValue: string);
+    procedure OpenAction(vAction: TmndAddon; vMetaItem: TmncMetaItem);
 
 
     procedure SaveOptions;
@@ -129,7 +128,8 @@ type
     procedure ServerChanged;
     procedure DatabaseChanged;
 
-    procedure ShowMeta(vAddon: TmndAddon; vSelectDefault: Boolean);
+    procedure ShowMeta(vAddon: TmndAddon; vMetaItem: TmncMetaItem; vSelectDefault: Boolean);
+
     procedure ShowEditor(vAddon: TmndAddon; S: string);
   end;
 
@@ -142,49 +142,50 @@ uses
 
 { TDBManagerForm }
 
-procedure TDBManagerForm.ShowMeta(vAddon: TmndAddon; vSelectDefault: Boolean);
+procedure TDBManagerForm.ShowMeta(vAddon: TmndAddon; vMetaItem: TmncMetaItem; vSelectDefault: Boolean);
 var
   i, c: Integer;
   d: Integer;
-  g: string;
+  Select: string;
   b: Boolean;
-  aMasters: TmndAddons;
-  aMaster: TmndAddon;
-  MetaName: string;
+  aAddons: TmndAddons;
+  aSelectedAddon: TmndAddon;
 begin
   DatabaseLbl.Caption := DBEngine.DB.Connection.Resource;
-  MetaName := vAddon.Title + ': ' + DBEngine.Stack.Current.MetaItems.Values[DBEngine.Stack.Current.DisplayName];
-  aMasters := TmndAddons.Create;
+  MasterLbl.Caption := vAddon.Master;
+  aAddons := TmndAddons.Create(False);
   try
-    DBEngine.EnumAddons(vAddon.Name, aMasters, DBEngine.DB.IsActive);
+    DBEngine.EnumAddons(vAddon.Master, aAddons, DBEngine.DB.IsActive);
+    //DBEngine.EnumAddons(AddonName, aAddons, DBEngine.DB.IsActive);
 
-    g := DBEngine.Stack.Current.Select;
-    aMaster := nil;
+    //select := DBEngine.Stack.Current.Select;
+    Select := vAddon.Name;
+    aSelectedAddon := nil;
     d := -1;
     c := 0;
     b := false;
-    MasterList.Items.BeginUpdate;
+    AddonsList.Items.BeginUpdate;
     try
-      MasterList.Clear;
+      AddonsList.Clear;
       Masters.Clear;
-      for i := 0 to aMasters.Count -1 do
+      for i := 0 to aAddons.Count -1 do
       begin
-        if not (nsCommand in aMasters[i].Style) then //Group in style
+        if not (nsCommand in aAddons[i].Style) then //Group in style
         begin
-          MasterList.Items.Add(aMasters[i].Title);
-          Masters.Add(aMasters[i]);
+          AddonsList.Items.Add(aAddons[i].Title);
+          Masters.Add(aAddons[i]);
           //if (d < 0) then
           begin
-            if (d < 0) then //select first one
+            if (d < 0) then //Select first one
             begin
               d := c;
-              aMaster := aMasters[i];
+              aSelectedAddon := aAddons[i];
             end;
             //b mean already selected and override privouse assigb
-            if not b and (((g = '') and (nsDefault in aMasters[i].Style))) or (((g <>'') and SameText(g, aMasters[i].Name))) then
+            if not b and (((Select = '') and (nsDefault in aAddons[i].Style))) or (((Select <>'') and SameText(Select, aAddons[i].Name))) then
             begin
               d := c;
-              aMaster := aMasters[i];
+              aSelectedAddon := aAddons[i];
               b := true;
             end;
           end;
@@ -192,20 +193,20 @@ begin
         end;
       end;
     finally
-      MasterList.Items.EndUpdate;
+      AddonsList.Items.EndUpdate;
     end;
     if d < 0 then
       d := 0;
-    if aMasters.Count > 0 then
-      MasterList.ItemIndex := d;
+    if aAddons.Count > 0 then
+      AddonsList.ItemIndex := d;
   finally
-    aMasters.Free;
+    aAddons.Free;
   end;
 
-  if aMaster <> nil then
-    DBEngine.Stack.Current.Select := aMaster.Name;
+  {if aSelectedAddon <> nil then
+    DBEngine.Stack.Current.Select := aSelectedAddon.Name;}
 
-  LoadMembers(aMaster, DBEngine.Stack.Current.MetaItems); //if Master is nil it must clear the member grid
+  LoadMembers(vAddon, vMetaItem); //if Master is nil it must clear the member grid
 end;
 
 procedure TDBManagerForm.ShowEditor(vAddon: TmndAddon; S: string);
@@ -222,12 +223,13 @@ begin
   end;
 end;
 
-procedure TDBManagerForm.LoadMembers(vMaster: TmndAddon; vMetaItems: TmncMetaItems);
+procedure TDBManagerForm.LoadMembers(vAddon: TmndAddon; vMetaItem: TmncMetaItem);
 var
   i, j: Integer;
+  aMetaItems: TmncMetaItems;
 begin
   MembersGrid.Clear;
-  if vMaster = nil then
+  if vAddon = nil then
   begin
     MembersGrid.ColumnsCount := 1;
     MembersGrid.Columns[0].Title := '';
@@ -242,7 +244,7 @@ begin
     MembersGrid.BeginUpdate;
     MembersGrid.Reset;
     try
-      vMaster.EnumMeta(Members, vMetaItems);
+      vAddon.EnumMeta(Members, vMetaItem);
 
       MembersGrid.ColumnsCount := Members.Header.Count + 1;
       MembersGrid.Columns[0].Title := 'Name';
@@ -266,9 +268,9 @@ begin
         end;
       end;
       MembersGrid.Current.Row := 0;
-      CurrentMaster := nil; //reduce flicker when fill Actions
-      CurrentMaster := vMaster;
-      LoadActions(vMaster.ItemName);
+      Current := nil; //reduce flicker when fill Actions
+      Current := vAddon;
+      LoadActions(vAddon.ItemName);
     finally
       MembersGrid.EndUpdate;
     end;
@@ -323,7 +325,7 @@ begin
     VK_F6:
     begin
       if MembersGrid.Focused then
-        MasterList.SetFocus
+        AddonsList.SetFocus
       else
         MembersGrid.SetFocus;
       Handled := True;
@@ -331,15 +333,15 @@ begin
   end;
 end;
 
-procedure TDBManagerForm.MasterListKeyPress(Sender: TObject; var Key: char);
+procedure TDBManagerForm.AddonsListKeyPress(Sender: TObject; var Key: char);
 begin
   if Key = #13 then
     MembersGrid.SetFocus;
 end;
 
-procedure TDBManagerForm.MasterListSelect(Sender: TObject);
+procedure TDBManagerForm.AddonsListSelect(Sender: TObject);
 begin
-  OpenMaster(Masters[MasterList.ItemIndex].Name);
+  OpenMaster(Masters[AddonsList.ItemIndex].Name);
 end;
 
 procedure TDBManagerForm.MembersGridDblClick(Sender: TObject);
@@ -447,21 +449,10 @@ begin
 
 end;
 
-procedure TDBManagerForm.CollectMetaItems(vMetaItems: TmncMetaItems);
-var
-  aItemName: string;
-begin
-  vMetaItems.Clone(DBEngine.Stack.Current.MetaItems);
-  //vMetaItems.Values[DBEngine.Stack.Current.Addon.Name] := DBEngine.Stack.Current.Value;
-  aItemName := MembersGrid.Values[0, MembersGrid.Current.Row];
-  vMetaItems.Values[CurrentMaster.ItemName] := aItemName;
-  DumpMetaItems(vMetaItems);
-end;
-
 procedure TDBManagerForm.StateChanged;
 begin
-  if CurrentMaster <> nil then
-    LoadActions(CurrentMaster.ItemName);
+  if Current <> nil then
+    LoadActions(Current.ItemName);
   if Visible then //prevent from setfocus non visible control
     MembersGrid.SetFocus;
 end;
@@ -574,12 +565,12 @@ end;
 
 procedure TDBManagerForm.ActionsMenuSelect(Sender: TObject);
 var
-  aValue: string;
+  aMetaItem: TmncMetaItem;
   aAddon: TmndAddon;
 begin
   aAddon := MenuActions[(Sender as TMenuItem).Tag];
-  aValue := MembersGrid.Values[0, MembersGrid.Current.Row];
-  OpenAction(aAddon, aValue);
+  aMetaItem := Members[MembersGrid.Current.Row];
+  OpenAction(aAddon, aMetaItem);
 end;
 
 constructor TDBManagerForm.Create(TheOwner: TComponent);
@@ -609,16 +600,15 @@ begin
   a := TmncMetaItems.Create;
   try
     {$ifdef DEBUG}
-    DebugLn('CurrentMaster.Name='+CurrentMaster.Name);
-    DebugLn('CurrentMaster.ItemName='+CurrentMaster.ItemName);
+    DebugLn('Current.Name='+Current.Name);
+    DebugLn('Current.ItemName='+Current.ItemName);
     {$endif}
-    CollectMetaItems(a);
     with DBEngine.Stack do
-      //if Current.Addon <> nil then
-      //begin
-        DBEngine.Stack.Push(TmndProcess.Create(CurrentMaster.Name, CurrentMaster.ItemName, AMember.Name, a));
+      if Current.CurrentAddon <> nil then
+      begin
+        DBEngine.Stack.Push(TmndProcess.Create(Current.CurrentAddon.ItemName, AMember));
         DBEngine.Run;
-      //end;
+      end;
         //what if Addon <> nil or what if Current.Addon.Item = ''
   finally
     a.Free;
@@ -632,15 +622,15 @@ begin
   a := TmncMetaItems.Create;
   try
     {$ifdef DEBUG}
-    DebugLn('CurrentMaster.Name='+CurrentMaster.Name);
-    DebugLn('CurrentMaster.ItemName='+CurrentMaster.ItemName);
+    DebugLn('Current.Name='+Current.Name);
+    DebugLn('Current.ItemName='+Current.ItemName);
     DebugLn('OpenMaster.AValue='+AValue);
     {$endif}
     //CollectMetaItems(a);
     with DBEngine.Stack do
-      if (Current <> nil) and (MasterList.Items.Count > 0) and (MasterList.ItemIndex >=0) then
+      if (Current <> nil) and (AddonsList.Items.Count > 0) and (AddonsList.ItemIndex >=0) then
       begin
-        DBEngine.Stack.Push(TmndProcess.Create(Current.CurrentAddon, AValue, Current.MetaItems));
+        DBEngine.Stack.Push(TmndProcess.Create(AValue, Current.MetaItem));
         DBEngine.Run;
       end;
   finally
@@ -648,23 +638,15 @@ begin
   end;
 end;
 
-procedure TDBManagerForm.OpenAction(vAction: TmndAddon; aValue: string);
-var
-  a: TmncMetaItems;
+procedure TDBManagerForm.OpenAction(vAction: TmndAddon; vMetaItem: TmncMetaItem);
 begin
-  a := TmncMetaItems.Create;
-  try
-    {$ifdef DEBUG}
-    DebugLn('CurrentMaster.Name='+CurrentMaster.Name);
-    DebugLn('CurrentMaster.ItemName='+CurrentMaster.ItemName);
-    DebugLn('AValue=' + AValue);
-    {$endif}
-    CollectMetaItems(a);
-    if vAction <> nil then
-      vAction.Execute(a);
-  finally
-    a.Free;
-  end;
+  {$ifdef DEBUG}
+  DebugLn('Current.Name='+Current.Name);
+  DebugLn('Current.ItemName='+Current.ItemName);
+  DebugLn('AValue=' + vMetaItem.Name);
+  {$endif}
+  if vAction <> nil then
+    vAction.Execute(vMetaItem);
 end;
 
 function TDBManagerForm.LogTime(Start: TDateTime): string;
