@@ -10,14 +10,17 @@ unit mndStdAddons;
 {$mode objfpc}{$H+}
 
 {
-  Meta --------------------------------
+  Root --------------------------------
     |                 |               |
     |                 |               |
     |                 |               |
-  Group             Group           Group
+  Master             Master           Master
     |----------------
     |       |       |
   Member  Member  Member
+    |----------------
+    |               |
+   Action        Action
 
    Open Meta = List the groups and open the first (Default) group
    Open Group = List the members of this group in the members list
@@ -263,7 +266,7 @@ uses
 constructor TDatabasesAddon.Create;
 begin
   inherited Create;
-  Group := 'Server';
+  Master := 'Server';
   Name := 'Databases';
   Title := 'Databases';
   Kind := sokDatabase;
@@ -280,7 +283,7 @@ end;
 constructor TDatabaseAddon.Create;
 begin
   inherited;
-  Group := 'Databases';
+  Master := 'Databases';
   Name := 'Database';
   Title := 'Database';
   Kind := sokDatabase;
@@ -298,7 +301,7 @@ end;
 constructor TTablesAddon.Create;
 begin
   inherited;
-  Group := 'Database';
+  Master := 'Database';
   Name := 'Tables';
   Title := 'Tables';
   ItemName := 'Table';
@@ -323,7 +326,7 @@ end;
 constructor TProceduresAddon.Create;
 begin
   inherited;
-  Group := 'Database';
+  Master := 'Database';
   Name := 'Procedures';
   Title := 'Procedures';
   ItemName := 'Procedure';
@@ -348,7 +351,7 @@ end;
 constructor TViewsAddon.Create;
 begin
   inherited;
-  Group := 'Database';
+  Master := 'Database';
   Name := 'Views';
   Title := 'Views';
   ItemName := 'View';
@@ -373,7 +376,7 @@ end;
 constructor TSequencesAddon.Create;
 begin
   inherited;
-  Group := 'Database';
+  Master := 'Database';
   Name := 'Sequences';
   Title := 'Sequences';
   ItemName := 'Sequence';
@@ -398,7 +401,7 @@ end;
 constructor TDomainsAddon.Create;
 begin
   inherited;
-  Group := 'Database';
+  Master := 'Database';
   Name := 'Domains';
   Title := 'Domains';
   ItemName := 'Domain';
@@ -423,7 +426,7 @@ end;
 constructor TExceptionsAddon.Create;
 begin
   inherited;
-  Group := 'Database';
+  Master := 'Database';
   Name := 'Exceptions';
   Title := 'Exceptions';
   ItemName := 'Exception';
@@ -448,7 +451,7 @@ end;
 constructor TFunctionsAddon.Create;
 begin
   inherited;
-  Group := 'Database';
+  Master := 'Database';
   Name := 'Functions';
   Title := 'Functions';
   ItemName := 'Function';
@@ -491,7 +494,7 @@ end;
 constructor TProcedureAddon.Create;
 begin
   inherited;
-  Group := 'Procedure';
+  Master := 'Procedure';
   Name := 'ProcedureSource';
   Title := 'Procedure Source';
   ItemName := 'Source';
@@ -524,7 +527,7 @@ end;
 constructor TViewAddon.Create;
 begin
   inherited;
-  Group := 'View';
+  Master := 'View';
   Name := 'ViewSource';
   Title := 'View Source';
   ItemName := 'Source';
@@ -557,7 +560,7 @@ end;
 constructor TTableTriggersAddon.Create;
 begin
   inherited;
-  Group := 'Table';
+  Master := 'Table';
   Name := 'Triggers';
   Title := 'Triggers';
   Kind := sokTrigger;
@@ -581,7 +584,7 @@ end;
 constructor TTriggerAddon.Create;
 begin
   inherited;
-  Group := 'Triggers';
+  Master := 'Triggers';
   Name := 'Trigger';
   Title := 'Trigger';
   Kind := sokTrigger;
@@ -613,7 +616,7 @@ end;
 constructor TTableIndicesAddon.Create;
 begin
   inherited;
-  Group := 'Table';
+  Master := 'Table';
   Name := 'Indices';
   Title := 'Indices';
   ItemName := 'Index';
@@ -638,7 +641,7 @@ end;
 constructor TDropIndexAddon.Create;
 begin
   inherited;
-  Group := 'Index';
+  Master := 'Index';
   Name := 'DropIndex';
   Title := 'Drop Index';
   Kind := sokIndex;
@@ -657,7 +660,7 @@ end;
 constructor TTableFieldsAddon.Create;
 begin
   inherited;
-  Group := 'Table';
+  Master := 'Table';
   Name := 'Fields';
   Title := 'Fields';
   ItemName := 'Field';
@@ -682,7 +685,7 @@ end;
 constructor TNewFieldAddon.Create;
 begin
   inherited;
-  Group := 'Table';
+  Master := 'Table';
   Name := 'NewField';
   Title := 'New Field';
   Kind := sokField;
@@ -720,7 +723,7 @@ end;
 constructor TEmptyTableAddon.Create;
 begin
   inherited;
-  Group := 'Table';
+  Master := 'Table';
   Name := 'EmptyTable';
   Title := 'Empty';
   Kind := sokNone;
@@ -744,7 +747,7 @@ end;
 constructor TDropFieldAddon.Create;
 begin
   inherited;
-  Group := 'Field';
+  Master := 'Field';
   Name := 'DropField';
   Title := 'Drop Field';
   Kind := sokField;
@@ -771,7 +774,7 @@ end;
 constructor TTriggersAddon.Create;
 begin
   inherited Create;
-  Group := 'Database';
+  Master := 'Database';
   Name := 'Triggers';
   Title := 'Triggers';
   ItemName := 'Trigger';
@@ -796,10 +799,10 @@ end;
 constructor TTableAddon.Create;
 begin
   inherited Create;
-  Group := 'Tables';
+  Master := 'Tables';
   Name := 'Table';
   Title := 'Table';
-  //ItemName := 'Field'; nop it has a child groups
+  //ItemName := 'Field'; nop it has a child Masters
   Kind := sokTable;
   ImageIndex := IMG_TABLE;
 end;
@@ -815,7 +818,7 @@ end;
 constructor TIndexAddon.Create;
 begin
   inherited Create;
-  Group := 'Indices';
+  Master := 'Indices';
   Name := 'Index';
   Title := 'Index';
   Kind := sokIndex;
@@ -845,7 +848,7 @@ end;
 constructor TIndicesAddon.Create;
 begin
   inherited Create;
-  Group := 'Database';
+  Master := 'Database';
   Name := 'Indices';
   Title := 'Indices';
   ItemName := 'Index';
@@ -870,7 +873,7 @@ end;
 constructor TDropTableAddon.Create;
 begin
   inherited Create;
-  Group := 'Table';
+  Master := 'Table';
   Name := 'DropTable';
   Title := 'Drop';
   Kind := sokTable;
@@ -889,7 +892,7 @@ end;
 constructor TSelectTableAddon.Create;
 begin
   inherited Create;
-  Group := 'Table';
+  Master := 'Table';
   Name := 'SelectTable';
   Title := 'Select';
   Kind := sokTable;
@@ -909,7 +912,7 @@ end;
 constructor TInsertTableAddon.Create;
 begin
   inherited Create;
-  Group := 'Table';
+  Master := 'Table';
   Name := 'InsertTable';
   Title := 'Insert';
   Kind := sokTable;

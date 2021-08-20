@@ -38,10 +38,12 @@ if you are editing multiple files, e.g. Python, PHP it can run this files into c
  | D 			| compile, run  | DMD           |
  | C 			| compile, run	|				|
  | Go 			| compile, run	| go			|
+ | SL/OpenSim   | lint      	| LSL			|
  | CMD, Bat		| run			| cmd.exe		|
  | sh 			| run			| sh			|
  | csv 			| show			| 				|
  | btfont [TODO]| edit, show	| 				|
+
  
 ### Disadvantages
   

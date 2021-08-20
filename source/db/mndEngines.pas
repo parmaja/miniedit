@@ -93,8 +93,8 @@ type
   public
     constructor Create;
     constructor Create(vAddon: TmndAddon; vSelect: string; vMetaItems: TmncMetaItems = nil; AShowIn: TmndShow = shwnElement);
-    constructor Create(Group, Name: string; vSelect: string; vMetaItems: TmncMetaItems = nil; AShowIn: TmndShow = shwnElement);
-    constructor Create(Group, Name: string; vSelect: string; vValue: string; AShowIn: TmndShow = shwnElement);
+    constructor Create(Master, Name: string; vSelect: string; vMetaItems: TmncMetaItems = nil; AShowIn: TmndShow = shwnElement);
+    constructor Create(Master, Name: string; vSelect: string; vValue: string; AShowIn: TmndShow = shwnElement);
 
     destructor Destroy; override;
 
@@ -131,7 +131,7 @@ type
   nsNeedSession: Enum only when session is active
 }
 
-  TmndAddonStyle = set of (nsDefault, nsGroup, nsCommand, nsEditor, nsButton, nsNeedSession);
+  TmndAddonStyle = set of (nsDefault, nsMaster, nsCommand, nsEditor, nsButton, nsNeedSession);
 
   ImndAddon = interface(IInterface)
     function GetAddon: TmndAddon;
@@ -142,7 +142,7 @@ type
   TmndAddon = class(TmnNamedObject)
   private
     FItemName: string;
-    FGroup: string;
+    FMaster: string;
     FStyle: TmndAddonStyle;
     FTitle: string;
     FKind: TmetaKind;
@@ -156,11 +156,11 @@ type
     procedure ShowProperty; virtual;
     procedure Execute(vMetaItems: TmncMetaItems; FallDefault: Boolean = False);
     procedure Execute(const Value: string);
-    procedure Enum(Addons: TmndAddons);
+    procedure EnumAddons(Addons: TmndAddons);
     procedure EnumDefaults(Addons: TmndAddons);
     procedure EnumMeta(vItems: TmncMetaItems; vMetaItems: TmncMetaItems = nil); virtual; abstract;
     property CanExecute: Boolean read GetCanExecute;
-    property Group: string read FGroup write FGroup; //Group is parent Addon like Tabkes.Group = 'Database'
+    property Master: string read FMaster write FMaster; //Master is parent Addon like Tables.Master = 'Database'
     //property Name: string read FName write FName; //Name = 'Tables'
     property ItemName: string read FItemName write FItemName; //Item name eg  Tables.Item = 'Table'
     property Kind: TmetaKind read FKind write FKind default sokNone;
@@ -176,9 +176,9 @@ type
   TmndCustomAddons = class(specialize TmnNamedObjectList<TmndAddon>)
   private
   public
-    procedure Enum(GroupName: string; Addons: TmndAddons; SessionActive: Boolean; OnlyDefaults: Boolean = False); overload;
-    function Find(const Group, Name: string): TmndAddon;
-    function Find(const Group, Name: string; Deep: Boolean): TmndAddon;
+    procedure EnumAddons(MasterName: string; Addons: TmndAddons; SessionActive: Boolean; OnlyDefaults: Boolean = False); overload;
+    function Find(const Master, Name: string): TmndAddon;
+    function Find(const Master, Name: string; Deep: Boolean): TmndAddon;
     function IsExists(vAddon: TmndAddon): Boolean;
   end;
 
@@ -362,7 +362,7 @@ type
     procedure Run(vStack: TmndStack);
     procedure Run(vAddon: TmndAddon; vMetaItems: TmncMetaItems);
     procedure Run;
-    //procedure Run(vGroup, vName, vValue: string; vSelect: string = '');
+    //procedure Run(vMaster, vName, vValue: string; vSelect: string = '');
     procedure RegisterFilter(Filter: string);
     procedure RegisterViewer(Classes: array of TmndAddonClass);
     procedure LoadFile(FileName:string; Strings: TStrings);
@@ -448,24 +448,24 @@ begin
   FShowIn := AShowIn;
 end;
 
-constructor TmndProcess.Create(Group, Name: string; vSelect: string; vMetaItems: TmncMetaItems; AShowIn: TmndShow);
+constructor TmndProcess.Create(Master, Name: string; vSelect: string; vMetaItems: TmncMetaItems; AShowIn: TmndShow);
 var
   aAddon: TmndAddon;
 begin
-  aAddon := DBEngine.Find(Group, Name, True);
+  aAddon := DBEngine.Find(Master, Name, True);
   if aAddon = nil then
-    raise Exception.Create('Addon not found' + Group + '\' + Name);
+    raise Exception.Create('Addon not found' + Master + '\' + Name);
   Create(aAddon, Select, vMetaItems, AShowIn);
 end;
 
-constructor TmndProcess.Create(Group, Name: string; vSelect: string; vValue: string; AShowIn: TmndShow);
+constructor TmndProcess.Create(Master, Name: string; vSelect: string; vValue: string; AShowIn: TmndShow);
 var
   a: TmncMetaItems;
 begin
   a := TmncMetaItems.Create;
   try
     a.Add(Name, vValue);
-    Create(Group, Name, Select, a, AShowIn);
+    Create(Master, Name, Select, a, AShowIn);
   finally
     a.Free;
   end;
@@ -661,7 +661,7 @@ end;
 
 { TmndAddons }
 
-procedure TmndCustomAddons.Enum(GroupName: string; Addons: TmndAddons; SessionActive: Boolean; OnlyDefaults:Boolean = False);
+procedure TmndCustomAddons.EnumAddons(MasterName: string; Addons: TmndAddons; SessionActive: Boolean; OnlyDefaults:Boolean = False);
 var
   i: Integer;
   aDefault: Integer;
@@ -672,7 +672,7 @@ begin
   c := 0;
   for i := 0 to Count - 1 do
   begin
-    if SameText(Items[i].Group, GroupName) and (not OnlyDefaults or (nsDefault in Items[i].Style)) and (SessionActive or not (nsNeedSession in Items[i].Style)) then
+    if SameText(Items[i].Master, MasterName) and (not OnlyDefaults or (nsDefault in Items[i].Style)) and (SessionActive or not (nsNeedSession in Items[i].Style)) then
     begin
       if (aDefault < 0) and (nsDefault in Items[i].Style) then
         aDefault := c;
@@ -685,14 +685,14 @@ begin
     Addons.Move(aDefault, 0);
 end;
 
-function TmndCustomAddons.Find(const Group, Name: string): TmndAddon;
+function TmndCustomAddons.Find(const Master, Name: string): TmndAddon;
 var
   i: Integer;
 begin
   Result := nil;
   for i := 0 to Count - 1 do
   begin
-    if SameText(Group, Items[i].Group) and SameText(Name, Items[i].Name) then
+    if SameText(Master, Items[i].Master) and SameText(Name, Items[i].Name) then
     begin
       Result := Items[i];
       break;
@@ -700,20 +700,20 @@ begin
   end;
 end;
 
-function TmndCustomAddons.Find(const Group, Name: string; Deep: Boolean): TmndAddon;
+function TmndCustomAddons.Find(const Master, Name: string; Deep: Boolean): TmndAddon;
 var
   aAddons: TmndAddons;
 begin
-  Result := Find(Group, Name);
+  Result := Find(Master, Name);
   if Deep then
     if Result = nil then
     begin
-      Result := Find(Group, Name);
+      Result := Find(Master, Name);
       if (Result = nil) then
       begin
         aAddons := TmndAddons.Create;
         try
-          Enum(Name, aAddons, True);
+          EnumAddons(Name, aAddons, True);
           if aAddons.Count > 0 then
             Result := aAddons[0];
         finally
@@ -774,7 +774,7 @@ begin
   c := 0;
   for i := 0 to mndClasses.Count - 1 do
   begin
-    if SameText(mndClasses[i].Group, Name) then
+    if SameText(mndClasses[i].Master, Name) then
     begin
       if (aDefault < 0) and mndClasses[i].IsDefault then
         aDefault := c;
@@ -786,14 +786,14 @@ begin
     Strings.Move(aDefault, 0);
 end;}
 
-procedure TmndAddon.Enum(Addons: TmndAddons);
+procedure TmndAddon.EnumAddons(Addons: TmndAddons);
 begin
-  DBEngine.Enum(Name, Addons, DBEngine.DB.IsActive);
+  DBEngine.EnumAddons(Name, Addons, DBEngine.DB.IsActive);
 end;
 
 procedure TmndAddon.EnumDefaults(Addons: TmndAddons);
 begin
-  DBEngine.Enum(Name, Addons, DBEngine.DB.IsActive, True);
+  DBEngine.EnumAddons(Name, Addons, DBEngine.DB.IsActive, True);
 end;
 
 procedure TmndAddon.Execute(vMetaItems: TmncMetaItems; FallDefault: Boolean = False);

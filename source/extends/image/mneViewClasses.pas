@@ -96,7 +96,15 @@ end;
 
 procedure TImageFile.DoLoad(FileName: string);
 begin
-  FContent.Image.Picture.LoadFromFile(FileName);
+  try
+    FContent.Image.Picture.LoadFromFile(FileName);
+  except
+    on E: Exception do
+    begin
+      FContent.Image.Picture.Clear;
+      raise;
+    end;
+  end;
 end;
 
 procedure TImageFile.DoSave(FileName: string);

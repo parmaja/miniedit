@@ -12,6 +12,15 @@ unit mndManagerForms;
 {todo: Ask for param when have params in normal execute sql script}
 {todo: Extract the Meta of whale database}
 {todo: Blob access as PNG or JPG}
+{
+
+
+    Root : Addon (label)  Database
+      Masters : Addons(combobox) [Tables, Indexes, ...]
+        Master : Addons(itemindex of combobox) [Tables]
+          Members Master Items : Memoer(grid) [Table1, Table2]
+             Actions : Addons PopupMenu (Select, Drop, ...)
+}
 
 interface
 
@@ -90,31 +99,36 @@ type
     procedure CheckSearch;
     procedure SearchFor(S: string);
     procedure ApplyFilter;
-    procedure CollectMetaItems(vMetaItems: TmncMetaItems);
   private
     function LogTime(Start: TDateTime): string;
     procedure StateChanged;
-    procedure LoadMembers(vMaster: TmndAddon; vMetaItems: TmncMetaItems);
-  public
-    MenuActions: TmndAddons;
-
-    Masters: TmndAddons;//Fields, Indexes
-    Members: TmncMetaItems; //Grid
-    CurrentMaster: TmndAddon;
-
     procedure ActionsMenuSelect(Sender: TObject);
+    procedure CollectMetaItems(vMetaItems: TmncMetaItems);
+  public
+    Masters: TmndAddons;//Fields, Indexes
+    CurrentMaster: TmndAddon;
+    Members: TmncMetaItems; //Grid
+    MenuActions: TmndAddons;
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
-    procedure OpenAction(vAction: TmndAddon; aValue: string);
-    procedure OpenMember(AMember: TmncMetaItem);
+
+    //procedure OpenRoot(AValue: string);
+
     procedure OpenMaster(AValue: string);
+
+    procedure LoadMembers(vMaster: TmndAddon; vMetaItems: TmncMetaItems);
+    procedure OpenMember(AMember: TmncMetaItem);
+
     procedure LoadActions(vMaster: string; Append: Boolean = False);
+    procedure OpenAction(vAction: TmndAddon; aValue: string);
+
 
     procedure SaveOptions;
     procedure LoadOptions;
 
     procedure ServerChanged;
     procedure DatabaseChanged;
+
     procedure ShowMeta(vAddon: TmndAddon; vSelectDefault: Boolean);
     procedure ShowEditor(vAddon: TmndAddon; S: string);
   end;
@@ -142,7 +156,7 @@ begin
   MetaName := vAddon.Title + ': ' + DBEngine.Stack.Current.MetaItems.Values[DBEngine.Stack.Current.DisplayName];
   aMasters := TmndAddons.Create;
   try
-    DBEngine.Enum(vAddon.Name, aMasters, DBEngine.DB.IsActive);
+    DBEngine.EnumAddons(vAddon.Name, aMasters, DBEngine.DB.IsActive);
 
     g := DBEngine.Stack.Current.Select;
     aMaster := nil;
@@ -468,7 +482,7 @@ begin
     MenuActions := TmndAddons.Create;
     aList := TmndAddons.Create;
     try
-      DBEngine.Enum(vMaster, aList, DBEngine.DB.IsActive);
+      DBEngine.EnumAddons(vMaster, aList, DBEngine.DB.IsActive);
       c := 0;
       for i := 0 to aList.Count - 1 do
         if nsCommand in aList[i].Style then
