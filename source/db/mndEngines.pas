@@ -88,7 +88,6 @@ type
     //FMetaItems: TmncMetaItems;
     FShowIn: TmndShow;
   strict protected
-    property Addon: TmndAddon read FAddon write FAddon;
     function GetDisplayName: string; virtual;
   public
     Value: string;
@@ -101,9 +100,10 @@ type
 
     procedure Execute(vMetaItem: TmncMetaItem; FallDefault: Boolean = False);
     property DisplayName: string read GetDisplayName;
-    function CurrentAddon: TmndAddon; deprecated;
+
     //property MetaItems: TmncMetaItems read FMetaItems write FMetaItems;
     property MetaItem: TmncMetaItem read FMetaItem write FMetaItem;
+    property Addon: TmndAddon read FAddon;// write FAddon;
     property ShowIn: TmndShow read FShowIn write FShowIn;
   end;
 
@@ -164,7 +164,7 @@ type
     //property Name: string read FName write FName; //Name = 'Tables' it is already exists in TmnNamedObject
     property Master: string read FMaster write FMaster; //Master is parent Addon like Tables.Master = 'Database'
     property ItemName: string read FItemName write FItemName; //Item name eg  Tables.Item = 'Table'
-    property DefaultAddon: string read FDefaultAddon write FDefaultAddon; //Default Addon from Childs addons
+    property DefaultAddon: string read FDefaultAddon write FDefaultAddon; deprecated; //Default Addon from Childs addons
     property Kind: TmetaKind read FKind write FKind default sokNone;
     property Style: TmndAddonStyle read FStyle write FStyle;
     property Title: string read FTitle write FTitle;
@@ -310,7 +310,7 @@ type
     destructor Destroy; override;
     function CreateMeta: TmncMeta;
     procedure LoadMeta;
-    procedure Open(vCreate:Boolean; DatabaseEngine, DatabaseName, UserName, Password, Role: string; vExclusive: Boolean = False; vVacuum: Boolean = False);
+    procedure Open(vCreate: Boolean; DatabaseEngine, Host, Port, DatabaseName, UserName, Password, Role: string; vExclusive: Boolean = False; vVacuum: Boolean = False);
     procedure Close;
     function IsActive: Boolean;
     procedure Connected;
@@ -416,7 +416,7 @@ end;
 
 procedure DumpMetaItem(a: TmncMetaItem);
 begin
-  DebugLn(AlignStr(a.Name, 20, [alsCut, alsLeft]) + ': ' + a.Value);
+  DebugLn(AlignStr(a.Name, 20, [alsCut, alsLeft]));
 end;
 
 var
@@ -449,7 +449,7 @@ end;
 constructor TmndProcess.Create(vAddon: TmndAddon; vMetaItem: TmncMetaItem; AShowIn: TmndShow);
 begin
   Create;
-  Addon := vAddon;
+  FAddon := vAddon;
   //MetaItems.Clone(vMetaItems);
   MetaItem.Clone(vMetaItem);
   FShowIn := AShowIn;
@@ -487,11 +487,6 @@ begin
     {$endif}
     Addon.Execute(vMetaItem, FallDefault);
   end;
-end;
-
-function TmndProcess.CurrentAddon: TmndAddon;
-begin
-  Result := Addon;
 end;
 
 { TmndStack }
@@ -921,7 +916,7 @@ begin
     DB.Close;
 
   //Setting.CacheMetas := CacheMetaChk.Checked;
-  DB.Open(False, EngineName, Resource, User, Password, Role, False, False);
+  DB.Open(False, EngineName, Host, Port, Resource, User, Password, Role, False, False);
   DatabaseChanged;
   Stack.Clear;
   Stack.Push(TmndProcess.Create('Table', ''));
@@ -975,7 +970,7 @@ begin
       if DBEngine.DB.IsActive then
         DBEngine.DB.Close;
 
-      DBEngine.DB.Open(True, (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name, DatabaseEdit.Text, UserEdit.Text, PasswordEdit.Text, RoleEdit.Text, ExclusiveChk.Checked);
+      DBEngine.DB.Open(True, (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name, HostEdit.Text, PortEdit.Text, DatabaseEdit.Text, UserEdit.Text, PasswordEdit.Text, RoleEdit.Text, ExclusiveChk.Checked);
       DBEngine.Stack.Clear;
       DBEngine.Stack.Push(TmndProcess.Create('Table', DatabaseEdit.Text));
       DBEngine.Run(DBEngine.Stack);
@@ -1215,21 +1210,21 @@ begin
     AMeta := Engines.CreateMeta(FConnection);
     try
       AMeta.Link := Session;
-      AMeta.EnumObjects(Tables, sokTable, '', [ekSystem, ekSort]);
-      AMeta.EnumObjects(Views, sokView, '', [ekSort]);
+      AMeta.EnumObjects(Tables, sokTable, DBEngine.DB.Connection.Resource, [ekSystem, ekSort]);
+{      AMeta.EnumObjects(Views, sokView, '', [ekSort]);
       AMeta.EnumObjects(Proceduers, sokProcedure, '', [ekSort]);
       AMeta.EnumObjects(Sequences, sokSequence, '', [ekSort]);
       AMeta.EnumObjects(Functions, sokFunction, '', [ekSort]);
       AMeta.EnumObjects(Exceptions, sokException, '', [ekSort]);
       AMeta.EnumObjects(Domains, sokDomain, '', [ekSort]);
-      AMeta.EnumObjects(Fields, sokField);
+      AMeta.EnumObjects(Fields, sokField);}
     finally
       AMeta.Free;
     end;
   end;
 end;
 
-procedure TmndDB.Open(vCreate: Boolean; DatabaseEngine, DatabaseName, UserName, Password, Role: string; vExclusive: Boolean; vVacuum: Boolean);
+procedure TmndDB.Open(vCreate: Boolean; DatabaseEngine, Host, Port, DatabaseName, UserName, Password, Role: string; vExclusive: Boolean; vVacuum: Boolean);
 begin
   FConnection := Engines.CreateConnection(DatabaseEngine) as TmncSQLConnection;
 

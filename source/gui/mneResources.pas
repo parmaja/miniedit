@@ -122,7 +122,7 @@ begin
   Extensions.Add('go', 11);
   Extensions.Add('sql', 12);
   Extensions.Add('db', cDatabaseImage);
-  Extensions.Add('postgre', 14);
+  Extensions.Add('postgresql', 14);
   Extensions.Add('sqlite', 15);
   Extensions.Add('firebird', 16);
   Extensions.Add('mysql', 17);

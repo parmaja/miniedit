@@ -42,6 +42,7 @@ object DBManagerForm: TDBManagerForm
         ItemHeight = 15
         OnKeyPress = AddonsListKeyPress
         OnSelect = AddonsListSelect
+        PopupMenu = ActionsPopupMenu
         Style = csDropDownList
         TabOrder = 0
       end
@@ -67,15 +68,15 @@ object DBManagerForm: TDBManagerForm
         OnClick = FirstBtnClick
         TabOrder = 2
       end
-      object OpenBtn: TButton
+      object RefreshBtn: TButton
         Left = 0
         Height = 25
         Top = 24
-        Width = 55
+        Width = 65
         Align = alLeft
         AutoSize = True
-        Caption = 'Open'
-        OnClick = OpenBtnClick
+        Caption = 'Refresh'
+        OnClick = RefreshBtnClick
         TabOrder = 3
       end
       object Panel1: TPanel
@@ -98,6 +99,7 @@ object DBManagerForm: TDBManagerForm
           BorderSpacing.Around = 2
           Caption = 'No database opened'
           Layout = tlCenter
+          PopupMenu = ActionsPopupMenu
           ShowAccelChar = False
         end
         object DatabaseImage: TntvImgBtn
@@ -131,6 +133,7 @@ object DBManagerForm: TDBManagerForm
           BorderSpacing.Around = 2
           Caption = 'Element'
           Layout = tlCenter
+          PopupMenu = ActionsPopupMenu
         end
         object DatabaseImage1: TntvImgBtn
           Left = 0
@@ -244,7 +247,8 @@ object DBManagerForm: TDBManagerForm
     end
   end
   object ActionsPopupMenu: TPopupMenu
-    Left = 79
+    OnPopup = ActionsPopupMenuPopup
+    Left = 80
     Top = 274
   end
   object DatabaseMenu: TPopupMenu

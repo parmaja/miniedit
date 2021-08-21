@@ -1,3 +1,4 @@
+
 unit mndStdAddons;
 {**
  *  This file is part of the "MiniEdit"
@@ -291,7 +292,7 @@ var
 begin
   aMeta := DBEngine.DB.CreateMeta;
   try
-    aMeta.EnumFields(vItems, vMetaItem.Name);
+    aMeta.EnumFields(vItems, vMetaItem.SQLName);
   finally
     aMeta.Free
   end;
@@ -351,7 +352,7 @@ var
 begin
   aMeta := DBEngine.DB.CreateMeta;
   try
-    aMeta.EnumTables(vItems);
+    aMeta.EnumTables(vItems, DBEngine.DB.Connection.Resource);
   finally
     aMeta.Free
   end;
@@ -581,7 +582,7 @@ begin
   try
     aMeta := DBEngine.DB.CreateMeta;
     try
-      aMeta.GetViewSource(aStrings, vMetaItem.Value, [ekAlter]);
+      aMeta.GetViewSource(aStrings, vMetaItem.SQLName, [ekAlter]);
     finally
       aMeta.Free;
     end;
@@ -637,7 +638,7 @@ begin
   try
     aMeta := DBEngine.DB.CreateMeta;
     try
-      aMeta.GetTriggerSource(aStrings, vMetaItem.Values['Trigger'], [ekAlter]);
+      aMeta.GetTriggerSource(aStrings, vMetaItem.Definitions['Trigger'], [ekAlter]);
     finally
       aMeta.Free;
     end;
@@ -666,7 +667,7 @@ var
 begin
   aMeta := DBEngine.DB.CreateMeta;
   try
-    aMeta.EnumIndices(vItems, vMetaItem.Name);
+    aMeta.EnumIndices(vItems, vMetaItem.SQLName);
   finally
     aMeta.Free
   end;
@@ -710,7 +711,7 @@ var
 begin
   aMeta := DBEngine.DB.CreateMeta;
   try
-    aMeta.EnumFields(vItems, vMetaItem.Values['Table']);
+    aMeta.EnumFields(vItems, vMetaItem.Definitions['Table']);
   finally
     aMeta.Free
   end;
@@ -738,7 +739,7 @@ begin
   aStrings := TStringList.Create;
   try
     //aStrings.Text := 'alter table ' + vStack['Table'] + ' drop column ' + Value;
-    aStrings.Text := 'alter table ' + vMetaItem.Value + ' add ?FieldName ?FieldType';
+    aStrings.Text := 'alter table ' + vMetaItem.SQLName + ' add ?FieldName ?FieldType';
 
     DBEngine.ShowEditor(Self, aStrings);
   finally
@@ -773,7 +774,7 @@ var
 begin
   inherited;
   aStrings := TStringList.Create;
-  aStrings.Text := 'delete from ' + vMetaItem.Value;
+  aStrings.Text := 'delete from ' + vMetaItem.SQLName;
   DBEngine.ShowEditor(Self, aStrings);
   aStrings.Free;
 end;
@@ -798,7 +799,7 @@ begin
   inherited;
   aStrings := TStringList.Create;
   try
-    aStrings.Text := 'alter table ' + vMetaItem.Values['Table'] + ' drop column ' + vMetaItem.Value;
+    aStrings.Text := 'alter table ' + vMetaItem.Definitions['Table'] + ' drop column ' + vMetaItem.SQLName;
     DBEngine.ShowEditor(Self, aStrings);
   finally
     aStrings.Free;
@@ -856,7 +857,7 @@ var
 begin
   aMeta := DBEngine.DB.CreateMeta;
   try
-    aMeta.EnumTables(vItems);
+    aMeta.EnumTables(vItems, DBEngine.DB.Connection.Resource);
   finally
     aMeta.Free
   end;
@@ -886,7 +887,7 @@ var
 begin
   aMeta := DBEngine.DB.CreateMeta;
   try
-    aMeta.GetIndexInfo(vItems, vMetaItem.Values['Index']);
+    aMeta.GetIndexInfo(vItems, vMetaItem.Definitions['Index']);
   finally
     aMeta.Free
   end;
@@ -933,7 +934,7 @@ end;
 procedure TDropTableAddon.DoExecute(vMetaItem: TmncMetaItem);
 begin
   inherited;
-  DBEngine.ShowEditor(Self, 'drop table ' + vMetaItem.Values['Table']);
+  DBEngine.ShowEditor(Self, 'drop table ' + vMetaItem.Definitions['Table']);
 end;
 
 { TSelectTableAddon }
@@ -953,7 +954,7 @@ procedure TSelectTableAddon.DoExecute(vMetaItem: TmncMetaItem);
 begin
   inherited;
   DumpMetaItem(vMetaItem);
-  DBEngine.ShowEditor(Self, 'select * from ' + vMetaItem.Values['Table']);
+  DBEngine.ShowEditor(Self, 'select * from ' + vMetaItem.SQLName);
 end;
 
 { TInsertTableAddon }
@@ -981,7 +982,7 @@ begin
   try
     aMeta := DBEngine.DB.CreateMeta;
     try
-      aMeta.EnumFields(aItems, vMetaItem.Values['Table']);
+      aMeta.EnumFields(aItems, vMetaItem.Definitions['Table']);
     finally
       aMeta.Free
     end;
@@ -1000,7 +1001,7 @@ begin
   finally
     aItems.Free;
   end;
-  DBEngine.ShowEditor(Self, 'insert into ' + vMetaItem.Values['Table'] + '(' + s1 + ') values (' + s2 +')');
+  DBEngine.ShowEditor(Self, 'insert into ' + vMetaItem.Definitions['Table'] + '(' + s1 + ') values (' + s2 +')');
 end;
 
 { TExportSQLAddon }
