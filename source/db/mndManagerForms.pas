@@ -606,7 +606,7 @@ begin
     with DBEngine.Stack do
       if Current.CurrentAddon <> nil then
       begin
-        DBEngine.Stack.Push(TmndProcess.Create(Current.CurrentAddon.ItemName, AMember));
+        DBEngine.Stack.Push(TmndProcess.Create(Current.CurrentAddon.DefaultAddon, AMember));
         DBEngine.Run;
       end;
         //what if Addon <> nil or what if Current.Addon.Item = ''

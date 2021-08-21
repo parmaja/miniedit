@@ -142,6 +142,7 @@ type
 
   TmndAddon = class(TmnNamedObject)
   private
+    FDefaultAddon: string;
     FItemName: string;
     FMaster: string;
     FStyle: TmndAddonStyle;
@@ -163,6 +164,7 @@ type
     //property Name: string read FName write FName; //Name = 'Tables' it is already exists in TmnNamedObject
     property Master: string read FMaster write FMaster; //Master is parent Addon like Tables.Master = 'Database'
     property ItemName: string read FItemName write FItemName; //Item name eg  Tables.Item = 'Table'
+    property DefaultAddon: string read FDefaultAddon write FDefaultAddon; //Default Addon from Childs addons
     property Kind: TmetaKind read FKind write FKind default sokNone;
     property Style: TmndAddonStyle read FStyle write FStyle;
     property Title: string read FTitle write FTitle;
@@ -922,7 +924,7 @@ begin
   DB.Open(False, EngineName, Resource, User, Password, Role, False, False);
   DatabaseChanged;
   Stack.Clear;
-  Stack.Push(TmndProcess.Create('Tables', ''));
+  Stack.Push(TmndProcess.Create('Table', ''));
   Run;
   Engine.SendAction(eaShowDatabases);
 end;
@@ -975,7 +977,7 @@ begin
 
       DBEngine.DB.Open(True, (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name, DatabaseEdit.Text, UserEdit.Text, PasswordEdit.Text, RoleEdit.Text, ExclusiveChk.Checked);
       DBEngine.Stack.Clear;
-      DBEngine.Stack.Push(TmndProcess.Create('Tables', DatabaseEdit.Text));
+      DBEngine.Stack.Push(TmndProcess.Create('Table', DatabaseEdit.Text));
       DBEngine.Run(DBEngine.Stack);
     end;
   end;
