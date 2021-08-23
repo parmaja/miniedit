@@ -19,7 +19,7 @@ unit mndManagerForms;
       Masters : Addons(combobox) [Tables, Indexes, ...]
         Master : Addons(itemindex of combobox) [Tables]
           Members Master Items : Memoer(grid) [Table1, Table2]
-             Actions : Addons PopupMenu (Select, Drop, ...)
+             Commands : Addons PopupMenu (Select, Drop, ...)
 }
 
 interface
@@ -36,21 +36,21 @@ uses
 
 type
 
-  { TActionMenuItem }
+  { TCommandMenuItem }
 
-  TActionMenuItem = class(TMenuItem)
+  TCommandMenuItem = class(TMenuItem)
   protected
-    procedure Click; override;
   public
     Addon: TmndAddon;
     MetaItem: TmncMetaItem;
+    procedure Click; override;
   end;
 
   { TDBManagerForm }
 
   TDBManagerForm = class(TFrame, INotifyEngine, INotifyEngineSetting, ImndNotify)
     DatabaseImage: TntvImgBtn;
-    DatabaseImage1: TntvImgBtn;
+    MasterImage: TntvImgBtn;
     MasterLbl: TLabel;
     Panel3: TPanel;
     ServerImage: TntvImgBtn;
@@ -71,7 +71,7 @@ type
     MenuItem2: TMenuItem;
     MenuItem3: TMenuItem;
     HelpMnu: TMenuItem;
-    ActionsPopupMenu: TPopupMenu;
+    CommandsPopupMenu: TPopupMenu;
     DatabasesPnl: TntvPanel;
     Panel1: TPanel;
     Panel2: TPanel;
@@ -83,7 +83,7 @@ type
     Timer1: TTimer;
     ToolsMnu: TMenuItem;
     GroupPanel: TPanel;
-    procedure ActionsPopupMenuPopup(Sender: TObject);
+    procedure CommandsPopupMenuPopup(Sender: TObject);
     procedure BackBtnClick(Sender: TObject);
     procedure ConnectBtnClick(Sender: TObject);
     procedure DatabasesListDblClick(Sender: TObject);
@@ -114,7 +114,7 @@ type
     procedure StateChanged;
   public
     Masters: TmndAddons;//Fields, Indexes
-    Members: TmncMetaItems; //Grid
+    Members: TmndMembers; //Grid
     constructor Create(TheOwner: TComponent); override;
     destructor Destroy; override;
 
@@ -123,9 +123,9 @@ type
     procedure OpenMaster(AValue: string);
 
     procedure LoadMembers(vAddon: TmndAddon; vMetaItem: TmncMetaItem);
-    procedure OpenMember(AMember: TmncMetaItem);
+    procedure OpenMember(AMember: TmndMember);
 
-    procedure LoadActions(vMaster: string; vMetaItem: TmncMetaItem; Append: Boolean = False);
+    procedure LoadCommands(vAddonName: string; vMetaItem: TmncMetaItem; Append: Boolean = False);
 
     procedure SaveOptions;
     procedure LoadOptions;
@@ -145,9 +145,9 @@ implementation
 uses
   CSVOptionsForms, ParamsForms, SynEditMiscProcs;
 
-{ TActionMenuItem }
+{ TCommandMenuItem }
 
-procedure TActionMenuItem.Click;
+procedure TCommandMenuItem.Click;
 begin
   if Addon <> nil then
     Addon.Execute(MetaItem);
@@ -162,19 +162,21 @@ var
   Select: string;
   b: Boolean;
   aAddons: TmndAddons;
-  aSelectedAddon: TmndAddon;
+//  aSelectedAddon: TmndAddon;
 begin
   ServerLbl.Caption := DBEngine.DB.Connection.Host;
   DatabaseLbl.Caption := DBEngine.DB.Connection.Resource;
   MasterLbl.Caption := vAddon.Master;
+  //if vAddon.Kind = akMeta then
+    MasterLbl.Caption := MasterLbl.Caption + ': ' + vMetaItem.Name;
   aAddons := TmndAddons.Create(False);
   try
-    DBEngine.EnumAddons(vAddon.Master, aAddons, DBEngine.DB.IsActive);
+    DBEngine.EnumAddons(vAddon.Master, [akAddon, akMeta], aAddons, DBEngine.DB.IsActive);
     //DBEngine.EnumAddons(AddonName, aAddons, DBEngine.DB.IsActive);
 
     //select := DBEngine.Stack.Current.Select;
     Select := vAddon.Name;
-    aSelectedAddon := nil;
+    //aSelectedAddon := nil;
     d := -1;
     c := 0;
     b := false;
@@ -184,7 +186,7 @@ begin
       Masters.Clear;
       for i := 0 to aAddons.Count -1 do
       begin
-        if not (nsCommand in aAddons[i].Style) then //Group in style
+        if not (akCommand = aAddons[i].Kind) then //Group in style
         begin
           AddonsList.Items.Add(aAddons[i].Title);
           Masters.Add(aAddons[i]);
@@ -193,13 +195,13 @@ begin
             if (d < 0) then //Select first one
             begin
               d := c;
-              aSelectedAddon := aAddons[i];
+              //aSelectedAddon := aAddons[i];
             end;
             //b mean already selected and override privouse assigb
             if not b and (((Select = '') and (nsDefault in aAddons[i].Style))) or (((Select <>'') and SameText(Select, aAddons[i].Name))) then
             begin
               d := c;
-              aSelectedAddon := aAddons[i];
+              //aSelectedAddon := aAddons[i];
               b := true;
             end;
           end;
@@ -241,6 +243,7 @@ procedure TDBManagerForm.LoadMembers(vAddon: TmndAddon; vMetaItem: TmncMetaItem)
 var
   i, j: Integer;
   aMetaItems: TmncMetaItems;
+  aMetaItem: TmncMetaItem;
 begin
   MembersGrid.Clear;
   if vAddon = nil then
@@ -253,20 +256,21 @@ begin
   else
   begin
     FreeAndNil(Members);
-    Members := TmncMetaItems.Create;
+    Members := TmndMembers.Create(True);
 
     MembersGrid.BeginUpdate;
     MembersGrid.Reset;
     try
-      vAddon.EnumMeta(Members, vMetaItem);
+      vAddon.EnumMembers(Members, vMetaItem);
 
       if Members.Count > 0 then
       begin
-        MembersGrid.ColumnsCount := Members[0].Attributes.Count + 1;
+        aMetaItem := Members[0].MetaItem;
+        MembersGrid.ColumnsCount := aMetaItem.Attributes.Count + 1;
         MembersGrid.Columns[0].Title := 'Name';
         for i := 1 to MembersGrid.ColumnsCount -1 do
         begin
-          MembersGrid.Columns[i].Title := Members[0].Attributes.Items[i - 1].Name;
+          MembersGrid.Columns[i].Title := Members[0].MetaItem.Attributes.Items[i - 1].Name;
         end;
         if MembersGrid.ColumnsCount > 0 then
           MembersGrid.Columns[0].AutoFit := True;
@@ -278,9 +282,9 @@ begin
           for j := 0 to MembersGrid.ColumnsCount - 1 do
           begin
             if j = 0 then
-              MembersGrid.Values[j, i] := Members[i].Name
-            else if (j - 1) < Members[i].Attributes.Count then //maybe Attributes not have all data
-              MembersGrid.Values[j, i] := Members[i].Attributes.Items[j - 1].Value; //TODO must be assigned my name not by index
+              MembersGrid.Values[j, i] := Members[i].MetaItem.Name
+            else if (j - 1) < Members[i].MetaItem.Attributes.Count then //maybe Attributes not have all data
+              MembersGrid.Values[j, i] := Members[i].MetaItem.Attributes.Items[j - 1].Value; //TODO must be assigned my name not by index
           end;
         end;
         MembersGrid.Current.Row := 0;
@@ -301,18 +305,18 @@ begin
   end;
 end;
 
-procedure TDBManagerForm.ActionsPopupMenuPopup(Sender: TObject);
+procedure TDBManagerForm.CommandsPopupMenuPopup(Sender: TObject);
 begin
-  with ActionsPopupMenu do
+  with CommandsPopupMenu do
   begin
     if PopupComponent = DatabaseLbl then
     else if PopupComponent = MasterLbl then
-      LoadActions(DBEngine.Stack.Current.Addon.Master, DBEngine.Stack.Current.MetaItem, False)
+      LoadCommands(DBEngine.Stack.Current.Addon.Master, DBEngine.Stack.Current.MetaItem, False)
     else if PopupComponent = AddonsList then
-      LoadActions(DBEngine.Stack.Current.Addon.Name, DBEngine.Stack.Current.MetaItem, False)
+      LoadCommands(DBEngine.Stack.Current.Addon.Name, DBEngine.Stack.Current.MetaItem, False)
     else
     begin
-      LoadActions(DBEngine.Stack.Current.Addon.Name, Members.Items[MembersGrid.Current.Row], False);
+      LoadCommands(Members.Items[MembersGrid.Current.Row].Addon.Name, Members.Items[MembersGrid.Current.Row].MetaItem, False);
     end
   end;
 end;
@@ -479,28 +483,28 @@ begin
     MembersGrid.SetFocus;
 end;
 
-procedure TDBManagerForm.LoadActions(vMaster: string; vMetaItem: TmncMetaItem; Append: Boolean);
+procedure TDBManagerForm.LoadCommands(vAddonName: string; vMetaItem: TmncMetaItem; Append: Boolean);
 var
   i, c: Integer;
   aList: TmndAddons;
-  aMenuItem: TActionMenuItem;
+  aMenuItem: TCommandMenuItem;
 begin
-  if (vMaster = '') or not Append then
-    ActionsPopupMenu.Items.Clear;
-  if vMaster <> '' then
+  if (vAddonName = '') or not Append then
+    CommandsPopupMenu.Items.Clear;
+  if vAddonName <> '' then
   begin
     aList := TmndAddons.Create;
     try
-      DBEngine.EnumAddons(vMaster, aList, DBEngine.DB.IsActive);
+      DBEngine.EnumAddons(vAddonName, [akCommand], aList, DBEngine.DB.IsActive);
       c := 0;
       for i := 0 to aList.Count - 1 do
-        if nsCommand in aList[i].Style then
+        if akCommand = aList[i].Kind then
         begin
-          aMenuItem := TActionMenuItem.Create(ActionsPopupMenu);
+          aMenuItem := TCommandMenuItem.Create(CommandsPopupMenu);
           aMenuItem.Caption := aList[i].Title;
           aMenuItem.Addon := aList[i];
           aMenuItem.MetaItem := vMetaItem;
-          ActionsPopupMenu.Items.Add(aMenuItem);
+          CommandsPopupMenu.Items.Add(aMenuItem);
           Inc(c);
         end;
     finally
@@ -604,7 +608,7 @@ begin
   inherited Destroy;
 end;
 
-procedure TDBManagerForm.OpenMember(AMember: TmncMetaItem);
+procedure TDBManagerForm.OpenMember(AMember: TmndMember);
 var
   a: TmncMetaItems;
   aDefault: string;
@@ -614,12 +618,17 @@ begin
     with DBEngine.Stack do
       if Current.Addon <> nil then
       begin
-        aDefault := Current.Addon.DefaultAddon;
+        //aDefault := AMember.Addon.DefaultAddon;
+        aDefault := AMember.Addon.Name;
+        //if (aDefault = '')  then
         {if (aDefault = '')  then
           aDefault := DBEngine.FindDefault(Current.Addon.Name);}
         if aDefault <> '' then
         begin
-          DBEngine.Stack.Push(TmndProcess.Create(aDefault, AMember));
+          if AMember.Addon.Kind = akMeta then
+            DBEngine.Stack.Push(TmndProcess.Create(aDefault, DBEngine.Stack.Current.MetaItem))
+          else
+            DBEngine.Stack.Push(TmndProcess.Create(aDefault, AMember.MetaItem));
           DBEngine.Run;
         end;
       end;

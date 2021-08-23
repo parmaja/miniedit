@@ -42,7 +42,7 @@ object DBManagerForm: TDBManagerForm
         ItemHeight = 15
         OnKeyPress = AddonsListKeyPress
         OnSelect = AddonsListSelect
-        PopupMenu = ActionsPopupMenu
+        PopupMenu = CommandsPopupMenu
         Style = csDropDownList
         TabOrder = 0
       end
@@ -99,7 +99,7 @@ object DBManagerForm: TDBManagerForm
           BorderSpacing.Around = 2
           Caption = 'No database opened'
           Layout = tlCenter
-          PopupMenu = ActionsPopupMenu
+          PopupMenu = CommandsPopupMenu
           ShowAccelChar = False
         end
         object DatabaseImage: TntvImgBtn
@@ -110,6 +110,7 @@ object DBManagerForm: TDBManagerForm
           Images = EditorResource.FileImages
           ImageIndex = 13
           Align = alLeft
+          PopupMenu = CommandsPopupMenu
           AutoCheck = False
         end
       end
@@ -133,9 +134,9 @@ object DBManagerForm: TDBManagerForm
           BorderSpacing.Around = 2
           Caption = 'Element'
           Layout = tlCenter
-          PopupMenu = ActionsPopupMenu
+          PopupMenu = CommandsPopupMenu
         end
-        object DatabaseImage1: TntvImgBtn
+        object MasterImage: TntvImgBtn
           Left = 0
           Height = 24
           Top = 0
@@ -143,6 +144,7 @@ object DBManagerForm: TDBManagerForm
           Images = EditorResource.FileImages
           ImageIndex = 13
           Align = alLeft
+          PopupMenu = CommandsPopupMenu
           AutoCheck = False
         end
       end
@@ -159,7 +161,7 @@ object DBManagerForm: TDBManagerForm
       ColWidth = 80
       FixedFontColor = clBlack
       Gutter = False
-      PopupMenu = ActionsPopupMenu
+      PopupMenu = CommandsPopupMenu
       OddColor = clWindow
       ReadOnly = True
       RowHeight = 22
@@ -246,8 +248,8 @@ object DBManagerForm: TDBManagerForm
       end
     end
   end
-  object ActionsPopupMenu: TPopupMenu
-    OnPopup = ActionsPopupMenuPopup
+  object CommandsPopupMenu: TPopupMenu
+    OnPopup = CommandsPopupMenuPopup
     Left = 80
     Top = 274
   end
