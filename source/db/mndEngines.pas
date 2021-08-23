@@ -868,6 +868,7 @@ begin
         EnumMetaItems(aMetaItems, vMetaItem);
         for aMetaItem in aMetaItems do
         begin
+          aMetaItem.CopyDefinitions(vMetaItem);
           vMembers.Add(aAddon, aMetaItem);
         end;
       finally
@@ -884,6 +885,7 @@ begin
         begin
           aMetaItem := TmncMetaItem.Create;
           aMetaItem.Name := aAddon.Title;
+          aMetaItem.CopyDefinitions(vMetaItem);
           vMembers.Add(aAddon, aMetaItem);
         end;
       finally

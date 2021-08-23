@@ -1053,7 +1053,7 @@ begin
   finally
     aItems.Free;
   end;
-  DBEngine.ShowEditor(Self, 'insert into ' + vMetaItem.Definitions['Table'] + '(' + s1 + ') values (' + s2 +')');
+  DBEngine.ShowEditor(Self, 'insert into ' + vMetaItem.Name + '(' + s1 + ') values (' + s2 +')');
 end;
 
 { TExportSQLAddon }
