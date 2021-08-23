@@ -12,8 +12,9 @@ interface
 uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
   LCLintf, LCLType, ExtCtrls, SynHighlighterSQL, EditorProfiles, GUIMsgBox, mnMsgBox,
-  Dialogs, EditorEngine, EditorClasses, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit, EditorRun,
-  mndManagerForms, mndSQLForms, mndEngines;
+  Dialogs, EditorEngine, EditorClasses, EditorOptions, SynCompletion, SynEditHighlighter, SynHighlighterHashEntries, SynEditSearch,
+  SynEdit, EditorRun,
+  mnSynHighlighterMultiProc, mndManagerForms, mndSQLForms, mndEngines;
 
 type
 
@@ -40,6 +41,8 @@ type
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
+    procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
+    procedure DoExecuteCompletion(Sender: TObject); override;
   public
   end;
 
@@ -136,6 +139,37 @@ begin
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
     Mapper.Add(VariableAttri, attVariable);
+  end;
+end;
+
+procedure TSQLFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
+begin
+  inherited;
+  Completion.EndOfTokenChr := '"{}()[].<>/\:!&*+-=%;';//what about notice "
+end;
+
+procedure TSQLFileCategory.DoExecuteCompletion(Sender: TObject);
+var
+  aSynEdit: TCustomSynEdit;
+  i: Integer;
+begin
+  inherited;
+  Screen.Cursor := crHourGlass;
+  Completion.ItemList.BeginUpdate;
+  try
+    Completion.ItemList.Clear;
+    aSynEdit := (Sender as TSynCompletion).TheForm.CurrentEditor as TCustomSynEdit;
+    if (aSynEdit <> nil) then
+    begin
+      EnumerateKeywords(Ord(attKeyword), StdSQLKeywords, Highlighter.IdentChars, @DoAddCompletion);
+      EnumerateKeywords(Ord(attDataType), StdSQLTypes, Highlighter.IdentChars, @DoAddCompletion);
+      EnumerateKeywords(Ord(attCommon), StdSQLFunctions, Highlighter.IdentChars, @DoAddCompletion);
+      for i := 0 to DBEngine.DB.Tables.Count -1 do
+        DoAddCompletion(DBEngine.DB.Tables[i].SQLName, ord(attVariable));
+    end;
+  finally
+    Completion.ItemList.EndUpdate;
+    Screen.Cursor := crDefault;
   end;
 end;
 
