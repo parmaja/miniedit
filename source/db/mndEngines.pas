@@ -399,6 +399,7 @@ type
     //procedure Run(vMaster, vName, vValue: string; vSelect: string = '');
     procedure RegisterFilter(Filter: string);
     procedure RegisterAddon(Classes: array of TmndAddonClass);
+    procedure RegisterAddon(Master: string; Classes: array of TmndAddonClass);
     procedure LoadFile(FileName:string; Strings: TStrings);
     procedure SaveFile(FileName:string; Strings: TStrings);
     function GetAllSupportedFiles: string;
@@ -670,6 +671,20 @@ var
 begin
   for i := 0 to Length(Classes) - 1 do
     Add(Classes[i].Create);
+end;
+
+procedure TDBEngine.RegisterAddon(Master: string; Classes: array of TmndAddonClass);
+var
+  i: Integer;
+  aAddon: TmndAddon;
+begin
+  for i := 0 to Length(Classes) - 1 do
+  begin
+    aAddon := Classes[i].Create;
+    if Master <> '' then
+      aAddon.Master := Master;
+    Add(aAddon);
+  end;
 end;
 
 procedure TDBEngine.LoadFile(FileName: string; Strings: TStrings);

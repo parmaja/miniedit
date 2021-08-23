@@ -346,7 +346,7 @@ var
 begin
   aMeta := DBEngine.DB.CreateMeta;
   try
-    aMeta.EnumFields(vItems, vMetaItem.SQLName);
+    aMeta.EnumFields(vItems, vMetaItem.Name);
   finally
     aMeta.Free
   end;
@@ -769,7 +769,7 @@ var
 begin
   aMeta := DBEngine.DB.CreateMeta;
   try
-    aMeta.EnumFields(vItems, vMetaItem.SQLName);
+    aMeta.EnumFields(vItems, vMetaItem.Name);
   finally
     aMeta.Free
   end;

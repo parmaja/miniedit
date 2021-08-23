@@ -350,14 +350,14 @@ object MainForm: TMainForm
       TabStyle = tbsSheet
       Align = alClient
       TabOrder = 0
-      object DatabasePnl: TntvPanel
+      object ProjectPnl: TntvPanel
         Left = 3
         Height = 284
         Top = 23
         Width = 255
         Align = alClient
       end
-      object ProjectPnl: TntvPanel
+      object DatabasePnl: TntvPanel
         Left = 3
         Height = 284
         Top = 23
@@ -3200,7 +3200,7 @@ object MainForm: TMainForm
     Enabled = False
     Interval = 500
     OnTimer = FilesSearchTimerTimer
-    Left = 181
-    Top = 327
+    Left = 184
+    Top = 264
   end
 end

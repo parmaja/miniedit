@@ -25,7 +25,7 @@ unit mndManagerForms;
 interface
 
 uses
-  Classes, SysUtils, LResources, Forms, Controls, Graphics, Dialogs, Grids,
+  Classes, SysUtils, StrUtils, LResources, Forms, Controls, Graphics, Dialogs, Grids,
   dateutils, LCLType, LCLIntf, Types, mncConnections, LCLProc, contnrs,
   ExtCtrls, StdCtrls, SynEdit, FileUtil, Buttons, Menus, mncCSV,
   mncSQL, SynCompletion, SynEditAutoComplete, SynHighlighterHashEntries,
@@ -50,16 +50,19 @@ type
 
   TDBManagerForm = class(TFrame, INotifyEngine, INotifyEngineSetting, ImndNotify)
     DatabaseImage: TntvImgBtn;
+    FilesFilterClearBtn: TntvImgBtn;
+    FilterEdit: TEdit;
     MasterImage: TntvImgBtn;
     MasterLbl: TLabel;
     Panel3: TPanel;
+    Panel4: TPanel;
+    SQLBtn: TButton;
     ServerImage: TntvImgBtn;
     DatabaseLbl: TLabel;
     ServerLbl: TLabel;
     DatabaseMenu: TPopupMenu;
     BackBtn: TButton;
     CacheMetaChk1: TCheckBox;
-    Edit1: TEdit;
     DatabasesList: TListView;
     MembersGrid: TntvGrid;
     RefreshBtn: TButton;
@@ -80,7 +83,7 @@ type
     OpenMnu: TMenuItem;
     GroupsPanel: TPanel;
     AboutMnu: TMenuItem;
-    Timer1: TTimer;
+    FilterTimer: TTimer;
     ToolsMnu: TMenuItem;
     GroupPanel: TPanel;
     procedure CommandsPopupMenuPopup(Sender: TObject);
@@ -89,6 +92,9 @@ type
     procedure DatabasesListDblClick(Sender: TObject);
     procedure DisconnectBtnClick(Sender: TObject);
     procedure Edit1KeyPress(Sender: TObject; var Key: char);
+    procedure FilesFilterClearBtnClick(Sender: TObject);
+    procedure FilterEditChange(Sender: TObject);
+    procedure FilterEditKeyPress(Sender: TObject; var Key: char);
     procedure FirstBtnClick(Sender: TObject);
     procedure FormShortCut(var Msg: TLMKey; var Handled: Boolean);
     procedure AddonsListKeyPress(Sender: TObject; var Key: char);
@@ -100,14 +106,18 @@ type
     procedure MembersListDblClick(Sender: TObject);
     procedure MembersListKeyPress(Sender: TObject; var Key: char);
     procedure RefreshBtnClick(Sender: TObject);
-    procedure Timer1Timer(Sender: TObject);
+    procedure SQLBtnClick(Sender: TObject);
+    procedure FilterTimerTimer(Sender: TObject);
   private
     FSearching: Boolean;
     FFirstSearch: Boolean;
     FSearch: UTF8String;
     FSearchTime: TDateTime;
+    Filter: string;
+    procedure BackAddon;
     procedure CheckSearch;
     procedure SearchFor(S: string);
+    procedure FillMembers;
     procedure ApplyFilter;
   private
     function LogTime(Start: TDateTime): string;
@@ -240,62 +250,29 @@ begin
 end;
 
 procedure TDBManagerForm.LoadMembers(vAddon: TmndAddon; vMetaItem: TmncMetaItem);
-var
-  i, j: Integer;
-  aMetaItems: TmncMetaItems;
-  aMetaItem: TmncMetaItem;
 begin
   MembersGrid.Clear;
   if vAddon = nil then
   begin
     MembersGrid.ColumnsCount := 1;
     MembersGrid.Columns[0].Title := '';
-    MembersGrid.Capacity := 1;
-    MembersGrid.Count := 1;
+    MembersGrid.Reset;
   end
   else
   begin
     FreeAndNil(Members);
     Members := TmndMembers.Create(True);
-
-    MembersGrid.BeginUpdate;
-    MembersGrid.Reset;
-    try
-      vAddon.EnumMembers(Members, vMetaItem);
-
-      if Members.Count > 0 then
-      begin
-        aMetaItem := Members[0].MetaItem;
-        MembersGrid.ColumnsCount := aMetaItem.Attributes.Count + 1;
-        MembersGrid.Columns[0].Title := 'Name';
-        for i := 1 to MembersGrid.ColumnsCount -1 do
-        begin
-          MembersGrid.Columns[i].Title := Members[0].MetaItem.Attributes.Items[i - 1].Name;
-        end;
-        if MembersGrid.ColumnsCount > 0 then
-          MembersGrid.Columns[0].AutoFit := True;
-
-        MembersGrid.Capacity := Members.Count;
-        MembersGrid.Count := Members.Count;
-        for i := 0 to Members.Count -1 do
-        begin
-          for j := 0 to MembersGrid.ColumnsCount - 1 do
-          begin
-            if j = 0 then
-              MembersGrid.Values[j, i] := Members[i].MetaItem.Name
-            else if (j - 1) < Members[i].MetaItem.Attributes.Count then //maybe Attributes not have all data
-              MembersGrid.Values[j, i] := Members[i].MetaItem.Attributes.Items[j - 1].Value; //TODO must be assigned my name not by index
-          end;
-        end;
-        MembersGrid.Current.Row := 0;
-      end;
-    finally
-      MembersGrid.EndUpdate;
-    end;
+    vAddon.EnumMembers(Members, vMetaItem);
+    FillMembers;
   end;
 end;
 
 procedure TDBManagerForm.BackBtnClick(Sender: TObject);
+begin
+  BackAddon;
+end;
+
+procedure TDBManagerForm.BackAddon;
 begin
   if DBEngine.Stack.Count > 1 then
   begin
@@ -316,7 +293,7 @@ begin
       LoadCommands(DBEngine.Stack.Current.Addon.Name, DBEngine.Stack.Current.MetaItem, False)
     else
     begin
-      LoadCommands(Members.Items[MembersGrid.Current.Row].Addon.Name, Members.Items[MembersGrid.Current.Row].MetaItem, False);
+      LoadCommands(Members.Items[MembersGrid.CurrentRow.Data].Addon.Name, Members.Items[MembersGrid.CurrentRow.Data].MetaItem, False);
     end
   end;
 end;
@@ -342,7 +319,27 @@ end;
 
 procedure TDBManagerForm.Edit1KeyPress(Sender: TObject; var Key: char);
 begin
-  Timer1.Enabled := True;
+  FilterTimer.Enabled := True;
+end;
+
+procedure TDBManagerForm.FilesFilterClearBtnClick(Sender: TObject);
+begin
+  FilterEdit.Clear;
+end;
+
+procedure TDBManagerForm.FilterEditChange(Sender: TObject);
+begin
+  FilterTimer.Enabled := False;
+  FilterTimer.Enabled := True;
+end;
+
+procedure TDBManagerForm.FilterEditKeyPress(Sender: TObject; var Key: char);
+begin
+  if Key=#13 then
+  begin
+    MembersGrid.SetFocus;
+    Key := #0;
+  end;
 end;
 
 procedure TDBManagerForm.FirstBtnClick(Sender: TObject);
@@ -380,8 +377,8 @@ end;
 
 procedure TDBManagerForm.MembersGridDblClick(Sender: TObject);
 begin
-  if (MembersGrid.Count > 0) and (MembersGrid.Current.Row >= 0) then
-    OpenMember(Members[MembersGrid.Current.Row]);
+  if (MembersGrid.Count > 0) and (MembersGrid.CurrentRow.Data >= 0) then
+    OpenMember(Members[MembersGrid.CurrentRow.Data]);
 end;
 
 procedure TDBManagerForm.MembersGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -394,7 +391,7 @@ begin
     end;
     VK_RETURN:
     begin
-      OpenMember(Members[MembersGrid.Current.Row]);
+      OpenMember(Members[MembersGrid.CurrentRow.Data]);
     end;
   end;
 end;
@@ -417,23 +414,32 @@ begin
   ShowMeta(DBEngine.Stack.Current.Addon, DBEngine.Stack.Current.MetaItem, False);
 end;
 
+procedure TDBManagerForm.SQLBtnClick(Sender: TObject);
+begin
+  with Engine.Files.New('sql') do
+  begin
+    IsTemporary := True;
+    SynEdit.Lines.Text := ''; //baaah
+  end;
+end;
+
 procedure TDBManagerForm.MembersListDblClick(Sender: TObject);
 begin
-  OpenMember(Members[MembersGrid.Current.Row]);
+  OpenMember(Members[MembersGrid.CurrentRow.Data]);
 end;
 
 procedure TDBManagerForm.MembersListKeyPress(Sender: TObject; var Key: char);
 begin
   if (Key = #13) then
   begin
-    OpenMember(Members[MembersGrid.Current.Row]);
+    OpenMember(Members[MembersGrid.CurrentRow.Data]);
     Key := #0;
   end;
 end;
 
-procedure TDBManagerForm.Timer1Timer(Sender: TObject);
+procedure TDBManagerForm.FilterTimerTimer(Sender: TObject);
 begin
-  Timer1.Enabled := False;
+  FilterTimer.Enabled := False;
   ApplyFilter;
 end;
 
@@ -472,9 +478,58 @@ begin
   FSearchTime := Now;
 end;
 
+procedure TDBManagerForm.FillMembers;
+var
+  i, j, c: Integer;
+  aName: string;
+  aMetaItem: TmncMetaItem;
+begin
+  MembersGrid.BeginUpdate;
+  try
+    MembersGrid.Reset;
+
+    if Members.Count > 0 then
+    begin
+      aMetaItem := Members[0].MetaItem;
+      MembersGrid.ColumnsCount := aMetaItem.Attributes.Count + 1;
+      MembersGrid.Columns[0].Title := 'Name';
+      for i := 1 to MembersGrid.ColumnsCount -1 do
+      begin
+        MembersGrid.Columns[i].Title := Members[0].MetaItem.Attributes.Items[i - 1].Name;
+      end;
+      if MembersGrid.ColumnsCount > 0 then
+        MembersGrid.Columns[0].AutoFit := True;
+
+      c := 0;
+      for i := 0 to Members.Count -1 do
+      begin
+        aName := Members[i].MetaItem.Name;
+        if (Filter = '') or StrUtils.ContainsText(aName, Filter) then
+        begin
+          MembersGrid.Count := c + 1;
+          MembersGrid.Capacity := c + 1;
+          for j := 0 to MembersGrid.ColumnsCount - 1 do
+          begin
+            if j = 0 then
+              MembersGrid.Values[j, c] := aName
+            else if (j - 1) < Members[i].MetaItem.Attributes.Count then //maybe Attributes not have all data
+              MembersGrid.Values[j, c] := Members[i].MetaItem.Attributes.Items[j - 1].Value; //TODO must be assigned my name not by index
+          end;
+          MembersGrid.Rows[c].Data := i;
+          Inc(c);
+        end;
+      end;
+      MembersGrid.Current.Row := 0;
+    end;
+  finally
+    MembersGrid.EndUpdate;
+  end;
+end;
+
 procedure TDBManagerForm.ApplyFilter;
 begin
-
+  Filter := FilterEdit.Text;
+  FillMembers;
 end;
 
 procedure TDBManagerForm.StateChanged;

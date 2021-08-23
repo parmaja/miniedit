@@ -31,7 +31,7 @@ object DBManagerForm: TDBManagerForm
       BevelOuter = bvNone
       ClientHeight = 96
       ClientWidth = 269
-      TabOrder = 0
+      TabOrder = 1
       object AddonsList: TComboBox
         Left = 0
         Height = 23
@@ -148,10 +148,21 @@ object DBManagerForm: TDBManagerForm
           AutoCheck = False
         end
       end
+      object SQLBtn: TButton
+        Left = 65
+        Height = 25
+        Top = 24
+        Width = 47
+        Align = alLeft
+        AutoSize = True
+        Caption = 'SQL'
+        OnClick = SQLBtnClick
+        TabOrder = 6
+      end
     end
     object MembersGrid: TntvGrid
       Left = 4
-      Height = 186
+      Height = 187
       Top = 101
       Width = 267
       Align = alClient
@@ -167,20 +178,45 @@ object DBManagerForm: TDBManagerForm
       RowHeight = 22
       ScrollBars = ssAutoBoth
       RowSelect = True
-      TabOrder = 1
+      TabOrder = 0
       FullHeader = True
       OnDblClick = MembersGridDblClick
       OnKeyDown = MembersGridKeyDown
     end
-    object Edit1: TEdit
+    object Panel4: TPanel
       Left = 2
-      Height = 23
-      Top = 289
+      Height = 22
+      Top = 290
       Width = 271
       Align = alBottom
-      OnKeyPress = Edit1KeyPress
+      BevelOuter = bvNone
+      ClientHeight = 22
+      ClientWidth = 271
       TabOrder = 2
-      TextHint = 'Search'
+      object FilterEdit: TEdit
+        Left = 0
+        Height = 22
+        Top = 0
+        Width = 250
+        Align = alClient
+        OnChange = FilterEditChange
+        OnKeyPress = FilterEditKeyPress
+        TabOrder = 0
+        TextHint = 'Filter'
+      end
+      object FilesFilterClearBtn: TntvImgBtn
+        AnchorSideBottom.Side = asrBottom
+        Left = 250
+        Height = 22
+        Hint = 'Clear files filter'
+        Top = 0
+        Width = 21
+        Images = EditorResource.ToolbarImageList
+        ImageIndex = 35
+        Align = alRight
+        OnClick = FilesFilterClearBtnClick
+        AutoCheck = False
+      end
     end
   end
   object DatabasesPnl: TntvPanel
@@ -264,10 +300,11 @@ object DBManagerForm: TDBManagerForm
       Caption = 'Close'
     end
   end
-  object Timer1: TTimer
+  object FilterTimer: TTimer
     Enabled = False
-    OnTimer = Timer1Timer
-    Left = 197
-    Top = 398
+    Interval = 500
+    OnTimer = FilterTimerTimer
+    Left = 192
+    Top = 274
   end
 end
