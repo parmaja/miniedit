@@ -5362,8 +5362,8 @@ begin
   if vFullName <> '' then
   begin
     //if have extension we will search for extension only, if not, we will search for name
-    if Pos('.', vFullName) > 0 then //
-      s := ExtractFileExt(vFullName)  //externsion only with dot
+    if Pos('.', vFullName) > 1 then //>1 not >0 , not .ini
+      s := ExtractFileExt(vFullName)  //extension only with dot
     else
       s := vFullName;
     for i := 0 to Count - 1 do
@@ -5766,18 +5766,21 @@ var
 begin
   Result := '';
   AExtensions := TStringList.Create;
-  AExtensions.Delimiter := ';';
-  AExtensions.DelimitedText := Engine.Session.Project.FileFilter;
-  for AExtension in AExtensions do
-  begin
-    aGroup := Engine.Tendency.Groups.FindGroup(AExtension);
-    if aGroup <> nil then
+  try
+    AExtensions.Delimiter := ';';
+    AExtensions.DelimitedText := Engine.Session.Project.FileFilter;
+    for AExtension in AExtensions do
     begin
-      GroupAddFitler(Result, aGroup);
-      CreateMaskProc(aGroup);
+      aGroup := Engine.Groups.FindGroup(AExtension);
+      if aGroup <> nil then
+      begin
+        GroupAddFitler(Result, aGroup);
+        CreateMaskProc(aGroup);
+      end;
     end;
+  finally
+    AExtensions.Free;
   end;
-  AExtensions.Free;
 end;
 
 procedure TEditorProject.Saving;
