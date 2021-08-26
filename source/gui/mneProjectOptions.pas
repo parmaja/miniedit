@@ -22,10 +22,12 @@ type
     Button3: TButton;
     Button4: TButton;
     DescriptionEdit: TMemo;
+    IgnoreNamesEdit: TEdit;
     GroupBox1: TGroupBox;
     IndentModeCbo: TComboBox;
     Label1: TLabel;
     Label10: TLabel;
+    Label11: TLabel;
     Label2: TLabel;
     Label6: TLabel;
     Label7: TLabel;
@@ -182,6 +184,7 @@ begin
   TabWidthEdit.Text := IntToStr(FProject.Options.TabWidth);
   IndentModeCbo.ItemIndex := Ord(FProject.Options.IndentMode);
   FileFilterEdit.Text := FProject.FileFilter;
+  IgnoreNamesEdit.Text := FProject.IgnoreNames;
 end;
 
 procedure TProjectForm.Apply;
@@ -199,6 +202,7 @@ begin
   FProject.Options.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
   FProject.Options.IndentMode := TIndentMode(IndentModeCbo.ItemIndex);
   FProject.FileFilter := FileFilterEdit.Text;
+  FProject.IgnoreNames := IgnoreNamesEdit.Text;
 end;
 
 procedure TProjectForm.Button3Click(Sender: TObject);

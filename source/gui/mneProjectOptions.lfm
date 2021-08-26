@@ -1,21 +1,21 @@
 object ProjectForm: TProjectForm
   Left = 461
-  Height = 284
+  Height = 312
   Top = 184
   Width = 471
   BorderStyle = bsDialog
   Caption = 'Project Options'
-  ClientHeight = 284
+  ClientHeight = 312
   ClientWidth = 471
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object OkBtn: TButton
     Left = 392
     Height = 25
-    Top = 257
+    Top = 285
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&Ok'
@@ -26,7 +26,7 @@ object ProjectForm: TProjectForm
   object CancelBtn: TButton
     Left = 316
     Height = 25
-    Top = 257
+    Top = 285
     Width = 75
     Anchors = [akRight, akBottom]
     Cancel = True
@@ -36,7 +36,7 @@ object ProjectForm: TProjectForm
   end
   object PageControl: TPageControl
     Left = 4
-    Height = 249
+    Height = 277
     Top = 5
     Width = 463
     ActivePage = GeneralSheet
@@ -47,7 +47,7 @@ object ProjectForm: TProjectForm
     Options = [nboKeyboardTabSwitch]
     object GeneralSheet: TTabSheet
       Caption = 'General'
-      ClientHeight = 223
+      ClientHeight = 251
       ClientWidth = 455
       object Label3: TLabel
         Left = 12
@@ -56,7 +56,6 @@ object ProjectForm: TProjectForm
         Width = 56
         Caption = 'Project &Title'
         FocusControl = NameEdit
-        ParentColor = False
       end
       object Label4: TLabel
         Left = 12
@@ -64,7 +63,6 @@ object ProjectForm: TProjectForm
         Top = 62
         Width = 53
         Caption = '&Description'
-        ParentColor = False
       end
       object NameEdit: TEdit
         Left = 108
@@ -87,12 +85,11 @@ object ProjectForm: TProjectForm
         Width = 64
         Caption = 'Project &Name'
         FocusControl = TitleEdit
-        ParentColor = False
       end
       object SaveDesktopChk: TCheckBox
         Left = 24
         Height = 19
-        Top = 195
+        Top = 225
         Width = 270
         Caption = 'Save Desktop, &Reopen last opend files in this project'
         TabOrder = 4
@@ -100,15 +97,14 @@ object ProjectForm: TProjectForm
       object Label8: TLabel
         Left = 12
         Height = 13
-        Top = 173
+        Top = 203
         Width = 70
         Caption = 'Source Control'
-        ParentColor = False
       end
       object SCMCbo: TComboBox
         Left = 108
         Height = 21
-        Top = 169
+        Top = 199
         Width = 303
         ItemHeight = 13
         Style = csDropDownList
@@ -123,25 +119,39 @@ object ProjectForm: TProjectForm
         TabOrder = 2
       end
       object FileFilterEdit: TEdit
-        Left = 12
+        Left = 16
         Height = 21
-        Top = 139
+        Top = 135
         Width = 399
         TabOrder = 5
       end
       object Label7: TLabel
-        Left = 12
+        Left = 16
         Height = 13
-        Top = 122
+        Top = 118
         Width = 107
         Caption = 'Filter files (eg .ini;.conf)'
         FocusControl = TitleEdit
-        ParentColor = False
+      end
+      object Label11: TLabel
+        Left = 16
+        Height = 13
+        Top = 160
+        Width = 68
+        Caption = 'Execlude Files'
+        FocusControl = TitleEdit
+      end
+      object IgnoreNamesEdit: TEdit
+        Left = 16
+        Height = 21
+        Top = 177
+        Width = 399
+        TabOrder = 6
       end
     end
     object GeneralOptionsSheet: TTabSheet
       Caption = 'Options'
-      ClientHeight = 223
+      ClientHeight = 251
       ClientWidth = 455
       object Label1: TLabel
         Left = 8
@@ -149,7 +159,6 @@ object ProjectForm: TProjectForm
         Top = 121
         Width = 274
         Caption = 'Roo&t path of your project useful when enumerate your files'
-        ParentColor = False
       end
       object RootDirEdit: TEdit
         Left = 8
@@ -174,7 +183,6 @@ object ProjectForm: TProjectForm
         Top = 174
         Width = 39
         Caption = 'Main file'
-        ParentColor = False
       end
       object MainEdit: TEdit
         Left = 64
@@ -201,7 +209,6 @@ object ProjectForm: TProjectForm
         Top = 194
         Width = 297
         Caption = 'If empty, we will take the current opened file, or pass the folder.'
-        ParentColor = False
         WordWrap = True
       end
       object GroupBox1: TGroupBox
@@ -226,7 +233,6 @@ object ProjectForm: TProjectForm
           Top = 38
           Width = 53
           Caption = 'Tab Width:'
-          ParentColor = False
         end
         object Label6: TLabel
           Left = 14
@@ -234,7 +240,6 @@ object ProjectForm: TProjectForm
           Top = 12
           Width = 60
           Caption = 'Indent Mode'
-          ParentColor = False
         end
         object IndentModeCbo: TComboBox
           Left = 80

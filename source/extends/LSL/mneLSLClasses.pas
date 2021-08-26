@@ -56,6 +56,8 @@ type
     function CreateDebugger: TEditorDebugger; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
+    procedure SendMessage(S: string; vMessageType: TNotifyMessageType); override;
+    procedure HelpKeyword(AWord:string); override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
   end;
 
@@ -150,6 +152,64 @@ begin
 
   if Engine.Session.Run.Active then //if there is items ready to run
     Engine.Session.Run.Start(Debugger);
+end;
+
+function PosForward(S: string; vChar: string): Integer;
+begin
+  Result := PosEx(vChar, S);
+end;
+
+procedure TLSLTendency.SendMessage(S: string; vMessageType: TNotifyMessageType);
+var
+  aErr: TErrorInfo;
+  p: Integer;
+  m, t : string;
+  list: TStringList;
+  function GetStr(Index: Integer): string;
+  begin
+    if Index > list.Count then
+      Result := ''
+    else
+      Result := List[Index];
+  end;
+
+//D:\lab\pascal\miniEdit\test\teleport.lsl::ERROR:: ( 21, 95): `OS_LTPAG_FORCEFLY' is undeclared.
+begin
+  aErr := Default(TErrorInfo);
+  if (S <> '') and (vMessageType = msgtOutput) then
+  begin
+    list := TStringList.Create;
+    try
+      list.Delimiter := ':';
+      list.DelimitedText := S;
+      aErr.FileName := GetStr(0);
+      aErr.Name := GetStr(2);
+      t := GetStr(4);
+      if LeftStr(t, 1) = '(' then
+        t := MidStr(t, 2, Length(t) - 1);
+      if RightStr(t, 1) = ')' then
+        t := MidStr(t, 1, Length(t) - 1);
+
+      p := Pos(',', t);
+      if p > 0 then
+      begin
+        m := MidStr(t, 1, p - 1);
+        t := MidStr(t, p + 1, MaxInt);
+      end;
+      aErr.Line := StrToIntDef(m, 0);
+      aErr.Column := StrToIntDef(t, 0);
+      aErr.Message := GetStr(5);
+    finally
+      list.Free;
+    end;
+  end;
+  Engine.SendMessage(S, vMessageType, aErr);
+end;
+
+procedure TLSLTendency.HelpKeyword(AWord: string);
+begin
+  inherited;
+  OpenURL('http://wiki.secondlife.com/wiki/' + AWord);
 end;
 
 { TLSLFileCategory }

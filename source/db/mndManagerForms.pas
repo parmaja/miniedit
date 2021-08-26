@@ -288,7 +288,7 @@ begin
   begin
     if PopupComponent = DatabaseLbl then
     else if PopupComponent = MasterLbl then
-      LoadCommands(DBEngine.Stack.Current.Addon.Master, DBEngine.Stack.Current.MetaItem, False)
+      LoadCommands(DBEngine.Stack.Current.Addon.Name, DBEngine.Stack.Current.MetaItem, False)
     else if PopupComponent = AddonsList then
       LoadCommands(DBEngine.Stack.Current.Addon.Name, DBEngine.Stack.Current.MetaItem, False)
     else

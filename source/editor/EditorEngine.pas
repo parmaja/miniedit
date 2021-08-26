@@ -408,6 +408,7 @@ type
 
   TEditorProject = class abstract(TmnXMLProfile)
   private
+    FIgnoreNames: string;
     FFileFilter: string;
     FOptions: TEditorProjectOptions;
     FRunOptions: TRunProjectOptions;
@@ -455,6 +456,7 @@ type
     property Options: TEditorProjectOptions read FOptions write FOptions default nil;
 
     property FileFilter: string read FFileFilter write FFileFilter;
+    property IgnoreNames: string read FIgnoreNames write FIgnoreNames;
   end;
 
   TTendencyProject = class(TEditorProject)
@@ -1365,6 +1367,7 @@ function DetectLinesMode(const Contents: string): TEditorLinesMode;
 type
   TFileFindTypes = set of (fftDir, fftFile);
 
+procedure CancelSearch;
 function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean; Types: TFileFindTypes = [fftFile]): Boolean;
 procedure EnumFileList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean);
 procedure EnumDirList(const Root, Masks, Ignore: string; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean);
@@ -3025,6 +3028,14 @@ begin
   FNotifyObjects.Remove(NotifyEngine);
 end;
 
+var
+  FCancel: Boolean = False;
+
+procedure CancelSearch;
+begin
+  FCancel := True;
+end;
+
 function EnumFileList(const Root, Masks, Ignore: string; Callback: TEnumFilesCallback; AObject: TObject; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean; Types: TFileFindTypes): Boolean;
 var
   Resume: Boolean;
@@ -3054,7 +3065,9 @@ var
             else
               f := IncludePathDelimiter(Path) + sr.Name;
             Callback(AObject, f, aCount, vLevel, False, Resume);
-            if (vMaxCount > 0) and (aCount > vMaxCount) then
+            if (aCount mod 100) = 0 then
+              Application.ProcessMessages;
+            if FCancel or ((vMaxCount > 0) and (aCount > vMaxCount)) then
               Resume := False;
               //raise Exception.Create('Too many files');
             if not Resume then
@@ -3094,6 +3107,7 @@ var
         end;
   end;
 begin
+  FCancel := False;
   if Ignore <> '' then
   begin
     IgnoreList := TStringList.Create;

@@ -10,7 +10,7 @@ interface
 
 uses
   Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls;
+  Dialogs, StdCtrls, EditorEngine;
 
 type
   TSearchProgressForm = class(TForm)
@@ -32,6 +32,7 @@ implementation
 procedure TSearchProgressForm.CancelBtnClick(Sender: TObject);
 begin
   Canceled := True;
+  CancelSearch;
 end;
 
 end.

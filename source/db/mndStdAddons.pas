@@ -789,27 +789,15 @@ end;
 
 procedure TNewFieldAddon.DoExecute(vMetaItem: TmncMetaItem);
 var
-  aStrings: TStringList;
-//  aFieldName: string;
+  aMeta: TmncMeta;
 begin
   inherited;
-  aStrings := TStringList.Create;
+  aMeta := DBEngine.DB.CreateMeta;
   try
-    //aStrings.Text := 'alter table ' + vStack['Table'] + ' drop column ' + Value;
-    aStrings.Text := 'alter table ' + vMetaItem.SQLName + ' add ?FieldName ?FieldType';
-
-    DBEngine.ShowEditor(Self, aStrings);
+    DBEngine.ShowEditor(Self, aMeta.GetNewFieldSQL(vMetaItem.SQLName));
   finally
-    aStrings.Free;
+    aMeta.Free
   end;
-
-  {if InputQuery('New', 'New Field for ' + MemberName, aFieldName) then
-  begin
-    aStrings := TStringList.Create;
-    aStrings.Text := 'alter table ' + FBQuoteName(MemberName) + ' add ' + FBQuoteName(aFieldName) + ' smallint';
-    Open(vSession, aStrings);
-    aStrings.Free;
-  end;}
 end;
 
 { TEmptyTableAddon }

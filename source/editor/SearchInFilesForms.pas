@@ -83,8 +83,10 @@ end;
 
 procedure TSearchInFilesForm.SearchInFiles;
 var
-  aMasks: string;
+  aIgnoreNames, aMasks: string;
 begin
+  aIgnoreNames := Engine.Options.IgnoreNames;
+
   if Engine.Session.Active and (SearchFilesGrp.ItemIndex = 0) then
     aMasks := Engine.Session.Project.Tendency.Groups.CreateMask(@CreateMask)
   else if Engine.Session.Active and (SearchFilesGrp.ItemIndex = 1) then
@@ -92,7 +94,16 @@ begin
   else
     aMasks := Engine.Groups.CreateMask(@CreateMask);
 
-  EnumFileList(IncludeTrailingPathDelimiter(SearchFolderEdit.Text), aMasks, Engine.Options.IgnoreNames, @DoSearchInFileCallback, Self, 1000, 5, True);
+  if Engine.Session.Active then
+  begin
+    if Engine.Session.Project.IgnoreNames <> '' then
+    begin
+      if (aIgnoreNames <> '') then
+        aIgnoreNames := aIgnoreNames + ';';
+      aIgnoreNames := aIgnoreNames + Engine.Session.Project.IgnoreNames;
+    end;
+  end;
+  EnumFileList(IncludeTrailingPathDelimiter(SearchFolderEdit.Text), aMasks, aIgnoreNames, @DoSearchInFileCallback, Self, 1000, 5, True);
 end;
 
 procedure TSearchInFilesForm.SearchReplaceText;
