@@ -5235,10 +5235,10 @@ begin
       begin
         if s <> '' then
           s := s + ';';
-        s := s + '*.' + AExtensions[i];
+        s := s + '*' + AExtensions[i];
         if Result <> '' then
           Result := Result + ';';
-        Result := Result + '*.' + AExtensions[i];
+        Result := Result + '*' + AExtensions[i];
       end;
     finally
       AExtensions.Free;
@@ -5355,7 +5355,7 @@ end;
 
 function TFileGroups.FindGroup(vFullName: string; vKind: TFileGroupKinds): TFileGroup;
 var
-  i, j: integer;
+  i: integer;
   s: string;
 begin
   Result := nil;
