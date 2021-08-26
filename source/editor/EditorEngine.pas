@@ -3074,7 +3074,8 @@ var
               break;
             aCount := aCount + 1;
           end;
-        until (FindNext(sr) <> 0);
+          Engine.SendLog(sr.Name);
+      until (FindNext(sr) <> 0);
       end;
     end;
 
@@ -3100,9 +3101,12 @@ var
                 if not Resume then
                   break;
               end;
+              if (aCount mod 10) = 0 then
+                Application.ProcessMessages;
               if (vMaxLevel = 0) or (vLevel < vMaxLevel) then
                 DoFind(Root, IncludePathDelimiter(Path + sr.Name), vLevel);
             end;
+            Engine.SendLog(sr.Name);
           until (FindNext(sr) <> 0);
         end;
   end;

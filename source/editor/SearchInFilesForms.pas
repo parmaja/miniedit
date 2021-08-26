@@ -85,7 +85,6 @@ procedure TSearchInFilesForm.SearchInFiles;
 var
   aIgnoreNames, aMasks: string;
 begin
-  aIgnoreNames := Engine.Options.IgnoreNames;
 
   if Engine.Session.Active and (SearchFilesGrp.ItemIndex = 0) then
     aMasks := Engine.Session.Project.Tendency.Groups.CreateMask(@CreateMask)
@@ -94,6 +93,7 @@ begin
   else
     aMasks := Engine.Groups.CreateMask(@CreateMask);
 
+  aIgnoreNames := Engine.Options.IgnoreNames;
   if Engine.Session.Active then
   begin
     if Engine.Session.Project.IgnoreNames <> '' then

@@ -12,7 +12,7 @@ object SelectFileForm: TSelectFileForm
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   Position = poMainFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object FilesList: TListView
     Left = 3
     Height = 253
@@ -59,6 +59,7 @@ object SelectFileForm: TSelectFileForm
     Cancel = True
     Caption = '&Cancel'
     ModalResult = 2
+    OnClick = CancelBtnClick
     TabOrder = 3
   end
   object FilterEdit: TEdit
@@ -73,7 +74,7 @@ object SelectFileForm: TSelectFileForm
     TextHint = 'Type to filter file name'
   end
   object Timer: TTimer
-    Interval = 300
+    Interval = 1
     OnTimer = TimerTimer
     Left = 96
     Top = 79

@@ -17,12 +17,16 @@ uses
   EditorEngine, Dialogs, ComCtrls, StdCtrls, ExtCtrls;
 
 type
+
+  { TSelectFileForm }
+
   TSelectFileForm = class(TForm)
     FilesList: TListView;
     OkBtn: TButton;
     CancelBtn: TButton;
     FilterEdit: TEdit;
     Timer: TTimer;
+    procedure CancelBtnClick(Sender: TObject);
     procedure FilesListDblClick(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -32,6 +36,9 @@ type
     procedure OkBtnClick(Sender: TObject);
   private
     FFiles: TStringList;
+    FLoaded: Boolean;
+    FRoot: string;
+    procedure EnumFiles;
   public
     procedure ShowFiles;
   end;
@@ -53,10 +60,10 @@ begin
   with TSelectFileForm.Create(Application) do
   begin
     try
+      FRoot := vRoot;
       //FilterEdit.Text := LastFilter;
       FilterEdit.SelectAll;
-      EnumFileList(vRoot, Engine.Groups.CreateFilter(False), Engine.Options.IgnoreNames, FFiles, 1000, 10, False);
-      ShowFiles;
+
       Result := ShowModal = mrOK;
       if Result then
       begin
@@ -79,6 +86,11 @@ begin
   ModalResult := mrOK;
 end;
 
+procedure TSelectFileForm.CancelBtnClick(Sender: TObject);
+begin
+  CancelSearch;
+end;
+
 procedure TSelectFileForm.FormDestroy(Sender: TObject);
 begin
   FFiles.Free;
@@ -96,6 +108,11 @@ var
   aFileName: string;
   aItem: TListItem;
 begin
+  if not FLoaded then
+  begin
+    FLoaded := True;
+    EnumFiles;
+  end;
   s := FilterEdit.Text;
   {if (s <> '') and (Pos('*', s) = 0) then
     s := s + '*';}
@@ -136,6 +153,7 @@ begin
     Timer.Interval := 250
   else
     Timer.Interval := 500;
+  Timer.Interval := 300;
   Timer.Enabled := True;
 end;
 
@@ -159,6 +177,28 @@ begin
   end;
   if FilesList.Items.Count > 0 then
     ModalResult := mrOK
+end;
+
+procedure TSelectFileForm.EnumFiles;
+var
+  aIgnoreNames: string;
+begin
+  Screen.Cursor := crHourGlass;
+  try
+    aIgnoreNames := Engine.Options.IgnoreNames;
+    if Engine.Session.Active then
+    begin
+      if Engine.Session.Project.IgnoreNames <> '' then
+      begin
+        if (aIgnoreNames <> '') then
+          aIgnoreNames := aIgnoreNames + ';';
+        aIgnoreNames := aIgnoreNames + Engine.Session.Project.IgnoreNames;
+      end;
+    end;
+    EnumFileList(FRoot, Engine.Groups.CreateFilter(False), aIgnoreNames, FFiles, 1000, 10, False);
+  finally
+    Screen.Cursor := crDefault;
+  end;
 end;
 
 end.
