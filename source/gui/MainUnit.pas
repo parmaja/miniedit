@@ -651,7 +651,7 @@ type
     procedure ShowWatchesList;
     procedure ShowSearchGrid;
     procedure LoadAddons;
-    procedure ShowFileAtLine(vFileName: string; vLine: Integer);
+    procedure ShowFileAtLine(vFileName: string; vLine: Integer; vColumn: Integer = 0);
     property ShowFolderFiles: TShowFolderFiles read FShowFolderFiles write SetShowFolderFiles;
     property SortFolderFiles: TSortFolderFiles read FSortFolderFiles write SetSortFolderFiles;
   public
@@ -1189,7 +1189,7 @@ begin
   begin
     aLine := FOutputs[OutputEdit.CaretY - 1];
     if aLine.Info.FileName <> '' then
-      ShowFileAtLine(aLine.Info.FileName, aLine.Info.Line);
+      ShowFileAtLine(aLine.Info.FileName, aLine.Info.Line, aLine.Info.Column);
   end;
 end;
 
@@ -3031,7 +3031,7 @@ begin
   end;
 end;
 
-procedure TMainForm.ShowFileAtLine(vFileName: string; vLine: Integer);
+procedure TMainForm.ShowFileAtLine(vFileName: string; vLine: Integer; vColumn: Integer);
 begin
   Engine.Files.OpenFile(vFileName);
   with Engine.Files do
@@ -3040,7 +3040,7 @@ begin
       if vLine > 0 then
         if (Current <> nil) and (Current.SynEdit <> nil) then
         begin
-          Current.SynEdit.LogicalCaretXY := Point(0, vLine);
+          Current.SynEdit.LogicalCaretXY := Point(vColumn, vLine);
 //          Current.SynEdit.SelectLine;
           Current.SynEdit.EnsureCursorPosVisible;
           Current.SetHighlightLine(vLine); //after changing

@@ -96,6 +96,7 @@ type
     function PickCustomColor(var AColor: TColor): Boolean;
     procedure RetrieveAttribute;
 
+    procedure SaveAsCode;
     procedure Apply;
     procedure Retrieve;
   public
@@ -335,6 +336,9 @@ end;
 
 procedure TEditorColorsForm.OkBtnClick(Sender: TObject);
 begin
+  {$ifdef debug}
+  SaveAsCode;
+  {$endif}
   ModalResult := mrOk;
 end;
 
@@ -463,6 +467,46 @@ begin
   end;
 end;
 
+procedure TEditorColorsForm.SaveAsCode;
+var
+  i: Integer;
+  s: string;
+  aName: string;
+  Stream: TFileStream;
+  function GetStyle(op: TGlobalAttributeOptions): string;
+    procedure Add(ss: string);
+    begin
+      if Result <> '' then
+        Result := Result + ', ';
+      Result := Result + ss;
+    end;
+  begin
+    Result := '';
+    if gaoDefaultBackground in op then
+      Add('gaoDefaultBackground');
+    if gaoDefaultForeground in op then
+      Add('gaoDefaultForeground');
+  end;
+begin
+  Stream := TFileStream.Create(Application.Location + 'ThemeDefault.inc', fmCreate);
+  try
+    for i := 0 to FProfile.Attributes.Count -1 do
+    begin
+      aName := GetEnumName(typeinfo(TAttributeType), ord(FProfile.Attributes[i].AttType));
+      //v := Integer(FProfile.Attributes[i].Style);
+      s := '  Add(F'+Copy(aName, 4, MaxInt) + ', ' +
+        aName + ', ''' + FProfile.Attributes[i].Title + ''', ''' + FProfile.Attributes[i].Description + ''', ' +
+        ColorToString(FProfile.Attributes[i].ForeColor) + ', ' + ColorToString(FProfile.Attributes[i].BackColor) + ', ' +
+
+        '['+GetStyle(FProfile.Attributes[i].Options)+']'+
+        ');'+#13#10;
+       Stream.WriteBuffer(Pointer(s)^, length(s));
+    end;
+  finally
+    Stream.Free;
+  end;
+end;
+
 procedure TEditorColorsForm.ApplyAttribute;
 var
   aGlobalAttribute: TGlobalAttribute;
@@ -545,27 +589,6 @@ begin
 end;
 
 procedure TEditorColorsForm.SaveBtnClick(Sender: TObject);
-{$ifdef debug}
-var
-  i: Integer;
-  s: string;
-  aName: string;
-  Stream: TFileStream;
-  function GetStyle(op: TGlobalAttributeOptions): string;
-    procedure Add(ss: string);
-    begin
-      if Result <> '' then
-        Result := Result + ', ';
-      Result := Result + ss;
-    end;
-  begin
-    Result := '';
-    if gaoDefaultBackground in op then
-      Add('gaoDefaultBackground');
-    if gaoDefaultForeground in op then
-      Add('gaoDefaultForeground');
-  end;
-  {$endif}
 begin
   SaveDialog.FileName := NameEdit.Text + SaveDialog.DefaultExt;
   if SaveDialog.Execute then
@@ -573,25 +596,6 @@ begin
     Apply;
     FProfile.Attributes.Name := ExtractFileNameWithoutExt(ExtractFileName(SaveDialog.FileName));
     XMLWriteObjectFile(FProfile.Attributes, SaveDialog.FileName);
-    {$ifdef debug}
-    Stream := TFileStream.Create(ExtractFilePath(SaveDialog.FileName) + ExtractFileNameWithoutExt(ExtractFileName(SaveDialog.FileName))+'-code.pas', fmCreate);
-    try
-      for i := 0 to FProfile.Attributes.Count -1 do
-      begin
-        aName := GetEnumName(typeinfo(TAttributeType), ord(FProfile.Attributes[i].AttType));
-        //v := Integer(FProfile.Attributes[i].Style);
-        s := '  Add(F'+Copy(aName, 4, MaxInt) + ', ' +
-          aName + ', ''' + FProfile.Attributes[i].Title + ''', ' +
-          ColorToString(FProfile.Attributes[i].ForeColor) + ', ' + ColorToString(FProfile.Attributes[i].BackColor) + ', ' +
-
-          '['+GetStyle(FProfile.Attributes[i].Options)+']'+
-          ');'+#13#10;
-         Stream.WriteBuffer(Pointer(s)^, length(s));
-      end;
-    finally
-      Stream.Free;
-    end;
-    {$endif}
     RetrieveAttribute;
   end;
 end;

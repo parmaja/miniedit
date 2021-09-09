@@ -140,7 +140,7 @@ type
     FIdentifier: TGlobalAttribute;
     FDirective: TGlobalAttribute;
     FVariable: TGlobalAttribute;
-    FStandard: TGlobalAttribute;
+    FCommon: TGlobalAttribute;
 
 
     FNumber: TGlobalAttribute;
@@ -157,7 +157,7 @@ type
 
     FDefault: TGlobalAttribute;
     FText: TGlobalAttribute;
-    FEmbedText: TGlobalAttribute;
+    FEmbed: TGlobalAttribute;
 
     FList: TGlobalAttributeList;
     function GetCount: Integer;
@@ -196,14 +196,14 @@ type
     property Directive: TGlobalAttribute read FDirective;
     property Identifier: TGlobalAttribute read FIdentifier;
     property Variable: TGlobalAttribute read FVariable;
-    property Standard: TGlobalAttribute read FStandard;
+    property Common: TGlobalAttribute read FCommon;
     property DataValue: TGlobalAttribute read FDataValue;
     property DataType: TGlobalAttribute read FDataType;
     property DataName: TGlobalAttribute read FDataName;
     property Document: TGlobalAttribute read FDocument;
 
     property Text: TGlobalAttribute read FText;
-    property EmbedText: TGlobalAttribute read FEmbedText;
+    property Embed: TGlobalAttribute read FEmbed;
     property Comment: TGlobalAttribute read FComment;
     property QuotedString: TGlobalAttribute read FQuotedString;
     property FontName: String read FInfo.FontName write FInfo.FontName;
@@ -447,31 +447,7 @@ procedure TGlobalAttributes.Prepare;
 begin
   FList.Clear;
   Init;
-  Add(FDefault, attDefault, 'Default', 'Default colors', clBlack, $00DFDFDF, []);
-  Add(FPanel, attPanel, 'Panel', 'GUI Panel', clBlack, $00CFCFCF, []);
-  Add(FLink, attLink, 'Link', 'URL Links of follow defines highlight', clWhite, $002A190F, [gaoDefaultBackground,gaoDefaultForeground]);
-  Add(FSelected, attSelected, 'Selected', 'Selected text', clBlack, $00CAA586, []);
-  Add(FHighlighted, attHighlighted, 'Highlighted', 'Highlighted important line, like running line', $00150FFF, clNone, [gaoDefaultBackground]);
-  Add(FActive, attActive, 'Active', 'Like debugging line', clBlack, $00755B4A, []);
-  Add(FModified, attModified, 'Modified', 'Modified lines mark colors', clYellow, clGreen, []);
-  Add(FGutter, attGutter, 'Gutter', 'Gutter',clBlack, $00E9E9E9, []);
-  Add(FSeparator, attSeparator, 'Separator', 'Seperators, between Gutter of Editor and Line numbers', $00D8D8D8, $00CDCDCD, []);
-
-  Add(FDirective, attDirective, 'Directive', 'Directive or Section, Special keywords', $002525AD, $002A190F, [gaoDefaultBackground]);
-  Add(FKeyword, attKeyword, 'Keyword', 'Keyword of language', $00BB4A00, $002A190F, [gaoDefaultBackground]);
-  Add(FQuotedString, attQuotedString, 'String', 'Double or single quoted string', $00008C20, $002A190F, [gaoDefaultBackground]);
-  Add(FDocument, attDocument, 'Document', 'Commented line with special for reading as documentation', $001C4118, $002A190F, [gaoDefaultBackground]);
-  Add(FComment, attComment, 'Comment', 'Commmented line, ignored by eyes and compiler', $00565658, $002A190F, [gaoDefaultBackground]);
-  Add(FSymbol, attSymbol, 'Symbol', 'Symbols non text characters', $006C4100, $002A190F, [gaoDefaultBackground]);
-  Add(FStandard, attCommon, 'Common', 'Common functions and procedure names, like print', $00C50159, $002A190F, [gaoDefaultBackground]);
-  Add(FEmbedText, attEmbed, 'Embed', 'Embed Text or language, like CDATA in XML or ASM in Pascal, C', clWhite, $002A190F, [gaoDefaultBackground,gaoDefaultForeground]);
-  Add(FNumber, attNumber, 'Number', 'Numbers', $000052A4, $002A190F, [gaoDefaultBackground]);
-  Add(FIdentifier, attIdentifier, 'Identifier', 'Identifiers, text too but for language', clBlack, $002A190F, [gaoDefaultBackground]);
-  Add(FText, attText, 'Text', 'Non code text, or any text', clWhite, $002A190F, [gaoDefaultBackground,gaoDefaultForeground]);
-  Add(FVariable, attVariable, 'Variable', 'Variables/Data names', clSkyBlue, $002A190F, [gaoDefaultBackground]);
-  Add(FDataType, attDataType, 'Type', 'Variable/Data type', $002F7ADF, $002A190F, [gaoDefaultBackground]);
-  Add(FDataValue, attDataValue, 'Value', 'Variable/Data Value', $002F7ADF, $002A190F, [gaoDefaultBackground]);
-  //Add(FDataName, attDataName, 'Name', 'Data Name', $0016C11D, $002A190F, [gaoDefaultBackground]);
+  {$i 'ThemeDefault.inc'}
   Correct;
 end;
 

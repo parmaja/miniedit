@@ -13,7 +13,7 @@ object EditorColorsForm: TEditorColorsForm
   OnShow = FormShow
   Position = poScreenCenter
   ShowHint = True
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object OkBtn: TButton
     Left = 390
     Height = 27
@@ -60,7 +60,6 @@ object EditorColorsForm: TEditorColorsForm
     Top = 50
     Width = 42
     Caption = '&Attribute:'
-    ParentColor = False
   end
   object BackgroundCbo: TColorBox
     Left = 105
@@ -125,7 +124,6 @@ object EditorColorsForm: TEditorColorsForm
     Top = 20
     Width = 82
     Caption = 'Courier New 10pt'
-    ParentColor = False
   end
   object FontBtn: TButton
     Left = 370
@@ -844,7 +842,6 @@ object EditorColorsForm: TEditorColorsForm
       Top = 10
       Width = 136
       Caption = 'Example of colors and codes'
-      ParentColor = False
       OnClick = ExampleLblClick
     end
     object CategoryCbo: TComboBox
@@ -872,7 +869,6 @@ object EditorColorsForm: TEditorColorsForm
     Top = 368
     Width = 28
     Caption = 'Name'
-    ParentColor = False
   end
   object FontDialog: TFontDialog
     Font.Height = -11
