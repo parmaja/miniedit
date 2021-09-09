@@ -554,6 +554,7 @@
       <CompilerMessages>
         <IgnoredMessages idx5024="True" idx5023="True"/>
       </CompilerMessages>
+      <CustomOptions Value="-dDEBUG"/>
     </Other>
   </CompilerOptions>
   <Debugging>

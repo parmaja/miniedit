@@ -41,7 +41,7 @@ type
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
-    procedure DoExecuteCompletion(Sender: TObject); override;
+    procedure DoPrepareCompletion(Sender: TObject); override;
   public
   end;
 
@@ -106,6 +106,7 @@ begin
     Engine.SendAction(eaClearOutput);
 
     aRunItem := Engine.Session.Run.Add;
+    aRunItem.MessageType := msgtInteractive;
     aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.Run.Console := Info.Console;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
@@ -133,6 +134,7 @@ begin
     Engine.SendAction(eaClearOutput);
 
     aRunItem := Engine.Session.Run.Add;
+    aRunItem.MessageType := msgtInteractive;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Run.Silent := True;
@@ -161,49 +163,62 @@ end;
 
 procedure TLSLTendency.SendMessage(S: string; vMessageType: TNotifyMessageType);
 var
-  aErr: TErrorInfo;
+  aMsg: TMessageInfo;
   p: Integer;
   m, t : string;
   list: TStringList;
   function GetStr(Index: Integer): string;
   begin
-    if Index > list.Count then
+    if Index >= list.Count then
       Result := ''
     else
       Result := List[Index];
   end;
 
 //D:\lab\pascal\miniEdit\test\teleport.lsl::ERROR:: ( 21, 95): `OS_LTPAG_FORCEFLY' is undeclared.
+//TOTAL:: Errors: 4  Warnings: 0
+
 begin
-  aErr := Default(TErrorInfo);
-  if (S <> '') and (vMessageType = msgtOutput) then
+  if (S <> '') and (vMessageType = msgtInteractive) then
   begin
+    aMsg := Default(TMessageInfo);
     list := TStringList.Create;
     try
-      list.Delimiter := ':';
-      list.DelimitedText := S;
-      aErr.FileName := GetStr(0);
-      aErr.Name := GetStr(2);
-      t := GetStr(4);
-      if LeftStr(t, 1) = '(' then
-        t := MidStr(t, 2, Length(t) - 1);
-      if RightStr(t, 1) = ')' then
-        t := MidStr(t, 1, Length(t) - 1);
-
-      p := Pos(',', t);
-      if p > 0 then
+      StrToStringsEx(Trim(S), List, ['::']);
+      t := GetStr(2);
+      if t <> '' then
       begin
-        m := MidStr(t, 1, p - 1);
-        t := MidStr(t, p + 1, MaxInt);
-      end;
-      aErr.Line := StrToIntDef(m, 0);
-      aErr.Column := StrToIntDef(t, 0);
-      aErr.Message := GetStr(5);
+        aMsg.MessageType := vMessageType;
+        aMsg.FileName := GetStr(0);
+        aMsg.Name := GetStr(1);
+        aMsg.Message1 := Trim(SubStr(t, ':', 1));
+        t := Trim(SubStr(t, ':', 0));
+
+        if LeftStr(t, 1) = '(' then
+          t := Trim(MidStr(t, 2, Length(t) - 1));
+        if RightStr(t, 1) = ')' then
+          t := Trim(MidStr(t, 1, Length(t) - 1));
+
+        p := Pos(',', t);
+        if p > 0 then
+        begin
+          m := Trim(MidStr(t, 1, p - 1));
+          t := Trim(MidStr(t, p + 1, MaxInt));
+        end
+        else
+          m := t;
+        aMsg.Line := StrToIntDef(m, 0);
+        aMsg.Column := StrToIntDef(t, 0);
+        Engine.SendMessage(S, aMsg);
+      end
+      else
+        inherited;
     finally
       list.Free;
     end;
-  end;
-  Engine.SendMessage(S, vMessageType, aErr);
+  end
+  else
+    inherited;
 end;
 
 procedure TLSLTendency.HelpKeyword(AWord: string);
@@ -246,24 +261,18 @@ begin
   Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;';//what about $
 end;
 
-procedure TLSLFileCategory.DoExecuteCompletion(Sender: TObject);
-var
-  aSynEdit: TCustomSynEdit;
+procedure TLSLFileCategory.DoPrepareCompletion(Sender: TObject);
 begin
   inherited;
   Screen.Cursor := crHourGlass;
   Completion.ItemList.BeginUpdate;
   try
     Completion.ItemList.Clear;
-    aSynEdit := (Sender as TSynCompletion).TheForm.CurrentEditor as TCustomSynEdit;
-    if (aSynEdit <> nil) then
-    begin
-      EnumerateKeywords(Ord(attKeyword), sLSLKeywords, Highlighter.IdentChars, @DoAddCompletion);
-      EnumerateKeywords(Ord(attDataType), sLSLTypes, Highlighter.IdentChars, @DoAddCompletion);
-      EnumerateKeywords(Ord(attDataValue), sLSLValues, Highlighter.IdentChars, @DoAddCompletion);
-      EnumerateKeywords(Ord(attCommon), sLSLFunctions, Highlighter.IdentChars, @DoAddCompletion);
-      EnumerateKeywords(Ord(attCommon), sOpenSIMFunctions, Highlighter.IdentChars, @DoAddCompletion);
-    end;
+    EnumerateKeywords(Ord(attKeyword), sLSLKeywords, Highlighter.IdentChars, @DoAddCompletion);
+    EnumerateKeywords(Ord(attDataType), sLSLTypes, Highlighter.IdentChars, @DoAddCompletion);
+    EnumerateKeywords(Ord(attDataValue), sLSLValues, Highlighter.IdentChars, @DoAddCompletion);
+    EnumerateKeywords(Ord(attCommon), sLSLFunctions, Highlighter.IdentChars, @DoAddCompletion);
+    EnumerateKeywords(Ord(attCommon), sOpenSIMFunctions, Highlighter.IdentChars, @DoAddCompletion);
   finally
     Completion.ItemList.EndUpdate;
     Screen.Cursor := crDefault;

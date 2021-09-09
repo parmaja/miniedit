@@ -84,16 +84,23 @@ uses
 
     TEditorChangeStates = set of TEditorChangeState;
 
-    TNotifyMessageType = (msgtStatus, msgtEndStatus, msgtLog, msgtOutput, msgtError);
+    TNotifyMessageType = (
+      msgtStatus,
+      msgtEndStatus,
+      msgtLog,
+      msgtOutput,
+      msgtInteractive //like msgtOutput but should parsed
+    );
     TEditorAction = (eaShowFolders, eaShowDatabases, eaShowProject, eaClearOutput, eaClearLog, eaEnd);
 
-    TErrorInfo = record
+    TMessageInfo = record
+      MessageType: TNotifyMessageType;
       ID: Integer;
       Line: Integer;
       Column: Integer;
       Name: string;
       FileName: string;
-      Message: string;
+      Message1: string;
     end;
 
     { INotifyEngine }
@@ -116,7 +123,7 @@ uses
     INotifyEngineEditor = interface(INotifyEngine)
       ['{B3ACF9DF-2A37-4693-A7A5-FBF47DCAFC92}']
       procedure EngineAction(EngineAction: TEditorAction);
-      procedure EngineMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);
+      procedure EngineMessage(S: string; vMessageInfo: TMessageInfo);
       procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
     end;
 

@@ -15,6 +15,9 @@ program mne;
 
   good fonts
   http://www.lowing.org/fonts/
+
+  good ref
+  https://forum.lazarus.freepascal.org/index.php/topic,46251.msg329046.html#msg329046
 }
 
 {

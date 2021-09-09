@@ -42,7 +42,7 @@ type
   TOutputLine = class(TObject)
   public
     LogLine: Integer; //line number in log editor/list
-    Info: TErrorInfo;
+    Info: TMessageInfo;
   end;
 
   TOutputs = class(specialize TmnObjectList<TOutputLine>)
@@ -642,8 +642,8 @@ type
     //
     procedure ChangeState(var State: TEditorChangeStates);
     procedure EngineReplaceText(Sender: TObject; const ASearch, AReplace: string; Line, Column: integer; var ReplaceAction: TSynReplaceAction);
-    procedure EngineMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);
-    procedure AddError(vError: TErrorInfo); overload;
+    procedure EngineMessage(S: string; vMessageInfo: TMessageInfo);
+    procedure AddError(vMessageInfo: TMessageInfo); overload;
     procedure EngineAction(EngineAction: TEditorAction);
 
     procedure FollowFolder(vFolder: string; FocusIt: Boolean);
@@ -1971,14 +1971,14 @@ begin
   Engine.CurrentTendency.Run([rnaLint]);
 end;
 
-procedure TMainForm.AddError(vError: TErrorInfo);
+procedure TMainForm.AddError(vMessageInfo: TMessageInfo);
 begin
   MessagesGrid.RowCount := MessagesGrid.RowCount + 1;
   //MessagesGrid.Cells[1, MessagesGrid.RowCount - 1] := IntToStr(vError.ID);
-  MessagesGrid.Cells[1, MessagesGrid.RowCount - 1] := vError.Name;
-  MessagesGrid.Cells[2, MessagesGrid.RowCount - 1] := vError.Message;
-  MessagesGrid.Cells[3, MessagesGrid.RowCount - 1] := vError.FileName;
-  MessagesGrid.Cells[4, MessagesGrid.RowCount - 1] := IntToStr(vError.Line);
+  MessagesGrid.Cells[1, MessagesGrid.RowCount - 1] := vMessageInfo.Name;
+  MessagesGrid.Cells[2, MessagesGrid.RowCount - 1] := vMessageInfo.Message1;
+  MessagesGrid.Cells[3, MessagesGrid.RowCount - 1] := vMessageInfo.FileName;
+  MessagesGrid.Cells[4, MessagesGrid.RowCount - 1] := IntToStr(vMessageInfo.Line);
 end;
 
 procedure TMainForm.AboutActExecute(Sender: TObject);
@@ -2438,12 +2438,12 @@ begin
     if (Index = 0) and (FOutputs.Count > 0) then
     begin
       aLine := FOutputs.Last;
-      aLine.Info.Message := aLine.Info.Message + S;
+      aLine.Info.Message1 := aLine.Info.Message1 + S;
     end
     else
     begin
       aLine := TOutputLine.Create;
-      aLine.Info.Message := S;
+      aLine.Info.Message1 := S;
       FOutputs.Add(aLine);
     end;
 
@@ -2454,11 +2454,11 @@ begin
   end;
 end;
 
-procedure TMainForm.EngineMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);
+procedure TMainForm.EngineMessage(S: string; vMessageInfo: TMessageInfo);
 var
   aLine: TOutputLine;
 begin
-  case vMessageType of
+  case vMessageInfo.MessageType of
     msgtStatus:
       MessageLabel.Caption := Trim(S);
     msgtEndStatus:
@@ -2468,19 +2468,19 @@ begin
     end;
     msgtOutput:
     begin
-      StrToStringsCallback(s, self, @AddOutput, [#13], [], [], []);
+      StrToStringsExCallback(S, self, @AddOutput, [#13#10, #13, #10], [], [], []);
       OutputEdit.CaretY := OutputEdit.Lines.Count;
     end;
-    msgtError:
+    msgtInteractive:
     begin
       aLine := TOutputLine.Create;
-      aLine.Info := vError;
+      aLine.Info := vMessageInfo;
       FOutputs.Add(aLine);
       OutputEdit.Lines.Add(S);
       OutputEdit.CaretY := OutputEdit.Lines.Count;
       aLine.LogLine := OutputEdit.CaretY;
-      if (vError.FileName <> '') then
-        AddError(vError);
+      if (vMessageInfo.MessageType = msgtInteractive) then
+        AddError(vMessageInfo);
     end;
     msgtLog:
     begin

@@ -192,7 +192,7 @@ begin
     end;
 
     aRunItem.Info.Run.Silent := True;
-    aRunItem.MessageType := msgtError;
+    aRunItem.MessageType := msgtInteractive;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
@@ -302,35 +302,38 @@ end;
 
 procedure TGoTendency.SendMessage(S: string; vMessageType: TNotifyMessageType);
 var
-  aErr: TErrorInfo;
+  aMsg: TMessageInfo;
   p: Integer;
 begin
-  aErr := Default(TErrorInfo);
-  if (S <> '') and (vMessageType = msgtError) then
+  if (S <> '') and (vMessageType = msgtInteractive)
+    and  (S[1] <> '#') then
   begin
-    if (S[1] <> '#') then
     begin
+      aMsg := Default(TMessageInfo);
+      aMsg.MessageType := vMessageType;
       p := PosForward(S, ':');
       if p > 0 then
       begin
-        aErr.FileName := ExpandToPath(Trim(MidStr(s, 1, p - 1)), Engine.Session.Run.CurrentDirectory);
+        aMsg.FileName := ExpandToPath(Trim(MidStr(s, 1, p - 1)), Engine.Session.Run.CurrentDirectory);
         s := Trim(MidStr(S, p + 1, MaxInt));
         p := PosForward(s, ':');
         if p > 0 then
         begin
-          aErr.Line := StrToIntDef(MidStr(s, 1, p - 1), 0);
+          aMsg.Line := StrToIntDef(MidStr(s, 1, p - 1), 0);
           s := MidStr(s, p + 1, MaxInt);
           p := PosForward(s, ':');
           if p > 0 then
           begin
-            aErr.Column := StrToIntDef(MidStr(s, 1, p - 1), 0);
+            aMsg.Column := StrToIntDef(MidStr(s, 1, p - 1), 0);
           end;
         end;
-        aErr.Message := s;
+        aMsg.Message1 := s;
       end;
     end;
-  end;
-  Engine.SendMessage(S, vMessageType, aErr);
+    Engine.SendMessage(S, aMsg);
+  end
+  else
+    inherited;
 end;
 
 function TGoTendency.CreateDebugger: TEditorDebugger;

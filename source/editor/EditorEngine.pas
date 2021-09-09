@@ -1,6 +1,7 @@
 unit EditorEngine;
 {$mode objfpc}{$H+}
 {$ModeSwitch advancedrecords}
+{$modeswitch arrayoperators}
 {$INTERFACES CORBA} //Needed for interfaces without guid
 {**
  * Mini Edit
@@ -941,6 +942,7 @@ type
     procedure InitCompletion(vSynEdit: TCustomSynEdit); virtual;
     procedure DoAddKeywords; virtual;
     procedure DoAddCompletion(AKeyword: string; AKind: integer); virtual;
+    procedure DoPrepareCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
     procedure DoExecuteCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
     function DoPaintItem(const AKey: string; ACanvas: TCanvas; X, Y: integer; ASelected: boolean; AIndex: integer): Boolean;
 
@@ -1008,7 +1010,7 @@ type
     {CommentID: Integer;
     StringID: Integer;} //TODO
     procedure ExtractKeywords(Files, Identifiers: TStringList); virtual;
-    procedure DoExecuteCompletion(Sender: TObject); override;
+    procedure DoPrepareCompletion(Sender: TObject); override;
   end;
 
   { TFileGroup }
@@ -1329,7 +1331,7 @@ type
     property MacroRecorder: TSynMacroRecorder read FMacroRecorder;
     procedure SendLog(S: string);
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType);
-    procedure SendMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);
+    procedure SendMessage(S: string; vMessageInfo: TMessageInfo);
     procedure SendAction(EditorAction: TEditorAction);
 
     procedure SaveAll(Force: Boolean);
@@ -1353,7 +1355,6 @@ type
 function ResetUpdate(State: TEditorChangeState; var InStates: TEditorChangeStates): Boolean;
 
 function SelectFolder(const Caption: string; const Root: string; var Directory: string): Boolean;
-procedure SpliteStr(S, Separator: string; var Name, Value: string);
 
 procedure SaveAsUnix(Strings: TStrings; Stream: TStream);
 procedure SaveAsWindows(Strings: TStrings; Stream: TStream);
@@ -1439,23 +1440,6 @@ end;
 function SelectFolder(const Caption: string; const Root: string; var Directory: string): Boolean;
 begin
   Result := SelectDirectory(Caption, Root, Directory);
-end;
-
-procedure SpliteStr(S, Separator: string; var Name, Value: string);
-var
-  p: integer;
-begin
-  p := AnsiPos(Separator, S);
-  if P <> 0 then
-  begin
-    Name := Copy(s, 1, p - 1);
-    Value := Copy(s, p + 1, MaxInt);
-  end
-  else
-  begin
-    Name := s;
-    Value := '';
-  end;
 end;
 
 procedure SaveAsUnix(Strings: TStrings; Stream: TStream);
@@ -1774,7 +1758,7 @@ begin
   end;
 end;
 
-procedure TCodeFileCategory.DoExecuteCompletion(Sender: TObject);
+procedure TCodeFileCategory.DoPrepareCompletion(Sender: TObject);
 var
   aIdentifiers: THashedStringList;
   aCurrent, Token: string;
@@ -4157,13 +4141,14 @@ end;
 
 procedure TEditorEngine.SendMessage(S: string; vMessageType: TNotifyMessageType);
 var
-  aError: TErrorInfo;
+  aMessageInfo: TMessageInfo;
 begin
-  aError := Default(TErrorInfo);
-  SendMessage(S, vMessageType, aError);
+  aMessageInfo := Default(TMessageInfo);
+  aMessageInfo.MessageType := vMessageType;
+  SendMessage(S, aMessageInfo);
 end;
 
-procedure TEditorEngine.SendMessage(S: string; vMessageType: TNotifyMessageType; vError: TErrorInfo);
+procedure TEditorEngine.SendMessage(S: string; vMessageInfo: TMessageInfo);
 var
   i: Integer;
 begin
@@ -4171,7 +4156,7 @@ begin
     for i := 0 to FNotifyObjects.Count -1 do
     begin
       if FNotifyObjects[i] is INotifyEngineEditor then
-        (FNotifyObjects[i] as INotifyEngineEditor).EngineMessage(S, vMessageType, vError);
+        (FNotifyObjects[i] as INotifyEngineEditor).EngineMessage(S, vMessageInfo);
     end;
 end;
 
@@ -5513,7 +5498,7 @@ begin
   begin
     FCompletion := TmneSynCompletion.Create(nil);
     Completion.Width := 340;
-    Completion.OnExecute := @DoExecuteCompletion;
+    Completion.OnPrepare := @DoPrepareCompletion;
     Completion.OnPaintItem := @DoPaintItem;
     Completion.ShortCut := scCtrl + VK_SPACE;
     Completion.CaseSensitive := False;
@@ -5541,6 +5526,10 @@ end;
 procedure TVirtualCategory.DoAddCompletion(AKeyword: string; AKind: integer);
 begin
   Completion.ItemList.AddObject(AKeyword, TObject(AKind));
+end;
+
+procedure TVirtualCategory.DoPrepareCompletion(Sender: TObject);
+begin
 end;
 
 procedure TVirtualCategory.InitEdit(vSynEdit: TCustomSynEdit);

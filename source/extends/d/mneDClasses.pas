@@ -184,6 +184,7 @@ begin
   begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Run.Silent := True;
+    aRunItem.MessageType := msgtInteractive;
 
     aRunItem.Info.Run.Command := Info.Command;
     if aRunItem.Info.Run.Command = '' then
@@ -200,7 +201,7 @@ begin
     end;
 
     aRunItem.Info.Run.Silent := True;
-    aRunItem.MessageType := msgtError;
+    aRunItem.MessageType := msgtInteractive;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 
@@ -314,35 +315,40 @@ end;
 
 procedure TDTendency.SendMessage(S: string; vMessageType: TNotifyMessageType);
 var
-  aErr: TErrorInfo;
+  aMsg: TMessageInfo;
   p: Integer;
   m, t : string;
 begin
-  aErr := Default(TErrorInfo);
-  if (S <> '') and (vMessageType = msgtError) then
+  if (S <> '') and (vMessageType = msgtInteractive) then
   begin
     p := PosForward(S, '):');
     if p > 0 then
     begin
+      aMsg := Default(TMessageInfo);
+      aMsg.MessageType := vMessageType;
       t := MidStr(S, 1, p - 1);
       m := Trim(MidStr(S, p + 2, MaxInt));
       p := PosBackword(t, '(');
       if p > 0 then
       begin
-        aErr.FileName := ExpandToPath(Trim(MidStr(t, 1, p - 1)), Engine.Session.Run.CurrentDirectory);
+        aMsg.FileName := ExpandToPath(Trim(MidStr(t, 1, p - 1)), Engine.Session.Run.CurrentDirectory);
         t := MidStr(t, p + 1, MaxInt);
-        aErr.Line := StrToIntDef(t, 0);
+        aMsg.Line := StrToIntDef(t, 0);
       end;
       p := PosForward(m, ':');
       if p > 0 then
       begin
-        aErr.Name := Trim(MidStr(m, 1, p - 1));
+        aMsg.Name := Trim(MidStr(m, 1, p - 1));
         m := Trim(MidStr(m, p + 1, MaxInt));
       end;
-      aErr.Message := m;
-    end;
-  end;
-  Engine.SendMessage(S, vMessageType, aErr);
+      aMsg.Message1 := m;
+      Engine.SendMessage(S, aMsg);
+    end
+    else
+      inherited;
+  end
+  else
+    inherited;
 end;
 
 function TDTendency.CreateDebugger: TEditorDebugger;
