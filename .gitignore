@@ -7,3 +7,4 @@ units
 /source/gui/*.lps
 /source/gui/mne.res
 /release
+/bin/ThemeDefault.inc
