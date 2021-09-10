@@ -325,6 +325,7 @@ begin
     if p > 0 then
     begin
       aMsg := Default(TMessageInfo);
+      aMsg.Processed := True;
       aMsg.MessageType := vMessageType;
       t := MidStr(S, 1, p - 1);
       m := Trim(MidStr(S, p + 2, MaxInt));

@@ -70,7 +70,7 @@ type
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure DoAddKeywords; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
-    procedure DoExecuteCompletion(Sender: TObject); override;
+    procedure DoPrepareCompletion(Sender: TObject); override;
   public
     function GetColorPrefix: string; override;
   end;
@@ -351,7 +351,7 @@ begin
   Result := TSynXHTMLSyn.Create(nil);
 end;
 
-procedure TXHTMLFileCategory.DoExecuteCompletion(Sender: TObject);
+procedure TXHTMLFileCategory.DoPrepareCompletion(Sender: TObject);
 var
   aVariables: THashedStringList;
   aIdentifiers: THashedStringList;
@@ -412,24 +412,24 @@ begin
           //extract keywords from external files
           if Engine.Options.CollectAutoComplete and (Engine.Session.GetRoot <> '') then
           begin
-            if ((GetTickCount - Engine.Session.CachedAge) > (Engine.Options.CollectTimeout * 1000)) then
+            if ((GetTickCount - CachedAge) > (Engine.Options.CollectTimeout * 1000)) then
             begin
-              Engine.Session.CachedVariables.Clear;
-              Engine.Session.CachedIdentifiers.Clear;
+              CachedVariables.Clear;
+              CachedIdentifiers.Clear;
               aFiles := TStringList.Create;
               try
                 EnumFileList(Engine.Session.GetRoot, '*.php', Engine.Options.IgnoreNames, aFiles, 1000, 3, True);//TODO check the root dir if no project opened
                 r := aFiles.IndexOf(Engine.Files.Current.Name);
                 if r >= 0 then
                   aFiles.Delete(r);
-                ExtractKeywords(aFiles, Engine.Session.CachedVariables, Engine.Session.CachedIdentifiers);
+                ExtractKeywords(aFiles, CachedVariables, CachedIdentifiers);
               finally
                 aFiles.Free;
               end;
             end;
-            aVariables.AddStrings(Engine.Session.CachedVariables);
-            aIdentifiers.AddStrings(Engine.Session.CachedIdentifiers);
-            Engine.Session.CachedAge := GetTickCount;
+            aVariables.AddStrings(CachedVariables);
+            aIdentifiers.AddStrings(CachedIdentifiers);
+            CachedAge := GetTickCount;
           end;
           //add current file Identifiers and Variables
           try

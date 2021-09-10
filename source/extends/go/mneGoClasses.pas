@@ -310,6 +310,7 @@ begin
   begin
     begin
       aMsg := Default(TMessageInfo);
+      aMsg.Processed := True;
       aMsg.MessageType := vMessageType;
       p := PosForward(S, ':');
       if p > 0 then

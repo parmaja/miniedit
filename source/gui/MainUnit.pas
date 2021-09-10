@@ -654,6 +654,8 @@ type
     procedure ShowFileAtLine(vFileName: string; vLine: Integer; vColumn: Integer = 0);
     property ShowFolderFiles: TShowFolderFiles read FShowFolderFiles write SetShowFolderFiles;
     property SortFolderFiles: TSortFolderFiles read FSortFolderFiles write SetSortFolderFiles;
+
+    procedure CheckChangedEvent(Data: PtrInt);
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -897,7 +899,7 @@ end;
 procedure TMainForm.ApplicationPropertiesActivate(Sender: TObject);
 begin
   if not (csLoading in ComponentState) then
-    Engine.Files.CheckChanged;
+    Application.QueueAsyncCall(@CheckChangedEvent, 0);
 end;
 
 procedure TMainForm.ApplicationPropertiesHint(Sender: TObject);
@@ -2479,7 +2481,7 @@ begin
       OutputEdit.Lines.Add(S);
       OutputEdit.CaretY := OutputEdit.Lines.Count;
       aLine.LogLine := OutputEdit.CaretY;
-      if (vMessageInfo.MessageType = msgtInteractive) then
+      if (vMessageInfo.Processed) then
         AddError(vMessageInfo);
     end;
     msgtLog:
@@ -3047,6 +3049,11 @@ begin
           Current.SynEdit.SetFocus;
         end;
   end;
+end;
+
+procedure TMainForm.CheckChangedEvent(Data: PtrInt);
+begin
+  Engine.Files.CheckChanged;
 end;
 
 procedure TMainForm.Add1Click(Sender: TObject);

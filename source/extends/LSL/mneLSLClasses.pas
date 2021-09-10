@@ -188,6 +188,7 @@ begin
       t := GetStr(2);
       if t <> '' then
       begin
+        aMsg.Processed := True;
         aMsg.MessageType := vMessageType;
         aMsg.FileName := GetStr(0);
         aMsg.Name := GetStr(1);

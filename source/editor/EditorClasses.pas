@@ -94,6 +94,7 @@ uses
     TEditorAction = (eaShowFolders, eaShowDatabases, eaShowProject, eaClearOutput, eaClearLog, eaEnd);
 
     TMessageInfo = record
+      Processed: Boolean;
       MessageType: TNotifyMessageType;
       ID: Integer;
       Line: Integer;

@@ -142,7 +142,6 @@ type
     FVariable: TGlobalAttribute;
     FCommon: TGlobalAttribute;
 
-
     FNumber: TGlobalAttribute;
     FSelected: TGlobalAttribute;
     FHighlighted: TGlobalAttribute;
@@ -203,7 +202,7 @@ type
     property Document: TGlobalAttribute read FDocument;
 
     property Text: TGlobalAttribute read FText;
-    property Embed: TGlobalAttribute read FEmbed;
+    property EmbedText: TGlobalAttribute read FEmbed;
     property Comment: TGlobalAttribute read FComment;
     property QuotedString: TGlobalAttribute read FQuotedString;
     property FontName: String read FInfo.FontName write FInfo.FontName;

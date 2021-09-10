@@ -997,9 +997,18 @@ type
   { TTextFileCategory }
 
   TTextFileCategory = class(TFileCategory)
+  private
+    FCachedAge: QWord;
+    FCachedIdentifiers: THashedStringList;
+    FCachedVariables: THashedStringList;
   protected
     function GetIsText: Boolean; override;
   public
+    procedure Created; override;
+    destructor Destroy; override;
+    property CachedVariables: THashedStringList read FCachedVariables; //move to category
+    property CachedIdentifiers: THashedStringList read FCachedIdentifiers;
+    property CachedAge: QWord read FCachedAge write FCachedAge;
   end;
 
   { TCodeFileCategory }
@@ -1137,9 +1146,6 @@ type
     FPanel: TControl;
     FProject: TEditorProject;
     FRun: TmneRun;
-    FCachedIdentifiers: THashedStringList;
-    FCachedVariables: THashedStringList;
-    FCachedAge: QWord;
     function GetActive: Boolean;
     function GetMainFile: string;
     function GetMainFolder: string;
@@ -1174,9 +1180,6 @@ type
     //Process the project running if it is null, process should nil it after finish
     property Run: TmneRun read FRun write SetRun;
 
-    property CachedVariables: THashedStringList read FCachedVariables;
-    property CachedIdentifiers: THashedStringList read FCachedIdentifiers;
-    property CachedAge: QWord read FCachedAge write FCachedAge;
   end;
 
   TEditorMessagesList = class;
@@ -1786,23 +1789,23 @@ begin
       //extract keywords from external files
       if Engine.Options.CollectAutoComplete and (Engine.Session.GetRoot <> '') then
       begin
-        if ((GetTickCount - Engine.Session.CachedAge) > (Engine.Options.CollectTimeout * 1000)) then
+        if ((GetTickCount - CachedAge) > (Engine.Options.CollectTimeout * 1000)) then
         begin
-          Engine.Session.CachedVariables.Clear;
-          Engine.Session.CachedIdentifiers.Clear;
+          CachedVariables.Clear;
+          CachedIdentifiers.Clear;
           aFiles := TStringList.Create;
           try
             EnumFileList(Engine.Session.GetRoot, GetExtensions, Engine.Options.IgnoreNames, aFiles, 1000, 3, Engine.Session.Active);//TODO check the root dir if no project opened
             r := aFiles.IndexOf(Engine.Files.Current.Name);
             if r >= 0 then
               aFiles.Delete(r);
-            ExtractKeywords(aFiles, Engine.Session.CachedIdentifiers);
+            ExtractKeywords(aFiles, CachedIdentifiers);
           finally
             aFiles.Free;
           end;
         end;
-        aIdentifiers.AddStrings(Engine.Session.CachedIdentifiers);
-        Engine.Session.CachedAge := GetTickCount;
+        aIdentifiers.AddStrings(CachedIdentifiers);
+        CachedAge := GetTickCount;
       end;
       //add current file Identifiers
       try
@@ -1936,6 +1939,20 @@ end;
 function TTextFileCategory.GetIsText: Boolean;
 begin
   Result := True;
+end;
+
+procedure TTextFileCategory.Created;
+begin
+  inherited;
+  FCachedVariables := THashedStringList.Create;
+  FCachedIdentifiers := THashedStringList.Create;
+end;
+
+destructor TTextFileCategory.Destroy;
+begin
+  FCachedVariables.Free;
+  FCachedIdentifiers.Free;
+  inherited;
 end;
 
 { TMapper }
@@ -2928,9 +2945,6 @@ end;
 
 procedure TEditorSession.Close;
 begin
-  FCachedIdentifiers.Clear;
-  FCachedVariables.Clear;
-  FCachedAge := 0;
   if (Project <> nil) and (Project.FileName <> '') then
     Project.SaveToFile(Project.FileName);
 
@@ -5622,7 +5636,9 @@ begin
   aType := TAttributeType(Completion.ItemList.Objects[AIndex]);
   att := Engine.Options.Profile.Attributes.Find(aType);
   if att <> nil then
-    ACanvas.Font.Color := att.ForeColor;
+    ACanvas.Font.Color := att.Foreground
+  else
+    ACanvas.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   ACanvas.TextOut(X + 4, Y, AKey);
   Result := True;
 end;
@@ -5975,8 +5991,6 @@ begin
   Run.Stop;
   FreeAndNil(FRun);
   FreeAndNil(FOptions);
-  FCachedVariables.Free;
-  FCachedIdentifiers.Free;
   inherited;
 end;
 
@@ -5997,8 +6011,6 @@ begin
   inherited;
   FOptions := TEditorSessionOptions.Create;
   FRun := TmneRun.Create;
-  FCachedVariables := THashedStringList.Create;
-  FCachedIdentifiers := THashedStringList.Create;
 end;
 
 procedure TFileGroups.EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds);
