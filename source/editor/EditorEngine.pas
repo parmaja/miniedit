@@ -3966,8 +3966,6 @@ begin
           for j := 0 to lStrings.Count -1 do
           begin
             s := lStrings[j];
-            if LeftStr(s, 1) = '.' then
-              s := Copy(s, 2, MaxInt);
             Groups[i].ExtraExtensions.Add(s);
           end;
         end;
