@@ -7,8 +7,8 @@ object SQLEditForm: TSQLEditForm
   ClientWidth = 697
   TabOrder = 0
   Visible = False
-  DesignLeft = 418
-  DesignTop = 278
+  DesignLeft = 333
+  DesignTop = 267
   object PageControl: TntvPageControl
     Left = 0
     Height = 317
@@ -51,7 +51,6 @@ object SQLEditForm: TSQLEditForm
         BorderStyle = bsSingle
         Color = clWindow
         ColWidth = 80
-        FixedFontColor = clBlack
         PopupMenu = GridPopupMenu
         RowHeight = 22
         Capacity = 100000
@@ -68,10 +67,10 @@ object SQLEditForm: TSQLEditForm
         ClientWidth = 697
         TabOrder = 1
         object FetchedLbl: TLabel
-          Left = 170
+          Left = 0
           Height = 26
           Top = 0
-          Width = 371
+          Width = 541
           Align = alClient
           Alignment = taRightJustify
           AutoSize = False
@@ -105,24 +104,6 @@ object SQLEditForm: TSQLEditForm
           Align = alRight
           Caption = 'S&top'
           TabOrder = 0
-        end
-        object CommitBtn: TButton
-          Left = 0
-          Height = 26
-          Top = 0
-          Width = 85
-          Align = alLeft
-          Caption = 'C&ommit'
-          TabOrder = 2
-        end
-        object RollbackBtn: TButton
-          Left = 85
-          Height = 26
-          Top = 0
-          Width = 85
-          Align = alLeft
-          Caption = '&Rolback'
-          TabOrder = 3
         end
       end
     end

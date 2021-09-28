@@ -31,7 +31,7 @@ uses
   mncSQL, SynCompletion, SynEditAutoComplete, SynHighlighterHashEntries,
   mnUtils, mncMeta, mncCSVExchanges, mnSynHighlighterStdSQL, mncMySQL,
   mncPostgre, mncSQLite, mncSQLiteMeta, mncPGMeta, mncFBMeta, ntvGrids,
-  ntvPanels, ntvImgBtns, mndEngines, mndStdAddons, LMessages, ComCtrls,
+  ntvPanels, ntvImgBtns, mndEngines, mndStdAddons, LMessages, ComCtrls, ntvThemes,
   EditorClasses, EditorEngine, mneResources;
 
 type

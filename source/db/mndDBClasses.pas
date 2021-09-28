@@ -42,7 +42,7 @@ type
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
-    procedure DoExecuteCompletion(Sender: TObject); override;
+    procedure DoPrepareCompletion(Sender: TObject); override;
   public
   end;
 
@@ -145,10 +145,10 @@ end;
 procedure TSQLFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
-  Completion.EndOfTokenChr := '"{}()[].<>/\:!&*+-=%;';//what about notice "
+  Completion.EndOfTokenChr := '"{}()[].<>/\:!&*+-=%;"';//what about notice "
 end;
 
-procedure TSQLFileCategory.DoExecuteCompletion(Sender: TObject);
+procedure TSQLFileCategory.DoPrepareCompletion(Sender: TObject);
 var
   aSynEdit: TCustomSynEdit;
   i: Integer;
@@ -165,7 +165,7 @@ begin
       EnumerateKeywords(Ord(attDataType), StdSQLTypes, Highlighter.IdentChars, @DoAddCompletion);
       EnumerateKeywords(Ord(attCommon), StdSQLFunctions, Highlighter.IdentChars, @DoAddCompletion);
       for i := 0 to DBEngine.DB.Tables.Count -1 do
-        DoAddCompletion(DBEngine.DB.Tables[i].SQLName, ord(attVariable));
+        DoAddCompletion(DBEngine.DB.Tables[i].Name, ord(attVariable));
     end;
   finally
     Completion.ItemList.EndUpdate;

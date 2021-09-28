@@ -1,7 +1,7 @@
 object MainForm: TMainForm
-  Left = 524
+  Left = 392
   Height = 568
-  Top = 185
+  Top = 182
   Width = 1021
   ActiveControl = LogEdit
   AllowDropFiles = True
@@ -129,7 +129,7 @@ object MainForm: TMainForm
       object RollbackBtn: TToolButton
         Left = 544
         Top = 0
-        Action = DBRollbackBtn
+        Action = DBRollbackAct
         Style = tbsCheck
       end
     end
@@ -350,14 +350,14 @@ object MainForm: TMainForm
       TabStyle = tbsSheet
       Align = alClient
       TabOrder = 0
-      object ProjectPnl: TntvPanel
+      object DatabasePnl: TntvPanel
         Left = 3
         Height = 284
         Top = 23
         Width = 255
         Align = alClient
       end
-      object DatabasePnl: TntvPanel
+      object ProjectPnl: TntvPanel
         Left = 3
         Height = 284
         Top = 23
@@ -418,6 +418,7 @@ object MainForm: TMainForm
             Top = 0
             Width = 234
             Align = alClient
+            Color = clWindow
             OnChange = FilesFilterEditChange
             OnKeyPress = FilesFilterEditKeyPress
             TabOrder = 0
@@ -1827,8 +1828,8 @@ object MainForm: TMainForm
   end
   object MainMenu: TMainMenu
     Images = EditorResource.ToolbarImageList
-    Left = 377
-    Top = 114
+    Left = 208
+    Top = 36
     object file1: TMenuItem
       Caption = '&File'
       Hint = 'Exit|Quits the application'
@@ -1925,11 +1926,17 @@ object MainForm: TMainForm
       object MenuItem50: TMenuItem
         Caption = '-'
       end
+      object MenuItem51: TMenuItem
+        Action = NewSQLAct
+      end
+      object MenuItem52: TMenuItem
+        Caption = '-'
+      end
       object MenuItem5: TMenuItem
         Action = DBCommitAct
       end
       object MenuItem49: TMenuItem
-        Action = DBRollbackBtn
+        Action = DBRollbackAct
       end
     end
     object ProjectMnu: TMenuItem
@@ -2882,9 +2889,15 @@ object MainForm: TMainForm
       Category = 'Database'
       Caption = 'Commit'
     end
-    object DBRollbackBtn: TAction
+    object DBRollbackAct: TAction
       Category = 'Database'
       Caption = 'Rollback'
+    end
+    object NewSQLAct: TAction
+      Category = 'Debug'
+      Caption = 'SQL'
+      ImageIndex = 36
+      OnExecute = NewSQLActExecute
     end
   end
   object FolderMenu: TPopupMenu

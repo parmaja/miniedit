@@ -63,7 +63,10 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
-    DBRollbackBtn: TAction;
+    MenuItem51: TMenuItem;
+    MenuItem52: TMenuItem;
+    NewSQLAct: TAction;
+    DBRollbackAct: TAction;
     DBCommitAct: TAction;
     FilesFilterEdit: TEdit;
     FilesFilterClearBtn: TntvImgBtn;
@@ -416,6 +419,7 @@ type
     SwitchFocusAct: TAction;
     SwitchFocus1: TMenuItem;
     N16: TMenuItem;
+    procedure NewSQLActExecute(Sender: TObject);
     procedure AnsiMnuClick(Sender: TObject);
     procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesHint(Sender: TObject);
@@ -605,6 +609,7 @@ type
     procedure EngineDebug;
     procedure EngineRefresh;
     procedure EngineEdited;
+    procedure TransactionChanged;
     procedure EngineState;
     procedure ProjectLoaded;
     procedure UpdateFolder;
@@ -915,6 +920,15 @@ begin
   Engine.Files.Current.FileEncoding := EncodingAnsi;
 end;
 
+procedure TMainForm.NewSQLActExecute(Sender: TObject);
+begin
+  with Engine.Files.New('sql') do
+  begin
+    IsTemporary := True;
+    SynEdit.Lines.Text := ''; //baaah
+  end;
+end;
+
 procedure TMainForm.FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
 begin
   Engine.Files.SetCurrentIndex(FileTabs.ItemIndex, True);
@@ -1152,6 +1166,9 @@ begin
   else
     TypePnl.Caption := 'Undefined';
   //  DebugPnl.Visible := DebugPnl.Caption <> '';
+
+  DBCommitAct.Enabled := DBEngine.DB.HaveSessions;
+  DBRollbackAct.Enabled := DBEngine.DB.HaveSessions;
 
   Engine.Update([ecsMenu]);
 
@@ -1420,6 +1437,12 @@ begin
     StatePnl.Caption := '';
     StatePnl.ParentColor := True;
   end;
+end;
+
+procedure TMainForm.TransactionChanged;
+begin
+  DBCommitAct.Enabled := DBEngine.DB.HaveSessions;
+  DBRollbackAct.Enabled := DBEngine.DB.HaveSessions;
 end;
 
 procedure TMainForm.SaveAllActExecute(Sender: TObject);
@@ -2082,7 +2105,7 @@ begin
     DBGResetAct.Enabled := Can(capStop);
     DBGLintAct.Enabled := Can(capLint);
     DBCommitAct.Enabled := Can(capTransaction);
-    DBRollbackBtn.Enabled := Can(capTransaction);
+    DBRollbackAct.Enabled := Can(capTransaction);
 
     DBGDebugModeAct.Enabled := (capDebug in Capabilities);
     DBGDebugModeAct.Checked :=  (Engine.CurrentTendency.Debugger <> nil) and Engine.CurrentTendency.Debugger.Active;
@@ -2429,6 +2452,8 @@ begin
     OptionsChanged;
   if ecsFolder in State then
     UpdateFolder;
+  if ecsTransaction in State then
+    TransactionChanged;
 end;
 
 procedure AddOutput(Sender: Pointer; Index: Integer; S: string; var Resume: Boolean);
@@ -2812,7 +2837,6 @@ begin
     BugSignBtn.Visible := True
   else
     BugSignBtn.Visible := False;
-  //FileHeaderPanel.Color := $00EEE0D7;
   FileHeaderPanel.Visible := Engine.Files.Count > 0;
   if FileHeaderPanel.Visible then
     FileHeaderPanel.Refresh;
@@ -2882,24 +2906,25 @@ begin
   else
     EditorResource.Switch(thsLight);
 
-  ntvTheme.Painter.ActiveColor := MixColors(Engine.Options.Profile.Attributes.Panel.Foreground, Engine.Options.Profile.Attributes.Panel.Background, 50);
-  ntvTheme.Painter.RaisedColor := Lighten(ntvTheme.Painter.ActiveColor, 10);
-  ntvTheme.Painter.LoweredColor := Darken(ntvTheme.Painter.ActiveColor, 10);
+  //Theme.Active.Background := MixColors(Engine.Options.Profile.Attributes.Panel.Foreground, Engine.Options.Profile.Attributes.Panel.Background, 50);
+  //Theme.Separator.Foreground := Lighten(Theme.Active.Background, 10);
+  //Theme.Separator.Background := Darken(Theme.Active.Background, 10);
 
-  MessagesTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
-  MessagesTabs.NormalColor := MixColors(OppositeColor(MessagesTabs.ActiveColor), MessagesTabs.ActiveColor, 50);
-
-  BrowserTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
-  BrowserTabs.NormalColor := MixColors(OppositeColor(BrowserTabs.ActiveColor), BrowserTabs.ActiveColor, 50);
-
-  FileHeaderPanel.Font.Color := Engine.Options.Profile.Attributes.Gutter.Foreground;
-  FileHeaderPanel.Color := Engine.Options.Profile.Attributes.Gutter.Background;
-
-  FileTabs.Color := Engine.Options.Profile.Attributes.Gutter.Background;
-  FileTabs.Font.Color := Engine.Options.Profile.Attributes.Gutter.Foreground;
-
-  FileTabs.ActiveColor := Engine.Options.Profile.Attributes.Default.Background;
-  FileTabs.NormalColor := MixColors(OppositeColor(FileTabs.ActiveColor), FileTabs.ActiveColor, 50);
+  Theme.Odd.Background := Engine.Options.Profile.Attributes.Default.Background;
+  Theme.Panel.Foreground := Engine.Options.Profile.Attributes.Panel.Foreground;
+  Theme.Panel.Background := Engine.Options.Profile.Attributes.Panel.Background;
+  Theme.Default.Foreground := Engine.Options.Profile.Attributes.Default.Foreground;
+  Theme.Default.Background := Engine.Options.Profile.Attributes.Default.Background;
+  Theme.Button.Foreground := Engine.Options.Profile.Attributes.Gutter.Foreground;
+  Theme.Button.Background := Engine.Options.Profile.Attributes.Gutter.Background;
+  Theme.Active.Foreground := Engine.Options.Profile.Attributes.Active.Foreground;
+  Theme.Active.Background := Engine.Options.Profile.Attributes.Active.Background;
+  Theme.Header.Foreground := Engine.Options.Profile.Attributes.Gutter.Foreground;
+  Theme.Header.Background := Engine.Options.Profile.Attributes.Gutter.Background;
+  Theme.Separator.Background := Engine.Options.Profile.Attributes.Separator.Background;
+  Theme.Separator.Foreground := Engine.Options.Profile.Attributes.Separator.Foreground;
+  ThemeEngine.Correct;
+  ThemeEngine.Notify;
 
 //  FileList.Font.Name := Engine.Options.Profile.Attributes.FontName;
 //  FileList.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;

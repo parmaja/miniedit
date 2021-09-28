@@ -4,7 +4,7 @@
     <Name>gray</Name>
     <Default Class="TGlobalAttribute">
       <BackColor>2763306</BackColor>
-      <ForeColor>16759187</ForeColor>
+      <ForeColor>clWhite</ForeColor>
     </Default>
     <Link Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>

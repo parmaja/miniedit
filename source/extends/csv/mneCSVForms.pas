@@ -94,7 +94,7 @@ type
     property OnChanged: TNotifyEvent read FOnChanged write FOnChanged;
 
     procedure ClearGrid;
-    procedure FillGrid(SQLCMD: TmncCommand; Title: String);
+    procedure FillGrid(SQLCMD: TmncCommand; Title: String; MergeColumns: Boolean = False);
 
     procedure LoadFromStream(AStream: TStream);
     procedure SaveToStream(AStream: TStream);
@@ -438,7 +438,7 @@ begin
   end;
 end;
 
-procedure TCSVForm.FillGrid(SQLCMD: TmncCommand; Title: String);
+procedure TCSVForm.FillGrid(SQLCMD: TmncCommand; Title: String; MergeColumns: Boolean);
 
   function GetTextWidth(Text: String): Integer;
   begin
@@ -451,7 +451,7 @@ procedure TCSVForm.FillGrid(SQLCMD: TmncCommand; Title: String);
   end;
 
 var
-  i, c, w: Integer;
+  i, r, w: Integer;
   s: String;
   str: string;
   startCol: integer;
@@ -484,11 +484,17 @@ begin
     DataGrid.BeginUpdate;
 
   try
-    IsNumbers := nil;
     if Title = '' then
       Caption := 'Data'
     else
       Caption := 'Data: ' + Title;
+
+    if not MergeColumns then
+    begin
+      DataGrid.ColumnsCount := 0;
+      DataGrid.Clear;
+      DataGrid.Rows.Clear;
+    end;
 
     FetchedLbl.Caption := 'Fetched: ';
     max := nil;
@@ -498,7 +504,7 @@ begin
     HaveHeader := cols > 0;
     if not HaveHeader then
     begin
-      cols := SQLCMD.Fields.Count;
+      cols := SQLCMD.Columns.Count;
     end;
     setLength(max, cols);
     setLength(IsNumbers, cols);
@@ -517,7 +523,7 @@ begin
         IsNumbers[i] := SQLCMD.Columns[i].IsNumber;
       end;
     end;
-    c := 0;
+    r := 0;
     CalcWidths;
 
     if FInteractive then
@@ -525,12 +531,12 @@ begin
 
     while not SQLCMD.Done do
     begin
-      if DataGrid.Count <= (c + 1) then
+      if DataGrid.Count <= (r + 1) then
       begin
-        if not FInteractive or (c >= Steps) then
-          DataGrid.Count := c + Steps
+        if not FInteractive or (r >= Steps) then
+          DataGrid.Count := r + Steps
         else
-          DataGrid.Count := c + 1;
+          DataGrid.Count := r;
       end;
 
       for i := 0 to cols - 1 do
@@ -540,28 +546,28 @@ begin
           str := SQLCMD.Fields.Items[i].AsString;
           if length(str) > max[i] then
             max[i] := length(str);
-          DataGrid.Values[startCol + i, c] := str;
+          DataGrid.Values[startCol + i, r] := str;
         end;
       end;
-      Inc(c);
+      Inc(r);
       //before 100 rows will see the grid row by row filled, cheeting the eyes of user
-      if (c < Steps) or (Frac(c / Steps) = 0) then
+      if (r < Steps) or (Frac(r / Steps) = 0) then
       begin
         if FInteractive then
         begin
-          FetchCountLbl.Caption := IntToStr(c - 1);
+          FetchCountLbl.Caption := IntToStr(r);
           CalcWidths;
         end;
         Application.ProcessMessages;
-        {if c > 100000 then
+        {if r > 100000 then
           steps := 100000
         else
-        if c > 10000 then
+        if r > 10000 then
           steps := 10000
         else
-        if c > 2500 then
+        if r > 2500 then
           steps := 1000
-        else }if c > 500 then
+        else }if r > 500 then
           steps := 500;
       end;
       if FCancel then
@@ -569,8 +575,13 @@ begin
       SQLCMD.Next;
     end;
     CalcWidths;
-    DataGrid.Count := c;
-    FetchCountLbl.Caption := IntToStr(c - 1);
+    if not MergeColumns then
+    begin
+      DataGrid.Count := r;
+      DataGrid.Capacity := r;
+    end;
+    DataGrid.Count := r;
+    FetchCountLbl.Caption := IntToStr(r - 1);
   finally
     if not FInteractive then
       DataGrid.EndUpdate;
@@ -685,12 +696,6 @@ begin
   Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   DataGrid.Color := Engine.Options.Profile.Attributes.Panel.Background;
   DataGrid.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
-  DataGrid.FixedColor := Engine.Options.Profile.Attributes.Gutter.Background;
-  DataGrid.FixedFontColor := Engine.Options.Profile.Attributes.Gutter.Foreground;
-  DataGrid.LinesColor := Engine.Options.Profile.Attributes.Separator.Background;
-
-  DataGrid.EvenColor := Engine.Options.Profile.Attributes.Default.Background;
-  DataGrid.OddColor := Engine.Options.Profile.Attributes.Default.Background;
 end;
 
 end.

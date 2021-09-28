@@ -9,7 +9,7 @@ object CSVForm: TCSVForm
   ParentColor = False
   TabOrder = 0
   DesignLeft = 438
-  DesignTop = 143
+  DesignTop = 150
   object PageControl: TntvPageControl
     Left = 0
     Height = 432
@@ -64,7 +64,6 @@ object CSVForm: TCSVForm
         BorderStyle = bsSingle
         Color = clWindow
         ColWidth = 80
-        FixedFontColor = clBlack
         PopupMenu = GridPopupMenu
         RowHeight = 22
         Capacity = 100000

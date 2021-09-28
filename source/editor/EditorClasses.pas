@@ -79,7 +79,9 @@ uses
       ecsFolder,
       ecsMenu,
       ecsProject,
-      ecsProjectLoaded
+      ecsProjectLoaded,
+      ecsTransaction
+
     ); //ecsShow bring to front
 
     TEditorChangeStates = set of TEditorChangeState;

@@ -50,10 +50,6 @@ type
     Panel4: TPanel;
     StopBtn: TButton;
     ClearBtn: TButton;
-    CommitBtn: TButton;
-    RollbackBtn: TButton;
-    procedure ConfigFileBtnClick(Sender: TObject);
-    procedure ControlPagesChange(Sender: TObject);
     procedure DataGridChanged(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
@@ -69,6 +65,7 @@ type
     FOnChanged: TNotifyEvent;
   protected
     FCancel: Boolean;
+    FGridChanged: Boolean;
     IsNumbers: array of boolean;
     FFileName: string;
     procedure Changed;
@@ -93,15 +90,6 @@ uses
 {$R *.lfm}
 
 { TSQLEditForm }
-
-procedure TSQLEditForm.ConfigFileBtnClick(Sender: TObject);
-begin
-end;
-
-procedure TSQLEditForm.ControlPagesChange(Sender: TObject);
-begin
-
-end;
 
 procedure TSQLEditForm.DataGridChanged(Sender: TObject);
 begin
@@ -259,22 +247,25 @@ var
   Steps: Integer;
   HaveHeader: Boolean;
 begin
+  FGridChanged := False;
   StopBtn.Enabled := True;
   Steps := 100;
+
   if not FInteractive then
     DataGrid.BeginUpdate;
+
   try
+    if Title = '' then
+      Caption := 'Data'
+    else
+      Caption := 'Data: ' + Title;
+
     if not MergeColumns then
     begin
       DataGrid.ColumnsCount := 0;
       DataGrid.Clear;
       DataGrid.Rows.Clear;
     end;
-    IsNumbers := nil;
-    if Title = '' then
-      Caption := 'Data'
-    else
-      Caption := 'Data: ' + Title;
 
     FetchedLbl.Caption := 'Fetched: ';
     max := nil;
@@ -305,18 +296,20 @@ begin
     end;
     r := 0;
     CalcWidths;
+
     if FInteractive then
       Application.ProcessMessages;
 
     while not SQLCMD.Done do
     begin
-      if DataGrid.Count <= r then
+      if DataGrid.Count <= (r + 1) then
       begin
         if not FInteractive or (r >= Steps) then
           DataGrid.Count := r + Steps
         else
           DataGrid.Count := r;
       end;
+
       for i := 0 to cols - 1 do
       begin
         if i < SQLCMD.Fields.Count then
@@ -358,6 +351,7 @@ begin
       DataGrid.Count := r;
       DataGrid.Capacity := r;
     end;
+    DataGrid.Count := r;
     FetchCountLbl.Caption := IntToStr(r);
   finally
     if not FInteractive then
@@ -377,13 +371,7 @@ begin
 
   Color := Engine.Options.Profile.Attributes.Default.Background;
   Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
-  DataGrid.Color := Engine.Options.Profile.Attributes.Panel.Background;
   DataGrid.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
-  DataGrid.FixedColor := Engine.Options.Profile.Attributes.Gutter.Background;
-  DataGrid.FixedFontColor := Engine.Options.Profile.Attributes.Gutter.Foreground;
-  DataGrid.LinesColor := Engine.Options.Profile.Attributes.Separator.Background;
-  DataGrid.EvenColor := Engine.Options.Profile.Attributes.Default.Background;
-  DataGrid.OddColor := Engine.Options.Profile.Attributes.Default.Background;
 end;
 
 procedure TSQLEditForm.Execute;

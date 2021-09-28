@@ -326,7 +326,6 @@ type
   TmndDB = class(TObject)
   private
     FConnection: TmncSQLConnection;
-    FSession: TmncSQLSession;
     FTables: TmncMetaItems;
     FSequences: TmncMetaItems;
     FProceduers: TmncMetaItems;
@@ -337,12 +336,11 @@ type
     FFields: TmncMetaItems;
     FExclusive: Boolean;
     FVacuum: Boolean;
-    procedure RunLoginSQL;
-    procedure RunLogoutSQL;
+    function GetHaveSessions: Boolean;
   public
     constructor Create;
     destructor Destroy; override;
-    function CreateMeta: TmncMeta;
+    function CreateMeta(ASession: TmncSession = nil): TmncMeta;
     procedure LoadMeta;
     procedure Open(vCreate: Boolean; DatabaseEngine, Host, Port, DatabaseName, UserName, Password, Role: string; vExclusive: Boolean = False; vVacuum: Boolean = False);
     procedure Close;
@@ -351,7 +349,7 @@ type
     procedure Disconnected;
 
     property Connection: TmncSQLConnection read FConnection;
-    property Session: TmncSQLSession read FSession;
+    property HaveSessions: Boolean read GetHaveSessions;
 
     property Tables: TmncMetaItems read FTables;
     property Proceduers: TmncMetaItems read FProceduers;
@@ -791,29 +789,6 @@ destructor TmndAddon.Destroy;
 begin
   inherited Destroy;
 end;
-
-{procedure TmndAddon.Enum(Session: TmndDB; Strings: TStrings);
-var
-  i: Integer;
-  aDefault: Integer;
-  c:Integer;
-begin
-  inherited;
-  aDefault := -1;
-  c := 0;
-  for i := 0 to mndClasses.Count - 1 do
-  begin
-    if SameText(mndClasses[i].Master, Name) then
-    begin
-      if (aDefault < 0) and mndClasses[i].IsDefault then
-        aDefault := c;
-      Strings.AddObject(mndClasses[i].Title, mndClasses[i]);
-      Inc(c);
-    end;
-  end;
-  if aDefault >= 0 then
-    Strings.Move(aDefault, 0);
-end;}
 
 procedure TmndAddon.EnumAddons(Addons: TmndAddons; Kinds: TmndAddonKinds);
 begin
@@ -1293,9 +1268,12 @@ procedure TmndDB.Connected;
 begin
   if FVacuum then
     Connection.Vacuum;
-  Session.Start;
   LoadMeta;
-  RunLoginSQL;
+end;
+
+function TmndDB.GetHaveSessions: Boolean;
+begin
+  Result := (Connection <> nil) and (Connection.StartCount > 0);
 end;
 
 constructor TmndDB.Create;
@@ -1321,31 +1299,35 @@ begin
   FreeAndNil(FFunctions);
   FreeAndNil(FDomains);
   FreeAndNil(FFields);
-  FreeAndNil(FSession);
   FreeAndNil(FConnection);
   inherited;
 end;
 
-function TmndDB.CreateMeta: TmncMeta;
+function TmndDB.CreateMeta(ASession: TmncSession): TmncMeta;
 begin
   Result := Engines.CreateMeta(Connection);
-  Result.Link := Session;
+  if ASession <> nil then
+    Result.Session := ASession
+  else
+  begin
+    Result.Session := Connection.CreateSession;
+    Result.OwnSession := True;
+  end;
 end;
 
 procedure TmndDB.Disconnected;
 begin
-  RunLogoutSQL;
 end;
 
 procedure TmndDB.LoadMeta;
 var
   AMeta: TmncMeta;
+  aSession: TmncSession;
 begin
   if DBEngine.Setting.CacheMetas then
   begin
-    AMeta := Engines.CreateMeta(FConnection);
+    AMeta := CreateMeta;
     try
-      AMeta.Link := Session;
       AMeta.EnumObjects(Tables, sokTable, DBEngine.DB.Connection.Resource, [ekSystem, ekSort]);
 {      AMeta.EnumObjects(Views, sokView, '', [ekSort]);
       AMeta.EnumObjects(Proceduers, sokProcedure, '', [ekSort]);
@@ -1374,8 +1356,6 @@ begin
   //Connection.AutoCreate := vAutoCreate;
   //DBConnection.Exclusive := FExclusive;//TODO
 
-  FSession := FConnection.CreateSession;
-
   Connection.Connect;
   Connected;
   //Engine.SendLog()
@@ -1386,65 +1366,14 @@ procedure TmndDB.Close;
 begin
   if IsActive then
     Disconnected;
-  if (Session <> nil) and Session.Active then
-    Session.Stop;
   if (Connection <> nil) and Connection.Connected then
     Connection.Disconnect;
-  FreeAndNil(FSession);
   FreeAndNil(FConnection);
 end;
 
 function TmndDB.IsActive: Boolean;
 begin
   Result := (Connection <> nil) and Connection.Active;
-end;
-
-procedure TmndDB.RunLoginSQL;
-var
-  CMD: TmncSQLCommand;
-begin
-  CMD := Session.CreateCommand;
-  try
-    if DBEngine.Setting.InternalLoginSQL <> '' then
-    begin
-      CMD.SQL.Text := DBEngine.Setting.InternalLoginSQL;
-      CMD.Execute;
-      CMD.Session.Commit(True);
-    end;
-    if DBEngine.Setting.LoginSQL <> '' then
-    begin
-      CMD.Close;
-      CMD.SQL.Text := DBEngine.Setting.LoginSQL;
-      CMD.Execute;
-      CMD.Session.Commit(True);
-    end;
-  finally
-    CMD.Free;
-  end;
-end;
-
-procedure TmndDB.RunLogoutSQL;
-var
-  CMD: TmncSQLCommand;
-begin
-  CMD := Session.CreateCommand;
-  try
-    if DBEngine.Setting.InternalLogoutSQL <> '' then
-    begin
-      CMD.SQL.Text := DBEngine.Setting.InternalLogoutSQL;
-      CMD.Execute;
-      CMD.Session.Commit(True);
-    end;
-    if DBEngine.Setting.LogoutSQL <> '' then
-    begin
-      CMD.Close;
-      CMD.SQL.Text := DBEngine.Setting.LogoutSQL;
-      CMD.Execute;
-      CMD.Session.Commit(True);
-    end;
-  finally
-    CMD.Free;
-  end;
 end;
 
 initialization
