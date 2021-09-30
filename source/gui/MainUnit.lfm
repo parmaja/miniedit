@@ -30,6 +30,7 @@ object MainForm: TMainForm
     Images = EditorResource.ToolbarImageList
     ParentColor = False
     TabOrder = 2
+    OnClick = TopToolbarClick
     object MainBar: TToolBar
       Left = 1
       Height = 23
@@ -131,6 +132,12 @@ object MainForm: TMainForm
         Top = 0
         Action = DBRollbackAct
         Style = tbsCheck
+      end
+      object CommitBtn1: TToolButton
+        Left = 852
+        Top = 0
+        Caption = 'Test'
+        OnClick = CommitBtn1Click
       end
     end
   end
@@ -2888,6 +2895,7 @@ object MainForm: TMainForm
     object DBCommitAct: TAction
       Category = 'Database'
       Caption = 'Commit'
+      OnExecute = DBCommitActExecute
     end
     object DBRollbackAct: TAction
       Category = 'Database'

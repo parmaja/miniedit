@@ -570,6 +570,7 @@ type
     procedure Delete; //only name not with the path
 
     procedure Show; virtual; //Need to activate it after show to focus editor
+    procedure Hide; virtual;
     function Visible: Boolean;
     procedure Activate; virtual;
     function Activated: Boolean;
@@ -3674,10 +3675,17 @@ begin
 end;
 
 procedure TEditorFiles.SetCurrent(const Value: TEditorFile);
+var
+  i: Integer;
 begin
   if FCurrent <> Value then
   begin
     FCurrent := Value;
+    for i := 0 to Count -1 do
+    begin
+      if Items[i] <> FCurrent then
+        Items[i].Hide;
+    end;
     FCurrent.Show;
     if not Engine.Updating then
       FCurrent.Activate;
@@ -4542,6 +4550,17 @@ begin
     Content.Visible := True;
     Content.Show;
     Content.BringToFront;
+    //Activate;//no no, bad when return back from another app to miniedit
+  end;
+end;
+
+procedure TEditorFile.Hide;
+begin
+  if Content <> nil then
+  begin
+//    Content.Visible := False;
+    Content.Hide;
+    Content.SendToBack;
     //Activate;//no no, bad when return back from another app to miniedit
   end;
 end;
