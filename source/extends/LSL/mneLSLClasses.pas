@@ -225,7 +225,10 @@ end;
 procedure TLSLTendency.HelpKeyword(AWord: string);
 begin
   inherited;
-  OpenURL('http://wiki.secondlife.com/wiki/' + AWord);
+  if SameText(LeftStr(AWord, 2), 'll') then
+    OpenURL('http://wiki.secondlife.com/wiki/' + AWord)
+  else
+    OpenURL('http://opensimulator.org/wiki/' + AWord);
 end;
 
 { TLSLFileCategory }
