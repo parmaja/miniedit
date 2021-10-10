@@ -7,44 +7,53 @@ object SQLEditForm: TSQLEditForm
   ClientWidth = 697
   TabOrder = 0
   Visible = False
-  DesignLeft = 333
-  DesignTop = 267
+  DesignLeft = 513
+  DesignTop = 262
   object PageControl: TntvPageControl
     Left = 0
-    Height = 317
-    Top = 0
+    Height = 176
+    Top = 141
     Width = 697
     Margin = 0
     ShowButtons = False
     Items = <    
       item
-        Caption = 'SQL'
-        Name = 'SQLTab'
-        AutoWidth = True
-        Control = SQLPnl
-      end    
-      item
         Caption = 'Data'
         Name = 'DataTab'
         AutoWidth = True
         Control = DataPnl
+      end    
+      item
+        Caption = 'Info'
+        Name = 'InfoTab'
+        AutoWidth = True
+        Control = Panel1
       end>
     TabPosition = tbpBottom
     Align = alClient
     TabOrder = 0
-    object DataPnl: TPanel
+    object Panel1: TPanel
       Left = 0
-      Height = 297
+      Height = 156
       Top = 0
       Width = 697
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 297
-      ClientWidth = 697
       TabOrder = 1
+    end
+    object DataPnl: TPanel
+      Left = 0
+      Height = 156
+      Top = 0
+      Width = 697
+      Align = alClient
+      BevelOuter = bvNone
+      ClientHeight = 156
+      ClientWidth = 697
+      TabOrder = 0
       object DataGrid: TntvGrid
         Left = 0
-        Height = 271
+        Height = 130
         Top = 26
         Width = 697
         Align = alClient
@@ -107,15 +116,15 @@ object SQLEditForm: TSQLEditForm
         end
       end
     end
-    object SQLPnl: TPanel
-      Left = 0
-      Height = 297
-      Top = 0
-      Width = 697
-      Align = alClient
-      BevelOuter = bvNone
-      TabOrder = 0
-    end
+  end
+  object SQLPnl: TntvPanel
+    Left = 0
+    Height = 141
+    Top = 0
+    Width = 697
+    Align = alTop
+    ResizeStyle = nrsUpdate
+    SplitterSize = 5
   end
   object GridPopupMenu: TPopupMenu
     Left = 381

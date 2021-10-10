@@ -63,7 +63,7 @@ uses
   EditorColors, gdbClasses, mneCompilerProjectFrames, mneRunFrames, mneClasses,
   mneRecentsForms, mneTendencyOptions, mneCSVForms, mnUtils,
   mnStreams, mncCSV, mndOpenDatabases, mndSQLForms, mndEngines,
-  mndStdAddons, mndConnectServers, mndDBClasses, unit1;
+  mndStdAddons, mndConnectServers, mndDBClasses;
 
 {$R *.res}
 {$i '..\lib\mne.inc'}

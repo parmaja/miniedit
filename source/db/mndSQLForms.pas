@@ -24,7 +24,7 @@ uses
   mncSQL,
   LCLType, Graphics, Menus, Buttons, ComCtrls, EditorEngine, mndManagerForms, ParamsForms,
   mndEngines, IniFiles, ntvTabSets, mnMsgBox, mnStreams, ntvGrids,
-  ntvPageControls, mncConnections, mncCSV;
+  ntvPageControls, ntvPanels, mncConnections, mncCSV;
 
 type
 
@@ -45,9 +45,10 @@ type
     MenuItem6: TMenuItem;
     GridPopupMenu: TPopupMenu;
     PageControl: TntvPageControl;
-    SQLPnl: TPanel;
     DataPnl: TPanel;
+    Panel1: TPanel;
     Panel4: TPanel;
+    SQLPnl: TntvPanel;
     StopBtn: TButton;
     ClearBtn: TButton;
     procedure DataGridChanged(Sender: TObject);
@@ -393,7 +394,7 @@ begin
             if (CMD.Params.Count = 0) or ShowSQLParams(CMD) then
             begin
               CMD.Execute;
-              PageControl.ActiveControl := DataPnl;
+              //PageControl.ActiveControl := DataPnl;
               FillGrid(CMD, 'Data');
             end;
             Session.Commit;

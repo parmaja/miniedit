@@ -7,6 +7,10 @@ unit MainUnit;
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author    Zaher Dirkey <zaher at parmaja dot com>
  *}
+ {
+    TODO
+    https://github.com/heliosroots/fp-vscode/tree/master/sources
+ }
 interface
 
 uses
@@ -17,7 +21,7 @@ uses
   StdActns, Grids, SynEditHighlighter, SynEdit, IAddons, ntvThemes, ntvSplitters,
   SynHighlighterSQL, EditorClasses, ntvImgBtns, ntvPanels,
   {$ifdef WINDOWS}
-  Windows, //TODO, i hate include it
+  Windows, //For attach process thread
   {$endif}
 
   {$ifdef WINDOWS}

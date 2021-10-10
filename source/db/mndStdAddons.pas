@@ -1035,13 +1035,13 @@ begin
         s1 := s1 + ' ,';
         s2 := s2 + ' ,';
       end;
-      s1 := s1+ aItems[i].Name;
+      s1 := s1+ aItems[i].SQLName;
       s2 := s2 + '?' + aItems[i].Name;
     end;
   finally
     aItems.Free;
   end;
-  DBEngine.ShowEditor(Self, 'insert into ' + vMetaItem.Name + '(' + s1 + ') values (' + s2 +')');
+  DBEngine.ShowEditor(Self, 'insert into ' + vMetaItem.SQLName + '(' + s1 + ') values (' + s2 +')');
 end;
 
 { TExportSQLAddon }
