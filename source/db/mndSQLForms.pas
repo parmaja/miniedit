@@ -31,7 +31,9 @@ type
   { TSQLEditForm }
 
   TSQLEditForm = class(TFrame, IEditorControl)
+    ClearBtn: TButton;
     DataGrid: TntvGrid;
+    GridPnl: TPanel;
     FetchCountLbl: TLabel;
     FetchedLbl: TLabel;
     MenuItem7: TMenuItem;
@@ -45,12 +47,10 @@ type
     MenuItem6: TMenuItem;
     GridPopupMenu: TPopupMenu;
     PageControl: TntvPageControl;
-    DataPnl: TPanel;
     Panel1: TPanel;
     Panel4: TPanel;
-    SQLPnl: TntvPanel;
+    DataPnl: TntvPanel;
     StopBtn: TButton;
-    ClearBtn: TButton;
     procedure DataGridChanged(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
@@ -366,7 +366,7 @@ begin
   inherited;
   PageControl.ItemIndex := 0;
   SQLEdit := TmnSynEdit.Create(Self);
-  SQLEdit.Parent := SQLPnl;
+  SQLEdit.Parent := Self;
   SQLEdit.Align := alClient;
   SQLEdit.Visible := True;
 
@@ -394,7 +394,7 @@ begin
             if (CMD.Params.Count = 0) or ShowSQLParams(CMD) then
             begin
               CMD.Execute;
-              //PageControl.ActiveControl := DataPnl;
+              //PageControl.ActiveControl := GridPnl;
               FillGrid(CMD, 'Data');
             end;
             Session.Commit;

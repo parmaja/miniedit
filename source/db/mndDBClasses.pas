@@ -32,6 +32,8 @@ type
     function Execute(RunInfo: TmneRunInfo): Boolean; override;
   public
     destructor Destroy; override;
+    procedure EnumSwitchControls(vList: TSwitchControls); override;
+    procedure Show; override;
     function Run: Boolean;
   end;
 
@@ -80,12 +82,7 @@ end;
 
 function TSQLFile.GetControl: TWinControl;
 begin
-  if FContent.PageControl.ActiveControl = FContent.SQLPnl then
-    Result := FContent.SQLEdit
-  else if FContent.PageControl.ActiveControl = FContent.DataPnl then
-    Result := FContent.DataGrid
-  else
-    Result := FContent;
+  Result := FContent.SQLEdit
 end;
 
 function TSQLFile.Run: Boolean;
@@ -113,6 +110,19 @@ destructor TSQLFile.Destroy;
 begin
   FreeAndNil(FContent);
   inherited Destroy;
+end;
+
+procedure TSQLFile.EnumSwitchControls(vList: TSwitchControls);
+begin
+  inherited;
+  if FContent.PageControl.ActiveControl = FContent.GridPnl then
+    vList.Add(FContent.DataGrid);
+end;
+
+procedure TSQLFile.Show;
+begin
+  inherited Show;
+  FContent.DataPnl.Visible := DBEngine.DB.IsActive;
 end;
 
 { TSQLFileCategory }

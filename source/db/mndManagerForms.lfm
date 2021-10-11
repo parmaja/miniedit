@@ -167,7 +167,6 @@ object DBManagerForm: TDBManagerForm
       Width = 267
       Align = alClient
       BorderSpacing.Around = 2
-      BorderStyle = bsSingle
       Color = clWindow
       ColWidth = 80
       Gutter = False
@@ -263,7 +262,7 @@ object DBManagerForm: TDBManagerForm
         Left = 26
         Height = 20
         Top = 2
-        Width = 247
+        Width = 176
         Align = alClient
         AutoSize = False
         BorderSpacing.Around = 2
@@ -279,6 +278,17 @@ object DBManagerForm: TDBManagerForm
         ImageIndex = 13
         Align = alLeft
         AutoCheck = False
+      end
+      object ConnectBtn: TButton
+        Left = 204
+        Height = 24
+        Top = 0
+        Width = 71
+        Align = alRight
+        AutoSize = True
+        Caption = 'Connect'
+        OnClick = ConnectBtnClick
+        TabOrder = 0
       end
     end
   end

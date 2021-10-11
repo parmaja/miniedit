@@ -2904,6 +2904,12 @@ object MainForm: TMainForm
       ImageIndex = 36
       OnExecute = NewSQLActExecute
     end
+    object BackwordSwitchFocusAct: TAction
+      Category = 'View'
+      Caption = 'Backword Switch Focus'
+      OnExecute = BackwordSwitchFocusActExecute
+      ShortCut = 8309
+    end
   end
   object FolderMenu: TPopupMenu
     Images = EditorResource.ToolbarImageList

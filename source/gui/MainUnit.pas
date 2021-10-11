@@ -67,6 +67,8 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
+    BackwordSwitchFocusAct: TAction;
+    CommitBtn1: TToolButton;
     MenuItem51: TMenuItem;
     MenuItem52: TMenuItem;
     NewSQLAct: TAction;
@@ -423,6 +425,7 @@ type
     SwitchFocusAct: TAction;
     SwitchFocus1: TMenuItem;
     N16: TMenuItem;
+    procedure BackwordSwitchFocusActExecute(Sender: TObject);
     procedure NewSQLActExecute(Sender: TObject);
     procedure AnsiMnuClick(Sender: TObject);
     procedure ApplicationPropertiesActivate(Sender: TObject);
@@ -595,6 +598,7 @@ type
     FShowFolderFiles: TShowFolderFiles;
     FSortFolderFiles: TSortFolderFiles;
     procedure LogGotoLine;
+    procedure SwitchFocus(Backword: Boolean = False);
     procedure TestDebug;
     function CanOpenInclude: boolean;
     procedure CatchErr(Sender: TObject; e: exception);
@@ -931,6 +935,11 @@ begin
     IsTemporary := True;
     SynEdit.Lines.Text := ''; //baaah
   end;
+end;
+
+procedure TMainForm.BackwordSwitchFocusActExecute(Sender: TObject);
+begin
+  SwitchFocus(True);
 end;
 
 procedure TMainForm.FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
@@ -3387,14 +3396,19 @@ begin
 end;
 
 procedure TMainForm.SwitchFocusActExecute(Sender: TObject);
+begin
+  SwitchFocus;
+end;
+
+procedure TMainForm.SwitchFocus(Backword: Boolean);
 var
   aList: specialize TFPGList<TWinControl>;
   i, cur: Integer;
 begin
   aList := specialize TFPGList<TWinControl>.Create;
   try
-    if (Engine.Files.Current <> nil) and (Engine.Files.Current.Control <> nil) then
-      aList.Add(Engine.Files.Current.Control);
+    if (Engine.Files.Current <> nil) then
+      Engine.Files.Current.EnumSwitchControls(aList);
     if BrowserPnl.Visible then
       aList.Add(BrowserTabs.ActivableControl);
     if MessagesPnl.Visible then
@@ -3413,9 +3427,18 @@ begin
       end;
     end;
 
-    inc(cur);
-    if cur > aList.Count -1 then
-      cur := 0;
+    if Backword then
+    begin
+      dec(cur);
+      if cur < 0 then
+        cur := aList.Count -1;
+    end
+    else
+    begin
+      inc(cur);
+      if cur > aList.Count -1 then
+        cur := 0;
+    end;
     aList[cur].SetFocus;
   finally
     aList.Free;

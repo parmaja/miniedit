@@ -9,122 +9,121 @@ object SQLEditForm: TSQLEditForm
   Visible = False
   DesignLeft = 513
   DesignTop = 262
-  object PageControl: TntvPageControl
+  object DataPnl: TntvPanel
     Left = 0
-    Height = 176
-    Top = 141
+    Height = 180
+    Top = 137
     Width = 697
-    Margin = 0
-    ShowButtons = False
-    Items = <    
-      item
-        Caption = 'Data'
-        Name = 'DataTab'
-        AutoWidth = True
-        Control = DataPnl
-      end    
-      item
-        Caption = 'Info'
-        Name = 'InfoTab'
-        AutoWidth = True
-        Control = Panel1
-      end>
-    TabPosition = tbpBottom
-    Align = alClient
-    TabOrder = 0
-    object Panel1: TPanel
+    Align = alBottom
+    ResizeStyle = nrsUpdate
+    SplitterSize = 5
+    object PageControl: TntvPageControl
       Left = 0
-      Height = 156
-      Top = 0
+      Height = 175
+      Top = 5
       Width = 697
+      Margin = 0
+      ShowButtons = False
+      Items = <      
+        item
+          Caption = 'Data'
+          Name = 'DataTab'
+          AutoWidth = True
+          Control = GridPnl
+        end      
+        item
+          Caption = 'Info'
+          Name = 'InfoTab'
+          AutoWidth = True
+          Control = Panel1
+        end>
+      TabPosition = tbpBottom
       Align = alClient
-      BevelOuter = bvNone
-      TabOrder = 1
-    end
-    object DataPnl: TPanel
-      Left = 0
-      Height = 156
-      Top = 0
-      Width = 697
-      Align = alClient
-      BevelOuter = bvNone
-      ClientHeight = 156
-      ClientWidth = 697
       TabOrder = 0
-      object DataGrid: TntvGrid
+      object Panel1: TPanel
         Left = 0
-        Height = 130
-        Top = 26
-        Width = 697
-        Align = alClient
-        BorderStyle = bsSingle
-        Color = clWindow
-        ColWidth = 80
-        PopupMenu = GridPopupMenu
-        RowHeight = 22
-        Capacity = 100000
-        TabOrder = 0
-      end
-      object Panel4: TPanel
-        Left = 0
-        Height = 26
+        Height = 155
         Top = 0
         Width = 697
-        Align = alTop
+        Align = alClient
         BevelOuter = bvNone
-        ClientHeight = 26
-        ClientWidth = 697
         TabOrder = 1
-        object FetchedLbl: TLabel
+      end
+      object GridPnl: TPanel
+        Left = 0
+        Height = 155
+        Top = 0
+        Width = 697
+        Align = alClient
+        BevelOuter = bvNone
+        ClientHeight = 155
+        ClientWidth = 697
+        TabOrder = 0
+        object DataGrid: TntvGrid
+          Left = 0
+          Height = 129
+          Top = 26
+          Width = 697
+          Align = alClient
+          Color = clWindow
+          ColWidth = 80
+          PopupMenu = GridPopupMenu
+          RowHeight = 22
+          Capacity = 100000
+          TabOrder = 0
+        end
+        object Panel4: TPanel
           Left = 0
           Height = 26
           Top = 0
-          Width = 541
-          Align = alClient
-          Alignment = taRightJustify
-          AutoSize = False
-          Caption = 'Fetched: '
-          Layout = tlCenter
-        end
-        object FetchCountLbl: TLabel
-          Left = 541
-          Height = 26
-          Top = 0
-          Width = 53
-          Align = alRight
-          AutoSize = False
-          Caption = '0'
-          Layout = tlCenter
-        end
-        object ClearBtn: TButton
-          Left = 594
-          Height = 26
-          Top = 0
-          Width = 53
-          Align = alRight
-          Caption = '&Clear'
+          Width = 697
+          Align = alTop
+          BevelOuter = bvNone
+          ClientHeight = 26
+          ClientWidth = 697
           TabOrder = 1
-        end
-        object StopBtn: TButton
-          Left = 647
-          Height = 26
-          Top = 0
-          Width = 50
-          Align = alRight
-          Caption = 'S&top'
-          TabOrder = 0
+          object FetchedLbl: TLabel
+            Left = 0
+            Height = 26
+            Top = 0
+            Width = 541
+            Align = alClient
+            Alignment = taRightJustify
+            AutoSize = False
+            Caption = 'Fetched: '
+            Layout = tlCenter
+          end
+          object FetchCountLbl: TLabel
+            Left = 541
+            Height = 26
+            Top = 0
+            Width = 53
+            Align = alRight
+            AutoSize = False
+            Caption = '0'
+            Layout = tlCenter
+          end
+          object ClearBtn: TButton
+            Left = 594
+            Height = 26
+            Top = 0
+            Width = 53
+            Align = alRight
+            Caption = '&Clear'
+            TabOrder = 1
+          end
+          object StopBtn: TButton
+            Left = 647
+            Height = 26
+            Top = 0
+            Width = 50
+            Align = alRight
+            Caption = 'S&top'
+            TabOrder = 0
+          end
         end
       end
     end
-  end
-  object SQLPnl: TntvPanel
-    Left = 0
-    Height = 141
-    Top = 0
-    Width = 697
-    Align = alTop
-    ResizeStyle = nrsUpdate
-    SplitterSize = 5
   end
   object GridPopupMenu: TPopupMenu
     Left = 381

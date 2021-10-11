@@ -494,6 +494,8 @@ type
     property MarkupInfo;
   end;
 
+  TSwitchControls = specialize TFPGList<TWinControl>;
+
   TEditorLinesMode = (efmUnix, efmWindows, efmMac);
   TEditCapabilities = set of (ecpAllowCopy, ecpAllowPaste, ecpAllowCut, ecpAllowUndo, ecpAllowRedo);
 
@@ -604,6 +606,8 @@ type
     procedure Cut; virtual;
     procedure SelectAll; virtual;
 
+    //When main form needs to switch focus (F6), add to the list all control can take focus
+    procedure EnumSwitchControls(vList: TSwitchControls); virtual;
     //run the file or run the project depend on the project type (Tendency)
     property LinesMode: TEditorLinesMode read FLinesMode write SetLinesMode default efmUnix;
     property FileEncoding: string read FFileEncoding write SetFileEncoding;
@@ -4780,6 +4784,12 @@ end;
 
 procedure TEditorFile.SelectAll;
 begin
+end;
+
+procedure TEditorFile.EnumSwitchControls(vList: TSwitchControls);
+begin
+  if Control <> nil then
+    vList.Add(Control);
 end;
 
 procedure TEditorFile.UpdateAge;

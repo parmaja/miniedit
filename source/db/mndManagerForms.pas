@@ -84,6 +84,7 @@ type
     GroupsPanel: TPanel;
     AboutMnu: TMenuItem;
     FilterTimer: TTimer;
+    ConnectBtn: TButton;
     ToolsMnu: TMenuItem;
     GroupPanel: TPanel;
     procedure CommandsPopupMenuPopup(Sender: TObject);
@@ -116,6 +117,7 @@ type
     Filter: string;
     procedure BackAddon;
     procedure CheckSearch;
+    procedure ConnectDatabase;
     procedure SearchFor(S: string);
     procedure FillMembers;
     procedure ApplyFilter;
@@ -300,9 +302,15 @@ end;
 
 procedure TDBManagerForm.ConnectBtnClick(Sender: TObject);
 begin
+  ConnectDatabase;
 end;
 
 procedure TDBManagerForm.DatabasesListDblClick(Sender: TObject);
+begin
+  ConnectDatabase;
+end;
+
+procedure TDBManagerForm.ConnectDatabase;
 var
   aDatabase: string;
 begin
