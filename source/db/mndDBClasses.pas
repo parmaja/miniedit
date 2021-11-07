@@ -34,6 +34,7 @@ type
     destructor Destroy; override;
     procedure EnumSwitchControls(vList: TSwitchControls); override;
     procedure Show; override;
+    procedure Update; override;
     function Run: Boolean;
   end;
 
@@ -121,8 +122,13 @@ end;
 
 procedure TSQLFile.Show;
 begin
-  inherited Show;
-  FContent.DataPnl.Visible := DBEngine.DB.IsActive;
+  inherited;
+  FContent.UpdateControls;
+end;
+
+procedure TSQLFile.Update;
+begin
+  FContent.UpdateControls;
 end;
 
 { TSQLFileCategory }

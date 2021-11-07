@@ -344,7 +344,7 @@ procedure TTableFieldAddon.EnumMetaItems(vItems: TmncMetaItems; vMetaItem: TmncM
 var
   aMeta: TmncMeta;
 begin
-  aMeta := DBEngine.DB.CreateMeta;
+  aMeta := DBEngine.CreateMeta;
   try
     aMeta.EnumFields(vItems, vMetaItem.Name);
   finally
@@ -409,9 +409,9 @@ procedure TTablesAddon.EnumMetaItems(vItems: TmncMetaItems; vMetaItem: TmncMetaI
 var
   aMeta: TmncMeta;
 begin
-  aMeta := DBEngine.DB.CreateMeta;
+  aMeta := DBEngine.CreateMeta;
   try
-    aMeta.EnumTables(vItems, DBEngine.DB.Connection.Resource);
+    aMeta.EnumTables(vItems, DBEngine.DatabaseName);
   finally
     aMeta.Free
   end;
@@ -434,7 +434,7 @@ procedure TProceduresAddon.EnumMetaItems(vItems: TmncMetaItems; vMetaItem: TmncM
 var
   aMeta: TmncMeta;
 begin
-  aMeta := DBEngine.DB.CreateMeta;
+  aMeta := DBEngine.CreateMeta;
   try
     aMeta.EnumProcedures(vItems);
   finally
@@ -459,7 +459,7 @@ procedure TViewAddon.EnumMetaItems(vItems: TmncMetaItems; vMetaItem: TmncMetaIte
 var
   aMeta: TmncMeta;
 begin
-  aMeta := DBEngine.DB.CreateMeta;
+  aMeta := DBEngine.CreateMeta;
   try
     aMeta.EnumViews(vItems);
   finally
@@ -484,7 +484,7 @@ procedure TSequencesAddon.EnumMetaItems(vItems: TmncMetaItems; vMetaItem: TmncMe
 var
   aMeta: TmncMeta;
 begin
-  aMeta := DBEngine.DB.CreateMeta;
+  aMeta := DBEngine.CreateMeta;
   try
     aMeta.EnumSequences(vItems);
   finally
@@ -509,7 +509,7 @@ procedure TDomainsAddon.EnumMetaItems(vItems: TmncMetaItems; vMetaItem: TmncMeta
 var
   aMeta: TmncMeta;
 begin
-  aMeta := DBEngine.DB.CreateMeta;
+  aMeta := DBEngine.CreateMeta;
   try
     aMeta.EnumDomains(vItems);
   finally
@@ -534,7 +534,7 @@ procedure TExceptionsAddon.EnumMetaItems(vItems: TmncMetaItems; vMetaItem: TmncM
 var
   aMeta: TmncMeta;
 begin
-  aMeta := DBEngine.DB.CreateMeta;
+  aMeta := DBEngine.CreateMeta;
   try
     aMeta.EnumExceptions(vItems);
   finally
@@ -559,7 +559,7 @@ procedure TFunctionsAddon.EnumMetaItems(vItems: TmncMetaItems; vMetaItem: TmncMe
 var
   aMeta: TmncMeta;
 begin
-  aMeta := DBEngine.DB.CreateMeta;
+  aMeta := DBEngine.CreateMeta;
   try
     aMeta.EnumFunctions(vItems);
   finally
@@ -606,7 +606,7 @@ begin
   inherited;
   aStrings := TStringList.Create;
   try
-    aMeta := DBEngine.DB.CreateMeta;
+    aMeta := DBEngine.CreateMeta;
     try
       //aMeta.ExtractObject(aStrings, sokProcedure, MemberName, [ekAlter]);
     finally
@@ -639,7 +639,7 @@ begin
   inherited;
   aStrings := TStringList.Create;
   try
-    aMeta := DBEngine.DB.CreateMeta;
+    aMeta := DBEngine.CreateMeta;
     try
       aMeta.GetViewSource(aStrings, vMetaItem.SQLName, [ekAlter]);
     finally
@@ -667,7 +667,7 @@ procedure TTableTriggersAddon.EnumMetaItems(vItems: TmncMetaItems; vMetaItem: Tm
 var
   aMeta: TmncMeta;
 begin
-  aMeta := DBEngine.DB.CreateMeta;
+  aMeta := DBEngine.CreateMeta;
   try
     aMeta.EnumTriggers(vItems, {MetaItem.Values['Table']} ''); //TODO
   finally
@@ -695,7 +695,7 @@ begin
   inherited;
   aStrings := TStringList.Create;
   try
-    aMeta := DBEngine.DB.CreateMeta;
+    aMeta := DBEngine.CreateMeta;
     try
       aMeta.GetTriggerSource(aStrings, vMetaItem.Definitions['Trigger'], [ekAlter]);
     finally
@@ -724,7 +724,7 @@ procedure TTableIndexAddon.EnumMetaItems(vItems: TmncMetaItems; vMetaItem: TmncM
 var
   aMeta: TmncMeta;
 begin
-  aMeta := DBEngine.DB.CreateMeta;
+  aMeta := DBEngine.CreateMeta;
   try
     aMeta.EnumIndices(vItems, vMetaItem.SQLName);
   finally
@@ -767,7 +767,7 @@ procedure TTableFieldsAddon.EnumMetaItems(vItems: TmncMetaItems; vMetaItem: Tmnc
 var
   aMeta: TmncMeta;
 begin
-  aMeta := DBEngine.DB.CreateMeta;
+  aMeta := DBEngine.CreateMeta;
   try
     aMeta.EnumFields(vItems, vMetaItem.Name);
   finally
@@ -792,7 +792,7 @@ var
   aMeta: TmncMeta;
 begin
   inherited;
-  aMeta := DBEngine.DB.CreateMeta;
+  aMeta := DBEngine.CreateMeta;
   try
     DBEngine.ShowEditor(Self, aMeta.GetNewFieldSQL(vMetaItem.SQLName));
   finally
@@ -866,7 +866,7 @@ procedure TTriggersAddon.EnumMetaItems(vItems: TmncMetaItems; vMetaItem: TmncMet
 var
   aMeta: TmncMeta;
 begin
-  aMeta := DBEngine.DB.CreateMeta;
+  aMeta := DBEngine.CreateMeta;
   try
     aMeta.EnumTriggers(vItems);
   finally
@@ -898,9 +898,9 @@ procedure TTableAddon.EnumMetaItems(vItems: TmncMetaItems; vMetaItem: TmncMetaIt
 var
   aMeta: TmncMeta;
 begin
-  aMeta := DBEngine.DB.CreateMeta;
+  aMeta := DBEngine.CreateMeta;
   try
-    aMeta.EnumTables(vItems, DBEngine.DB.Connection.Resource);
+    aMeta.EnumTables(vItems, DBEngine.DatabaseName);
   finally
     aMeta.Free
   end;
@@ -928,7 +928,7 @@ procedure TIndexAddon.EnumMetaItems(vItems: TmncMetaItems; vMetaItem: TmncMetaIt
 var
   aMeta: TmncMeta;
 begin
-  aMeta := DBEngine.DB.CreateMeta;
+  aMeta := DBEngine.CreateMeta;
   try
     aMeta.GetIndexInfo(vItems, vMetaItem.Definitions['Index']);
   finally
@@ -953,7 +953,7 @@ procedure TIndicesAddon.EnumMetaItems(vItems: TmncMetaItems; vMetaItem: TmncMeta
 var
   aMeta: TmncMeta;
 begin
-  aMeta := DBEngine.DB.CreateMeta;
+  aMeta := DBEngine.CreateMeta;
   try
     aMeta.EnumIndices(vItems);
   finally
@@ -1020,7 +1020,7 @@ begin
   inherited;
   aItems := TmncMetaItems.Create;
   try
-    aMeta := DBEngine.DB.CreateMeta;
+    aMeta := DBEngine.CreateMeta;
     try
       aMeta.EnumFields(aItems, vMetaItem.Name);
     finally

@@ -29,7 +29,7 @@ uses
   dateutils, LCLType, LCLIntf, Types, mncConnections, LCLProc, contnrs,
   ExtCtrls, StdCtrls, SynEdit, FileUtil, Buttons, Menus, mncCSV,
   mncSQL, SynCompletion, SynEditAutoComplete, SynHighlighterHashEntries,
-  mnUtils, mncMeta, mncCSVExchanges, mnSynHighlighterStdSQL, mncMySQL,
+  mnUtils, mncMeta, mnSynHighlighterStdSQL, mncMySQL,
   mncPostgre, mncSQLite, mncSQLiteMeta, mncPGMeta, mncFBMeta, ntvGrids,
   ntvPanels, ntvImgBtns, mndEngines, mndStdAddons, LMessages, ComCtrls, ntvThemes,
   EditorClasses, EditorEngine, mneResources;
@@ -176,14 +176,14 @@ var
   aAddons: TmndAddons;
 //  aSelectedAddon: TmndAddon;
 begin
-  ServerLbl.Caption := DBEngine.DB.Connection.Host;
-  DatabaseLbl.Caption := DBEngine.DB.Connection.Resource;
+  ServerLbl.Caption := DBEngine.Host;
+  DatabaseLbl.Caption := DBEngine.DatabaseName;
   MasterLbl.Caption := vAddon.Master;
   //if vAddon.Kind = akMeta then
     MasterLbl.Caption := MasterLbl.Caption + ': ' + vMetaItem.Name;
   aAddons := TmndAddons.Create(False);
   try
-    DBEngine.EnumAddons(vAddon.Master, [akAddon, akMeta], aAddons, DBEngine.DB.IsActive);
+    DBEngine.EnumAddons(vAddon.Master, [akAddon, akMeta], aAddons, DBEngine.IsActive);
     //DBEngine.EnumAddons(AddonName, aAddons, DBEngine.DB.IsActive);
 
     //select := DBEngine.Stack.Current.Select;
@@ -558,7 +558,7 @@ begin
   begin
     aList := TmndAddons.Create;
     try
-      DBEngine.EnumAddons(vAddonName, [akCommand], aList, DBEngine.DB.IsActive);
+      DBEngine.EnumAddons(vAddonName, [akCommand], aList, DBEngine.IsActive);
       c := 0;
       for i := 0 to aList.Count - 1 do
         if akCommand = aList[i].Kind then
@@ -625,8 +625,8 @@ begin
     end
     else
     begin
-      if DBEngine.DB.IsActive then
-        ServerLbl.Caption := DBEngine.DB.Connection.Host
+      if DBEngine.IsActive then
+        ServerLbl.Caption := DBEngine.Host
       else
         ServerLbl.Caption := 'No server connected';
       DatabaseImage.ImageIndex := cDatabaseImage;
@@ -640,10 +640,10 @@ end;
 
 procedure TDBManagerForm.DatabaseChanged;
 begin
-  if DBEngine.DB.IsActive then
+  if DBEngine.IsActive then
   begin
-    DatabaseLbl.Caption := DBEngine.DB.Connection.Resource;
-    DatabaseImage.ImageIndex := EditorResource.GetImageIndex(DBEngine.DB.Connection.EngineName, cDatabaseImage);
+    DatabaseLbl.Caption := DBEngine.DatabaseName;
+    DatabaseImage.ImageIndex := EditorResource.GetImageIndex(DBEngine.EngineName, cDatabaseImage);
   end
   else
   begin
@@ -664,7 +664,7 @@ end;
 destructor TDBManagerForm.Destroy;
 begin
   DBEngine.NotifyObject := nil;
-  DBEngine.DB.Close;
+  DBEngine.CloseDatabase;
   FreeAndNil(Masters);
   FreeAndNil(Members);
   Engine.UnregisterNotify(Self);

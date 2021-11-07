@@ -67,6 +67,7 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
+    DBStartAct: TAction;
     BackwordSwitchFocusAct: TAction;
     CommitBtn1: TToolButton;
     MenuItem51: TMenuItem;
@@ -426,6 +427,7 @@ type
     SwitchFocus1: TMenuItem;
     N16: TMenuItem;
     procedure BackwordSwitchFocusActExecute(Sender: TObject);
+    procedure DBDisconnectActExecute(Sender: TObject);
     procedure NewSQLActExecute(Sender: TObject);
     procedure AnsiMnuClick(Sender: TObject);
     procedure ApplicationPropertiesActivate(Sender: TObject);
@@ -942,6 +944,11 @@ begin
   SwitchFocus(True);
 end;
 
+procedure TMainForm.DBDisconnectActExecute(Sender: TObject);
+begin
+  DBEngine.CloseDatabase;
+end;
+
 procedure TMainForm.FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
 begin
   Engine.Files.SetCurrentIndex(FileTabs.ItemIndex, True);
@@ -1180,8 +1187,8 @@ begin
     TypePnl.Caption := 'Undefined';
   //  DebugPnl.Visible := DebugPnl.Caption <> '';
 
-  DBCommitAct.Enabled := DBEngine.DB.HaveSessions;
-  DBRollbackAct.Enabled := DBEngine.DB.HaveSessions;
+  DBCommitAct.Enabled := DBEngine.HaveSessions;
+  DBRollbackAct.Enabled := DBEngine.HaveSessions;
 
   Engine.Update([ecsMenu]);
 
@@ -1282,7 +1289,7 @@ begin
     if mr = msgcCancel then
       CanClose := False
     else if mr = msgcYes then
-      Engine.Files.SaveAll(False);
+      Engine.Files.SaveAll(True); //force save all
   end;
 
   if CanClose and (Engine.Session.Active) then
@@ -1454,8 +1461,8 @@ end;
 
 procedure TMainForm.TransactionChanged;
 begin
-  DBCommitAct.Enabled := DBEngine.DB.HaveSessions;
-  DBRollbackAct.Enabled := DBEngine.DB.HaveSessions;
+  DBCommitAct.Enabled := DBEngine.HaveSessions;
+  DBRollbackAct.Enabled := DBEngine.HaveSessions;
 end;
 
 procedure TMainForm.SaveAllActExecute(Sender: TObject);

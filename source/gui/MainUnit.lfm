@@ -2860,6 +2860,7 @@ object MainForm: TMainForm
     object DBDisconnectAct: TAction
       Category = 'Database'
       Caption = 'Disconnect'
+      OnExecute = DBDisconnectActExecute
     end
     object DBBrowseAct: TAction
       Category = 'Database'
@@ -2890,14 +2891,6 @@ object MainForm: TMainForm
       GroupIndex = 6
       OnExecute = SortByExtensionsActExecute
     end
-    object DBCommitAct: TAction
-      Category = 'Database'
-      Caption = 'Commit'
-    end
-    object DBRollbackAct: TAction
-      Category = 'Database'
-      Caption = 'Rollback'
-    end
     object NewSQLAct: TAction
       Category = 'Debug'
       Caption = 'SQL'
@@ -2909,6 +2902,18 @@ object MainForm: TMainForm
       Caption = 'Backword Switch Focus'
       OnExecute = BackwordSwitchFocusActExecute
       ShortCut = 8309
+    end
+    object DBStartAct: TAction
+      Category = 'Database'
+      Caption = 'Start'
+    end
+    object DBCommitAct: TAction
+      Category = 'Database'
+      Caption = 'Commit'
+    end
+    object DBRollbackAct: TAction
+      Category = 'Database'
+      Caption = 'Rollback'
     end
   end
   object FolderMenu: TPopupMenu

@@ -52,6 +52,9 @@ type
     DataPnl: TntvPanel;
     StopBtn: TButton;
     procedure DataGridChanged(Sender: TObject);
+
+    procedure DataPnlCanOffset(Sender: TObject; var NewOffset: Integer; var Accept: Boolean);
+    procedure DataPnlResize(Sender: TObject);
     procedure MenuItem1Click(Sender: TObject);
     procedure MenuItem2Click(Sender: TObject);
     procedure MenuItem3Click(Sender: TObject);
@@ -81,6 +84,7 @@ type
     procedure ClearGrid;
     procedure FillGrid(SQLCMD: TmncCommand; Title: String; MergeColumns: Boolean = False);
     procedure Execute;
+    procedure UpdateControls;
   end;
 
 implementation
@@ -95,6 +99,16 @@ uses
 procedure TSQLEditForm.DataGridChanged(Sender: TObject);
 begin
   Changed;
+end;
+
+procedure TSQLEditForm.DataPnlCanOffset(Sender: TObject; var NewOffset: Integer; var Accept: Boolean);
+begin
+
+end;
+
+procedure TSQLEditForm.DataPnlResize(Sender: TObject);
+begin
+  DBEngine.Setting.DataPanelSize := DataPnl.Height;
 end;
 
 procedure TSQLEditForm.MenuItem1Click(Sender: TObject);
@@ -161,7 +175,7 @@ end;
 
 procedure TSQLEditForm.MenuItem6Click(Sender: TObject);
 begin
-  //DataGrid.CopyToClipboard(True);
+  DataGrid.ClipboardCopy(True);
 end;
 
 procedure TSQLEditForm.IsRtlMnuClick(Sender: TObject);
@@ -370,6 +384,8 @@ begin
   SQLEdit.Align := alClient;
   SQLEdit.Visible := True;
 
+  DataPnl.Height := DBEngine.Setting.DataPanelSize;
+
   Color := Engine.Options.Profile.Attributes.Default.Background;
   Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
   DataGrid.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
@@ -380,9 +396,9 @@ var
   CMD: TmncSQLCommand;
   Session: TmncSQLSession;
 begin
-  if DBEngine.DB.IsActive then
+  if DBEngine.IsActive then
   begin
-    Session := DBEngine.DB.Connection.CreateSession;
+    Session := DBEngine.CreateSession;
     try
       CMD := Session.CreateCommand;
       try
@@ -417,6 +433,15 @@ begin
       Session.Free;
     end;
   end;
+end;
+
+procedure TSQLEditForm.UpdateControls;
+begin
+  DataPnl.Visible := DBEngine.IsActive;
+  if DBEngine.Setting.DataPanelSize <> 0 then
+    DataPnl.Height := DBEngine.Setting.DataPanelSize
+  else
+    DataPnl.Height := 200;
 end;
 
 end.

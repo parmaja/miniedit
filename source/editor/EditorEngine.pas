@@ -546,6 +546,7 @@ type
     procedure Edit;
     procedure DoEdit(Sender: TObject); virtual;
     procedure DoStatusChange(Sender: TObject; Changes: TSynStatusChanges); virtual;
+    procedure Update; virtual;
     procedure UpdateAge; virtual;
     procedure NewContent; virtual;
     procedure DoLoad(FileName: string); virtual; abstract;
@@ -740,6 +741,7 @@ type
     procedure SaveAll(Force: Boolean);
     procedure ReloadAll;
     procedure CheckAll;
+    procedure UpdateAll;
     procedure SaveAs;
 
     procedure Revert;
@@ -3473,7 +3475,7 @@ begin
   end;
 end;
 
-function TEditorFiles.OpenFile(vFileName, vFileParams: string; ActivateIt: Boolean): TEditorFile;
+function TEditorFiles.OpenFile(vFileName: string; vFileParams: string; ActivateIt: Boolean): TEditorFile;
 begin
   if SameText(ExtractFileExt(vFileName), Engine.Extenstion) then //zaher need dot
   begin
@@ -3648,6 +3650,16 @@ begin
   for i := 0 to Count - 1 do
   begin
     Items[i].CheckChanged(True);
+  end;
+end;
+
+procedure TEditorFiles.UpdateAll;
+var
+  i: integer;
+begin
+  for i := 0 to Count - 1 do
+  begin
+    Items[i].Update;
   end;
 end;
 
@@ -5165,6 +5177,10 @@ procedure TEditorFile.DoStatusChange(Sender: TObject; Changes: TSynStatusChanges
 begin
   if ([scReadOnly, scCaretX, scCaretY, scLeftChar, scTopLine, scSelection] * Changes) <> [] then
     Engine.Update([ecsState]);
+end;
+
+procedure TEditorFile.Update;
+begin
 end;
 
 { TEditorOptions }

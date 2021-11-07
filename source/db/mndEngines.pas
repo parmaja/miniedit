@@ -14,7 +14,7 @@ interface
 uses
   SysUtils, Variants, Classes, Controls, Dialogs, Forms, Contnrs, ImgList,
   mnClasses, mnUtils, mnXMLRttiProfile,
-  mncConnections, mncCSVExchanges, mncSQL, mncCSV, mncDB, mncMeta, mnParams, mnFields,
+  mncConnections, mncSQL, mncCSV, mncDB, mncMeta, mnParams, mnFields,
   EditorEngine, EditorClasses, fgl,
   mndOpenDatabases, mndConnectServers;
 
@@ -55,6 +55,7 @@ type
     FCSVDelimiterChar: Char;
     FCSVHeader: TmncCSVHeader;
     FCSVQuoteChar: Char;
+    FDataPanelSize: Integer;
     FOpenSaveDialogFilters: string;
     FCacheMetas: Boolean;
     FLogoutSQL: string;
@@ -74,6 +75,7 @@ type
     property CSVDelimiterChar: Char read FCSVDelimiterChar write FCSVDelimiterChar default ';';
     property CSVHeader: TmncCSVHeader read FCSVHeader write FCSVHeader default hdrNone;
     property CSVANSIContents: Boolean read FCSVANSIContents write FCSVANSIContents default False;
+    property DataPanelSize: Integer read FDataPanelSize write FDataPanelSize default 200;
   end;
 
   TmndShow = (shwnElement, shwnBrowse, shwnFile);
@@ -337,6 +339,8 @@ type
     FExclusive: Boolean;
     FVacuum: Boolean;
     function GetHaveSessions: Boolean;
+  protected
+    property Connection: TmncSQLConnection read FConnection;
   public
     constructor Create;
     destructor Destroy; override;
@@ -347,8 +351,8 @@ type
     function IsActive: Boolean;
     procedure Connected;
     procedure Disconnected;
+    procedure Disconnecting;
 
-    property Connection: TmncSQLConnection read FConnection;
     property HaveSessions: Boolean read GetHaveSessions;
 
     property Tables: TmncMetaItems read FTables;
@@ -372,7 +376,13 @@ type
     FHistory: TmndAddonHistory;
     FSQLHistory: TmndSQLHistory;
     FNotifyObject: ImndNotify;
+    function GetDatabaseName: string;
+    function GetEngineName: string;
+    function GetHaveSessions: Boolean;
+    function GetHost: string;
+    function GetIsActive: Boolean;
     procedure SetNotifyObject(AValue: ImndNotify);
+  protected
   public
     Server: TmndServerInfo;
     constructor Create;
@@ -408,13 +418,23 @@ type
     procedure ShowEditor(vAddon: TmndAddon; S: string);
     procedure ShowEditor(vAddon: TmndAddon; S: TStringList);
 
+    function CreateMeta(ASession: TmncSession = nil): TmncMeta;
+    function CreateSession: TmncSQLSession;
+
     property Setting: TmndSetting read FSetting;
     property Engines: TStringLIst read FEngines;
-    property DB: TmndDB read FDB;
     property History: TmndAddonHistory read FHistory;
     property Stack: TmndStack read FStack;
     property SQLHistory: TmndSQLHistory read FSQLHistory;
     property NotifyObject: ImndNotify read FNotifyObject write SetNotifyObject {implements ImndNotify};
+
+    property EngineName: string read GetEngineName;
+    property DatabaseName: string read GetDatabaseName;
+    property Host: string read GetHost;
+    property IsActive: Boolean read GetIsActive;
+    property HaveSessions: Boolean read GetHaveSessions;
+
+    property DB: TmndDB read FDB;
   end;
 
 const
@@ -910,6 +930,40 @@ begin
   FNotifyObject :=AValue;
 end;
 
+function TDBEngine.GetDatabaseName: string;
+begin
+  if DB <> nil then
+    Result := DB.Connection.Resource
+  else
+    Result := '';
+end;
+
+function TDBEngine.GetEngineName: string;
+begin
+  if DB <> nil then
+    Result := DB.Connection.EngineName
+  else
+    Result := '';
+end;
+
+function TDBEngine.GetHaveSessions: Boolean;
+begin
+  Result := (DB <> nil) and DB.HaveSessions;
+end;
+
+function TDBEngine.GetHost: string;
+begin
+  if DB <> nil then
+    Result := DB.Connection.Host
+  else
+    Result := '';
+end;
+
+function TDBEngine.GetIsActive: Boolean;
+begin
+  Result := (DB <> nil) and DB.IsActive;
+end;
+
 constructor TDBEngine.Create;
 begin
   inherited Create(True);
@@ -937,28 +991,28 @@ end;
 
 procedure TDBEngine.OpenServer(FileParams: string);
 var
-  EngineName, Resource, Host, Port, User, Password, Role: string;
+  aEngineName, aResource, aHost, aPort, aUser, aPassword, aRole: string;
   AliasName: string;
 begin
-  mncDB.Engines.DecomposeConnectionString(FileParams, EngineName, Resource, Host, Port, User, Password, Role);
-  Server.Engine := mncDB.Engines.Find(EngineName);
+  mncDB.Engines.DecomposeConnectionString(FileParams, aEngineName, aResource, aHost, aPort, aUser, aPassword, aRole);
+  Server.Engine := mncDB.Engines.Find(aEngineName);
 
-  Server.Info.Host := Host;
-  Server.Info.Port := Port;
-  Server.Info.UserName := User;
-  Server.Info.Password := Password;
-  Server.Info.Role := Role;
+  Server.Info.Host := aHost;
+  Server.Info.Port := aPort;
+  Server.Info.UserName := aUser;
+  Server.Info.Password := aPassword;
+  Server.Info.Role := aRole;
 
   if Server.Info.Host = '' then
     Server.Info.Host := 'localhost';
 
   if (ccPath in Server.Engine.ConnectionClass.Capabilities) and not (ccNetwork in Server.Engine.ConnectionClass.Capabilities) then
   begin
-    AliasName := ExtractFilePath(Resource);
+    AliasName := ExtractFilePath(aResource);
   end
   else
   begin
-    AliasName := '@' + EngineName + ':' + Server.Info.Host;
+    AliasName := '@' + aEngineName + ':' + Server.Info.Host;
     if Server.Info.Port <> '' then
       AliasName := AliasName + ':' + Server.Info.Port;
   end;
@@ -971,21 +1025,21 @@ end;
 procedure TDBEngine.OpenServer;
 var
   FileParams: string;
-  EngineName, Host, Port, User, Password, Role: string;
+  aEngineName, aHost, aPort, aUser, aPassword, aRole: string;
 begin
   with TConnectDBServerForm.Create(Application) do
   begin
     if ShowModal = mrOK then
     begin
-      EngineName := (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name;
+      aEngineName := (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name;
 
-      Host := HostEdit.Text;
-      Port := PortEdit.Text;
-      User := UserEdit.Text;
-      Password := PasswordEdit.Text;
-      Role := RoleEdit.Text;
+      aHost := HostEdit.Text;
+      aPort := PortEdit.Text;
+      aUser := UserEdit.Text;
+      aPassword := PasswordEdit.Text;
+      aRole := RoleEdit.Text;
 
-      FileParams := mncDB.Engines.ComposeConnectionString(EngineName, '', Host, Port, User, Password, Role);
+      FileParams := mncDB.Engines.ComposeConnectionString(aEngineName, '', aHost, aPort, aUser, aPassword, aRole);
       OpenServer(FileParams);
     end;
   end;
@@ -993,33 +1047,33 @@ end;
 
 procedure TDBEngine.OpenDatabase(AliasName: string; FileParams: string);
 var
-  EngineName, Resource, Host, Port, User, Password, Role: string;
+  aEngineName, aResource, aHost, aPort, aUser, aPassword, aRole: string;
   aName: string;
   AEngine: TmncEngine;
 begin
-  mncDB.Engines.DecomposeConnectionString(FileParams, EngineName, Resource, Host, Port, User, Password, Role);
-  if Resource = '' then
+  mncDB.Engines.DecomposeConnectionString(FileParams, aEngineName, aResource, aHost, aPort, aUser, aPassword, aRole);
+  if aResource = '' then
   begin
     OpenServer(FileParams);
     Exit;
   end;
 
-  AEngine := mncDB.Engines.Find(EngineName);
+  AEngine := mncDB.Engines.Find(aEngineName);
 
   if (ccPath in AEngine.ConnectionClass.Capabilities) and
-     (not (ccNetwork in AEngine.ConnectionClass.Capabilities) or (Host = '')) then
+     (not (ccNetwork in AEngine.ConnectionClass.Capabilities) or (aHost = '')) then
   begin
-    Engine.ProcessRecentDatabase(Resource, FileParams); //sqlite, or firebird as file
+    Engine.ProcessRecentDatabase(aResource, FileParams); //sqlite, or firebird as file
   end
   else
   begin
-    aName := Resource + '@' + EngineName + ':';
-    if Host = '' then
+    aName := aResource + '@' + aEngineName + ':';
+    if aHost = '' then
       aName := aName + 'localhost'
-    else if Port <> '' then
-      aName := aName + Host + ':' + Port
+    else if aPort <> '' then
+      aName := aName + aHost + ':' + aPort
     else
-      aName := aName + Host;
+      aName := aName + aHost;
     Engine.ProcessRecentDatabase(aName, FileParams);//sqlite, or firebird as file
   end;
 
@@ -1027,7 +1081,7 @@ begin
     DB.Close;
 
   //Setting.CacheMetas := CacheMetaChk.Checked;
-  DB.Open(False, EngineName, Host, Port, Resource, User, Password, Role, False, False);
+  DB.Open(False, aEngineName, aHost, aPort, aResource, aUser, aPassword, aRole, False, False);
   DatabaseChanged;
   Stack.Clear;
   Stack.Push(TmndProcess.Create('Database', ''));
@@ -1045,22 +1099,22 @@ end;
 
 procedure TDBEngine.OpenDatabase;
 var
-  EngineName, Resource, Host, Port, User, Password, Role: string;
+  aEngineName, aResource, aHost, aPort, aUser, aPassword, aRole: string;
 begin
   with TOpenDatabaseForm.Create(Application) do
   begin
     if ShowModal = mrOK then
     begin
-      EngineName := (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name;
+      aEngineName := (DatabaseEngineCbo.Items.Objects[DatabaseEngineCbo.ItemIndex] as TmncEngine).Name;
 
-      Host := HostEdit.Text;
-      Port := PortEdit.Text;
-      Resource := DatabaseEdit.Text;
-      User := UserEdit.Text;
-      Password := PasswordEdit.Text;
-      Role := RoleEdit.Text;
+      aHost := HostEdit.Text;
+      aPort := PortEdit.Text;
+      aResource := DatabaseEdit.Text;
+      aUser := UserEdit.Text;
+      aPassword := PasswordEdit.Text;
+      aRole := RoleEdit.Text;
       //ExclusiveChk.Checked,
-      OpenDatabase(Resource, EngineName, Host, Port, User, Password, Role);
+      OpenDatabase(aResource, aEngineName, aHost, aPort, aUser, aPassword, aRole);
     end;
   end;
 end;
@@ -1068,8 +1122,10 @@ end;
 procedure TDBEngine.CloseDatabase;
 begin
   if DB.IsActive then
+  begin
     DB.Close;
-  DatabaseChanged;
+    DatabaseChanged;
+  end;
 end;
 
 procedure TDBEngine.CreateDatabase;
@@ -1135,7 +1191,11 @@ end;
 
 procedure TDBEngine.DatabaseChanged;
 begin
-  FNotifyObject.DatabaseChanged;
+  if FNotifyObject <> nil then
+  begin
+    FNotifyObject.DatabaseChanged;
+    Engine.Files.UpdateAll;
+  end;
 end;
 
 procedure TDBEngine.ShowMeta(vAddon: TmndAddon; vMetaItem: TmncMetaItem; vSelectDefault: Boolean);
@@ -1151,6 +1211,19 @@ end;
 procedure TDBEngine.ShowEditor(vAddon: TmndAddon; S: TStringList);
 begin
   FNotifyObject.ShowEditor(vAddon, S.Text);
+end;
+
+function TDBEngine.CreateMeta(ASession: TmncSession): TmncMeta;
+begin
+  Result := DB.CreateMeta(ASession);
+end;
+
+function TDBEngine.CreateSession: TmncSQLSession;
+begin
+  if IsActive then
+    Result := DB.Connection.CreateSession
+  else
+    Result := nil;
 end;
 
 procedure TDBEngine.LoadOptions;
@@ -1260,6 +1333,7 @@ begin
   FCSVQuoteChar := '"';
   FCSVDelimiterChar := ';';
   FCacheMetas := True;
+  FDataPanelSize := 200;
 end;
 
 { TmndDB }
@@ -1319,10 +1393,13 @@ procedure TmndDB.Disconnected;
 begin
 end;
 
+procedure TmndDB.Disconnecting;
+begin
+end;
+
 procedure TmndDB.LoadMeta;
 var
   AMeta: TmncMeta;
-  aSession: TmncSession;
 begin
   if DBEngine.Setting.CacheMetas then
   begin
@@ -1350,6 +1427,8 @@ begin
   FExclusive := vExclusive;
 
   Connection.Resource := DatabaseName;
+  Connection.Host := Host;
+  Connection.Port := Port;
   Connection.UserName := UserName;
   Connection.Password := Password;
   Connection.Role := Role;
@@ -1365,10 +1444,11 @@ end;
 procedure TmndDB.Close;
 begin
   if IsActive then
-    Disconnected;
+    Disconnecting;
   if (Connection <> nil) and Connection.Connected then
     Connection.Disconnect;
   FreeAndNil(FConnection);
+  Disconnected;
 end;
 
 function TmndDB.IsActive: Boolean;
