@@ -11,7 +11,7 @@ interface
 
 uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs, Dialogs,
-  LCLintf, LCLType, LazFileUtils,
+  LCLintf, LCLType, LazFileUtils, mnSynHighlighterBVH,
   EditorOptions, EditorRun, EditorClasses, mneRunFrames,
   SynEditHighlighter, SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
@@ -45,6 +45,26 @@ type
   public
   end;
 
+  { TBVHFile }
+
+  TBVHFile = class(TSourceEditorFile)
+  protected
+    procedure NewContent; override;
+  public
+  end;
+
+  { TBVHFileCategory }
+
+  TBVHFileCategory = class(TTextFileCategory)
+  private
+  protected
+    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    procedure InitMappers; override;
+    procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
+    procedure DoPrepareCompletion(Sender: TObject); override;
+  public
+  end;
+
   TLSLEditorDebugger = class(TEditorDebugger)
   end;
 
@@ -65,6 +85,62 @@ implementation
 
 uses
   IniFiles, mnStreams, mnUtils;
+
+{ TBVHFileCategory }
+
+function TBVHFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+begin
+  Result := TSynBVHSyn.Create(nil);
+end;
+
+procedure TBVHFileCategory.InitMappers;
+begin
+  with Highlighter as TSynBVHSyn do
+  begin
+    Mapper.Add(WhitespaceAttri, attDefault);
+    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(ProcessorAttri, attDirective);
+    Mapper.Add(KeywordAttri, attKeyword);
+    Mapper.Add(DocumentAttri, attDocument);
+    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(VariableAttri, attVariable);
+    Mapper.Add(TypeAttri, attDataType);
+    Mapper.Add(ValueAttri, attDataValue);
+    Mapper.Add(FunctionAttri, attCommon);
+    Mapper.Add(TextAttri, attText);
+    Mapper.Add(NumberAttri, attNumber);
+    Mapper.Add(StringAttri, attQuotedString);
+    Mapper.Add(SymbolAttri, attSymbol);
+  end
+end;
+
+procedure TBVHFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
+begin
+  inherited;
+  Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;';//what about $
+end;
+
+procedure TBVHFileCategory.DoPrepareCompletion(Sender: TObject);
+begin
+  inherited;
+  Screen.Cursor := crHourGlass;
+  Completion.ItemList.BeginUpdate;
+  try
+    Completion.ItemList.Clear;
+    EnumerateKeywords(Ord(attKeyword), sBVHKeywords, Highlighter.IdentChars, @DoAddCompletion);
+    EnumerateKeywords(Ord(attDataType), sBVHTypes, Highlighter.IdentChars, @DoAddCompletion);
+  finally
+    Completion.ItemList.EndUpdate;
+    Screen.Cursor := crDefault;
+  end;
+end;
+
+{ TBVHFile }
+
+procedure TBVHFile.NewContent;
+begin
+  inherited NewContent;
+end;
 
 { TLSLTendency }
 
@@ -296,5 +372,7 @@ initialization
     Tendencies.Add(TLSLTendency);
     Categories.Add(TLSLFileCategory.Create(TLSLTendency, 'LSL', 'SecondLife/OpenSIM Script'));
     Groups.Add(TLSLFile, 'LSL', 'OpenSIM Script', TLSLFileCategory, ['.lsl', '.ossl'], [fgkAssociated, fgkFolding, fgkBrowsable], [capLint]);
+    Categories.Add(TBVHFileCategory.Create(TLSLTendency, 'BVH', 'SecondLife/OpenSIM Animation'));
+    Groups.Add(TBVHFile, 'BVH', 'Biovision Animation', TBVHFileCategory, ['.bvh'], [fgkAssociated, fgkBrowsable], []);
   end;
 end.
