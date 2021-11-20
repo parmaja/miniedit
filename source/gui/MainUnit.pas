@@ -69,7 +69,6 @@ type
   TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
     DBStartAct: TAction;
     BackwordSwitchFocusAct: TAction;
-    CommitBtn1: TToolButton;
     MenuItem51: TMenuItem;
     MenuItem52: TMenuItem;
     NewSQLAct: TAction;

@@ -23,12 +23,12 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="6"/>
+      <MinorVersionNr Value="7"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="202"/>
+      <BuildNr Value="203"/>
       <CharSet Value="04B0"/>
       <Attributes pvaPreRelease="True"/>
-      <StringTable CompanyName="PARMAJA" FileDescription="mini Edit IDE" InternalName="MiniEdit" ProductName="MiniEdit" ProductVersion="1.6.1.1"/>
+      <StringTable CompanyName="PARMAJA" FileDescription="mini Edit IDE" InternalName="MiniEdit" ProductName="MiniEdit" ProductVersion="1.7.1.1"/>
     </VersionInfo>
     <MacroValues Count="1">
       <Macro2 Name="LCLWidgetType" Value="win32"/>

@@ -132,11 +132,6 @@ object MainForm: TMainForm
         Action = DBRollbackAct
         Style = tbsCheck
       end
-      object CommitBtn1: TToolButton
-        Left = 852
-        Top = 0
-        Caption = 'Test'
-      end
     end
   end
   object ClientPnl: TPanel

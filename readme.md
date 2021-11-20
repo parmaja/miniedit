@@ -94,3 +94,5 @@ CudaText http://uvviewsoft.com/cudatext/
 PINote https://pinote.sourceforge.io/
 
 Micro https://micro-editor.github.io/
+
+mlsde https://sourceforge.net/projects/mlsde/
