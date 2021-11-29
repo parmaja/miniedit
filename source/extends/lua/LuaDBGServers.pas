@@ -304,10 +304,10 @@ type
     procedure Prepare; override;
     procedure DoExecute;
     procedure Process; override;
+    procedure TerminatedSet; override;
   public
     constructor Create(vOwner: TmnConnections; vStream: TmnConnectionStream);
     destructor Destroy; override;
-    procedure Stop; override;
     property Key: string read FKey;
     property Server: TLuaDBGServer read GetServer;
   published
@@ -766,9 +766,9 @@ begin
   end;
 end;
 
-procedure TLuaDBGConnection.Stop;
+procedure TLuaDBGConnection.TerminatedSet;
 begin
-  inherited;
+  inherited TerminatedSet;
   DebugManager.Event.SetEvent;
 end;
 

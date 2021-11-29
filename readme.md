@@ -80,7 +80,6 @@ Open each package in Lazarus and compile it in order.
     minictrls\lib\MiniLib.lpk
     minictrls\components\native\NativeLib.lpk
 
-
 #### Competitions
 
 Notepad++ https://notepad-plus-plus.org/

@@ -182,12 +182,12 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="10">
+    <RequiredPackages Count="9">
       <Item1>
-        <PackageName Value="MiniCtrls"/>
+        <PackageName Value="MiniLib"/>
       </Item1>
       <Item2>
-        <PackageName Value="MiniCommons"/>
+        <PackageName Value="MiniCtrls"/>
       </Item2>
       <Item3>
         <PackageName Value="MiniConnections"/>
@@ -200,24 +200,20 @@
         <MinVersion Valid="True"/>
       </Item5>
       <Item6>
-        <PackageName Value="NativeLib"/>
-        <MinVersion Valid="True"/>
-      </Item6>
-      <Item7>
         <PackageName Value="SynEdit"/>
         <MinVersion Major="1" Valid="True"/>
+      </Item6>
+      <Item7>
+        <PackageName Value="LCL"/>
       </Item7>
       <Item8>
-        <PackageName Value="LCL"/>
-      </Item8>
-      <Item9>
         <PackageName Value="LCLBase"/>
         <MinVersion Major="1" Release="1" Valid="True"/>
-      </Item9>
-      <Item10>
+      </Item8>
+      <Item9>
         <PackageName Value="FCL"/>
         <MinVersion Major="1" Release="1" Valid="True"/>
-      </Item10>
+      </Item9>
     </RequiredPackages>
     <Units Count="61">
       <Unit0>

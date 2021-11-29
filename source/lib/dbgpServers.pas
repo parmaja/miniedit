@@ -351,10 +351,10 @@ type
     procedure Prepare; override;
     procedure DoExecute;
     procedure Process; override;
+    procedure TerminatedSet; override;
   public
     constructor Create(vOwner: TmnConnections; vStream: TmnConnectionStream);
     destructor Destroy; override;
-    procedure Stop; override;
     property Key: string read FKey;
     property Server: TdbgpServer read GetServer;
   published
@@ -817,7 +817,7 @@ begin
   end;
 end;
 
-procedure TdbgpConnection.Stop;
+procedure TdbgpConnection.TerminatedSet;
 begin
   inherited;
   DebugManager.Event.SetEvent;
