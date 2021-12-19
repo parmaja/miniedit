@@ -15,7 +15,7 @@ uses
   EditorOptions, EditorRun, EditorClasses, mneRunFrames,
   SynEditHighlighter, SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  mnSynHighlighterSard, SynHighlighterLFM;
+  mnSynHighlighterSARD, SynHighlighterLFM;
 
 type
 
