@@ -30,9 +30,6 @@
       <Attributes pvaPreRelease="True"/>
       <StringTable CompanyName="PARMAJA" FileDescription="mini Edit IDE" InternalName="MiniEdit" ProductName="MiniEdit" ProductVersion="1.7.1.1"/>
     </VersionInfo>
-    <MacroValues Count="1">
-      <Macro2 Name="LCLWidgetType" Value="win32"/>
-    </MacroValues>
     <BuildModes Count="4">
       <Item1 Name="Debug" Default="True"/>
       <Item2 Name="Linux">
@@ -77,6 +74,9 @@
         </CompilerOptions>
       </Item2>
       <Item3 Name="Win32">
+        <MacroValues Count="1">
+          <Macro2 Name="LCLWidgetType" Value="win32"/>
+        </MacroValues>
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -172,7 +172,7 @@
       </Item4>
       <SharedMatrixOptions Count="3">
         <Item1 ID="404340325604" Modes="Linux" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
-        <Item2 ID="142010062422" Modes="Debug" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+        <Item2 ID="142010062422" Modes="Win32" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
         <Item3 ID="971028019367" Modes="Debug" Value="-dDEBUG"/>
       </SharedMatrixOptions>
     </BuildModes>
@@ -563,7 +563,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\db;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\basic;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\gcc;..\extends\fntgen;..\extends\designer;..\extends\go;..\extends\cmd;..\extends\lsl;..\..\..\minictrls\lib\syn"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\db;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\basic;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\gcc;..\extends\fntgen;..\extends\designer;..\extends\go;..\extends\cmd;..\extends\lsl"/>
       <UnitOutputDirectory Value="..\..\units\debug"/>
     </SearchPaths>
     <Parsing>

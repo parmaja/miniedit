@@ -1140,8 +1140,10 @@ begin
       Caption := Engine.Session.Project.Title + ' - ' + sApplicationTitle
     else if (Engine.Session.Project.Name <> '') then
       Caption := Engine.Session.Project.Name + ' - ' + sApplicationTitle
+    else if Engine.Files.Current <> nil then
+      Caption := Engine.Files.Current.NakeName
     else
-      Caption := 'No Name - ' + sApplicationTitle;
+      Caption := sApplicationTitle;
   end
   else
     Caption := sApplicationTitle;

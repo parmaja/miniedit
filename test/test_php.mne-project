@@ -8,24 +8,16 @@
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>M:\home\pascal\projects\miniEdit\test\test-pas.pas</CurrentFile>
-        <CurrentFolder>M:\home\pascal\projects\miniEdit\test\</CurrentFolder>
+        <CurrentFile>/lab/pascal/miniEdit/test/test.php</CurrentFile>
+        <CurrentFolder>/lab/pascal/miniEdit/test/</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\test.php</FileName>
-            <CaretY>5</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\lua-test.lua</FileName>
+            <FileName>/lab/pascal/miniEdit/test/test.php</FileName>
+            <CaretX>22</CaretX>
             <CaretY>4</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\test.d</FileName>
-            <CaretY>8</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>M:\home\pascal\projects\miniEdit\test\test-pas.pas</FileName>
-            <CaretY>13</CaretY>
+            <FileName>/lab/pascal/miniEdit/test/test_pas.pas</FileName>
           </Object>
         </Items>
       </Files>
@@ -33,10 +25,10 @@
     <Options Class="TEditorProjectOptions">
     </Options>
     <RunOptions Class="TRunProjectOptions">
-      <Pause>False</Pause>
       <ExpandPaths>False</ExpandPaths>
       <Paths Class="TStringList">
       </Paths>
+      <SharedLib>False</SharedLib>
     </RunOptions>
   </Object>
 </rtti>

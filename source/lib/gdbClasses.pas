@@ -34,7 +34,8 @@ d:\dev\lazarus\components\lazdebuggergdbmi\debugutils.pp
 interface
 
 uses
-  Windows, Classes, SysUtils, StrUtils,
+  //Windows,
+  Classes, SysUtils, StrUtils,
   mnClasses, syncobjs, process, fpjson, EditorRun,
   mnUtils, mnStreams, ConsoleProcess, EditorEngine;
 
@@ -352,7 +353,7 @@ var
   list: TStringList;
 begin
   Result := Default(TMICommand);
-  OutputDebugString(PChar('[MNE]CMD:' + S));
+  //OutputDebugString(PChar('[MNE]CMD:' + S));
   list:=TStringList.Create;
   try
     StrToStrings(S, list, [','], [], ['"']);
@@ -804,7 +805,7 @@ begin
   S := '';
   while ReadStream.ReadLine(S, True) do
   begin
-    OutputDebugString(PChar('<[MNE]RAW:' + S));
+    //OutputDebugString(PChar('<[MNE]RAW:' + S));
     ParseMI(S, S, ResType);
     Result.Add('', S, ResType);
     //Engine.SendLog(S);

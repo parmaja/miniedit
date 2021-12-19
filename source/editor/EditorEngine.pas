@@ -5582,7 +5582,7 @@ end;
 
 procedure TVirtualCategory.DoAddCompletion(AKeyword: string; AKind: integer);
 begin
-  Completion.ItemList.AddObject(AKeyword, TObject(AKind));
+  Completion.ItemList.AddObject(AKeyword, TObject(IntPtr(AKind)));
 end;
 
 procedure TVirtualCategory.DoPrepareCompletion(Sender: TObject);
@@ -5676,7 +5676,7 @@ var
   aType: TAttributeType;
   att: TGlobalAttribute;
 begin
-  aType := TAttributeType(Completion.ItemList.Objects[AIndex]);
+  aType := TAttributeType(IntPtr(Completion.ItemList.Objects[AIndex]));
   att := Engine.Options.Profile.Attributes.Find(aType);
   if att <> nil then
     ACanvas.Font.Color := att.Foreground
