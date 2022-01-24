@@ -72,13 +72,12 @@ Open each package in Lazarus and compile it in order.
 
 #### Required Packages
 
-    minilib\lib\MiniCommons.lpk
+    minilib\lib\MiniLib.lpk
     minilib\xml\source\MiniXML.lpk
     minilib\socket\source\MiniSockets.lpk
     minilib\connection\source\MiniConnections.lpk
 
-    minictrls\lib\MiniLib.lpk
-    minictrls\components\native\NativeLib.lpk
+    minictrls\src\MiniCtrls.lpk
 
 #### Competitions
 
