@@ -8,18 +8,7 @@
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>/lab/pascal/miniEdit/test/test.php</CurrentFile>
-        <CurrentFolder>/lab/pascal/miniEdit/test/</CurrentFolder>
-        <Items>
-          <Object Type="TEditorDesktopFile">
-            <FileName>/lab/pascal/miniEdit/test/test.php</FileName>
-            <CaretX>22</CaretX>
-            <CaretY>4</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>/lab/pascal/miniEdit/test/test_pas.pas</FileName>
-          </Object>
-        </Items>
+        <CurrentFolder>D:\lab\pascal\miniEdit\test\</CurrentFolder>
       </Files>
     </Desktop>
     <Options Class="TEditorProjectOptions">

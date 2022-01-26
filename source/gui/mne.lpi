@@ -542,7 +542,7 @@
         <IsPartOfProject Value="True"/>
       </Unit57>
       <Unit58>
-        <Filename Value="..\extends\LSL\mneLSLClasses.pas"/>
+        <Filename Value="..\extends\lsl\mneLSLClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit58>
       <Unit59>

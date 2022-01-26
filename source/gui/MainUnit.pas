@@ -613,6 +613,7 @@ type
     procedure OptionsChanged;
     function ChooseSCM(var vSCM: TEditorSCM): Boolean;
 
+    procedure SetMainTitle;
     procedure EngineChanged;
     procedure UpdateWatches;
     procedure EngineDebug;
@@ -1134,25 +1135,14 @@ begin
     FileTabs.Items.EndUpdate;
   end;
   FileTabs.Visible := FileTabs.Items.Count > 0;
-  if (Engine.Session.Active) then
-  begin
-    if (Engine.Session.Project.Title <> '') then
-      Caption := Engine.Session.Project.Title + ' - ' + sApplicationTitle
-    else if (Engine.Session.Project.Name <> '') then
-      Caption := Engine.Session.Project.Name + ' - ' + sApplicationTitle
-    else if Engine.Files.Current <> nil then
-      Caption := Engine.Files.Current.NakeName
-    else
-      Caption := sApplicationTitle;
-  end
-  else
-    Caption := sApplicationTitle;
-  Application.Title := Caption;
+  SetMainTitle;
   EnumRecents;
 end;
 
 procedure TMainForm.EngineRefresh;
 begin
+  SetMainTitle;
+
   if Engine.Files.Current <> nil then
   begin
     if (Engine.Files.Current.SynEdit <> nil) and (Engine.Files.Current.SynEdit.PopupMenu = nil) then
@@ -2548,6 +2538,24 @@ begin
     aName := '';
   Result := ShowSelectList('Select SCM type', Engine.SourceManagements, [slfIncludeNone], aName);
   vSCM := Engine.SourceManagements.Find(aName);
+end;
+
+procedure TMainForm.SetMainTitle;
+begin
+  if (Engine.Session.Active) then
+  begin
+    if (Engine.Session.Project.Title <> '') then
+      Caption := Engine.Session.Project.Title + ' - ' + sApplicationTitle
+    else if (Engine.Session.Project.Name <> '') then
+      Caption := Engine.Session.Project.Name + ' - ' + sApplicationTitle
+    else if Engine.Files.Current <> nil then
+      Caption := Engine.Files.Current.NakeName + ' - ' + sApplicationTitle
+    else
+      Caption := sApplicationTitle;
+  end
+  else
+    Caption := sApplicationTitle;
+  Application.Title := Caption;
 end;
 
 procedure TMainForm.ProjectLoaded;
