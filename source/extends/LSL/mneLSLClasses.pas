@@ -35,7 +35,7 @@ type
 
   { TLSLFileCategory }
 
-  TLSLFileCategory = class(TTextFileCategory)
+  TLSLFileCategory = class(TCodeFileCategory)
   private
   protected
     function DoCreateHighlighter: TSynCustomHighlighter; override;
@@ -126,7 +126,7 @@ begin
   Screen.Cursor := crHourGlass;
   Completion.ItemList.BeginUpdate;
   try
-    Completion.ItemList.Clear;
+    //Completion.ItemList.Clear;
     EnumerateKeywords(Ord(attKeyword), sBVHKeywords, Highlighter.IdentChars, @DoAddCompletion);
     EnumerateKeywords(Ord(attDataType), sBVHTypes, Highlighter.IdentChars, @DoAddCompletion);
   finally
@@ -301,10 +301,10 @@ end;
 procedure TLSLTendency.HelpKeyword(AWord: string);
 begin
   inherited;
-  if SameText(LeftStr(AWord, 2), 'll') then
-    OpenURL('http://wiki.secondlife.com/wiki/' + AWord)
+  if SameText(LeftStr(AWord, 2), 'os') then
+    OpenURL('http://opensimulator.org/wiki/' + AWord)
   else
-    OpenURL('http://opensimulator.org/wiki/' + AWord);
+    OpenURL('http://wiki.secondlife.com/wiki/' + AWord);
 end;
 
 { TLSLFileCategory }
@@ -339,15 +339,16 @@ procedure TLSLFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;';//what about $
+  IdentifierID := ord(mnSynHighlighterMultiProc.tkIdentifier);
+  IdentifierAttribute := Ord(attIdentifier);
 end;
 
 procedure TLSLFileCategory.DoPrepareCompletion(Sender: TObject);
 begin
-  inherited;
   Screen.Cursor := crHourGlass;
   Completion.ItemList.BeginUpdate;
   try
-    Completion.ItemList.Clear;
+    //Completion.ItemList.Clear; //nop
     EnumerateKeywords(Ord(attKeyword), sLSLKeywords, Highlighter.IdentChars, @DoAddCompletion);
     EnumerateKeywords(Ord(attDataType), sLSLTypes, Highlighter.IdentChars, @DoAddCompletion);
     EnumerateKeywords(Ord(attDataValue), sLSLValues, Highlighter.IdentChars, @DoAddCompletion);
@@ -357,6 +358,7 @@ begin
     Completion.ItemList.EndUpdate;
     Screen.Cursor := crDefault;
   end;
+  inherited;
 end;
 
 { TLSLFile }

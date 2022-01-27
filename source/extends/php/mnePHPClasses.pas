@@ -370,7 +370,7 @@ begin
   Screen.Cursor := crHourGlass;
   Completion.ItemList.BeginUpdate;
   try
-    Completion.ItemList.Clear;
+    //Completion.ItemList.Clear;
     DoAddKeywords;
 
     aSynEdit := Completion.TheForm.CurrentEditor as TCustomSynEdit;

@@ -950,6 +950,7 @@ type
     procedure DoAddKeywords; virtual;
     procedure DoAddCompletion(AKeyword: string; AKind: integer); virtual;
     procedure DoPrepareCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
+    procedure PrepareCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
     procedure DoExecuteCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
     function DoPaintItem(const AKey: string; ACanvas: TCanvas; X, Y: integer; ASelected: boolean; AIndex: integer): Boolean;
 
@@ -1023,8 +1024,7 @@ type
   TCodeFileCategory = class(TTextFileCategory)
   protected
     IdentifierID: Integer;
-    {CommentID: Integer;
-    StringID: Integer;} //TODO
+    IdentifierAttribute: Integer;
     procedure ExtractKeywords(Files, Identifiers: TStringList); virtual;
     procedure DoPrepareCompletion(Sender: TObject); override;
   end;
@@ -1781,7 +1781,7 @@ begin
   Screen.Cursor := crHourGlass;
   Completion.ItemList.BeginUpdate;
   try
-    Completion.ItemList.Clear;
+    //Completion.ItemList.Clear;
     DoAddKeywords; //TODO check timeout before refill it for speeding
 
     aSynEdit := Completion.TheForm.CurrentEditor as TCustomSynEdit;
@@ -1833,7 +1833,7 @@ begin
         end;
 
         for i := 0 to aIdentifiers.Count - 1 do
-          DoAddCompletion(aIdentifiers[i], IdentifierID);
+          DoAddCompletion(aIdentifiers[i], IdentifierAttribute); //use mapper
       finally
         aIdentifiers.Free;
       end;
@@ -5555,7 +5555,7 @@ begin
   begin
     FCompletion := TmneSynCompletion.Create(nil);
     Completion.Width := 340;
-    Completion.OnPrepare := @DoPrepareCompletion;
+    Completion.OnPrepare := @PrepareCompletion;
     Completion.OnPaintItem := @DoPaintItem;
     Completion.ShortCut := scCtrl + VK_SPACE;
     Completion.CaseSensitive := False;
@@ -5587,6 +5587,12 @@ end;
 
 procedure TVirtualCategory.DoPrepareCompletion(Sender: TObject);
 begin
+end;
+
+procedure TVirtualCategory.PrepareCompletion(Sender: TObject);
+begin
+  Completion.ItemList.Clear;
+  DoPrepareCompletion(Sender);
 end;
 
 procedure TVirtualCategory.InitEdit(vSynEdit: TCustomSynEdit);
