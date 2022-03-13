@@ -42,6 +42,7 @@ type
 
   TEditorEngine = class;
   TVirtualCategory = class;
+  TVirtualCategoryClass = class of TVirtualCategory;
   TFileGroup = class;
   TFileGroups = class;
   TEditorFile = class;
@@ -284,7 +285,9 @@ type
     IsPrepared: Boolean;
     FCapabilities: TRunCapabilities;
     FHaveOptions: Boolean;
+    procedure AddGroup(vName: string; vCategory: TVirtualCategory);
     procedure AddGroup(vName, vCategory: string);
+    procedure AddGroup(vName:string; vCategoryClass: TVirtualCategoryClass);
     function CreateDebugger: TEditorDebugger; virtual;
     procedure Init; virtual;
     procedure Created; virtual;
@@ -2526,23 +2529,40 @@ begin
   Result := False;
 end;
 
-procedure TEditorTendency.AddGroup(vName, vCategory: string);
+procedure TEditorTendency.AddGroup(vName: string; vCategory: TVirtualCategory);
 var
   G: TFileGroup;
+begin
+  if vCategory = nil then
+    G := Engine.Groups.Find(vName)
+  else
+    G := vCategory.Find(vName);
+
+  if G = nil then
+    raise Exception.Create(vName + ' file group not found');
+  Groups.Add(G);
+end;
+
+procedure TEditorTendency.AddGroup(vName, vCategory: string);
+var
   C: TVirtualCategory;
 begin
   if vCategory = '' then
     C := nil
   else
     C := Engine.Categories.Find(vCategory);
-  if C = nil then
-    G := Engine.Groups.Find(vName)
-  else
-    G := C.Find(vName);
+  AddGroup(vName, C);
+end;
 
-  if G = nil then
-    raise Exception.Create(vName + ' file group not found');
-  Groups.Add(G);
+procedure TEditorTendency.AddGroup(vName: string; vCategoryClass: TVirtualCategoryClass);
+var
+  C: TVirtualCategory;
+begin
+  if vCategoryClass = nil then
+    C := nil
+  else
+    C := Engine.Categories.FindByClass(vCategoryClass);
+  AddGroup(vName, C);
 end;
 
 function TEditorTendency.CreateDebugger: TEditorDebugger;
