@@ -4,7 +4,7 @@ unit mneGoClasses;
  * Mini Edit
  *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author    Zaher Goirkey <zaher at parmaja dot com>
+ * @author    Zaher Goirkey 
  *
  *}
 

@@ -4,7 +4,7 @@ unit mneClasses;
  * Mini Edit
  *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author    Zaher Dirkey <zaher at parmaja dot com>
+ * @author    Zaher Dirkey 
  *}
 
 interface
@@ -397,7 +397,7 @@ initialization
     Groups.Add(TXMLFile, 'xml', 'XML', TXMLFileCategory, ['.xml', '.lpi'], [fgkAssociated, fgkBrowsable]);
 
     Categories.Add(TCFGFileCategory.Create(DefaultProject.Tendency, 'cfg', 'Config and INI'));
-    Groups.Add(TINIConfigFile, 'ini', 'INI', TCFGFileCategory, ['.ini', '.pls'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TINIConfigFile, 'ini', 'INI', TCFGFileCategory, ['.ini', '.pls', '.isl'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TCFGConfigFile, 'cfg', 'Config', TCFGFileCategory, ['.cfg', '.conf', '.config', 'config'], [fgkAssociated, fgkBrowsable]);
 
     Categories.Add(TYamlFileCategory.Create(DefaultProject.Tendency, 'yaml', 'YAML'));

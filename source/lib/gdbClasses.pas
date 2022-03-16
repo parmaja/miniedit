@@ -5,7 +5,7 @@ unit gdbClasses;
  * Mini Edit
  *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author    Zaher Dirkey <zaher at parmaja dot com>
+ * @author    Zaher Dirkey 
  *}
 {**
 TODO show gdb log

@@ -7,7 +7,7 @@ unit EditorEngine;
  * Mini Edit
  *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author    Zaher Dirkey <zaher at parmaja dot com>
+ * @author    Zaher Dirkey 
  *}
 
 {**
@@ -235,18 +235,17 @@ type
 
   TRunCapability = (
     capErrors,
-    capExecute, //Can run this file
     capStop, //Stop executing or compiling
+    capLint, //Check error of file without compiling or run
     capCompile, //Can compile this file
     capLink, //Can need link before run
-    capLint, //Check error of file without compiling or run
+    capExecute, //Can run this file
     capDebug, //we can debug the project/file
     capEval, //Debugger can evaluate
     capTrace, //Steps (Step Into, Step Over etc...)
     capUpload, //Have upload, like avr projects need to upload to mcu
     capDebugServer, //PHP style need to start debug server
     capTransaction //Database
-
   );
 
   TRunCapabilities = set of TRunCapability;

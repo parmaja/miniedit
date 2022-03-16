@@ -12,13 +12,13 @@
         <CurrentFolder>D:\lab\pascal\tyro\demos\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
-            <FileName>D:\lab\pascal\tyro\demos\test.lua</FileName>
-            <CaretY>11</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
             <FileName>D:\lab\pascal\tyro\demos\test.ps</FileName>
             <CaretX>35</CaretX>
             <CaretY>5</CaretY>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>D:\lab\pascal\tyro\demos\sin.lua</FileName>
+            <CaretY>10</CaretY>
           </Object>
         </Items>
       </Files>
