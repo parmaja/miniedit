@@ -183,6 +183,6 @@ initialization
     Groups.Add(TPASFile, 'ps', 'Pascal Script', TPSFileCategory, ['.rops', '.ps', '.pascal'], [fgkAssociated, fgkFolding, fgkBrowsable], [capExecute, capDebug]);
 
     Categories.Add(TLSFileCategory.Create(TTyroTendency, 'ls', 'Lua Script'));
-    Groups.Add(TPASFile, 'ls', 'Lua Script', TLSFileCategory, ['.ls'], [fgkAssociated, fgkFolding, fgkBrowsable], [capExecute, capDebug]);
+    Groups.Add(TPASFile, 'ls', 'Lua Script', TPSFileCategory, ['.ls'], [fgkAssociated, fgkFolding, fgkBrowsable], [capExecute, capDebug]);
   end;
 end.

@@ -13,12 +13,11 @@
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>D:\lab\pascal\tyro\demos\test.ps</FileName>
-            <CaretX>35</CaretX>
-            <CaretY>5</CaretY>
+            <CaretY>13</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>D:\lab\pascal\tyro\demos\sin.lua</FileName>
-            <CaretY>10</CaretY>
+            <CaretY>7</CaretY>
           </Object>
         </Items>
       </Files>

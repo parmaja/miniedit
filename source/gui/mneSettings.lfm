@@ -40,9 +40,9 @@ object EditorSettingForm: TEditorSettingForm
     Height = 288
     Top = 3
     Width = 419
-    ActivePage = TabSheet4
+    ActivePage = TabSheet2
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 2
     object TabSheet2: TTabSheet
       Caption = 'Options'
@@ -55,6 +55,7 @@ object EditorSettingForm: TEditorSettingForm
         Top = 73
         Width = 259
         Caption = 'Autocomplete words will be cached and updated every'
+        ParentColor = False
       end
       object CollectTimeoutEdit: TEdit
         Left = 272
@@ -77,9 +78,9 @@ object EditorSettingForm: TEditorSettingForm
       end
       object CollectAutoCompleteChk: TCheckBox
         Left = 7
-        Height = 19
+        Height = 17
         Top = 46
-        Width = 307
+        Width = 305
         Caption = 'Auto complete variables and identifiers in whole project folder'
         TabOrder = 2
       end
@@ -89,6 +90,7 @@ object EditorSettingForm: TEditorSettingForm
         Top = 97
         Width = 326
         Caption = 'You must have a project and define the root folder to use this feature.'
+        ParentColor = False
       end
       object Label1: TLabel
         Left = 356
@@ -96,12 +98,13 @@ object EditorSettingForm: TEditorSettingForm
         Top = 73
         Width = 42
         Caption = 'Seconds'
+        ParentColor = False
       end
       object AutoOpenProjectChk: TCheckBox
         Left = 7
-        Height = 19
+        Height = 17
         Top = 7
-        Width = 123
+        Width = 121
         Caption = 'Auto open last project'
         TabOrder = 3
       end
@@ -111,6 +114,7 @@ object EditorSettingForm: TEditorSettingForm
         Top = 30
         Width = 69
         Caption = 'Auto Complete'
+        ParentColor = False
       end
       object Label5: TLabel
         Left = 8
@@ -118,6 +122,7 @@ object EditorSettingForm: TEditorSettingForm
         Top = 142
         Width = 73
         Caption = 'Ansi CodePage'
+        ParentColor = False
       end
       object CodePagesCbo: TComboBox
         Left = 94
@@ -162,6 +167,7 @@ object EditorSettingForm: TEditorSettingForm
         Top = 36
         Width = 305
         Caption = 'You can add extra extension files to open and browse, use DOT.'
+        ParentColor = False
       end
       object Label10: TLabel
         Left = 4
@@ -169,6 +175,7 @@ object EditorSettingForm: TEditorSettingForm
         Top = 53
         Width = 113
         Caption = 'example: inc;php3;php4'
+        ParentColor = False
       end
       object IgnoreNamesEdit: TEdit
         Left = 2
@@ -185,6 +192,7 @@ object EditorSettingForm: TEditorSettingForm
         Width = 151
         Anchors = [akLeft, akBottom]
         Caption = 'Files or Folders name to ignore it'
+        ParentColor = False
       end
       object Label12: TLabel
         Left = 195
@@ -193,12 +201,13 @@ object EditorSettingForm: TEditorSettingForm
         Width = 108
         Anchors = [akLeft, akBottom]
         Caption = 'example: .svn;.git;_vti_'
+        ParentColor = False
       end
       object FallbackToTxtChk: TCheckBox
         Left = 7
-        Height = 19
+        Height = 17
         Top = 7
-        Width = 303
+        Width = 301
         Caption = 'Fallback to txt file if file not recognized when trying to open it'
         TabOrder = 1
       end

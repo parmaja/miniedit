@@ -34,6 +34,7 @@ type
   TEditorOptionsForm = class(TForm)
     AutoIndentChk: TCheckBox;
     BracketHighlightChk: TCheckBox;
+    AutoUpdateFileChk: TCheckBox;
     CodeFoldingChk: TCheckBox;
     EnhanceHomeKeyChk: TCheckBox;
     GroupUndoChk: TCheckBox;
@@ -188,6 +189,7 @@ begin
     //Can be override by project options
     TabWidthEdit.Text := IntToStr(FProfile.TabWidth);
     IndentModeCbo.ItemIndex := Ord(FProfile.IndentMode);
+    AutoUpdateFileChk.Checked := FProfile.AutoUpdateFile;
   finally
     InChanging := False;
   end;
@@ -242,6 +244,7 @@ begin
   FProfile.ExtraLineSpacing := StrToIntDef(LineSpacingEdit.Text, 0);
   FProfile.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
   FProfile.IndentMode := TIndentMode(IndentModeCbo.ItemIndex);
+  FProfile.AutoUpdateFile := AutoUpdateFileChk.Checked;
 end;
 
 end.

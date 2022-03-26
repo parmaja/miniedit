@@ -227,6 +227,7 @@ type
     ExtraLineSpacing: Integer;
     TabWidth: Integer;
     IndentMode: TIndentMode;
+    AutoUpdateFile: Boolean;
     EditorOptions: TSynEditorOptions;
     ExtEditorOptions: TSynEditorOptions2;
   end;
@@ -262,6 +263,7 @@ type
     //Can be overriden by project options
     property TabWidth: Integer read FInfo.TabWidth write FInfo.TabWidth default 4;
     property IndentMode: TIndentMode read FInfo.IndentMode write FInfo.IndentMode default idntTabsToSpaces;
+    property AutoUpdateFile: Boolean read FInfo.AutoUpdateFile write FInfo.AutoUpdateFile default False;
   end;
 
 implementation

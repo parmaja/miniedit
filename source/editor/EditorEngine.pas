@@ -952,7 +952,7 @@ type
     procedure DoAddKeywords; virtual;
     procedure DoAddCompletion(AKeyword: string; AKind: integer); virtual;
     procedure DoPrepareCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
-    procedure PrepareCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
+    procedure PrepareCompletion(ASender: TSynBaseCompletion; var ACurrentString: String; var APosition: Integer; var AnX, AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
     procedure DoExecuteCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
     function DoPaintItem(const AKey: string; ACanvas: TCanvas; X, Y: integer; ASelected: boolean; AIndex: integer): Boolean;
 
@@ -3386,7 +3386,7 @@ procedure TEditorSession.Load(FileName: string);
 var
   aProject: TEditorProject;
 begin
-  Close; //must free before load project for save the desktop and sure to save its files
+  Close; //* TODO:  wrong for first time loading,  must free before load project for save the desktop and sure to save its files
   Engine.BeginUpdate;
   try
     aProject := New;
@@ -4620,17 +4620,26 @@ begin
       aDialog := TSaveDialog.Create(nil);
       aDialog.Title := 'Save file';
       aDialog.Filter := Engine.Groups.CreateFilter(True, Extension, Group, False);//put the group of file as the first one
-      aDialog.InitialDir := Engine.BrowseFolder;
-      if Extension <> '' then
-        aDialog.DefaultExt := Extension
+
+      if Name <> '' then
+      begin
+        aDialog.InitialDir := ExtractFilePath(Name);
+        aDialog.FileName := Name;
+      end
       else
       begin
-        if Group <> nil then
-          aDialog.DefaultExt := Group.Extensions[0].Name
+        aDialog.InitialDir := Engine.BrowseFolder;
+        if Extension <> '' then
+          aDialog.DefaultExt := Extension
         else
-          aDialog.DefaultExt := Engine.Tendency.GetDefaultGroup.Extensions[0].Name;
+        begin
+          if Group <> nil then
+            aDialog.DefaultExt := Group.Extensions[0].Name
+          else
+            aDialog.DefaultExt := Engine.Tendency.GetDefaultGroup.Extensions[0].Name;
+        end;
+        aDialog.FileName := '*' + aDialog.DefaultExt;
       end;
-      aDialog.FileName := '*' + aDialog.DefaultExt;
 
       aSave := aDialog.Execute;
       if aSave then
@@ -4674,42 +4683,39 @@ var
   n: Integer;
 begin
   Result := True;
-  if not IsNew then
+  if (Name <> '') and (FileExists(Name)) then //even if marked as new
   begin
-    if (FileExists(Name)) then
+    if IsNew or ((FFileAge <> FileAge(Name)) or (FFileSize <> FileSize(Name)))  then
     begin
-      if ((FFileAge <> FileAge(Name)) or (FFileSize <> FileSize(Name)))  then
-      begin
-        if Force then
-          mr := msgcYes
-        else
-          mr := MsgBox.YesNoCancel(Name + #13' was changed, update it?');
-        if mr = msgcYes then
-          Load;
-        if mr = msgcCancel then
-          Result := False
-        else
-          UpdateAge;
-      end;
+      if Force or (Engine.Options.Profile.AutoUpdateFile and not IsChanged) then
+        mr := msgcYes
+      else
+        mr := MsgBox.YesNoCancel(Name + #13' was changed, update it?');
+      if mr = msgcYes then
+        Load;
+      if mr = msgcCancel then
+        Result := False
+      else
+        UpdateAge;
+    end;
+  end
+  else if not IsNew then
+  begin
+    if Force then
+      n := -1 //nothing
+    else
+      n := MsgBox.Ask(Name + #13' was not found, what do want?', [Choice('&Keep It', msgcYes), Choice('&Close', msgcCancel), Choice('Read only', msgcNo)], 0, 2);
+    if n = -1 then //do nothing
+    else if n = 0 then //Keep It
+      IsNew := True
+    else if n = 2 then //Keep It
+    begin
+      IsChanged := False;
+      IsTemporary := False;
+      IsReadOnly := True
     end
     else
-    begin
-      if Force then
-        n := -1 //nothing
-      else
-        n := MsgBox.Ask(Name + #13' was not found, what do want?', [Choice('&Keep It', msgcYes), Choice('&Close', msgcCancel), Choice('Read only', msgcNo)], 0, 2);
-      if n = -1 then //do nothing
-      else if n = 0 then //Keep It
-        IsNew := True
-      else if n = 2 then //Keep It
-      begin
-        IsChanged := False;
-        IsTemporary := False;
-        IsReadOnly := True
-      end
-      else
-        Close;
-    end;
+      Close;
   end;
 end;
 
@@ -4827,6 +4833,7 @@ procedure TEditorFile.UpdateAge;
 begin
   FFileAge := FileAge(Name);
   FFileSize := FileSize(Name);
+  IsNew := False;
 end;
 
 procedure TEditorFile.Load;
@@ -5574,7 +5581,7 @@ begin
   begin
     FCompletion := TmneSynCompletion.Create(nil);
     Completion.Width := 340;
-    Completion.OnPrepare := @PrepareCompletion;
+    Completion.OnBeforeExecute := @PrepareCompletion;
     Completion.OnPaintItem := @DoPaintItem;
     Completion.ShortCut := scCtrl + VK_SPACE;
     Completion.CaseSensitive := False;
@@ -5608,10 +5615,10 @@ procedure TVirtualCategory.DoPrepareCompletion(Sender: TObject);
 begin
 end;
 
-procedure TVirtualCategory.PrepareCompletion(Sender: TObject);
+procedure TVirtualCategory.PrepareCompletion(ASender: TSynBaseCompletion; var ACurrentString: String; var APosition: Integer; var AnX, AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
 begin
   Completion.ItemList.Clear;
-  DoPrepareCompletion(Sender);
+  DoPrepareCompletion(ASender);
 end;
 
 procedure TVirtualCategory.InitEdit(vSynEdit: TCustomSynEdit);
