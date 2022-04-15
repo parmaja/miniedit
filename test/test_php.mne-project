@@ -8,16 +8,15 @@
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>D:\lab\pascal\tyro\demos\test.ps</CurrentFile>
-        <CurrentFolder>D:\lab\pascal\tyro\demos\</CurrentFolder>
+        <CurrentFile>D:\lab\pascal\miniEdit\test\utf8be.text</CurrentFile>
+        <CurrentFolder>D:\lab\pascal\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
-            <FileName>D:\lab\pascal\tyro\demos\test.ps</FileName>
-            <CaretY>13</CaretY>
+            <FileName>D:\lab\pascal\miniEdit\test\utf8le.text</FileName>
           </Object>
           <Object Type="TEditorDesktopFile">
-            <FileName>D:\lab\pascal\tyro\demos\sin.lua</FileName>
-            <CaretY>7</CaretY>
+            <FileName>D:\lab\pascal\miniEdit\test\utf8be.text</FileName>
+            <CaretX>15</CaretX>
           </Object>
         </Items>
       </Files>

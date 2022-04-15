@@ -4952,8 +4952,9 @@ begin
     FileEncoding := GuessEncoding(Contents);
     if not SameText(FileEncoding, EncodingUTF8) then
     begin
-      if SameText(FileEncoding, 'ucs2le') or SameText(FileEncoding, 'ucs2be') then //Because ConvertEncodingToUTF8 not removes BOM
-        Contents := System.Copy(Contents, 3, MaxInt);
+      //https://forum.lazarus.freepascal.org/index.php/topic,43160.0.html
+{      if SameText(FileEncoding, 'ucs2le') or SameText(FileEncoding, 'ucs2be') then //Because ConvertEncodingToUTF8 not removes Marks
+        Contents := System.Copy(Contents, 3, MaxInt);}
       Contents := ConvertEncodingToUTF8(Contents, FileEncoding, Encoded);
     end;
     LinesMode := DetectLinesMode(Contents);

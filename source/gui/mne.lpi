@@ -577,6 +577,7 @@
     </Parsing>
     <Linking>
       <Debugging>
+        <UseValgrind Value="True"/>
         <UseExternalDbgSyms Value="True"/>
       </Debugging>
       <Options>

@@ -4,7 +4,10 @@ unit mneLSLClasses;
  * Mini Edit
  *
  * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
- * @author    Zaher Dirkey 
+ * @author    Zaher Dirkey
+ *
+ * https://github.com/Makopo/lslint/issues/102
+ * https://github.com/Sei-Lisa/kwdb
  *}
 
 interface
