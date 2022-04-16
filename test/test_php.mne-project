@@ -8,13 +8,16 @@
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>D:\lab\pascal\miniEdit\test\test.html</CurrentFile>
+        <CurrentFile>D:\lab\pascal\miniEdit\test\test.php</CurrentFile>
         <CurrentFolder>D:\lab\pascal\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>D:\lab\pascal\miniEdit\test\test.html</FileName>
-            <CaretX>15</CaretX>
             <CaretY>5</CaretY>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>D:\lab\pascal\miniEdit\test\test.php</FileName>
+            <CaretY>7</CaretY>
           </Object>
         </Items>
       </Files>

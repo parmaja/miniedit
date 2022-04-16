@@ -1920,7 +1920,6 @@ begin
   IPCServer.ServerID := sApplicationID;
   IPCServer.StartServer;
   LoadAddons;
-
   //Engine.SendLog('MiniEdit started');
 end;
 

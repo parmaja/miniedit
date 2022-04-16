@@ -4951,12 +4951,7 @@ begin
     AStream.Read(Pointer(Contents)^, Size);
     FileEncoding := GuessEncoding(Contents);
     if not SameText(FileEncoding, EncodingUTF8) then
-    begin
-      //https://forum.lazarus.freepascal.org/index.php/topic,43160.0.html
-{      if SameText(FileEncoding, 'ucs2le') or SameText(FileEncoding, 'ucs2be') then //Because ConvertEncodingToUTF8 not removes Marks
-        Contents := System.Copy(Contents, 3, MaxInt);}
       Contents := ConvertEncodingToUTF8(Contents, FileEncoding, Encoded);
-    end;
     LinesMode := DetectLinesMode(Contents);
     IndentMode := Engine.Options.Profile.IndentMode;
     if Tendency.OverrideEditorOptions then
