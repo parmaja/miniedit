@@ -1931,7 +1931,7 @@ begin
   else if Engine.Options.BoundRect.Right - Engine.Options.BoundRect.Left > 10 then   //Safe load width
     BoundsRect := Engine.Options.BoundRect;
 
-  Engine.Start;
+  //Engine.Start;
 end;
 
 procedure TMainForm.GotoFileFolderActExecute(Sender: TObject);

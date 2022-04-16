@@ -156,7 +156,9 @@ begin
     Application.CreateForm(TEditorResource, EditorResource);
     Application.CreateForm(TMainForm, MainForm);
     try
-      Engine.Start;
+      MainForm.Show;
+      Application.ProcessMessages;
+      Engine.Start; //it is exists in MainForm.Show
     except
       on E: Exception do
       begin

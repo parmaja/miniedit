@@ -8,15 +8,13 @@
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>D:\lab\pascal\miniEdit\test\utf8be.text</CurrentFile>
+        <CurrentFile>D:\lab\pascal\miniEdit\test\test.html</CurrentFile>
         <CurrentFolder>D:\lab\pascal\miniEdit\test\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
-            <FileName>D:\lab\pascal\miniEdit\test\utf8le.text</FileName>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>D:\lab\pascal\miniEdit\test\utf8be.text</FileName>
+            <FileName>D:\lab\pascal\miniEdit\test\test.html</FileName>
             <CaretX>15</CaretX>
+            <CaretY>5</CaretY>
           </Object>
         </Items>
       </Files>
