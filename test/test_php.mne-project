@@ -8,16 +8,15 @@
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>D:\lab\pascal\miniEdit\test\test.php</CurrentFile>
-        <CurrentFolder>D:\lab\pascal\miniEdit\test\</CurrentFolder>
+        <CurrentFile>G:\Games\opensim\dirkey2\bin\Regions\Regions.ini</CurrentFile>
+        <CurrentFolder>G:\Games\opensim\dirkey2\bin\Regions\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>D:\lab\pascal\miniEdit\test\test.html</FileName>
-            <CaretY>5</CaretY>
+            <CaretY>12</CaretY>
           </Object>
           <Object Type="TEditorDesktopFile">
-            <FileName>D:\lab\pascal\miniEdit\test\test.php</FileName>
-            <CaretX>24</CaretX>
+            <FileName>G:\Games\opensim\dirkey2\bin\Regions\Regions.ini</FileName>
             <CaretY>11</CaretY>
           </Object>
         </Items>

@@ -2271,6 +2271,7 @@ end;
 procedure TSyntaxEditorFile.BeforeDestruction;
 begin
   Engine.MacroRecorder.RemoveEditor(SynEdit);
+  Engine.EditorPlugin.RemoveEditor(SynEdit);
   inherited BeforeDestruction;
 end;
 
