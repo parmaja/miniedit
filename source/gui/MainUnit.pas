@@ -4,7 +4,7 @@ unit MainUnit;
 {**
  * Mini Edit
  *
- * @license    GPL 2 (http://www.gnu.org/licenses/gpl.html)
+ * @license   GPL 2 (http://www.gnu.org/licenses/gpl.html)
  * @author    Zaher Dirkey 
  *}
  {
@@ -14,10 +14,11 @@ unit MainUnit;
 interface
 
 uses
-  Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms, mnMsgBox, contnrs, LConvEncoding,
-  LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorRun, process, fgl,
-  Dialogs, StdCtrls, Math, ComCtrls, ExtCtrls, ImgList, Menus,
-  ToolWin, Buttons, FileCtrl, ShellCtrls, ActnList, EditorEngine, mneClasses,
+  SysUtils, Variants, Classes, Messages, Graphics, Controls, Forms,
+  Dialogs, StdCtrls, ComCtrls, ExtCtrls, ImgList, Menus, ToolWin, Buttons, FileCtrl,
+  mnMsgBox, contnrs, LConvEncoding,
+  LCLVersion, LMessages, lCLType, LCLIntf, LCLProc, EditorRun, process, fgl, Math,
+  ShellCtrls, ActnList, EditorEngine, mneClasses,
   StdActns, Grids, SynEditHighlighter, SynEdit, IAddons, ntvThemes, ntvSplitters,
   SynHighlighterSQL, EditorClasses, ntvImgBtns, ntvPanels,
   {$ifdef WINDOWS}
@@ -712,23 +713,8 @@ begin
 end;
 
 procedure TMainForm.ApplicationPropertiesShowHint(var HintStr: string; var CanShow: boolean; var HintInfo: THintInfo);
-var
-  s: string;
 begin
-  if (Engine.Files.Current <> nil) and (HintInfo.HintControl is TCustomSynEdit) then
-  begin
-    Engine.Files.Current.GetHint(HintInfo.HintControl, HintInfo.CursorPos, s);
-    CanShow := s <> '';
-
-    if CanShow then
-    begin
-      HintStr := s;
-      HintInfo.HintStr := s;
-      HintInfo.HideTimeout := 10000;
-      HintInfo.ReshowTimeout := 500;
-    end;
-  end
-  else if (HintInfo.HintStr = '') and (HintInfo.HintControl.Action is TAction) then
+  if (HintInfo.HintControl.Action is TAction) then
     with (HintInfo.HintControl.Action as TAction) do
     begin
       HintInfo.HintStr := HintInfo.HintControl.Caption + ' (' + ShortCutToText(ShortCut) + ')';

@@ -26,13 +26,13 @@ Portable Notes:
 interface
 
 uses
-  Messages, SysUtils, Forms, StdCtrls, StrUtils, Dialogs, Variants, Classes, Controls, LCLIntf, LConvEncoding,
+  Messages, SysUtils, Forms, StdCtrls, StrUtils, Dialogs, Variants, Classes, Menus, Controls, LCLIntf, LConvEncoding,
   FileUtil, LazFileUtils,
   Graphics, Contnrs, Types, IniFiles, EditorOptions, EditorColors, EditorProfiles,
-  SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses,
+  SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses, SynEditPlugins, SynPluginTemplateEdit,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
-  dbgpServers, Masks, mnXMLRttiProfile, mnXMLUtils, mnClasses, fgl,
+  mncCSV, dbgpServers, Masks, mnXMLRttiProfile, mnXMLUtils, mnClasses, fgl,
   mnUtils, LCLType, EditorClasses, EditorRun;
 
 type
@@ -100,11 +100,15 @@ type
     procedure Add(Name:string; ImageIndex: Integer = -1);
   end;
 
+  TTextEditorFile = class;
+
   { TmnSynEdit }
 
   TmnSynEdit = class(TSynEdit)
   protected
+    FEditorFile: TTextEditorFile;
   public
+    procedure DoOnShowHint(HintInfo: PHintInfo); override;
     constructor Create(AOwner: TComponent); override;
     procedure ExecuteCommand(Command: TSynEditorCommand; const AChar: TUTF8Char; Data: pointer); override;
   end;
@@ -646,6 +650,25 @@ type
   public
   end;
 
+
+  TmneSynEditCommand = (mscUUID); // msPaused = paused recording
+
+  { TmneSynEditPlugin }
+
+  TmneSynEditPlugin = class(TAbstractSynHookerPlugin)
+  protected
+    FCommandIDs: array [TmneSynEditCommand] of TSynEditorCommand;
+    FShortCuts: array [TmneSynEditCommand] of TShortCut;
+    procedure OnCommand(Sender: TObject; AfterProcessing: boolean;
+      var Handled: boolean; var Command: TSynEditorCommand;
+      var aChar: TUTF8Char; Data: pointer; HandlerData: pointer); override;
+
+    procedure DoEditorAdded(AValue: TCustomSynEdit); override;
+    procedure DoEditorRemoving(AValue: TCustomSynEdit); override;
+  public
+    constructor Create(aOwner: TComponent); override;
+  end;
+
   { TSyntaxEditorFile }
 
   TSyntaxEditorFile = class abstract(TEditorFile, ITextEditor)
@@ -945,6 +968,8 @@ type
     function GetMapper: TMapper;
   protected
     FCompletion: TmneSynCompletion;
+    //FTemplatePlugin: TSynPluginTemplateEdit;
+
     function DoCreateHighlighter: TSynCustomHighlighter; virtual; abstract;
     procedure InitMappers; virtual; abstract;
 
@@ -981,6 +1006,7 @@ type
     property IsText: Boolean read GetIsText;
     property Highlighter: TSynCustomHighlighter read GetHighlighter;
     property Completion: TmneSynCompletion read FCompletion;
+    //property TemplatePlugin: TSynPluginTemplateEdit read FTemplatePlugin;
     property Kind: TFileCategoryKinds read FKind;
     property ImageName: string read FImageName write FImageName;
     property Items[Index: Integer]: TFileGroup read GetItem; default;
@@ -1246,7 +1272,8 @@ type
     FSession: TEditorSession;
     FMessagesList: TEditorMessagesList;
     FBrowseFolder: string;
-    FMacroRecorder: TSynMacroRecorder;
+    FMacroRecorderPlugin: TSynMacroRecorder;
+    FEditorPlugin: TmneSynEditPlugin;
     FWorkSpace: string;
     //Extenstion Cache
     //FExtenstionCache: TExtenstionCache; //TODO
@@ -1340,7 +1367,8 @@ type
     property DefaultProject: TDefaultProject read FDefaultProject; //used when there is no project action, it is assigned to project, but not active
     property SCM: TEditorSCM read GetSCM;
     function GetIsChanged: Boolean;
-    property MacroRecorder: TSynMacroRecorder read FMacroRecorder;
+    property MacroRecorder: TSynMacroRecorder read FMacroRecorderPlugin;
+    property EditorPlugin: TmneSynEditPlugin read FEditorPlugin;
     procedure SendLog(S: string);
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType);
     procedure SendMessage(S: string; vMessageInfo: TMessageInfo);
@@ -1499,6 +1527,41 @@ begin
   end;
 end;
 
+{ TmneSynEditPlugin }
+
+procedure TmneSynEditPlugin.OnCommand(Sender: TObject; AfterProcessing: boolean; var Handled: boolean; var Command: TSynEditorCommand; var aChar: TUTF8Char; Data: pointer; HandlerData: pointer);
+var
+  aGUID: TGUID;
+begin
+  if Command = FCommandIDs[mscUUID] then
+  begin
+    CreateGUID(aGUID);
+    TCustomSynEdit(Sender).InsertTextAtCaret(LowerCase(RemoveEncloseStr(GUIDToString(aGUID), '{', '}')));
+    Handled := True;
+  end
+end;
+
+procedure TmneSynEditPlugin.DoEditorAdded(AValue: TCustomSynEdit);
+begin
+  inherited;
+  HookEditor(AValue, FCommandIDs[mscUUID], 0, FShortCuts[mscUUID], []);
+  AValue.RegisterCommandHandler(@OnCommand, Self, [hcfPreExec]);
+end;
+
+procedure TmneSynEditPlugin.DoEditorRemoving(AValue: TCustomSynEdit);
+begin
+  inherited;
+  UnHookEditor(AValue, FCommandIDs[mscUUID], FShortCuts[mscUUID]);
+  AValue.UnregisterCommandHandler(@OnCommand);
+end;
+
+constructor TmneSynEditPlugin.Create(aOwner: TComponent);
+begin
+  inherited Create(aOwner);
+  FCommandIDs[mscUUID] := AllocatePluginKeyRange(1);
+  FShortCuts[mscUUID] := Menus.ShortCut(Ord('G'), [ssCtrl, ssShift]);
+end;
+
 { TFileCategory }
 
 function TFileCategory.OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile;
@@ -1607,6 +1670,7 @@ begin
   inherited;
   FSynEdit := TmnSynEdit.Create(Engine.FilePanel);
   SynEdit.Visible := False;
+  (SynEdit as TmnSynEdit).FEditorFile := Self;
   SynEdit.Parent := Engine.FilePanel;
 end;
 
@@ -1627,6 +1691,24 @@ begin
 end;
 
 { TSyntaxEditorFile }
+
+procedure TmnSynEdit.DoOnShowHint(HintInfo: PHintInfo);
+var
+  s: string;
+begin
+  inherited DoOnShowHint(HintInfo);
+
+  FEditorFile.GetHint(Self, HintInfo^.CursorPos, s);
+//  CanShow := s <> '';
+
+  if s <> '' then
+    with HintInfo^ do
+    begin
+      HintStr := s;
+      HideTimeout := 10000;
+      ReshowTimeout := 500;
+    end;
+end;
 
 constructor TmnSynEdit.Create(AOwner: TComponent);
 var
@@ -2170,7 +2252,15 @@ begin
     Command   := ecUpperCaseBlock;
   end;
 
+  with SynEdit.Keystrokes.Add do
+  begin
+    Key       := VK_SPACE;
+    Shift     := [ssShift, ssCtrl];
+    Command   := ecUpperCaseBlock;
+  end;
+
   Engine.MacroRecorder.AddEditor(SynEdit);
+  Engine.EditorPlugin.AddEditor(SynEdit);
 end;
 
 destructor TSyntaxEditorFile.Destroy;
@@ -2990,8 +3080,9 @@ begin
   inherited;
   FEnvironment := TStringList.Create;
   FMessagesList := TEditorMessagesList.Create;
-  FMacroRecorder := TSynMacroRecorder.Create(nil);
-  FMacroRecorder.OnStateChange := @DoMacroRecorderChanged;
+  FMacroRecorderPlugin := TSynMacroRecorder.Create(nil);
+  FMacroRecorderPlugin.OnStateChange := @DoMacroRecorderChanged;
+  FEditorPlugin := TmneSynEditPlugin.Create(nil);
   FNotifyObjects := TEditorNotifyList.Create;
 
   FEnvironment.Add('Home=' + SysUtils.GetEnvironmentVariable('HOME'));
@@ -3034,7 +3125,8 @@ begin
   FreeAndNil(FSearchEngine);
   FreeAndNil(FOptions);
   FreeAndNil(FSourceManagements);
-  FreeAndNil(FMacroRecorder);
+  FreeAndNil(FMacroRecorderPlugin);
+  FreeAndNil(FEditorPlugin);
   FreeAndNil(FMessagesList);
   FreeAndNil(FDefaultProject);
   //FreeAndNil(FForms);
@@ -5585,6 +5677,15 @@ begin
   end;
   FCompletion.AddEditor(vSynEdit);
 
+  {if FTemplatePlugin <> nil then
+  begin
+    FTemplatePlugin := TSynPluginTemplateEdit.Create(nil);
+  end;}
+  //FTemplatePlugin.added
+
+  //FTemplatePlugin.
+
+
   Completion.TheForm.Caption := Name;
 
   Completion.TheForm.Font.Size := vSynEdit.Font.Size;
@@ -5625,6 +5726,7 @@ destructor TVirtualCategory.Destroy;
 begin
   FreeAndNil(FMapper);
   FreeAndNil(FCompletion);
+  //FreeAndNil(FTemplatePlugin);
   FreeAndNil(FHighlighter);
   inherited;
 end;

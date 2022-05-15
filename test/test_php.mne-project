@@ -17,7 +17,8 @@
           </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>D:\lab\pascal\miniEdit\test\test.php</FileName>
-            <CaretY>7</CaretY>
+            <CaretX>24</CaretX>
+            <CaretY>11</CaretY>
           </Object>
         </Items>
       </Files>

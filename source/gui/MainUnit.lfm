@@ -26,9 +26,11 @@ object MainForm: TMainForm
     Top = 0
     Width = 1021
     AutoSize = True
+    Color = clWindow
     EdgeBorders = [ebTop, ebBottom]
     Images = EditorResource.ToolbarImageList
     ParentColor = False
+    ParentFont = False
     TabOrder = 2
     object MainBar: TToolBar
       Left = 1
@@ -195,6 +197,7 @@ object MainForm: TMainForm
         Align = alClient
         AutoSize = False
         Layout = tlCenter
+        ParentColor = False
         PopupMenu = FilePopupMenu
       end
       object FileCloseBtn: TntvImgBtn
@@ -459,6 +462,7 @@ object MainForm: TMainForm
             Align = alClient
             BorderSpacing.Around = 2
             Caption = 'Path:'
+            ParentColor = False
             PopupMenu = FolderMenu
           end
           object FolderCloseBtn1: TntvImgBtn
