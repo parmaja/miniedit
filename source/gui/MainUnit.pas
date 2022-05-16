@@ -1140,7 +1140,7 @@ begin
     FileEncodeBtn.Enabled := Engine.Files.Current.IsText;
     FileTabs.ItemIndex := Engine.Files.Current.Index;
     if Engine.Files.Current.Name <> '' then
-      FileTabs.Items[FileTabs.ItemIndex].Caption := ExtractFileName(Engine.Files.Current.Name);
+      FileTabs.Items[FileTabs.ItemIndex].Caption := Engine.Files.Current.GetCaption;
     if Folder = '' then
       Folder := ExtractFilePath(Engine.Files.Current.Name);
     SaveAct.Enabled := Engine.Files.Current.IsChanged;

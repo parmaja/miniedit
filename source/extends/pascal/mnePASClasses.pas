@@ -295,9 +295,9 @@ begin
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(SymbolAttri, attSymbol);
     Mapper.Add(ASMAttri, attEmbed);
-    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(CommentAttri, attComment, ord(tkComment));
     Mapper.Add(IDEDirectiveAttri, attDirective);
-    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(IdentifierAttri, attIdentifier, ord(tkIdentifier));
     Mapper.Add(SpaceAttri, attDefault);
     Mapper.Add(CaseLabelAttri, attSymbol);
     Mapper.Add(DirectiveAttri, attDirective);

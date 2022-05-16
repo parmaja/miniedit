@@ -41,6 +41,7 @@ type
   TLSLFileCategory = class(TCodeFileCategory)
   private
   protected
+    function GetFileCaption(AFile: TEditorFile; FileName: string): string; override;
     function DoCreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
@@ -101,11 +102,11 @@ begin
   with Highlighter as TSynBVHSyn do
   begin
     Mapper.Add(WhitespaceAttri, attDefault);
-    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(CommentAttri, attComment, ord(tkComment));
     Mapper.Add(ProcessorAttri, attDirective);
     Mapper.Add(KeywordAttri, attKeyword);
     Mapper.Add(DocumentAttri, attDocument);
-    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(IdentifierAttri, attIdentifier, ord(tkIdentifier) );
     Mapper.Add(VariableAttri, attVariable);
     Mapper.Add(TypeAttri, attDataType);
     Mapper.Add(ValueAttri, attDataValue);
@@ -312,6 +313,28 @@ end;
 
 { TLSLFileCategory }
 
+function TLSLFileCategory.GetFileCaption(AFile: TEditorFile; FileName: string): string;
+const
+  sl: string = 'sl_script_';
+var
+  p: Integer;
+  ext: string;
+begin
+  if LeftStr(FileName, Length(sl)) = sl then
+  begin
+    ext := ExtractFileExt(FileName);
+    Result := MidStr(FileName, Length(sl) + 1, MaxInt);
+    p := ReversePos('_', Result);
+    if p>0 then
+    begin
+      Result := MidStr(Result, 1, p + 4); //* we take 4 char after _
+      Result := ChangeFileExt(Result, ext);
+    end;
+  end
+  else
+    Result := FileName;
+end;
+
 function TLSLFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TmneSynLSLSyn.Create(nil);
@@ -322,11 +345,11 @@ begin
   with Highlighter as TSynLSLSyn do
   begin
     Mapper.Add(WhitespaceAttri, attDefault);
-    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(CommentAttri, attComment, ord(tkComment));
     Mapper.Add(ProcessorAttri, attDirective);
     Mapper.Add(KeywordAttri, attKeyword);
-    Mapper.Add(DocumentAttri, attDocument);
-    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(DocumentAttri, attDocument, ord(tkDocument));
+    Mapper.Add(IdentifierAttri, attIdentifier, ord(tkIdentifier));
     Mapper.Add(VariableAttri, attVariable);
     Mapper.Add(TypeAttri, attDataType);
     Mapper.Add(ValueAttri, attDataValue);

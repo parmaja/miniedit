@@ -638,7 +638,8 @@ type
     property Content: TWinControl read GetContent; //Container of SynEdit or Grids or Images and all child contrls
     //Control we need to know about it to focus it after open file or changing focus by F6
     property Control: TWinControl read GetControl; //Control if available, maybe Grid or SynEdit or same the content
-    property SynEdit: TSynEdit read GetSynEdit; //SynEdit of available
+    //TODO Should not have this here
+    property SynEdit: TSynEdit read GetSynEdit; //SynEdit if available
   published
   end;
 
@@ -937,6 +938,7 @@ type
   TMap = class(TObject)
     Name: string;
     AttType: TAttributeType;
+    TokenID: Integer;
   end;
 
   { TMapper }
@@ -944,7 +946,9 @@ type
   TMapper = class(specialize TmnNamedObjectList<TMap>)
   private
   public
-    function Add(Attribute: TSynHighlighterAttributes; AttType: TAttributeType): TMap;
+    function Add(Attribute: TSynHighlighterAttributes; AttType: TAttributeType; TokenID: Integer = -1): TMap;
+    function IndexOfAttribute(AttributeType: TAttributeType): Integer;
+    function TokkenIDOf(AttributeType: TAttributeType): Integer;
   end;
 
   TFileCategoryKind = (
@@ -968,6 +972,8 @@ type
     function GetMapper: TMapper;
   protected
     FCompletion: TmneSynCompletion;
+
+    function GetFileCaption(AFile: TEditorFile; FileName: string): string; virtual;
     //FTemplatePlugin: TSynPluginTemplateEdit;
 
     function DoCreateHighlighter: TSynCustomHighlighter; virtual; abstract;
@@ -985,6 +991,8 @@ type
     function GetIsText: Boolean; virtual;
 
     function OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile; virtual;
+
+    procedure ScanValues(AFile: TEditorFile; Values: TStringList); virtual;
   public
     constructor Create(ATendency: TEditorTendency; const vName, vTitle: string; vKind: TFileCategoryKinds = []; vImageName: string = ''); virtual;
     constructor Create(ATendency: TEditorTendencyClass; const vName, vTitle: string; vKind: TFileCategoryKinds = []; vImageName: string = ''); virtual;
@@ -1053,6 +1061,7 @@ type
   protected
     IdentifierID: Integer;
     IdentifierAttribute: Integer;
+    procedure ScanValues(AFile: TEditorFile; Values: TStringList); override;
     procedure ExtractKeywords(Files, Identifiers: TStringList); virtual;
     procedure DoPrepareCompletion(Sender: TObject); override;
   end;
@@ -1817,6 +1826,79 @@ end;
 
 { TCodeFileCategory }
 
+procedure TCodeFileCategory.ScanValues(AFile: TEditorFile; Values: TStringList);
+  function ScanID(s: string; start: Integer; out Name, Value: string): Boolean;
+  var
+    i: Integer;
+  begin
+    i := Start;
+    while i <= Length(s) do
+    begin
+      if CharInSet(s[i], sWhitespace) or (s[i] = ':') then
+      begin
+        Name := MidStr(S, Start, i - Start);
+        Value := Trim(MidStr(S, i + 1, MaxInt));
+        if LeftStr(Value, 1) = ':' then
+          Value := Trim(MidStr(Value, 2, MaxInt));
+        Result := True;
+        break;
+      end
+      else
+        Inc(i);
+    end;
+
+  end;
+var
+  Token: string;
+  i: integer;
+  aLine: Integer;
+  aCommentKind: Integer;
+  p: Integer;
+  aSynEdit: TCustomSynEdit;
+  aName, aValue: string;
+begin
+  inherited;
+  aCommentKind := Mapper.TokkenIDOf(attDocument);
+  if aCommentKind < 0 then
+    aCommentKind := Mapper.TokkenIDOf(attComment);
+  if aCommentKind >= 0 then
+  begin
+    aSynEdit := AFile.SynEdit;
+    Screen.Cursor := crHourGlass;
+    try
+      if (aSynEdit <> nil) and (Highlighter <> nil) then
+      begin
+        aLine := aSynEdit.CaretY;
+
+        try
+          Highlighter.ResetRange;
+          for i := 0 to aSynEdit.Lines.Count - 1 do
+          begin
+            Highlighter.SetLine(aSynEdit.Lines[i], 1);
+            while not Highlighter.GetEol do
+            begin
+              Token := Highlighter.GetToken;
+              if (Highlighter.GetTokenKind = aCommentKind) then
+              begin
+                p := Pos('@', Token);
+                if p > 0 then
+                begin
+                  if ScanID(Token, p + 1, aName, aValue) then
+                    Values.AddPair(Trim(aName), Trim(aValue));
+                end;
+              end;
+              Highlighter.Next;
+            end;
+          end;
+        finally
+        end;
+      end;
+    finally
+      Screen.Cursor := crDefault;
+    end;
+  end;
+end;
+
 procedure TCodeFileCategory.ExtractKeywords(Files, Identifiers: TStringList);
 var
   aFile: TStringList;
@@ -1907,7 +1989,7 @@ begin
           while not Highlighter.GetEol do
           begin
             Token := Highlighter.GetToken;
-            if (i <> aLine - 1) or (aCurrent <> Token) then
+            if (i <> aLine - 1) or (aCurrent <> Token) then //TODO what is (i <> aLine - 1) ????
             begin
               if (Highlighter.GetTokenKind = IdentifierID) and (aIdentifiers.IndexOf(Token) < 0) then
                 aIdentifiers.Add(Token);
@@ -2048,12 +2130,43 @@ end;
 
 { TMapper }
 
-function TMapper.Add(Attribute: TSynHighlighterAttributes; AttType: TAttributeType): TMap;
+function TMapper.Add(Attribute: TSynHighlighterAttributes; AttType: TAttributeType; TokenID: Integer): TMap;
 begin
   Result := TMap.Create;
   Result.Name := Attribute.StoredName;
   Result.AttType := AttType;
+  Result.TokenID := TokenID;
   inherited Add(Result); //if there is a bug inside add, you need to fix it by code, so no need to catch it
+end;
+
+function TMapper.IndexOfAttribute(AttributeType: TAttributeType): Integer;
+var
+  i: integer;
+begin
+  Result := -1;
+  for i := 0 to Count - 1 do
+  begin
+    if Items[i].AttType = AttributeType then
+    begin
+      Result := i;
+      break;
+    end;
+  end;
+end;
+
+function TMapper.TokkenIDOf(AttributeType: TAttributeType): Integer;
+var
+  i: integer;
+begin
+  Result := -1;
+  for i := 0 to Count - 1 do
+  begin
+    if Items[i].AttType = AttributeType then
+    begin
+      Result := Items[i].TokenID;
+      break;
+    end;
+  end;
 end;
 
 { TSyntaxEditorFile }
@@ -4602,14 +4715,31 @@ begin
 end;
 
 procedure TEditorFile.SaveToFile(FileName: string);
+var
+  Values: TStringList;
+  BackupFileName: string;
 begin
-  DoSave(FileName);
-  Name := FileName;
-  IsChanged := False;
-  IsTemporary := False;
-  IsNew := False;
-  Engine.Update([ecsFolder]);
-  UpdateAge;
+  Values := TStringList.Create;
+  try
+    Group.Category.ScanValues(Self, Values);
+    DoSave(FileName);
+    if Values.IndexOfName('localfile') >= 0 then
+    begin
+      BackupFileName := Values.Values['localfile'];
+      BackupFileName := Engine.EnvReplace(BackupFileName, true);
+      BackupFileName := ExpandToPath(BackupFileName, Engine.Session.Project.Path);
+      if not SameFileName(BackupFileName, FileName) then
+        DoSave(BackupFileName);
+    end;
+    Name := FileName;
+    IsChanged := False;
+    IsTemporary := False;
+    IsNew := False;
+    Engine.Update([ecsFolder]);
+    UpdateAge;
+  finally
+    FreeAndNil(Values);
+  end;
 end;
 
 procedure TEditorFile.Rename(ToNakeName: string);
@@ -4874,6 +5004,8 @@ begin
   end
   else
     Result := ExtractFileName(Name);
+  if Group <> nil then
+    Result := Group.Category.GetFileCaption(Self, Result);
 end;
 
 function TEditorFile.GetLanguageName: string;
@@ -5782,6 +5914,11 @@ begin
     raise Exception.Create('Mapper is null');
 end;
 
+function TVirtualCategory.GetFileCaption(AFile: TEditorFile; FileName: string): string;
+begin
+  Result := FileName;
+end;
+
 function TVirtualCategory.GetHighlighter: TSynCustomHighlighter;
 begin
   InitHighlighter;
@@ -5796,6 +5933,10 @@ end;
 function TVirtualCategory.OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile;
 begin
   Result := nil;
+end;
+
+procedure TVirtualCategory.ScanValues(AFile: TEditorFile; Values: TStringList);
+begin
 end;
 
 procedure TVirtualCategory.DoExecuteCompletion(Sender: TObject);

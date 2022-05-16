@@ -576,9 +576,9 @@ begin
   with Highlighter as TSynJScriptSyn do
   begin
     Mapper.Add(SpaceAttri, attDefault);
-    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(CommentAttri, attComment, ord(tkComment));
     Mapper.Add(KeyAttri, attKeyword);
-    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(IdentifierAttri, attIdentifier, ord(tkIdentifier));
     Mapper.Add(NonReservedKeyAttri, attVariable);
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(StringAttri, attQuotedString);

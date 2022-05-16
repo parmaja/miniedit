@@ -8,16 +8,22 @@
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>G:\Games\opensim\dirkey2\bin\Regions\Regions.ini</CurrentFile>
-        <CurrentFolder>G:\Games\opensim\dirkey2\bin\Regions\</CurrentFolder>
+        <CurrentFile>C:\temp\test.lsl</CurrentFile>
+        <CurrentFolder>C:\Users\Main\AppData\Local\Temp\</CurrentFolder>
         <Items>
-          <Object Type="TEditorDesktopFile">
-            <FileName>D:\lab\pascal\miniEdit\test\test.html</FileName>
-            <CaretY>12</CaretY>
-          </Object>
           <Object Type="TEditorDesktopFile">
             <FileName>G:\Games\opensim\dirkey2\bin\Regions\Regions.ini</FileName>
             <CaretY>11</CaretY>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>D:\lab\pascal\miniEdit\test\teleport.lsl</FileName>
+            <CaretX>34</CaretX>
+            <CaretY>2</CaretY>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>C:\temp\test.lsl</FileName>
+            <CaretX>80</CaretX>
+            <CaretY>8</CaretY>
           </Object>
         </Items>
       </Files>
