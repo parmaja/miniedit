@@ -302,7 +302,7 @@ object MainForm: TMainForm
       TabOrder = 2
       OnClick = StatePnlClick
     end
-    object TypePnl: TPanel
+    object TendencyPnl: TPanel
       Left = 0
       Height = 21
       Hint = 'Project Type'
@@ -313,7 +313,7 @@ object MainForm: TMainForm
       BevelOuter = bvLowered
       BorderWidth = 2
       TabOrder = 3
-      OnDblClick = TypePnlDblClick
+      OnDblClick = TendencyPnlDblClick
     end
   end
   object BrowserPnl: TntvPanel
@@ -2002,7 +2002,7 @@ object MainForm: TMainForm
         Caption = '-'
       end
       object ProjectTypeMnu: TMenuItem
-        Action = SelectProjectTypeAct
+        Action = SelectProjectTendencyAct
       end
       object TypeOptionsMnu: TMenuItem
         Action = TypeOptionsAct
@@ -2204,7 +2204,7 @@ object MainForm: TMainForm
         Action = EditorColorsAct
       end
       object TypeOptionsForMnu: TMenuItem
-        Action = TypesOptionsAct
+        Action = TendenciesOptionsAct
       end
       object MenuItem41: TMenuItem
         Caption = '-'
@@ -2514,10 +2514,10 @@ object MainForm: TMainForm
       Hint = 'Source control managment type'
       OnExecute = SelectSCMTypeActExecute
     end
-    object SelectProjectTypeAct: TAction
+    object SelectProjectTendencyAct: TAction
       Category = 'Project'
-      Caption = 'Select Type'
-      OnExecute = SelectProjectTypeActExecute
+      Caption = 'Select Tendency'
+      OnExecute = SelectProjectTendencyActExecute
     end
     object TypeOptionsAct: TAction
       Category = 'Project'
@@ -2645,7 +2645,7 @@ object MainForm: TMainForm
     end
     object ShowTendencyFilterAct: TAction
       Category = 'Files'
-      Caption = 'Project Type Filter'
+      Caption = 'Project Tendency Filter'
       Checked = True
       GroupIndex = 5
       OnExecute = ShowTendencyFilterActExecute
@@ -2765,10 +2765,10 @@ object MainForm: TMainForm
       OnExecute = DBGAddWatchActExecute
       ShortCut = 16500
     end
-    object TypesOptionsAct: TAction
+    object TendenciesOptionsAct: TAction
       Category = 'Tools'
-      Caption = 'Types Options'
-      OnExecute = TypesOptionsActExecute
+      Caption = 'Tendencies Options'
+      OnExecute = TendenciesOptionsActExecute
     end
     object ProjectOptionsAct: TAction
       Category = 'Project'

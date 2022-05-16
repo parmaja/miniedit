@@ -19,6 +19,8 @@ type
   { TTendencyForm }
 
   TTendencyForm = class(TForm)
+    Button3: TButton;
+    Label1: TLabel;
     Label3: TLabel;
     IndentModeCbo: TComboBox;
     GroupBox1: TGroupBox;
@@ -28,6 +30,7 @@ type
     OverrideOptionsChk: TCheckBox;
     PageControl: TPageControl;
     GeneralSheet: TTabSheet;
+    DefaultPathEdit: TEdit;
     TabWidthEdit: TEdit;
     procedure PageControlChanging(Sender: TObject; var AllowChange: Boolean);
   private
@@ -78,6 +81,7 @@ begin
   FTendency.OverrideEditorOptions := OverrideOptionsChk.Checked;
   FTendency.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
   FTendency.IndentMode := TIndentMode(IndentModeCbo.ItemIndex);
+  FTendency.DefaultPath := DefaultPathEdit.Text;
 end;
 
 procedure TTendencyForm.RetrieveFrames;
@@ -108,6 +112,7 @@ begin
   OverrideOptionsChk.Checked := FTendency.OverrideEditorOptions;
   TabWidthEdit.Text := IntToStr(FTendency.TabWidth);
   IndentModeCbo.ItemIndex := Ord(FTendency.IndentMode);
+  DefaultPathEdit.Text := FTendency.DefaultPath;
 end;
 
 procedure TTendencyForm.PageControlChanging(Sender: TObject; var AllowChange: Boolean);

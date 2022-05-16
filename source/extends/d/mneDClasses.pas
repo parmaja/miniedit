@@ -214,7 +214,7 @@ begin
     aRunItem.Info.Run.AddParam(aPath);
 
     if RunOptions.ConfigFile <> '' then
-      aRunItem.Info.Run.AddParam('@' + Engine.EnvReplace(RunOptions.ConfigFile))
+      aRunItem.Info.Run.AddParam('@' + ReplaceVariables(RunOptions.ConfigFile))
     else if UseCfg then
     begin
       if FileExists(ChangeFileExt(Info.MainFile, '.cfg')) then

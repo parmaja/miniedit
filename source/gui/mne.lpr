@@ -86,7 +86,7 @@ var
         if Result then
         begin
           aWorkspace := aIniFile.ReadString('options', 'Workspace', '');
-          aWorkspace := IncludeTrailingPathDelimiter(Engine.EnvReplace(aWorkspace, True));
+          aWorkspace := IncludeTrailingPathDelimiter(Engine.ReplaceVariables(aWorkspace, True));
           Engine.Workspace := ExpandToPath(aWorkspace, Application.Location);
           Engine.Environment.Add('Workspace=' + aWorkspace);
           ForceDirectories(Engine.Workspace);

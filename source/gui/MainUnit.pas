@@ -177,7 +177,7 @@ type
     ToolButton8: TToolButton;
     UTF8Mnu: TMenuItem;
     TypeOptionsForMnu: TMenuItem;
-    TypesOptionsAct: TAction;
+    TendenciesOptionsAct: TAction;
     DBGCompileAct: TAction;
     MenuItem22: TMenuItem;
     GotoFileFolderMnu: TMenuItem;
@@ -208,9 +208,9 @@ type
     NewAct: TAction;
     MenuItem13: TMenuItem;
     SelectSCMTypeAct: TAction;
-    TypePnl: TPanel;
+    TendencyPnl: TPanel;
     ProjectTypeMnu: TMenuItem;
-    SelectProjectTypeAct: TAction;
+    SelectProjectTendencyAct: TAction;
     MenuItem10: TMenuItem;
     MenuItem11: TMenuItem;
     MenuItem12: TMenuItem;
@@ -492,7 +492,7 @@ type
     procedure SearchGridDblClick(Sender: TObject);
     procedure SearchGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
     procedure SearchGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-    procedure SelectProjectTypeActExecute(Sender: TObject);
+    procedure SelectProjectTendencyActExecute(Sender: TObject);
     procedure RefreshFilesActExecute(Sender: TObject);
     procedure RenameActExecute(Sender: TObject);
     procedure SaveActExecute(Sender: TObject);
@@ -529,8 +529,8 @@ type
     procedure ToolsMnuClick(Sender: TObject);
     procedure TypeOptionsActExecute(Sender: TObject);
     procedure TypePnlClick(Sender: TObject);
-    procedure TypePnlDblClick(Sender: TObject);
-    procedure TypesOptionsActExecute(Sender: TObject);
+    procedure TendencyPnlDblClick(Sender: TObject);
+    procedure TendenciesOptionsActExecute(Sender: TObject);
     procedure UC16BEBOMMnuClick(Sender: TObject);
     procedure UC16LEBOMMnuClick(Sender: TObject);
     procedure UTF8BOMMnuClick(Sender: TObject);
@@ -766,7 +766,7 @@ begin
     s := Engine.Files.Current.Extension;
     if LeftStr(s, 1) = '.' then
       s := MidStr(s, 2, MaxInt);
-    if MsgBox.Input(s, 'Please enter new file type for ' + s) then
+    if MsgBox.Input(s, 'Please enter new file tendency for ' + s) then
     begin
       Engine.Files.Current.Extension := s;
     end;
@@ -1094,7 +1094,7 @@ begin
       end;
       //E := G.IndexOfName()
       //from old Engine.Files.New(Engine.Tendency.GetDefaultGroup);
-      if ShowSelectList('Select file type', G, [slfSearch, slfUseNameTitle], E) then
+      if ShowSelectList('Select file tendency', G, [slfSearch, slfUseNameTitle], E) then
         Engine.Files.New(G[E]);
     finally
       G.Free;
@@ -1157,11 +1157,11 @@ begin
     SaveAllAct.Enabled := Engine.GetIsChanged;
   end;
   if Engine.Session.Active and (Engine.Session.Project.Tendency <> nil) then
-    TypePnl.Caption := Engine.Session.Project.Tendency.Name
+    TendencyPnl.Caption := Engine.Session.Project.Tendency.Name
   else if (Engine.Files.Current <> nil) and (Engine.Files.Current.Tendency <> nil) then
-    TypePnl.Caption := Engine.Files.Current.Tendency.Name
+    TendencyPnl.Caption := Engine.Files.Current.Tendency.Name
   else
-    TypePnl.Caption := 'Undefined';
+    TendencyPnl.Caption := 'Undefined';
   //  DebugPnl.Visible := DebugPnl.Caption <> '';
 
   DBCommitAct.Enabled := DBEngine.HaveSessions;
@@ -1380,13 +1380,13 @@ begin
     SearchGridDblClick(Sender);
 end;
 
-procedure TMainForm.SelectProjectTypeActExecute(Sender: TObject);
+procedure TMainForm.SelectProjectTendencyActExecute(Sender: TObject);
 var
   lTendency: TEditorTendency;
 begin
   if Engine.Session.Active then
   begin
-    if not MsgBox.No('You cannot change the type without losing project setting, are you sure?') then
+    if not MsgBox.No('You cannot change the tendency without losing project setting, are you sure?') then
     begin
       lTendency := Engine.Session.Project.Tendency;
       if Engine.ChooseTendency(lTendency) then
@@ -1782,12 +1782,12 @@ procedure TMainForm.TypePnlClick(Sender: TObject);
 begin
 end;
 
-procedure TMainForm.TypePnlDblClick(Sender: TObject);
+procedure TMainForm.TendencyPnlDblClick(Sender: TObject);
 begin
-  SelectProjectTypeAct.Execute;
+  SelectProjectTendencyAct.Execute;
 end;
 
-procedure TMainForm.TypesOptionsActExecute(Sender: TObject);
+procedure TMainForm.TendenciesOptionsActExecute(Sender: TObject);
 var
   lTendency: TEditorTendency;
 begin

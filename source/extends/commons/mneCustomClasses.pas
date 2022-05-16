@@ -244,7 +244,7 @@ begin
       //aRunItem.Info.AddParam('-v');
 
       if AOptions.ConfigFile <> '' then
-        aRunItem.Info.Run.AddParam('@' + Engine.EnvReplace(AOptions.ConfigFile));
+        aRunItem.Info.Run.AddParam('@' + ReplaceVariables(AOptions.ConfigFile));
     end;
 
     if rnaExecute in Info.Actions then

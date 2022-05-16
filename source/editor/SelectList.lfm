@@ -11,7 +11,7 @@ object SelectListForm: TSelectListForm
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Position = poMainFormCenter
-  LCLVersion = '2.1.0.0'
+  LCLVersion = '2.3.0.0'
   object ItemsList: TListView
     Left = 3
     Height = 195
@@ -22,9 +22,9 @@ object SelectListForm: TSelectListForm
     Columns = <    
       item
         AutoSize = True
-        Caption = 'Type'
+        Caption = 'Name'
         MinWidth = 100
-        Width = 41
+        Width = 47
       end    
       item
         Caption = 'Description'
