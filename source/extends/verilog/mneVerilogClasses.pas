@@ -198,7 +198,7 @@ begin
 
     for i := 0 to Engine.Files.Count-1 do
       if Engine.Files[i].Extension='.v' then
-        aRunItem.Info.Run.AddParam(Engine.Files[i].Name);
+        aRunItem.Info.Run.AddParam(Engine.Files[i].FileName);
   end;
 
   if rnaExecute in Info.Actions then

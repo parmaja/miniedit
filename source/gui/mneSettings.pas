@@ -265,7 +265,7 @@ var
 begin
   aFolder := MainPathEdit.Text;
   if (aFolder = '') and (Engine.Files.Current <> nil) then
-    aFolder := ExtractFilePath(Engine.Files.Current.Name);
+    aFolder := ExtractFilePath(Engine.Files.Current.FileName);
   if SelectFolder('Select root directory for your project', '', aFolder) then
   begin
     MainPathEdit.Text := aFolder;

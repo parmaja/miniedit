@@ -13,6 +13,10 @@ unit EditorEngine;
 
 {**
 
+  FileName = c:\temp\myfile.ext
+  File = myfile.ext
+  NickName = myfile
+  FilePath = c:\temp\
 
   Categories: list
     Category: object have have highlighter, autocomplete ...
@@ -28,7 +32,7 @@ interface
 
 uses
   Messages, SysUtils, Forms, StdCtrls, StrUtils, Dialogs, Variants, Classes, Menus, Controls, LCLIntf, LConvEncoding,
-  FileUtil, LazFileUtils,
+  FileUtil, LazFileUtils, Math,
   Graphics, Contnrs, Types, IniFiles, EditorOptions, EditorColors, EditorProfiles, fgl,
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses, SynEditPlugins, SynPluginTemplateEdit,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
@@ -531,7 +535,7 @@ type
   TEditorFile = class(TCollectionItem, IFileEditor)
   private
     FFileEncoding: String;
-    FName: String;
+    FFileName: String;
     FIsNew: Boolean;
     FIsChanged: Boolean;
     FFileAge: Integer;
@@ -545,7 +549,7 @@ type
     function GetEditCapability: TEditCapabilities;
     function GetRunCapability: TRunCapabilities;
     function GetIsText: Boolean;
-    function GetNakeName: String;
+    function GetBaseName: String;
     function GetNickName: String;
     function GetExtension: String;
     function GetPath: String;
@@ -557,7 +561,7 @@ type
     function GetLinesModeAsText: String;
     procedure SetLinesMode(const Value: TEditorLinesMode);
     procedure SetExtension(AValue: String);
-    procedure SetNakeName(AValue: String);
+    procedure SetBaseName(AValue: String);
     procedure SetNickName(AValue: String);
   protected
     procedure InitContents; virtual;
@@ -584,9 +588,9 @@ type
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
     procedure AssignTo(Dest: TPersistent); override;
-    procedure LoadFromFile(FileName: String);
+    procedure LoadFromFile(AFileName: String);
     procedure Load;
-    procedure SaveToFile(FileName: String);
+    procedure SaveToFile(AFileName: String);
     procedure Save(Force: Boolean; Extension: String = ''; AsNewFile: Boolean = False); virtual;
     procedure Save;
 
@@ -596,7 +600,7 @@ type
     procedure ContentsLoadFromFile(SynEdit: TSynEdit; FileName: String); //used if u have synedit
     procedure ContentsSaveToFile(SynEdit: TSynEdit; FileName: String);
 
-    procedure Rename(ToNakeName: String); //only name not with the path
+    procedure Rename(ToName: String); //only name not with the path
     procedure Delete; //only name not with the path
 
     procedure Show; virtual; //Need to activate it after show to focus editor
@@ -644,13 +648,13 @@ type
     property FileEncoding: String read FFileEncoding write SetFileEncoding;
     property LinesModeAsText: String read GetLinesModeAsText;
     property IsText: Boolean read GetIsText;
-    property Name: String read FName write FName;
-    property Params: String read FParams write FParams;
+    property FileName: String read FFileName write FFileName;
+    property BaseName: String read GetBaseName write SetBaseName; //no path with ext
+    property NickName: String read GetNickName write SetNickName; //no path without ext
     property Title: String read FTitle write FTitle; //used only if Name is empty for temporary files
-    property NakeName: String read GetNakeName write SetNakeName; //no path with ext
-    property NickName: String read GetNickName write SetNickName; //no path no ext
-    property Extension: String read GetExtension write SetExtension;
     property Path: String read GetPath;
+    property Params: String read FParams write FParams;
+    property Extension: String read GetExtension write SetExtension;
     property Tendency: TEditorTendency read GetTendency;
     property Related: String read FRelated write FRelated;
     property IsChanged: Boolean read FIsChanged write SetIsChanged;
@@ -702,8 +706,8 @@ type
     function GetIsReadonly: Boolean; override;
     procedure SetIsReadonly(const Value: Boolean); override;
     function GetContent: TWinControl; override;
-    procedure DoLoad(FileName: String); override;
-    procedure DoSave(FileName: String); override;
+    procedure DoLoad(AFileName: String); override;
+    procedure DoSave(AFileName: String); override;
     procedure GroupChanged; override;
     procedure DoEdit(Sender: TObject); override;
     procedure DoStatusChange(Sender: TObject; Changes: TSynStatusChanges); override;
@@ -1892,36 +1896,40 @@ end;
 
 procedure TCodeFileCategory.ScanValues(AFile: TEditorFile; Values: TStringList);
 
-  function ScanID(s: String; start: Integer; out Name, Value: String): Boolean;
-  var
-    i: Integer;
+  function ScanID(s: String; start: Integer; out Stop: integer; out Name, Value: String): Boolean;
   begin
-    i := Start;
-    while i <= Length(s) do
+    Stop := Start;
+    while true do
     begin
-      if CharInSet(s[i], sWhitespace) or (s[i] = ':') then
+      if (Stop > Length(s)) or CharInSet(s[Stop], sWhitespace + [':', '=']) then
       begin
-        Name := MidStr(S, Start, i - Start);
-        Value := Trim(MidStr(S, i + 1, MaxInt));
-        if LeftStr(Value, 1) = ':' then
-          Value := Trim(MidStr(Value, 2, MaxInt));
+        Name := MidStr(S, Start, Stop - Start);
+        Value := Trim(MidStr(S, Stop + 1, MaxInt));
         Result := True;
-        break;
+        Break;
       end
       else
-        Inc(i);
+        Inc(Stop);
     end;
-
   end;
 
 var
   Token: String;
   i: Integer;
-  aLine: Integer;
   aCommentKind: Integer;
   p: Integer;
   aSynEdit: TCustomSynEdit;
   aName, aValue: String;
+  p1,p2 :TPoint;
+  aLine: string;
+  Stop: Integer;
+
+  procedure UpdateValue(Value: string);
+  begin
+     p1 := Point(Highlighter.GetTokenPos + Stop + 1, i + 1);
+     p2 := Point(Max(Length(aLine) + 1, p1.x + length(Value)), i + 1); //to the end of line, baaah no but temporary
+     aSynEdit.TextBetweenPointsEx[p1, p2, scamIgnore] := Value;
+  end;
 begin
   inherited;
   aCommentKind := Mapper.TokkenIDOf(attDocument);
@@ -1934,13 +1942,12 @@ begin
     try
       if (aSynEdit <> nil) and (Highlighter <> nil) then
       begin
-        aLine := aSynEdit.CaretY;
-
         try
           Highlighter.ResetRange;
           for i := 0 to aSynEdit.Lines.Count - 1 do
           begin
-            Highlighter.SetLine(aSynEdit.Lines[i], 1);
+            aLine := aSynEdit.Lines[i];
+            Highlighter.SetLine(aLine, 1);
             while not Highlighter.GetEol do
             begin
               Token := Highlighter.GetToken;
@@ -1949,8 +1956,22 @@ begin
                 p := Pos('@', Token);
                 if p > 0 then
                 begin
-                  if ScanID(Token, p + 1, aName, aValue) then
-                    Values.AddPair(Trim(aName), Trim(aValue));
+                  if ScanID(Token, p + 1, Stop, aName, aValue) then
+                  begin
+                    aName := Trim(aName);
+                    aValue := Trim(aValue);
+                    Values.AddPair(aName, aValue);
+                    if aName = 'updated' then
+                    begin
+                      aValue := ' ' + ISODateToStr(Now);
+                      UpdateValue(aValue);
+                    end
+                    else if aName = 'filename' then
+                    begin
+                      //aValue := ' ' + AFile.Name;
+                      UpdateValue(aValue);
+                    end;
+                  end;
                 end;
               end;
               Highlighter.Next;
@@ -2035,7 +2056,7 @@ begin
           aFiles := TStringList.Create;
           try
             EnumFileList(Engine.Session.GetRoot, GetExtensions, Engine.Options.IgnoreNames, aFiles, 1000, 3, Engine.Session.Active);//TODO check the root dir if no project opened
-            r := aFiles.IndexOf(Engine.Files.Current.Name);
+            r := aFiles.IndexOf(Engine.Files.Current.FileName);
             if r >= 0 then
               aFiles.Delete(r);
             ExtractKeywords(aFiles, CachedIdentifiers);
@@ -2263,14 +2284,14 @@ begin
   Result := SynEdit;
 end;
 
-procedure TSyntaxEditorFile.DoLoad(FileName: String);
+procedure TSyntaxEditorFile.DoLoad(AFileName: String);
 begin
-  ContentsLoadFromFile(SynEdit, FileName);
+  ContentsLoadFromFile(SynEdit, AFileName);
 end;
 
-procedure TSyntaxEditorFile.DoSave(FileName: String);
+procedure TSyntaxEditorFile.DoSave(AFileName: String);
 begin
-  ContentsSaveToFile(SynEdit, FileName);
+  ContentsSaveToFile(SynEdit, AFileName);
 end;
 
 procedure TSyntaxEditorFile.GroupChanged;
@@ -2320,7 +2341,7 @@ begin
     aLine := SynEdit.PixelsToRowColumn(Point(X, Y)).y;
     DebugManager.Enter;
     try
-      Tendency.Debugger.Breakpoints.Toggle(Name, aLine);
+      Tendency.Debugger.Breakpoints.Toggle(FileName, aLine);
     finally
       DebugManager.Leave;
     end;
@@ -2960,7 +2981,7 @@ begin
         p.MainFile := Engine.ExpandFile(Engine.Session.Project.RunOptions.MainFile); //TODO: here need to care about expand file to be similar to env variable
 
         if (p.MainFile = '') and (Engine.Files.Current <> nil) then
-          p.MainFile := Engine.Files.Current.Name;
+          p.MainFile := Engine.Files.Current.FileName;
 
         if (p.Root = '') then
           p.Root := ExtractFileDir(p.MainFile);
@@ -3560,7 +3581,7 @@ begin
   Result := nil;
   for i := 0 to Count - 1 do
   begin
-    if SameText(vFileName, Items[i].Name) then
+    if SameText(vFileName, Items[i].FileName) then
     begin
       Result := Items[i];
       break;
@@ -4000,7 +4021,7 @@ end;
 procedure TEditorFiles.SaveAs;
 begin
   if Current <> nil then
-    Current.Save(True, ExtractFileExt(Current.Name), True);
+    Current.Save(True, ExtractFileExt(Current.FileName), True);
 end;
 
 procedure TEditorOptions.Save(vWorkspace: String);
@@ -4456,7 +4477,7 @@ begin
       MainFile := '';
 
     if (MainFile = '') and (Files.Current <> nil) then
-      MainFile := Files.Current.Name;
+      MainFile := Files.Current.FileName;
 
     if MainFile <> '' then
     begin
@@ -4611,7 +4632,7 @@ procedure TEditorFiles.Revert;
 begin
   if Current <> nil then
   begin
-    if MsgBox.Yes('Revert file ' + Current.Name) then
+    if MsgBox.Yes('Revert file ' + Current.FileName) then
       Current.Load;
   end;
 end;
@@ -4725,17 +4746,17 @@ var
   mr: TmsgChoice;
   a: Boolean;
 begin
-  if (Name <> '') or not IsTemporary then
+  if (FileName <> '') or not IsTemporary then
   begin
     if IsChanged then
     begin
-      mr := MsgBox.YesNoCancel('Save file ' + Name + ' before close?');
+      mr := MsgBox.YesNoCancel('Save file ' + FileName + ' before close?');
       if mr = msgcCancel then
         Abort
       else if mr = msgcYes then
         Save(True);
     end;
-    Engine.ProcessRecentFile(Name);
+    Engine.ProcessRecentFile(FileName);
   end;
 
   i := Index;
@@ -4788,10 +4809,10 @@ begin
   Engine.Files.Edited;
 end;
 
-procedure TEditorFile.LoadFromFile(FileName: String);
+procedure TEditorFile.LoadFromFile(AFileName: String);
 begin
-  FileName := ExpandFileName(FileName);
-  Name := FileName;
+  FileName := ExpandFileName(AFileName);
+  FileName := AFileName;
   try
     DoLoad(FileName);//maybe safe loading
   except
@@ -4825,7 +4846,7 @@ begin
   end;
 end;
 
-procedure TEditorFile.SaveToFile(FileName: String);
+procedure TEditorFile.SaveToFile(AFileName: String);
 var
   Values: TStringList;
   BackupFileName: String;
@@ -4833,15 +4854,18 @@ begin
   Values := TStringList.Create;
   try
     Group.Category.ScanValues(Self, Values);
-    DoSave(FileName);
+    DoSave(AFileName);
     if Values.IndexOfName('localfile') >= 0 then
     begin
       try
         BackupFileName := DequoteStr(Values.Values['localfile'], '"');
         BackupFileName := ReplaceVariables(BackupFileName, []);
         BackupFileName := ExpandToPath(BackupFileName, Engine.Session.Project.DefaultPath);
-        if not SameFileName(BackupFileName, FileName) then
+        if not SameFileName(BackupFileName, AFileName) then
+        begin
           DoSave(BackupFileName);
+          Engine.SendLog('Saved as backup: ' + BackupFileName);
+        end;
       except
         on E: Exception do
         begin
@@ -4849,7 +4873,7 @@ begin
         end;
       end;
     end;
-    Name := FileName;
+    FileName := AFileName;
     IsChanged := False;
     IsTemporary := False;
     IsNew := False;
@@ -4860,7 +4884,7 @@ begin
   end;
 end;
 
-procedure TEditorFile.Rename(ToNakeName: String);
+procedure TEditorFile.Rename(ToName: String);
 var
   p: String;
   aExt: String;
@@ -4868,14 +4892,14 @@ var
 begin
   Engine.BeginUpdate;
   try
-    if Name <> '' then
+    if FileName <> '' then
     begin
-      p := ExtractFilePath(Name);
-      if RenameFile(Name, p + ToNakeName) then
+      p := ExtractFilePath(FileName);
+      if RenameFile(FileName, p + ToName) then
       begin
-        Engine.RemoveRecentFile(Name);
-        Name := p + ToNakeName;
-        Engine.ProcessRecentFile(Name);
+        Engine.RemoveRecentFile(FileName);
+        FileName := p + ToName;
+        Engine.ProcessRecentFile(FileName);
 
         aExt := Extension;
         if LeftStr(aExt, 1) <> '.' then
@@ -4885,7 +4909,7 @@ begin
       end;
     end
     else
-      Name := ToNakeName;
+      FileName := ToName;
     Engine.Update([ecsRefresh, ecsFolder, ecsState, ecsChanged]);
   finally
     Engine.EndUpdate;
@@ -4896,12 +4920,12 @@ procedure TEditorFile.Delete;
 begin
   Engine.BeginUpdate;
   try
-    if Name <> '' then
+    if FileName <> '' then
     begin
-      if DeleteFile(Name) then
+      if DeleteFile(FileName) then
       begin
-        Engine.RemoveRecentFile(Name);
-        Name := ExtractFileName(Name);
+        Engine.RemoveRecentFile(FileName);
+        FileName := ExtractFileName(FileName);
         IsNew := True;
         IsChanged := True;
       end;
@@ -4954,18 +4978,18 @@ var
 begin
   DoRecent := False;
   aName := '';
-  if (((Name <> '') or not IsTemporary) or Force) then
+  if (((FileName <> '') or not IsTemporary) or Force) then
   begin
-    if (IsNew or (FName = '') or AsNewFile) then
+    if (IsNew or (FFileName = '') or AsNewFile) then
     begin
       aDialog := TSaveDialog.Create(nil);
       aDialog.Title := 'Save file';
       aDialog.Filter := Engine.Groups.CreateFilter(True, Extension, Group, False);//put the group of file as the first one
 
-      if Name <> '' then
+      if FileName <> '' then
       begin
-        aDialog.InitialDir := ExtractFilePath(Name);
-        aDialog.FileName := Name;
+        aDialog.InitialDir := ExtractFilePath(FileName);
+        aDialog.FileName := FileName;
       end
       else
       begin
@@ -4992,7 +5016,7 @@ begin
     end
     else
     begin
-      aName := FName;
+      aName := FFileName;
       aSave := True;
     end;
   end
@@ -5002,7 +5026,7 @@ begin
   if aSave then
   begin
     SaveToFile(aName);
-    FName := aName;
+    FFileName := aName;
     if DoRecent then
     begin
       Engine.ProcessRecentFile(aName);
@@ -5024,14 +5048,14 @@ var
   n: Integer;
 begin
   Result := True;
-  if (Name <> '') and (FileExists(Name)) then //even if marked as new
+  if (FileName <> '') and (FileExists(FileName)) then //even if marked as new
   begin
-    if IsNew or ((FFileAge <> FileAge(Name)) or (FFileSize <> FileSize(Name))) then
+    if IsNew or ((FFileAge <> FileAge(FileName)) or (FFileSize <> FileSize(FileName))) then
     begin
       if Force or (Engine.Options.Profile.AutoUpdateFile and not IsChanged) then
         mr := msgcYes
       else
-        mr := MsgBox.YesNoCancel(Name + #13' was changed, update it?');
+        mr := MsgBox.YesNoCancel(FileName + #13' was changed, update it?');
       if mr = msgcYes then
         Load;
       if mr = msgcCancel then
@@ -5045,7 +5069,7 @@ begin
     if Force then
       n := -1 //nothing
     else
-      n := MsgBox.Ask(Name + #13' was not found, what do want?', [Choice('&Keep It', msgcYes), Choice('&Close', msgcCancel), Choice('Read only', msgcNo)], 0, 2);
+      n := MsgBox.Ask(FileName + #13' was not found, what do want?', [Choice('&Keep It', msgcYes), Choice('&Close', msgcCancel), Choice('Read only', msgcNo)], 0, 2);
     if n = -1 then //do nothing
     else if n = 0 then //Keep It
       IsNew := True
@@ -5109,7 +5133,7 @@ end;
 
 function TEditorFile.GetCaption: String;
 begin
-  if Name = '' then
+  if FileName = '' then
   begin
     if Group <> nil then
       Result := Group.Name
@@ -5121,7 +5145,7 @@ begin
       Result := '*' + Result;
   end
   else
-    Result := ExtractFileName(Name);
+    Result := ExtractFileName(FileName);
   if Group <> nil then
     Result := Group.Category.GetFileCaption(Self, Result);
 end;
@@ -5170,9 +5194,12 @@ procedure TEditorFile.EnumVariables(Values: TStringList; EnumSkips: TEnumVariabl
 begin
   if not (evsFile in EnumSkips) then
   begin
-    Values.Merge('File', Name);
-    Values.Merge('FileName', NakeName);
+    Values.Merge('File', FileName);
+    Values.Merge('FileName', FileName);
+    Values.Merge('FileBaseName', BaseName);
+    Values.Merge('BaseName', BaseName);
     Values.Merge('FileNickName', NickName);
+    Values.Merge('NickName', NickName);
     Values.Merge('FilePath', Path);
   end;
   Group.Category.EnumVariables(Values, EnumSkips + [evsFile]);
@@ -5199,14 +5226,14 @@ end;
 
 procedure TEditorFile.UpdateAge;
 begin
-  FFileAge := FileAge(Name);
-  FFileSize := FileSize(Name);
+  FFileAge := FileAge(FileName);
+  FFileSize := FileSize(FileName);
   IsNew := False;
 end;
 
 procedure TEditorFile.Load;
 begin
-  LoadFromFile(Name);
+  LoadFromFile(FileName);
 end;
 
 procedure TEditorFile.SetGroup(const Value: TFileGroup);
@@ -5240,24 +5267,24 @@ begin
   Result := (Group <> nil) and Group.Category.IsText;
 end;
 
-function TEditorFile.GetNakeName: String;
+function TEditorFile.GetBaseName: String;
 begin
-  Result := ExtractFileName(Name);
+  Result := ExtractFileName(FileName);
 end;
 
 function TEditorFile.GetExtension: String;
 begin
-  Result := ExtractFileExt(Name);
+  Result := ExtractFileExt(FileName);
 end;
 
 function TEditorFile.GetPath: String;
 begin
-  Result := ExtractFilePath(Name);
+  Result := ExtractFilePath(FileName);
 end;
 
 function TEditorFile.GetNickName: String;
 begin
-  Result := ExtractFileNameWithoutExt(NakeName);
+  Result := ExtractFileNameWithoutExt(BaseName);
 end;
 
 function TEditorFile.GetTendency: TEditorTendency;
@@ -5544,7 +5571,7 @@ begin
   end;
 end;
 
-procedure TEditorFile.SetNakeName(AValue: String);
+procedure TEditorFile.SetBaseName(AValue: String);
 begin
   Rename(AValue);
 end;
@@ -6614,7 +6641,7 @@ begin
       for i := FirstLine to LastLine do
       begin
         aLine := TSynEdit(SynEdit).ScreenRowToRow(i);
-        if aTendency.Debugger.Breakpoints.IsExists(FEditorFile.Name, aLine) then
+        if aTendency.Debugger.Breakpoints.IsExists(FEditorFile.FileName, aLine) then
           DrawIndicator(i, DEBUG_IMAGE_BREAKPOINT);
       end;
 
@@ -6735,14 +6762,14 @@ begin
   Files.Clear;
 
   if (Engine.Files.Current <> nil) and (not Engine.Files.Current.IsNew) then
-    Files.CurrentFile := Engine.Files.Current.Name
+    Files.CurrentFile := Engine.Files.Current.FileName
   else
     Files.CurrentFile := '';
 
   for i := 0 to Engine.Files.Count - 1 do
   begin
     aFile := Engine.Files[i];
-    aItem := Files.Add(aFile.Name);
+    aItem := Files.Add(aFile.FileName);
     aFile.AssignTo(aItem);
   end;
 end;

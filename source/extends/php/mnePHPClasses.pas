@@ -419,7 +419,7 @@ begin
               aFiles := TStringList.Create;
               try
                 EnumFileList(Engine.Session.GetRoot, '*.php', Engine.Options.IgnoreNames, aFiles, 1000, 3, True);//TODO check the root dir if no project opened
-                r := aFiles.IndexOf(Engine.Files.Current.Name);
+                r := aFiles.IndexOf(Engine.Files.Current.FileName);
                 if r >= 0 then
                   aFiles.Delete(r);
                 ExtractKeywords(aFiles, CachedVariables, CachedIdentifiers);

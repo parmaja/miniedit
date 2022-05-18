@@ -35,8 +35,8 @@ type
     procedure InitContents; override;
     function GetContent: TWinControl; override;
     function GetIsReadonly: Boolean; override;
-    procedure DoLoad(FileName: string); override;
-    procedure DoSave(FileName: string); override;
+    procedure DoLoad(AFileName: string); override;
+    procedure DoSave(AFileName: string); override;
   public
     destructor Destroy; override;
   end;
@@ -94,10 +94,10 @@ begin
   Result := True;
 end;
 
-procedure TImageFile.DoLoad(FileName: string);
+procedure TImageFile.DoLoad(AFileName: string);
 begin
   try
-    FContent.Image.Picture.LoadFromFile(FileName);
+    FContent.Image.Picture.LoadFromFile(AFileName);
   except
     on E: Exception do
     begin
@@ -107,9 +107,9 @@ begin
   end;
 end;
 
-procedure TImageFile.DoSave(FileName: string);
+procedure TImageFile.DoSave(AFileName: string);
 begin
-  FContent.Image.Picture.SaveToFile(FileName);
+  FContent.Image.Picture.SaveToFile(AFileName);
 end;
 
 destructor TImageFile.Destroy;

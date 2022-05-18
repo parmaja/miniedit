@@ -237,7 +237,7 @@ end;
 procedure TSearchInFilesForm.MenuItem1Click(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
-    SearchFolderEdit.Text := ExtractFileDir(Engine.Files.Current.Name)
+    SearchFolderEdit.Text := ExtractFileDir(Engine.Files.Current.FileName)
 end;
 
 procedure TSearchInFilesForm.MenuItem2Click(Sender: TObject);

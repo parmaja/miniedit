@@ -835,7 +835,7 @@ procedure TMainForm.DeleteActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
   begin
-    if not MsgBox.No('Are you sure want delete ' + Engine.Files.Current.NakeName) then
+    if not MsgBox.No('Are you sure want delete ' + Engine.Files.Current.BaseName) then
       Engine.Files.Current.Delete;
   end;
 end;
@@ -1116,7 +1116,7 @@ begin
   try
     FileTabs.Items.Clear;
     for i := 0 to Engine.Files.Count - 1 do
-      FileTabs.Items.AddItem(ExtractFileName(Engine.Files[i].Name), Engine.Files[i].GetCaption);
+      FileTabs.Items.AddItem(ExtractFileName(Engine.Files[i].FileName), Engine.Files[i].GetCaption);
   finally
     FileTabs.Items.EndUpdate;
   end;
@@ -1133,16 +1133,16 @@ begin
   begin
     if (Engine.Files.Current.SynEdit <> nil) and (Engine.Files.Current.SynEdit.PopupMenu = nil) then
       Engine.Files.Current.SynEdit.PopupMenu := EditorPopupMenu;
-    FileNameLbl.Caption := Engine.Files.Current.Name;
+    FileNameLbl.Caption := Engine.Files.Current.FileName;
     LinesModeBtn.Caption := Engine.Files.Current.LinesModeAsText;
     LinesModeBtn.Enabled := Engine.Files.Current.IsText;
     FileEncodeBtn.Caption := UpperCase(Engine.Files.Current.FileEncoding);
     FileEncodeBtn.Enabled := Engine.Files.Current.IsText;
     FileTabs.ItemIndex := Engine.Files.Current.Index;
-    if Engine.Files.Current.Name <> '' then
+    if Engine.Files.Current.FileName <> '' then
       FileTabs.Items[FileTabs.ItemIndex].Caption := Engine.Files.Current.GetCaption;
     if Folder = '' then
-      Folder := ExtractFilePath(Engine.Files.Current.Name);
+      Folder := ExtractFilePath(Engine.Files.Current.FileName);
     SaveAct.Enabled := Engine.Files.Current.IsChanged;
     SaveAllAct.Enabled := Engine.GetIsChanged;
   end
@@ -1296,7 +1296,7 @@ end;
 procedure TMainForm.SCMAddFileActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
-    Engine.SCM.AddFile(Engine.Files.Current.Name);
+    Engine.SCM.AddFile(Engine.Files.Current.FileName);
 end;
 
 procedure TMainForm.SearchGridDblClick(Sender: TObject);
@@ -1684,7 +1684,7 @@ procedure TMainForm.ExploreFolderActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
   begin
-    ExploreFolder(Engine.Files.Current.Name);
+    ExploreFolder(Engine.Files.Current.FileName);
   end;
 end;
 
@@ -1707,7 +1707,7 @@ procedure TMainForm.SetAsMainFileAcExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
   begin
-    Engine.Session.Project.RunOptions.MainFile := Engine.Files.Current.Name;
+    Engine.Session.Project.RunOptions.MainFile := Engine.Files.Current.FileName;
     Engine.Update([ecsRefresh]);
   end;
 end;
@@ -1923,7 +1923,7 @@ procedure TMainForm.GotoFileFolderActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
   begin
-    Folder := ExtractFilePath(Engine.Files.Current.Name);
+    Folder := ExtractFilePath(Engine.Files.Current.FileName);
     Engine.ProcessRecentFolder(Folder);
   end;
 end;
@@ -2534,7 +2534,7 @@ begin
     else if (Engine.Session.Project.Name <> '') then
       Caption := Engine.Session.Project.Name + ' - ' + sApplicationTitle
     else if Engine.Files.Current <> nil then
-      Caption := Engine.Files.Current.NakeName + ' - ' + sApplicationTitle
+      Caption := Engine.Files.Current.BaseName + ' - ' + sApplicationTitle
     else
       Caption := sApplicationTitle;
   end
@@ -2744,19 +2744,19 @@ end;
 procedure TMainForm.SCMDiffFileActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
-    Engine.SCM.DiffFile(Engine.Files.Current.Name);
+    Engine.SCM.DiffFile(Engine.Files.Current.FileName);
 end;
 
 procedure TMainForm.SCMCommitFileActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
-    Engine.SCM.CommitFile(Engine.Files.Current.Name);
+    Engine.SCM.CommitFile(Engine.Files.Current.FileName);
 end;
 
 procedure TMainForm.SCMUpdateFileActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
-    Engine.SCM.UpdateFile(Engine.Files.Current.Name);
+    Engine.SCM.UpdateFile(Engine.Files.Current.FileName);
 end;
 
 procedure TMainForm.SCMUpdateActExecute(Sender: TObject);
@@ -3152,7 +3152,7 @@ begin
         aLine := Current.SynEdit.CaretY;
         DebugManager.Enter;
         try
-          Current.Tendency.Debugger.Breakpoints.Toggle(Current.Name, aLine);
+          Current.Tendency.Debugger.Breakpoints.Toggle(Current.FileName, aLine);
         finally
           DebugManager.Leave;
         end;
@@ -3183,7 +3183,7 @@ end;
 procedure TMainForm.CopyFileNameActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
-    Clipboard.AsText := Engine.Files.Current.Name;
+    Clipboard.AsText := Engine.Files.Current.FileName;
 end;
 
 procedure TMainForm.DBGAddWatchActExecute(Sender: TObject);
@@ -3329,7 +3329,7 @@ procedure TMainForm.ExploreFolder(AFolder: string);
 begin
   if Engine.Files.Current <> nil then
   begin
-    ExploreFile(Engine.Files.Current.Name);
+    ExploreFile(Engine.Files.Current.FileName);
   end;
 end;
 
@@ -3387,7 +3387,7 @@ begin
       //      aDialog.InitialDir := Engine.BrowseFolder;
       if aDialog.Execute then
       begin
-        Engine.SCM.DiffToFile(aDialog.FileName, Engine.Files.Current.Name);
+        Engine.SCM.DiffToFile(aDialog.FileName, Engine.Files.Current.FileName);
       end;
       Engine.Files.CheckChanged;
     finally

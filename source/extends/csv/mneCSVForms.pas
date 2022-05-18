@@ -151,7 +151,7 @@ end;
 
 procedure TCSVForm.DelConfigFileBtnClick(Sender: TObject);
 begin
-  DeleteFile(EditorFile.Name + '.conf');
+  DeleteFile(EditorFile.FileName + '.conf');
   RefreshControls;
   Engine.Update([ecsFolder]);
 end;
@@ -347,14 +347,14 @@ end;
 
 function TCSVForm.IsConfigFileExists: Boolean;
 begin
-  Result := FileExists(EditorFile.Name + '.conf');
+  Result := FileExists(EditorFile.FileName + '.conf');
 end;
 
 procedure TCSVForm.SaveConfigFile;
 var
   ini: TIniFile;
 begin
-  ini := TIniFile.Create(EditorFile.Name + '.conf');
+  ini := TIniFile.Create(EditorFile.FileName + '.conf');
   try
     CSVOptions.SaveToIni('options', ini);
     ini.WriteBool('ui', 'rtl', IsRTL);
@@ -374,7 +374,7 @@ procedure TCSVForm.SaveToFile(FileName: string);
 var
   aFile: TFileStream;
 begin
-  aFile := TFileStream.Create(EditorFile.Name, fmCreate or fmOpenWrite);
+  aFile := TFileStream.Create(EditorFile.FileName, fmCreate or fmOpenWrite);
   try
     SaveToStream(aFile);
   finally
@@ -406,7 +406,7 @@ begin
   begin
     b := IsConfigFileExists;
     if b then
-      Ini := TIniFile.Create(EditorFile.Name + '.conf')
+      Ini := TIniFile.Create(EditorFile.FileName + '.conf')
     else
       Ini := TIniFile.Create(Engine.WorkSpace + 'mne-csv-options.ini');
     try
@@ -615,7 +615,7 @@ begin
           csvCMD.EmptyLine := elFetch;
 
         if csvCMD.Execute then //not empty, or eof
-          FillGrid(csvCMD, 'File: ' + EditorFile.Name);
+          FillGrid(csvCMD, 'File: ' + EditorFile.FileName);
       finally
         csvCMD.Free;
       end;

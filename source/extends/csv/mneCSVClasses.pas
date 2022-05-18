@@ -37,8 +37,8 @@ type
     function GetControl: TWinControl; override;
     function GetSynEdit: TSynEdit; override;
     function GetIsReadonly: Boolean; override;
-    procedure DoLoad(FileName: string); override;
-    procedure DoSave(FileName: string); override;
+    procedure DoLoad(AFileName: string); override;
+    procedure DoSave(AFileName: string); override;
   public
     destructor Destroy; override;
   end;
@@ -107,20 +107,20 @@ begin
   Result := False;
 end;
 
-procedure TCSVFile.DoLoad(FileName: string);
+procedure TCSVFile.DoLoad(AFileName: string);
 begin
   if FContent.Mode = csvmText then
     inherited
   else
-    FContent.Load(FileName);
+    FContent.Load(AFileName);
 end;
 
-procedure TCSVFile.DoSave(FileName: string);
+procedure TCSVFile.DoSave(AFileName: string);
 begin
   if FContent.Mode = csvmText then
     inherited
   else
-    FContent.Save(FileName);
+    FContent.Save(AFileName);
 end;
 
 destructor TCSVFile.Destroy;

@@ -27,8 +27,8 @@ type
     function GetContent: TWinControl; override;
     function GetControl: TWinControl; override;
     function GetIsReadonly: Boolean; override;
-    procedure DoLoad(FileName: string); override;
-    procedure DoSave(FileName: string); override;
+    procedure DoLoad(AFileName: string); override;
+    procedure DoSave(AFileName: string); override;
   public
     destructor Destroy; override;
   end;
@@ -73,14 +73,14 @@ begin
   Result := True;
 end;
 
-procedure TBoardFile.DoLoad(FileName: string);
+procedure TBoardFile.DoLoad(AFileName: string);
 begin
-  //Contents.Board.Picture.LoadFromFile(FileName);
+  //Contents.Board.Picture.LoadFromFile(AFileName);
 end;
 
-procedure TBoardFile.DoSave(FileName: string);
+procedure TBoardFile.DoSave(AFileName: string);
 begin
-  //Contents.Board.Picture.SaveToFile(FileName);
+  //Contents.Board.Picture.SaveToFile(AFileName);
 end;
 
 destructor TBoardFile.Destroy;
