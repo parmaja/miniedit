@@ -1409,9 +1409,9 @@ var
 begin
   if Engine.Files.Current <> nil then
   begin
-    s := Engine.Files.Current.PureName;
+    s := Engine.Files.Current.NickName;
     if MsgBox.Input(s, 'Please enter new name for ' + s) then
-      Engine.Files.Current.PureName := s;
+      Engine.Files.Current.NickName := s;
   end;
 end;
 
@@ -1626,7 +1626,7 @@ begin
   begin
     aFile := (Sender as TMenuItem).Caption;
     if Engine.Session.Active then
-      aFile := ExpandToPath(aFile, Engine.Session.Project.RunOptions.MainFolder);
+      aFile := ExpandToPath(aFile, Engine.Session.Project.RunOptions.MainPath);
     Engine.Files.OpenFile(aFile);
   end;
 end;
@@ -1714,7 +1714,7 @@ end;
 
 procedure TMainForm.SetAsRootFolderActExecute(Sender: TObject);
 begin
-  Engine.Session.Project.RunOptions.MainFolder:= Folder;
+  Engine.Session.Project.RunOptions.MainPath := Folder;
 end;
 
 procedure TMainForm.ShowAllFilterActExecute(Sender: TObject);
@@ -1997,7 +1997,7 @@ begin
   MessagesGrid.RowCount := MessagesGrid.RowCount + 1;
   //MessagesGrid.Cells[1, MessagesGrid.RowCount - 1] := IntToStr(vError.ID);
   MessagesGrid.Cells[1, MessagesGrid.RowCount - 1] := vMessageInfo.Name;
-  MessagesGrid.Cells[2, MessagesGrid.RowCount - 1] := vMessageInfo.Message1;
+  MessagesGrid.Cells[2, MessagesGrid.RowCount - 1] := vMessageInfo.Message;
   MessagesGrid.Cells[3, MessagesGrid.RowCount - 1] := vMessageInfo.FileName;
   MessagesGrid.Cells[4, MessagesGrid.RowCount - 1] := IntToStr(vMessageInfo.Line);
 end;
@@ -2461,12 +2461,12 @@ begin
     if (Index = 0) and (FOutputs.Count > 0) then
     begin
       aLine := FOutputs.Last;
-      aLine.Info.Message1 := aLine.Info.Message1 + S;
+      aLine.Info.Message := aLine.Info.Message + S;
     end
     else
     begin
       aLine := TOutputLine.Create;
-      aLine.Info.Message1 := S;
+      aLine.Info.Message := S;
       FOutputs.Add(aLine);
     end;
 

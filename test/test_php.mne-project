@@ -8,19 +8,12 @@
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>C:\temp\test.lsl</CurrentFile>
-        <CurrentFolder>C:\temp\</CurrentFolder>
+        <CurrentFile>D:\lab\opensim\projects\Stargate\Ring.lsl</CurrentFile>
+        <CurrentFolder>D:\lab\opensim\projects\Stargate\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
-            <FileName>G:\Games\opensim\dirkey2\bin\Regions\Regions.ini</FileName>
-            <CaretY>11</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>D:\lab\pascal\miniEdit\test\teleport.lsl</FileName>
-            <CaretY>2</CaretY>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>C:\temp\test.lsl</FileName>
+            <FileName>D:\lab\opensim\projects\Stargate\Ring.lsl</FileName>
+            <CaretY>8</CaretY>
           </Object>
         </Items>
       </Files>

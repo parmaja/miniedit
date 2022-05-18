@@ -29,11 +29,11 @@ interface
 uses
   Messages, SysUtils, Forms, StdCtrls, StrUtils, Dialogs, Variants, Classes, Menus, Controls, LCLIntf, LConvEncoding,
   FileUtil, LazFileUtils,
-  Graphics, Contnrs, Types, IniFiles, EditorOptions, EditorColors, EditorProfiles,
+  Graphics, Contnrs, Types, IniFiles, EditorOptions, EditorColors, EditorProfiles, fgl,
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses, SynEditPlugins, SynPluginTemplateEdit,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
-  mncCSV, dbgpServers, Masks, mnXMLRttiProfile, mnXMLUtils, mnClasses, fgl,
+  mncCSV, dbgpServers, Masks, mnXMLRttiProfile, mnXMLUtils, mnClasses,
   mnUtils, LCLType, EditorClasses, EditorRun;
 
 type
@@ -83,6 +83,14 @@ type
     function DoCreateItem(AClass: TmnXMLItemClass): TmnXMLItem; override;
     property Items[Index: Integer]: _Object_ read GetItem write SetItem; default;
   published
+  end;
+
+  { TStringsHelper }
+
+  TStringsHelper = class helper for TStrings
+  public
+    procedure Merge(FromStrings: TStrings; Overwrite: Boolean = False);
+    procedure Merge(Name, Value: String; Overwrite: Boolean = False);
   end;
 
   { TEditorExtension }
@@ -215,6 +223,8 @@ type
   TAddFrameCallBack = procedure(AFrame: TFrame) of object;
   TAddClickCallBack = procedure(Name, Caption: String; OnClickEvent: TNotifyEvent; ShortCut: TShortCut = 0) of object;
 
+  TEnumVariablesSkip = (evsFile, evsCategory, evsTendicy, evsProject, evsEngine, evsDefaultPath, evsEnviroment);
+  TEnumVariablesSkips = set of TEnumVariablesSkip;
 
   TFileGroupKind = (
     fgkDefault,
@@ -318,18 +328,20 @@ type
     property Capabilities: TRunCapabilities read FCapabilities;
     function Can(ACapability: TRunCapability): Boolean;
 
-    procedure EnumVariables(Values: TStringList); virtual;
-    function ReplaceVariables(S: String): String; virtual;
+    procedure EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips); virtual;
+    function ReplaceVariables(S: String; EnumSkips: TEnumVariablesSkips): String; virtual;
+
+    procedure UpdatePath; virtual;
 
     property Groups: TFileGroups read FGroups;
     property IsDefault: Boolean read GetIsDefault;
     property OutputExtension: String read FOutputExtension write FOutputExtension;
+    property DefaultPath: string read FDefaultPath;
   published
     //Override options
     property OverrideEditorOptions: Boolean read FOverrideEditorOptions write FOverrideEditorOptions default False;
     property TabWidth: Integer read FTabWidth write FTabWidth default 4;
     property IndentMode: TIndentMode read FIndentMode write FIndentMode default idntTabsToSpaces;
-    property DefaultPath: string read FDefaultPath write FDefaultPath;
 
     property RunOptions: TRunProjectOptions read FRunOptions;// write FRunOptions;
   end;
@@ -376,7 +388,7 @@ type
 
   TRunProjectInfo = record
     Command: String;
-    MainFolder: String;
+    MainPath: String;
     Params: String;
     Console: TThreeStates;
     Pause: TThreeStates;
@@ -405,7 +417,7 @@ type
     property Command: String read FInfo.Command write FInfo.Command;
     property Params: String read FInfo.Params write FInfo.Params;
     property Require: String read FInfo.Require write FInfo.Require;
-    property MainFolder: String read FInfo.MainFolder write FInfo.MainFolder;
+    property MainPath: String read FInfo.MainPath write FInfo.MainPath;
     property MainFile: String read FInfo.MainFile write FInfo.MainFile;
     property OutputFile: String read FInfo.OutputFile write FInfo.OutputFile;
     property ExpandPaths: Boolean read FInfo.ExpandPaths write FInfo.ExpandPaths;
@@ -421,6 +433,7 @@ type
 
   TEditorProject = class abstract(TmnXMLProfile)
   private
+    FDefaultPath: string;
     FIgnoreNames: String;
     FFileFilter: String;
     FOptions: TEditorProjectOptions;
@@ -450,12 +463,14 @@ type
     procedure LoadFromFile(FileName: String); override;
     property FileName: String read FFileName write FFileName;
     property Path: String read GetPath;
+    procedure UpdatePath;
     procedure SetSCMClass(SCMClass: TEditorSCM);
     function CreateMask(CreateMaskProc: TCreateMaskProc): String;
     //Tendency here point to one of Engine.Tendencies so it is not owned by project
     property Tendency: TEditorTendency read FTendency write SetTendency;
     property RunOptions: TRunProjectOptions read FRunOptions write FRunOptions;
     property IsActive: Boolean read GetIsActive;
+    property DefaultPath: string read FDefaultPath;
   published
     property Name: String read FName write FName;
     property Title: String read FTitle write FTitle;
@@ -531,7 +546,7 @@ type
     function GetRunCapability: TRunCapabilities;
     function GetIsText: Boolean;
     function GetNakeName: String;
-    function GetPureName: String;
+    function GetNickName: String;
     function GetExtension: String;
     function GetPath: String;
     function GetTendency: TEditorTendency;
@@ -543,7 +558,7 @@ type
     procedure SetLinesMode(const Value: TEditorLinesMode);
     procedure SetExtension(AValue: String);
     procedure SetNakeName(AValue: String);
-    procedure SetPureName(AValue: String);
+    procedure SetNickName(AValue: String);
   protected
     procedure InitContents; virtual;
     procedure GroupChanged; virtual;
@@ -619,8 +634,8 @@ type
     procedure Cut; virtual;
     procedure SelectAll; virtual;
 
-    procedure EnumVariables(Values: TStringList); virtual;
-    function ReplaceVariables(S: String): String; virtual;
+    procedure EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips); virtual;
+    function ReplaceVariables(S: String; EnumSkips: TEnumVariablesSkips): String;
 
     //When main form needs to switch focus (F6), add to the list all control can take focus
     procedure EnumSwitchControls(vList: TSwitchControls); virtual;
@@ -633,7 +648,7 @@ type
     property Params: String read FParams write FParams;
     property Title: String read FTitle write FTitle; //used only if Name is empty for temporary files
     property NakeName: String read GetNakeName write SetNakeName; //no path with ext
-    property PureName: String read GetPureName write SetPureName; //no path no ext
+    property NickName: String read GetNickName write SetNickName; //no path no ext
     property Extension: String read GetExtension write SetExtension;
     property Path: String read GetPath;
     property Tendency: TEditorTendency read GetTendency;
@@ -843,6 +858,7 @@ type
   TEditorOptions = class(TmnXMLProfile)
   private
     FAutoOpenProject: Boolean;
+    FMainPath: String;
     FFallbackToText: Boolean;
     FIgnoreNames: String;
     FLastFolder: String;
@@ -903,6 +919,7 @@ type
     property SearchFolderHistory: TStringList read FSearchFolderHistory;
   published
     property AutoOpenProject: Boolean read FAutoOpenProject write FAutoOpenProject;
+    property MainPath: String read FMainPath write FMainPath;
     property LastProject: String read FLastProject write FLastProject;
     property LastFolder: String read FLastFolder write FLastFolder;
     property ExtraExtensions: TStringList read FExtraExtensions write FExtraExtensions;
@@ -1015,9 +1032,9 @@ type
     procedure EnumExtensions(vExtensions: TStringList);
     function GetExtensions: String;
 
-    procedure EnumVariables(Values: TStringList); virtual;
-    function ReplaceVariables(S: String; Values: TStringList): String;
-    function ReplaceVariables(S: String): String;
+    procedure EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips); virtual;
+    function ReplaceVariables(S: String; Values: TStringList; EnumSkips: TEnumVariablesSkips): String;
+    function ReplaceVariables(S: String; EnumSkips: TEnumVariablesSkips): String;
 
     function GetColorPrefix: String; virtual;
     function FormatColor(Color: TColor): String; virtual;
@@ -1204,7 +1221,7 @@ type
     FRun: TmneRun;
     function GetActive: Boolean;
     function GetMainFile: String;
-    function GetMainFolder: String;
+    function GetMainPath: String;
     procedure SetPanel(AValue: TControl);
     procedure SetInternalProject(const Value: TEditorProject);
     procedure SetRun(AValue: TmneRun);
@@ -1220,6 +1237,7 @@ type
     function SaveAs(AProject: TEditorProject): Boolean;
     function Save: Boolean;
     function SaveAs: Boolean;
+
     function GetRoot: String;
 
     procedure SetProject(const Value: TEditorProject; LoadFiles: Boolean = True);
@@ -1230,7 +1248,7 @@ type
     property Panel: TControl read FPanel write SetPanel;
     //Session Options is depend on the system used not shared between OSs
     property Options: TEditorSessionOptions read FOptions;
-    property MainFolder: String read GetMainFolder;
+    property MainPath: String read GetMainPath;
     property MainFile: String read GetMainFile;
     property IsChanged: Boolean read FIsChanged;
     //Process the project running if it is null, process should nil it after finish
@@ -1276,6 +1294,7 @@ type
   TEditorEngine = class(TObject)
   private
     FDebugLink: TEditorDebugLink;
+    FDefaultPath: string;
     FDefaultProject: TDefaultProject;
     //FForms: TEditorFormList;
     FTendencies: TTendencies;
@@ -1327,6 +1346,7 @@ type
     procedure Prepare(vSafeMode: Boolean = False);
     procedure Start; //After Createing MainForm
     procedure LoadOptions;
+    procedure UpdatePath;
     procedure UpdateOptions;
     procedure SaveOptions;
     procedure Shutdown;
@@ -1356,10 +1376,9 @@ type
     property Updating: Boolean read GetUpdating;
     property UpdateState: TEditorChangeStates read FUpdateState;
 
-    procedure EnumVariables(Values: TStringList; NoRoot: Boolean = False);
-    function ReplaceVariables(S: String; Values: TStringList; NoRoot: Boolean = False): String; //NoRoot to expand root path it self
-    function ReplaceVariables(S: String; NoRoot: Boolean = False): String;
-    function ExpandFile(FileName: String): String;
+    procedure EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips);
+    function ReplaceVariables(S: String; EnumSkips: TEnumVariablesSkips): String;
+    function  ExpandFile(FileName: String): String;
     function GetRoot: String;
     property Extenstion: String read FExtenstion write FExtenstion;
 
@@ -1400,6 +1419,7 @@ type
     procedure Run;
     procedure Execute;
 
+    property DefaultPath: string read FDefaultPath;
     property Environment: TStringList read FEnvironment write FEnvironment;
   published
   end;
@@ -1413,6 +1433,8 @@ type
   public
     List: TStringList;
   end;
+
+function EditorReplaceVariables(S: String; Values: TStringList): String;
 
 function ResetUpdate(State: TEditorChangeState; var InStates: TEditorChangeStates): Boolean;
 
@@ -1493,6 +1515,16 @@ begin
   Result := FEngine;
 end;
 
+function EditorReplaceVariables(S: String; Values: TStringList): String;
+begin
+  if s <> '' then
+  begin
+    Result := VarReplace(S, Values, sEnvVarChar);
+  end
+  else
+    Result := '';
+end;
+
 function ResetUpdate(State: TEditorChangeState; var InStates: TEditorChangeStates): Boolean;
 begin
   Result := State in InStates;
@@ -1547,6 +1579,25 @@ begin
       S := S + #$D;
     Stream.WriteBuffer(Pointer(S)^, Length(S));
   end;
+end;
+
+{ TStringsHelper }
+
+procedure TStringsHelper.Merge(FromStrings: TStrings; Overwrite: Boolean);
+var
+  i: Integer;
+begin
+  for i := 0 to FromStrings.Count - 1 do
+  begin
+    if Overwrite or (IndexOfName(FromStrings.Names[i]) < 0) then
+      Values[FromStrings.Names[i]] := FromStrings.ValueFromIndex[i];
+  end;
+end;
+
+procedure TStringsHelper.Merge(Name, Value: String; Overwrite: Boolean);
+begin
+  if Overwrite or (IndexOfName(Name) < 0) then
+    Values[Name] := Value;
 end;
 
 { TmneSynEditPlugin }
@@ -2743,22 +2794,35 @@ begin
   Result := (ACapability in Capabilities) or ((Engine.Files.Current <> nil) and (ACapability in Engine.Files.Current.Group.Capapility));
 end;
 
-procedure TEditorTendency.EnumVariables(Values: TStringList);
+procedure TEditorTendency.EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips);
 begin
-  Values.Values['DefaultPath'] := DefaultPath;
+  if not (evsTendicy in EnumSkips) then
+  begin
+    Values.Merge('DefaultPath', DefaultPath);
+    Values.Merge('MainPath', DefaultPath);
+  end;
+  Engine.EnumVariables(Values, EnumSkips + [evsTendicy]);
 end;
 
-function TEditorTendency.ReplaceVariables(S: String): String;
+function TEditorTendency.ReplaceVariables(S: String; EnumSkips: TEnumVariablesSkips): String;
 var
   Values: TStringList;
 begin
   Values := TStringList.Create;
   try
-    EnumVariables(Values);
-    Result := Engine.ReplaceVariables(S, Values);
+    EnumVariables(Values, EnumSkips);
+    Result := EditorReplaceVariables(S, Values);
   finally
     Values.Free;
   end;
+end;
+
+procedure TEditorTendency.UpdatePath;
+begin
+  if RunOptions.MainPath <> '' then
+    FDefaultPath := ExpandToPath(RunOptions.MainPath, Engine.DefaultPath)
+   else
+    FDefaultPath := Engine.DefaultPath;
 end;
 
 function TEditorTendency.GetIsDefault: Boolean;
@@ -2884,7 +2948,7 @@ begin
         if rnaCompile in RunActions then
           Engine.SendAction(eaClearOutput);
         p.Root := Engine.Session.GetRoot;
-        p.Command := ReplaceVariables(AOptions.Command);
+        p.Command := ReplaceVariables(AOptions.Command, []);
 
         p.Pause := AOptions.Pause in [stateTrue];
         p.Console := AOptions.Console in [stateTrue, stateNone];
@@ -3481,6 +3545,14 @@ begin
   end;
 end;
 
+procedure TEditorEngine.UpdatePath;
+begin
+  if Options.MainPath <> '' then
+    FDefaultPath := ExpandToPath(Options.MainPath, Application.Location)
+  else
+    FDefaultPath := Application.Location;
+end;
+
 function TEditorFiles.FindFile(const vFileName: String): TEditorFile;
 var
   i: Integer;
@@ -3825,16 +3897,16 @@ function TEditorSession.GetRoot: String;
 var
   r: String;
 begin
-  if (Engine.Session.Active) and (Engine.Session.Project.RunOptions.MainFolder <> '') then
-    Result := GetMainFolder
+  if (Engine.Session.Active) and (Engine.Session.Project.RunOptions.MainPath <> '') then
+    Result := GetMainPath
   else if (Engine.Session.Active) and (Engine.Session.Project.RunOptions.MainFile <> '') then
   begin
     r := Engine.Session.Project.RunOptions.MainFile;
-    r := ExpandToPath(r, Engine.Session.Project.Path);
-    Result := ExtractFilePath(Engine.ReplaceVariables(r, True));
+    r := ExpandToPath(r, Engine.Session.Project.DefaultPath);
+    Result := ExtractFilePath(Engine.ReplaceVariables(r, [evsDefaultPath]));
   end
   else if Engine.Files.Current <> nil then
-    Result := ExtractFilePath(Engine.Files.Current.Name)
+    Result := Engine.Files.Current.Path
   else if Engine.BrowseFolder <> '' then
     Result := Engine.BrowseFolder
   else
@@ -4206,6 +4278,7 @@ begin
   BeginUpdate;
   try
     Options.Load(Workspace);
+    UpdatePath;
     Session.Options.SafeLoadFromFile(Workspace + 'mne-options-' + SysPlatform + '.xml');
     for i := 0 to Tendencies.Count - 1 do
     begin
@@ -4214,6 +4287,7 @@ begin
         aFile := Workspace + 'mne-tendency-' + LowerCase(Tendencies[i].Name) + '.xml';
         if FileExists(aFile) then
           XMLReadObjectFile(Tendencies[i], aFile);
+        Tendencies[i].UpdatePath;
       end;
     end;
     //After loading options
@@ -4354,82 +4428,69 @@ begin
   Result := FUpdateCount > 0;
 end;
 
-function TEditorEngine.ReplaceVariables(S: String; NoRoot: Boolean): String;
-begin
-  Result := ReplaceVariables(S, nil, NoRoot);
-end;
-
-procedure TEditorEngine.EnumVariables(Values: TStringList; NoRoot: Boolean);
+procedure TEditorEngine.EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips);
 var
   MainFile: String;
 begin
-  Values.Assign(Environment);
-  if not NoRoot then
+  if not (evsEngine in EnumSkips) then
   begin
-    Values.Values['Root'] := GetRoot;
-    Values.Values['Directory'] := GetRoot;
-  end;
+    if not (evsEnviroment in EnumSkips) then
+      Values.Merge(Environment);
 
-  if Files.Current <> nil then
-  begin
-    Values.Values['File'] := Files.Current.Name;
-    Values.Values['FileName'] := Files.Current.NakeName;
-    Values.Values['FilePureName'] := Files.Current.PureName;
-    Values.Values['FilePath'] := Files.Current.Path;
-  end;
+    if not (evsDefaultPath in EnumSkips) then
+    begin
+      Values.Merge('Root', GetRoot);
+    end;
 
-  if Session.Active then
-  begin
-    MainFile := Session.Project.RunOptions.MainFile;
-    MainFile := ExpandToPath(MainFile, Session.Project.Path);
-  end
-  else
-    MainFile := '';
+    if Files.Current <> nil then
+      Files.Current.EnumVariables(Values, EnumSkips + [evsEngine]);
 
-  if (MainFile = '') and (Files.Current <> nil) then
-    MainFile := Files.Current.Name;
+    Tendency.EnumVariables(Values, EnumSkips + [evsEngine]);
 
-  if MainFile <> '' then
-  begin
-    Values.Values['Main'] := MainFile;
-    Values.Values['MainFile'] := MainFile;
-    Values.Values['MainFileName'] := ExtractFileName(MainFile);
-    Values.Values['MainFilePureName'] := ExtractFileNameWithoutExt(MainFile);
-    Values.Values['MainPath'] := ExtractFilePath(MainFile);
-  end;
+    if Session.Active then
+    begin
+      MainFile := Session.Project.RunOptions.MainFile;
+      MainFile := ExpandToPath(MainFile, Session.Project.DefaultPath);
+    end
+    else
+      MainFile := '';
 
-  if Session.Active then
-  begin
-    Values.Values['Project'] := Session.Project.FileName;
-    Values.Values['ProjectFile'] := Session.Project.FileName;
-    Values.Values['ProjectPath'] := Session.Project.Path;
-    Values.Values['OutputName'] := Session.Project.RunOptions.OutputFile; //TODO need to guess
+    if (MainFile = '') and (Files.Current <> nil) then
+      MainFile := Files.Current.Name;
+
+    if MainFile <> '' then
+    begin
+      Values.Merge('Main', MainFile);
+      Values.Merge('MainFile', MainFile);
+      Values.Merge('MainFileName', ExtractFileName(MainFile));
+      Values.Merge('MainFileNickName', ExtractFileNameWithoutExt(ExtractFileName(MainFile)));
+      Values.Merge('MainPath', ExtractFilePath(MainFile));
+    end;
+
+    if Session.Active then
+    begin
+      if not (evsProject in EnumSkips) then
+      begin
+        Values.Merge('Project', Session.Project.FileName);
+        Values.Merge('ProjectFile', Session.Project.FileName);
+        Values.Merge('ProjectPath', Session.Project.DefaultPath);
+        Values.Merge('OutputName', Session.Project.RunOptions.OutputFile); //TODO need to gues)s
+      end;
+    end;
   end;
 end;
 
-function TEditorEngine.ReplaceVariables(S: String; Values: TStringList; NoRoot: Boolean): String;
+function TEditorEngine.ReplaceVariables(S: String; EnumSkips: TEnumVariablesSkips): String;
 var
-  List: TStringList;
-  aName: String;
-  i: Integer;
+  Values: TStringList;
 begin
-  if s <> '' then
-  begin
-    List := TStringList.Create;
-    try
-      EnumVariables(List, NoRoot);
-      if Values <> nil then
-        for i := 0 to Values.Count - 1 do
-        begin
-          List.Values[Values.Names[i]] := Values.ValueFromIndex[i];
-        end;
-      Result := VarReplace(S, List, sEnvVarChar);
-    finally
-      List.Free;
-    end;
-  end
-  else
-    Result := '';
+  Values := TStringList.Create;
+  try
+    EnumVariables(Values, EnumSkips);
+    Result := EditorReplaceVariables(S, Values);
+  finally
+    Values.Free;
+  end;
 end;
 
 function TEditorEngine.ExpandFile(FileName: String): String;
@@ -4775,11 +4836,18 @@ begin
     DoSave(FileName);
     if Values.IndexOfName('localfile') >= 0 then
     begin
-      BackupFileName := Values.Values['localfile'];
-      BackupFileName := ReplaceVariables(BackupFileName);
-      BackupFileName := ExpandToPath(BackupFileName, Engine.Session.Project.Path);
-      if not SameFileName(BackupFileName, FileName) then
-        DoSave(BackupFileName);
+      try
+        BackupFileName := DequoteStr(Values.Values['localfile'], '"');
+        BackupFileName := ReplaceVariables(BackupFileName, []);
+        BackupFileName := ExpandToPath(BackupFileName, Engine.Session.Project.DefaultPath);
+        if not SameFileName(BackupFileName, FileName) then
+          DoSave(BackupFileName);
+      except
+        on E: Exception do
+        begin
+          Engine.SendMessage(E.Message, msgtLog);
+        end;
+      end;
     end;
     Name := FileName;
     IsChanged := False;
@@ -5098,22 +5166,26 @@ procedure TEditorFile.SelectAll;
 begin
 end;
 
-procedure TEditorFile.EnumVariables(Values: TStringList);
+procedure TEditorFile.EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips);
 begin
-  Values.Values['File'] := Name;
-  Values.Values['FileName'] := NakeName;
-  Values.Values['FilePureName'] := PureName;
-  Values.Values['FilePath'] := Path;
+  if not (evsFile in EnumSkips) then
+  begin
+    Values.Merge('File', Name);
+    Values.Merge('FileName', NakeName);
+    Values.Merge('FileNickName', NickName);
+    Values.Merge('FilePath', Path);
+  end;
+  Group.Category.EnumVariables(Values, EnumSkips + [evsFile]);
 end;
 
-function TEditorFile.ReplaceVariables(S: String): String;
+function TEditorFile.ReplaceVariables(S: String; EnumSkips: TEnumVariablesSkips): String;
 var
   Values: TStringList;
 begin
   Values := TStringList.Create;
   try
-    EnumVariables(Values);
-    Result := Group.Category.ReplaceVariables(S, Values);
+    EnumVariables(Values, EnumSkips);
+    Result := EditorReplaceVariables(S, Values);
   finally
     Values.Free;
   end;
@@ -5183,7 +5255,7 @@ begin
   Result := ExtractFilePath(Name);
 end;
 
-function TEditorFile.GetPureName: String;
+function TEditorFile.GetNickName: String;
 begin
   Result := ExtractFileNameWithoutExt(NakeName);
 end;
@@ -5210,7 +5282,7 @@ procedure TEditorFile.SetExtension(AValue: String);
 begin
   if LeftStr(AValue, 1) <> '.' then
     AValue := '.' + AValue;
-  Rename(PureName + AValue);
+  Rename(NickName + AValue);
 end;
 
 function TEditorFile.GetContent: TWinControl;
@@ -5477,7 +5549,7 @@ begin
   Rename(AValue);
 end;
 
-procedure TEditorFile.SetPureName(AValue: String);
+procedure TEditorFile.SetNickName(AValue: String);
 begin
   Rename(AValue + Extension);
 end;
@@ -5830,24 +5902,27 @@ begin
   end;
 end;
 
-procedure TVirtualCategory.EnumVariables(Values: TStringList);
+procedure TVirtualCategory.EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips);
 begin
-
+  if not (evsCategory in EnumSkips) then
+  begin
+  end;
+  Tendency.EnumVariables(Values, EnumSkips + [evsCategory]);
 end;
 
-function TVirtualCategory.ReplaceVariables(S: String; Values: TStringList): String;
+function TVirtualCategory.ReplaceVariables(S: String; Values: TStringList; EnumSkips: TEnumVariablesSkips): String;
 begin
-  EnumVariables(Values);
-  Result := Engine.ReplaceVariables(S, Values);
+  EnumVariables(Values, EnumSkips);
+  Result := EditorReplaceVariables(S, Values);
 end;
 
-function TVirtualCategory.ReplaceVariables(S: String): String;
+function TVirtualCategory.ReplaceVariables(S: String; EnumSkips: TEnumVariablesSkips): String;
 var
   Values: TStringList;
 begin
   Values := TStringList.Create;
   try
-    Result := Engine.ReplaceVariables(S, Values);
+    Result := ReplaceVariables(S, Values, EnumSkips);
   finally
     Values.Free;
   end;
@@ -6080,6 +6155,7 @@ procedure TEditorProject.LoadFromFile(FileName: String);
 begin
   FFileName := FileName;
   inherited LoadFromFile(FileName);
+  UpdatePath;
 end;
 
 procedure TEditorProject.SetTendencyName(AValue: String);
@@ -6111,18 +6187,9 @@ begin
   Result := (Self <> nil) and not (Self is TDefaultProject);
 end;
 
-function TEditorSession.GetMainFolder: String;
-var
-  r: String;
+function TEditorSession.GetMainPath: String;
 begin
-  if (Project.RunOptions.MainFolder <> '') then
-  begin
-    r := Project.RunOptions.MainFolder;
-    r := Engine.ReplaceVariables(r, True);
-    Result := ExpandToPath(r, Project.Path);
-  end
-  else
-    Result := Project.Path;
+  Result := Project.DefaultPath;
 end;
 
 procedure TEditorSession.SetPanel(AValue: TControl);
@@ -6167,6 +6234,7 @@ begin
   inherited;
   if (Tendency = nil) then
     TendencyName := 'Default'; //fix if TendencyName is empty
+  UpdatePath;
 {  if not Failed and FSaveDesktop then
     Desktop.Load;}
 end;
@@ -6209,6 +6277,24 @@ begin
   inherited;
   if FSaveDesktop then
     Desktop.Save;
+end;
+
+procedure TEditorProject.UpdatePath;
+begin
+  if Self is TDefaultProject then
+  begin
+    if RunOptions.MainPath <> '' then
+      FDefaultPath := ExpandToPath(RunOptions.MainPath, Tendency.DefaultPath)
+    else
+      FDefaultPath := Tendency.DefaultPath
+ end
+ else
+ begin
+   if RunOptions.MainPath <> '' then
+     FDefaultPath := ExpandToPath(RunOptions.MainPath, Path)
+   else
+     FDefaultPath := Path;
+ end;
 end;
 
 { TFileGroup }

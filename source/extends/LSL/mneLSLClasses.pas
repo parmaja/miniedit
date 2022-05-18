@@ -272,7 +272,7 @@ begin
         aMsg.MessageType := vMessageType;
         aMsg.FileName := GetStr(0);
         aMsg.Name := GetStr(1);
-        aMsg.Message1 := Trim(SubStr(t, ':', 1));
+        aMsg.Message := Trim(SubStr(t, ':', 1));
         t := Trim(SubStr(t, ':', 0));
 
         if LeftStr(t, 1) = '(' then

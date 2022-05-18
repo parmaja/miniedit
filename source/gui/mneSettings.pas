@@ -20,6 +20,8 @@ type
 
   TEditorSettingForm = class(TForm)
     AutoOpenProjectChk: TCheckBox;
+    Button3: TButton;
+    MainPathEdit: TEdit;
     FallbackToTxtChk: TCheckBox;
     CodePagesCbo: TComboBox;
     IgnoreNamesEdit: TEdit;
@@ -29,6 +31,8 @@ type
     Label4: TLabel;
     Label5: TLabel;
     ExtensionsGrid: TntvGrid;
+    Label6: TLabel;
+    Label7: TLabel;
     OkBtn: TButton;
     CancelBtn: TButton;
     PageControl: TPageControl;
@@ -44,6 +48,7 @@ type
     TabSheet4: TTabSheet;
     Label9: TLabel;
     Label10: TLabel;
+    procedure Button3Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure INIEditChange(Sender: TObject);
@@ -53,6 +58,7 @@ type
     FExtraExtensions: array of string;
     GroupCol: TntvStandardColumn;
     ExtensionCol: TntvStandardColumn;
+    procedure SelectPathFolder;
     procedure Retrieve;
     procedure Apply;
   public
@@ -170,6 +176,7 @@ procedure TEditorSettingForm.Apply;
 var
   i, c: Integer;
 begin
+  FEngine.Options.MainPath := MainPathEdit.Text;
   FEngine.Options.FallbackToText := FallbackToTxtChk.Checked;
   FEngine.Options.AutoOpenProject := AutoOpenProjectChk.Checked;
   FEngine.Options.CollectAutoComplete := CollectAutoCompleteChk.Checked;
@@ -187,6 +194,7 @@ begin
   end;
   FEngine.Options.IgnoreNames := IgnoreNamesEdit.Text;
   FEngine.Options.AnsiCodePage := CodePageNames[CodePagesCbo.ItemIndex].cp;
+  Engine.UpdatePath;
   Engine.UpdateOptions;
   Engine.Update([ecsOptions]);
 end;
@@ -195,6 +203,7 @@ procedure TEditorSettingForm.Retrieve;
 var
   i, c: Integer;
 begin
+  MainPathEdit.Text := FEngine.Options.MainPath;
   FallbackToTxtChk.Checked := FEngine.Options.FallbackToText;
   AutoOpenProjectChk.Checked := FEngine.Options.AutoOpenProject;
   CollectAutoCompleteChk.Checked := FEngine.Options.CollectAutoComplete;
@@ -231,6 +240,11 @@ begin
   PageControl.ActivePageIndex := CurrentPage;
 end;
 
+procedure TEditorSettingForm.Button3Click(Sender: TObject);
+begin
+  SelectPathFolder;
+end;
+
 procedure TEditorSettingForm.FormClose(Sender: TObject; var CloseAction: TCloseAction);
 begin
   CurrentPage := PageControl.ActivePageIndex;
@@ -243,6 +257,19 @@ end;
 procedure TEditorSettingForm.ExtensionsGridClick(Sender: TObject);
 begin
 
+end;
+
+procedure TEditorSettingForm.SelectPathFolder;
+var
+  aFolder: string;
+begin
+  aFolder := MainPathEdit.Text;
+  if (aFolder = '') and (Engine.Files.Current <> nil) then
+    aFolder := ExtractFilePath(Engine.Files.Current.Name);
+  if SelectFolder('Select root directory for your project', '', aFolder) then
+  begin
+    MainPathEdit.Text := aFolder;
+  end;
 end;
 
 end.

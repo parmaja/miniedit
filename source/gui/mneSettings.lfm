@@ -1,11 +1,11 @@
 object EditorSettingForm: TEditorSettingForm
   Left = 393
-  Height = 321
+  Height = 350
   Top = 211
   Width = 426
   BorderStyle = bsSingle
   Caption = 'General Options'
-  ClientHeight = 321
+  ClientHeight = 350
   ClientWidth = 426
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
@@ -16,7 +16,7 @@ object EditorSettingForm: TEditorSettingForm
   object OkBtn: TButton
     Left = 347
     Height = 26
-    Top = 292
+    Top = 321
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&Ok'
@@ -27,7 +27,7 @@ object EditorSettingForm: TEditorSettingForm
   object CancelBtn: TButton
     Left = 270
     Height = 26
-    Top = 292
+    Top = 321
     Width = 75
     Anchors = [akRight, akBottom]
     Cancel = True
@@ -37,7 +37,7 @@ object EditorSettingForm: TEditorSettingForm
   end
   object PageControl: TPageControl
     Left = 3
-    Height = 288
+    Height = 317
     Top = 3
     Width = 419
     ActivePage = TabSheet2
@@ -46,13 +46,13 @@ object EditorSettingForm: TEditorSettingForm
     TabOrder = 2
     object TabSheet2: TTabSheet
       Caption = 'Options'
-      ClientHeight = 262
+      ClientHeight = 291
       ClientWidth = 411
       ImageIndex = 1
       object Label3: TLabel
         Left = 7
         Height = 13
-        Top = 73
+        Top = 110
         Width = 259
         Caption = 'Autocomplete words will be cached and updated every'
         ParentColor = False
@@ -60,34 +60,34 @@ object EditorSettingForm: TEditorSettingForm
       object CollectTimeoutEdit: TEdit
         Left = 272
         Height = 21
-        Top = 70
+        Top = 107
         Width = 61
-        TabOrder = 0
+        TabOrder = 2
         Text = '0'
       end
       object CollectTimeoutSpn: TUpDown
         Left = 333
         Height = 21
-        Top = 70
+        Top = 107
         Width = 15
         Associate = CollectTimeoutEdit
         Max = 1000
         Min = 0
         Position = 0
-        TabOrder = 1
+        TabOrder = 3
       end
       object CollectAutoCompleteChk: TCheckBox
         Left = 7
         Height = 17
-        Top = 46
+        Top = 83
         Width = 305
         Caption = 'Auto complete variables and identifiers in whole project folder'
-        TabOrder = 2
+        TabOrder = 4
       end
       object Label4: TLabel
         Left = 7
         Height = 13
-        Top = 97
+        Top = 134
         Width = 326
         Caption = 'You must have a project and define the root folder to use this feature.'
         ParentColor = False
@@ -95,7 +95,7 @@ object EditorSettingForm: TEditorSettingForm
       object Label1: TLabel
         Left = 356
         Height = 13
-        Top = 73
+        Top = 110
         Width = 42
         Caption = 'Seconds'
         ParentColor = False
@@ -103,15 +103,15 @@ object EditorSettingForm: TEditorSettingForm
       object AutoOpenProjectChk: TCheckBox
         Left = 7
         Height = 17
-        Top = 7
+        Top = 47
         Width = 121
         Caption = 'Auto open last project'
-        TabOrder = 3
+        TabOrder = 5
       end
       object Label2: TLabel
         Left = 8
         Height = 13
-        Top = 30
+        Top = 67
         Width = 69
         Caption = 'Auto Complete'
         ParentColor = False
@@ -119,7 +119,7 @@ object EditorSettingForm: TEditorSettingForm
       object Label5: TLabel
         Left = 8
         Height = 13
-        Top = 142
+        Top = 179
         Width = 73
         Caption = 'Ansi CodePage'
         ParentColor = False
@@ -127,15 +127,15 @@ object EditorSettingForm: TEditorSettingForm
       object CodePagesCbo: TComboBox
         Left = 94
         Height = 21
-        Top = 138
+        Top = 175
         Width = 161
         ItemHeight = 13
-        TabOrder = 4
+        TabOrder = 6
       end
       object AutoStartDebugGrp: TRadioGroup
         Left = 8
         Height = 84
-        Top = 168
+        Top = 205
         Width = 388
         AutoFill = True
         Caption = 'Auto Start Debug'
@@ -153,12 +153,36 @@ object EditorSettingForm: TEditorSettingForm
           'Auto start debug mode when startup'
           'Auto start debug mode when run'
         )
-        TabOrder = 5
+        TabOrder = 7
+      end
+      object MainPathEdit: TEdit
+        Left = 8
+        Height = 21
+        Top = 20
+        Width = 377
+        TabOrder = 0
+      end
+      object Label7: TLabel
+        Left = 9
+        Height = 13
+        Top = 5
+        Width = 59
+        Caption = 'Default Path'
+        ParentColor = False
+      end
+      object Button3: TButton
+        Left = 387
+        Height = 22
+        Top = 19
+        Width = 22
+        Caption = '...'
+        OnClick = Button3Click
+        TabOrder = 1
       end
     end
     object TabSheet4: TTabSheet
       Caption = 'Extensions'
-      ClientHeight = 262
+      ClientHeight = 291
       ClientWidth = 411
       ImageIndex = 3
       object Label9: TLabel
@@ -180,7 +204,7 @@ object EditorSettingForm: TEditorSettingForm
       object IgnoreNamesEdit: TEdit
         Left = 2
         Height = 21
-        Top = 238
+        Top = 267
         Width = 402
         Anchors = [akLeft, akBottom]
         TabOrder = 0
@@ -188,7 +212,7 @@ object EditorSettingForm: TEditorSettingForm
       object Label11: TLabel
         Left = 2
         Height = 13
-        Top = 222
+        Top = 251
         Width = 151
         Anchors = [akLeft, akBottom]
         Caption = 'Files or Folders name to ignore it'
@@ -197,7 +221,7 @@ object EditorSettingForm: TEditorSettingForm
       object Label12: TLabel
         Left = 195
         Height = 13
-        Top = 220
+        Top = 249
         Width = 108
         Anchors = [akLeft, akBottom]
         Caption = 'example: .svn;.git;_vti_'
@@ -213,7 +237,7 @@ object EditorSettingForm: TEditorSettingForm
       end
       object ExtensionsGrid: TntvGrid
         Left = 2
-        Height = 142
+        Height = 171
         Top = 73
         Width = 402
         Anchors = [akTop, akLeft, akRight, akBottom]
@@ -229,5 +253,13 @@ object EditorSettingForm: TEditorSettingForm
         OnClick = ExtensionsGridClick
       end
     end
+  end
+  object Label6: TLabel
+    Left = 11
+    Height = 13
+    Top = 16
+    Width = 59
+    Caption = 'Default Path'
+    ParentColor = False
   end
 end

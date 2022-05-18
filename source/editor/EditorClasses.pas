@@ -103,7 +103,7 @@ uses
       Column: Integer;
       Name: string;
       FileName: string;
-      Message1: string;
+      Message: string;
     end;
 
     { INotifyEngine }

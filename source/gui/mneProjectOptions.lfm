@@ -39,9 +39,9 @@ object ProjectForm: TProjectForm
     Height = 277
     Top = 5
     Width = 463
-    ActivePage = GeneralOptionsSheet
+    ActivePage = GeneralSheet
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 1
+    TabIndex = 0
     TabOrder = 0
     OnChanging = PageControlChanging
     Options = [nboKeyboardTabSwitch]
@@ -167,7 +167,7 @@ object ProjectForm: TProjectForm
         Caption = 'Roo&t path of your project useful when enumerate your files'
         ParentColor = False
       end
-      object RootDirEdit: TEdit
+      object MainPathEdit: TEdit
         Left = 8
         Height = 21
         Top = 138

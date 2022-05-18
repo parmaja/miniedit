@@ -55,7 +55,7 @@ object TendencyForm: TTendencyForm
         Width = 430
         ClientHeight = 68
         ClientWidth = 426
-        TabOrder = 0
+        TabOrder = 3
         object TabWidthEdit: TEdit
           Left = 80
           Height = 21
@@ -97,7 +97,7 @@ object TendencyForm: TTendencyForm
         Top = 73
         Width = 97
         Caption = 'Override Options'
-        TabOrder = 1
+        TabOrder = 2
       end
       object Label1: TLabel
         Left = 11
@@ -107,12 +107,12 @@ object TendencyForm: TTendencyForm
         Caption = 'Default Path'
         ParentColor = False
       end
-      object DefaultPathEdit: TEdit
+      object MainPathEdit: TEdit
         Left = 11
         Height = 21
         Top = 33
         Width = 401
-        TabOrder = 2
+        TabOrder = 0
       end
       object Button3: TButton
         Left = 417
@@ -120,7 +120,8 @@ object TendencyForm: TTendencyForm
         Top = 32
         Width = 22
         Caption = '...'
-        TabOrder = 3
+        OnClick = Button3Click
+        TabOrder = 1
       end
     end
   end

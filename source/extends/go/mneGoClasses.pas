@@ -328,7 +328,7 @@ begin
             aMsg.Column := StrToIntDef(MidStr(s, 1, p - 1), 0);
           end;
         end;
-        aMsg.Message1 := s;
+        aMsg.Message := s;
       end;
     end;
     Engine.SendMessage(S, aMsg);

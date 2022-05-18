@@ -45,7 +45,7 @@ type
     NameEdit: TEdit;
     FileFilterEdit: TEdit;
     OverrideOptionsChk: TCheckBox;
-    RootDirEdit: TEdit;
+    MainPathEdit: TEdit;
     SaveDesktopChk: TCheckBox;
     SCMCbo: TComboBox;
     TabWidthEdit: TEdit;
@@ -122,7 +122,7 @@ end;
 
 procedure TProjectForm.MenuItem1Click(Sender: TObject);
 begin
-  RootDirEdit.Text := Engine.BrowseFolder;
+  MainPathEdit.Text := Engine.BrowseFolder;
 end;
 
 procedure TProjectForm.MenuItem2Click(Sender: TObject);
@@ -134,7 +134,7 @@ procedure TProjectForm.Button4Click(Sender: TObject);
 var
   s: string;
 begin
-  ShowSelectFile(FProject.RunOptions.MainFolder, s);
+  ShowSelectFile(FProject.RunOptions.MainPath, s);
   MainEdit.Text := s;
 end;
 
@@ -170,7 +170,7 @@ begin
   TitleEdit.Text := FProject.Title;
   NameEdit.Text := FProject.Name;
   DescriptionEdit.Text := FProject.Description;
-  RootDirEdit.Text := FProject.RunOptions.MainFolder;
+  MainPathEdit.Text := FProject.RunOptions.MainPath;
   SaveDesktopChk.Checked := FProject.SaveDesktop;
   if FProject.SCM <> nil then
     SCMCbo.ItemIndex := Engine.SourceManagements.IndexOfName(FProject.SCM.Name) + 1
@@ -192,7 +192,7 @@ begin
   FProject.Title := TitleEdit.Text;
   FProject.Name := NameEdit.Text;
   FProject.Description := DescriptionEdit.Text;
-  FProject.RunOptions.MainFolder := RootDirEdit.Text;
+  FProject.RunOptions.MainPath := MainPathEdit.Text;
   FProject.SaveDesktop := SaveDesktopChk.Checked;
   FProject.SetSCMClass(TEditorSCM(SCMCbo.Items.Objects[SCMCbo.ItemIndex]));
   FProject.RunOptions.MainFile := MainEdit.Text;
@@ -203,6 +203,7 @@ begin
   FProject.Options.IndentMode := TIndentMode(IndentModeCbo.ItemIndex);
   FProject.FileFilter := FileFilterEdit.Text;
   FProject.IgnoreNames := IgnoreNamesEdit.Text;
+  FProject.UpdatePath;
 end;
 
 procedure TProjectForm.Button3Click(Sender: TObject);
@@ -214,12 +215,12 @@ procedure TProjectForm.SelectPathFolder;
 var
   aFolder: string;
 begin
-  aFolder := RootDirEdit.Text;
+  aFolder := MainPathEdit.Text;
   if (aFolder = '') and (Engine.Files.Current <> nil) then
     aFolder := ExtractFilePath(Engine.Files.Current.Name);
   if SelectFolder('Select root directory for your project', '', aFolder) then
   begin
-    RootDirEdit.Text := aFolder;
+    MainPathEdit.Text := aFolder;
   end;
 end;
 

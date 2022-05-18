@@ -214,7 +214,7 @@ begin
     aRunItem.Info.Run.AddParam(aPath);
 
     if RunOptions.ConfigFile <> '' then
-      aRunItem.Info.Run.AddParam('@' + ReplaceVariables(RunOptions.ConfigFile))
+      aRunItem.Info.Run.AddParam('@' + ReplaceVariables(RunOptions.ConfigFile, []))
     else if UseCfg then
     begin
       if FileExists(ChangeFileExt(Info.MainFile, '.cfg')) then
@@ -342,7 +342,7 @@ begin
         aMsg.Name := Trim(MidStr(m, 1, p - 1));
         m := Trim(MidStr(m, p + 1, MaxInt));
       end;
-      aMsg.Message1 := m;
+      aMsg.Message := m;
       Engine.SendMessage(S, aMsg);
     end
     else

@@ -30,8 +30,9 @@ type
     OverrideOptionsChk: TCheckBox;
     PageControl: TPageControl;
     GeneralSheet: TTabSheet;
-    DefaultPathEdit: TEdit;
+    MainPathEdit: TEdit;
     TabWidthEdit: TEdit;
+    procedure Button3Click(Sender: TObject);
     procedure PageControlChanging(Sender: TObject; var AllowChange: Boolean);
   private
     FTendency: TEditorTendency;
@@ -39,6 +40,7 @@ type
   protected
     procedure AddFrame(AFrame: TFrame);
   public
+    procedure SelectPathFolder;
     procedure ApplyFrames;
     procedure Apply;
     procedure RetrieveFrames;
@@ -81,7 +83,8 @@ begin
   FTendency.OverrideEditorOptions := OverrideOptionsChk.Checked;
   FTendency.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
   FTendency.IndentMode := TIndentMode(IndentModeCbo.ItemIndex);
-  FTendency.DefaultPath := DefaultPathEdit.Text;
+  FTendency.RunOptions.MainPath := MainPathEdit.Text;
+  FTendency.UpdatePath;
 end;
 
 procedure TTendencyForm.RetrieveFrames;
@@ -112,7 +115,7 @@ begin
   OverrideOptionsChk.Checked := FTendency.OverrideEditorOptions;
   TabWidthEdit.Text := IntToStr(FTendency.TabWidth);
   IndentModeCbo.ItemIndex := Ord(FTendency.IndentMode);
-  DefaultPathEdit.Text := FTendency.DefaultPath;
+  MainPathEdit.Text := FTendency.RunOptions.MainPath;
 end;
 
 procedure TTendencyForm.PageControlChanging(Sender: TObject; var AllowChange: Boolean);
@@ -122,10 +125,28 @@ begin
       Apply;
 end;
 
+procedure TTendencyForm.Button3Click(Sender: TObject);
+begin
+  SelectPathFolder;
+end;
+
 procedure TTendencyForm.AddFrame(AFrame: TFrame);
 begin
   SetLength(FFrames, Length(FFrames) + 1);
   FFrames[Length(FFrames)- 1] := AFrame;
+end;
+
+procedure TTendencyForm.SelectPathFolder;
+var
+  aFolder: string;
+begin
+  aFolder := MainPathEdit.Text;
+  if (aFolder = '') and (Engine.Files.Current <> nil) then
+    aFolder := ExtractFilePath(Engine.Files.Current.Name);
+  if SelectFolder('Select root directory for your project', '', aFolder) then
+  begin
+    MainPathEdit.Text := aFolder;
+  end;
 end;
 
 procedure TTendencyForm.ApplyFrames;
