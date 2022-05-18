@@ -641,7 +641,7 @@ type
     procedure SelectAll; virtual;
 
     procedure EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips); virtual;
-    function ReplaceVariables(S: String; EnumSkips: TEnumVariablesSkips): String;
+    function ReplaceVariables(S: String; EnumSkips: TEnumVariablesSkips; AValues: TStringList = nil): String;
 
     //When main form needs to switch focus (F6), add to the list all control can take focus
     procedure EnumSwitchControls(vList: TSwitchControls); virtual;
@@ -3424,7 +3424,6 @@ var
               break;
             aCount := aCount + 1;
           end;
-          Engine.SendLog(sr.Name);
         until (FindNext(sr) <> 0);
       end;
     end;
@@ -3456,7 +3455,6 @@ var
               if (vMaxLevel = 0) or (vLevel < vMaxLevel) then
                 DoFind(Root, IncludePathDelimiter(Path + sr.Name), vLevel);
             end;
-            Engine.SendLog(sr.Name);
           until (FindNext(sr) <> 0);
         end;
   end;
@@ -4864,7 +4862,7 @@ begin
         if Values.IndexOfName('localfile') >= 0 then
         begin
             BackupFileName := DequoteStr(Values.Values['localfile'], '"');
-            BackupFileName := ReplaceVariables(BackupFileName, []);
+            BackupFileName := ReplaceVariables(BackupFileName, [], Values);
             BackupFileName := ExpandToPath(BackupFileName, Engine.Session.Project.DefaultPath);
             if not SameFileName(BackupFileName, AFileName) then
             begin
@@ -5211,13 +5209,15 @@ begin
   Group.Category.EnumVariables(Values, EnumSkips + [evsFile]);
 end;
 
-function TEditorFile.ReplaceVariables(S: String; EnumSkips: TEnumVariablesSkips): String;
+function TEditorFile.ReplaceVariables(S: String; EnumSkips: TEnumVariablesSkips; AValues: TStringList): String;
 var
   Values: TStringList;
 begin
   Values := TStringList.Create;
   try
     EnumVariables(Values, EnumSkips);
+    if AValues <> nil then
+      Values.Merge(AValues);
     Result := EditorReplaceVariables(S, Values);
   finally
     Values.Free;

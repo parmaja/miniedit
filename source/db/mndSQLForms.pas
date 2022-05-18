@@ -417,7 +417,7 @@ begin
           except
             on E: Exception do
             begin
-              Engine.SendLog(E.Message);
+              //Engine.SendLog(E.Message);
               Session.Rollback;
               raise;
             end;
