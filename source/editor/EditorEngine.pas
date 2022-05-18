@@ -1932,6 +1932,9 @@ var
      p2 := Point(Max(Length(aLine) + 1, p1.x + length(Value)), i + 1); //to the end of line, baaah no but temporary
      aSynEdit.TextBetweenPointsEx[p1, p2, scamIgnore] := Value;
   end;
+
+var
+  rev: Integer;
 begin
   inherited;
   aCommentKind := Mapper.TokkenIDOf(attDocument);
@@ -1965,14 +1968,20 @@ begin
                     Values.AddPair(aName, aValue);
                     if aName = 'updated' then
                     begin
-                      aValue := ' ' + ISODateToStr(Now);
+                      aValue := ' "' + ISODateToStr(Now, '-', ' ', True) + '"';
                       UpdateValue(aValue);
                     end
-                    else if aName = 'filename' then
+                    else if aName = 'revision' then
                     begin
-                      //aValue := ' ' + AFile.Name;
+                      rev := StrToIntDef(aValue, 0) + 1;
+                      aValue := ' ' + IntToStr(rev);
                       UpdateValue(aValue);
-                    end;
+                    end
+                    {else if aName = 'filename' then
+                    begin
+                      aValue := ' ' + AFile.Name;
+                      UpdateValue(aValue);
+                    end;}
                   end;
                 end;
               end;
