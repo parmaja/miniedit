@@ -123,6 +123,14 @@ object TendencyForm: TTendencyForm
         OnClick = Button3Click
         TabOrder = 1
       end
+      object MacrosChk: TCheckBox
+        Left = 20
+        Height = 17
+        Top = 170
+        Width = 84
+        Caption = 'Enable Macro'
+        TabOrder = 4
+      end
     end
   end
 end

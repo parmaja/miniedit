@@ -28,6 +28,7 @@ type
     OkBtn: TButton;
     CancelBtn: TButton;
     OverrideOptionsChk: TCheckBox;
+    MacrosChk: TCheckBox;
     PageControl: TPageControl;
     GeneralSheet: TTabSheet;
     MainPathEdit: TEdit;
@@ -84,6 +85,7 @@ begin
   FTendency.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
   FTendency.IndentMode := TIndentMode(IndentModeCbo.ItemIndex);
   FTendency.RunOptions.MainPath := MainPathEdit.Text;
+  FTendency.EnableMacros := MacrosChk.Checked;
   FTendency.UpdatePath;
 end;
 
@@ -116,6 +118,7 @@ begin
   TabWidthEdit.Text := IntToStr(FTendency.TabWidth);
   IndentModeCbo.ItemIndex := Ord(FTendency.IndentMode);
   MainPathEdit.Text := FTendency.RunOptions.MainPath;
+  MacrosChk.Checked := FTendency.EnableMacros;
 end;
 
 procedure TTendencyForm.PageControlChanging(Sender: TObject; var AllowChange: Boolean);

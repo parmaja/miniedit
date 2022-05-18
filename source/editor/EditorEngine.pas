@@ -292,6 +292,7 @@ type
   TEditorTendency = class abstract(TTendency)
   private
     FDefaultPath: string;
+    FEnableMacros: Boolean;
     FGroups: TFileGroups;
     FOutputExtension: String;
     FRunOptions: TRunProjectOptions;
@@ -348,6 +349,7 @@ type
     property IndentMode: TIndentMode read FIndentMode write FIndentMode default idntTabsToSpaces;
 
     property RunOptions: TRunProjectOptions read FRunOptions;// write FRunOptions;
+    property EnableMacros: Boolean read FEnableMacros write FEnableMacros default False;
   end;
 
   TEditorTendencyClass = class of TEditorTendency;
@@ -4853,18 +4855,22 @@ var
 begin
   Values := TStringList.Create;
   try
-    Group.Category.ScanValues(Self, Values);
+    if Tendency.EnableMacros then
+      Group.Category.ScanValues(Self, Values);
     DoSave(AFileName);
-    if Values.IndexOfName('localfile') >= 0 then
+    if Tendency.EnableMacros then
     begin
       try
-        BackupFileName := DequoteStr(Values.Values['localfile'], '"');
-        BackupFileName := ReplaceVariables(BackupFileName, []);
-        BackupFileName := ExpandToPath(BackupFileName, Engine.Session.Project.DefaultPath);
-        if not SameFileName(BackupFileName, AFileName) then
+        if Values.IndexOfName('localfile') >= 0 then
         begin
-          DoSave(BackupFileName);
-          Engine.SendLog('Saved as backup: ' + BackupFileName);
+            BackupFileName := DequoteStr(Values.Values['localfile'], '"');
+            BackupFileName := ReplaceVariables(BackupFileName, []);
+            BackupFileName := ExpandToPath(BackupFileName, Engine.Session.Project.DefaultPath);
+            if not SameFileName(BackupFileName, AFileName) then
+            begin
+              DoSave(BackupFileName);
+              Engine.SendLog('Saved as backup: ' + BackupFileName);
+            end;
         end;
       except
         on E: Exception do

@@ -8,13 +8,18 @@
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>D:\lab\opensim\projects\Stargate\Ring.lsl</CurrentFile>
+        <CurrentFile>D:\lab\opensim\projects\Stargate\Gate.lsl</CurrentFile>
         <CurrentFolder>D:\lab\opensim\projects\Stargate\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>D:\lab\opensim\projects\Stargate\Ring.lsl</FileName>
-            <CaretX>49</CaretX>
-            <CaretY>8</CaretY>
+            <CaretX>25</CaretX>
+            <CaretY>6</CaretY>
+          </Object>
+          <Object Type="TEditorDesktopFile">
+            <FileName>D:\lab\opensim\projects\Stargate\Gate.lsl</FileName>
+            <CaretX>45</CaretX>
+            <CaretY>19</CaretY>
           </Object>
         </Items>
       </Files>
