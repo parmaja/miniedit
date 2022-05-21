@@ -14,7 +14,7 @@ interface
 uses
   SysUtils, Variants, Classes, Controls, Dialogs, Forms, Contnrs, ImgList,
   mnClasses, mnUtils, mnXMLRttiProfile,
-  mncConnections, mncSQL, mncCSV, mncDB, mncMeta, mnParams, mnFields,
+  mncConnections, mncSQL, mncCSV, mncDB, mncMeta, mnFields,
   EditorEngine, EditorClasses, fgl,
   mndOpenDatabases, mndConnectServers;
 

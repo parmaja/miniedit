@@ -1961,17 +1961,17 @@ begin
                 p := Pos('@', Token);
                 if p > 0 then
                 begin
-                  if ScanID(Token, p + 1, Stop, aName, aValue) then
+                  if ScanID(Token, p {+ 1}, Stop, aName, aValue) then //we take @ with names
                   begin
                     aName := Trim(aName);
                     aValue := Trim(aValue);
                     Values.AddPair(aName, aValue);
-                    if aName = 'updated' then
+                    if aName = '@updated' then
                     begin
                       aValue := ' "' + ISODateToStr(Now, '-', ' ', True) + '"';
                       UpdateValue(aValue);
                     end
-                    else if aName = 'revision' then
+                    else if aName = '@revision' then
                     begin
                       rev := StrToIntDef(aValue, 0) + 1;
                       aValue := ' ' + IntToStr(rev);
@@ -4464,6 +4464,9 @@ var
 begin
   if not (evsEngine in EnumSkips) then
   begin
+    Values.Merge('Date', ISODateToStr(Now, '-', ' ', False));
+    Values.Merge('DateTime', ISODateToStr(Now, '-', ' ', True));
+
     if not (evsEnviroment in EnumSkips) then
       Values.Merge(Environment);
 
@@ -4859,6 +4862,8 @@ procedure TEditorFile.SaveToFile(AFileName: String);
 var
   Values: TStringList;
   BackupFileName: String;
+  i: Integer;
+  aName, aValue: string;
 begin
   Values := TStringList.Create;
   try
@@ -4868,17 +4873,23 @@ begin
     if Tendency.EnableMacros then
     begin
       try
-        if Values.IndexOfName('localfile') >= 0 then
+        for i := 0 to Values.Count -1 do
         begin
-            BackupFileName := DequoteStr(Values.Values['localfile'], '"');
-            BackupFileName := ReplaceVariables(BackupFileName, [], Values);
-            BackupFileName := ExpandToPath(BackupFileName, Engine.Session.Project.DefaultPath);
-            if not SameFileName(BackupFileName, AFileName) then
-            begin
-              DoSave(BackupFileName);
-              Engine.SendLog('Saved as backup: ' + BackupFileName);
-            end;
-        end;
+          aName := Values.Names[i];
+          aValue := Values.ValueFromIndex[i];
+          if SameText(aName, '@localfile') then
+          begin
+              BackupFileName := DequoteStr(aValue, '"');
+              BackupFileName := ReplaceVariables(BackupFileName, [], Values);
+              BackupFileName := ExpandToPath(BackupFileName, Engine.Session.Project.DefaultPath);
+              if not SameFileName(BackupFileName, AFileName) then //not the same file
+              begin
+                DoSave(BackupFileName);
+                //TODO Send update age if opened in the editor
+                Engine.SendLog('Saved as backup: ' + BackupFileName);
+              end;
+          end;
+         end;
       except
         on E: Exception do
         begin
