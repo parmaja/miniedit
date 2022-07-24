@@ -1832,8 +1832,8 @@ object MainForm: TMainForm
   end
   object MainMenu: TMainMenu
     Images = EditorResource.ToolbarImageList
-    Left = 208
-    Top = 36
+    Left = 196
+    Top = 92
     object file1: TMenuItem
       Caption = '&File'
       Hint = 'Exit|Quits the application'
@@ -1995,11 +1995,11 @@ object MainForm: TMainForm
         Action = SetAsRootFolderAct
         Hint = 'set the current folder in panel as root/main folder'
       end
-      object MenuItem13: TMenuItem
-        Action = SelectSCMTypeAct
-      end
       object MenuItem26: TMenuItem
         Caption = '-'
+      end
+      object MenuItem13: TMenuItem
+        Action = SelectSCMTypeAct
       end
       object ProjectTypeMnu: TMenuItem
         Action = SelectProjectTendencyAct

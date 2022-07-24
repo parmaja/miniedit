@@ -585,6 +585,7 @@ type
     procedure DoLoad(FileName: String); virtual; abstract;
     procedure DoSave(FileName: String); virtual; abstract;
     function Execute(RunInfo: TmneRunInfo): Boolean; virtual;
+    function CanAddRecentFiles: Boolean; virtual;
   public
     constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
@@ -808,6 +809,7 @@ type
     procedure FindNext;
     procedure FindPrevious;
     procedure CheckChanged;
+    procedure CheckChanged(AFileName: string); //slient function
     procedure CloseAll;
     procedure CloseOthers;
     function GetEditedCount: Integer;
@@ -1440,7 +1442,7 @@ type
     List: TStringList;
   end;
 
-function EditorReplaceVariables(S: String; Values: TStringList): String;
+function InternalReplaceVariables(S: String; Values: TStringList): String;
 
 function ResetUpdate(State: TEditorChangeState; var InStates: TEditorChangeStates): Boolean;
 
@@ -1521,11 +1523,11 @@ begin
   Result := FEngine;
 end;
 
-function EditorReplaceVariables(S: String; Values: TStringList): String;
+function InternalReplaceVariables(S: String; Values: TStringList): String;
 begin
   if s <> '' then
   begin
-    Result := VarReplace(S, Values, sEnvVarChar);
+    Result := VarReplace(S, Values, sEnvVarChar, '', ['@']); //* @ for file macro
   end
   else
     Result := '';
@@ -1965,7 +1967,6 @@ begin
                   begin
                     aName := Trim(aName);
                     aValue := Trim(aValue);
-                    Values.AddPair(aName, aValue);
                     if aName = '@updated' then
                     begin
                       aValue := ' "' + ISODateToStr(Now, '-', ' ', True) + '"';
@@ -1983,6 +1984,7 @@ begin
                       UpdateValue(aValue);
                     end;}
                   end;
+                  Values.AddPair(aName, aValue);
                 end;
               end;
               Highlighter.Next;
@@ -2370,7 +2372,7 @@ begin
     begin
       Special := True;
       aColor := Engine.Options.Profile.Attributes.Default.Background;
-      Markup.Background := MixColors(aColor, OppositeColor(Engine.Options.Profile.Attributes.Default.Background), 200);
+      Markup.Background := MixColors(aColor, ContrastColor(Engine.Options.Profile.Attributes.Default.Background), 200);
       Markup.Foreground := Engine.Options.Profile.Attributes.Default.Foreground;
     end;
   end
@@ -2843,7 +2845,7 @@ begin
   Values := TStringList.Create;
   try
     EnumVariables(Values, EnumSkips);
-    Result := EditorReplaceVariables(S, Values);
+    Result := InternalReplaceVariables(S, Values);
   finally
     Values.Free;
   end;
@@ -3271,6 +3273,21 @@ begin
   end;
 end;
 
+procedure TEditorFiles.CheckChanged(AFileName: string);
+var
+  i: Integer;
+  aFile: TEditorFile;
+begin
+  Engine.BeginUpdate;
+  try
+    aFile := FindFile(AFileName);
+    if aFile <> nil then
+      aFile.UpdateAge;
+  finally
+    Engine.EndUpdate;
+  end;
+end;
+
 procedure TEditorFiles.CloseAll;
 begin
   Engine.BeginUpdate;
@@ -3691,7 +3708,7 @@ begin
       FallbackGroup := '';
     Result := Engine.Groups.OpenFile(Self, FileName, FileParams, FallbackGroup);
   end;
-  if (Result <> nil) and AppendToRecent then
+  if (Result <> nil) and AppendToRecent and Result.CanAddRecentFiles then
     Engine.ProcessRecentFile(lFileName);
 end;
 
@@ -4467,6 +4484,10 @@ begin
     Values.Merge('Date', ISODateToStr(Now, '-', ' ', False));
     Values.Merge('DateTime', ISODateToStr(Now, '-', ' ', True));
 
+    Values.Merge('FileDate', ISODateToStr(Now, '-', '-', '-', False));
+    Values.Merge('FileDateTime', ISODateToStr(Now, '-', '-', '-', True));
+
+
     if not (evsEnviroment in EnumSkips) then
       Values.Merge(Environment);
 
@@ -4520,7 +4541,7 @@ begin
   Values := TStringList.Create;
   try
     EnumVariables(Values, EnumSkips);
-    Result := EditorReplaceVariables(S, Values);
+    Result := InternalReplaceVariables(S, Values);
   finally
     Values.Free;
   end;
@@ -4768,7 +4789,8 @@ begin
       else if mr = msgcYes then
         Save(True);
     end;
-    Engine.ProcessRecentFile(FileName);
+    if (FileName <> '') then
+      Engine.ProcessRecentFile(FileName);
   end;
 
   i := Index;
@@ -4885,6 +4907,7 @@ begin
               if not SameFileName(BackupFileName, AFileName) then //not the same file
               begin
                 DoSave(BackupFileName);
+                Engine.Files.CheckChanged(BackupFileName);
                 //TODO Send update age if opened in the editor
                 Engine.SendLog('Saved as backup: ' + BackupFileName);
               end;
@@ -5238,7 +5261,7 @@ begin
     EnumVariables(Values, EnumSkips);
     if AValues <> nil then
       Values.Merge(AValues);
-    Result := EditorReplaceVariables(S, Values);
+    Result := InternalReplaceVariables(S, Values);
   finally
     Values.Free;
   end;
@@ -5475,6 +5498,11 @@ end;
 function TEditorFile.Execute(RunInfo: TmneRunInfo): Boolean;
 begin
   Result := False;
+end;
+
+function TEditorFile.CanAddRecentFiles: Boolean;
+begin
+  Result := True;
 end;
 
 function ConvertToLinesMode(Mode: TEditorLinesMode; Contents: String): String;
@@ -5966,7 +5994,7 @@ end;
 function TVirtualCategory.ReplaceVariables(S: String; Values: TStringList; EnumSkips: TEnumVariablesSkips): String;
 begin
   EnumVariables(Values, EnumSkips);
-  Result := EditorReplaceVariables(S, Values);
+  Result := InternalReplaceVariables(S, Values);
 end;
 
 function TVirtualCategory.ReplaceVariables(S: String; EnumSkips: TEnumVariablesSkips): String;

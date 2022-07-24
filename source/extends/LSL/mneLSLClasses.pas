@@ -20,6 +20,9 @@ uses
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   mnSynHighlighterMultiProc, mnSynHighlighterLSL;
 
+const
+  sl_script_: string = 'sl_script_';
+
 type
 
   { TmneSynLSLSyn }
@@ -33,6 +36,7 @@ type
   TLSLFile = class(TSourceEditorFile)
   protected
     procedure NewContent; override;
+    function CanAddRecentFiles: Boolean; override;
   public
   end;
 
@@ -314,16 +318,14 @@ end;
 { TLSLFileCategory }
 
 function TLSLFileCategory.GetFileCaption(AFile: TEditorFile; FileName: string): string;
-const
-  sl: string = 'sl_script_';
 var
   p: Integer;
   ext: string;
 begin
-  if LeftStr(FileName, Length(sl)) = sl then
+  if LeftStr(FileName, Length(sl_script_)) = sl_script_ then
   begin
     ext := ExtractFileExt(FileName);
-    Result := MidStr(FileName, Length(sl) + 1, MaxInt);
+    Result := MidStr(FileName, Length(sl_script_) + 1, MaxInt);
     p := ReversePos('_', Result);
     if p>0 then
     begin
@@ -392,6 +394,11 @@ end;
 procedure TLSLFile.NewContent;
 begin
   inherited NewContent;
+end;
+
+function TLSLFile.CanAddRecentFiles: Boolean;
+begin
+  Result := not SameText(LeftStr(FileName, Length(sl_script_)), sl_script_);
 end;
 
 initialization
