@@ -988,6 +988,27 @@ type
     );
   TFileCategoryKinds = set of TFileCategoryKind;
 
+  TScannedValue = class(TmnObject)
+  public
+    Line: Integer;
+    X1,X2: Integer;
+    Text: string;
+    Value: string;
+  end;
+
+  { TScannedValues }
+
+  TScannedValues = class(specialize TmnObjectList<TScannedValue>)
+  public
+    procedure Add(
+      Line: Integer;
+      X1,X2: Integer;
+      Text: string;
+      Value: string
+    );
+
+  end;
+
   { TVirtualCategory }
 
   TVirtualCategory = class(TEditorElements)
@@ -1589,6 +1610,21 @@ begin
   end;
 end;
 
+{ TScannedValues }
+
+procedure TScannedValues.Add(Line: Integer; X1, X2: Integer; Text: string; Value: string);
+var
+  item: TScannedValue;
+begin
+  item := TScannedValue.Create;
+  item.Line := Line;
+  item.X1 := X1;
+  item.X2 := X2;
+  item.Text := Text;
+  item.Value := Value;
+  inherited Add(item);
+end;
+
 { TStringsHelper }
 
 procedure TStringsHelper.Merge(FromStrings: TStrings; Overwrite: Boolean);
@@ -1918,25 +1954,41 @@ procedure TCodeFileCategory.ScanValues(AFile: TEditorFile; Values: TStringList);
   end;
 
 var
-  Token: String;
-  i: Integer;
+  aToken: String;
+  aTokenPos: Integer;
   aCommentKind: Integer;
   p: Integer;
   aSynEdit: TCustomSynEdit;
   aName, aValue: String;
-  p1,p2 :TPoint;
+  aLineNumber: Integer;
   aLine: string;
   Stop: Integer;
+  ScannedValues: TScannedValues;
 
-  procedure UpdateValue(Value: string);
+  procedure UpdateValue(Name, Value: string);
+  var
+    x1, x2: Integer;
+    //    s: string;
   begin
-     p1 := Point(Highlighter.GetTokenPos + Stop + 1, i + 1);
-     p2 := Point(Max(Length(aLine) + 1, p1.x + length(Value)), i + 1); //to the end of line, baaah no but temporary
-     aSynEdit.TextBetweenPointsEx[p1, p2, scamIgnore] := Value;
+    x1 := aTokenPos + Stop;
+    x2 := Max(Length(aLine) + 1, x1 + length(Value));
+    ScannedValues.Add(aLineNumber, x1, x2, Name, Value);
+
+{    s := MidStr(aLine, 1, x1);
+    s := s + Value;
+    s := s + MidStr(aLine, x2, MaxInt);}
+    //aSynEdit.Lines[aLineNumber] := s;
+(*
+    p1 := Point(aTokenPos + Stop + 1, aLineNumber + 1);
+    p2 := Point(Max(Length(aLine) + 1, p1.x + length(Value)), aLineNumber + 1); //to the end of line, baaah no but temporary
+    aSynEdit.TextBetweenPointsEx[p1, p2, scamIgnore] := Value;
+*)
   end;
 
 var
+  item: TScannedValue;
   rev: Integer;
+  p1, p2: TPoint;
 begin
   inherited;
   aCommentKind := Mapper.TokkenIDOf(attDocument);
@@ -1944,6 +1996,7 @@ begin
     aCommentKind := Mapper.TokkenIDOf(attComment);
   if aCommentKind >= 0 then
   begin
+    ScannedValues:=TScannedValues.Create;
     aSynEdit := AFile.SynEdit;
     Screen.Cursor := crHourGlass;
     try
@@ -1951,32 +2004,33 @@ begin
       begin
         try
           Highlighter.ResetRange;
-          for i := 0 to aSynEdit.Lines.Count - 1 do
+          for aLineNumber := 0 to aSynEdit.Lines.Count - 1 do
           begin
-            aLine := aSynEdit.Lines[i];
-            Highlighter.SetLine(aLine, 1);
+            aLine := aSynEdit.Lines[aLineNumber];
+            Highlighter.SetLine(aLine, aLineNumber);
             while not Highlighter.GetEol do
             begin
-              Token := Highlighter.GetToken;
+              aToken := Highlighter.GetToken;
+              aTokenPos := Highlighter.GetTokenPos;
               if (Highlighter.GetTokenKind = aCommentKind) then
               begin
-                p := Pos('@', Token);
+                p := Pos('@', aToken);
                 if p > 0 then
                 begin
-                  if ScanID(Token, p {+ 1}, Stop, aName, aValue) then //we take @ with names
+                  if ScanID(aToken, p {+ 1}, Stop, aName, aValue) then //we take @ with names
                   begin
                     aName := Trim(aName);
                     aValue := Trim(aValue);
                     if aName = '@updated' then
                     begin
                       aValue := ' "' + ISODateToStr(Now, '-', ' ', True) + '"';
-                      UpdateValue(aValue);
+                      UpdateValue(aName, aValue);
                     end
                     else if aName = '@revision' then
                     begin
                       rev := StrToIntDef(aValue, 0) + 1;
                       aValue := ' ' + IntToStr(rev);
-                      UpdateValue(aValue);
+                      UpdateValue(aName, aValue);
                     end
                     {else if aName = 'filename' then
                     begin
@@ -1993,7 +2047,25 @@ begin
         finally
         end;
       end;
+      aSynEdit.BeginUpdate(False);
+      try
+        for item in ScannedValues do
+        begin
+          {
+          nop no undo work into
+          Line := aSynEdit.Lines[item.Line];
+          aSynEdit.Lines[Item.Line] := MidStr(aLine, 1, item.x1) + Item.Value + MidStr(aLine, item.x2, MaxInt);
+          }
+          p1 := Point(item.X1 + 1, item.Line + 1);
+          p2 := Point(Item.X2, item.Line + 1);
+          aSynEdit.TextBetweenPointsEx[p1, p2, scamIgnore] := Item.Value;
+
+        end;
+      finally
+        aSynEdit.EndUpdate;
+      end;
     finally
+      FreeAndNil(ScannedValues);
       Screen.Cursor := crDefault;
     end;
   end;
@@ -4789,7 +4861,7 @@ begin
       else if mr = msgcYes then
         Save(True);
     end;
-    if (FileName <> '') then
+    if (FileName <> '') and CanAddRecentFiles then
       Engine.ProcessRecentFile(FileName);
   end;
 

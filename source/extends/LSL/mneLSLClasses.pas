@@ -398,7 +398,7 @@ end;
 
 function TLSLFile.CanAddRecentFiles: Boolean;
 begin
-  Result := not SameText(LeftStr(FileName, Length(sl_script_)), sl_script_);
+  Result := not SameText(LeftStr(BaseName, Length(sl_script_)), sl_script_);
 end;
 
 initialization
