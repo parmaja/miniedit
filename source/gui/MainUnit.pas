@@ -2967,6 +2967,9 @@ begin
     LogEdit.Gutter.Parts.Part[i].MarkupInfo.Foreground := Engine.Options.Profile.Attributes.Gutter.Foreground;
     LogEdit.Gutter.Parts.Part[i].MarkupInfo.Background := Engine.Options.Profile.Attributes.Gutter.Background;
   end;
+
+  FilesFilterEdit.Color := Engine.Options.Profile.Attributes.Default.Background;
+  FilesFilterEdit.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
 end;
 
 procedure TMainForm.UpdateWatches;

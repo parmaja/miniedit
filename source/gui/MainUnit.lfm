@@ -382,7 +382,7 @@ object MainForm: TMainForm
         TabOrder = 0
         object FileList: TListView
           Left = 0
-          Height = 236
+          Height = 233
           Top = 23
           Width = 255
           Align = alClient
@@ -407,20 +407,22 @@ object MainForm: TMainForm
         end
         object Panel1: TPanel
           Left = 0
-          Height = 22
-          Top = 262
+          Height = 25
+          Top = 259
           Width = 255
           Align = alBottom
           BevelOuter = bvNone
-          ClientHeight = 22
+          ClientHeight = 25
           ClientWidth = 255
           TabOrder = 1
           object FilesFilterEdit: TEdit
-            Left = 0
-            Height = 22
-            Top = 0
-            Width = 234
+            Left = 2
+            Height = 21
+            Top = 2
+            Width = 230
             Align = alClient
+            BorderSpacing.Around = 2
+            BorderStyle = bsNone
             Color = clWindow
             OnChange = FilesFilterEditChange
             OnKeyPress = FilesFilterEditKeyPress
@@ -433,7 +435,7 @@ object MainForm: TMainForm
             AnchorSideBottom.Control = BugSignBtn
             AnchorSideBottom.Side = asrBottom
             Left = 234
-            Height = 22
+            Height = 25
             Hint = 'Clear files filter'
             Top = 0
             Width = 21
