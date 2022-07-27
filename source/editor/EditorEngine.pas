@@ -31,14 +31,16 @@ Portable Notes:
 interface
 
 uses
-  Messages, SysUtils, Forms, StdCtrls, StrUtils, Dialogs, Variants, Classes, Menus, Controls, LCLIntf, LConvEncoding,
-  FileUtil, LazFileUtils, Math,
-  Graphics, Contnrs, Types, IniFiles, EditorOptions, EditorColors, EditorProfiles, fgl,
+  Messages, SysUtils, Forms, StdCtrls, StrUtils, Dialogs, Variants, Classes, Menus, Controls,
+  LCLIntf, LConvEncoding, LazUTF8, fgl, LCLType,
+  FileUtil, LazFileUtils, Math, Masks,
+  Graphics, Contnrs, Types, IniFiles,
+  EditorOptions, EditorColors, EditorProfiles,
   SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses, SynEditPlugins, SynPluginTemplateEdit,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
-  mncCSV, dbgpServers, Masks, mnXMLRttiProfile, mnXMLUtils, mnClasses,
-  mnUtils, LCLType, EditorClasses, EditorRun;
+  mncCSV, dbgpServers, mnXMLRttiProfile, mnXMLUtils, mnClasses,
+  mnUtils, EditorClasses, EditorRun;
 
 type
   TThreeStates = (stateNone, stateFalse, stateTrue);
@@ -964,7 +966,13 @@ type
   protected
     function OwnedByEditor: Boolean; override;
     function GetCompletionFormClass: TSynBaseCompletionFormClass; override;
+    procedure OnSynCompletionNextChar(Sender: TObject);
+    procedure OnSynCompletionPrevChar(Sender: TObject);
+    procedure OnSynCompletionKeyPress(Sender: TObject; var Key: Char);
+    procedure OnSynCompletionUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
+    procedure OnSynCompletionPositionChanged(Sender: TObject);
   public
+    constructor Create(AOwner: TComponent); override;
   end;
 
   TMap = class(TObject)
@@ -2782,6 +2790,86 @@ end;
 function TmneSynCompletion.GetCompletionFormClass: TSynBaseCompletionFormClass;
 begin
   Result := TmneSynBaseCompletionForm;
+end;
+
+procedure TmneSynCompletion.OnSynCompletionNextChar(Sender: TObject);
+var
+  NewPrefix: String;
+  Line: String;
+  LogCaret: TPoint;
+  CharLen: LongInt;
+  AddPrefix: String;
+begin
+  if Editor=nil then exit;
+  LogCaret:=Editor.LogicalCaretXY;
+  if LogCaret.Y>=Editor.Lines.Count then exit;
+  Line:=Editor.Lines[LogCaret.Y-1];
+  if LogCaret.X>length(Line) then exit;
+  CharLen:=UTF8CodepointSize(@Line[LogCaret.X]);
+  AddPrefix:=copy(Line,LogCaret.X,CharLen);
+  if not Editor.IsIdentChar(AddPrefix) then exit;
+  NewPrefix:=CurrentString+AddPrefix;
+  //debugln('TSourceNotebook.OnSynCompletionNextChar NewPrefix="',NewPrefix,'" LogCaret.X=',dbgs(LogCaret.X));
+  inc(LogCaret.X);
+  Editor.LogicalCaretXY:=LogCaret;
+  CurrentString:=NewPrefix;
+end;
+
+procedure TmneSynCompletion.OnSynCompletionPrevChar(Sender: TObject);
+var
+  NewPrefix: String;
+  NewLen: LongInt;
+begin
+  NewPrefix:=CurrentString;
+  if NewPrefix='' then exit;
+  if Editor=nil then exit;
+  Editor.CaretX:=Editor.CaretX-1;
+  NewLen:=UTF8FindNearestCharStart(PChar(NewPrefix),length(NewPrefix),
+                                   length(NewPrefix)-1);
+  NewPrefix:=copy(NewPrefix,1,NewLen);
+  CurrentString:=NewPrefix;
+end;
+
+procedure TmneSynCompletion.OnSynCompletionKeyPress(Sender: TObject; var Key: Char);
+begin
+  if (System.Pos(Key,EndOfTokenChr)>0) then begin
+    // identifier completed
+    //debugln('TSourceNotebook.OnSynCompletionKeyPress A');
+    TheForm.OnValidate(Sender,Key,[]);
+    //debugln('TSourceNotebook.OnSynCompletionKeyPress B');
+    Key:=#0;
+  end;
+end;
+
+procedure TmneSynCompletion.OnSynCompletionUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
+begin
+  if (length(UTF8Key)=1)
+  and (System.Pos(UTF8Key[1],EndOfTokenChr)>0) then begin
+    // identifier completed
+    //debugln('TSourceNotebook.OnSynCompletionUTF8KeyPress A');
+    TheForm.OnValidate(Sender,UTF8Key,[]);
+    //debugln('TSourceNotebook.OnSynCompletionKeyPress B');
+    UTF8Key:='';
+  end;
+  //debugln('TSourceNotebook.OnSynCompletionKeyPress B UTF8Key=',dbgstr(UTF8Key));
+end;
+
+procedure TmneSynCompletion.OnSynCompletionPositionChanged(Sender: TObject);
+begin
+  {if Manager.ActiveCompletionPlugin<>nil then
+    Manager.ActiveCompletionPlugin.IndexChanged(Position);
+  if SrcEditHintWindow<>nil then
+    SrcEditHintWindow.UpdateHints;}
+end;
+
+constructor TmneSynCompletion.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  OnKeyNextChar:=@OnSynCompletionNextChar;
+  OnKeyPrevChar:=@OnSynCompletionPrevChar;
+  OnKeyPress:=@OnSynCompletionKeyPress;
+  OnUTF8KeyPress:=@OnSynCompletionUTF8KeyPress;
+  OnPositionChanged:=@OnSynCompletionPositionChanged;
 end;
 
 { TEditorSCM }
@@ -6132,6 +6220,7 @@ begin
     Completion.ShortCut := scCtrl + VK_SPACE;
     Completion.CaseSensitive := False;
     Completion.SelectedColor := vSynEdit.SelectedColor.Background;
+    Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;,';
   end;
   FCompletion.AddEditor(vSynEdit);
 

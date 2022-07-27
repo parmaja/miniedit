@@ -125,7 +125,7 @@ end;
 procedure TBVHFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
-  Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;';//what about $
+  Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;,';//what about $?
 end;
 
 procedure TBVHFileCategory.DoPrepareCompletion(Sender: TObject);
@@ -366,7 +366,7 @@ end;
 procedure TLSLFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
-  Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;';//what about $
+  Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;,';//what about $
   IdentifierID := ord(mnSynHighlighterMultiProc.tkIdentifier);
   IdentifierAttribute := Ord(attIdentifier);
 end;
