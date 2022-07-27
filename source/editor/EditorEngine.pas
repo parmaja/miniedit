@@ -1033,6 +1033,7 @@ type
     function GetMapper: TMapper;
   protected
     FCompletion: TmneSynCompletion;
+    FAutoComplete: TSynAutoCompleteExtended;
 
     function GetFileCaption(AFile: TEditorFile; FileName: String): String; virtual;
     //FTemplatePlugin: TSynPluginTemplateEdit;
@@ -3435,7 +3436,6 @@ end;
 
 procedure TEditorFiles.CheckChanged(AFileName: string);
 var
-  i: Integer;
   aFile: TEditorFile;
 begin
   Engine.BeginUpdate;
@@ -6211,6 +6211,13 @@ end;
 
 procedure TVirtualCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
+  if FAutoComplete = nil then
+  begin
+    FAutoComplete := TSynAutoCompleteExtended.Create(nil);
+    FAutoComplete.ShortCut := scShift + VK_SPACE;
+  end;
+  FAutoComplete.AddEditor(vSynEdit);
+
   if FCompletion = nil then
   begin
     FCompletion := TmneSynCompletion.Create(nil);

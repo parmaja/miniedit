@@ -1,0 +1,5 @@
+[state_entry | state_entry()]
+state_entry()
+{
+    |;
+}
