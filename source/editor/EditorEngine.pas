@@ -36,7 +36,8 @@ uses
   FileUtil, LazFileUtils, Math, Masks,
   Graphics, Contnrs, Types, IniFiles,
   EditorOptions, EditorColors, EditorProfiles,
-  SynEditMarks, SynCompletion, SynEditTypes, SynEditMiscClasses, SynEditPlugins, SynPluginTemplateEdit,
+  SynEditMarks, SynCompletion, SynEditAutoComplete,
+  SynEditTypes, SynEditMiscClasses, SynEditPlugins, SynPluginTemplateEdit,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
   mncCSV, dbgpServers, mnXMLRttiProfile, mnXMLUtils, mnClasses,
@@ -979,6 +980,7 @@ type
     Name: String;
     AttType: TAttributeType;
     TokenID: Integer;
+    Attribute: TSynHighlighterAttributes;
   end;
 
   { TMapper }
@@ -988,6 +990,8 @@ type
   public
     function Add(Attribute: TSynHighlighterAttributes; AttType: TAttributeType; TokenID: Integer = -1): TMap;
     function IndexOfAttribute(AttributeType: TAttributeType): Integer;
+    function FindByAttribute(AttributeType: TAttributeType): TMap;
+    function AttributeName(AttributeType: TAttributeType): string;
     function TokkenIDOf(AttributeType: TAttributeType): Integer;
   end;
 
@@ -1033,17 +1037,18 @@ type
     function GetMapper: TMapper;
   protected
     FCompletion: TmneSynCompletion;
-    FAutoComplete: TSynAutoCompleteExtended;
+    FAutoComplete: TSynEditAutoComplete;
 
     function GetFileCaption(AFile: TEditorFile; FileName: String): String; virtual;
-    //FTemplatePlugin: TSynPluginTemplateEdit;
 
     function DoCreateHighlighter: TSynCustomHighlighter; virtual; abstract;
     procedure InitMappers; virtual; abstract;
 
+    //run once but when category ini
     procedure InitCompletion(vSynEdit: TCustomSynEdit); virtual;
     procedure DoAddKeywords; virtual;
-    procedure DoAddCompletion(AKeyword: String; AKind: Integer); virtual;
+    procedure DoAddCompletion(AKeyword: String; AKind: Integer);
+    procedure DoAddCompletion(AKeyword: String; AKind: TAttributeType); virtual;
     procedure DoPrepareCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
     procedure PrepareCompletion(ASender: TSynBaseCompletion; var ACurrentString: String; var APosition: Integer; var AnX, AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
     procedure DoExecuteCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
@@ -1081,7 +1086,7 @@ type
     property IsText: Boolean read GetIsText;
     property Highlighter: TSynCustomHighlighter read GetHighlighter;
     property Completion: TmneSynCompletion read FCompletion;
-    //property TemplatePlugin: TSynPluginTemplateEdit read FTemplatePlugin;
+    property AutoComplete: TSynEditAutoComplete read FAutoComplete;
     property Kind: TFileCategoryKinds read FKind;
     property ImageName: String read FImageName write FImageName;
     property Items[Index: Integer]: TFileGroup read GetItem; default;
@@ -2126,9 +2131,9 @@ var
 begin
   inherited;
   Screen.Cursor := crHourGlass;
-  Completion.ItemList.BeginUpdate;
+  Completion.BeginUpdate;
   try
-    //Completion.ItemList.Clear;
+    //Completion.Clear;
     DoAddKeywords; //TODO check timeout before refill it for speeding
 
     aSynEdit := Completion.TheForm.CurrentEditor as TCustomSynEdit;
@@ -2180,14 +2185,14 @@ begin
         end;
 
         for i := 0 to aIdentifiers.Count - 1 do
-          DoAddCompletion(aIdentifiers[i], IdentifierAttribute); //use mapper
+          DoAddCompletion(aIdentifiers[i], attIdentifier); //use mapper
       finally
         aIdentifiers.Free;
       end;
     end;
-    (Completion.ItemList as TStringList).Sort;
+    //(Completion.ItemList as TStringList).Sort;
   finally
-    Completion.ItemList.EndUpdate;
+    Completion.EndUpdate;
     Screen.Cursor := crDefault;
   end;
 end;
@@ -2315,6 +2320,7 @@ end;
 function TMapper.Add(Attribute: TSynHighlighterAttributes; AttType: TAttributeType; TokenID: Integer): TMap;
 begin
   Result := TMap.Create;
+  Result.Attribute := Attribute;
   Result.Name := Attribute.StoredName;
   Result.AttType := AttType;
   Result.TokenID := TokenID;
@@ -2331,6 +2337,36 @@ begin
     if Items[i].AttType = AttributeType then
     begin
       Result := i;
+      break;
+    end;
+  end;
+end;
+
+function TMapper.FindByAttribute(AttributeType: TAttributeType): TMap;
+var
+  i: Integer;
+begin
+  Result := nil;
+  for i := 0 to Count - 1 do
+  begin
+    if Items[i].AttType = AttributeType then
+    begin
+      Result := Items[i];
+      break;
+    end;
+  end;
+end;
+
+function TMapper.AttributeName(AttributeType: TAttributeType): string;
+var
+  i: Integer;
+begin
+  Result := '';
+  for i := 0 to Count - 1 do
+  begin
+    if Items[i].AttType = AttributeType then
+    begin
+      Result := Items[i].Name;
       break;
     end;
   end;
@@ -2550,9 +2586,16 @@ begin
   with SynEdit.Keystrokes.Add do
   begin
     Key := VK_SPACE;
-    Shift := [ssShift, ssCtrl];
-    Command := ecUpperCaseBlock;
+    Shift := [ssShift];
+    Command := ecAutoCompletion;
   end;
+
+  {with SynEdit.Keystrokes.Add do
+  begin
+    Key := VK_SPACE;
+    Shift := [ssShift, ssCtrl];
+    Command := Proposal;
+  end;}
 
   Engine.MacroRecorder.AddEditor(SynEdit);
   Engine.EditorPlugin.AddEditor(SynEdit);
@@ -6213,35 +6256,29 @@ procedure TVirtualCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   if FAutoComplete = nil then
   begin
-    FAutoComplete := TSynAutoCompleteExtended.Create(nil);
-    FAutoComplete.ShortCut := scShift + VK_SPACE;
+    FAutoComplete := TSynEditAutoComplete.Create(nil);
+    AutoComplete.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;,';
   end;
-  FAutoComplete.AddEditor(vSynEdit);
+  AutoComplete.AddEditor(vSynEdit);
 
   if FCompletion = nil then
   begin
     FCompletion := TmneSynCompletion.Create(nil);
-    Completion.Width := 340;
+    Completion.Width := vSynEdit.ClientWidth div 3;
+    if Completion.Width < 360 then
+      Completion.Width := 360;
     Completion.OnBeforeExecute := @PrepareCompletion;
-    Completion.OnPaintItem := @DoPaintItem;
+//    Completion.OnPaintItem := @DoPaintItem;
     Completion.ShortCut := scCtrl + VK_SPACE;
     Completion.CaseSensitive := False;
     Completion.SelectedColor := vSynEdit.SelectedColor.Background;
     Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;,';
+    Completion.UseInsertList := True;
+    Completion.UsePrettyText := True;
   end;
-  FCompletion.AddEditor(vSynEdit);
-
-  {if FTemplatePlugin <> nil then
-  begin
-    FTemplatePlugin := TSynPluginTemplateEdit.Create(nil);
-  end;}
-  //FTemplatePlugin.added
-
-  //FTemplatePlugin.
-
+  Completion.AddEditor(vSynEdit);
 
   Completion.TheForm.Caption := Name;
-
   Completion.TheForm.Font.Size := vSynEdit.Font.Size;
   Completion.TheForm.Font.Color := vSynEdit.Font.Color;
   Completion.TheForm.Color := vSynEdit.Color;
@@ -6259,7 +6296,22 @@ end;
 
 procedure TVirtualCategory.DoAddCompletion(AKeyword: String; AKind: Integer);
 begin
-  Completion.ItemList.AddObject(AKeyword, TObject(IntPtr(AKind)));
+  DoAddCompletion(AKeyword, TAttributeType(AKind));
+end;
+
+procedure TVirtualCategory.DoAddCompletion(AKeyword: String; AKind: TAttributeType);
+var
+  s: string;
+//  i: Integer;
+  map: TMap;
+begin
+  //s := '\style{+B}' + Engine.Options.Profile.Attributes.AttributeName(AKind) + '\style{-B} : ' + AKeyword;
+  map := Mapper.FindByAttribute(AKind);
+  s := map.Name + ': \Column{6}\color{$'+IntToHex(map.Attribute.Foreground)+'}' + AKeyword;
+  {i := AutoComplete.CompletionComments.IndexOf(AKeyword);
+  if i>=0 then
+    s := s + AutoComplete.Completions[i];}
+  Completion.AddItem(S, AKeyword, TObject(IntPtr(Ord(AKind))));
 end;
 
 procedure TVirtualCategory.DoPrepareCompletion(Sender: TObject);
@@ -6268,7 +6320,7 @@ end;
 
 procedure TVirtualCategory.PrepareCompletion(ASender: TSynBaseCompletion; var ACurrentString: String; var APosition: Integer; var AnX, AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
 begin
-  Completion.ItemList.Clear;
+  Completion.Clear;
   DoPrepareCompletion(ASender);
 end;
 

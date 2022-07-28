@@ -171,6 +171,7 @@ type
     procedure Revert;
     procedure Correct; //reset the default colors based on whitespace
     function Find(AttType: TAttributeType): TGlobalAttribute;
+    function AttributeName(AttType: TAttributeType): string;
     property Items[Index: Integer]: TGlobalAttribute read GetItem; default;
     procedure Assign(Source: TPersistent); override;
     procedure AssignTo(Dest: TPersistent); override;
@@ -511,6 +512,22 @@ begin
     end;
   end;
 end;
+
+function TGlobalAttributes.AttributeName(AttType: TAttributeType): string;
+var
+  i: integer;
+begin
+  Result := '';
+  for i := 0 to Count - 1 do
+  begin
+    if Items[i].AttType = AttType then
+    begin
+      Result := Items[i].FTitle;
+      break;
+    end;
+  end;
+end;
+
 
 procedure TGlobalAttributes.Assign(Source: TPersistent);
 var

@@ -369,12 +369,13 @@ begin
   Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;,';//what about $
   IdentifierID := ord(mnSynHighlighterMultiProc.tkIdentifier);
   IdentifierAttribute := Ord(attIdentifier);
-  if FileExistsUTF8(Application.Location + 'lsl.template') then
-    FAutoComplete.AutoCompleteList.LoadFromFile(Application.Location + 'lsl.template');
 end;
 
 procedure TLSLFileCategory.DoPrepareCompletion(Sender: TObject);
 begin
+  if AutoComplete.AutoCompleteList.Count = 0 then
+    if FileExistsUTF8(Application.Location + 'lsl.template') then
+      AutoComplete.AutoCompleteList.LoadFromFile(Application.Location + 'lsl.template');
   Screen.Cursor := crHourGlass;
   Completion.ItemList.BeginUpdate;
   try

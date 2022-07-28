@@ -3,3 +3,12 @@ state_entry()
 {
     |;
 }
+
+[changed | changed(integer change)]
+ changed(integer change)
+ {
+     |
+ }
+
+[llLinkParticleSystem | llLinkParticleSystem(integer link, list rules)]
+llLinkParticleSystem(link|, rules)
