@@ -1021,6 +1021,19 @@ type
 
   end;
 
+  TKeywordItem = class(TmnObject)
+  public
+    Line: Integer;
+    X1,X2: Integer;
+    Text: string;
+    Value: string;
+  end;
+
+  TKeywordList = class(specialize TmnObjectList<TKeywordItem>)
+  public
+    //procedure Add();
+  end;
+
   { TVirtualCategory }
 
   TVirtualCategory = class(TEditorElements)
@@ -1046,12 +1059,14 @@ type
 
     //run once but when category ini
     procedure InitCompletion(vSynEdit: TCustomSynEdit); virtual;
-    procedure DoAddKeywords; virtual;
+
     procedure DoAddCompletion(AKeyword: String; AKind: Integer);
     procedure DoAddCompletion(AKeyword: String; AKind: TAttributeType); virtual;
+
     procedure DoPrepareCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
+
     procedure PrepareCompletion(ASender: TSynBaseCompletion; var ACurrentString: String; var APosition: Integer; var AnX, AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
-    procedure DoExecuteCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
+
     function DoPaintItem(const AKey: String; ACanvas: TCanvas; X, Y: Integer; ASelected: Boolean; AIndex: Integer): Boolean;
 
     procedure InitEdit(vSynEdit: TCustomSynEdit); virtual;
@@ -1135,6 +1150,7 @@ type
     IdentifierAttribute: Integer;
     procedure ScanValues(AFile: TEditorFile; Values: TStringList); override;
     procedure ExtractKeywords(Files, Identifiers: TStringList); virtual;
+    procedure DoAddKeywords; virtual;
     procedure DoPrepareCompletion(Sender: TObject); override;
   end;
 
@@ -2120,6 +2136,10 @@ begin
   end;
 end;
 
+procedure TCodeFileCategory.DoAddKeywords;
+begin
+end;
+
 procedure TCodeFileCategory.DoPrepareCompletion(Sender: TObject);
 var
   aIdentifiers: THashedStringList;
@@ -2190,7 +2210,7 @@ begin
         aIdentifiers.Free;
       end;
     end;
-    //(Completion.ItemList as TStringList).Sort;
+    Completion.Sort;
   finally
     Completion.EndUpdate;
     Screen.Cursor := crDefault;
@@ -6285,13 +6305,10 @@ begin
   Completion.TheForm.BackgroundColor := vSynEdit.Color;
   Completion.TheForm.TextColor := vSynEdit.Font.Color;
   Completion.TheForm.DrawBorderColor := vSynEdit.Font.Color;
-  Completion.TheForm.DrawBorderWidth := 2;
+  Completion.TheForm.DrawBorderWidth := 1;
+  //Completion.TheForm.LongLineHintType := sclpExtendHalfLeft;
 
   Completion.AutoUseSingleIdent := True;
-end;
-
-procedure TVirtualCategory.DoAddKeywords;
-begin
 end;
 
 procedure TVirtualCategory.DoAddCompletion(AKeyword: String; AKind: Integer);
@@ -6409,10 +6426,6 @@ begin
 end;
 
 procedure TVirtualCategory.ScanValues(AFile: TEditorFile; Values: TStringList);
-begin
-end;
-
-procedure TVirtualCategory.DoExecuteCompletion(Sender: TObject);
 begin
 end;
 

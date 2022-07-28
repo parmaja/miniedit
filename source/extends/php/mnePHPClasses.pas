@@ -62,12 +62,12 @@ type
 
   { TXHTMLFileCategory }
 
-  TXHTMLFileCategory = class(TTextFileCategory)
+  TXHTMLFileCategory = class(TCodeFileCategory)
   private
-    procedure ExtractKeywords(Files, Variables, Identifiers: TStringList);
   protected
     procedure InitMappers; override;
     function DoCreateHighlighter: TSynCustomHighlighter; override;
+    procedure ExtractPHPKeywords(Files, Variables, Identifiers: TStringList);
     procedure DoAddKeywords; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoPrepareCompletion(Sender: TObject); override;
@@ -422,7 +422,7 @@ begin
                 r := aFiles.IndexOf(Engine.Files.Current.FileName);
                 if r >= 0 then
                   aFiles.Delete(r);
-                ExtractKeywords(aFiles, CachedVariables, CachedIdentifiers);
+                ExtractPHPKeywords(aFiles, CachedVariables, CachedIdentifiers);
               finally
                 aFiles.Free;
               end;
@@ -482,7 +482,7 @@ begin
   Result := '#';
 end;
 
-procedure TXHTMLFileCategory.ExtractKeywords(Files, Variables, Identifiers: TStringList);
+procedure TXHTMLFileCategory.ExtractPHPKeywords(Files, Variables, Identifiers: TStringList);
 var
   aFile: TStringList;
   s: string;
