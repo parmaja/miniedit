@@ -1070,6 +1070,7 @@ type
     function DoPaintItem(const AKey: String; ACanvas: TCanvas; X, Y: Integer; ASelected: Boolean; AIndex: Integer): Boolean;
 
     procedure InitEdit(vSynEdit: TCustomSynEdit); virtual;
+    procedure EndEdit(vSynEdit: TCustomSynEdit); virtual;
     function GetIsText: Boolean; virtual;
 
     function OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: String): TEditorFile; virtual;
@@ -1833,6 +1834,7 @@ end;
 
 destructor TTextEditorFile.Destroy;
 begin
+  Group.Category.EndEdit(FSynEdit);
   FreeAndNil(FSynEdit);
   inherited Destroy;
 end;
@@ -6343,6 +6345,12 @@ end;
 
 procedure TVirtualCategory.InitEdit(vSynEdit: TCustomSynEdit);
 begin
+end;
+
+procedure TVirtualCategory.EndEdit(vSynEdit: TCustomSynEdit);
+begin
+  AutoComplete.RemoveEditor(vSynEdit);
+  Completion.RemoveEditor(vSynEdit);
 end;
 
 destructor TVirtualCategory.Destroy;

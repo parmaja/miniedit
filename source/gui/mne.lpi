@@ -23,9 +23,9 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="7"/>
+      <MinorVersionNr Value="8"/>
       <RevisionNr Value="1"/>
-      <BuildNr Value="203"/>
+      <BuildNr Value="207"/>
       <CharSet Value="04B0"/>
       <Attributes pvaPreRelease="True"/>
       <StringTable CompanyName="PARMAJA" FileDescription="mini Edit IDE" InternalName="MiniEdit" ProductName="MiniEdit" ProductVersion="1.7.1.1"/>
@@ -577,7 +577,6 @@
     </Parsing>
     <Linking>
       <Debugging>
-        <UseValgrind Value="True"/>
         <UseExternalDbgSyms Value="True"/>
       </Debugging>
       <Options>
