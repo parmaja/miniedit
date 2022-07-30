@@ -26,7 +26,7 @@ type
   protected
     function GetIsText: Boolean; override;
   public
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   end;
 
@@ -59,7 +59,7 @@ type
 
   TApacheFileCategory = class(TTextFileCategory)
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
   end;
@@ -68,7 +68,7 @@ type
 
   TCFGFileCategory = class(TTextFileCategory)
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
   end;
@@ -77,7 +77,7 @@ type
 
   TYamlFileCategory = class(TTextFileCategory)
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
   end;
@@ -86,7 +86,7 @@ type
 
   TTXTFileCategory = class(TTextFileCategory)
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
   end;
@@ -95,7 +95,7 @@ type
 
   TMDFileCategory = class(TTextFileCategory)
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
   end;
@@ -104,7 +104,7 @@ type
 
   TXMLFileCategory = class(TTextFileCategory)
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
   end;
@@ -241,7 +241,7 @@ begin
   Result := False;
 end;
 
-function TmneProjectFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TmneProjectFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := nil;
 end;
@@ -252,7 +252,7 @@ end;
 
 { TYamlFileCategory }
 
-function TYamlFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TYamlFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynApacheSyn.Create(nil);
 end;
@@ -274,7 +274,7 @@ end;
 
 { TMDFileCategory }
 
-function TMDFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TMDFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := nil;
 end;
@@ -285,7 +285,7 @@ end;
 
 { TCFGFileCategory }
 
-function TCFGFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TCFGFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynConfigSyn.Create(nil);
 end;
@@ -308,7 +308,7 @@ end;
 
 { TTApacheFileCategory }
 
-function TApacheFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TApacheFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynApacheSyn.Create(nil);
 end;
@@ -330,7 +330,7 @@ end;
 
 { TTXTFileCategory }
 
-function TTXTFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TTXTFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := nil;
 end;
@@ -341,7 +341,7 @@ end;
 
 { TXMLFileCategory }
 
-function TXMLFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TXMLFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynXMLSyn.Create(nil);
 end;

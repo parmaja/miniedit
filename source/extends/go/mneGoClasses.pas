@@ -38,7 +38,7 @@ type
   private
   protected
     procedure InitMappers; override;
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddKeywords; override;
   public
@@ -365,7 +365,7 @@ end;
 
 { TGoFileCategory }
 
-function TGoFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TGoFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynGoSyn.Create(nil);
 end;

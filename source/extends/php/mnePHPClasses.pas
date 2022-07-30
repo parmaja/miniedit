@@ -66,7 +66,7 @@ type
   private
   protected
     procedure InitMappers; override;
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure ExtractPHPKeywords(Files, Variables, Identifiers: TStringList);
     procedure DoAddKeywords; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
@@ -79,7 +79,7 @@ type
 
   TCSSFileCategory = class(TCodeFileCategory)
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
     function GetColorPrefix: string; override;
@@ -89,7 +89,7 @@ type
 
   TJSFileCategory = class(TTextFileCategory)
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
     function GetColorPrefix: string; override;
@@ -314,7 +314,7 @@ end;
 
 { TCSSFileCategory }
 
-function TCSSFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TCSSFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynCSSSyn.Create(nil);
 end;
@@ -346,7 +346,7 @@ end;
 
 { TXHTMLFileCategory }
 
-function TXHTMLFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TXHTMLFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynXHTMLSyn.Create(nil);
 end;
@@ -566,7 +566,7 @@ end;
 
 { TJSFileCategory }
 
-function TJSFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TJSFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynJScriptSyn.Create(nil);
 end;

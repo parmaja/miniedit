@@ -55,7 +55,7 @@ type
   private
   protected
     procedure InitMappers; override;
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddKeywords; override;
   public
@@ -302,7 +302,7 @@ end;
 
 { TCustomFileCategory }
 
-function TCustomFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TCustomFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynDSyn.Create(nil);
 end;

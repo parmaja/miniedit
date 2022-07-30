@@ -42,7 +42,7 @@ type
   protected
     procedure DoFixTabsSpaces(Sender: TObject);
     procedure InitMappers; override;
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddKeywords; override;
   public
@@ -259,7 +259,7 @@ end;
 
 { TPyFileCategory }
 
-function TPyFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TPyFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynPythonSyn.Create(nil);
 end;

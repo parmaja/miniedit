@@ -36,7 +36,7 @@ type
   protected
     procedure DoFixTabsSpaces(Sender: TObject);
     procedure InitMappers; override;
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddKeywords; override;
   public
@@ -277,7 +277,7 @@ end;
 
 { TBasicFileCategory }
 
-function TBasicFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TBasicFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynVBSyn.Create(nil);
 end;

@@ -52,7 +52,7 @@ type
   TCSVFileCategory = class(TTextFileCategory)
   private
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
   end;
@@ -155,7 +155,7 @@ end;
 
 { TCSVFileCategory }
 
-function TCSVFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TCSVFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynCSVSyn.Create(nil);
 end;

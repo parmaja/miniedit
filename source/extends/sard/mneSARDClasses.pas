@@ -38,7 +38,7 @@ type
   TSardFileCategory = class(TTextFileCategory)
   private
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
   end;
@@ -151,7 +151,7 @@ end;
 
 { TSardFileCategory }
 
-function TSardFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TSardFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TmneSynSardSyn.Create(nil);
 end;

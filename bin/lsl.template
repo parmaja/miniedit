@@ -10,5 +10,5 @@ state_entry()
      |
  }
 
-[llLinkParticleSystem | llLinkParticleSystem(integer link, list rules)]
+[llLinkParticleSystem | Defines a particle system for the containing prim based on a list of rules.]
 llLinkParticleSystem(link|, rules)

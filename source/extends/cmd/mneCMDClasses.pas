@@ -42,7 +42,7 @@ type
   TCMDFileCategory = class(TTextFileCategory)
   private
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
   end;
@@ -62,7 +62,7 @@ type
   TSHFileCategory = class(TTextFileCategory)
   private
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
   end;
@@ -91,7 +91,7 @@ end;
 
 { TSHFileCategory }
 
-function TSHFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TSHFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
     Result := TmneSynSHSyn.Create(nil);
 end;
@@ -177,7 +177,7 @@ end;
 
 { TCMDFileCategory }
 
-function TCMDFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TCMDFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TmneSynCMDSyn.Create(nil);
 end;

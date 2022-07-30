@@ -43,7 +43,7 @@ type
   protected
     procedure DoFormatClick(Sender: TObject);
     procedure InitMappers; override;
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddKeywords; override;
   public
@@ -130,7 +130,7 @@ begin
   AddItems('Format', 'Format', @DoFormatClick, TextToShortCut('Ctrl+Shift+F'));
 end;
 
-function TCppFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TCppFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynCppSyn.Create(nil);
 end;

@@ -46,7 +46,7 @@ type
   private
   protected
     function GetFileCaption(AFile: TEditorFile; FileName: string): string; override;
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoPrepareCompletion(Sender: TObject); override;
@@ -66,7 +66,7 @@ type
   TBVHFileCategory = class(TTextFileCategory)
   private
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoPrepareCompletion(Sender: TObject); override;
@@ -96,7 +96,7 @@ uses
 
 { TBVHFileCategory }
 
-function TBVHFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TBVHFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynBVHSyn.Create(nil);
 end;
@@ -337,7 +337,7 @@ begin
     Result := FileName;
 end;
 
-function TLSLFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TLSLFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TmneSynLSLSyn.Create(nil);
 end;
@@ -373,9 +373,6 @@ end;
 
 procedure TLSLFileCategory.DoPrepareCompletion(Sender: TObject);
 begin
-  if AutoComplete.AutoCompleteList.Count = 0 then
-    if FileExistsUTF8(Application.Location + 'lsl.template') then
-      AutoComplete.AutoCompleteList.LoadFromFile(Application.Location + 'lsl.template');
   Screen.Cursor := crHourGlass;
   Completion.ItemList.BeginUpdate;
   try

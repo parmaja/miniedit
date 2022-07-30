@@ -44,7 +44,7 @@ type
     procedure ImplementClick(Sender: TObject);
     procedure ImplementWiresClick(Sender: TObject);
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddKeywords; override;
@@ -343,7 +343,7 @@ begin
   CreateInstantiation(true);
 end;
 
-function TVerilogFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TVerilogFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TmneSynVerilogSyn.Create(nil);
 end;

@@ -75,6 +75,7 @@
       <Options>gaoDefaultBackground</Options>
     </Common>
     <DataValue Class="TGlobalAttribute">
+      <ForeColor>1041648</ForeColor>
     </DataValue>
     <DataType Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>

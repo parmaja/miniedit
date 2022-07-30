@@ -45,7 +45,7 @@ type
   TPASFileCategory = class(TCodeFileCategory)
   private
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddKeywords; override;
@@ -60,7 +60,7 @@ type
   TLFMFileCategory = class(TTextFileCategory)
   private
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
   end;
@@ -148,7 +148,7 @@ end;
 
 { TLFMFileCategory }
 
-function TLFMFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TLFMFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TSynLFMSyn.Create(nil);
 end;
@@ -281,7 +281,7 @@ end;
 
 { TPASFileCategory }
 
-function TPASFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TPASFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TmneSynPASSyn.Create(nil);
 end;

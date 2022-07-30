@@ -42,7 +42,7 @@ type
 
   TSQLFileCategory = class(TTextFileCategory)
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoPrepareCompletion(Sender: TObject); override;
@@ -53,7 +53,7 @@ type
 
   TDBFileCategory = class(TVirtualCategory)
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     function GetIsText: Boolean; override;
     function OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile; override;
@@ -133,7 +133,7 @@ end;
 
 { TSQLFileCategory }
 
-function TSQLFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TSQLFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   {Result := TSynSQLSyn.Create(nil);
   (Result as TSynSQLSyn).SQLDialect := sqlMySQL;}
@@ -191,7 +191,7 @@ end;
 
 { TDBFileCategory }
 
-function TDBFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TDBFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := nil;
 end;

@@ -37,7 +37,7 @@ type
 
   TBoardFileCategory = class(TFileCategory)
   protected
-    function DoCreateHighlighter: TSynCustomHighlighter; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     function GetIsText: Boolean; override;
   public
@@ -91,7 +91,7 @@ end;
 
 { TBoardFileCategory }
 
-function TBoardFileCategory.DoCreateHighlighter: TSynCustomHighlighter;
+function TBoardFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := nil;
 end;
