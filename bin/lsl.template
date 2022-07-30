@@ -1,14 +1,54 @@
-[state_entry | state_entry()]
+[default]
+default {
+    state_entry()
+    {
+        |;
+    }
+}
+
+[state_entry]
 state_entry()
 {
     |;
 }
 
-[changed | changed(integer change)]
- changed(integer change)
- {
-     |
- }
+[changed]
+changed(integer change)
+{
+ |
+}
 
-[llLinkParticleSystem | Defines a particle system for the containing prim based on a list of rules.]
-llLinkParticleSystem(link|, rules)
+[touch]
+touch(integer num_detected)
+{
+    |
+}
+
+[touch_start]
+touch_start(integer num_detected)
+{
+    |
+}
+
+[touch_end]
+touch_end(integer num_detected)
+{
+    |
+}
+
+[listen]
+listen(integer channel, string name, key id, string message)
+{
+    |
+}
+
+[timer]
+timer()
+{
+    |
+}
+
+[on_rez]
+on_rez(integer a)
+{
+}
