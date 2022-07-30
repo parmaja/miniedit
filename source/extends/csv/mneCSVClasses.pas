@@ -52,9 +52,9 @@ type
   TCSVFileCategory = class(TTextFileCategory)
   private
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
   { TCSVPerspective }

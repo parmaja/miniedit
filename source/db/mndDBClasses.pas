@@ -42,22 +42,22 @@ type
 
   TSQLFileCategory = class(TTextFileCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoPrepareCompletion(Sender: TObject); override;
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
   { TDBFileCategory }
 
   TDBFileCategory = class(TVirtualCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     function GetIsText: Boolean; override;
     function OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: string): TEditorFile; override;
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
 implementation

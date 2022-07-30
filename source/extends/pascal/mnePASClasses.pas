@@ -45,11 +45,11 @@ type
   TPASFileCategory = class(TCodeFileCategory)
   private
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddKeywords; override;
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
     function GetColorPrefix: string; override;
     function FormatColor(Color: TColor): string; override;
     function DeformatColor(Str: string): TColor; override;
@@ -60,9 +60,9 @@ type
   TLFMFileCategory = class(TTextFileCategory)
   private
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
   { TPasProjectOptions }

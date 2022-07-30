@@ -36,7 +36,7 @@ uses
   FileUtil, LazFileUtils, Math, Masks,
   Graphics, Contnrs, Types, IniFiles,
   EditorOptions, EditorColors, EditorProfiles,
-  SynEditMarks, SynCompletion, SynEditAutoComplete,
+  SynEditMarks, SynCompletion, mnSynCompletion, SynEditAutoComplete,
   SynEditTypes, SynEditMiscClasses, SynEditPlugins, SynPluginTemplateEdit,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
@@ -1015,17 +1015,21 @@ type
 
   end;
 
-  TKeywordItem = class(TmnObject)
+  TKeywordItem = class(TmnNamedObject)
   public
-    Line: Integer;
-    X1,X2: Integer;
-    Text: string;
-    Value: string;
+    Attribute: string; //* keyword, const, function, event, value etc
+    Params: string; //* X:integer, Y:Integer
+    Template: string; //* name(count: integer) { | }
+    Description: string;
+    Temp: Boolean; //*
   end;
 
-  TKeywordList = class(specialize TmnObjectList<TKeywordItem>)
+  { TKeywordList }
+
+  TKeywordList = class(specialize TmnNamedObjectList<TKeywordItem>)
   public
-    //procedure Add();
+    procedure LoadFromFile(FileName: string); virtual;
+    procedure DeleteTemp;//
   end;
 
   { TVirtualCategory }
@@ -1043,6 +1047,7 @@ type
     function GetItem(Index: Integer): TFileGroup;
     function GetMapper: TMapper;
   protected
+    FKeywords: TKeywordList;
     FCompletion: TmneSynCompletion;
     FAutoComplete: TSynEditAutoComplete;
 
@@ -1060,9 +1065,7 @@ type
 
     procedure DoAddCompletion(AKeyword: String; AKind: Integer);
     procedure DoAddCompletion(AKeyword: String; AKind: TAttributeType); virtual;
-
     procedure DoPrepareCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
-
     procedure PrepareCompletion(ASender: TSynBaseCompletion; var ACurrentString: String; var APosition: Integer; var AnX, AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
     //-----------
 
@@ -1103,6 +1106,7 @@ type
     property Kind: TFileCategoryKinds read FKind;
     property ImageName: String read FImageName write FImageName;
     property Items[Index: Integer]: TFileGroup read GetItem; default;
+    property Keywords: TKeywordList read FKeywords;
   end;
 
   TFileCategoryClass = class of TVirtualCategory;
@@ -1639,6 +1643,27 @@ begin
       S := S + #$D;
     Stream.WriteBuffer(Pointer(S)^, Length(S));
   end;
+end;
+
+{ TKeywordList }
+
+procedure TKeywordList.LoadFromFile(FileName: string);
+var
+  i: Integer;
+begin
+  i := 0;
+  while i < Count do
+  begin
+    if Self[i].Temp then
+      Delete(i)
+    else
+      Inc(i);
+  end;
+end;
+
+procedure TKeywordList.DeleteTemp;
+begin
+
 end;
 
 { TScannedValues }
@@ -6164,6 +6189,7 @@ end;
 constructor TVirtualCategory.Create(ATendency: TEditorTendency; const vName, vTitle: String; vKind: TFileCategoryKinds; vImageName: String);
 begin
   inherited Create(False); //childs is groups and already added to Groups and freed by it
+  FKeywords := TKeywordList.Create;
   FTendency := ATendency;
   FName := vName;
   FTitle := vTitle;
@@ -6365,7 +6391,7 @@ destructor TVirtualCategory.Destroy;
 begin
   FreeAndNil(FMapper);
   FreeAndNil(FCompletion);
-  //FreeAndNil(FTemplatePlugin);
+  FreeAndNil(FKeywords);
   FreeAndNil(FHighlighter);
   inherited;
 end;

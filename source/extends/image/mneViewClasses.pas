@@ -45,10 +45,10 @@ type
 
   TImageFileCategory = class(TFileCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     function GetIsText: Boolean; override;
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
 implementation

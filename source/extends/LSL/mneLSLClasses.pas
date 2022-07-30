@@ -46,11 +46,11 @@ type
   private
   protected
     function GetFileCaption(AFile: TEditorFile; FileName: string): string; override;
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoPrepareCompletion(Sender: TObject); override;
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
   { TBVHFile }
@@ -66,11 +66,11 @@ type
   TBVHFileCategory = class(TTextFileCategory)
   private
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoPrepareCompletion(Sender: TObject); override;
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
   TLSLEditorDebugger = class(TEditorDebugger)

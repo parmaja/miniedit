@@ -44,12 +44,12 @@ type
     procedure ImplementClick(Sender: TObject);
     procedure ImplementWiresClick(Sender: TObject);
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddKeywords; override;
 
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure EnumMenuItems(AddItems: TAddClickCallBack); override;
   end;
 

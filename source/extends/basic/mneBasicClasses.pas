@@ -36,10 +36,10 @@ type
   protected
     procedure DoFixTabsSpaces(Sender: TObject);
     procedure InitMappers; override;
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddKeywords; override;
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure EnumMenuItems(AddItems: TAddClickCallBack); override;
   end;
 

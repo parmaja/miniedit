@@ -43,11 +43,11 @@ type
   protected
     procedure DoFormatClick(Sender: TObject);
     procedure InitMappers; override;
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoAddKeywords; override;
   public
     procedure EnumMenuItems(AddItems: TAddClickCallBack); override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
   { TDProjectOptions }

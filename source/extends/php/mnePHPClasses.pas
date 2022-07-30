@@ -66,12 +66,12 @@ type
   private
   protected
     procedure InitMappers; override;
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure ExtractPHPKeywords(Files, Variables, Identifiers: TStringList);
     procedure DoAddKeywords; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoPrepareCompletion(Sender: TObject); override;
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
     function GetColorPrefix: string; override;
   end;
 
@@ -79,9 +79,9 @@ type
 
   TCSSFileCategory = class(TCodeFileCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
     function GetColorPrefix: string; override;
   end;
 
@@ -89,10 +89,10 @@ type
 
   TJSFileCategory = class(TTextFileCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
     function GetColorPrefix: string; override;
+    function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
   { TPHPProjectOptions }

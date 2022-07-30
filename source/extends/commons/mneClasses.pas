@@ -59,54 +59,54 @@ type
 
   TApacheFileCategory = class(TTextFileCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
   { TCFGFileCategory }
 
   TCFGFileCategory = class(TTextFileCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
   { TYamlFileCategory }
 
   TYamlFileCategory = class(TTextFileCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
   { TTXTFileCategory }
 
   TTXTFileCategory = class(TTextFileCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
   { TMDFileCategory }
 
   TMDFileCategory = class(TTextFileCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
   { TXMLFileCategory }
 
   TXMLFileCategory = class(TTextFileCategory)
   protected
-    function CreateHighlighter: TSynCustomHighlighter; override;
     procedure InitMappers; override;
   public
+    function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
   { TmneEngine }
