@@ -20,7 +20,7 @@
       <ForeColor>clBlack</ForeColor>
     </Selected>
     <Highlighted Class="TGlobalAttribute">
-      <BackColor>7500402</BackColor>
+      <BackColor>204</BackColor>
       <ForeColor>16759187</ForeColor>
     </Highlighted>
     <Active Class="TGlobalAttribute">
@@ -33,7 +33,7 @@
     </Gutter>
     <Separator Class="TGlobalAttribute">
       <BackColor>3552822</BackColor>
-      <ForeColor>3552822</ForeColor>
+      <ForeColor>10526880</ForeColor>
     </Separator>
     <Modified Class="TGlobalAttribute">
       <BackColor>clGreen</BackColor>
@@ -46,7 +46,7 @@
     </Keyword>
     <Symbol Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>16759187</ForeColor>
+      <ForeColor>clWhite</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Symbol>
     <Number Class="TGlobalAttribute">
@@ -71,10 +71,11 @@
     </Variable>
     <Common Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>4188158</ForeColor>
+      <ForeColor>15173072</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Common>
     <DataValue Class="TGlobalAttribute">
+      <ForeColor>4708845</ForeColor>
     </DataValue>
     <DataType Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
@@ -106,7 +107,7 @@
       <Options>gaoDefaultBackground</Options>
     </QuotedString>
     <FontName>Consolas</FontName>
-    <FontSize>11</FontSize>
+    <FontSize>12</FontSize>
     <FontNoAntialiasing>False</FontNoAntialiasing>
     <CodeFolding>True</CodeFolding>
   </Object>

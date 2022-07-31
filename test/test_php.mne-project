@@ -9,11 +9,13 @@
       </Watches>
       <Files Class="TEditorDesktopFiles">
         <CurrentFile>D:\lab\pascal\miniEdit\bin\lsl.template</CurrentFile>
-        <CurrentFolder>D:\lab\opensim\projects\Stargate\</CurrentFolder>
+        <CurrentFolder>D:\lab\pascal\miniEdit\bin\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
             <FileName>D:\lab\pascal\miniEdit\bin\lsl.template</FileName>
-            <CaretX>2</CaretX>
+            <CaretX>35</CaretX>
+            <CaretY>22</CaretY>
+            <TopLine>15</TopLine>
           </Object>
         </Items>
       </Files>

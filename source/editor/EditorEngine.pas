@@ -36,7 +36,7 @@ uses
   FileUtil, LazFileUtils, Math, Masks,
   Graphics, Contnrs, Types, IniFiles,
   EditorOptions, EditorColors, EditorProfiles,
-  SynEditMarks, SynCompletion, mnSynCompletion, SynEditAutoComplete,
+  SynEditMarks, mnSynCompletion, mnSynParamsHint, SynEditAutoComplete,
   SynEditTypes, SynEditMiscClasses, SynEditPlugins, SynPluginTemplateEdit,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
@@ -957,7 +957,7 @@ type
 
   { TmneSynCompletion }
 
-  TmneSynCompletion = class(TSynCompletion)
+  TmneSynCompletion = class(TSynDualCompletion)
   protected
     function OwnedByEditor: Boolean; override;
 
@@ -4552,7 +4552,7 @@ begin
     BrowseFolder := ExtractFilePath(lFilePath);
     //The filename is expanded, if necessary, in EditorEngine.TEditorFiles.InternalOpenFile
     Session.SetProject(DefaultProject, False);
-    Files.OpenFile(lFilePath, '');
+    Files.OpenFile(lFilePath, '', True);
   end
   else
   begin
@@ -6325,7 +6325,6 @@ begin
     Completion.CaseSensitive := False;
     Completion.SelectedColor := vSynEdit.SelectedColor.Background;
     Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;,';
-    Completion.UseInsertList := True;
     Completion.UsePrettyText := True;
   end;
   Completion.AddEditor(vSynEdit);
