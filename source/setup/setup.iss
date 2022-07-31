@@ -36,7 +36,12 @@ Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:Ad
 Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
 
 [Files]
-Source: ..\..\bin\mne.exe; DestDir: {app}; Flags: ignoreversion
+Source: ..\..\bin\mne32.exe; DestDir: {app}; Flags: ignoreversion
+Source: ..\..\bin\mne64.exe; DestDir: {app}; Flags: ignoreversion
+Source: ..\..\bin\lslint.exe; DestDir: {app}; Flags: ignoreversion
+Source: ..\..\bin\*.dll; DestDir: {app}; Flags: ignoreversion
+Source: ..\..\bin\*.template; DestDir: {app}; Flags: ignoreversion
+Source: ..\..\bin\*.mne-theme; DestDir: {app}; Flags: ignoreversion
 Source: ..\..\changed.txt; DestDir: {app}; Flags: ignoreversion
 Source: ..\..\copying.txt; DestDir: {app}; Flags: ignoreversion
 Source: ..\..\readme.txt; DestDir: {app}; Flags: ignoreversion

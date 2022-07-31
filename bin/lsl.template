@@ -18,12 +18,6 @@ changed(integer change)
  |
 }
 
-[touch]
-touch(integer num_detected)
-{
-    |
-}
-
 [touch_start]
 touch_start(integer num_detected)
 {
@@ -51,4 +45,10 @@ timer()
 [on_rez]
 on_rez(integer a)
 {
+}
+
+[touch]
+touch(integer num_detected)
+{
+    |
 }

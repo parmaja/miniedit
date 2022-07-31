@@ -8,23 +8,12 @@
       <Watches Class="TmneWatches">
       </Watches>
       <Files Class="TEditorDesktopFiles">
-        <CurrentFile>D:\lab\opensim\projects\Stargate\Gate.lsl</CurrentFile>
-        <CurrentFolder>D:\lab\pascal\miniEdit\bin\</CurrentFolder>
+        <CurrentFile>D:\lab\pascal\miniEdit\bin\lsl.template</CurrentFile>
+        <CurrentFolder>D:\lab\opensim\projects\Stargate\</CurrentFolder>
         <Items>
           <Object Type="TEditorDesktopFile">
-            <FileName>D:\lab\opensim\projects\Stargate\Gate.lsl</FileName>
-            <CaretX>6</CaretX>
-            <CaretY>364</CaretY>
-            <TopLine>326</TopLine>
-          </Object>
-          <Object Type="TEditorDesktopFile">
-            <FileName>D:\lab\opensim\projects\ModeeCannons\SingaCannons.lsl</FileName>
-            <CaretY>15</CaretY>
-            <TopLine>21</TopLine>
-          </Object>
-          <Object Type="TEditorDesktopFile">
             <FileName>D:\lab\pascal\miniEdit\bin\lsl.template</FileName>
-            <CaretY>10</CaretY>
+            <CaretX>2</CaretX>
           </Object>
         </Items>
       </Files>
