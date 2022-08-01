@@ -171,9 +171,9 @@ var
 begin
   inherited;
   Screen.Cursor := crHourGlass;
-  Completion.ItemList.BeginUpdate;
+  Completion.BeginUpdate;
   try
-    Completion.ItemList.Clear;
+    Completion.Clear;
     aSynEdit := (Sender as TSynCompletion).TheForm.CurrentEditor as TCustomSynEdit;
     if (aSynEdit <> nil) then
     begin
@@ -184,7 +184,7 @@ begin
         DoAddCompletion(DBEngine.DB.Tables[i].Name, ord(attVariable));
     end;
   finally
-    Completion.ItemList.EndUpdate;
+    Completion.EndUpdate;
     Screen.Cursor := crDefault;
   end;
 end;

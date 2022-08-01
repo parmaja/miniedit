@@ -368,7 +368,7 @@ var
 begin
   inherited;
   Screen.Cursor := crHourGlass;
-  Completion.ItemList.BeginUpdate;
+  Completion.BeginUpdate;
   try
     //Completion.ItemList.Clear;
     DoAddKeywords;
@@ -470,9 +470,9 @@ begin
         end;
       end;
     end;
-    (Completion.ItemList as TStringList).Sort;
+    Completion.Sort;
   finally
-    Completion.ItemList.EndUpdate;
+    Completion.EndUpdate;
     Screen.Cursor := crDefault;
   end;
 end;

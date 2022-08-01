@@ -100,6 +100,97 @@ type
     procedure Merge(Name, Value: String; Overwrite: Boolean = False);
   end;
 
+  TScannedValue = class(TmnObject)
+  public
+    Line: Integer;
+    X1,X2: Integer;
+    Text: string;
+    Value: string;
+  end;
+
+  { TScannedValues }
+
+  TScannedValues = class(specialize TmnObjectList<TScannedValue>)
+  public
+    procedure Add(
+      Line: Integer;
+      X1,X2: Integer;
+      Text: string;
+      Value: string
+    );
+
+  end;
+
+  TKeywordItem = class(TmnNamedObject)
+  public
+    Display: string;
+    AttributeType: TAttributeType;
+    AttributeName: string; //* keyword, const, function, event, value etc
+    Params: string; //* X:integer, Y:Integer
+    Template: string; //* name(count: integer) { | }
+    Description: string;
+    Temp: Boolean; //*
+  end;
+
+  { TKeywordList }
+
+  TKeywordList = class(specialize TmnNamedObjectList<TKeywordItem>)
+  public
+    procedure LoadFromFile(FileName: string); virtual;
+    procedure Clean;// Delete temp items
+    function AddItem(AName: string; ADisplay: string; AttributeType: TAttributeType; AsTemp: Boolean = False): TKeywordItem;
+    procedure Sort;
+  end;
+
+  { TmneSynCompletionForm }
+
+  TmneSynCompletionForm = class(TSynVirtualCompletionForm)
+  private
+    FKeywords: TKeywordList;
+  protected
+    function GetItemText(Index: Integer): string; override;
+    function GetItemDisplay(Index: Integer): string; override;
+    function GetItemsCount: Integer; override;
+  public
+    constructor Create(AOwner: Tcomponent); override;
+    destructor Destroy; override;
+    property Keywords: TKeywordList read FKeywords;
+  end;
+
+  { TmneSynCompletion }
+
+  TmneSynCompletion = class(TSynBaseCompletion)
+  protected
+    FKeywords: TKeywordList;
+    function GetCompletionFormClass: TSynVirtualCompletionFormClass; override;
+    function OwnedByEditor: Boolean; override;
+
+    procedure OnSynCompletionNextChar(Sender: TObject);
+    procedure OnSynCompletionPrevChar(Sender: TObject);
+    procedure OnSynCompletionKeyPress(Sender: TObject; var Key: Char);
+    procedure OnSynCompletionUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
+  public
+    constructor Create(AOwner: TComponent); override;
+    procedure Sort; override;
+    procedure Clear; override;
+  end;
+
+  TmneSynEditCommand = (mscUUID); // msPaused = paused recording
+
+  { TmneSynEditPlugin }
+
+  TmneSynEditPlugin = class(TAbstractSynHookerPlugin)
+  protected
+    FCommandIDs: array [TmneSynEditCommand] of TSynEditorCommand;
+    FShortCuts: array [TmneSynEditCommand] of TShortCut;
+    procedure OnCommand(Sender: TObject; AfterProcessing: Boolean; var Handled: Boolean; var Command: TSynEditorCommand; var aChar: TUTF8Char; Data: pointer; HandlerData: pointer); override;
+
+    procedure DoEditorAdded(AValue: TCustomSynEdit); override;
+    procedure DoEditorRemoving(AValue: TCustomSynEdit); override;
+  public
+    constructor Create(aOwner: TComponent); override;
+  end;
+
   { TEditorExtension }
 
   TEditorExtension = class(TObject)
@@ -677,31 +768,6 @@ type
   published
   end;
 
-  { TControlEditorFile }
-
-  TControlEditorFile = class abstract(TEditorFile, IControlEditor)
-  private
-  protected
-  public
-  end;
-
-
-  TmneSynEditCommand = (mscUUID); // msPaused = paused recording
-
-  { TmneSynEditPlugin }
-
-  TmneSynEditPlugin = class(TAbstractSynHookerPlugin)
-  protected
-    FCommandIDs: array [TmneSynEditCommand] of TSynEditorCommand;
-    FShortCuts: array [TmneSynEditCommand] of TShortCut;
-    procedure OnCommand(Sender: TObject; AfterProcessing: Boolean; var Handled: Boolean; var Command: TSynEditorCommand; var aChar: TUTF8Char; Data: pointer; HandlerData: pointer); override;
-
-    procedure DoEditorAdded(AValue: TCustomSynEdit); override;
-    procedure DoEditorRemoving(AValue: TCustomSynEdit); override;
-  public
-    constructor Create(aOwner: TComponent); override;
-  end;
-
   { TSyntaxEditorFile }
 
   TSyntaxEditorFile = class abstract(TEditorFile, ITextEditor)
@@ -766,6 +832,14 @@ type
   { TSourceEditorFile }
 
   TSourceEditorFile = class(TTextEditorFile, IExecuteEditor, IWatchEditor)
+  public
+  end;
+
+  { TControlEditorFile }
+
+  TControlEditorFile = class abstract(TEditorFile, IControlEditor)
+  private
+  protected
   public
   end;
 
@@ -955,21 +1029,6 @@ type
     property Custom: TStringList read FCustom;
   end;
 
-  { TmneSynCompletion }
-
-  TmneSynCompletion = class(TSynDualCompletion)
-  protected
-    function OwnedByEditor: Boolean; override;
-
-    procedure OnSynCompletionNextChar(Sender: TObject);
-    procedure OnSynCompletionPrevChar(Sender: TObject);
-    procedure OnSynCompletionKeyPress(Sender: TObject; var Key: Char);
-    procedure OnSynCompletionUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
-    procedure OnSynCompletionPositionChanged(Sender: TObject);
-  public
-    constructor Create(AOwner: TComponent); override;
-  end;
-
   TMap = class(TObject)
     Name: String;
     AttType: TAttributeType;
@@ -993,44 +1052,6 @@ type
     fckPublish //idk not used
     );
   TFileCategoryKinds = set of TFileCategoryKind;
-
-  TScannedValue = class(TmnObject)
-  public
-    Line: Integer;
-    X1,X2: Integer;
-    Text: string;
-    Value: string;
-  end;
-
-  { TScannedValues }
-
-  TScannedValues = class(specialize TmnObjectList<TScannedValue>)
-  public
-    procedure Add(
-      Line: Integer;
-      X1,X2: Integer;
-      Text: string;
-      Value: string
-    );
-
-  end;
-
-  TKeywordItem = class(TmnNamedObject)
-  public
-    Attribute: string; //* keyword, const, function, event, value etc
-    Params: string; //* X:integer, Y:Integer
-    Template: string; //* name(count: integer) { | }
-    Description: string;
-    Temp: Boolean; //*
-  end;
-
-  { TKeywordList }
-
-  TKeywordList = class(specialize TmnNamedObjectList<TKeywordItem>)
-  public
-    procedure LoadFromFile(FileName: string); virtual;
-    procedure DeleteTemp;//
-  end;
 
   { TVirtualCategory }
 
@@ -1063,13 +1084,13 @@ type
     //run once but when category ini
     procedure InitCompletion(vSynEdit: TCustomSynEdit); virtual;
 
-    procedure DoAddCompletion(AKeyword: String; AKind: Integer);
-    procedure DoAddCompletion(AKeyword: String; AKind: TAttributeType); virtual;
+    procedure DoAddCompletion(AKeyword: String; AKind: Integer); deprecated;
+    procedure DoAddCompletion(AKeyword: String; AKind: TAttributeType; Temp: Boolean); virtual;
     procedure DoPrepareCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
     procedure PrepareCompletion(ASender: TSynBaseCompletion; var ACurrentString: String; var APosition: Integer; var AnX, AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
     //-----------
 
-    function DoPaintItem(const AKey: String; ACanvas: TCanvas; X, Y: Integer; ASelected: Boolean; AIndex: Integer): Boolean;
+    //function DoPaintItem(const AKey: String; ACanvas: TCanvas; X, Y: Integer; ASelected: Boolean; AIndex: Integer): Boolean;
 
     function GetIsText: Boolean; virtual;
 
@@ -1101,7 +1122,7 @@ type
     property Tendency: TEditorTendency read FTendency;
     property IsText: Boolean read GetIsText;
     property Highlighter: TSynCustomHighlighter read GetHighlighter;
-    property Completion: TmneSynCompletion read FCompletion;
+    property Completion:  TmneSynCompletion read FCompletion;
     property AutoComplete: TSynEditAutoComplete read FAutoComplete;
     property Kind: TFileCategoryKinds read FKind;
     property ImageName: String read FImageName write FImageName;
@@ -1645,9 +1666,59 @@ begin
   end;
 end;
 
+{ TmneSynCompletionForm }
+
+function TmneSynCompletionForm.GetItemText(Index: Integer): string;
+begin
+  Result := FKeywords[Index].Name;
+end;
+
+function TmneSynCompletionForm.GetItemDisplay(Index: Integer): string;
+begin
+  Result := FKeywords[Index].Display;
+end;
+
+function TmneSynCompletionForm.GetItemsCount: Integer;
+begin
+  Result := FKeywords.Count;
+end;
+
+constructor TmneSynCompletionForm.Create(AOwner: Tcomponent);
+begin
+  inherited Create(AOwner);
+  SmartEdit := True;
+end;
+
+destructor TmneSynCompletionForm.Destroy;
+begin
+  inherited Destroy;
+end;
+
+function TmneSynCompletion.GetCompletionFormClass: TSynVirtualCompletionFormClass;
+begin
+  Result := TmneSynCompletionForm;
+end;
+
+procedure TmneSynCompletion.Sort;
+begin
+  inherited Sort;
+  FKeywords.Sort;
+end;
+
+procedure TmneSynCompletion.Clear;
+begin
+  inherited Clear;
+  FKeywords.Clear;
+end;
+
+
 { TKeywordList }
 
 procedure TKeywordList.LoadFromFile(FileName: string);
+begin
+end;
+
+procedure TKeywordList.Clean;
 var
   i: Integer;
 begin
@@ -1661,9 +1732,25 @@ begin
   end;
 end;
 
-procedure TKeywordList.DeleteTemp;
+function TKeywordList.AddItem(AName: string; ADisplay: string; AttributeType: TAttributeType; AsTemp: Boolean): TKeywordItem;
 begin
+  Result := TKeywordItem.Create;
+  Result.Name := AName;
+  Result.Display := ADisplay;
+  Result.AttributeType := AttributeType;
+  Result.Temp := AsTemp;
+  //Result.AttributeName:= ;
+  Add(Result);
+end;
 
+function KeywordListCompare(Item1, Item2: Pointer): Integer;
+begin
+  Result := CompareText(TKeywordItem(Item1).Name, TKeywordItem(Item2).Name);
+end;
+
+procedure TKeywordList.Sort;
+begin
+  inherited Sort(@KeywordListCompare);
 end;
 
 { TScannedValues }
@@ -2232,7 +2319,7 @@ begin
         end;
 
         for i := 0 to aIdentifiers.Count - 1 do
-          DoAddCompletion(aIdentifiers[i], attIdentifier); //use mapper
+          DoAddCompletion(aIdentifiers[i], attIdentifier, True); //use mapper
       finally
         aIdentifiers.Free;
       end;
@@ -2899,7 +2986,6 @@ begin
   AddPrefix:=copy(Line,LogCaret.X,CharLen);
   if not Editor.IsIdentChar(AddPrefix) then exit;
   NewPrefix:=CurrentString+AddPrefix;
-  //debugln('TSourceNotebook.OnSynCompletionNextChar NewPrefix="',NewPrefix,'" LogCaret.X=',dbgs(LogCaret.X));
   inc(LogCaret.X);
   Editor.LogicalCaretXY:=LogCaret;
   CurrentString:=NewPrefix;
@@ -2923,10 +3009,7 @@ end;
 procedure TmneSynCompletion.OnSynCompletionKeyPress(Sender: TObject; var Key: Char);
 begin
   if (System.Pos(Key,EndOfTokenChr)>0) then begin
-    // identifier completed
-    //debugln('TSourceNotebook.OnSynCompletionKeyPress A');
     TheForm.OnValidate(Sender,Key,[]);
-    //debugln('TSourceNotebook.OnSynCompletionKeyPress B');
     Key:=#0;
   end;
 end;
@@ -2935,21 +3018,9 @@ procedure TmneSynCompletion.OnSynCompletionUTF8KeyPress(Sender: TObject; var UTF
 begin
   if (length(UTF8Key)=1)
   and (System.Pos(UTF8Key[1],EndOfTokenChr)>0) then begin
-    // identifier completed
-    //debugln('TSourceNotebook.OnSynCompletionUTF8KeyPress A');
     TheForm.OnValidate(Sender,UTF8Key,[]);
-    //debugln('TSourceNotebook.OnSynCompletionKeyPress B');
     UTF8Key:='';
   end;
-  //debugln('TSourceNotebook.OnSynCompletionKeyPress B UTF8Key=',dbgstr(UTF8Key));
-end;
-
-procedure TmneSynCompletion.OnSynCompletionPositionChanged(Sender: TObject);
-begin
-  {if Manager.ActiveCompletionPlugin<>nil then
-    Manager.ActiveCompletionPlugin.IndexChanged(Position);
-  if SrcEditHintWindow<>nil then
-    SrcEditHintWindow.UpdateHints;}
 end;
 
 constructor TmneSynCompletion.Create(AOwner: TComponent);
@@ -2959,7 +3030,6 @@ begin
   OnKeyPrevChar:=@OnSynCompletionPrevChar;
   OnKeyPress:=@OnSynCompletionKeyPress;
   OnUTF8KeyPress:=@OnSynCompletionUTF8KeyPress;
-  OnPositionChanged:=@OnSynCompletionPositionChanged;
 end;
 
 { TEditorSCM }
@@ -6316,6 +6386,8 @@ begin
   if FCompletion = nil then
   begin
     FCompletion := TmneSynCompletion.Create(nil);
+    FCompletion.FKeywords := Keywords;
+    (Completion.TheForm as TmneSynCompletionForm).FKeywords := Keywords;
     Completion.Width := vSynEdit.ClientWidth div 3;
     if Completion.Width < 360 then
       Completion.Width := 360;
@@ -6335,9 +6407,8 @@ begin
   Completion.TheForm.Color := vSynEdit.Color;
   Completion.TheForm.BackgroundColor := vSynEdit.Color;
   Completion.TheForm.TextColor := vSynEdit.Font.Color;
-  Completion.TheForm.DrawBorderColor := vSynEdit.Font.Color;
+  Completion.TheForm.DrawBorderColor := Engine.Options.Profile.Attributes.Highlighted.Background;
   Completion.TheForm.DrawBorderWidth := 1;
-  //Completion.TheForm.LongLineHintType := sclpExtendHalfLeft;
 
   Completion.AutoUseSingleIdent := True;
 
@@ -6348,10 +6419,10 @@ end;
 
 procedure TVirtualCategory.DoAddCompletion(AKeyword: String; AKind: Integer);
 begin
-  DoAddCompletion(AKeyword, TAttributeType(AKind));
+  DoAddCompletion(AKeyword, TAttributeType(AKind), False);
 end;
 
-procedure TVirtualCategory.DoAddCompletion(AKeyword: String; AKind: TAttributeType);
+procedure TVirtualCategory.DoAddCompletion(AKeyword: String; AKind: TAttributeType; Temp: Boolean);
 var
   s: string;
   i: Integer;
@@ -6363,7 +6434,8 @@ begin
   i := AutoComplete.Completions.IndexOf(AKeyword);
   if i>=0 then
     s := s + '\hspace{16}' + AutoComplete.CompletionComments[i];
-  Completion.AddItem(S, AKeyword, TObject(IntPtr(Ord(AKind))));
+  //Completion.AddItem(S, AKeyword, TObject(IntPtr(Ord(AKind))));
+  Keywords.AddItem(AKeyword, S, AKind, Temp);
 end;
 
 procedure TVirtualCategory.DoPrepareCompletion(Sender: TObject);
@@ -6372,7 +6444,8 @@ end;
 
 procedure TVirtualCategory.PrepareCompletion(ASender: TSynBaseCompletion; var ACurrentString: String; var APosition: Integer; var AnX, AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
 begin
-  Completion.Clear;
+  Keywords.Clean;
+  //Completion.Clear;
   DoPrepareCompletion(ASender);
 end;
 
@@ -6464,7 +6537,7 @@ end;
 procedure TVirtualCategory.ScanValues(AFile: TEditorFile; Values: TStringList);
 begin
 end;
-
+{
 function TVirtualCategory.DoPaintItem(const AKey: String; ACanvas: TCanvas; X, Y: Integer; ASelected: Boolean; AIndex: Integer): Boolean;
 var
   aType: TAttributeType;
@@ -6479,7 +6552,7 @@ begin
   ACanvas.TextOut(X + 4, Y, AKey);
   Result := True;
 end;
-
+}
 
 { TEditorProject }
 
@@ -7118,6 +7191,7 @@ begin
     Result.Name := Name;
   end;
   Add(Result);
+
 end;
 
 finalization

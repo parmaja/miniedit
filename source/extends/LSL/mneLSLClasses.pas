@@ -132,13 +132,13 @@ procedure TBVHFileCategory.DoPrepareCompletion(Sender: TObject);
 begin
   inherited;
   Screen.Cursor := crHourGlass;
-  Completion.ItemList.BeginUpdate;
+  Completion.BeginUpdate;
   try
     //Completion.ItemList.Clear;
     EnumerateKeywords(Ord(attKeyword), sBVHKeywords, Highlighter.IdentChars, @DoAddCompletion);
     EnumerateKeywords(Ord(attDataType), sBVHTypes, Highlighter.IdentChars, @DoAddCompletion);
   finally
-    Completion.ItemList.EndUpdate;
+    Completion.EndUpdate;
     Screen.Cursor := crDefault;
   end;
 end;
@@ -369,21 +369,23 @@ begin
   Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;,';//what about $
   IdentifierID := ord(mnSynHighlighterMultiProc.tkIdentifier);
   IdentifierAttribute := Ord(attIdentifier);
-end;
-
-procedure TLSLFileCategory.DoPrepareCompletion(Sender: TObject);
-begin
-  Screen.Cursor := crHourGlass;
-  Completion.ItemList.BeginUpdate;
-  try
-    //Completion.ItemList.Clear; //nop
+  if Keywords.Count = 0 then
+  begin
     EnumerateKeywords(Ord(attKeyword), sLSLKeywords, Highlighter.IdentChars, @DoAddCompletion);
     EnumerateKeywords(Ord(attDataType), sLSLTypes, Highlighter.IdentChars, @DoAddCompletion);
     EnumerateKeywords(Ord(attDataValue), sLSLValues, Highlighter.IdentChars, @DoAddCompletion);
     EnumerateKeywords(Ord(attCommon), sLSLFunctions, Highlighter.IdentChars, @DoAddCompletion);
     EnumerateKeywords(Ord(attCommon), sOpenSIMFunctions, Highlighter.IdentChars, @DoAddCompletion);
+  end;
+end;
+
+procedure TLSLFileCategory.DoPrepareCompletion(Sender: TObject);
+begin
+  Screen.Cursor := crHourGlass;
+  Completion.BeginUpdate;
+  try
   finally
-    Completion.ItemList.EndUpdate;
+    Completion.EndUpdate;
     Screen.Cursor := crDefault;
   end;
   inherited;
