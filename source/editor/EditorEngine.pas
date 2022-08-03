@@ -138,7 +138,7 @@ type
   public
     procedure LoadFromFile(FileName: string); virtual;
     procedure Clean;// Delete temp items
-    function AddItem(AName: string; ADisplay: string; AttributeType: TAttributeType; AsTemp: Boolean = False): TKeywordItem;
+    function AddItem(AName, ADisplay, ADescription: string; AttributeType: TAttributeType; AsTemp: Boolean = False): TKeywordItem;
     procedure Sort;
   end;
 
@@ -1034,6 +1034,7 @@ type
     AttType: TAttributeType;
     TokenID: Integer;
     Attribute: TSynHighlighterAttributes;
+    ForignName: string;
   end;
 
   { TMapper }
@@ -1042,6 +1043,7 @@ type
   private
   public
     function Add(Attribute: TSynHighlighterAttributes; AttType: TAttributeType; TokenID: Integer = -1): TMap;
+    function Add(ForignName: string; Attribute: TSynHighlighterAttributes; AttType: TAttributeType; TokenID: Integer = -1): TMap;
     function IndexOfAttribute(AttributeType: TAttributeType): Integer;
     function FindByAttribute(AttributeType: TAttributeType): TMap;
     function AttributeName(AttributeType: TAttributeType): string;
@@ -1085,7 +1087,7 @@ type
     procedure InitCompletion(vSynEdit: TCustomSynEdit); virtual;
 
     procedure DoAddCompletion(AKeyword: String; AKind: Integer); deprecated;
-    procedure DoAddCompletion(AKeyword: String; AKind: TAttributeType; Temp: Boolean); virtual;
+    procedure DoAddCompletion(AKeyword: String; ForignName, Description: string; AKind: TAttributeType; Temp: Boolean); virtual;
     procedure DoPrepareCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
     procedure PrepareCompletion(ASender: TSynBaseCompletion; var ACurrentString: String; var APosition: Integer; var AnX, AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
     //-----------
@@ -1732,12 +1734,13 @@ begin
   end;
 end;
 
-function TKeywordList.AddItem(AName: string; ADisplay: string; AttributeType: TAttributeType; AsTemp: Boolean): TKeywordItem;
+function TKeywordList.AddItem(AName, ADisplay, ADescription: string; AttributeType: TAttributeType; AsTemp: Boolean): TKeywordItem;
 begin
   Result := TKeywordItem.Create;
   Result.Name := AName;
   Result.Display := ADisplay;
   Result.AttributeType := AttributeType;
+  Result.Description := ADescription;
   Result.Temp := AsTemp;
   //Result.AttributeName:= ;
   Add(Result);
@@ -2267,7 +2270,6 @@ begin
   Screen.Cursor := crHourGlass;
   Completion.BeginUpdate;
   try
-    //Completion.Clear;
     DoAddKeywords; //TODO check timeout before refill it for speeding
 
     aSynEdit := Completion.TheForm.CurrentEditor as TCustomSynEdit;
@@ -2319,7 +2321,7 @@ begin
         end;
 
         for i := 0 to aIdentifiers.Count - 1 do
-          DoAddCompletion(aIdentifiers[i], attIdentifier, True); //use mapper
+          DoAddCompletion(aIdentifiers[i], '', '', attIdentifier, True); //use mapper
       finally
         aIdentifiers.Free;
       end;
@@ -2459,6 +2461,17 @@ begin
   Result.AttType := AttType;
   Result.TokenID := TokenID;
   inherited Add(Result); //if there is a bug inside add, you need to fix it by code, so no need to catch it
+end;
+
+function TMapper.Add(ForignName: string; Attribute: TSynHighlighterAttributes; AttType: TAttributeType; TokenID: Integer): TMap;
+begin
+ Result := TMap.Create;
+ Result.Attribute := Attribute;
+ Result.Name := Attribute.StoredName;
+ Result.AttType := AttType;
+ Result.TokenID := TokenID;
+ Result.ForignName := ForignName;
+ inherited Add(Result); //if there is a bug inside add, you need to fix it by code, so no need to catch it
 end;
 
 function TMapper.IndexOfAttribute(AttributeType: TAttributeType): Integer;
@@ -2978,7 +2991,7 @@ begin
   if Editor = nil then
     exit;
   LogCaret:=Editor.LogicalCaretXY;
-  if LogCaret.Y>=Editor.Lines.Count then
+  if LogCaret.Y>Editor.Lines.Count then
     exit;
   Line:=Editor.Lines[LogCaret.Y-1];
   if LogCaret.X>length(Line) then exit;
@@ -6419,10 +6432,10 @@ end;
 
 procedure TVirtualCategory.DoAddCompletion(AKeyword: String; AKind: Integer);
 begin
-  DoAddCompletion(AKeyword, TAttributeType(AKind), False);
+  DoAddCompletion(AKeyword, '', '', TAttributeType(AKind), False);
 end;
 
-procedure TVirtualCategory.DoAddCompletion(AKeyword: String; AKind: TAttributeType; Temp: Boolean);
+procedure TVirtualCategory.DoAddCompletion(AKeyword: String; ForignName, Description: string; AKind: TAttributeType; Temp: Boolean);
 var
   s: string;
   i: Integer;
@@ -6430,12 +6443,14 @@ var
 begin
   //s := '\style{+B}' + Engine.Options.Profile.Attributes.AttributeName(AKind) + '\style{-B} : ' + AKeyword;
   map := Mapper.FindByAttribute(AKind);
-  s := map.Name + ': \tab{6}\color{$'+IntToHex(map.Attribute.Foreground)+'}' + AKeyword;
+  if ForignName = '' then
+    ForignName := map.Name;
+  s := ForignName + ': \tab{6}\color{$'+IntToHex(map.Attribute.Foreground)+'}' + AKeyword;
   i := AutoComplete.Completions.IndexOf(AKeyword);
   if i>=0 then
     s := s + '\hspace{16}' + AutoComplete.CompletionComments[i];
   //Completion.AddItem(S, AKeyword, TObject(IntPtr(Ord(AKind))));
-  Keywords.AddItem(AKeyword, S, AKind, Temp);
+  Keywords.AddItem(AKeyword, S, Description, AKind, Temp);
 end;
 
 procedure TVirtualCategory.DoPrepareCompletion(Sender: TObject);

@@ -2452,7 +2452,7 @@ begin
     TransactionChanged;
 end;
 
-procedure AddOutput(Sender: Pointer; Index: Integer; S: string; var Resume: Boolean);
+procedure AddOutput(Sender: Pointer; Index, CharIndex, NextIndex: Integer; S: string; var Resume: Boolean);
 var
   aLine: TOutputLine;
 begin
@@ -2491,7 +2491,7 @@ begin
     end;
     msgtOutput:
     begin
-      StrToStringsExCallback(S, self, @AddOutput, [#13#10, #13, #10], [], [], []);
+      StrToStringsExCallback(S, 1, self, @AddOutput, [#13#10, #13, #10], [], [], []);
       OutputEdit.CaretY := OutputEdit.Lines.Count;
     end;
     msgtInteractive:
@@ -3476,3 +3476,5 @@ begin
 end;
 
 end.
+
+Roxette - It Must Have Been Love

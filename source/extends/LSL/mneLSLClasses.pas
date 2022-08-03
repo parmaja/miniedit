@@ -49,6 +49,7 @@ type
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoPrepareCompletion(Sender: TObject); override;
+    procedure DoAddKeywords; override;
   public
     function CreateHighlighter: TSynCustomHighlighter; override;
   end;
@@ -364,6 +365,12 @@ begin
 end;
 
 procedure TLSLFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
+var
+  stream: TmnWrapperStream;
+  line: utf8string;
+  declare, subdeclare, token: string;
+  CharIndex, NextIndex: Integer;
+  att: TAttributeType;
 begin
   inherited;
   Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;,';//what about $
@@ -373,9 +380,38 @@ begin
   begin
     EnumerateKeywords(Ord(attKeyword), sLSLKeywords, Highlighter.IdentChars, @DoAddCompletion);
     EnumerateKeywords(Ord(attDataType), sLSLTypes, Highlighter.IdentChars, @DoAddCompletion);
-    EnumerateKeywords(Ord(attDataValue), sLSLValues, Highlighter.IdentChars, @DoAddCompletion);
-    EnumerateKeywords(Ord(attCommon), sLSLFunctions, Highlighter.IdentChars, @DoAddCompletion);
-    EnumerateKeywords(Ord(attCommon), sOpenSIMFunctions, Highlighter.IdentChars, @DoAddCompletion);
+    if FileExistsUTF8(Application.Location + 'lsl.keywords') then
+    begin
+      stream := TmnWrapperStream.Create(TFileStream.Create(Application.Location + 'lsl.keywords', fmOpenRead), True);
+      try
+        while stream.ReadLine(line) do
+        begin
+          line := trim(line);
+          if LeftStr(line, 2) <> '//' then
+          begin
+            if StrScanTo(line, 1, declare, CharIndex, NextIndex, [' ', '(', ')', ',', ';']) then
+            begin
+              if SameText(declare, 'const') then
+                StrScanTo(line, NextIndex, subdeclare, CharIndex, NextIndex, [' ', '(', ')', ',', ';']);
+              StrScanTo(line, NextIndex, token, CharIndex, NextIndex, [' ', '(', ')', ',', ';']);
+              if SameText(declare, 'const') then
+                att := attDataValue
+              else
+                att := attCommon;
+              end;
+              DoAddCompletion(token, declare, line, att, False);
+            end;
+          end;
+      finally
+        stream.Free;
+      end;
+    end
+    else
+    begin
+      EnumerateKeywords(Ord(attDataValue), sLSLValues, Highlighter.IdentChars, @DoAddCompletion);
+      EnumerateKeywords(Ord(attCommon), sLSLFunctions, Highlighter.IdentChars, @DoAddCompletion);
+      EnumerateKeywords(Ord(attCommon), sOpenSIMFunctions, Highlighter.IdentChars, @DoAddCompletion);
+    end;
   end;
 end;
 
@@ -388,6 +424,11 @@ begin
     Completion.EndUpdate;
     Screen.Cursor := crDefault;
   end;
+  inherited;
+end;
+
+procedure TLSLFileCategory.DoAddKeywords;
+begin
   inherited;
 end;
 
