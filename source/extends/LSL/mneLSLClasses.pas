@@ -346,18 +346,21 @@ begin
   if KeywordItem <> nil then
   begin
     AHint := KeywordItem.AttributeName + ' ' + KeywordItem.Name;
-    for i := 0 to KeywordItem.Params.Count -1 do
+    if KeywordItem.Params.Count > 0 then
     begin
-      if i = 0 then
-        AHint := AHint + '('
-      else
-        AHint := AHint + ', ';
-      if i = ParamIndex then
-        AHint := AHint + '\style{+B}' + KeywordItem.Params[i] + '\style{-B}'
-      else
-        AHint := AHint + KeywordItem.Params[i];
+      for i := 0 to KeywordItem.Params.Count -1 do
+      begin
+        if i = 0 then
+          AHint := AHint + '('
+        else
+          AHint := AHint + ', ';
+        if i = ParamIndex then
+          AHint := AHint + '\style{+B}' + KeywordItem.Params[i] + '\style{-B}'
+        else
+          AHint := AHint + KeywordItem.Params[i];
+      end;
+      AHint := AHint + ')';
     end;
-    AHint := AHint + ')';
   end
   else
     AHint := '';

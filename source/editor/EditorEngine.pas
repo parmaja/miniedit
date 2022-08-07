@@ -167,7 +167,6 @@ type
 
   TmneSynCompletion = class(TSynBaseCompletion)
   protected
-    FKeywords: TKeywordList;
     function GetCompletionFormClass: TSynVirtualCompletionFormClass; override;
     function OwnedByEditor: Boolean; override;
 
@@ -177,8 +176,6 @@ type
     procedure OnSynCompletionUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
   public
     constructor Create(AOwner: TComponent); override;
-    procedure Sort; override;
-    procedure Clear; override;
   end;
 
   TmneSynEditCommand = (mscUUID); // msPaused = paused recording
@@ -1102,8 +1099,6 @@ type
     procedure PrepareCompletion(ASender: TSynBaseCompletion; var ACurrentString: String; var APosition: Integer; var AnX, AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
     //-----------
 
-    //function DoPaintItem(const AKey: String; ACanvas: TCanvas; X, Y: Integer; ASelected: Boolean; AIndex: Integer): Boolean;
-
     function GetIsText: Boolean; virtual;
 
     function OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: String): TEditorFile; virtual;
@@ -1726,19 +1721,6 @@ function TmneSynCompletion.GetCompletionFormClass: TSynVirtualCompletionFormClas
 begin
   Result := TmneSynCompletionForm;
 end;
-
-procedure TmneSynCompletion.Sort;
-begin
-  inherited Sort;
-  FKeywords.Sort;
-end;
-
-procedure TmneSynCompletion.Clear;
-begin
-  inherited Clear;
-  FKeywords.Clear;
-end;
-
 
 { TKeywordList }
 
@@ -5039,8 +5021,6 @@ begin
 end;
 
 procedure TEditorEngine.DoGetHintString(AEditor: TCustomSynEdit; Token: string; ParamIndex: Integer; out AHint: String);
-var
-  KeywordItem: TKeywordItem;
 begin
   AHint := '';//* We do not want to show dummy hint
   if (AEditor is TmneSynEdit) then
@@ -5053,8 +5033,6 @@ begin
 end;
 
 procedure TEditorEngine.DoGetHintExists(AEditor: TCustomSynEdit; Token: string; var Exists: Boolean);
-var
-  KeywordItem: TKeywordItem;
 begin
   if (AEditor is TmneSynEdit) then
   begin
@@ -6446,13 +6424,11 @@ begin
   if FCompletion = nil then
   begin
     FCompletion := TmneSynCompletion.Create(nil);
-    FCompletion.FKeywords := Keywords;
     (Completion.TheForm as TmneSynCompletionForm).FKeywords := Keywords;
     Completion.Width := vSynEdit.ClientWidth div 3;
     if Completion.Width < 360 then
       Completion.Width := 360;
     Completion.OnBeforeExecute := @PrepareCompletion;
-//    Completion.OnPaintItem := @DoPaintItem;//no need
     Completion.ShortCut := scCtrl + VK_SPACE;
     Completion.CaseSensitive := False;
     Completion.SelectedColor := vSynEdit.SelectedColor.Background;
@@ -6507,7 +6483,6 @@ end;
 procedure TVirtualCategory.PrepareCompletion(ASender: TSynBaseCompletion; var ACurrentString: String; var APosition: Integer; var AnX, AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
 begin
   Keywords.Clean;
-  //Completion.Clear;
   DoPrepareCompletion(ASender);
 end;
 
@@ -6610,22 +6585,6 @@ end;
 procedure TVirtualCategory.ScanValues(AFile: TEditorFile; Values: TStringList);
 begin
 end;
-{
-function TVirtualCategory.DoPaintItem(const AKey: String; ACanvas: TCanvas; X, Y: Integer; ASelected: Boolean; AIndex: Integer): Boolean;
-var
-  aType: TAttributeType;
-  att: TGlobalAttribute;
-begin
-  aType := TAttributeType(IntPtr(Completion.ItemList.Objects[AIndex]));
-  att := Engine.Options.Profile.Attributes.Find(aType);
-  if att <> nil then
-    ACanvas.Font.Color := att.Foreground
-  else
-    ACanvas.Font.Color := Engine.Options.Profile.Attributes.Default.Foreground;
-  ACanvas.TextOut(X + 4, Y, AKey);
-  Result := True;
-end;
-}
 
 { TEditorProject }
 
