@@ -74,7 +74,7 @@ type
     FFileName: string;
     procedure Changed;
   public
-    SQLEdit: TmnSynEdit;
+    SQLEdit: TmneSynEdit;
     IsRTL: Boolean;
     FInteractive: Boolean;
     FLoading: Boolean;
@@ -379,7 +379,7 @@ constructor TSQLEditForm.Create(TheOwner: TComponent);
 begin
   inherited;
   PageControl.ItemIndex := 0;
-  SQLEdit := TmnSynEdit.Create(Self);
+  SQLEdit := TmneSynEdit.Create(Self);
   SQLEdit.Parent := Self;
   SQLEdit.Align := alClient;
   SQLEdit.Visible := True;

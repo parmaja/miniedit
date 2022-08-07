@@ -291,8 +291,8 @@ end;
 
 procedure TBasicFileCategory.DoAddKeywords;
 begin
-  //EnumerateKeywords(Ord(tkKeyword), sBasicKeywords, Highlighter.IdentChars, @DoAddCompletion);
-  //EnumerateKeywords(Ord(tkFunction), sBasicFunctions, Highlighter.IdentChars, @DoAddCompletion);
+  //EnumerateKeywords(Ord(tkKeyword), sBasicKeywords, Highlighter.IdentChars, @AddKeyword);
+  //EnumerateKeywords(Ord(tkFunction), sBasicFunctions, Highlighter.IdentChars, @AddKeyword);
 end;
 
 procedure TBasicFileCategory.DoFixTabsSpaces(Sender: TObject);

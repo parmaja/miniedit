@@ -46,10 +46,9 @@ type
   private
   protected
     function GetFileCaption(AFile: TEditorFile; FileName: string): string; override;
+    procedure GetHintString(Token: string; ParamIndex: Integer; out AHint: String); override;
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
-    procedure DoPrepareCompletion(Sender: TObject); override;
-    procedure DoAddKeywords; override;
   public
     function CreateHighlighter: TSynCustomHighlighter; override;
   end;
@@ -136,8 +135,8 @@ begin
   Completion.BeginUpdate;
   try
     //Completion.ItemList.Clear;
-    EnumerateKeywords(Ord(attKeyword), sBVHKeywords, Highlighter.IdentChars, @DoAddCompletion);
-    EnumerateKeywords(Ord(attDataType), sBVHTypes, Highlighter.IdentChars, @DoAddCompletion);
+    EnumerateKeywords(Ord(attKeyword), sBVHKeywords, Highlighter.IdentChars, @AddKeyword);
+    EnumerateKeywords(Ord(attDataType), sBVHTypes, Highlighter.IdentChars, @AddKeyword);
   finally
     Completion.EndUpdate;
     Screen.Cursor := crDefault;
@@ -338,6 +337,32 @@ begin
     Result := FileName;
 end;
 
+procedure TLSLFileCategory.GetHintString(Token: string; ParamIndex: Integer; out AHint: String);
+var
+  KeywordItem: TKeywordItem;
+  i: Integer;
+begin
+  KeywordItem := Keywords.Find(Token);
+  if KeywordItem <> nil then
+  begin
+    AHint := KeywordItem.AttributeName + ' ' + KeywordItem.Name;
+    for i := 0 to KeywordItem.Params.Count -1 do
+    begin
+      if i = 0 then
+        AHint := AHint + '('
+      else
+        AHint := AHint + ', ';
+      if i = ParamIndex then
+        AHint := AHint + '\style{+B}' + KeywordItem.Params[i] + '\style{-B}'
+      else
+        AHint := AHint + KeywordItem.Params[i];
+    end;
+    AHint := AHint + ')';
+  end
+  else
+    AHint := '';
+end;
+
 function TLSLFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
   Result := TmneSynLSLSyn.Create(nil);
@@ -378,8 +403,8 @@ begin
   IdentifierAttribute := Ord(attIdentifier);
   if Keywords.Count = 0 then
   begin
-    EnumerateKeywords(Ord(attKeyword), sLSLKeywords, Highlighter.IdentChars, @DoAddCompletion);
-    EnumerateKeywords(Ord(attDataType), sLSLTypes, Highlighter.IdentChars, @DoAddCompletion);
+    EnumerateKeywords(Ord(attKeyword), sLSLKeywords, Highlighter.IdentChars, @AddKeyword);
+    EnumerateKeywords(Ord(attDataType), sLSLTypes, Highlighter.IdentChars, @AddKeyword);
     if FileExistsUTF8(Application.Location + 'lsl.keywords') then
     begin
       stream := TmnWrapperStream.Create(TFileStream.Create(Application.Location + 'lsl.keywords', fmOpenRead), True);
@@ -399,7 +424,16 @@ begin
               else
                 att := attCommon;
               end;
-              DoAddCompletion(token, declare, line, att, False);
+              with AddKeyword(token, declare, att, False) do
+              begin
+                if StrScanTo(line, 0, token, CharIndex, NextIndex, ['(']) then
+                begin
+                  line := MidStr(line, NextIndex, MaxInt);
+                  if RightStr(line, 1) = ')' then
+                    line := MidStr(line, 1, Length(line) - 1);
+                  StrToStrings(Trim(line), Params, [','], [' ']);
+                end;
+              end;
             end;
           end;
       finally
@@ -408,28 +442,11 @@ begin
     end
     else
     begin
-      EnumerateKeywords(Ord(attDataValue), sLSLValues, Highlighter.IdentChars, @DoAddCompletion);
-      EnumerateKeywords(Ord(attCommon), sLSLFunctions, Highlighter.IdentChars, @DoAddCompletion);
-      EnumerateKeywords(Ord(attCommon), sOpenSIMFunctions, Highlighter.IdentChars, @DoAddCompletion);
+      EnumerateKeywords(Ord(attDataValue), sLSLValues, Highlighter.IdentChars, @AddKeyword);
+      EnumerateKeywords(Ord(attCommon), sLSLFunctions, Highlighter.IdentChars, @AddKeyword);
+      EnumerateKeywords(Ord(attCommon), sOpenSIMFunctions, Highlighter.IdentChars, @AddKeyword);
     end;
   end;
-end;
-
-procedure TLSLFileCategory.DoPrepareCompletion(Sender: TObject);
-begin
-  Screen.Cursor := crHourGlass;
-  Completion.BeginUpdate;
-  try
-  finally
-    Completion.EndUpdate;
-    Screen.Cursor := crDefault;
-  end;
-  inherited;
-end;
-
-procedure TLSLFileCategory.DoAddKeywords;
-begin
-  inherited;
 end;
 
 { TLSLFile }

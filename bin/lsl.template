@@ -43,12 +43,24 @@ timer()
 }
 
 [on_rez]
-on_rez(integer a)
+on_rez(integer number)
 {
+    |
 }
 
 [touch]
 touch(integer num_detected)
 {
+    |
+}
+
+[control]
+control(key id, integer level, integer edge)
+{
+    |
+}
+
+[land_collision_start]
+land_collision_start(vector pos){
     |
 }

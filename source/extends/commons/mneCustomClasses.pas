@@ -316,8 +316,8 @@ end;
 
 procedure TCustomFileCategory.DoAddKeywords;
 begin
-  EnumerateKeywords(Ord(tkKeyword), sDKeywords, Highlighter.IdentChars, @DoAddCompletion);
-  EnumerateKeywords(Ord(tkFunction), sDFunctions, Highlighter.IdentChars, @DoAddCompletion);
+  EnumerateKeywords(Ord(tkKeyword), sDKeywords, Highlighter.IdentChars, @AddKeyword);
+  EnumerateKeywords(Ord(tkFunction), sDFunctions, Highlighter.IdentChars, @AddKeyword);
 end;
 
 procedure TCustomFileCategory.InitMappers;

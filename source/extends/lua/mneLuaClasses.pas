@@ -303,8 +303,8 @@ end;
 
 procedure TLuaFileCategory.DoAddKeywords;
 begin
-  EnumerateKeywords(Ord(tkKeyword), sLuaKeywords, Highlighter.IdentChars, @DoAddCompletion);
-  EnumerateKeywords(Ord(tkFunction), sLuaFunctions, Highlighter.IdentChars, @DoAddCompletion);
+  EnumerateKeywords(Ord(tkKeyword), sLuaKeywords, Highlighter.IdentChars, @AddKeyword);
+  EnumerateKeywords(Ord(tkFunction), sLuaFunctions, Highlighter.IdentChars, @AddKeyword);
 end;
 
 procedure TLuaFileCategory.DoFixTabsSpaces(Sender: TObject);

@@ -315,8 +315,8 @@ procedure TPASFileCategory.DoAddKeywords;
 begin
   inherited DoAddKeywords;
   //TODO Keywords.Assign((Highlighter as TSynPasSyn).GetKeywordsList);
-  //EnumerateKeywords(Ord(tkKeyword), sPasKeywords, Highlighter.IdentChars, @DoAddCompletion);
-  //EnumerateKeywords(Ord(tkFunction), sPasFunctions, Highlighter.IdentChars, @DoAddCompletion);
+  //EnumerateKeywords(Ord(tkKeyword), sPasKeywords, Highlighter.IdentChars, @AddKeyword);
+  //EnumerateKeywords(Ord(tkFunction), sPasFunctions, Highlighter.IdentChars, @AddKeyword);
 end;
 
 function TPASFileCategory.GetColorPrefix: string;

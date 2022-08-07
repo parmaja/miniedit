@@ -121,15 +121,21 @@ type
 
   end;
 
+  { TKeywordItem }
+
   TKeywordItem = class(TmnNamedObject)
+  private
+    FParams: TStringList;
   public
     Display: string;
     AttributeType: TAttributeType;
     AttributeName: string; //* keyword, const, function, event, value etc
-    Params: string; //* X:integer, Y:Integer
     Template: string; //* name(count: integer) { | }
     Description: string;
     Temp: Boolean; //*
+    constructor Create;
+    destructor Destroy; override;
+    property Params: TStringList read FParams;
   end;
 
   { TKeywordList }
@@ -138,7 +144,7 @@ type
   public
     procedure LoadFromFile(FileName: string); virtual;
     procedure Clean;// Delete temp items
-    function AddItem(AName, ADisplay, ADescription: string; AttributeType: TAttributeType; AsTemp: Boolean = False): TKeywordItem;
+    function AddItem(AName, ADisplay, AttributeName: string; AttributeType: TAttributeType; AsTemp: Boolean = False): TKeywordItem;
     procedure Sort;
   end;
 
@@ -209,15 +215,16 @@ type
 
   TTextEditorFile = class;
 
-  { TmnSynEdit }
+  { TmneSynEdit }
 
-  TmnSynEdit = class(TSynEdit)
+  TmneSynEdit = class(TSynEdit)
   protected
     FEditorFile: TTextEditorFile;
   public
     procedure DoOnShowHint(HintInfo: PHintInfo); override;
     constructor Create(AOwner: TComponent); override;
     procedure ExecuteCommand(Command: TSynEditorCommand; const AChar: TUTF8Char; Data: pointer); override;
+    property EditorFile: TTextEditorFile read FEditorFile;
   end;
 
   { TEditorDesktopFile }
@@ -886,7 +893,7 @@ type
     procedure FindNext;
     procedure FindPrevious;
     procedure CheckChanged;
-    procedure CheckChanged(AFileName: string); //slient function
+    procedure CheckChanged(AFileName: string; Force: Boolean); //slient function
     procedure CloseAll;
     procedure CloseOthers;
     function GetEditedCount: Integer;
@@ -1084,10 +1091,13 @@ type
 
 
     //run once but when category ini
+    procedure GetHintString(Token: string; ParamIndex: Integer; out AHint: String); virtual;
+
     procedure InitCompletion(vSynEdit: TCustomSynEdit); virtual;
 
-    procedure DoAddCompletion(AKeyword: String; AKind: Integer); deprecated;
-    procedure DoAddCompletion(AKeyword: String; ForignName, Description: string; AKind: TAttributeType; Temp: Boolean); virtual;
+    procedure AddKeyword(AKeyword: String; AKind: Integer); deprecated;
+    function AddKeyword(AKeyword: String; AttributeName: string; AKind: TAttributeType; Temp: Boolean): TKeywordItem; virtual;
+
     procedure DoPrepareCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
     procedure PrepareCompletion(ASender: TSynBaseCompletion; var ACurrentString: String; var APosition: Integer; var AnX, AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
     //-----------
@@ -1421,6 +1431,8 @@ type
     procedure InternalChangedState(State: TEditorChangeStates);
     procedure DoChangedState(State: TEditorChangeStates); virtual;
     procedure DoMacroRecorderChanged(Sender: TObject);
+    procedure DoGetHintString(AEditor: TCustomSynEdit; Token: string; ParamIndex: Integer; out AHint: String);
+    procedure DoGetHintExists(AEditor: TCustomSynEdit; Token: string; var Exists: Boolean); virtual;
     procedure DoReplaceText(Sender: TObject; const ASearch, AReplace: String; Line, Column: Integer; var ReplaceAction: TSynReplaceAction);
   public
     constructor Create; virtual;
@@ -1668,6 +1680,20 @@ begin
   end;
 end;
 
+{ TKeywordItem }
+
+constructor TKeywordItem.Create;
+begin
+  inherited Create;
+  FParams := TStringList.Create;
+end;
+
+destructor TKeywordItem.Destroy;
+begin
+  FreeAndNil(FParams);
+  inherited Destroy;
+end;
+
 { TmneSynCompletionForm }
 
 function TmneSynCompletionForm.GetItemText(Index: Integer): string;
@@ -1734,13 +1760,13 @@ begin
   end;
 end;
 
-function TKeywordList.AddItem(AName, ADisplay, ADescription: string; AttributeType: TAttributeType; AsTemp: Boolean): TKeywordItem;
+function TKeywordList.AddItem(AName, ADisplay, AttributeName: string; AttributeType: TAttributeType; AsTemp: Boolean): TKeywordItem;
 begin
   Result := TKeywordItem.Create;
   Result.Name := AName;
   Result.Display := ADisplay;
   Result.AttributeType := AttributeType;
-  Result.Description := ADescription;
+  Result.AttributeName := AttributeName;
   Result.Temp := AsTemp;
   //Result.AttributeName:= ;
   Add(Result);
@@ -1931,9 +1957,9 @@ end;
 procedure TTextEditorFile.InitContents;
 begin
   inherited;
-  FSynEdit := TmnSynEdit.Create(Engine.FilePanel);
+  FSynEdit := TmneSynEdit.Create(Engine.FilePanel);
   SynEdit.Visible := False;
-  (SynEdit as TmnSynEdit).FEditorFile := Self;
+  (SynEdit as TmneSynEdit).FEditorFile := Self;
   SynEdit.Parent := Engine.FilePanel;
 end;
 
@@ -1956,7 +1982,7 @@ end;
 
 { TSyntaxEditorFile }
 
-procedure TmnSynEdit.DoOnShowHint(HintInfo: PHintInfo);
+procedure TmneSynEdit.DoOnShowHint(HintInfo: PHintInfo);
 var
   s: String;
 begin
@@ -1974,7 +2000,7 @@ begin
     end;
 end;
 
-constructor TmnSynEdit.Create(AOwner: TComponent);
+constructor TmneSynEdit.Create(AOwner: TComponent);
 var
   i: Integer;
 begin
@@ -1987,7 +2013,7 @@ begin
     Keystrokes.Delete(i);
 end;
 
-procedure TmnSynEdit.ExecuteCommand(Command: TSynEditorCommand; const AChar: TUTF8Char; Data: pointer);
+procedure TmneSynEdit.ExecuteCommand(Command: TSynEditorCommand; const AChar: TUTF8Char; Data: pointer);
 begin
   if command = ecLowerCaseBlock then
   begin
@@ -2259,7 +2285,6 @@ end;
 
 procedure TCodeFileCategory.DoPrepareCompletion(Sender: TObject);
 var
-  aIdentifiers: THashedStringList;
   aCurrent, Token: String;
   i, r: Integer;
   aLine: Integer;
@@ -2279,8 +2304,6 @@ begin
       aCurrent := aSynEdit.GetWordAtRowCol(aSynEdit.LogicalCaretXY);
 
       //load keyowrds
-      aIdentifiers := THashedStringList.Create;
-
       //extract keywords from external files
       if Engine.Options.CollectAutoComplete and (Engine.Session.GetRoot <> '') then
       begin
@@ -2299,31 +2322,24 @@ begin
             aFiles.Free;
           end;
         end;
-        aIdentifiers.AddStrings(CachedIdentifiers);
         CachedAge := GetTickCount;
       end;
-      //add current file Identifiers
-      try
-        Highlighter.ResetRange;
-        for i := 0 to aSynEdit.Lines.Count - 1 do
-        begin
-          Highlighter.SetLine(aSynEdit.Lines[i], 1);
-          while not Highlighter.GetEol do
-          begin
-            Token := Highlighter.GetToken;
-            if (i <> aLine - 1) or (aCurrent <> Token) then //TODO what is (i <> aLine - 1) ????
-            begin
-              if (Highlighter.GetTokenKind = IdentifierID) and (aIdentifiers.IndexOf(Token) < 0) then
-                aIdentifiers.Add(Token);
-            end;
-            Highlighter.Next;
-          end;
-        end;
 
-        for i := 0 to aIdentifiers.Count - 1 do
-          DoAddCompletion(aIdentifiers[i], '', '', attIdentifier, True); //use mapper
-      finally
-        aIdentifiers.Free;
+      //add current file Identifiers
+      Highlighter.ResetRange;
+      for i := 0 to aSynEdit.Lines.Count - 1 do
+      begin
+        Highlighter.SetLine(aSynEdit.Lines[i], 1);
+        while not Highlighter.GetEol do
+        begin
+          Token := Highlighter.GetToken;
+          if (i <> aLine - 1) or (aCurrent <> Token) then //TODO what is (i <> aLine - 1) ????
+          begin
+            if (Highlighter.GetTokenKind = IdentifierID) and (Keywords.Find(Token) = nil) then
+              AddKeyword(Token, 'Identifier', attIdentifier, True); //use mapper
+          end;
+          Highlighter.Next;
+        end;
       end;
     end;
     Completion.Sort;
@@ -3608,7 +3624,7 @@ begin
   end;
 end;
 
-procedure TEditorFiles.CheckChanged(AFileName: string);
+procedure TEditorFiles.CheckChanged(AFileName: string; Force: Boolean);
 var
   aFile: TEditorFile;
 begin
@@ -3616,7 +3632,7 @@ begin
   try
     aFile := FindFile(AFileName);
     if aFile <> nil then
-      aFile.UpdateAge;
+      aFile.CheckChanged(Force);
   finally
     Engine.EndUpdate;
   end;
@@ -3679,6 +3695,8 @@ begin
   FMacroRecorderPlugin.OnStateChange := @DoMacroRecorderChanged;
   FEditorPlugin := TmneSynEditPlugin.Create(nil);
   FHintParams := TSynShowParamsHint.Create(nil);
+  FHintParams.OnGetHintString := @DoGetHintString;
+  FHintParams.OnGetHintExists := @DoGetHintExists;
   FHintParams.UsePrettyText := True;
   FNotifyObjects := TEditorNotifyList.Create;
 
@@ -5020,6 +5038,35 @@ begin
   Update([ecsState]);
 end;
 
+procedure TEditorEngine.DoGetHintString(AEditor: TCustomSynEdit; Token: string; ParamIndex: Integer; out AHint: String);
+var
+  KeywordItem: TKeywordItem;
+begin
+  AHint := '';//* We do not want to show dummy hint
+  if (AEditor is TmneSynEdit) then
+  begin
+    if (AEditor as TmneSynEdit).EditorFile <> nil then
+    begin
+      (AEditor as TmneSynEdit).EditorFile.Group.Category.GetHintString(Token, ParamIndex, AHint);
+    end;
+  end;
+end;
+
+procedure TEditorEngine.DoGetHintExists(AEditor: TCustomSynEdit; Token: string; var Exists: Boolean);
+var
+  KeywordItem: TKeywordItem;
+begin
+  if (AEditor is TmneSynEdit) then
+  begin
+    if (AEditor as TmneSynEdit).EditorFile <> nil then
+    begin
+      Exists := (AEditor as TmneSynEdit).EditorFile.Group.Category.Keywords.Find(Token) <> nil;
+    end;
+  end
+  else
+    Exists := False;
+end;
+
 function TEditorEngine.GetWorkSpace: String;
 begin
   Result := IncludeTrailingPathDelimiter(FWorkSpace);
@@ -5244,7 +5291,7 @@ begin
               if not SameFileName(BackupFileName, AFileName) then //not the same file
               begin
                 DoSave(BackupFileName);
-                Engine.Files.CheckChanged(BackupFileName);
+                Engine.Files.CheckChanged(BackupFileName, True);
                 //TODO Send update age if opened in the editor
                 Engine.SendLog('Saved as backup: ' + BackupFileName);
               end;
@@ -6430,12 +6477,12 @@ begin
       AutoComplete.AutoCompleteList.LoadFromFile(LowerCase(Application.Location + Name + '.template'));
 end;
 
-procedure TVirtualCategory.DoAddCompletion(AKeyword: String; AKind: Integer);
+procedure TVirtualCategory.AddKeyword(AKeyword: String; AKind: Integer);
 begin
-  DoAddCompletion(AKeyword, '', '', TAttributeType(AKind), False);
+  AddKeyword(AKeyword, '', TAttributeType(AKind), False);
 end;
 
-procedure TVirtualCategory.DoAddCompletion(AKeyword: String; ForignName, Description: string; AKind: TAttributeType; Temp: Boolean);
+function TVirtualCategory.AddKeyword(AKeyword: String; AttributeName: string; AKind: TAttributeType; Temp: Boolean): TKeywordItem;
 var
   s: string;
   i: Integer;
@@ -6443,14 +6490,14 @@ var
 begin
   //s := '\style{+B}' + Engine.Options.Profile.Attributes.AttributeName(AKind) + '\style{-B} : ' + AKeyword;
   map := Mapper.FindByAttribute(AKind);
-  if ForignName = '' then
-    ForignName := map.Name;
-  s := ForignName + ': \tab{6}\color{$'+IntToHex(map.Attribute.Foreground)+'}' + AKeyword;
+  if AttributeName = '' then
+    AttributeName := map.Name;
+  s := AttributeName + ': \tab{6}\color{$'+IntToHex(map.Attribute.Foreground)+'}' + AKeyword;
   i := AutoComplete.Completions.IndexOf(AKeyword);
   if i>=0 then
     s := s + '\hspace{16}' + AutoComplete.CompletionComments[i];
   //Completion.AddItem(S, AKeyword, TObject(IntPtr(Ord(AKind))));
-  Keywords.AddItem(AKeyword, S, Description, AKind, Temp);
+  Result := Keywords.AddItem(AKeyword, S, AttributeName, AKind, Temp);
 end;
 
 procedure TVirtualCategory.DoPrepareCompletion(Sender: TObject);
@@ -6472,6 +6519,17 @@ procedure TVirtualCategory.EndEdit(vSynEdit: TCustomSynEdit);
 begin
   AutoComplete.RemoveEditor(vSynEdit);
   Completion.RemoveEditor(vSynEdit);
+end;
+
+procedure TVirtualCategory.GetHintString(Token: string; ParamIndex: Integer; out AHint: String);
+var
+  KeywordItem: TKeywordItem;
+begin
+  KeywordItem := Keywords.Find(Token);
+  if KeywordItem <> nil then
+    AHint := KeywordItem.Description
+  else
+    AHint := '';
 end;
 
 destructor TVirtualCategory.Destroy;

@@ -374,8 +374,8 @@ end;
 procedure TVerilogFileCategory.DoAddKeywords;
 begin
   inherited DoAddKeywords;
-  //EnumerateKeywords(Ord(tkKeyword), sVerilogKeywords, Highlighter.IdentChars, @DoAddCompletion);
-  //EnumerateKeywords(Ord(tkDirective), sVerilogDirectives, Highlighter.IdentChars, @DoAddCompletion);
+  //EnumerateKeywords(Ord(tkKeyword), sVerilogKeywords, Highlighter.IdentChars, @AddKeyword);
+  //EnumerateKeywords(Ord(tkDirective), sVerilogDirectives, Highlighter.IdentChars, @AddKeyword);
 end;
 
 procedure TVerilogFileCategory.EnumMenuItems(AddItems: TAddClickCallBack);

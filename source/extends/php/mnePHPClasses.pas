@@ -387,7 +387,7 @@ begin
       else if aProcessor = aHTMLProcessor then
       begin
         Completion.TheForm.Caption := 'HTML';
-        EnumerateKeywords(Ord(attKeyword), sHTMLKeywords, Highlighter.IdentChars, @DoAddCompletion);
+        EnumerateKeywords(Ord(attKeyword), sHTMLKeywords, Highlighter.IdentChars, @AddKeyword);
       end
       else if aProcessor = aPHPProcessor then
       begin
@@ -395,7 +395,7 @@ begin
           Abort
         else if aTokenType = Ord(tkString) then
         begin
-          //EnumerateKeywords(Ord(attEmbed), sSQLKeywords, Highlighter.IdentChars, @DoAddCompletion);
+          //EnumerateKeywords(Ord(attEmbed), sSQLKeywords, Highlighter.IdentChars, @AddKeyword);
         end
         else
         begin
@@ -459,10 +459,10 @@ begin
             end;
 
             for i := 0 to aVariables.Count - 1 do
-              DoAddCompletion(aVariables[i], Ord(attVariable));
+              AddKeyword(aVariables[i], Ord(attVariable));
 
             for i := 0 to aIdentifiers.Count - 1 do
-              DoAddCompletion(aIdentifiers[i], Ord(attIdentifier));
+              AddKeyword(aIdentifiers[i], Ord(attIdentifier));
           finally
             aIdentifiers.Free;
             aVariables.Free;
@@ -558,10 +558,10 @@ procedure TXHTMLFileCategory.DoAddKeywords;
 begin
   inherited;
   //load keyowrds
-  EnumerateKeywords(Ord(attKeyword), sPHPControls, Highlighter.IdentChars, @DoAddCompletion);
-  EnumerateKeywords(Ord(attKeyword), sPHPKeywords, Highlighter.IdentChars, @DoAddCompletion);
-  EnumerateKeywords(Ord(attCommon), sPHPFunctions, Highlighter.IdentChars, @DoAddCompletion);
-  EnumerateKeywords(Ord(attCommon), sPHPConstants, Highlighter.IdentChars, @DoAddCompletion);
+  EnumerateKeywords(Ord(attKeyword), sPHPControls, Highlighter.IdentChars, @AddKeyword);
+  EnumerateKeywords(Ord(attKeyword), sPHPKeywords, Highlighter.IdentChars, @AddKeyword);
+  EnumerateKeywords(Ord(attCommon), sPHPFunctions, Highlighter.IdentChars, @AddKeyword);
+  EnumerateKeywords(Ord(attCommon), sPHPConstants, Highlighter.IdentChars, @AddKeyword);
 end;
 
 { TJSFileCategory }

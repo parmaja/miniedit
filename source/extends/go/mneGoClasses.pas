@@ -379,8 +379,8 @@ end;
 
 procedure TGoFileCategory.DoAddKeywords;
 begin
-  EnumerateKeywords(Ord(tkKeyword), sGoKeywords, Highlighter.IdentChars, @DoAddCompletion);
-  EnumerateKeywords(Ord(tkFunction), sGoFunctions, Highlighter.IdentChars, @DoAddCompletion);
+  EnumerateKeywords(Ord(tkKeyword), sGoKeywords, Highlighter.IdentChars, @AddKeyword);
+  EnumerateKeywords(Ord(tkFunction), sGoFunctions, Highlighter.IdentChars, @AddKeyword);
 end;
 
 procedure TGoFileCategory.InitMappers;

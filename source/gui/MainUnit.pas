@@ -2336,13 +2336,13 @@ begin
         if (Folder <> '') and DirectoryExists(Folder) then
         begin
           aFiles.Clear;
-          if FilesFilterEdit.Text <> '' then
+{          if FilesFilterEdit.Text <> '' then
           begin
             Filter := FilesFilterEdit.Text;
             if Pos('*', Filter) <= 0 then
               Filter := '*' + Filter + '*'
           end
-          else
+          else}
             Filter := '*';
           r := FindFirst(Folder + Filter, faAnyFile or faDirectory, SearchRec);
           while r = 0 do
@@ -3477,4 +3477,4 @@ end;
 
 end.
 
-Roxette - It Must Have Been Love
+

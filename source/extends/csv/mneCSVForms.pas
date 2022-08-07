@@ -81,7 +81,7 @@ type
   public
     FLoading: Boolean;
     EditorFile: TEditorFile;
-    TextEdit: TmnSynEdit;
+    TextEdit: TmneSynEdit;
     IsRTL: Boolean;
     CSVOptions: TmncCSVOptions;
     FInteractive: Boolean;
@@ -683,7 +683,7 @@ begin
   //FInteractive := True; //ewww
 
   PageControl.ItemIndex := 0;
-  TextEdit := TmnSynEdit.Create(Self);
+  TextEdit := TmneSynEdit.Create(Self);
   TextEdit.Parent := TextPnl;
   TextEdit.Align := alClient;
   TextEdit.Visible := True;

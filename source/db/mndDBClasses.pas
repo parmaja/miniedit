@@ -177,11 +177,11 @@ begin
     aSynEdit := (Sender as TSynCompletion).TheForm.CurrentEditor as TCustomSynEdit;
     if (aSynEdit <> nil) then
     begin
-      EnumerateKeywords(Ord(attKeyword), StdSQLKeywords, Highlighter.IdentChars, @DoAddCompletion);
-      EnumerateKeywords(Ord(attDataType), StdSQLTypes, Highlighter.IdentChars, @DoAddCompletion);
-      EnumerateKeywords(Ord(attCommon), StdSQLFunctions, Highlighter.IdentChars, @DoAddCompletion);
+      EnumerateKeywords(Ord(attKeyword), StdSQLKeywords, Highlighter.IdentChars, @AddKeyword);
+      EnumerateKeywords(Ord(attDataType), StdSQLTypes, Highlighter.IdentChars, @AddKeyword);
+      EnumerateKeywords(Ord(attCommon), StdSQLFunctions, Highlighter.IdentChars, @AddKeyword);
       for i := 0 to DBEngine.DB.Tables.Count -1 do
-        DoAddCompletion(DBEngine.DB.Tables[i].Name, ord(attVariable));
+        AddKeyword(DBEngine.DB.Tables[i].Name, ord(attVariable));
     end;
   finally
     Completion.EndUpdate;
