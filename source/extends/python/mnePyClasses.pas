@@ -296,7 +296,7 @@ end;
 
 procedure TPyFileCategory.EnumMenuItems(AddItems: TAddClickCallBack);
 begin
-  AddItems('FixTabsSpaces', 'Fix Tabs/Spaces', @DoFixTabsSpaces);
+  AddItems('FixTabsSpaces', 'Fix Tabs/Spaces', 'Edit', @DoFixTabsSpaces);
 end;
 
 procedure TPyFileCategory.InitMappers;

@@ -625,9 +625,7 @@ type
     procedure ProjectLoaded;
     procedure UpdateFolder;
     procedure ProjectChanged;
-    procedure UpdateMenus;
-    procedure AddMenuItem(AName, ACaption: string; AOnClickEvent: TNotifyEvent; AShortCut: TShortCut = 0);
-    procedure UpdateFileMenu;
+    procedure AddMenuItem(AName, ACaption, AParentMenu: string; AOnClickEvent: TNotifyEvent; AShortCut: TShortCut = 0);
     procedure UpdateMenuItems;
     procedure UpdatePanel;
     procedure SetFolder(const Value: string);
@@ -2033,62 +2031,54 @@ begin
   Engine.Update([ecsFolder]);
 end;
 
-procedure TMainForm.UpdateMenus;
-begin
-  UpdateFileMenu;
-  UpdateMenuItems;
-end;
-
-procedure TMainForm.AddMenuItem(AName, ACaption: string; AOnClickEvent: TNotifyEvent; AShortCut: TShortCut);
+procedure TMainForm.AddMenuItem(AName, ACaption, AParentMenu: string; AOnClickEvent: TNotifyEvent; AShortCut: TShortCut);
 var
+  AParentMnu: TMenuItem;
   MenuItem: TMenuItem;
+  n: string;
 begin
-  if FMenuItemsList.Count = 0 then
+  if AParentMenu = '' then
+    AParentMenu := 'Edit';
+
+  AParentMnu := FindComponent(AParentMenu + 'Mnu') as TMenuItem;
+  if AParentMnu = nil then
   begin
-    MenuItem := TMenuItem.Create(MainMenu);
-    EditMnu.Add(MenuItem);
-    MenuItem.Name := 'FILE_EDIT_MENUITEM_SEP';
+    Engine.SendLog(AParentMenu + ' menu item not found');
+    exit;
+  end;
+
+  n := AParentMenu + '_MenuItem_sep';
+  MenuItem := FindComponent(n) as TMenuItem;
+  if MenuItem = nil then
+  begin
+    MenuItem := TMenuItem.Create(Self);
+    AParentMnu.Add(MenuItem);
+    MenuItem.Name := n;
     MenuItem.Caption := '-';
     FMenuItemsList.Add(MenuItem);
 
-    MenuItem := TMenuItem.Create(EditorPopupMenu);
+    {MenuItem := TMenuItem.Create(EditorPopupMenu);
     EditorPopupMenu.Items.Add(MenuItem);
-    MenuItem.Name := 'FILE_EDIT_POPUPMENUITEM_SEP';
+    MenuItem.Name := AParentMnu + '_PopupMenuItem_sep';
     MenuItem.Caption := '-';
-    FMenuItemsList.Add(MenuItem);
+    FMenuItemsList.Add(MenuItem);}
   end;
-  MenuItem := TMenuItem.Create(MainMenu);
-  EditMnu.Add(MenuItem);
-  MenuItem.Name := 'FILE_EDIT_MENUITEM__' + AName;
+
+  MenuItem := TMenuItem.Create(Self);
+  AParentMnu.Add(MenuItem);
+  MenuItem.Name := AParentMenu + '_MenuItem__' + AName;
   MenuItem.Caption := ACaption;
   MenuItem.OnClick := AOnClickEvent;
   MenuItem.ShortCut := AShortCut;
   FMenuItemsList.Add(MenuItem);
 
-  MenuItem := TMenuItem.Create(EditorPopupMenu);
+  {MenuItem := TMenuItem.Create(EditorPopupMenu);
   EditorPopupMenu.Items.Add(MenuItem);
-  MenuItem.Name := 'FILE_EDIT_POPUPMENUITEM__' + AName;
+  MenuItem.Name := AParentMnu + '_PopupMenuItem__' + AName;
   MenuItem.Caption := ACaption;
   MenuItem.OnClick := AOnClickEvent;
   //MenuItem.ShortCut := AShortCut; //No ShortCut for popup, no dublicate
-  FMenuItemsList.Add(MenuItem);
-end;
-
-procedure TMainForm.UpdateFileMenu;
-begin
-  if Engine.Files.Current <> nil then
-  begin
-    FMenuItemsList.Clear;
-    if Engine.Files.Current.Group <> nil then
-      Engine.Files.Current.Group.Category.EnumMenuItems(@AddMenuItem);
-  end;
-
-  with Engine.CurrentTendency do
-  begin
-    MessagesTabs.Page[WatchesGrid].Visible := capDebug in Capabilities;
-    MessagesTabs.Page[CallStackGrid].Visible := capTrace in Capabilities;
-    //MessagesTabs.PageItem[MessagesGrid].Visible := capErrors in Capabilities;
-  end;
+  FMenuItemsList.Add(MenuItem);}
 end;
 
 procedure TMainForm.UpdateMenuItems;
@@ -2114,6 +2104,20 @@ begin
     DBGStepIntoAct.Enabled := capTrace in Capabilities;
     DBGStepOutAct.Enabled := capTrace in Capabilities;
     DBGRunToCursorAct.Enabled := capTrace in Capabilities;
+
+    if Engine.Files.Current <> nil then
+    begin
+      FMenuItemsList.Clear;
+      if Engine.Files.Current.Group <> nil then
+        Engine.Files.Current.Group.Category.EnumMenuItems(@AddMenuItem);
+    end;
+
+    with Engine.CurrentTendency do
+    begin
+      MessagesTabs.Page[WatchesGrid].Visible := capDebug in Capabilities;
+      MessagesTabs.Page[CallStackGrid].Visible := capTrace in Capabilities;
+      //MessagesTabs.PageItem[MessagesGrid].Visible := capErrors in Capabilities;
+    end;
   end;
 end;
 

@@ -44,12 +44,15 @@ type
 
   TLSLFileCategory = class(TCodeFileCategory)
   private
+    procedure FormatCodeClick(Sender: TObject);
+    procedure MangleCodeClick(Sender: TObject);
   protected
     function GetFileCaption(AFile: TEditorFile; FileName: string): string; override;
     procedure GetHintString(Token: string; ParamIndex: Integer; out AHint: String); override;
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
   public
+    procedure EnumMenuItems(AddItems: TAddClickCallBack); override;
     function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
@@ -317,6 +320,16 @@ end;
 
 { TLSLFileCategory }
 
+procedure TLSLFileCategory.FormatCodeClick(Sender: TObject);
+begin
+
+end;
+
+procedure TLSLFileCategory.MangleCodeClick(Sender: TObject);
+begin
+
+end;
+
 function TLSLFileCategory.GetFileCaption(AFile: TEditorFile; FileName: string): string;
 var
   p: Integer;
@@ -450,6 +463,13 @@ begin
       EnumerateKeywords(Ord(attCommon), sOpenSIMFunctions, Highlighter.IdentChars, @AddKeyword);
     end;
   end;
+end;
+
+procedure TLSLFileCategory.EnumMenuItems(AddItems: TAddClickCallBack);
+begin
+  inherited EnumMenuItems(AddItems);
+//  AddItems('FormatCode', 'Format Code', 'Edit', @FormatCodeClick, scCtrl + scAlt + VK_F);
+  AddItems('MangleCode', 'Mangle Code', 'Edit', @MangleCodeClick);
 end;
 
 { TLSLFile }

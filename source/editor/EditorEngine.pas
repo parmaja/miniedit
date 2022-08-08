@@ -323,7 +323,7 @@ type
   end;
 
   TAddFrameCallBack = procedure(AFrame: TFrame) of object;
-  TAddClickCallBack = procedure(Name, Caption: String; OnClickEvent: TNotifyEvent; ShortCut: TShortCut = 0) of object;
+  TAddClickCallBack = procedure(Name, Caption, ParentMenu: String; OnClickEvent: TNotifyEvent; ShortCut: TShortCut = 0) of object;
 
   TEnumVariablesSkip = (evsFile, evsCategory, evsTendicy, evsProject, evsEngine, evsDefaultPath, evsEnviroment);
   TEnumVariablesSkips = set of TEnumVariablesSkip;

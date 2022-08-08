@@ -127,7 +127,7 @@ end;
 procedure TCppFileCategory.EnumMenuItems(AddItems: TAddClickCallBack);
 begin
   inherited EnumMenuItems(AddItems);
-  AddItems('Format', 'Format', @DoFormatClick, TextToShortCut('Ctrl+Shift+F'));
+  AddItems('Format', 'Format', 'Edit', @DoFormatClick, scCtrl+scShift+VK_F);
 end;
 
 function TCppFileCategory.CreateHighlighter: TSynCustomHighlighter;
