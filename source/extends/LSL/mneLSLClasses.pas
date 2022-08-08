@@ -71,7 +71,7 @@ type
   protected
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
-    procedure DoPrepareCompletion(Sender: TObject); override;
+    procedure DoPrepareCompletion(AEditor: TCustomSynEdit); override;
   public
     function CreateHighlighter: TSynCustomHighlighter; override;
   end;
@@ -131,7 +131,7 @@ begin
   Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;,';//what about $?
 end;
 
-procedure TBVHFileCategory.DoPrepareCompletion(Sender: TObject);
+procedure TBVHFileCategory.DoPrepareCompletion(AEditor: TCustomSynEdit);
 begin
   inherited;
   Screen.Cursor := crHourGlass;

@@ -44,7 +44,7 @@ type
   protected
     procedure InitMappers; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
-    procedure DoPrepareCompletion(Sender: TObject); override;
+    procedure DoPrepareCompletion(AEditor: TCustomSynEdit); override;
   public
     function CreateHighlighter: TSynCustomHighlighter; override;
   end;
@@ -164,9 +164,8 @@ begin
   Completion.EndOfTokenChr := '"{}()[].<>/\:!&*+-=%;"';//what about notice "
 end;
 
-procedure TSQLFileCategory.DoPrepareCompletion(Sender: TObject);
+procedure TSQLFileCategory.DoPrepareCompletion(AEditor: TCustomSynEdit);
 var
-  aSynEdit: TCustomSynEdit;
   i: Integer;
 begin
   inherited;
@@ -174,15 +173,11 @@ begin
   Completion.BeginUpdate;
   try
     Completion.Clear;
-    aSynEdit := (Sender as TSynCompletion).TheForm.CurrentEditor as TCustomSynEdit;
-    if (aSynEdit <> nil) then
-    begin
-      EnumerateKeywords(Ord(attKeyword), StdSQLKeywords, Highlighter.IdentChars, @AddKeyword);
-      EnumerateKeywords(Ord(attDataType), StdSQLTypes, Highlighter.IdentChars, @AddKeyword);
-      EnumerateKeywords(Ord(attCommon), StdSQLFunctions, Highlighter.IdentChars, @AddKeyword);
-      for i := 0 to DBEngine.DB.Tables.Count -1 do
-        AddKeyword(DBEngine.DB.Tables[i].Name, ord(attVariable));
-    end;
+    EnumerateKeywords(Ord(attKeyword), StdSQLKeywords, Highlighter.IdentChars, @AddKeyword);
+    EnumerateKeywords(Ord(attDataType), StdSQLTypes, Highlighter.IdentChars, @AddKeyword);
+    EnumerateKeywords(Ord(attCommon), StdSQLFunctions, Highlighter.IdentChars, @AddKeyword);
+    for i := 0 to DBEngine.DB.Tables.Count -1 do
+      AddKeyword(DBEngine.DB.Tables[i].Name, ord(attVariable));
   finally
     Completion.EndUpdate;
     Screen.Cursor := crDefault;

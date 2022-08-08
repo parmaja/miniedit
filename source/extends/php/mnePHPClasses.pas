@@ -69,7 +69,7 @@ type
     procedure ExtractPHPKeywords(Files, Variables, Identifiers: TStringList);
     procedure DoAddKeywords; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
-    procedure DoPrepareCompletion(Sender: TObject); override;
+    procedure DoPrepareCompletion(AEditor: TCustomSynEdit); override;
   public
     function CreateHighlighter: TSynCustomHighlighter; override;
     function GetColorPrefix: string; override;
@@ -351,7 +351,7 @@ begin
   Result := TSynXHTMLSyn.Create(nil);
 end;
 
-procedure TXHTMLFileCategory.DoPrepareCompletion(Sender: TObject);
+procedure TXHTMLFileCategory.DoPrepareCompletion(AEditor: TCustomSynEdit);
 var
   aVariables: THashedStringList;
   aIdentifiers: THashedStringList;

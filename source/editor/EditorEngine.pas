@@ -1095,7 +1095,7 @@ type
     procedure AddKeyword(AKeyword: String; AKind: Integer); deprecated;
     function AddKeyword(AKeyword: String; AttributeName: string; AKind: TAttributeType; Temp: Boolean): TKeywordItem; virtual;
 
-    procedure DoPrepareCompletion(Sender: TObject); virtual; //TODO move it to CodeFileCategory
+    procedure DoPrepareCompletion(AEditor: TCustomSynEdit); virtual; //TODO move it to CodeFileCategory
     procedure PrepareCompletion(ASender: TSynBaseCompletion; var ACurrentString: String; var APosition: Integer; var AnX, AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
     //-----------
 
@@ -1181,7 +1181,7 @@ type
     procedure ScanValues(AFile: TEditorFile; Values: TStringList); override;
     procedure ExtractKeywords(Files, Identifiers: TStringList); virtual;
     procedure DoAddKeywords; virtual;
-    procedure DoPrepareCompletion(Sender: TObject); override;
+    procedure DoPrepareCompletion(AEditor: TCustomSynEdit); override;
   end;
 
   { TFileGroup }
@@ -2265,7 +2265,7 @@ procedure TCodeFileCategory.DoAddKeywords;
 begin
 end;
 
-procedure TCodeFileCategory.DoPrepareCompletion(Sender: TObject);
+procedure TCodeFileCategory.DoPrepareCompletion(AEditor: TCustomSynEdit);
 var
   aCurrent, Token: String;
   i, r: Integer;
@@ -6476,14 +6476,14 @@ begin
   Result := Keywords.AddItem(AKeyword, S, AttributeName, AKind, Temp);
 end;
 
-procedure TVirtualCategory.DoPrepareCompletion(Sender: TObject);
+procedure TVirtualCategory.DoPrepareCompletion(AEditor: TCustomSynEdit);
 begin
 end;
 
 procedure TVirtualCategory.PrepareCompletion(ASender: TSynBaseCompletion; var ACurrentString: String; var APosition: Integer; var AnX, AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
 begin
   Keywords.Clean;
-  DoPrepareCompletion(ASender);
+  DoPrepareCompletion(ASender.TheForm.CurrentEditor);
 end;
 
 procedure TVirtualCategory.InitEdit(vSynEdit: TCustomSynEdit);

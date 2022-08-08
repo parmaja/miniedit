@@ -680,7 +680,7 @@ begin
     try
       Reader.Start;
       Reader.Nodes := Result;
-      Reader.Parse(s);
+       Reader.Parse(s);
     finally
       Reader.Free;
     end;
