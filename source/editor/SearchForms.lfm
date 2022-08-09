@@ -10,13 +10,14 @@ object SearchForm: TSearchForm
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Position = poMainFormCenter
-  LCLVersion = '1.7'
+  LCLVersion = '2.3.0.0'
   object Label1: TLabel
     Left = 11
     Height = 13
     Top = 12
     Width = 72
     Caption = '&Search for text:'
+    Color = clDefault
     ParentColor = False
   end
   object SearchTextEdit: TComboBox
@@ -136,9 +137,9 @@ object SearchForm: TSearchForm
   end
   object ReplaceWithChk: TCheckBox
     Left = 10
-    Height = 19
+    Height = 17
     Top = 37
-    Width = 88
+    Width = 86
     Caption = '&Replace With:'
     OnClick = ReplaceWithChkClick
     TabOrder = 1

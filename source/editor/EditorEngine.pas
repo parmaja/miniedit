@@ -176,6 +176,8 @@ type
     procedure OnSynCompletionUTF8KeyPress(Sender: TObject; var UTF8Key: TUTF8Char);
   public
     constructor Create(AOwner: TComponent); override;
+    procedure Sort; override;
+    procedure Clear; override;
   end;
 
   TmneSynEditCommand = (mscUUID); // msPaused = paused recording
@@ -875,6 +877,7 @@ type
     procedure Open;
     procedure Save(Force: Boolean);
     procedure SaveAll(Force: Boolean);
+    procedure CancelAll;
     procedure ReloadAll;
     procedure CheckAll;
     procedure UpdateAll;
@@ -3043,6 +3046,18 @@ begin
   OnUTF8KeyPress:=@OnSynCompletionUTF8KeyPress;
 end;
 
+procedure TmneSynCompletion.Sort;
+begin
+  inherited Sort;
+  (TheForm as TmneSynCompletionForm).Keywords.Sort;
+end;
+
+procedure TmneSynCompletion.Clear;
+begin
+ inherited Sort;
+ (TheForm as TmneSynCompletionForm).Keywords.Clear;
+end;
+
 { TEditorSCM }
 
 constructor TEditorSCM.Create;
@@ -4348,6 +4363,16 @@ begin
   for i := 0 to Count - 1 do
   begin
     Items[i].Save(Force);
+  end;
+end;
+
+procedure TEditorFiles.CancelAll;
+var
+  i: Integer;
+begin
+  for i := 0 to Count - 1 do
+  begin
+    Items[i].IsChanged := False;
   end;
 end;
 

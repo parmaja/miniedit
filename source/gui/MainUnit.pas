@@ -1256,15 +1256,19 @@ end;
 
 procedure TMainForm.FormCloseQuery(Sender: TObject; var CanClose: boolean);
 var
+  answer: Integer;
   mr: TmsgChoice;
 begin
   if Engine.Files.GetEditedCount > 0 then
   begin
-    mr := MsgBox.YesNoCancel('There a files changed but not saved'#13'Save it all?');
-    if mr = msgcCancel then
-      CanClose := False
-    else if mr = msgcYes then
-      Engine.Files.SaveAll(True); //force save all
+    answer := MsgBox.Ask('There a files changed but not saved'#13, [Choice('Save &All', msgcYes), Choice('Ig&nore All', msgcNo), Choice('A&sk'), Choice('&Cancel', msgcCancel)], 0, 3, msgkConfirmation);
+    //mr := MsgBox.YesNoCancel();
+    if answer = 0 then
+      Engine.Files.SaveAll(True) //force save all
+    else if answer = 1 then
+      Engine.Files.CancelAll
+    else if answer = 3 then
+      CanClose := False;
   end;
 
   if CanClose and (Engine.Session.Active) then
