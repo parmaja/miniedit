@@ -1981,7 +1981,6 @@ begin
     Engine.Options.LastProject := Engine.Session.Project.FileName
   else
       Engine.Options.LastProject := '';
-  Engine.Options.LastFolder := Engine.BrowseFolder;
   Engine.Session.Close;
   Engine.UnregisterNotify(Self);
 
@@ -2344,13 +2343,13 @@ begin
         if (Folder <> '') and DirectoryExists(Folder) then
         begin
           aFiles.Clear;
-{          if FilesFilterEdit.Text <> '' then
+          if FilesFilterEdit.Text <> '' then
           begin
             Filter := FilesFilterEdit.Text;
             if Pos('*', Filter) <= 0 then
               Filter := '*' + Filter + '*'
           end
-          else}
+          else
             Filter := '*';
           r := FindFirst(Folder + Filter, faAnyFile or faDirectory, SearchRec);
           while r = 0 do
@@ -2553,7 +2552,7 @@ end;
 
 procedure TMainForm.ProjectLoaded;
 begin
-  Folder := Engine.GetRoot;
+//  Folder := Engine.GetRoot; //do not load root to folder, for lsl temp files not to save
 end;
 
 procedure TMainForm.ReplaceActExecute(Sender: TObject);
@@ -3484,5 +3483,3 @@ begin
 end;
 
 end.
-
-

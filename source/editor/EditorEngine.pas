@@ -3669,7 +3669,7 @@ end;
 
 procedure TEditorSession.Close;
 begin
-  if (Project <> nil) and (Project.FileName <> '') then
+   if (Project <> nil) and (Project.FileName <> '') then
     Project.SaveToFile(Project.FileName);
 
   Engine.Files.CloseAll;
@@ -4111,6 +4111,8 @@ begin
       raise;
     end;
     SetProject(aProject);
+    if FProject.IsActive then
+      Engine.BrowseFolder := FProject.RunOptions.MainPath;
     FIsChanged := False;
     if Active then  //sure if not default project
       Engine.ProcessRecentProject(FileName);
@@ -4772,6 +4774,7 @@ procedure TEditorEngine.Shutdown;
 var
   i: Integer;
 begin
+ Options.LastFolder := BrowseFolder;
   if (FEngineLife > engnNone) and (FEngineLife < engnShutdowned) then
   begin
     if Session.Active and (Session.Project.FileName <> '') then

@@ -109,6 +109,15 @@ type
     function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
+  { TYaccFileCategory }
+
+  TYaccFileCategory = class(TTextFileCategory)
+  protected
+    procedure InitMappers; override;
+  public
+    function CreateHighlighter: TSynCustomHighlighter; override;
+  end;
+
   { TmneEngine }
 
 function ColorToRGBHex(Color: TColor; ColorPrefix: string = '#'; Reverse: Boolean = false): string;
@@ -232,6 +241,18 @@ begin
         end;
     end;
   end;
+end;
+
+{ TYaccFileCategory }
+
+procedure TYaccFileCategory.InitMappers;
+begin
+
+end;
+
+function TYaccFileCategory.CreateHighlighter: TSynCustomHighlighter;
+begin
+
 end;
 
 { TmneProjectFileCategory }
