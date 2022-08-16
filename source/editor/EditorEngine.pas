@@ -2717,7 +2717,7 @@ begin
   begin
     Key := VK_K;
     Shift := [ssCtrl];
-    Key2 := VK_O;
+    Key2 := VK_L;
     Shift2 := [ssCtrl];
     Command := ecLowerCaseBlock;
   end;
@@ -2726,7 +2726,7 @@ begin
   begin
     Key := VK_K;
     Shift := [ssCtrl];
-    Key2 := VK_P;
+    Key2 := VK_U;
     Shift2 := [ssCtrl];
     Command := ecUpperCaseBlock;
   end;

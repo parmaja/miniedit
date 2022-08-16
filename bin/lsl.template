@@ -61,6 +61,13 @@ control(key id, integer level, integer edge)
 }
 
 [land_collision_start]
-land_collision_start(vector pos){
+land_collision_start(vector pos)
+{
     |
+}
+
+[link_message]
+link_message( integer sender_num, integer num, string str, key id )
+{
+	|;
 }
