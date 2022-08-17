@@ -1388,7 +1388,6 @@ type
     FDebugLink: TEditorDebugLink;
     FDefaultPath: string;
     FDefaultProject: TDefaultProject;
-    //FForms: TEditorFormList;
     FTendencies: TTendencies;
     FSourceManagements: TSourceManagements;
     FUpdateState: TEditorChangeStates;
@@ -1409,8 +1408,6 @@ type
     FHintParams: TSynShowParamsHint;
 
     FWorkSpace: String;
-    //Extenstion Cache
-    //FExtenstionCache: TExtenstionCache; //TODO
     FEnvironment: TStringList;
     FCache: TEngineCache;
     function GetSCM: TEditorSCM;
