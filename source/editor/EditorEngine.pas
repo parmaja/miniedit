@@ -2738,13 +2738,6 @@ begin
     Command := ecAutoCompletion;
   end;
 
-  {with SynEdit.Keystrokes.Add do
-  begin
-    Key := VK_SPACE;
-    Shift := [ssShift, ssCtrl];
-    Command := Proposal;
-  end;}
-
   Engine.MacroRecorder.AddEditor(SynEdit);
   Engine.EditorPlugin.AddEditor(SynEdit);
   Engine.HintParams.AddEditor(SynEdit);
