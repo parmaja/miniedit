@@ -71,3 +71,6 @@ link_message( integer sender_num, integer num, string str, key id )
 {
 	|;
 }
+
+[llListen]
+llListen(0|, "", NULL_KEY, "");
