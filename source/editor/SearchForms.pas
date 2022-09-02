@@ -153,7 +153,7 @@ begin
     SearchCaseSensitiveChk.Checked := ssoMatchCase in FSearchOptions;
     SearchWholeWordsChk.Checked := ssoWholeWord in FSearchOptions;
     SearchFromStartChk.Checked := ssoEntireScope in FSearchOptions;
-    SearchSelectedOnlyChk.Checked := ssoSelectedOnly in FSearchOptions;
+    SearchSelectedOnlyChk.Checked := SynEdit.SelAvail;// ssoSelectedOnly in FSearchOptions;
 
     if ShowModal = mrOK then
     begin
