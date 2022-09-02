@@ -236,7 +236,7 @@ begin
     {$else}
       aRunItem.Info.Run.Command := 'lslint';
     {$endif}
-    aRunItem.Info.Run.AddParam(' "' + Info.MainFile + '"');
+    aRunItem.Info.Run.AddParam(' -b '+Application.Location+'lsl.keywords "' + Info.MainFile + '"');
   end;
 
   if Engine.Session.Run.Active then //if there is items ready to run

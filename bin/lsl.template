@@ -72,5 +72,10 @@ link_message( integer sender_num, integer num, string str, key id )
 	|;
 }
 
+[dataserver]
+dataserver( key queryid, string data ){
+	|;
+}
+
 [llListen]
 llListen(0|, "", NULL_KEY, "");
