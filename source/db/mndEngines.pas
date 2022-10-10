@@ -132,13 +132,13 @@ type
   nsCommand: It is command not SQL member
   nsEditor: Show a script in SQL editor like triggers or stored prpocedures
   nsButton: Make it visible as button or menu in gui form
-  nsNeedSession: Enum only when session is active
+  nsNeedTransaction: Enum only when Transaction is active
 }
 
   TmndCustomAddons = class;
   TmndMembers = class;
 
-  TmndAddonStyle = set of (nsDefault, nsEditor, nsButton, nsNeedSession);
+  TmndAddonStyle = set of (nsDefault, nsEditor, nsButton, nsNeedTransaction);
   TmndAddonKind = (
     akAddon, //Database, Tables, Indexes
     akCommand, //Action command
@@ -195,7 +195,7 @@ type
   TmndCustomAddons = class(specialize TmnNamedObjectList<TmndAddon>)
   private
   public
-    procedure EnumAddons(MasterName: string; Kinds: TmndAddonKinds; Addons: TmndAddons; SessionActive: Boolean; OnlyDefaults: Boolean = False); overload;
+    procedure EnumAddons(MasterName: string; Kinds: TmndAddonKinds; Addons: TmndAddons; TransactionActive: Boolean; OnlyDefaults: Boolean = False); overload;
     function IsExists(vAddon: TmndAddon): Boolean;
   end;
 
@@ -321,7 +321,7 @@ type
     Info: TmncServerInfo;
   end;
 
-  //TmndOnNotifySession = procedure of object;
+  //TmndOnNotifyTransaction = procedure of object;
 
   { TmndDB }
 
@@ -338,13 +338,13 @@ type
     FFields: TmncMetaItems;
     FExclusive: Boolean;
     FVacuum: Boolean;
-    function GetHaveSessions: Boolean;
+    function GetHaveTransactions: Boolean;
   protected
     property Connection: TmncSQLConnection read FConnection;
   public
     constructor Create;
     destructor Destroy; override;
-    function CreateMeta(ASession: TmncSession = nil): TmncMeta;
+    function CreateMeta(ATransaction: TmncTransaction = nil): TmncMeta;
     procedure LoadMeta;
     procedure Open(vCreate: Boolean; DatabaseEngine, Host, Port, DatabaseName, UserName, Password, Role: string; vExclusive: Boolean = False; vVacuum: Boolean = False);
     procedure Close;
@@ -353,7 +353,7 @@ type
     procedure Disconnected;
     procedure Disconnecting;
 
-    property HaveSessions: Boolean read GetHaveSessions;
+    property HaveTransactions: Boolean read GetHaveTransactions;
 
     property Tables: TmncMetaItems read FTables;
     property Proceduers: TmncMetaItems read FProceduers;
@@ -378,7 +378,7 @@ type
     FNotifyObject: ImndNotify;
     function GetDatabaseName: string;
     function GetEngineName: string;
-    function GetHaveSessions: Boolean;
+    function GetHaveTransactions: Boolean;
     function GetHost: string;
     function GetIsActive: Boolean;
     procedure SetNotifyObject(AValue: ImndNotify);
@@ -418,8 +418,8 @@ type
     procedure ShowEditor(vAddon: TmndAddon; S: string);
     procedure ShowEditor(vAddon: TmndAddon; S: TStringList);
 
-    function CreateMeta(ASession: TmncSession = nil): TmncMeta;
-    function CreateSession: TmncSQLSession;
+    function CreateMeta(ATransaction: TmncTransaction = nil): TmncMeta;
+    function CreateTransaction: TmncSQLTransaction;
 
     property Setting: TmndSetting read FSetting;
     property Engines: TStringLIst read FEngines;
@@ -432,7 +432,7 @@ type
     property DatabaseName: string read GetDatabaseName;
     property Host: string read GetHost;
     property IsActive: Boolean read GetIsActive;
-    property HaveSessions: Boolean read GetHaveSessions;
+    property HaveTransactions: Boolean read GetHaveTransactions;
 
     property DB: TmndDB read FDB;
   end;
@@ -746,7 +746,7 @@ end;
 
 { TmndAddons }
 
-procedure TmndCustomAddons.EnumAddons(MasterName: string; Kinds: TmndAddonKinds; Addons: TmndAddons; SessionActive: Boolean; OnlyDefaults: Boolean);
+procedure TmndCustomAddons.EnumAddons(MasterName: string; Kinds: TmndAddonKinds; Addons: TmndAddons; TransactionActive: Boolean; OnlyDefaults: Boolean);
 var
   i: Integer;
   aDefault: Integer;
@@ -757,7 +757,7 @@ begin
   c := 0;
   for i := 0 to Count - 1 do
   begin
-    if (Items[i].Kind in Kinds) and  SameText(Items[i].Master, MasterName) and (not OnlyDefaults or (nsDefault in Items[i].Style)) and (SessionActive or not (nsNeedSession in Items[i].Style)) then
+    if (Items[i].Kind in Kinds) and  SameText(Items[i].Master, MasterName) and (not OnlyDefaults or (nsDefault in Items[i].Style)) and (TransactionActive or not (nsNeedTransaction in Items[i].Style)) then
     begin
       if (aDefault < 0) and (nsDefault in Items[i].Style) then
         aDefault := c;
@@ -946,9 +946,9 @@ begin
     Result := '';
 end;
 
-function TDBEngine.GetHaveSessions: Boolean;
+function TDBEngine.GetHaveTransactions: Boolean;
 begin
-  Result := (DB <> nil) and DB.HaveSessions;
+  Result := (DB <> nil) and DB.HaveTransactions;
 end;
 
 function TDBEngine.GetHost: string;
@@ -1213,15 +1213,15 @@ begin
   FNotifyObject.ShowEditor(vAddon, S.Text);
 end;
 
-function TDBEngine.CreateMeta(ASession: TmncSession): TmncMeta;
+function TDBEngine.CreateMeta(ATransaction: TmncTransaction): TmncMeta;
 begin
-  Result := DB.CreateMeta(ASession);
+  Result := DB.CreateMeta(ATransaction);
 end;
 
-function TDBEngine.CreateSession: TmncSQLSession;
+function TDBEngine.CreateTransaction: TmncSQLTransaction;
 begin
   if IsActive then
-    Result := DB.Connection.CreateSession
+    Result := DB.Connection.CreateTransaction
   else
     Result := nil;
 end;
@@ -1345,7 +1345,7 @@ begin
   LoadMeta;
 end;
 
-function TmndDB.GetHaveSessions: Boolean;
+function TmndDB.GetHaveTransactions: Boolean;
 begin
   Result := (Connection <> nil) and (Connection.StartCount > 0);
 end;
@@ -1377,15 +1377,15 @@ begin
   inherited;
 end;
 
-function TmndDB.CreateMeta(ASession: TmncSession): TmncMeta;
+function TmndDB.CreateMeta(ATransaction: TmncTransaction): TmncMeta;
 begin
   Result := Engines.CreateMeta(Connection);
-  if ASession <> nil then
-    Result.Session := ASession
+  if ATransaction <> nil then
+    Result.Transaction := ATransaction
   else
   begin
-    Result.Session := Connection.CreateSession;
-    Result.OwnSession := True;
+    Result.Transaction := Connection.CreateTransaction;
+    Result.OwnTransaction := True;
   end;
 end;
 

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <rtti version="1.0" author="MiniXML">
   <Object Type="TGlobalAttributes">
     <Name>navy</Name>
@@ -56,7 +56,7 @@
     </Number>
     <Directive Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>4276694</ForeColor>
+      <ForeColor>7500512</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Directive>
     <Identifier Class="TGlobalAttribute">

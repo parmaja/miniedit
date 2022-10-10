@@ -394,17 +394,17 @@ end;
 procedure TSQLEditForm.Execute;
 var
   CMD: TmncSQLCommand;
-  Session: TmncSQLSession;
+  Transaction: TmncSQLTransaction;
 begin
   if DBEngine.IsActive then
   begin
-    Session := DBEngine.CreateSession;
+    Transaction := DBEngine.CreateTransaction;
     try
-      CMD := Session.CreateCommand;
+      CMD := Transaction.CreateCommand;
       try
         CMD.SQL.Text := SQLEdit.Text;
         try
-          Session.Start;
+          Transaction.Start;
           try
             CMD.Prepare;
             if (CMD.Params.Count = 0) or ShowSQLParams(CMD) then
@@ -413,12 +413,12 @@ begin
               //PageControl.ActiveControl := GridPnl;
               FillGrid(CMD, 'Data');
             end;
-            Session.Commit;
+            Transaction.Commit;
           except
             on E: Exception do
             begin
               //Engine.SendLog(E.Message);
-              Session.Rollback;
+              Transaction.Rollback;
               raise;
             end;
           end;
@@ -430,7 +430,7 @@ begin
         CMD.Free;
       end;
     finally
-      Session.Free;
+      Transaction.Free;
     end;
   end;
 end;

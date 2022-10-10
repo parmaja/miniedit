@@ -67,7 +67,7 @@ land_collision_start(vector pos)
 }
 
 [link_message]
-link_message( integer sender_num, integer num, string str, key id )
+link_message( integer sender_num, integer num, string message, key id )
 {
 	|;
 }
@@ -77,5 +77,29 @@ dataserver( key queryid, string data ){
 	|;
 }
 
+[money]
+money(key id, integer amount)
+{
+	|;
+}
+
 [llListen]
 llListen(0|, "", NULL_KEY, "");
+
+[collision]
+collision( integer num_detected )
+{
+	|;
+}
+
+[collision_start]
+collision_start( integer num_detected )
+{
+	|;
+}
+
+[collision_end]
+collision_end( integer num_detected )
+{
+	|;
+}

@@ -592,7 +592,7 @@ end;
 procedure TCSVForm.LoadFromStream(AStream: TStream);
 var
   csvCnn: TmncCSVConnection;
-  csvSes: TmncCSVSession;
+  csvSes: TmncCSVTransaction;
   csvCMD: TmncCSVCommand;
   t: Int64;
 begin
@@ -602,7 +602,7 @@ begin
   try
     ClearGrid;
     csvCnn := TmncCSVConnection.Create;
-    csvSes := TmncCSVSession.Create(csvCnn);
+    csvSes := TmncCSVTransaction.Create(csvCnn);
     try
       csvSes.CSVOptions := CSVOptions;
       csvCnn.Connect;
@@ -636,12 +636,12 @@ end;
 procedure TCSVForm.SaveToStream(AStream: TStream);
 var
   csvCnn: TmncCSVConnection;
-  csvSes: TmncCSVSession;
+  csvSes: TmncCSVTransaction;
   csvCMD: TmncCSVCommand;
   c, r: Integer;
 begin
   csvCnn := TmncCSVConnection.Create;
-  csvSes := TmncCSVSession.Create(csvCnn);
+  csvSes := TmncCSVTransaction.Create(csvCnn);
   Screen.Cursor := crHourGlass;
   try
     csvSes.CSVOptions := CSVOptions;
