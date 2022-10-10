@@ -1140,7 +1140,8 @@ begin
     if Engine.Files.Current.FileName <> '' then
       FileTabs.Items[FileTabs.ItemIndex].Caption := Engine.Files.Current.GetCaption;
     if Folder = '' then
-      Folder := ExtractFilePath(Engine.Files.Current.FileName);
+      if Engine.Files.Current.CanAddRecentFiles then
+        Folder := ExtractFilePath(Engine.Files.Current.FileName);
     SaveAct.Enabled := Engine.Files.Current.IsChanged;
     SaveAllAct.Enabled := Engine.GetIsChanged;
   end
@@ -1162,8 +1163,8 @@ begin
     TendencyPnl.Caption := 'Undefined';
   //  DebugPnl.Visible := DebugPnl.Caption <> '';
 
-  DBCommitAct.Enabled := DBEngine.HaveSessions;
-  DBRollbackAct.Enabled := DBEngine.HaveSessions;
+  DBCommitAct.Enabled := DBEngine.HaveTransactions;
+  DBRollbackAct.Enabled := DBEngine.HaveTransactions;
 
   Engine.Update([ecsMenu]);
 
@@ -1440,8 +1441,8 @@ end;
 
 procedure TMainForm.TransactionChanged;
 begin
-  DBCommitAct.Enabled := DBEngine.HaveSessions;
-  DBRollbackAct.Enabled := DBEngine.HaveSessions;
+  DBCommitAct.Enabled := DBEngine.HaveTransactions;
+  DBRollbackAct.Enabled := DBEngine.HaveTransactions;
 end;
 
 procedure TMainForm.SaveAllActExecute(Sender: TObject);
@@ -1925,8 +1926,11 @@ procedure TMainForm.GotoFileFolderActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
   begin
-    Folder := ExtractFilePath(Engine.Files.Current.FileName);
-    Engine.ProcessRecentFolder(Folder);
+    if Engine.Files.Current.CanAddRecentFiles then
+    begin
+      Folder := ExtractFilePath(Engine.Files.Current.FileName);
+      Engine.ProcessRecentFolder(Folder);
+    end;
   end;
 end;
 

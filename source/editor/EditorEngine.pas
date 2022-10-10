@@ -685,7 +685,6 @@ type
     procedure DoLoad(FileName: String); virtual; abstract;
     procedure DoSave(FileName: String); virtual; abstract;
     function Execute(RunInfo: TmneRunInfo): Boolean; virtual;
-    function CanAddRecentFiles: Boolean; virtual;
   public
     constructor Create(ACollection: TCollection); override;
     destructor Destroy; override;
@@ -713,6 +712,7 @@ type
     function Activated: Boolean;
     procedure Close;
     procedure OpenInclude; virtual;
+    function CanAddRecentFiles: Boolean; virtual;
     function CanOpenInclude: Boolean; virtual;
     function CheckChanged(Force: Boolean = False): Boolean;
     //
@@ -1969,17 +1969,19 @@ var
   s: String;
 begin
   inherited DoOnShowHint(HintInfo);
+  if FEditorFile <> nil then
+  begin
+    FEditorFile.GetHint(Self, HintInfo^.CursorPos, s);
+    //  CanShow := s <> '';
 
-  FEditorFile.GetHint(Self, HintInfo^.CursorPos, s);
-  //  CanShow := s <> '';
-
-  if s <> '' then
-    with HintInfo^ do
-    begin
-      HintStr := s;
-      HideTimeout := 10000;
-      ReshowTimeout := 500;
-    end;
+    if s <> '' then
+      with HintInfo^ do
+      begin
+        HintStr := s;
+        HideTimeout := 10000;
+        ReshowTimeout := 500;
+      end;
+  end;
 end;
 
 constructor TmneSynEdit.Create(AOwner: TComponent);

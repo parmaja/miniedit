@@ -36,8 +36,8 @@ type
   TLSLFile = class(TSourceEditorFile)
   protected
     procedure NewContent; override;
-    function CanAddRecentFiles: Boolean; override;
   public
+    function CanAddRecentFiles: Boolean; override;
   end;
 
   { TLSLFileCategory }

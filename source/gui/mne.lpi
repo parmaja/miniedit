@@ -34,7 +34,7 @@
       <Item1 Name="Debug" Default="True"/>
       <Item2 Name="Linux">
         <MacroValues Count="1">
-          <Macro1 Name="LCLWidgetType" Value="gtk2"/>
+          <Macro3 Name="LCLWidgetType" Value="gtk2"/>
         </MacroValues>
         <CompilerOptions>
           <Version Value="11"/>
@@ -216,9 +216,9 @@
         </CompilerOptions>
       </Item5>
       <SharedMatrixOptions Count="4">
-        <Item1 ID="404340325604" Modes="Linux" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
+        <Item1 ID="971028019367" Modes="Debug" Value="-dDEBUG"/>
         <Item2 ID="142010062422" Modes="Win32" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
-        <Item3 ID="971028019367" Modes="Debug,Qt" Value="-dDEBUG"/>
+        <Item3 ID="404340325604" Modes="Linux" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
         <Item4 ID="250113919883" Modes="Qt" Type="IDEMacro" MacroName="LCLWidgetType" Value="qt5"/>
       </SharedMatrixOptions>
     </BuildModes>
@@ -623,7 +623,7 @@
     </Parsing>
     <Linking>
       <Debugging>
-        <UseExternalDbgSyms Value="True"/>
+        <UseValgrind Value="True"/>
       </Debugging>
       <Options>
         <Win32>
