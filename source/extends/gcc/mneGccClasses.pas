@@ -98,10 +98,10 @@ begin
   with Highlighter as TSynCppSyn do
   begin
     Mapper.Add(WhitespaceAttribute, attDefault);
-    Mapper.Add(CommentAttri, attComment);
-    Mapper.Add(KeyAttri, attKeyword);
+    Mapper.Add(CommentAttri, attComment, ord(tkComment));
+    Mapper.Add(KeyAttri, attKeyword, ord(tkKeyword));
     Mapper.Add(DirecAttri, attDirective);
-    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(IdentifierAttri, attIdentifier, ord(tkIdentifier));
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
@@ -139,12 +139,11 @@ procedure TCppFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   FCompletion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
-  IdentifierID := ord(mnSynHighlighterMultiProc.tkIdentifier);
 end;
 
 procedure TCppFileCategory.DoAddKeywords;
 begin
-  inherited DoAddKeywords;
+  inherited;
 end;
 
 { TCppProject }

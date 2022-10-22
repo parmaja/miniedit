@@ -50,6 +50,7 @@ type
     function GetFileCaption(AFile: TEditorFile; FileName: string): string; override;
     procedure GetHintString(Token: string; ParamIndex: Integer; out AHint: String); override;
     procedure InitMappers; override;
+    procedure DoAddKeywords; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
   public
     procedure EnumMenuItems(AddItems: TAddClickCallBack); override;
@@ -394,7 +395,7 @@ begin
     Mapper.Add(KeywordAttri, attKeyword);
     Mapper.Add(DocumentAttri, attDocument, ord(tkDocument));
     Mapper.Add(IdentifierAttri, attIdentifier, ord(tkIdentifier));
-    Mapper.Add(VariableAttri, attVariable);
+    Mapper.Add(VariableAttri, attVariable, ord(tkVariable));
     Mapper.Add(TypeAttri, attDataType);
     Mapper.Add(ValueAttri, attDataValue);
     Mapper.Add(FunctionAttri, attCommon);
@@ -405,7 +406,7 @@ begin
   end
 end;
 
-procedure TLSLFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
+procedure TLSLFileCategory.DoAddKeywords;
 var
   stream: TmnWrapperStream;
   line: utf8string;
@@ -414,60 +415,62 @@ var
   att: TAttributeType;
 begin
   inherited;
-  Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;,';//what about $
-  IdentifierID := ord(mnSynHighlighterMultiProc.tkIdentifier);
-  IdentifierAttribute := Ord(attIdentifier);
-  if Keywords.Count = 0 then
+
+  EnumerateKeywords(Ord(attKeyword), sLSLKeywords, Highlighter.IdentChars, @AddKeyword);
+  EnumerateKeywords(Ord(attDataType), sLSLTypes, Highlighter.IdentChars, @AddKeyword);
+
+  if FileExistsUTF8(Application.Location + 'lsl.keywords') then
   begin
-    EnumerateKeywords(Ord(attKeyword), sLSLKeywords, Highlighter.IdentChars, @AddKeyword);
-    EnumerateKeywords(Ord(attDataType), sLSLTypes, Highlighter.IdentChars, @AddKeyword);
-    if FileExistsUTF8(Application.Location + 'lsl.keywords') then
-    begin
-      stream := TmnWrapperStream.Create(TFileStream.Create(Application.Location + 'lsl.keywords', fmOpenRead), True);
-      try
-        while stream.ReadLine(line) do
+    stream := TmnWrapperStream.Create(TFileStream.Create(Application.Location + 'lsl.keywords', fmOpenRead), True);
+    try
+      while stream.ReadLine(line) do
+      begin
+        line := trim(line);
+        if LeftStr(line, 2) <> '//' then
         begin
-          line := trim(line);
-          if LeftStr(line, 2) <> '//' then
+          if StrScanTo(line, 1, declare, CharIndex, NextIndex, [' ', '(', ')', ',', ';']) then
           begin
-            if StrScanTo(line, 1, declare, CharIndex, NextIndex, [' ', '(', ')', ',', ';']) then
+            if SameText(declare, 'const') then
+              StrScanTo(line, NextIndex, subdeclare, CharIndex, NextIndex, [' ', '(', ')', ',', ';']);
+            StrScanTo(line, NextIndex, token, CharIndex, NextIndex, [' ', '(', ')', ',', ';']);
+            if SameText(declare, 'const') then
+              att := attDataValue
+            else
+              att := attCommon;
+            end;
+            with AddKeyword(token, declare, att, False) do
             begin
-              if SameText(declare, 'const') then
-                StrScanTo(line, NextIndex, subdeclare, CharIndex, NextIndex, [' ', '(', ')', ',', ';']);
-              StrScanTo(line, NextIndex, token, CharIndex, NextIndex, [' ', '(', ')', ',', ';']);
-              if SameText(declare, 'const') then
-                att := attDataValue
-              else
-                att := attCommon;
-              end;
-              with AddKeyword(token, declare, att, False) do
+              if StrScanTo(line, 0, token, CharIndex, NextIndex, ['(']) then
               begin
-                if StrScanTo(line, 0, token, CharIndex, NextIndex, ['(']) then
-                begin
-                  line := MidStr(line, NextIndex, MaxInt);
-                  if RightStr(line, 1) = ')' then
-                    line := MidStr(line, 1, Length(line) - 1);
-                  StrToStrings(Trim(line), Params, [','], [' ']);
-                end;
+                line := MidStr(line, NextIndex, MaxInt);
+                if RightStr(line, 1) = ')' then
+                  line := MidStr(line, 1, Length(line) - 1);
+                StrToStrings(Trim(line), Params, [','], [' ']);
               end;
             end;
           end;
-      finally
-        stream.Free;
-      end;
-    end
-    else
-    begin
-      EnumerateKeywords(Ord(attDataValue), sLSLValues, Highlighter.IdentChars, @AddKeyword);
-      EnumerateKeywords(Ord(attCommon), sLSLFunctions, Highlighter.IdentChars, @AddKeyword);
-      EnumerateKeywords(Ord(attCommon), sOpenSIMFunctions, Highlighter.IdentChars, @AddKeyword);
+        end;
+    finally
+      stream.Free;
     end;
+  end
+  else
+  begin
+    EnumerateKeywords(Ord(attDataValue), sLSLValues, Highlighter.IdentChars, @AddKeyword);
+    EnumerateKeywords(Ord(attCommon), sLSLFunctions, Highlighter.IdentChars, @AddKeyword);
+    EnumerateKeywords(Ord(attCommon), sOpenSIMFunctions, Highlighter.IdentChars, @AddKeyword);
   end;
+end;
+
+procedure TLSLFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
+begin
+  inherited;
+  Completion.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;,';//what about $
 end;
 
 procedure TLSLFileCategory.EnumMenuItems(AddItems: TAddClickCallBack);
 begin
-  inherited EnumMenuItems(AddItems);
+  inherited;
 //  AddItems('FormatCode', 'Format Code', 'Edit', @FormatCodeClick, scCtrl + scAlt + VK_F);
   AddItems('MangleCode', 'Mangle Code', 'Edit', @MangleCodeClick);
 end;

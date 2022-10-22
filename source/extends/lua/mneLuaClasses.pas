@@ -298,13 +298,12 @@ procedure TLuaFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   FCompletion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
-  IdentifierID := ord(tkIdentifier);
 end;
 
 procedure TLuaFileCategory.DoAddKeywords;
 begin
-  EnumerateKeywords(Ord(tkKeyword), sLuaKeywords, Highlighter.IdentChars, @AddKeyword);
-  EnumerateKeywords(Ord(tkFunction), sLuaFunctions, Highlighter.IdentChars, @AddKeyword);
+  EnumerateKeywords(Ord(attKeyword), sLuaKeywords, Highlighter.IdentChars, @AddKeyword);
+  EnumerateKeywords(Ord(attCommon), sLuaFunctions, Highlighter.IdentChars, @AddKeyword);
 end;
 
 procedure TLuaFileCategory.DoFixTabsSpaces(Sender: TObject);
@@ -334,11 +333,11 @@ begin
   with Highlighter as TmnSynLuaSyn do
   begin
     Mapper.Add(WhitespaceAttri, attDefault);
-    Mapper.Add(CommentAttri, attComment);
-    Mapper.Add(KeywordAttri, attKeyword);
+    Mapper.Add(CommentAttri, attComment, ord(tkComment));
+    Mapper.Add(KeywordAttri, attKeyword, ord(tkKeyword));
     Mapper.Add(TypeAttri, attDataType);
-    Mapper.Add(DocumentAttri, attDocument);
-    Mapper.Add(FunctionAttri, attCommon);
+    Mapper.Add(DocumentAttri, attDocument, ord(tkDocument));
+    Mapper.Add(FunctionAttri, attCommon, ord(tkFunction));
     Mapper.Add(IdentifierAttri, attIdentifier);
     Mapper.Add(TextAttri, attText);
     Mapper.Add(NumberAttri, attNumber);

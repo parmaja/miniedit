@@ -292,7 +292,7 @@ begin
   begin
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(NumberAttri, attNumber);
-    Mapper.Add(KeyAttri, attKeyword);
+    Mapper.Add(KeyAttri, attKeyword, ord(tkKey));
     Mapper.Add(SymbolAttri, attSymbol);
     Mapper.Add(ASMAttri, attEmbed);
     Mapper.Add(CommentAttri, attComment, ord(tkComment));
@@ -308,7 +308,6 @@ procedure TPASFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   Completion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
-  IdentifierID := ord(SynHighlighterPas.tkIdentifier);
 end;
 
 procedure TPASFileCategory.DoAddKeywords;
@@ -355,7 +354,7 @@ initialization
   with Engine do
   begin
     Tendencies.Add(TPasTendency);
-    Categories.Add(TPASFileCategory.Create(TPasTendency, 'pas', 'Pascal'));
+    Categories.Add(TPASFileCategory.Create(TPasTendency, 'pas', 'Pascal', [fckIncludes]));
     Categories.Add(TLFMFileCategory.Create(TPasTendency, 'lfm', 'Lazarus form lfm'));
 
     Groups.Add(TPASFile, 'pas', 'Pascal', TPASFileCategory, ['.pas', '.pp', '.p', '.dpk', '.inc'], [fgkAssociated, fgkFolding, fgkBrowsable], [capExecute, capDebug]);

@@ -25,7 +25,8 @@ interface
 uses
   SysUtils, Classes, Graphics,
   mnSynUtils, //exists in minilib at sourceforge
-  SynEditTypes, SynEditHighlighter, SynHighlighterHashEntries;
+  SynEditTypes, SynEditHighlighter, SynHighlighterHashEntries,
+  EditorProfiles;
 
 type
   TtkTokenKind = (tkNull, tkComment, tkDirective, tkKeyword, tkIdentifier, tkNumber, tkSpace, tkString, tkSymbol, tkUnknown, tkInbuiltFunc);
@@ -313,7 +314,7 @@ end;
 constructor TVerilogSyn.Create;
 begin
   inherited;
-  EnumerateKeywords(Ord(tkKeyword), sVerilogKeywords, GetIdentChars, @DoAddKeyword);
+  EnumerateKeywords(Ord(attKeyword), sVerilogKeywords, GetIdentChars, @DoAddKeyword);
 end;
 
 procedure TSynVerilogSyn.MakeProcTables;

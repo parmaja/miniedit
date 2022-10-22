@@ -177,7 +177,7 @@ begin
     EnumerateKeywords(Ord(attDataType), StdSQLTypes, Highlighter.IdentChars, @AddKeyword);
     EnumerateKeywords(Ord(attCommon), StdSQLFunctions, Highlighter.IdentChars, @AddKeyword);
     for i := 0 to DBEngine.DB.Tables.Count -1 do
-      AddKeyword(DBEngine.DB.Tables[i].Name, ord(attVariable));
+      AddKeyword(DBEngine.DB.Tables[i].Name, 'variable', attVariable, TRUE);
   finally
     Completion.EndUpdate;
     Screen.Cursor := crDefault;

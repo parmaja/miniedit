@@ -46,7 +46,8 @@ type
     attDataType,
     attDataValue
     //attDataName //object, namespace
-   );
+  );
+  TAttributeTypes = set of TAttributeType;
 
   TIndentMode = (idntNone, idntTabsToSpaces, idntSpacesToTabs);
 

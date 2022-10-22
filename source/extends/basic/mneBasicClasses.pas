@@ -286,13 +286,12 @@ procedure TBasicFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   FCompletion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
-  IdentifierID := ord(tkIdentifier);
 end;
 
 procedure TBasicFileCategory.DoAddKeywords;
 begin
-  //EnumerateKeywords(Ord(tkKeyword), sBasicKeywords, Highlighter.IdentChars, @AddKeyword);
-  //EnumerateKeywords(Ord(tkFunction), sBasicFunctions, Highlighter.IdentChars, @AddKeyword);
+  //EnumerateKeywords(Ord(attKeyword), sBasicKeywords, Highlighter.IdentChars, @AddKeyword);
+  //EnumerateKeywords(Ord(attCommon), sBasicFunctions, Highlighter.IdentChars, @AddKeyword);
 end;
 
 procedure TBasicFileCategory.DoFixTabsSpaces(Sender: TObject);
@@ -323,15 +322,15 @@ begin
   begin
     Mapper.Add(SpaceAttri, attDefault);
     Mapper.Add(KeyAttri, attKeyword);
-    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(CommentAttri, attComment, ord(tkComment));
     //Mapper.Add(TypeAttri, attDataType);
-    //Mapper.Add(DocumentAttri, attDocument);
+    //Mapper.Add(DocumentAttri, attDocument, ord(tkDocument));
     //Mapper.Add(FunctionAttri, attStandard);
-    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(IdentifierAttri, attIdentifier, ord(tkIdentifier));
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
-    //Mapper.Add(VariableAttri, attVariable);
+    //Mapper.Add(VariableAttri, attVariable, ord(tkVariable));
     //Mapper.Add(ProcessorAttri, attDirective);
   end;
 end;

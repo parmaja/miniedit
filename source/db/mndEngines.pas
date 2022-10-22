@@ -686,9 +686,13 @@ end;
 procedure TDBEngine.RegisterAddon(Classes: array of TmndAddonClass);
 var
   i: Integer;
+  addon: TmndAddonClass;
 begin
   for i := 0 to Length(Classes) - 1 do
-    Add(Classes[i].Create);
+  begin
+    addon := Classes[i];
+    Add(addon.Create);
+  end;
 end;
 
 procedure TDBEngine.RegisterAddon(Master: string; Classes: array of TmndAddonClass);

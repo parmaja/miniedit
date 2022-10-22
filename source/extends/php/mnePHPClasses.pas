@@ -366,115 +366,104 @@ var
   Attri: TSynHighlighterAttributes;
   aFiles: TStringList;
 begin
-  inherited;
-  Screen.Cursor := crHourGlass;
-  Completion.BeginUpdate;
-  try
-    //Completion.ItemList.Clear;
-    DoAddKeywords;
-
-    aSynEdit := Completion.TheForm.CurrentEditor as TCustomSynEdit;
-    if (aSynEdit <> nil) and (Highlighter is TSynXHTMLSyn) then
+  aSynEdit := Completion.TheForm.CurrentEditor as TCustomSynEdit;
+  if (aSynEdit <> nil) and (Highlighter is TSynXHTMLSyn) then
+  begin
+    aPHPProcessor := (Highlighter as TSynXHTMLSyn).Processors.IndexOf('php');
+    aHTMLProcessor := (Highlighter as TSynXHTMLSyn).Processors.IndexOf('html');
+    P := aSynEdit.CaretXY;
+    GetHighlighterAttriAtRowColExtend(aSynEdit, P, aCurrent, aTokenType, aStart, Attri, aRange);
+    aProcessor := RangeToProcessor(aRange);
+    if aTokenType = Ord(tkProcessor) then
+      Abort
+    //CanExecute := False
+    else if aProcessor = aHTMLProcessor then
     begin
-      aPHPProcessor := (Highlighter as TSynXHTMLSyn).Processors.IndexOf('php');
-      aHTMLProcessor := (Highlighter as TSynXHTMLSyn).Processors.IndexOf('html');
-      P := aSynEdit.CaretXY;
-      GetHighlighterAttriAtRowColExtend(aSynEdit, P, aCurrent, aTokenType, aStart, Attri, aRange);
-      aProcessor := RangeToProcessor(aRange);
-      if aTokenType = Ord(tkProcessor) then
+      Completion.TheForm.Caption := 'HTML';
+      EnumerateKeywords(Ord(attKeyword), sHTMLKeywords, Highlighter.IdentChars, @AddKeyword);
+    end
+    else if aProcessor = aPHPProcessor then
+    begin
+      if aTokenType = Ord(tkComment) then
         Abort
-      //CanExecute := False
-      else if aProcessor = aHTMLProcessor then
+      else if aTokenType = Ord(tkString) then
       begin
-        Completion.TheForm.Caption := 'HTML';
-        EnumerateKeywords(Ord(attKeyword), sHTMLKeywords, Highlighter.IdentChars, @AddKeyword);
+        //EnumerateKeywords(Ord(attEmbed), sSQLKeywords, Highlighter.IdentChars, @AddKeyword);
       end
-      else if aProcessor = aPHPProcessor then
+      else
       begin
-        if aTokenType = Ord(tkComment) then
-          Abort
-        else if aTokenType = Ord(tkString) then
-        begin
-          //EnumerateKeywords(Ord(attEmbed), sSQLKeywords, Highlighter.IdentChars, @AddKeyword);
-        end
-        else
-        begin
-          Completion.TheForm.Caption := 'PHP';
-          // load a variable
-          aVariables := THashedStringList.Create;
-          aIdentifiers := THashedStringList.Create;
+        Completion.TheForm.Caption := 'PHP';
+        // load a variable
+        aVariables := THashedStringList.Create;
+        aIdentifiers := THashedStringList.Create;
 
-          //Add system variables
-          ExtractStrings([','], [], PChar(sPHPVariables), aVariables);
-          for i := 0 to aVariables.Count - 1 do
-            aVariables[i] := '$' + aVariables[i];
+        //Add system variables
+        ExtractStrings([','], [], PChar(sPHPVariables), aVariables);
+        for i := 0 to aVariables.Count - 1 do
+          aVariables[i] := '$' + aVariables[i];
 
-          //extract keywords from external files
-          if Engine.Options.CollectAutoComplete and (Engine.Session.GetRoot <> '') then
+        //extract keywords from external files
+        if Engine.Options.CollectAutoComplete and (Engine.Session.GetRoot <> '') then
+        begin
+          if ((GetTickCount - CachedAge) > (Engine.Options.CollectTimeout * 1000)) then
           begin
-            if ((GetTickCount - CachedAge) > (Engine.Options.CollectTimeout * 1000)) then
-            begin
-              CachedVariables.Clear;
-              CachedIdentifiers.Clear;
-              aFiles := TStringList.Create;
-              try
-                EnumFileList(Engine.Session.GetRoot, '*.php', Engine.Options.IgnoreNames, aFiles, 1000, 3, True);//TODO check the root dir if no project opened
-                r := aFiles.IndexOf(Engine.Files.Current.FileName);
-                if r >= 0 then
-                  aFiles.Delete(r);
-                ExtractPHPKeywords(aFiles, CachedVariables, CachedIdentifiers);
-              finally
-                aFiles.Free;
-              end;
+            CachedVariables.Clear;
+            CachedIdentifiers.Clear;
+            aFiles := TStringList.Create;
+            try
+              EnumFileList(Engine.Session.GetRoot, '*.php', Engine.Options.IgnoreNames, aFiles, 1000, 3, True);//TODO check the root dir if no project opened
+              r := aFiles.IndexOf(Engine.Files.Current.FileName);
+              if r >= 0 then
+                aFiles.Delete(r);
+              ExtractPHPKeywords(aFiles, CachedVariables, CachedIdentifiers);
+            finally
+              aFiles.Free;
             end;
-            aVariables.AddStrings(CachedVariables);
-            aIdentifiers.AddStrings(CachedIdentifiers);
-            CachedAge := GetTickCount;
           end;
-          //add current file Identifiers and Variables
-          try
-            Highlighter.ResetRange;
-            for i := 0 to aSynEdit.Lines.Count - 1 do
+          aVariables.AddStrings(CachedVariables);
+          aIdentifiers.AddStrings(CachedIdentifiers);
+          CachedAge := GetTickCount;
+        end;
+        //add current file Identifiers and Variables
+        try
+          Highlighter.ResetRange;
+          for i := 0 to aSynEdit.Lines.Count - 1 do
+          begin
+            Highlighter.SetLine(aSynEdit.Lines[i], 1);
+            while not Highlighter.GetEol do
             begin
-              Highlighter.SetLine(aSynEdit.Lines[i], 1);
-              while not Highlighter.GetEol do
+              if (Highlighter.GetTokenPos <> (aStart - 1)) and (RangeToProcessor(Highlighter.GetRange) = aPHPProcessor) then
               begin
-                if (Highlighter.GetTokenPos <> (aStart - 1)) and (RangeToProcessor(Highlighter.GetRange) = aPHPProcessor) then
+                if (Highlighter.GetTokenKind = Ord(tkVariable)) then
                 begin
-                  if (Highlighter.GetTokenKind = Ord(tkVariable)) then
-                  begin
-                    Token := Highlighter.GetToken;
-                    if (Token <> '$') and (aVariables.IndexOf(Token) < 0) then
-                      aVariables.Add(Token);
-                  end
-                  else if (Highlighter.GetTokenKind = Ord(tkIdentifier)) then
-                  begin
-                    Token := Highlighter.GetToken;
-                    if aIdentifiers.IndexOf(Token) < 0 then
-                      aIdentifiers.Add(Token);
-                  end;
+                  Token := Highlighter.GetToken;
+                  if (Token <> '$') and (aVariables.IndexOf(Token) < 0) then
+                    aVariables.Add(Token);
+                end
+                else if (Highlighter.GetTokenKind = Ord(tkIdentifier)) then
+                begin
+                  Token := Highlighter.GetToken;
+                  if aIdentifiers.IndexOf(Token) < 0 then
+                    aIdentifiers.Add(Token);
                 end;
-                Highlighter.Next;
               end;
+              Highlighter.Next;
             end;
-
-            for i := 0 to aVariables.Count - 1 do
-              AddKeyword(aVariables[i], Ord(attVariable));
-
-            for i := 0 to aIdentifiers.Count - 1 do
-              AddKeyword(aIdentifiers[i], Ord(attIdentifier));
-          finally
-            aIdentifiers.Free;
-            aVariables.Free;
           end;
+
+          for i := 0 to aVariables.Count - 1 do
+            AddKeyword(aVariables[i], 'variable', attVariable, True);
+
+          for i := 0 to aIdentifiers.Count - 1 do
+            AddKeyword(aIdentifiers[i], 'identifier', attIdentifier, True);
+        finally
+          aIdentifiers.Free;
+          aVariables.Free;
         end;
       end;
     end;
-    Completion.Sort;
-  finally
-    Completion.EndUpdate;
-    Screen.Cursor := crDefault;
   end;
+  Completion.Sort;
 end;
 
 function TXHTMLFileCategory.GetColorPrefix: string;
@@ -579,7 +568,7 @@ begin
     Mapper.Add(CommentAttri, attComment, ord(tkComment));
     Mapper.Add(KeyAttri, attKeyword);
     Mapper.Add(IdentifierAttri, attIdentifier, ord(tkIdentifier));
-    Mapper.Add(NonReservedKeyAttri, attVariable);
+    Mapper.Add(NonReservedKeyAttri, attVariable, ord(tkVariable));
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
@@ -597,7 +586,7 @@ initialization
   with Engine do
   begin
     Tendencies.Add(TPHPTendency);
-    Categories.Add(TXHTMLFileCategory.Create(TPHPTendency, 'php/html','PHP and HTML', [fckPublish]));
+    Categories.Add(TXHTMLFileCategory.Create(TPHPTendency, 'php/html','PHP and HTML', [fckIncludes, fckPublish]));
     Categories.Add(TCSSFileCategory.Create(TPHPTendency, 'css', 'CSS', [fckPublish]));
     Categories.Add(TJSFileCategory.Create(TPHPTendency, 'js', 'Javascript JS', [fckPublish]));
 

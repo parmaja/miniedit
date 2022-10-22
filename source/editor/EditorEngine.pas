@@ -118,7 +118,6 @@ type
       Text: string;
       Value: string
     );
-
   end;
 
   { TKeywordItem }
@@ -1058,7 +1057,8 @@ type
   end;
 
   TFileCategoryKind = (
-    fckPublish //idk not used
+    fckPublish, //idk not used
+    fckIncludes //File can have indclude external files
     );
   TFileCategoryKinds = set of TFileCategoryKind;
 
@@ -1093,10 +1093,11 @@ type
     //run once but when category ini
     procedure GetHintString(Token: string; ParamIndex: Integer; out AHint: String); virtual;
 
-    procedure InitCompletion(vSynEdit: TCustomSynEdit); virtual;
-
     procedure AddKeyword(AKeyword: String; AKind: Integer); deprecated;
-    function AddKeyword(AKeyword: String; AttributeName: string; AKind: TAttributeType; Temp: Boolean): TKeywordItem; virtual;
+    function AddKeyword(AKeyword: String; AttributeName: string; AKind: TAttributeType; Temp: Boolean = False): TKeywordItem; virtual;
+
+    procedure DoAddKeywords; virtual;
+    procedure InitCompletion(vSynEdit: TCustomSynEdit); virtual;
 
     procedure DoPrepareCompletion(AEditor: TCustomSynEdit); virtual; //TODO move it to CodeFileCategory
     procedure PrepareCompletion(ASender: TSynBaseCompletion; var ACurrentString: String; var APosition: Integer; var AnX, AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
@@ -1179,11 +1180,8 @@ type
 
   TCodeFileCategory = class(TTextFileCategory)
   protected
-    IdentifierID: Integer;
-    IdentifierAttribute: Integer;
     procedure ScanValues(AFile: TEditorFile; Values: TStringList); override;
-    procedure ExtractKeywords(Files, Identifiers: TStringList); virtual;
-    procedure DoAddKeywords; virtual;
+    procedure CacheKeywords(Files: TStringList); virtual;
     procedure DoPrepareCompletion(AEditor: TCustomSynEdit); override;
   end;
 
@@ -1427,7 +1425,7 @@ type
     procedure DoChangedState(State: TEditorChangeStates); virtual;
     procedure DoMacroRecorderChanged(Sender: TObject);
     procedure DoGetHintString(AEditor: TCustomSynEdit; Token: string; ParamIndex: Integer; out AHint: String);
-    procedure DoGetHintExists(AEditor: TCustomSynEdit; Token: string; var Exists: Boolean); virtual;
+    procedure DoGetHintExists(AEditor: TCustomSynEdit; Token: string; FunctionsOnly: Boolean; var Exists: Boolean); virtual;
     procedure DoReplaceText(Sender: TObject; const ASearch, AReplace: String; Line, Column: Integer; var ReplaceAction: TSynReplaceAction);
   public
     constructor Create; virtual;
@@ -2228,13 +2226,16 @@ begin
   end;
 end;
 
-procedure TCodeFileCategory.ExtractKeywords(Files, Identifiers: TStringList);
+procedure TCodeFileCategory.CacheKeywords(Files: TStringList);
 var
   aFile: TStringList;
   s: String;
   i, f: Integer;
   aHighlighter: TSynCustomHighlighter;
+  aIdentifierID, aVariableID: Integer;
 begin
+  aIdentifierID := Mapper.TokkenIDOf(attIdentifier);
+  aVariableID := Mapper.TokkenIDOf(attVariable);
   aHighlighter := CreateHighlighter;
   aFile := TStringList.Create;
   try
@@ -2247,11 +2248,17 @@ begin
         aHighlighter.SetLine(aFile[i], 1);
         while not aHighlighter.GetEol do
         begin
-          if (aHighlighter.GetTokenKind = IdentifierID) then
+          if (aHighlighter.GetTokenKind = aIdentifierID) then
           begin
             s := aHighlighter.GetToken;
-            if Identifiers.IndexOf(s) < 0 then
-              Identifiers.Add(s);
+            if CachedIdentifiers.IndexOf(s) < 0 then
+              CachedIdentifiers.Add(s);
+          end
+          else if (aHighlighter.GetTokenKind = aVariableID) then
+          begin
+            s := aHighlighter.GetToken;
+            if CachedVariables.IndexOf(s) < 0 then
+              CachedVariables.Add(s);
           end;
           aHighlighter.Next;
         end;
@@ -2263,10 +2270,6 @@ begin
   end;
 end;
 
-procedure TCodeFileCategory.DoAddKeywords;
-begin
-end;
-
 procedure TCodeFileCategory.DoPrepareCompletion(AEditor: TCustomSynEdit);
 var
   aCurrent, Token: String;
@@ -2274,62 +2277,62 @@ var
   aLine: Integer;
   aSynEdit: TCustomSynEdit;
   aFiles: TStringList;
+  aIdentifierID, aVariableID: Integer;
 begin
   inherited;
   Screen.Cursor := crHourGlass;
-  Completion.BeginUpdate;
-  try
-    DoAddKeywords; //TODO check timeout before refill it for speeding
+  aIdentifierID := Mapper.TokkenIDOf(attIdentifier);
+  aVariableID := Mapper.TokkenIDOf(attVariable);
 
-    aSynEdit := Completion.TheForm.CurrentEditor as TCustomSynEdit;
-    if (aSynEdit <> nil) and (Highlighter <> nil) then
+  aSynEdit := Completion.TheForm.CurrentEditor as TCustomSynEdit;
+  if (aSynEdit <> nil) and (Highlighter <> nil) then
+  begin
+    aLine := aSynEdit.CaretY;
+    aCurrent := aSynEdit.GetWordAtRowCol(aSynEdit.LogicalCaretXY);
+
+    //load keyowrds
+    //extract keywords from external files
+    if (fckIncludes in Kind) and Engine.Options.CollectAutoComplete and (Engine.Session.GetRoot <> '') then
     begin
-      aLine := aSynEdit.CaretY;
-      aCurrent := aSynEdit.GetWordAtRowCol(aSynEdit.LogicalCaretXY);
-
-      //load keyowrds
-      //extract keywords from external files
-      if Engine.Options.CollectAutoComplete and (Engine.Session.GetRoot <> '') then
+      if ((GetTickCount - CachedAge) > (Engine.Options.CollectTimeout * 1000)) then
       begin
-        if ((GetTickCount - CachedAge) > (Engine.Options.CollectTimeout * 1000)) then
-        begin
-          CachedVariables.Clear;
-          CachedIdentifiers.Clear;
-          aFiles := TStringList.Create;
-          try
-            EnumFileList(Engine.Session.GetRoot, GetExtensions, Engine.Options.IgnoreNames, aFiles, 1000, 3, Engine.Session.Active);//TODO check the root dir if no project opened
-            r := aFiles.IndexOf(Engine.Files.Current.FileName);
-            if r >= 0 then
-              aFiles.Delete(r);
-            ExtractKeywords(aFiles, CachedIdentifiers);
-          finally
-            aFiles.Free;
-          end;
+        CachedVariables.Clear;
+        CachedIdentifiers.Clear;
+        aFiles := TStringList.Create;
+        try
+          EnumFileList(Engine.Session.GetRoot, GetExtensions, Engine.Options.IgnoreNames, aFiles, 1000, 3, Engine.Session.Active);//TODO check the root dir if no project opened
+          r := aFiles.IndexOf(Engine.Files.Current.FileName);
+          if r >= 0 then
+            aFiles.Delete(r);
+          CacheKeywords(aFiles);
+        finally
+          aFiles.Free;
         end;
-        CachedAge := GetTickCount;
       end;
+      CachedAge := GetTickCount;
+    end;
 
-      //add current file Identifiers
-      Highlighter.ResetRange;
-      for i := 0 to aSynEdit.Lines.Count - 1 do
+    //add current file Identifiers
+    Highlighter.ResetRange;
+    for i := 0 to aSynEdit.Lines.Count - 1 do
+    begin
+      Highlighter.SetLine(aSynEdit.Lines[i], 1);
+      while not Highlighter.GetEol do
       begin
-        Highlighter.SetLine(aSynEdit.Lines[i], 1);
-        while not Highlighter.GetEol do
+        Token := Highlighter.GetToken;
+        if (i <> aLine - 1) or (aCurrent <> Token) then //TODO what is (i <> aLine - 1) ????
         begin
-          Token := Highlighter.GetToken;
-          if (i <> aLine - 1) or (aCurrent <> Token) then //TODO what is (i <> aLine - 1) ????
+          if (Highlighter.GetTokenKind = aIdentifierID) then
           begin
-            if (Highlighter.GetTokenKind = IdentifierID) and (Keywords.Find(Token) = nil) then
-              AddKeyword(Token, 'Identifier', attIdentifier, True); //use mapper
-          end;
-          Highlighter.Next;
+            if (Keywords.Find(Token) = nil) then
+              AddKeyword(Token, 'Identifier', attIdentifier, True)
+          end
+          else if (Highlighter.GetTokenKind = aVariableID) and (Keywords.Find(Token) = nil) then
+            AddKeyword(Token, 'Variable', attVariable, True)
         end;
+        Highlighter.Next;
       end;
     end;
-    Completion.Sort;
-  finally
-    Completion.EndUpdate;
-    Screen.Cursor := crDefault;
   end;
 end;
 
@@ -5052,13 +5055,16 @@ begin
   end;
 end;
 
-procedure TEditorEngine.DoGetHintExists(AEditor: TCustomSynEdit; Token: string; var Exists: Boolean);
+procedure TEditorEngine.DoGetHintExists(AEditor: TCustomSynEdit; Token: string; FunctionsOnly: Boolean; var Exists: Boolean);
+var
+  aKeyword: TKeywordItem;
 begin
   if (AEditor is TmneSynEdit) then
   begin
     if (AEditor as TmneSynEdit).EditorFile <> nil then
     begin
-      Exists := (AEditor as TmneSynEdit).EditorFile.Group.Category.Keywords.Find(Token) <> nil;
+      aKeyword := (AEditor as TmneSynEdit).EditorFile.Group.Category.Keywords.Find(Token);
+      Exists := (aKeyword <> nil) and (not FunctionsOnly or (aKeyword.AttributeType in [attCommon]));
     end;
   end
   else
@@ -6471,6 +6477,11 @@ begin
   if AutoComplete.AutoCompleteList.Count = 0 then
     if FileExistsUTF8(LowerCase(Application.Location + FName + '.template')) then
       AutoComplete.AutoCompleteList.LoadFromFile(LowerCase(Application.Location + Name + '.template'));
+
+  if Keywords.Count = 0 then
+  begin
+    DoAddKeywords;
+  end;
 end;
 
 procedure TVirtualCategory.AddKeyword(AKeyword: String; AKind: Integer);
@@ -6496,6 +6507,10 @@ begin
   Result := Keywords.AddItem(AKeyword, S, AttributeName, AKind, Temp);
 end;
 
+procedure TVirtualCategory.DoAddKeywords;
+begin
+end;
+
 procedure TVirtualCategory.DoPrepareCompletion(AEditor: TCustomSynEdit);
 begin
 end;
@@ -6503,7 +6518,14 @@ end;
 procedure TVirtualCategory.PrepareCompletion(ASender: TSynBaseCompletion; var ACurrentString: String; var APosition: Integer; var AnX, AnY: Integer; var AnResult: TOnBeforeExeucteFlags);
 begin
   Keywords.Clean;
-  DoPrepareCompletion(ASender.TheForm.CurrentEditor);
+  Completion.BeginUpdate;
+  try
+    DoPrepareCompletion(ASender.TheForm.CurrentEditor);
+    Completion.Sort;
+  finally
+    Completion.EndUpdate;
+    Screen.Cursor := crDefault;
+  end;
 end;
 
 procedure TVirtualCategory.InitEdit(vSynEdit: TCustomSynEdit);
@@ -6629,7 +6651,7 @@ end;
 procedure TEditorProject.LoadFromFile(FileName: String);
 begin
   FFileName := FileName;
-  inherited LoadFromFile(FileName);
+  inherited;
   UpdatePath;
 end;
 

@@ -268,13 +268,12 @@ procedure TPyFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   FCompletion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
-  IdentifierID := ord(SynHighlighterPython.tkIdentifier);
 end;
 
 procedure TPyFileCategory.DoAddKeywords;
 begin
   //this a hack to lazarus source, just make GetKeywordIdentifiers public
-//  EnumerateKeywords(Ord(attDataValue), (Highlighter as TSynPythonSyn).GetKeywordIdentifiers, @AddKeyword);
+  EnumerateKeywords(Ord(attDataValue), (Highlighter as TSynPythonSyn).GetKeywordIdentifiers, Highlighter.IdentChars, @AddKeyword);
 end;
 
 procedure TPyFileCategory.DoFixTabsSpaces(Sender: TObject);
@@ -303,9 +302,9 @@ procedure TPyFileCategory.InitMappers;
 begin
   with Highlighter as TSynPythonSyn do
   begin
-    Mapper.Add(CommentAttri, attComment);
-    Mapper.Add(IdentifierAttri, attIdentifier);
-    Mapper.Add(KeyAttri, attKeyword);
+    Mapper.Add(CommentAttri, attComment, ord(tkComment));
+    Mapper.Add(IdentifierAttri, attIdentifier, ord(tkIdentifier));
+    Mapper.Add(KeyAttri, attKeyword, ord(tkKeyword));
     Mapper.Add(NonKeyAttri, attDefault);
     Mapper.Add(SystemAttri, attDefault);
     Mapper.Add(NumberAttri, attNumber);
@@ -314,7 +313,7 @@ begin
     Mapper.Add(FloatAttri, attNumber);
     Mapper.Add(SpaceAttri, attDefault);
     Mapper.Add(StringAttri, attQuotedString);
-    Mapper.Add(DocStringAttri, attDocument);
+    Mapper.Add(DocStringAttri, attDocument, ord(tkDocument));
     Mapper.Add(SymbolAttri, attSymbol);
     Mapper.Add(ErrorAttri, attDefault);
   end;

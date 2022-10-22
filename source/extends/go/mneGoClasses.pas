@@ -374,13 +374,12 @@ procedure TGoFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   FCompletion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
-  IdentifierID := ord(mnSynHighlighterMultiProc.tkIdentifier);
 end;
 
 procedure TGoFileCategory.DoAddKeywords;
 begin
-  EnumerateKeywords(Ord(tkKeyword), sGoKeywords, Highlighter.IdentChars, @AddKeyword);
-  EnumerateKeywords(Ord(tkFunction), sGoFunctions, Highlighter.IdentChars, @AddKeyword);
+  EnumerateKeywords(Ord(attKeyword), sGoKeywords, Highlighter.IdentChars, @AddKeyword);
+  EnumerateKeywords(Ord(attCommon), sGoFunctions, Highlighter.IdentChars, @AddKeyword);
 end;
 
 procedure TGoFileCategory.InitMappers;
@@ -388,17 +387,17 @@ begin
   with Highlighter as TSynGoSyn do
   begin
     Mapper.Add(WhitespaceAttri, attDefault);
-    Mapper.Add(CommentAttri, attComment);
-    Mapper.Add(KeywordAttri, attKeyword);
-    Mapper.Add(DocumentAttri, attDocument);
+    Mapper.Add(CommentAttri, attComment, ord(tkComment));
+    Mapper.Add(KeywordAttri, attKeyword, ord(tkKeyword));
+    Mapper.Add(DocumentAttri, attDocument, ord(tkDocument));
     Mapper.Add(TypeAttri, attDataType);
-    Mapper.Add(FunctionAttri, attCommon);
-    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(FunctionAttri, attCommon, ord(tkFunction));
+    Mapper.Add(IdentifierAttri, attIdentifier, ord(tkIdentifier));
     Mapper.Add(TextAttri, attText);
     Mapper.Add(NumberAttri, attNumber);
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
-    Mapper.Add(VariableAttri, attVariable);
+    Mapper.Add(VariableAttri, attVariable, ord(tkVariable));
     Mapper.Add(ProcessorAttri, attDirective);
   end;
 end;

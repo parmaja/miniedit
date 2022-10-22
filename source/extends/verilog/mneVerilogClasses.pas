@@ -354,13 +354,13 @@ begin
   begin
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(NumberAttri, attNumber);
-    Mapper.Add(KeywordAttribute, attKeyword);
+    Mapper.Add(KeywordAttribute, attKeyword, ord(tkKeyword));
     Mapper.Add(DirectiveAttri, attDirective);
     Mapper.Add(SymbolAttri, attSymbol);
-    Mapper.Add(CommentAttri, attComment);
-    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(CommentAttri, attComment, ord(tkComment));
+    Mapper.Add(IdentifierAttri, attIdentifier, ord(tkIdentifier));
     Mapper.Add(SpaceAttri, attDefault);
-    Mapper.Add(InbuiltFuncAttri, attCommon);
+    Mapper.Add(InbuiltFuncAttri, attCommon, ord(tkInbuiltFunc));
   end;
 end;
 
@@ -368,14 +368,13 @@ procedure TVerilogFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   inherited;
   Completion.EndOfTokenChr := '${}()[].<>/\:!&*+-=%;';
-  IdentifierID := ord(SynHighlighterVerilog.tkIdentifier);
 end;
 
 procedure TVerilogFileCategory.DoAddKeywords;
 begin
-  inherited DoAddKeywords;
-  //EnumerateKeywords(Ord(tkKeyword), sVerilogKeywords, Highlighter.IdentChars, @AddKeyword);
-  //EnumerateKeywords(Ord(tkDirective), sVerilogDirectives, Highlighter.IdentChars, @AddKeyword);
+  inherited;
+  EnumerateKeywords(Ord(attKeyword), sVerilogKeywords, Highlighter.IdentChars, @AddKeyword);
+  EnumerateKeywords(Ord(attDirective), sVerilogDirectives, Highlighter.IdentChars, @AddKeyword);
 end;
 
 procedure TVerilogFileCategory.EnumMenuItems(AddItems: TAddClickCallBack);
