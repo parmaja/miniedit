@@ -452,10 +452,10 @@ begin
           end;
 
           for i := 0 to aVariables.Count - 1 do
-            AddKeyword(aVariables[i], 'variable', attVariable, True);
+            AddKeyword(aVariables[i], 'Variable', attVariable, True);
 
           for i := 0 to aIdentifiers.Count - 1 do
-            AddKeyword(aIdentifiers[i], 'identifier', attIdentifier, True);
+            AddKeyword(aIdentifiers[i], 'Identifier', attIdentifier, True);
         finally
           aIdentifiers.Free;
           aVariables.Free;

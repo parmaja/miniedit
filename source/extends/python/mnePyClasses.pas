@@ -273,7 +273,7 @@ end;
 procedure TPyFileCategory.DoAddKeywords;
 begin
   //this a hack to lazarus source, just make GetKeywordIdentifiers public
-  EnumerateKeywords(Ord(attDataValue), (Highlighter as TSynPythonSyn).GetKeywordIdentifiers, Highlighter.IdentChars, @AddKeyword);
+  EnumerateKeywords(Ord(attKeyword), (Highlighter as TSynPythonSyn).GetKeywordIdentifiers, Highlighter.IdentChars, @AddKeyword);
 end;
 
 procedure TPyFileCategory.DoFixTabsSpaces(Sender: TObject);

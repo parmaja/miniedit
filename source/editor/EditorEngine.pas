@@ -1052,8 +1052,9 @@ type
     function Add(ForignName: string; Attribute: TSynHighlighterAttributes; AttType: TAttributeType; TokenID: Integer = -1): TMap;
     function IndexOfAttribute(AttributeType: TAttributeType): Integer;
     function FindByAttribute(AttributeType: TAttributeType): TMap;
+    function FindByTokenID(TokenID: Integer): TMap;
     function AttributeName(AttributeType: TAttributeType): string;
-    function TokkenIDOf(AttributeType: TAttributeType): Integer;
+    function TokenIDOf(AttributeType: TAttributeType): Integer;
   end;
 
   TFileCategoryKind = (
@@ -2146,9 +2147,9 @@ var
   p1, p2: TPoint;
 begin
   inherited;
-  aCommentKind := Mapper.TokkenIDOf(attDocument);
+  aCommentKind := Mapper.TokenIDOf(attDocument);
   if aCommentKind < 0 then
-    aCommentKind := Mapper.TokkenIDOf(attComment);
+    aCommentKind := Mapper.TokenIDOf(attComment);
   if aCommentKind >= 0 then
   begin
     ScannedValues:=TScannedValues.Create;
@@ -2234,8 +2235,8 @@ var
   aHighlighter: TSynCustomHighlighter;
   aIdentifierID, aVariableID: Integer;
 begin
-  aIdentifierID := Mapper.TokkenIDOf(attIdentifier);
-  aVariableID := Mapper.TokkenIDOf(attVariable);
+  aIdentifierID := Mapper.TokenIDOf(attIdentifier);
+  aVariableID := Mapper.TokenIDOf(attVariable);
   aHighlighter := CreateHighlighter;
   aFile := TStringList.Create;
   try
@@ -2281,8 +2282,8 @@ var
 begin
   inherited;
   Screen.Cursor := crHourGlass;
-  aIdentifierID := Mapper.TokkenIDOf(attIdentifier);
-  aVariableID := Mapper.TokkenIDOf(attVariable);
+  aIdentifierID := Mapper.TokenIDOf(attIdentifier);
+  aVariableID := Mapper.TokenIDOf(attVariable);
 
   aSynEdit := Completion.TheForm.CurrentEditor as TCustomSynEdit;
   if (aSynEdit <> nil) and (Highlighter <> nil) then
@@ -2507,6 +2508,21 @@ begin
   end;
 end;
 
+function TMapper.FindByTokenID(TokenID: Integer): TMap;
+var
+  i: Integer;
+begin
+  Result := nil;
+  for i := 0 to Count - 1 do
+  begin
+    if Items[i].TokenID = TokenID then
+    begin
+      Result := Items[i];
+      break;
+    end;
+  end;
+end;
+
 function TMapper.AttributeName(AttributeType: TAttributeType): string;
 var
   i: Integer;
@@ -2522,7 +2538,7 @@ begin
   end;
 end;
 
-function TMapper.TokkenIDOf(AttributeType: TAttributeType): Integer;
+function TMapper.TokenIDOf(AttributeType: TAttributeType): Integer;
 var
   i: Integer;
 begin
@@ -6485,8 +6501,18 @@ begin
 end;
 
 procedure TVirtualCategory.AddKeyword(AKeyword: String; AKind: Integer);
+var
+  s: string;
+  i: Integer;
+  map: TMap;
 begin
-  AddKeyword(AKeyword, '', TAttributeType(AKind), False);
+  //s := '\style{+B}' + Engine.Options.Profile.Attributes.AttributeName(AKind) + '\style{-B} : ' + AKeyword;
+  map := Mapper.FindByTokenID(AKind);
+  if map <> nil then
+    s := map.Name
+  else
+    s := '';
+  AddKeyword(AKeyword, s, TAttributeType(AKind), False);
 end;
 
 function TVirtualCategory.AddKeyword(AKeyword: String; AttributeName: string; AKind: TAttributeType; Temp: Boolean): TKeywordItem;
@@ -6497,6 +6523,8 @@ var
 begin
   //s := '\style{+B}' + Engine.Options.Profile.Attributes.AttributeName(AKind) + '\style{-B} : ' + AKeyword;
   map := Mapper.FindByAttribute(AKind);
+  if map = nil then
+    raise Exception.Create('Highlighter Map not exists');
   if AttributeName = '' then
     AttributeName := map.Name;
   s := AttributeName + ': \tab{6}\color{$'+IntToHex(map.Attribute.Foreground)+'}' + AKeyword;
