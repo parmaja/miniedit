@@ -161,8 +161,8 @@ begin
   FCapabilities := [{capExecute, } capLint];
   FHaveOptions := True;
   FName := 'LSL';
-  FTitle := 'OSSL/LSL project';
-  FDescription := 'OSSL/LSL Files, *.lsl;*.ossl';
+  FTitle := 'LSL/OSSL project';
+  FDescription := 'LSL/OSSL Files, *.lsl;*.ossl';
   FImageIndex := -1;
 end;
 

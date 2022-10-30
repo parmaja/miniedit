@@ -2453,7 +2453,7 @@ object MainForm: TMainForm
       ShortCut = 114
     end
     object EditorOptionsAct: TAction
-      Category = 'View'
+      Category = 'File'
       Caption = 'Editor Options'
       ImageIndex = 14
       OnExecute = EditorOptionsActExecute
@@ -2524,7 +2524,7 @@ object MainForm: TMainForm
     end
     object TypeOptionsAct: TAction
       Category = 'Project'
-      Caption = 'Type Options'
+      Caption = 'Tendency Options'
       OnExecute = TypeOptionsActExecute
     end
     object ExploreFolderAct: TAction
@@ -2917,6 +2917,11 @@ object MainForm: TMainForm
       Category = 'Database'
       Caption = 'Rollback'
     end
+    object FileTendencyAct: TAction
+      Category = 'File'
+      Caption = 'File Tendency'
+      OnExecute = FileTendencyActExecute
+    end
   end
   object FolderMenu: TPopupMenu
     Images = EditorResource.ToolbarImageList
@@ -3094,6 +3099,9 @@ object MainForm: TMainForm
     object EditorOptions2: TMenuItem
       Action = EditorOptionsAct
       OnClick = EditorOptionsActExecute
+    end
+    object MenuItem53: TMenuItem
+      Action = FileTendencyAct
     end
     object MenuItem40: TMenuItem
       Action = EditorColorsAct

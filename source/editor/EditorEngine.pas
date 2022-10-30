@@ -1540,6 +1540,7 @@ procedure SaveAsMode(const FileName: String; Mode: TEditorLinesMode; Strings: TS
 
 function ConvertToLinesMode(Mode: TEditorLinesMode; Contents: String): String;
 function DetectLinesMode(const Contents: String): TEditorLinesMode;
+function ConvertIndents(const Contents: String; TabWidth: Integer; Options: TIndentMode = idntTabsToSpaces): String;
 
 //EnumFileList return false if canceled by callback function
 type
@@ -1550,7 +1551,6 @@ function EnumFileList(const Root, Masks, Ignore: String; Callback: TEnumFilesCal
 procedure EnumFileList(const Root, Masks, Ignore: String; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean);
 procedure EnumDirList(const Root, Masks, Ignore: String; Strings: TStringList; vMaxCount, vMaxLevel: Integer; ReturnFullPath: Boolean);
 
-function ConvertIndents(const Contents: String; TabWidth: Integer; Options: TIndentMode = idntTabsToSpaces): String;
 
 const
   sEnvVarChar = '?';
@@ -2301,7 +2301,7 @@ begin
         CachedIdentifiers.Clear;
         aFiles := TStringList.Create;
         try
-          EnumFileList(Engine.Session.GetRoot, GetExtensions, Engine.Options.IgnoreNames, aFiles, 1000, 3, Engine.Session.Active);//TODO check the root dir if no project opened
+          EnumFileList(Engine.Session.GetRoot, GetExtensions, Engine.Options.IgnoreNames, aFiles, 1000, 0, Engine.Session.Active);//TODO check the root dir if no project opened
           r := aFiles.IndexOf(Engine.Files.Current.FileName);
           if r >= 0 then
             aFiles.Delete(r);
@@ -2326,7 +2326,7 @@ begin
           if (Highlighter.GetTokenKind = aIdentifierID) then
           begin
             if (Keywords.Find(Token) = nil) then
-              AddKeyword(Token, 'Identifier', attIdentifier, True)
+              AddKeyword(Token, 'Identifier', attIdentifier, True);
           end
           else if (Highlighter.GetTokenKind = aVariableID) and (Keywords.Find(Token) = nil) then
             AddKeyword(Token, 'Variable', attVariable, True)
@@ -2348,7 +2348,7 @@ end;
 
 destructor TEditorProjectOptions.Destroy;
 begin
-  inherited Destroy;
+  inherited;
 end;
 
 procedure TEditorProjectOptions.CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack);
@@ -3899,11 +3899,13 @@ end;
 {$endif}
 
 procedure EnumIndentMode(vItems: TStrings);
+var
+  strings: array[low(TIndentMode)..high(TIndentMode)] of string = ('Keep it', 'Tab to Spaces', 'Spaces to Tabs', 'Align Tabs', 'Align Spaces');
+  s: string;
 begin
   vItems.Clear;
-  vItems.Add('Keep it');
-  vItems.Add('Tab to Spaces');
-  vItems.Add('Spaces to Tabs');
+  for s in strings do
+    vItems.Add(s);
 end;
 
 { TListFileSearcher }
@@ -5978,6 +5980,7 @@ var
   begin
     i := p;
     c := 0;
+    t := 0;
     while i <= l do
     begin
       if Contents[i] = ' ' then
@@ -5988,12 +5991,22 @@ var
         break;
       Inc(i);
     end;
+
     if Options = idntSpacesToTabs then
     begin
       t := c div TabWidth;
       c := c mod TabWidth;
-      Result := Result + RepeatString(#9, t);
+    end
+    else if Options = idntAlignSpaces then
+      c := Ceil(c / TabWidth) * TabWidth
+    else if Options = idntSpacesToTabs then
+    begin
+      c := Ceil(c / TabWidth) * TabWidth;
+      t := c div TabWidth;
+      c := c mod TabWidth;
     end;
+
+    Result := Result + RepeatString(#9, t);
     Result := Result + RepeatString(' ', c);
     p := i;
   end;

@@ -68,10 +68,12 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
+    FileTendencyAct: TAction;
     DBStartAct: TAction;
     BackwordSwitchFocusAct: TAction;
     MenuItem51: TMenuItem;
     MenuItem52: TMenuItem;
+    MenuItem53: TMenuItem;
     NewSQLAct: TAction;
     DBRollbackAct: TAction;
     DBCommitAct: TAction;
@@ -428,6 +430,7 @@ type
     N16: TMenuItem;
     procedure BackwordSwitchFocusActExecute(Sender: TObject);
     procedure DBDisconnectActExecute(Sender: TObject);
+    procedure FileTendencyActExecute(Sender: TObject);
     procedure NewSQLActExecute(Sender: TObject);
     procedure AnsiMnuClick(Sender: TObject);
     procedure ApplicationPropertiesActivate(Sender: TObject);
@@ -931,6 +934,12 @@ end;
 procedure TMainForm.DBDisconnectActExecute(Sender: TObject);
 begin
   DBEngine.CloseDatabase;
+end;
+
+procedure TMainForm.FileTendencyActExecute(Sender: TObject);
+begin
+  if Engine.Files.Current <> nil then
+    ShowTendencyForm(Engine.Files.Current.Tendency);
 end;
 
 procedure TMainForm.FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);

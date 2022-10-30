@@ -141,6 +141,7 @@ object EditorOptionsForm: TEditorOptionsForm
     Top = 226
     Width = 50
     Caption = 'Extra Line:'
+    Color = clDefault
     ParentColor = False
   end
   object Label9: TLabel
@@ -149,6 +150,7 @@ object EditorOptionsForm: TEditorOptionsForm
     Top = 277
     Width = 53
     Caption = 'Tab Width:'
+    Color = clDefault
     ParentColor = False
   end
   object TabWidthEdit: TEdit
@@ -240,9 +242,10 @@ object EditorOptionsForm: TEditorOptionsForm
   object Label10: TLabel
     Left = 9
     Height = 13
-    Top = 223
+    Top = 226
     Width = 228
     Caption = 'Tabs in editors, Can be overriden by project type'
+    Color = clDefault
     ParentColor = False
   end
   object Label3: TLabel
@@ -251,6 +254,7 @@ object EditorOptionsForm: TEditorOptionsForm
     Top = 250
     Width = 60
     Caption = 'Indent Mode'
+    Color = clDefault
     ParentColor = False
   end
   object IndentModeCbo: TComboBox

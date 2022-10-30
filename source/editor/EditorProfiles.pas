@@ -49,7 +49,13 @@ type
   );
   TAttributeTypes = set of TAttributeType;
 
-  TIndentMode = (idntNone, idntTabsToSpaces, idntSpacesToTabs);
+  TIndentMode = (
+    idntNone,
+    idntTabsToSpaces,
+    idntSpacesToTabs,
+    idntAlignTabs,  //convert 6 spaces converted to 2 tabs (tab=4)
+    idntAlignSpaces  //convert 6 spaces converted to 8 (tab=4)
+  );
 
 const
   cSynRequiredOptions = [eoDragDropEditing, eoTrimTrailingSpaces, eoDropFiles, eoShowCtrlMouseLinks, eoAltSetsColumnMode, eoScrollPastEol, eoRightMouseMovesCursor, eoHideRightMargin];

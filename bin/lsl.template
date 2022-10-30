@@ -103,3 +103,9 @@ collision_end( integer num_detected )
 {
 	|;
 }
+
+[object_rez]
+object_rez(key id)
+{
+	|;
+}
