@@ -35,7 +35,10 @@ type
     procedure SearchTimerTimer(Sender: TObject);
   private
     FStyle: TSelectListFormStyle;
+  protected
+    procedure DoShow; override;
   public
+    FLastSearch: string;
     Elements: TEditorElements;
     procedure UpdateStyle;
     procedure ShowItems(vSelect: string; vFilter: string = '');
@@ -150,6 +153,7 @@ begin
   begin
     ItemsList.Items[t].Selected := True;
     ItemsList.Items[t].Focused := True;
+    ItemsList.Items[t].MakeVisible(False);
   end;
 end;
 
@@ -176,14 +180,21 @@ end;
 
 procedure TSelectListForm.SearchEditKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  //if Key > VK_SPACE then
+  if (Key >= VK_SPACE) and (FLastSearch <> SearchEdit.Text) then //* do not search at show dialog
     SearchTimer.Enabled := True;
 end;
 
 procedure TSelectListForm.SearchTimerTimer(Sender: TObject);
 begin
-  ShowItems('', SearchEdit.Text);
+  FLastSearch := SearchEdit.Text;
+  ShowItems('', FLastSearch);
   SearchTimer.Enabled := False;
+end;
+
+procedure TSelectListForm.DoShow;
+begin
+  inherited;
+  ItemsList.Selected.MakeVisible(False); //ShowItems can not make it visible while the form not visible yet
 end;
 
 procedure TSelectListForm.UpdateStyle;

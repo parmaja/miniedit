@@ -75,6 +75,7 @@ object SelectListForm: TSelectListForm
     Top = 8
     Width = 34
     Caption = 'Search'
+    Color = clDefault
     ParentColor = False
   end
   object SearchTimer: TTimer
