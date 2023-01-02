@@ -180,7 +180,7 @@ end;
 
 procedure TSelectListForm.SearchEditKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  if (Key >= VK_SPACE) and (FLastSearch <> SearchEdit.Text) then //* do not search at show dialog
+  if ((Key >= VK_DELETE) or (Key >= VK_BACK) or (Key >= VK_SPACE)) and (FLastSearch <> SearchEdit.Text) then //* do not search at show dialog
     SearchTimer.Enabled := True;
 end;
 

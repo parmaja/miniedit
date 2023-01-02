@@ -27,6 +27,7 @@ unit EditorEngine;
 
 Portable Notes:
   Main folder related to project folder, Project folder related to Project File folder
+  Paths in Variables should not delimited by PathDelimiter, use ExcludePathDelimiter()
 }
 interface
 
@@ -740,6 +741,7 @@ type
     procedure Cut; virtual;
     procedure SelectAll; virtual;
 
+    procedure ScanValues(Values: TStringList);
     procedure EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips); virtual;
     function ReplaceVariables(S: String; EnumSkips: TEnumVariablesSkips; AValues: TStringList = nil): String;
 
@@ -1108,7 +1110,6 @@ type
 
     function OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: String): TEditorFile; virtual;
 
-    procedure ScanValues(AFile: TEditorFile; Values: TStringList); virtual;
   public
     constructor Create(ATendency: TEditorTendency; const vName, vTitle: String; vKind: TFileCategoryKinds = []; vImageName: String = ''); virtual;
     constructor Create(ATendency: TEditorTendencyClass; const vName, vTitle: String; vKind: TFileCategoryKinds = []; vImageName: String = ''); virtual;
@@ -1123,6 +1124,8 @@ type
     function Find(vName: String): TFileGroup;
     procedure EnumExtensions(vExtensions: TStringList);
     function GetExtensions: String;
+
+    procedure ScanValues(AFile: TEditorFile; Values: TStringList); virtual;
 
     procedure EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips); virtual;
     function ReplaceVariables(S: String; Values: TStringList; EnumSkips: TEnumVariablesSkips): String;
@@ -3189,8 +3192,8 @@ procedure TEditorTendency.EnumVariables(Values: TStringList; EnumSkips: TEnumVar
 begin
   if not (evsTendicy in EnumSkips) then
   begin
-    Values.Merge('DefaultPath', DefaultPath);
-    Values.Merge('MainPath', DefaultPath);
+    Values.Merge('DefaultPath', ExcludePathDelimiter(DefaultPath));
+    Values.Merge('MainPath', ExcludePathDelimiter(DefaultPath));
   end;
   Engine.EnumVariables(Values, EnumSkips + [evsTendicy]);
 end;
@@ -4016,10 +4019,8 @@ end;
 
 function TEditorEngine.GetSCM: TEditorSCM;
 begin
-  if Session.Active then
-    Result := Session.Project.SCM
-  else
-    Result := nil;
+//  if Session.Active then
+  Result := Session.Project.SCM;
 end;
 
 function TEditorEngine.GetCurrentTendency: TEditorTendency;
@@ -4896,7 +4897,7 @@ begin
       Values.Merge('MainFile', MainFile);
       Values.Merge('MainFileName', ExtractFileName(MainFile));
       Values.Merge('MainFileNickName', ExtractFileNameWithoutExt(ExtractFileName(MainFile)));
-      Values.Merge('MainPath', ExtractFilePath(MainFile));
+      Values.Merge('MainPath', ExcludePathDelimiter(ExtractFilePath(MainFile)));
     end;
 
     if Session.Active then
@@ -4905,7 +4906,7 @@ begin
       begin
         Values.Merge('Project', Session.Project.FileName);
         Values.Merge('ProjectFile', Session.Project.FileName);
-        Values.Merge('ProjectPath', Session.Project.DefaultPath);
+        Values.Merge('ProjectPath', ExcludePathDelimiter(Session.Project.DefaultPath));
         Values.Merge('OutputName', Session.Project.RunOptions.OutputFile); //TODO need to gues)s
       end;
     end;
@@ -5643,6 +5644,11 @@ procedure TEditorFile.SelectAll;
 begin
 end;
 
+procedure TEditorFile.ScanValues(Values: TStringList);
+begin
+  Group.Category.ScanValues(Self, Values);
+end;
+
 procedure TEditorFile.EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips);
 begin
   if not (evsFile in EnumSkips) then
@@ -5653,7 +5659,7 @@ begin
     Values.Merge('BaseName', BaseName);
     Values.Merge('FileNickName', NickName);
     Values.Merge('NickName', NickName);
-    Values.Merge('FilePath', Path);
+    Values.Merge('FilePath', ExcludePathDelimiter(Path));
   end;
   Group.Category.EnumVariables(Values, EnumSkips + [evsFile]);
 end;
