@@ -1836,7 +1836,7 @@ object MainForm: TMainForm
   object MainMenu: TMainMenu
     Images = EditorResource.ToolbarImageList
     Left = 196
-    Top = 92
+    Top = 114
     object file1: TMenuItem
       Caption = '&File'
       Hint = 'Exit|Quits the application'
@@ -1856,7 +1856,7 @@ object MainForm: TMainForm
         OnClick = SaveAsActExecute
       end
       object ReopenFilesMnu: TMenuItem
-        Caption = 'Reopen'
+        Caption = '&Reopen'
       end
       object MenuItem48: TMenuItem
         Action = ManageAct
@@ -2275,7 +2275,7 @@ object MainForm: TMainForm
   end
   object ActionList: TActionList
     Images = EditorResource.ToolbarImageList
-    Left = 292
+    Left = 297
     Top = 187
     object PasteAct: TAction
       Category = 'Edit'
@@ -2569,9 +2569,10 @@ object MainForm: TMainForm
     end
     object RevertAct: TAction
       Category = 'File'
-      Caption = 'Revert'
+      Caption = 'Re&vert'
       Hint = 'Reload file and descard the changes'
       OnExecute = RevertActExecute
+      ShortCut = 49238
     end
     object OpenColorAct: TAction
       Category = 'Edit'
@@ -2682,13 +2683,13 @@ object MainForm: TMainForm
     end
     object RenameAct: TAction
       Category = 'File'
-      Caption = 'Rename File'
+      Caption = 'Re&name File'
       OnExecute = RenameActExecute
       ShortCut = 113
     end
     object DeleteAct: TAction
       Category = 'File'
-      Caption = 'Delete File'
+      Caption = '&Delete File'
       OnExecute = DeleteActExecute
     end
     object DBGExecuteAct: TAction
@@ -2934,7 +2935,7 @@ object MainForm: TMainForm
   end
   object FolderMenu: TPopupMenu
     Images = EditorResource.ToolbarImageList
-    Left = 180
+    Left = 196
     Top = 169
     object Home1: TMenuItem
       Action = FolderHomeAct
@@ -3014,7 +3015,7 @@ object MainForm: TMainForm
     end
   end
   object LineModeMenu: TPopupMenu
-    Left = 294
+    Left = 297
     Top = 114
     object UnixMnu: TMenuItem
       Caption = 'Unix'
@@ -3186,8 +3187,8 @@ object MainForm: TMainForm
     OnMessage = IPCServerMessage
     OnMessageQueued = IPCServerMessageQueued
     Threaded = False
-    Left = 97
-    Top = 270
+    Left = 72
+    Top = 169
   end
   object ApplicationProperties: TApplicationProperties
     ExceptionDialog = aedOkMessageBox
@@ -3195,7 +3196,7 @@ object MainForm: TMainForm
     OnHint = ApplicationPropertiesHint
     OnShowHint = ApplicationPropertiesShowHint
     Left = 72
-    Top = 112
+    Top = 114
   end
   object LogSyn: TSynAnySyn
     Enabled = False
@@ -3210,7 +3211,7 @@ object MainForm: TMainForm
     Top = 440
   end
   object MainFilePopupMnu: TPopupMenu
-    Left = 480
+    Left = 420
     Top = 114
     object MenuItem39: TMenuItem
       Action = ResetMainFileAct

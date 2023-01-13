@@ -1541,7 +1541,7 @@ procedure SaveAsWindows(Strings: TStrings; Stream: TStream);
 procedure SaveAsMAC(Strings: TStrings; Stream: TStream);
 procedure SaveAsMode(const FileName: String; Mode: TEditorLinesMode; Strings: TStrings);
 
-function ConvertToLinesMode(Mode: TEditorLinesMode; Contents: String): String;
+function ConvertToLines(Contents: String; Mode: TEditorLinesMode; TabWidth: Integer; IndentMode: TIndentMode = idntTabsToSpaces): String;
 function DetectLinesMode(const Contents: String): TEditorLinesMode;
 function ConvertIndents(const Contents: String; TabWidth: Integer; Options: TIndentMode = idntTabsToSpaces): String;
 
@@ -5812,7 +5812,8 @@ begin
     IndentMode := Engine.Options.Profile.IndentMode;
     if Tendency.OverrideEditorOptions then
       IndentMode := Tendency.IndentMode;
-    if IndentMode > idntNone then
+
+		if IndentMode > idntNone then
       Contents := ConvertIndents(Contents, SynEdit.TabWidth, IndentMode);
 
     if IsNew then //there is no undo here
@@ -5842,12 +5843,7 @@ begin
   if Tendency.OverrideEditorOptions then
     IndentMode := Tendency.IndentMode;
 
-  if IndentMode > idntNone then
-    Contents := ConvertIndents(SynEdit.Lines.Text, SynEdit.TabWidth, IndentMode)
-  else
-    Contents := SynEdit.Lines.Text;
-
-  Contents := ConvertToLinesMode(LinesMode, Contents);
+  Contents := ConvertToLines(SynEdit.Lines.Text, LinesMode, SynEdit.TabWidth, IndentMode);
 
   if not SameText(FileEncoding, EncodingUTF8) then
   begin
@@ -5917,13 +5913,18 @@ begin
   Result := True;
 end;
 
-function ConvertToLinesMode(Mode: TEditorLinesMode; Contents: String): String;
+function ConvertToLines(Contents: String; Mode: TEditorLinesMode; TabWidth: Integer; IndentMode: TIndentMode): String;
 var
   Strings: TStringList;
+  i: Integer;
 begin
   Strings := TStringList.Create;
-  Strings.Text := Contents;
   try
+    Strings.Text := Contents;
+    if IndentMode > idntNone then
+      for i := 0 to Strings.Count-1 do
+        Strings[i] := ConvertIndents(Strings[i], TabWidth, IndentMode);
+
     case Mode of
       efmWindows: Strings.LineBreak := #$D#$A;
       efmMac: Strings.LineBreak := #$D;
