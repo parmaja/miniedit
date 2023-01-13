@@ -6005,11 +6005,11 @@ var
     end
     else if Options = idntAlignSpaces then
       c := Ceil(c / TabWidth) * TabWidth
-    else if Options = idntSpacesToTabs then
+    else if Options = idntAlignTabs then
     begin
       c := Ceil(c / TabWidth) * TabWidth;
       t := c div TabWidth;
-      c := c mod TabWidth;
+      c := c mod TabWidth; //* or c := 0
     end;
 
     Result := Result + RepeatString(#9, t);
