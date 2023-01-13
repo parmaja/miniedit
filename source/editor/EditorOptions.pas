@@ -56,8 +56,6 @@ type
     ShowModifiedLinesChk: TCheckBox;
     ShowScrollHintChk: TCheckBox;
     ShowSeparatorChk: TCheckBox;
-    SmartTabDeleteChk: TCheckBox;
-    SmartTabsChk: TCheckBox;
     TabIndentChk: TCheckBox;
     TabWidthEdit: TEdit;
     WordWrapChk: TCheckBox;
@@ -178,11 +176,9 @@ begin
     //Options
     AutoIndentChk.Checked := eoAutoIndent in FProfile.EditorOptions;
     TabIndentChk.Checked := eoTabIndent in FProfile.EditorOptions;
-    SmartTabsChk.Checked := eoSmartTabs in FProfile.EditorOptions;
     HalfPageScrollChk.Checked := eoHalfPageScroll in FProfile.EditorOptions;
     ScrollByOneLessChk.Checked := eoScrollByOneLess in FProfile.EditorOptions;
     ShowScrollHintChk.Checked := eoShowScrollHint in FProfile.EditorOptions;
-    SmartTabDeleteChk.Checked := eoSmartTabDelete in FProfile.EditorOptions;
     EnhanceHomeKeyChk.Checked := eoEnhanceHomeKey in FProfile.EditorOptions;
     GroupUndoChk.Checked := eoGroupUndo in FProfile.EditorOptions;
     BracketHighlightChk.Checked := eoBracketHighlight in FProfile.EditorOptions;
@@ -219,13 +215,10 @@ begin
   //Options
   aOptions := FProfile.EditorOptions; //Keep old values for unsupported options
   aExtOptions := FProfile.ExtEditorOptions;
-  SetFlag(eoAutoIndent, AutoIndentChk.Checked);
   SetFlag(eoTabIndent, TabIndentChk.Checked);
-  SetFlag(eoSmartTabs, SmartTabsChk.Checked);
   SetFlag(eoHalfPageScroll, HalfPageScrollChk.Checked);
   SetFlag(eoScrollByOneLess, ScrollByOneLessChk.Checked);
   SetFlag(eoShowScrollHint, ShowScrollHintChk.Checked);
-  SetFlag(eoSmartTabDelete, SmartTabDeleteChk.Checked);
   SetFlag(eoEnhanceHomeKey, EnhanceHomeKeyChk.Checked);
   SetFlag(eoGroupUndo, GroupUndoChk.Checked);
   SetFlag(eoBracketHighlight, BracketHighlightChk.Checked);

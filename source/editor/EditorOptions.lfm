@@ -95,7 +95,7 @@ object EditorOptionsForm: TEditorOptionsForm
     Left = 14
     Height = 17
     Hint = 'When undoing/redoing actions, handle all continous changes of the same kind in one call instead undoing/redoing each command separately'
-    Top = 106
+    Top = 69
     Width = 74
     Caption = 'Group undo'
     TabOrder = 8
@@ -113,7 +113,7 @@ object EditorOptionsForm: TEditorOptionsForm
     Left = 14
     Height = 17
     Hint = 'if enabled, then the scrollbars will only show when necessary.  If you have ScrollPastEOL, then it the horizontal bar will always be there (it uses MaxLength instead)'
-    Top = 124
+    Top = 88
     Width = 73
     Caption = 'Word Wrap'
     TabOrder = 10
@@ -122,7 +122,7 @@ object EditorOptionsForm: TEditorOptionsForm
     Left = 14
     Height = 17
     Hint = 'Shows linebreaks, spaces and tabs using special symbols'
-    Top = 142
+    Top = 107
     Width = 97
     Caption = 'Bracket highlight'
     TabOrder = 11
@@ -212,32 +212,14 @@ object EditorOptionsForm: TEditorOptionsForm
       TabOrder = 4
     end
   end
-  object SmartTabsChk: TCheckBox
-    Left = 14
-    Height = 17
-    Hint = 'When using <Tab> key, caret will go to the next non-space character of the previous line'
-    Top = 69
-    Width = 68
-    Caption = 'Smart tabs'
-    TabOrder = 15
-  end
-  object SmartTabDeleteChk: TCheckBox
-    Left = 14
-    Height = 17
-    Hint = 'similar to Smart Tabs, but when you delete characters'
-    Top = 88
-    Width = 95
-    Caption = 'Smart tab delete'
-    TabOrder = 16
-  end
   object TabIndentChk: TCheckBox
     Left = 14
     Height = 17
     Hint = 'When active <Tab> and <Shift><Tab> act as block indent, unindent when text is selected'
-    Top = 31
+    Top = 30
     Width = 70
     Caption = 'Tab Indent'
-    TabOrder = 17
+    TabOrder = 15
   end
   object Label10: TLabel
     Left = 9
@@ -265,7 +247,7 @@ object EditorOptionsForm: TEditorOptionsForm
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 13
     Style = csDropDownList
-    TabOrder = 18
+    TabOrder = 16
   end
   object AutoUpdateFileChk: TCheckBox
     Left = 14
@@ -274,6 +256,6 @@ object EditorOptionsForm: TEditorOptionsForm
     Top = 191
     Width = 139
     Caption = 'Autoupdate if not modifed'
-    TabOrder = 19
+    TabOrder = 17
   end
 end

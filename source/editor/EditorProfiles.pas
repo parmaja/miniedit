@@ -60,7 +60,7 @@ type
 const
   cSynRequiredOptions = [eoDragDropEditing, eoTrimTrailingSpaces, eoDropFiles, eoShowCtrlMouseLinks, eoAltSetsColumnMode, eoScrollPastEol, eoRightMouseMovesCursor, eoHideRightMargin];
 
-  cSynRemoveOptions = [eoShowSpecialChars, eoScrollPastEof];
+  cSynRemoveOptions = [eoSmartTabs, eoSmartTabDelete, eoShowSpecialChars, eoScrollPastEof];
 
   cSynOverridedOptions = [];
 
