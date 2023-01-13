@@ -2242,17 +2242,21 @@ object MainForm: TMainForm
       object SCMAddFileMnu: TMenuItem
         Action = SCMAddFileAct
       end
-      object DiffMnu: TMenuItem
-        Action = SCMDiffFileAct
-        OnClick = SCMDiffFileActExecute
-      end
       object RevertMnu: TMenuItem
         Action = SCMRevertAct
         OnClick = SCMRevertActExecute
       end
+      object DiffMnu: TMenuItem
+        Action = SCMDiffFileAct
+        Caption = 'Compare File'
+        OnClick = SCMDiffFileActExecute
+      end
       object CompareToMnu: TMenuItem
         Action = SCMCompareToAct
         OnClick = SCMCompareToActExecute
+      end
+      object CompareLocalMnu: TMenuItem
+        Action = CompareLocalAct
       end
     end
     object Help1: TMenuItem
@@ -2921,6 +2925,11 @@ object MainForm: TMainForm
       Category = 'File'
       Caption = 'File Tendency'
       OnExecute = FileTendencyActExecute
+    end
+    object CompareLocalAct: TAction
+      Category = 'SCM'
+      Caption = 'Compare with Local'
+      OnExecute = CompareLocalActExecute
     end
   end
   object FolderMenu: TPopupMenu

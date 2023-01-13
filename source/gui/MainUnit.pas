@@ -68,12 +68,14 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
+    CompareLocalAct: TAction;
     FileTendencyAct: TAction;
     DBStartAct: TAction;
     BackwordSwitchFocusAct: TAction;
     MenuItem51: TMenuItem;
     MenuItem52: TMenuItem;
     MenuItem53: TMenuItem;
+    CompareLocalMnu: TMenuItem;
     NewSQLAct: TAction;
     DBRollbackAct: TAction;
     DBCommitAct: TAction;
@@ -429,6 +431,7 @@ type
     SwitchFocus1: TMenuItem;
     N16: TMenuItem;
     procedure BackwordSwitchFocusActExecute(Sender: TObject);
+    procedure CompareLocalActExecute(Sender: TObject);
     procedure DBDisconnectActExecute(Sender: TObject);
     procedure FileTendencyActExecute(Sender: TObject);
     procedure NewSQLActExecute(Sender: TObject);
@@ -929,6 +932,28 @@ end;
 procedure TMainForm.BackwordSwitchFocusActExecute(Sender: TObject);
 begin
   SwitchFocus(True);
+end;
+
+procedure TMainForm.CompareLocalActExecute(Sender: TObject);
+var
+  aFileName: string;
+  Values: TStringList;
+begin
+  Values := TStringList.Create;
+  try
+    if Engine.Files.Current.Tendency.EnableMacros then
+    begin
+      Engine.Files.Current.ScanValues(Values);
+      aFileName := Values.Values['localfile'];
+      if (aFileName <> '') and FileExists(aFileName) then
+      begin
+        Engine.SCM.DiffToFile(aFileName, Engine.Files.Current.FileName);
+        Engine.Files.CheckChanged;
+      end;
+    end;
+  finally
+    Values.Free;
+  end;
 end;
 
 procedure TMainForm.DBDisconnectActExecute(Sender: TObject);

@@ -109,3 +109,9 @@ object_rez(key id)
 {
 	|;
 }
+
+[attach]
+attach(key avatar)
+{
+	|
+}
