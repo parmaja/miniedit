@@ -5298,7 +5298,7 @@ begin
   try
     if Tendency.EnableMacros then
       Group.Category.ScanValues(Self, Values);
-    DoSave(AFileName);
+
     if Tendency.EnableMacros then
     begin
       try
@@ -5327,6 +5327,7 @@ begin
         end;
       end;
     end;
+    DoSave(AFileName);
     FileName := AFileName;
     IsChanged := False;
     IsTemporary := False;
@@ -5797,7 +5798,6 @@ procedure TEditorFile.ContentsLoadFromStream(SynEdit: TSynEdit; AStream: TStream
 var
   Contents: String;
   Size: Integer;
-  IndentMode: TIndentMode;
   Encoded: Boolean;
 begin
   SynEdit.BeginUpdate;
@@ -5809,13 +5809,6 @@ begin
     if not SameText(FileEncoding, EncodingUTF8) then
       Contents := ConvertEncodingToUTF8(Contents, FileEncoding, Encoded);
     LinesMode := DetectLinesMode(Contents);
-    IndentMode := Engine.Options.Profile.IndentMode;
-    if Tendency.OverrideEditorOptions then
-      IndentMode := Tendency.IndentMode;
-
-		if IndentMode > idntNone then
-      Contents := ConvertIndents(Contents, SynEdit.TabWidth, IndentMode);
-
     if IsNew then //there is no undo here
       SynEdit.Lines.Text := Contents
     else
