@@ -4679,11 +4679,21 @@ begin
       lFilePath := DequoteStr(ParamStr(2))
     else
       lFilePath := DequoteStr(ParamStr(1));
+    if FileExists(lFilePath) then
+    begin
+      Session.SetProject(DefaultProject, False);
+      Files.OpenFile(lFilePath, '', [ofoActivate, ofoByParam]);
+    end
+    else
+    begin
+		  if DirectoryExists(lFilePath) then
+        BrowseFolder := lFilePath
+      else
+        BrowseFolder := Options.LastFolder;
+      Session.SetProject(DefaultProject, False);
+    end;
     //BrowseFolder := ExtractFilePath(lFilePath);//nop maybe it is a temp folder check CanAddRecentFiles
     //The filename is expanded, if necessary, in EditorEngine.TEditorFiles.InternalOpenFile
-    BrowseFolder := Options.LastFolder;
-    Session.SetProject(DefaultProject, False);
-    Files.OpenFile(lFilePath, '', [ofoActivate, ofoByParam]);
   end
   else
   begin
