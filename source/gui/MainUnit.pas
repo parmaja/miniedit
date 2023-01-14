@@ -997,7 +997,7 @@ begin
       if DirectoryExists(A) and (i = 0) then
         aFolder := A
       else if FileExists(A) then
-        Engine.Files.OpenFile(A, '', True);
+        Engine.Files.OpenFile(A, '', [ofoActivate]);
     end;
     if aFolder <> '' then
       Folder := aFolder;
@@ -1507,7 +1507,7 @@ begin
     if FileList.Selected.Data = nil then
       FollowFolder(FileList.Selected.Caption, FileList.Focused)
     else
-      Engine.Files.OpenFile(Folder + FileList.Selected.Caption, '', True);
+      Engine.Files.OpenFile(Folder + FileList.Selected.Caption, '', [ofoActivate]);
   end;
 end;
 

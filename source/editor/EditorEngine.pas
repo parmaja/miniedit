@@ -850,6 +850,9 @@ type
   public
   end;
 
+  TOpenFileOption = (ofoActivate, ofoByParam);
+  TOpenFileOptions = set of TOpenFileOption;
+
   { TEditorFiles }
 
   TEditorFiles = class(TCollection)
@@ -870,7 +873,7 @@ type
     function LoadFile(vFileName, vFileParams: String; AppendToRecent: Boolean = True): TEditorFile;
     function ShowFile(vFileName: String): TEditorFile; overload; //open it without add to recent, for debuging
     function ShowFile(const FileName: String; Line: Integer): TEditorFile; overload;
-    function OpenFile(vFileName: String; vFileParams: String = ''; ActivateIt: Boolean = False): TEditorFile;
+    function OpenFile(vFileName: String; vFileParams: String = ''; OpenFileOptions: TOpenFileOptions = []): TEditorFile;
     procedure SetCurrentIndex(Index: Integer; vRefresh: Boolean);
     function New(vGroup: TFileGroup = nil): TEditorFile; overload;
     function New(GroupName: String): TEditorFile; overload;
@@ -1541,9 +1544,9 @@ procedure SaveAsWindows(Strings: TStrings; Stream: TStream);
 procedure SaveAsMAC(Strings: TStrings; Stream: TStream);
 procedure SaveAsMode(const FileName: String; Mode: TEditorLinesMode; Strings: TStrings);
 
-function ConvertToLines(Contents: String; Mode: TEditorLinesMode; TabWidth: Integer; IndentMode: TIndentMode = idntTabsToSpaces): String;
 function DetectLinesMode(const Contents: String): TEditorLinesMode;
 function ConvertIndents(const Contents: String; TabWidth: Integer; Options: TIndentMode = idntTabsToSpaces): String;
+function CorrectFileText(Contents: String; Mode: TEditorLinesMode; TabWidth: Integer; IndentMode: TIndentMode = idntTabsToSpaces): String;
 
 //EnumFileList return false if canceled by callback function
 type
@@ -4224,7 +4227,7 @@ begin
   end;
 end;
 
-function TEditorFiles.OpenFile(vFileName: String; vFileParams: String; ActivateIt: Boolean): TEditorFile;
+function TEditorFiles.OpenFile(vFileName: String; vFileParams: String; OpenFileOptions: TOpenFileOptions): TEditorFile;
 begin
   if SameText(ExtractFileExt(vFileName), Engine.Extenstion) then //zaher need dot
   begin
@@ -4237,8 +4240,11 @@ begin
     if Result <> nil then
     begin
       Current := Result;
-      if ActivateIt and not Result.Activated then
+      if (ofoActivate in OpenFileOptions) and not Result.Activated then
         Result.Activate;
+      if (ofoByParam in OpenFileOptions) and Result.CanAddRecentFiles and (not Engine.Session.Active) then
+        if Count = 1 then //first one
+          Engine.BrowseFolder := ExtractFilePath(vFileName);
     end;
   end;
 end;
@@ -4673,10 +4679,11 @@ begin
       lFilePath := DequoteStr(ParamStr(2))
     else
       lFilePath := DequoteStr(ParamStr(1));
-    BrowseFolder := ExtractFilePath(lFilePath);
+    //BrowseFolder := ExtractFilePath(lFilePath);//nop maybe it is a temp folder check CanAddRecentFiles
     //The filename is expanded, if necessary, in EditorEngine.TEditorFiles.InternalOpenFile
+    BrowseFolder := Options.LastFolder;
     Session.SetProject(DefaultProject, False);
-    Files.OpenFile(lFilePath, '', True);
+    Files.OpenFile(lFilePath, '', [ofoActivate, ofoByParam]);
   end
   else
   begin
@@ -4788,7 +4795,8 @@ procedure TEditorEngine.Shutdown;
 var
   i: Integer;
 begin
- Options.LastFolder := BrowseFolder;
+  if BrowseFolder <> '' then
+    Options.LastFolder := BrowseFolder;
   if (FEngineLife > engnNone) and (FEngineLife < engnShutdowned) then
   begin
     if Session.Active and (Session.Project.FileName <> '') then
@@ -5299,6 +5307,7 @@ begin
     if Tendency.EnableMacros then
       Group.Category.ScanValues(Self, Values);
 
+    //* check to backup file
     if Tendency.EnableMacros then
     begin
       try
@@ -5327,16 +5336,16 @@ begin
         end;
       end;
     end;
-    DoSave(AFileName);
-    FileName := AFileName;
-    IsChanged := False;
-    IsTemporary := False;
-    IsNew := False;
-    Engine.Update([ecsFolder]);
-    UpdateAge;
   finally
     FreeAndNil(Values);
   end;
+  DoSave(AFileName);
+  FileName := AFileName;
+  IsChanged := False;
+  IsTemporary := False;
+  IsNew := False;
+  Engine.Update([ecsFolder]);
+  UpdateAge;
 end;
 
 procedure TEditorFile.Rename(ToName: String);
@@ -5836,7 +5845,7 @@ begin
   if Tendency.OverrideEditorOptions then
     IndentMode := Tendency.IndentMode;
 
-  Contents := ConvertToLines(SynEdit.Lines.Text, LinesMode, SynEdit.TabWidth, IndentMode);
+  Contents := CorrectFileText(SynEdit.Lines.Text, LinesMode, SynEdit.TabWidth, IndentMode);
 
   if not SameText(FileEncoding, EncodingUTF8) then
   begin
@@ -5904,30 +5913,6 @@ end;
 function TEditorFile.CanAddRecentFiles: Boolean;
 begin
   Result := True;
-end;
-
-function ConvertToLines(Contents: String; Mode: TEditorLinesMode; TabWidth: Integer; IndentMode: TIndentMode): String;
-var
-  Strings: TStringList;
-  i: Integer;
-begin
-  Strings := TStringList.Create;
-  try
-    Strings.Text := Contents;
-    if IndentMode > idntNone then
-      for i := 0 to Strings.Count-1 do
-        Strings[i] := ConvertIndents(Strings[i], TabWidth, IndentMode);
-
-    case Mode of
-      efmWindows: Strings.LineBreak := #$D#$A;
-      efmMac: Strings.LineBreak := #$D;
-      else
-        Strings.LineBreak := #$A;
-    end;
-    Result := Strings.Text;
-  finally
-    Strings.Free;
-  end;
 end;
 
 function DetectLinesMode(const Contents: String): TEditorLinesMode;
@@ -6019,6 +6004,30 @@ begin
   begin
     ScanSpaces;
     ScanToEOL;
+  end;
+end;
+
+function CorrectFileText(Contents: String; Mode: TEditorLinesMode; TabWidth: Integer; IndentMode: TIndentMode): String;
+var
+  Strings: TStringList;
+  i: Integer;
+begin
+  Strings := TStringList.Create;
+  try
+    Strings.Text := Contents;
+    if IndentMode > idntNone then
+      for i := 0 to Strings.Count-1 do
+        Strings[i] := ConvertIndents(Strings[i], TabWidth, IndentMode);
+
+    case Mode of
+      efmWindows: Strings.LineBreak := #$D#$A;
+      efmMac: Strings.LineBreak := #$D;
+      else
+        Strings.LineBreak := #$A;
+    end;
+    Result := Strings.Text;
+  finally
+    Strings.Free;
   end;
 end;
 
