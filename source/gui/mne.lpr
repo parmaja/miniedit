@@ -155,6 +155,12 @@ begin
   try
     Application.CreateForm(TEditorResource, EditorResource);
     Application.CreateForm(TMainForm, MainForm);
+  finally
+    Engine.EndUpdate;
+  end;
+  //to sure options updated when created form, now we start new beginupdate
+  Engine.BeginUpdate;
+  try
     try
       MainForm.Show;
       Application.ProcessMessages;

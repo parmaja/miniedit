@@ -741,7 +741,7 @@ type
     procedure Cut; virtual;
     procedure SelectAll; virtual;
 
-    procedure ScanValues(Values: TStringList);
+    procedure ScanValues(Values: TStringList; UpdateValues: Boolean = False);
     procedure EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips); virtual;
     function ReplaceVariables(S: String; EnumSkips: TEnumVariablesSkips; AValues: TStringList = nil): String;
 
@@ -1128,7 +1128,7 @@ type
     procedure EnumExtensions(vExtensions: TStringList);
     function GetExtensions: String;
 
-    procedure ScanValues(AFile: TEditorFile; Values: TStringList); virtual;
+    procedure ScanValues(AFile: TEditorFile; Values: TStringList; UpdateValues: Boolean = False); virtual;
 
     procedure EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips); virtual;
     function ReplaceVariables(S: String; Values: TStringList; EnumSkips: TEnumVariablesSkips): String;
@@ -1187,7 +1187,7 @@ type
 
   TCodeFileCategory = class(TTextFileCategory)
   protected
-    procedure ScanValues(AFile: TEditorFile; Values: TStringList); override;
+    procedure ScanValues(AFile: TEditorFile; Values: TStringList; UpdateValues: Boolean = False); override;
     procedure CacheKeywords(Files: TStringList); virtual;
     procedure DoPrepareCompletion(AEditor: TCustomSynEdit); override;
   end;
@@ -2096,7 +2096,7 @@ end;
 
 { TCodeFileCategory }
 
-procedure TCodeFileCategory.ScanValues(AFile: TEditorFile; Values: TStringList);
+procedure TCodeFileCategory.ScanValues(AFile: TEditorFile; Values: TStringList; UpdateValues: Boolean);
 
   function ScanID(s: String; start: Integer; out Stop: integer; out Name, Value: String): Boolean;
   begin
@@ -2209,22 +2209,25 @@ begin
         finally
         end;
       end;
-      aSynEdit.BeginUpdate(False);
-      try
-        for item in ScannedValues do
-        begin
-          {
-          nop no undo work into
-          Line := aSynEdit.Lines[item.Line];
-          aSynEdit.Lines[Item.Line] := MidStr(aLine, 1, item.x1) + Item.Value + MidStr(aLine, item.x2, MaxInt);
-          }
-          p1 := Point(item.X1 + 1, item.Line + 1);
-          p2 := Point(Item.X2, item.Line + 1);
-          aSynEdit.TextBetweenPointsEx[p1, p2, scamIgnore] := Item.Value;
+      if UpdateValues then
+      begin
+        aSynEdit.BeginUpdate(False);
+        try
+          for item in ScannedValues do
+          begin
+            {
+            nop no undo work into
+            Line := aSynEdit.Lines[item.Line];
+            aSynEdit.Lines[Item.Line] := MidStr(aLine, 1, item.x1) + Item.Value + MidStr(aLine, item.x2, MaxInt);
+            }
+            p1 := Point(item.X1 + 1, item.Line + 1);
+            p2 := Point(Item.X2, item.Line + 1);
+            aSynEdit.TextBetweenPointsEx[p1, p2, scamIgnore] := Item.Value;
 
+          end;
+        finally
+          aSynEdit.EndUpdate;
         end;
-      finally
-        aSynEdit.EndUpdate;
       end;
     finally
       FreeAndNil(ScannedValues);
@@ -4022,8 +4025,8 @@ end;
 
 function TEditorEngine.GetSCM: TEditorSCM;
 begin
-//  if Session.Active then
-  Result := Session.Project.SCM;
+  if Session.Project <> nil then
+    Result := Session.Project.SCM;
 end;
 
 function TEditorEngine.GetCurrentTendency: TEditorTendency;
@@ -5315,7 +5318,7 @@ begin
   Values := TStringList.Create;
   try
     if Tendency.EnableMacros then
-      Group.Category.ScanValues(Self, Values);
+      ScanValues(Values, True);
 
     //* check to backup file
     if Tendency.EnableMacros then
@@ -5328,7 +5331,7 @@ begin
           if SameText(aName, '@localfile') then
           begin
               BackupFileName := DequoteStr(aValue, '"');
-              BackupFileName := ReplaceVariables(BackupFileName, [], Values);
+              //BackupFileName := ReplaceVariables(BackupFileName, [], Values);
               BackupFileName := ExpandToPath(BackupFileName, Engine.Session.Project.DefaultPath);
               if not SameFileName(BackupFileName, AFileName) then //not the same file
               begin
@@ -5664,9 +5667,13 @@ procedure TEditorFile.SelectAll;
 begin
 end;
 
-procedure TEditorFile.ScanValues(Values: TStringList);
+procedure TEditorFile.ScanValues(Values: TStringList; UpdateValues: Boolean);
+var
+  i: Integer;
 begin
-  Group.Category.ScanValues(Self, Values);
+  Group.Category.ScanValues(Self, Values, UpdateValues);
+  for i := 0 to Values.Count-1 do
+    Values[i] := ReplaceVariables(Values[i], [], Values);
 end;
 
 procedure TEditorFile.EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips);
@@ -6684,7 +6691,7 @@ begin
   Result := nil;
 end;
 
-procedure TVirtualCategory.ScanValues(AFile: TEditorFile; Values: TStringList);
+procedure TVirtualCategory.ScanValues(AFile: TEditorFile; Values: TStringList; UpdateValues: Boolean);
 begin
 end;
 

@@ -93,8 +93,6 @@ end;
 
 procedure TTGIT_SCM.Execute(App, Cmd: string);
 begin
-  if not FileExists(App) then
-    raise Exception.Create('File not found:' + App);
   if ShellExecute(0, nil, PChar(App), PChar(Cmd), PChar(ExtractFilePath(App)), 1) < 32 then
     RaiseLastOSError;
 end;

@@ -939,20 +939,24 @@ var
   aFileName: string;
   Values: TStringList;
 begin
-  Values := TStringList.Create;
-  try
-    if Engine.Files.Current.Tendency.EnableMacros then
-    begin
-      Engine.Files.Current.ScanValues(Values);
-      aFileName := Values.Values['localfile'];
-      if (aFileName <> '') and FileExists(aFileName) then
+  if Engine.Files.Current <> nil then
+  begin
+    Values := TStringList.Create;
+    try
+      if Engine.Files.Current.Tendency.EnableMacros then
       begin
-        Engine.SCM.DiffToFile(aFileName, Engine.Files.Current.FileName);
-        Engine.Files.CheckChanged;
+        Engine.Files.Current.ScanValues(Values);
+        aFileName := DequoteStr(Values.Values['@localfile']);
+        aFileName := ExpandToPath(aFileName , Engine.Session.Project.DefaultPath);
+        if (aFileName <> '') and FileExists(aFileName) and not SameFileName(aFileName, Engine.Files.Current.FileName) then
+        begin
+          Engine.SCM.DiffToFile(aFileName, Engine.Files.Current.FileName);
+          Engine.Files.CheckChanged;
+        end;
       end;
+    finally
+      Values.Free;
     end;
-  finally
-    Values.Free;
   end;
 end;
 
