@@ -76,19 +76,19 @@ procedure TTGIT_SCM.RevertFile(FileName: string);
 begin
 end;
 
-procedure TTGIT_SCM.DiffFile(FileName: string);
-begin
-  Execute(TortoiseProc, '/command:diff /path:"' + FileName + '" /notempfile /closeonend');
-end;
-
 procedure TTGIT_SCM.AddFile(FileName: string);
 begin
   Execute(TortoiseProc, '/command:add /path:"' + FileName + '" /notempfile /closeonend');
 end;
 
+procedure TTGIT_SCM.DiffFile(FileName: string);
+begin
+  Execute(TortoiseProc, '/command:diff /path:"' + FileName + '" /notempfile /closeonend');
+end;
+
 procedure TTGIT_SCM.DiffToFile(FileName, ToFileName: string);
 begin
-  Execute(TortoiseMerge, '/base:"' + FileName + '" /mine:' + ToFileName);
+  Execute(TortoiseMerge, '/base:"' + FileName + '" /mine:"' + ToFileName+'"');
 end;
 
 procedure TTGIT_SCM.Execute(App, Cmd: string);

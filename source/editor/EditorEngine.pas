@@ -32,7 +32,7 @@ Portable Notes:
 interface
 
 uses
-  Messages, SysUtils, Forms, StdCtrls, StrUtils, Dialogs, Variants, Classes, Menus, Controls,
+  Messages, SysUtils, Forms, StdCtrls, StrUtils, DateUtils, Dialogs, Variants, Classes, Menus, Controls,
   LCLIntf, LConvEncoding, LazUTF8, fgl, LCLType,
   FileUtil, LazFileUtils, Math, Masks,
   Graphics, Contnrs, Types, IniFiles,
@@ -640,7 +640,7 @@ type
     FFileName: String;
     FIsNew: Boolean;
     FIsChanged: Boolean;
-    FFileAge: Integer;
+    FFileDate: TDateTime;
     FFileSize: Int64;
     FGroup: TFileGroup;
     FParams: String;
@@ -757,6 +757,7 @@ type
     property NickName: String read GetNickName write SetNickName; //no path without ext
     property Title: String read FTitle write FTitle; //used only if Name is empty for temporary files
     property Path: String read GetPath;
+    property FileDate: TDateTime read FFileDate;
     property Params: String read FParams write FParams;
     property Extension: String read GetExtension write SetExtension;
     property Tendency: TEditorTendency read GetTendency;
@@ -1545,8 +1546,9 @@ procedure SaveAsMAC(Strings: TStrings; Stream: TStream);
 procedure SaveAsMode(const FileName: String; Mode: TEditorLinesMode; Strings: TStrings);
 
 function DetectLinesMode(const Contents: String): TEditorLinesMode;
-function ConvertIndents(const Contents: String; TabWidth: Integer; Options: TIndentMode = idntTabsToSpaces): String;
-function CorrectFileText(Contents: String; Mode: TEditorLinesMode; TabWidth: Integer; IndentMode: TIndentMode = idntTabsToSpaces): String;
+function ConvertLineIndents(const Line: String; TabWidth: Integer; Options: TIndentMode = idntTabsToSpaces): String;
+//function ConvertIndents(const Contents: String; TabWidth: Integer; Options: TIndentMode = idntTabsToSpaces): String;
+//function CorrectFileText(Contents: String; Mode: TEditorLinesMode; TabWidth: Integer; IndentMode: TIndentMode = idntTabsToSpaces): String;
 
 //EnumFileList return false if canceled by callback function
 type
@@ -2185,7 +2187,12 @@ begin
                     aValue := Trim(aValue);
                     if aName = '@updated' then
                     begin
-                      aValue := ' "' + ISODateToStr(Now, '-', ' ', True) + '"';
+                      aValue := ' "' + ISODateToStr(AFile.FileDate, '-', ' ', True) + '"';
+                      UpdateValue(aName, aValue);
+                    end
+                    else if aName = '@timestamp' then
+                    begin
+                      aValue := ' ' + IntToStr(DateTimeToUnix(AFile.FileDate));
                       UpdateValue(aName, aValue);
                     end
                     else if aName = '@revision' then
@@ -4883,10 +4890,10 @@ begin
   begin
     Values.Merge('Date', ISODateToStr(Now, '-', ' ', False));
     Values.Merge('DateTime', ISODateToStr(Now, '-', ' ', True));
+    Values.Merge('TimeStamp', IntToStr(DateTimeToUnix(Now)));
 
     Values.Merge('FileDate', ISODateToStr(Now, '-', '-', '-', False));
     Values.Merge('FileDateTime', ISODateToStr(Now, '-', '-', '-', True));
-
 
     if not (evsEnviroment in EnumSkips) then
       Values.Merge(Environment);
@@ -5272,6 +5279,8 @@ begin
 end;
 
 procedure TEditorFile.LoadFromFile(AFileName: String);
+{var
+  aBackupFileName: string;}
 begin
   FileName := ExpandFileName(AFileName);
   FileName := AFileName;
@@ -5287,6 +5296,18 @@ begin
   IsTemporary := False;
   IsNew := False;
   UpdateAge;
+  {if Tendency.EnableMacros then
+  begin
+    Engine.Files.Current.ScanValues(Values);
+    aBackupFileName := DequoteStr(Values.Values['@localfile']);
+    aBackupFileName := ExpandToPath(aBackupFileName , Engine.Session.Project.DefaultPath);
+    if (aBackupFileName <> '') and FileExists(aBackupFileName) and not SameFileName(aBackupFileName, Engine.Files.Current.FileName) then
+    begin
+      Engine.SendMessage('There is a backup file check if there is a differents: ' + aBackupFileName, msgtStatus);
+      //DequoteStr(Values.Values['@localfile']);
+      //MsgBox.Yes()
+    end;
+  end;}
 end;
 
 procedure SaveAsMode(const FileName: String; Mode: TEditorLinesMode; Strings: TStrings);
@@ -5315,6 +5336,7 @@ var
   i: Integer;
   aName, aValue: string;
 begin
+  FFileDate := Now;
   Values := TStringList.Create;
   try
     if Tendency.EnableMacros then
@@ -5357,6 +5379,7 @@ begin
   IsChanged := False;
   IsTemporary := False;
   IsNew := False;
+  FileSetDate(FileName, FileDate);
   Engine.Update([ecsFolder]);
   UpdateAge;
 end;
@@ -5527,7 +5550,7 @@ begin
   Result := True;
   if (FileName <> '') and (FileExists(FileName)) then //even if marked as new
   begin
-    if IsNew or ((FFileAge <> FileAge(FileName)) or (FFileSize <> FileSize(FileName))) then
+    if IsNew or ((FFileDate <> FileDateToDateTime(FileAge(FileName))) or (FFileSize <> FileSize(FileName))) then
     begin
       if Force or (Engine.Options.Profile.AutoUpdateFile and not IsChanged) then
         mr := msgcYes
@@ -5714,7 +5737,7 @@ end;
 
 procedure TEditorFile.UpdateAge;
 begin
-  FFileAge := FileAge(FileName);
+  FFileDate := FileDateToDateTime(FileAge(FileName));
   FFileSize := FileSize(FileName);
   IsNew := False;
 end;
@@ -5835,6 +5858,8 @@ begin
     if not SameText(FileEncoding, EncodingUTF8) then
       Contents := ConvertEncodingToUTF8(Contents, FileEncoding, Encoded);
     LinesMode := DetectLinesMode(Contents);
+    if Contents <> '' then
+      Contents := Contents + #13#10; //TODO stupid idea because SetText of strings ignore last line
     if IsNew then //there is no undo here
       SynEdit.Lines.Text := Contents
     else
@@ -5853,7 +5878,7 @@ begin
   end;
 end;
 
-procedure TEditorFile.ContentsSaveToStream(SynEdit: TSynEdit; AStream: TStream);
+{procedure TEditorFile.ContentsSaveToStream(SynEdit: TSynEdit; AStream: TStream);
 var
   Contents: Rawbytestring;
   IndentMode: TIndentMode;
@@ -5876,6 +5901,46 @@ begin
   end;
 
   AStream.WriteBuffer(Pointer(Contents)^, Length(Contents));
+end;}
+
+procedure TEditorFile.ContentsSaveToStream(SynEdit: TSynEdit; AStream: TStream);
+var
+//  Contents: Rawbytestring;
+  IndentMode: TIndentMode;
+  Line: Rawbytestring;
+  i: Integer;
+begin
+  IndentMode := Engine.Options.Profile.IndentMode;
+  if Tendency.OverrideEditorOptions then
+    IndentMode := Tendency.IndentMode;
+
+  if not SameText(FileEncoding, EncodingUTF8) then
+  begin
+    if FileEncoding = EncodingUTF8 then
+      AStream.WriteBuffer(UTF8BOM, Length(UTF8BOM))
+    else if FileEncoding = EncodingUCS2LE then
+      AStream.WriteBuffer(UTF16LEBOM, Length(UTF16LEBOM))
+    else if FileEncoding = EncodingUCS2BE then
+      AStream.WriteBuffer(@UTF16BEBOM[1], Length(UTF16BEBOM))
+  end;
+
+  for i := 0 to SynEdit.Lines.Count - 1 do
+  begin
+    Line := ConvertLineIndents(SynEdit.Lines[i], SynEdit.TabWidth, IndentMode);
+    if (i < SynEdit.Lines.Count - 1) then // Not Last Line
+    begin
+      case LinesMode of
+        efmWindows:
+				  Line := Line + #$D#$A;
+        efmMac:
+				  Line := Line + #$D;
+        else
+          Line := Line + #$A;
+      end;
+    end;
+    Line := ConvertEncoding(Line, EncodingUTF8, FileEncoding, False);
+    AStream.WriteBuffer(Pointer(Line)^, Length(Line));
+  end;
 end;
 
 procedure TEditorFile.ContentsLoadFromFile(SynEdit: TSynEdit; FileName: String);
@@ -5955,6 +6020,45 @@ begin
   end;
 end;
 
+function ConvertLineIndents(const Line: String; TabWidth: Integer; Options: TIndentMode): String;
+var
+  l, i, c, t: Integer;
+begin
+  Result := '';
+  c := 0;
+  l := Length(Line);
+  i := 1;
+  while i <= l do
+  begin
+    if Line[i] = ' ' then
+      c := c + 1
+    else if Line[i] = #9 then
+      c := c + TabWidth
+    else
+      break;
+    Inc(i);
+  end;
+
+  t := 0;
+  if Options = idntSpacesToTabs then
+  begin
+    t := c div TabWidth;
+    c := c mod TabWidth;
+  end
+  else if Options = idntAlignSpaces then
+    c := Ceil(c / TabWidth) * TabWidth
+  else if Options = idntAlignTabs then
+  begin
+    c := Ceil(c / TabWidth) * TabWidth;
+    t := c div TabWidth;
+    c := c mod TabWidth; //* or c := 0
+  end;
+
+  Result := Copy(Line, i, MaxInt);
+  Result := RepeatString(#9, t) + RepeatString(' ', c)+ Copy(Line, i, MaxInt);
+end;
+
+{ bug when one line without eol
 function ConvertIndents(const Contents: String; TabWidth: Integer; Options: TIndentMode): String;
 var
   p, l: Integer;
@@ -6022,9 +6126,9 @@ begin
     ScanSpaces;
     ScanToEOL;
   end;
-end;
+end;}
 
-function CorrectFileText(Contents: String; Mode: TEditorLinesMode; TabWidth: Integer; IndentMode: TIndentMode): String;
+{function CorrectFileText(Contents: String; Mode: TEditorLinesMode; TabWidth: Integer; IndentMode: TIndentMode): String;
 var
   Strings: TStringList;
   i: Integer;
@@ -6046,7 +6150,7 @@ begin
   finally
     Strings.Free;
   end;
-end;
+end;}
 
 function TEditorFile.GetLinesModeAsText: String;
 begin
