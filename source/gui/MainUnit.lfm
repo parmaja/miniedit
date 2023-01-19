@@ -138,22 +138,22 @@ object MainForm: TMainForm
   end
   object ClientPnl: TPanel
     Left = 269
-    Height = 315
+    Height = 294
     Top = 29
     Width = 752
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 315
+    ClientHeight = 294
     ClientWidth = 752
     TabOrder = 0
     object EditorsPnl: TPanel
       Left = 0
-      Height = 290
+      Height = 269
       Top = 25
       Width = 752
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 290
+      ClientHeight = 269
       ClientWidth = 752
       FullRepaint = False
       TabOrder = 0
@@ -318,7 +318,7 @@ object MainForm: TMainForm
   end
   object BrowserPnl: TntvPanel
     Left = 0
-    Height = 315
+    Height = 294
     Top = 29
     Width = 269
     Align = alLeft
@@ -326,7 +326,7 @@ object MainForm: TMainForm
     ResizeStyle = nrsUpdate
     object BrowserTabs: TntvPageControl
       Left = 0
-      Height = 310
+      Height = 289
       Top = 5
       Width = 261
       BorderSpacing.Top = 5
@@ -355,21 +355,21 @@ object MainForm: TMainForm
       TabOrder = 0
       object ProjectPnl: TntvPanel
         Left = 3
-        Height = 284
+        Height = 263
         Top = 23
         Width = 255
         Align = alClient
       end
       object DatabasePnl: TntvPanel
         Left = 3
-        Height = 284
+        Height = 263
         Top = 23
         Width = 255
         Align = alClient
       end
       object FolderPnl: TPanel
         Left = 3
-        Height = 284
+        Height = 263
         Top = 23
         Width = 255
         Align = alClient
@@ -377,12 +377,12 @@ object MainForm: TMainForm
         Caption = 'FolderPnl'
         ChildSizing.HorizontalSpacing = 3
         ChildSizing.VerticalSpacing = 3
-        ClientHeight = 284
+        ClientHeight = 263
         ClientWidth = 255
         TabOrder = 0
         object FileList: TListView
           Left = 0
-          Height = 233
+          Height = 212
           Top = 23
           Width = 255
           Align = alClient
@@ -408,7 +408,7 @@ object MainForm: TMainForm
         object Panel1: TPanel
           Left = 0
           Height = 25
-          Top = 259
+          Top = 238
           Width = 255
           Align = alBottom
           BevelOuter = bvNone
@@ -488,7 +488,7 @@ object MainForm: TMainForm
   object MessagesPnl: TntvPanel
     Left = 0
     Height = 183
-    Top = 344
+    Top = 323
     Width = 1021
     Align = alBottom
     Constraints.MinWidth = 100
@@ -1833,6 +1833,16 @@ object MainForm: TMainForm
       end
     end
   end
+  object MessagePanel: TPanel
+    Left = 0
+    Height = 21
+    Top = 506
+    Width = 1021
+    Align = alBottom
+    BevelOuter = bvNone
+    TabOrder = 5
+    Visible = False
+  end
   object MainMenu: TMainMenu
     Images = EditorResource.ToolbarImageList
     Left = 196
@@ -3118,8 +3128,8 @@ object MainForm: TMainForm
     end
   end
   object WatchesPopupMenu: TPopupMenu
-    Left = 297
-    Top = 254
+    Left = 392
+    Top = 436
     object Add1: TMenuItem
       Caption = 'Add'
       OnClick = Add1Click
@@ -3169,8 +3179,8 @@ object MainForm: TMainForm
   object StatusTimer: TTimer
     Interval = 5000
     OnTimer = StatusTimerTimer
-    Left = 371
-    Top = 198
+    Left = 36
+    Top = 484
   end
   object MessagesPopup: TPopupMenu
     Left = 153

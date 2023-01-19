@@ -139,6 +139,7 @@ type
     FilesSearchTimer: TTimer;
     CommitBtn: TToolButton;
     RollbackBtn: TToolButton;
+    MessagePanel: TPanel;
     ToolButton9: TToolButton;
     UTF8BOMMnu: TMenuItem;
     UC16BEBOMMnu: TMenuItem;
@@ -2262,7 +2263,7 @@ end;
 
 procedure TMainForm.CopyActExecute(Sender: TObject);
 begin
-  Engine.Files.Current.CanCopy;
+  Engine.Files.Current.Copy;
 end;
 
 procedure TMainForm.CutActExecute(Sender: TObject);
