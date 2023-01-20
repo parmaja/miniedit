@@ -393,7 +393,6 @@ type
     Delete1: TMenuItem;
     N13: TMenuItem;
     Refresh1: TMenuItem;
-    ShowValue1: TMenuItem;
     DBGToggleBreakpointAct: TAction;
     N14: TMenuItem;
     DBGToggleBreakpoint1: TMenuItem;

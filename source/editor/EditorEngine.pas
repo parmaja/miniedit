@@ -5858,16 +5858,19 @@ begin
     if not SameText(FileEncoding, EncodingUTF8) then
       Contents := ConvertEncodingToUTF8(Contents, FileEncoding, Encoded);
     LinesMode := DetectLinesMode(Contents);
-    if Contents <> '' then
-      Contents := Contents + #13#10; //TODO stupid idea because SetText of strings ignore last line
     if IsNew then //there is no undo here
+    begin
+      if (Contents <> '') and ((Contents[Length(Contents)] = #13) or (Contents[Length(Contents)] = #10)) then
+        Contents := Contents + #13#10; //TODO stupid idea because SetText of strings ignore last line
       SynEdit.Lines.Text := Contents
+    end
     else
     begin
       SynEdit.BeginUndoBlock;  //adding it to history of undo, so we can undo the revert to changes in by external
       try
+        //SynEdit.Lines.Text := Contents
+        //SynEdit.Text := Contents
         SynEdit.TextBetweenPoints[Point(1, 1), Point(length(SynEdit.Lines[SynEdit.Lines.Count - 1]) + 1, SynEdit.Lines.Count)] := Contents;
-        //SynEdit.Text := Contents;
       finally
         SynEdit.EndUndoBlock;
       end;

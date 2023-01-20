@@ -2945,8 +2945,8 @@ object MainForm: TMainForm
   end
   object FolderMenu: TPopupMenu
     Images = EditorResource.ToolbarImageList
-    Left = 196
-    Top = 169
+    Left = 168
+    Top = 208
     object Home1: TMenuItem
       Action = FolderHomeAct
       OnClick = FolderHomeActExecute
@@ -3044,8 +3044,8 @@ object MainForm: TMainForm
     Images = EditorResource.ToolbarImageList
     TrackButton = tbLeftButton
     OnPopup = EditorPopupMenuPopup
-    Left = 632
-    Top = 272
+    Left = 572
+    Top = 176
     object MenuItem47: TMenuItem
       Action = SetAsMainFileAc
     end
@@ -3102,9 +3102,6 @@ object MainForm: TMainForm
     object oggleBreakpoint1: TMenuItem
       Action = DBGToggleBreakpointAct
       OnClick = DBGToggleBreakpointActExecute
-    end
-    object ShowValue1: TMenuItem
-      Caption = 'Show Value'
     end
     object AddWatch1: TMenuItem
       Action = DBGAddWatchAct
@@ -3221,8 +3218,8 @@ object MainForm: TMainForm
     Top = 440
   end
   object MainFilePopupMnu: TPopupMenu
-    Left = 420
-    Top = 114
+    Left = 616
+    Top = 16
     object MenuItem39: TMenuItem
       Action = ResetMainFileAct
     end
@@ -3232,8 +3229,8 @@ object MainForm: TMainForm
     end
   end
   object EncodeModeMenu: TPopupMenu
-    Left = 772
-    Top = 79
+    Left = 896
+    Top = 40
     object UTF8Mnu: TMenuItem
       Caption = 'UTF8'
       OnClick = UTF8MnuClick
