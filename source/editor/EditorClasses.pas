@@ -95,8 +95,11 @@ uses
     );
     TEditorAction = (eaShowFolders, eaShowDatabases, eaShowProject, eaClearOutput, eaClearLog, eaEnd);
 
+    TMessageKind = (mskInfo, mskHint, mskWarning, mskError);
+
     TMessageInfo = record
       Processed: Boolean;
+      Kind: TMessageKind;
       MessageType: TNotifyMessageType;
       ID: Integer;
       Line: Integer;

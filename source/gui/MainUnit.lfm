@@ -2942,11 +2942,29 @@ object MainForm: TMainForm
       Caption = 'Compare with Local'
       OnExecute = CompareLocalActExecute
     end
+    object UndoAct: TAction
+      Category = 'Edit'
+      Caption = 'Undo'
+      OnExecute = UndoActExecute
+      OnUpdate = UndoActUpdate
+    end
+    object RedoAct: TAction
+      Category = 'Edit'
+      Caption = 'Redo'
+      OnExecute = RedoActExecute
+      OnUpdate = RedoActUpdate
+    end
+    object ClearUndoAct: TAction
+      Category = 'Edit'
+      Caption = 'Clear Undo'
+      OnExecute = ClearUndoActExecute
+      OnUpdate = ClearUndoActUpdate
+    end
   end
   object FolderMenu: TPopupMenu
     Images = EditorResource.ToolbarImageList
-    Left = 168
-    Top = 208
+    Left = 153
+    Top = 192
     object Home1: TMenuItem
       Action = FolderHomeAct
       OnClick = FolderHomeActExecute
@@ -3044,7 +3062,7 @@ object MainForm: TMainForm
     Images = EditorResource.ToolbarImageList
     TrackButton = tbLeftButton
     OnPopup = EditorPopupMenuPopup
-    Left = 572
+    Left = 576
     Top = 176
     object MenuItem47: TMenuItem
       Action = SetAsMainFileAc
@@ -3091,6 +3109,18 @@ object MainForm: TMainForm
       OnClick = SelectAllActExecute
     end
     object N5: TMenuItem
+      Caption = '-'
+    end
+    object MenuItem56: TMenuItem
+      Action = UndoAct
+    end
+    object MenuItem55: TMenuItem
+      Action = RedoAct
+    end
+    object MenuItem54: TMenuItem
+      Action = ClearUndoAct
+    end
+    object Separator1: TMenuItem
       Caption = '-'
     end
     object ExploreFileFolder2Act: TMenuItem

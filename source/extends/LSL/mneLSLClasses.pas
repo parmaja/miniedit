@@ -298,6 +298,12 @@ begin
           m := t;
         aMsg.Line := StrToIntDef(m, 0);
         aMsg.Column := StrToIntDef(t, 0);
+        if SameText(aMsg.Name, 'ERROR') then
+          aMsg.Kind := mskError
+        else if SameText(aMsg.Name, 'HINT') then
+          aMsg.Kind := mskHint
+        else if SameText(aMsg.Name, 'WARN') then
+          aMsg.Kind := mskWarning;
         Engine.SendMessage(S, aMsg);
       end
       else

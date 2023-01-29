@@ -68,6 +68,9 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
+    ClearUndoAct: TAction;
+    RedoAct: TAction;
+    UndoAct: TAction;
     CompareLocalAct: TAction;
     FileTendencyAct: TAction;
     DBStartAct: TAction;
@@ -76,6 +79,9 @@ type
     MenuItem52: TMenuItem;
     MenuItem53: TMenuItem;
     CompareLocalMnu: TMenuItem;
+    MenuItem54: TMenuItem;
+    MenuItem55: TMenuItem;
+    MenuItem56: TMenuItem;
     NewSQLAct: TAction;
     DBRollbackAct: TAction;
     DBCommitAct: TAction;
@@ -91,6 +97,7 @@ type
     MenuItem5: TMenuItem;
     Panel1: TPanel;
     Panel2: TPanel;
+    Separator1: TMenuItem;
     ShowProjectFilterAct: TAction;
     DBCreateDatabaseAct: TAction;
     DBBrowseAct: TAction;
@@ -431,6 +438,8 @@ type
     SwitchFocus1: TMenuItem;
     N16: TMenuItem;
     procedure BackwordSwitchFocusActExecute(Sender: TObject);
+    procedure ClearUndoActExecute(Sender: TObject);
+    procedure ClearUndoActUpdate(Sender: TObject);
     procedure CompareLocalActExecute(Sender: TObject);
     procedure DBDisconnectActExecute(Sender: TObject);
     procedure FileTendencyActExecute(Sender: TObject);
@@ -493,6 +502,8 @@ type
     procedure CloseActExecute(Sender: TObject);
     procedure FileListDblClick(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
+    procedure RedoActExecute(Sender: TObject);
+    procedure RedoActUpdate(Sender: TObject);
     procedure ResetMainFileActExecute(Sender: TObject);
     procedure SCMAddFileActExecute(Sender: TObject);
     procedure SearchGridDblClick(Sender: TObject);
@@ -539,6 +550,8 @@ type
     procedure TendenciesOptionsActExecute(Sender: TObject);
     procedure UC16BEBOMMnuClick(Sender: TObject);
     procedure UC16LEBOMMnuClick(Sender: TObject);
+    procedure UndoActExecute(Sender: TObject);
+    procedure UndoActUpdate(Sender: TObject);
     procedure UTF8BOMMnuClick(Sender: TObject);
     procedure UTF8MnuClick(Sender: TObject);
     procedure UnixMnuClick(Sender: TObject);
@@ -606,6 +619,7 @@ type
     FShowFolderFiles: TShowFolderFiles;
     FSortFolderFiles: TSortFolderFiles;
     procedure LogGotoLine;
+    procedure LogGotoLineFirstError;
     procedure SwitchFocus(Backword: Boolean = False);
     procedure TestDebug;
     function CanOpenInclude: boolean;
@@ -934,6 +948,16 @@ begin
   SwitchFocus(True);
 end;
 
+procedure TMainForm.ClearUndoActExecute(Sender: TObject);
+begin
+  Engine.Files.Current.ClearUndo;
+end;
+
+procedure TMainForm.ClearUndoActUpdate(Sender: TObject);
+begin
+  ClearUndoAct.Enabled := (Engine.Files.Current <> nil) and Engine.Files.Current.CanUndo;
+end;
+
 procedure TMainForm.CompareLocalActExecute(Sender: TObject);
 var
   aFileName: string;
@@ -1246,6 +1270,29 @@ begin
   end;
 end;
 
+procedure TMainForm.LogGotoLineFirstError;
+var
+  aLine: TOutputLine;
+  i: Integer;
+begin
+  if OutputEdit.CaretY <= OutputEdit.Lines.Count then //y based on 1
+  begin
+    for i := 0 to FOutputs.Count-1 do
+    begin
+      aLine := FOutputs[OutputEdit.CaretY - 1];
+      if aLine.Info.Kind = mskError then
+      begin
+        if aLine.Info.FileName <> '' then
+        begin
+          ShowFileAtLine(aLine.Info.FileName, aLine.Info.Line, aLine.Info.Column);
+          break;
+        end;
+      end;
+    end;
+
+  end;
+end;
+
 procedure TMainForm.OutputEditSpecialLineMarkup(Sender: TObject; Line: integer; var Special: boolean; Markup: TSynSelectedColor);
 begin
   if not IsShutdown then
@@ -1323,6 +1370,16 @@ begin
     else
       Engine.Session.Save;
   end;
+end;
+
+procedure TMainForm.RedoActExecute(Sender: TObject);
+begin
+  Engine.Files.Current.Redo;
+end;
+
+procedure TMainForm.RedoActUpdate(Sender: TObject);
+begin
+  RedoAct.Enabled := (Engine.Files.Current <> nil) and Engine.Files.Current.CanUndo;
 end;
 
 procedure TMainForm.ResetMainFileActExecute(Sender: TObject);
@@ -1851,6 +1908,16 @@ end;
 procedure TMainForm.UC16LEBOMMnuClick(Sender: TObject);
 begin
   Engine.Files.Current.FileEncoding := EncodingUCS2LE;
+end;
+
+procedure TMainForm.UndoActExecute(Sender: TObject);
+begin
+  Engine.Files.Current.Undo;
+end;
+
+procedure TMainForm.UndoActUpdate(Sender: TObject);
+begin
+  UndoAct.Enabled := (Engine.Files.Current <> nil) and Engine.Files.Current.CanUndo;
 end;
 
 procedure TMainForm.UTF8BOMMnuClick(Sender: TObject);
@@ -2778,7 +2845,7 @@ begin
       if FOutputs.Count > 0 then
       begin
         OutputEdit.CaretY := FOutputs[0].LogLine;
-        LogGotoLine;
+        LogGotoLineFirstError;
         OutputEdit.Invalidate;//there is bug refereshing marked line
       end;
     end;

@@ -630,7 +630,7 @@ type
   TSwitchControls = specialize TFPGList<TWinControl>;
 
   TEditorLinesMode = (efmUnix, efmWindows, efmMac);
-  TEditCapabilities = set of (ecpAllowCopy, ecpAllowPaste, ecpAllowCut, ecpAllowUndo, ecpAllowRedo);
+  TEditCapabilities = set of (ecpAllowCopy, ecpAllowPaste, ecpAllowCut, ecpAllowUndo);
 
   { TEditorFile }
 
@@ -733,6 +733,7 @@ type
     //Clipboard
     function CanCopy: Boolean;
     function CanPaste: Boolean;
+    function CanUndo: Boolean;
     property EditCapability: TEditCapabilities read GetEditCapability;
     property RunCapability: TRunCapabilities read GetRunCapability;
 
@@ -740,6 +741,10 @@ type
     procedure Copy; virtual;
     procedure Cut; virtual;
     procedure SelectAll; virtual;
+
+    procedure Undo; virtual;
+    procedure Redo; virtual;
+    procedure ClearUndo; virtual;
 
     procedure ScanValues(Values: TStringList; UpdateValues: Boolean = False);
     procedure EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips); virtual;
@@ -818,6 +823,10 @@ type
     procedure Paste; override;
     procedure Cut; override;
     procedure SelectAll; override;
+
+    procedure Undo; override;
+    procedure Redo; override;
+    procedure ClearUndo; override;
 
     procedure SetLine(Line: Integer); override;
     procedure GotoLine; override;
@@ -2700,6 +2709,7 @@ begin
 
   if SynEdit.CanPaste then
     vEditCapability := vEditCapability + [ecpAllowPaste];
+  vEditCapability := vEditCapability + [ecpAllowUndo];
 end;
 
 procedure TSyntaxEditorFile.SynEditKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -2976,6 +2986,24 @@ end;
 procedure TSyntaxEditorFile.SelectAll;
 begin
   SynEdit.SelectAll;
+end;
+
+procedure TSyntaxEditorFile.Undo;
+begin
+  inherited;
+  SynEdit.Undo;
+end;
+
+procedure TSyntaxEditorFile.Redo;
+begin
+  inherited
+  SynEdit.Redo;
+end;
+
+procedure TSyntaxEditorFile.ClearUndo;
+begin
+  inherited;
+  SynEdit.ClearUndo;
 end;
 
 procedure TSyntaxEditorFile.SetLine(Line: Integer);
@@ -5674,6 +5702,11 @@ begin
   Result := ecpAllowPaste in EditCapability;
 end;
 
+function TEditorFile.CanUndo: Boolean;
+begin
+  Result := ecpAllowUndo in EditCapability;
+end;
+
 procedure TEditorFile.Paste;
 begin
 end;
@@ -5688,6 +5721,21 @@ end;
 
 procedure TEditorFile.SelectAll;
 begin
+end;
+
+procedure TEditorFile.Undo;
+begin
+
+end;
+
+procedure TEditorFile.Redo;
+begin
+
+end;
+
+procedure TEditorFile.ClearUndo;
+begin
+
 end;
 
 procedure TEditorFile.ScanValues(Values: TStringList; UpdateValues: Boolean);
@@ -5865,7 +5913,7 @@ begin
       SynEdit.Lines.Text := Contents
     end
     else
-    begin
+    begin //allow to make undo when reloaded file
       SynEdit.BeginUndoBlock;  //adding it to history of undo, so we can undo the revert to changes in by external
       try
         //SynEdit.Lines.Text := Contents
