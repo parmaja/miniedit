@@ -328,6 +328,7 @@ type
   TmndDB = class(TObject)
   private
     FConnection: TmncSQLConnection;
+    //FMataTransaction: TmncSQLTransaction; //Transaction for load metadata
     FTables: TmncMetaItems;
     FSequences: TmncMetaItems;
     FProceduers: TmncMetaItems;
@@ -341,6 +342,7 @@ type
     function GetHaveTransactions: Boolean;
   protected
     property Connection: TmncSQLConnection read FConnection;
+    //property MataTransaction: TmncSQLTransaction read FMataTransaction; //Transaction for load metadata
   public
     constructor Create;
     destructor Destroy; override;
@@ -388,12 +390,15 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    procedure OpenServer(FileParams: string);
-    procedure OpenServer;
+    procedure OpenServer(FileParams: string); //By Params
+    procedure OpenServer; //* By Form
+
     procedure OpenDatabase(AliasName: string; FileParams: string);
     procedure OpenDatabase(Resource: string; EngineName, Host, Port, User, Password, Role: string);
-    procedure OpenDatabase;
+    procedure OpenDatabase; //* By Form
+
     procedure CloseDatabase;
+
     procedure CreateDatabase;
 
     procedure LoadOptions;
@@ -1390,6 +1395,7 @@ begin
   begin
     Result.Transaction := Connection.CreateTransaction;
     Result.OwnTransaction := True;
+    Result.Transaction.Start;
   end;
 end;
 

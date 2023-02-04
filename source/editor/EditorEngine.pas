@@ -37,7 +37,7 @@ uses
   FileUtil, LazFileUtils, Math, Masks,
   Graphics, Contnrs, Types, IniFiles,
   EditorOptions, EditorColors, EditorProfiles,
-  SynEditMarks, mnSynCompletion, mnSynParamsHint, SynEditAutoComplete,
+  SynBeautifier, SynEditMarks, mnSynCompletion, mnSynParamsHint, SynEditAutoComplete,
   SynEditTypes, SynEditMiscClasses, SynEditPlugins, SynPluginTemplateEdit,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
@@ -196,6 +196,14 @@ type
     constructor Create(aOwner: TComponent); override;
   end;
 
+  { TmneSynBeautifier }
+
+  TmneSynBeautifier = class(TSynBeautifier)
+  protected
+    procedure DoBeforeCommand(const ACaret: TSynEditCaret; var Command: TSynEditorCommand); override;
+  public
+  end;
+
   { TEditorExtension }
 
   TEditorExtension = class(TObject)
@@ -219,9 +227,11 @@ type
   TmneSynEdit = class(TSynEdit)
   protected
     FEditorFile: TTextEditorFile;
-  public
+    FmneSynBeautifier: TmneSynBeautifier;
     procedure DoOnShowHint(HintInfo: PHintInfo); override;
+  public
     constructor Create(AOwner: TComponent); override;
+    destructor Destroy; override;
     procedure ExecuteCommand(Command: TSynEditorCommand; const AChar: TUTF8Char; Data: pointer); override;
     property EditorFile: TTextEditorFile read FEditorFile;
   end;
@@ -1691,6 +1701,14 @@ begin
   end;
 end;
 
+{ TmneSynBeautifier }
+
+procedure TmneSynBeautifier.DoBeforeCommand(const ACaret: TSynEditCaret; var Command: TSynEditorCommand);
+begin
+  if (Command <> ecDeleteLastChar) then //* Do not inherited it, i do not want AutoIndent work in Delete
+    inherited DoBeforeCommand(ACaret, Command);
+end;
+
 { TKeywordItem }
 
 constructor TKeywordItem.Create;
@@ -2005,12 +2023,22 @@ var
   i: Integer;
 begin
   inherited Create(AOwner);
+  FmneSynBeautifier := TmneSynBeautifier.Create(Self);
+  Beautifier := FmneSynBeautifier;
+
   i := Keystrokes.FindKeycode(VK_NEXT, [ssCtrl]);
   if i >= 0 then
     Keystrokes.Delete(i);
   i := Keystrokes.FindKeycode(VK_PRIOR, [ssCtrl]);
   if i >= 0 then
     Keystrokes.Delete(i);
+end;
+
+destructor TmneSynEdit.Destroy;
+begin
+  Beautifier := nil;
+  FreeAndNil(FmneSynBeautifier);
+  inherited Destroy;
 end;
 
 procedure TmneSynEdit.ExecuteCommand(Command: TSynEditorCommand; const AChar: TUTF8Char; Data: pointer);

@@ -60,11 +60,11 @@ type
 const
   cSynRequiredOptions = [eoDragDropEditing, eoTrimTrailingSpaces, eoDropFiles, eoShowCtrlMouseLinks, eoAltSetsColumnMode, eoScrollPastEol, eoRightMouseMovesCursor, eoHideRightMargin];
 
-  cSynRemoveOptions = [eoSmartTabs, eoSmartTabDelete, eoShowSpecialChars, eoScrollPastEof];
+  cSynRemoveOptions = [eoPersistentCaret, eoTabsToSpaces, eoSpacesToTabs, eoSmartTabs, eoSmartTabDelete, eoShowSpecialChars, eoScrollPastEof];
 
   cSynOverridedOptions = [];
 
-  cSynDefaultOptions = cSynRequiredOptions + cSynRemoveOptions + [eoAutoIndent, eoBracketHighlight,
+  cSynDefaultOptions = cSynRequiredOptions + [eoAutoIndent, eoBracketHighlight,
     eoShowScrollHint, eoTabIndent, eoTrimTrailingSpaces, eoKeepCaretX];
 
 type
