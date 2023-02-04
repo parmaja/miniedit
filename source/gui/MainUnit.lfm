@@ -3147,11 +3147,11 @@ object MainForm: TMainForm
       Action = EditorOptionsAct
       OnClick = EditorOptionsActExecute
     end
-    object MenuItem53: TMenuItem
-      Action = FileTendencyAct
-    end
     object MenuItem40: TMenuItem
       Action = EditorColorsAct
+    end
+    object MenuItem53: TMenuItem
+      Action = FileTendencyAct
     end
   end
   object WatchesPopupMenu: TPopupMenu

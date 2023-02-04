@@ -202,6 +202,7 @@ type
   protected
     procedure DoBeforeCommand(const ACaret: TSynEditCaret; var Command: TSynEditorCommand); override;
   public
+    constructor Create(AOwner: TComponent); override;
   end;
 
   { TEditorExtension }
@@ -1707,6 +1708,12 @@ procedure TmneSynBeautifier.DoBeforeCommand(const ACaret: TSynEditCaret; var Com
 begin
   if (Command <> ecDeleteLastChar) then //* Do not inherited it, i do not want AutoIndent work in Delete
     inherited DoBeforeCommand(ACaret, Command);
+end;
+
+constructor TmneSynBeautifier.Create(AOwner: TComponent);
+begin
+  inherited Create(AOwner);
+  IndentType := sbitCopySpaceTab;
 end;
 
 { TKeywordItem }

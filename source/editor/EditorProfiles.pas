@@ -53,19 +53,20 @@ type
     idntNone,
     idntTabsToSpaces,
     idntSpacesToTabs,
-    idntAlignTabs,  //convert 6 spaces converted to 2 tabs (tab=4)
-    idntAlignSpaces  //convert 6 spaces converted to 8 (tab=4)
+    idntAlignTabs,  //convert 6 spaces to 2 tabs (tab=4)
+    idntAlignSpaces //convert 6 spaces to 8 (tab=4)
   );
 
 const
-  cSynRequiredOptions = [eoDragDropEditing, eoTrimTrailingSpaces, eoDropFiles, eoShowCtrlMouseLinks, eoAltSetsColumnMode, eoScrollPastEol, eoRightMouseMovesCursor, eoHideRightMargin];
+  //force to have this options
+  cSynRequiredOptions = [eoSpacesToTabs, eoDragDropEditing, eoTrimTrailingSpaces, eoDropFiles, eoShowCtrlMouseLinks, eoAltSetsColumnMode, eoScrollPastEol, eoRightMouseMovesCursor, eoHideRightMargin];
 
-  cSynRemoveOptions = [eoPersistentCaret, eoTabsToSpaces, eoSpacesToTabs, eoSmartTabs, eoSmartTabDelete, eoShowSpecialChars, eoScrollPastEof];
+  //force to remove this option
+  cSynRemoveOptions = [eoPersistentCaret, eoTabsToSpaces, eoSmartTabs, eoSmartTabDelete, eoShowSpecialChars, eoScrollPastEof];
 
-  cSynOverridedOptions = [];
-
-  cSynDefaultOptions = cSynRequiredOptions + [eoAutoIndent, eoBracketHighlight,
-    eoShowScrollHint, eoTabIndent, eoTrimTrailingSpaces, eoKeepCaretX];
+  //default option before overrided by config file
+  cSynDefaultOptions = cSynRequiredOptions +
+	                     [eoAutoIndent, eoAutoIndentOnPaste, eoTabIndent, eoBracketHighlight, eoShowScrollHint, eoKeepCaretX];
 
 type
   TGlobalAttributes = class;
@@ -248,7 +249,6 @@ type
     FAttributes: TGlobalAttributes;
   protected
   public
-    property Info: TEditorProfileInfo read FInfo write FInfo;
     constructor Create;
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
@@ -260,6 +260,7 @@ type
     procedure Loading; override;
     procedure Loaded(Failed: Boolean); override;
     procedure Saved(Failed: Boolean); override;
+    property Info: TEditorProfileInfo read FInfo write FInfo;
   published
     property Attributes: TGlobalAttributes read FAttributes;
 
