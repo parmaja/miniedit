@@ -2158,14 +2158,14 @@ object MainForm: TMainForm
       object MenuItem25: TMenuItem
         Action = DBGCompileAct
       end
+      object Check1: TMenuItem
+        Action = DBGLintAct
+        OnClick = DBGLintActExecute
+      end
       object ResumeMnu: TMenuItem
         Action = DBGExecuteAct
         Hint = 'Run and without debug'
         OnClick = DBGExecuteActExecute
-      end
-      object Check1: TMenuItem
-        Action = DBGLintAct
-        OnClick = DBGLintActExecute
       end
       object StepInto1: TMenuItem
         Action = DBGStepIntoAct
@@ -2433,6 +2433,7 @@ object MainForm: TMainForm
     object DBGRunAct: TAction
       Category = 'Debug'
       Caption = 'Run'
+      Hint = 'Execute and Debug'
       ImageIndex = 17
       OnExecute = DBGRunActExecute
       ShortCut = 120
@@ -2440,6 +2441,7 @@ object MainForm: TMainForm
     object DBGCompileAct: TAction
       Category = 'Debug'
       Caption = 'Compile'
+      Hint = 'Compile or check syntax without run'
       ImageIndex = 16
       OnExecute = DBGCompileActExecute
       ShortCut = 16504
@@ -2707,19 +2709,20 @@ object MainForm: TMainForm
       Caption = 'Execute'
       Hint = 'Run without debug'
       OnExecute = DBGExecuteActExecute
-      ShortCut = 8312
+      ShortCut = 24696
     end
     object DBGLintAct: TAction
       Category = 'Debug'
       Caption = 'Lint'
+      Hint = 'Check syntax'
       OnExecute = DBGLintActExecute
-      ShortCut = 24696
+      ShortCut = 8312
     end
     object DBGDebugModeAct: TAction
       Category = 'Debug'
       Caption = 'Debug'
       DisableIfNoHandler = False
-      Hint = 'Debug Mode'
+      Hint = 'Start/Stop Debug Mode'
       ImageIndex = 20
       OnExecute = DBGDebugModeActExecute
       OnUpdate = DBGDebugModeActUpdate

@@ -15,7 +15,7 @@ if you are editing multiple files, e.g. Python, PHP it can run this files into c
 ### Features
 
  * Portable, one executable file, take it any where.
- * UTF8, Ansi, and UC16LE, UC16BE encoding with BOM
+ * UTF8, Ansi, and UTF8, UC16LE, UC16BE encoding with BOM
  * Projects files, each project have special type/tendency (PHP, Lua, Python, Pascal, D)
  * Until now it is very Fast and very small
  * Search in files
@@ -26,7 +26,7 @@ if you are editing multiple files, e.g. Python, PHP it can run this files into c
  * Works in Windows and Linux
  * Compile and run Pascal, D, Go, Cpp (cpp todo not yet)
  * Run PHP, CMD, SH, BAT, Lua, Py
- * Semi themed colors can be customized easy
+ * Themed colors can be customized easy
 
 ### Languages supported
 
@@ -52,6 +52,7 @@ if you are editing multiple files, e.g. Python, PHP it can run this files into c
  * Not good in auto complete
  * Can't open unkown files
  * Can't open a huge file like logs
+ * No external addons
 
 ### Contributing
 
@@ -63,7 +64,7 @@ There is an addons to add menu items to file or main menu tools.
 MiniEdit is FreePascal/Lazarus project, to compile it you need to install all packages that needed
 
  * Use source code from github.com in branch "release", or use last tag,  branch "master" is my working upstream, it is not stable.
- * FreePascal FPC 3.2 or later
+ * FreePascal FPC 3.3 or later
  * Lazarus last update from subversion repo, it is recommended, or use version 2.1
  * MiniLib https://github.com/parmaja/minilib
  * MiniCtrls https://github.com/parmaja/minictrls
