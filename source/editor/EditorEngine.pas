@@ -423,6 +423,7 @@ type
     procedure Init; virtual;
     procedure Created; virtual;
     procedure DoRun(Info: TmneRunInfo); virtual;
+    procedure InternalRun(RunActions: TmneRunActions);
   public
     constructor Create; override;
     destructor Destroy; override;
@@ -3372,6 +3373,18 @@ begin
 end;
 
 procedure TEditorTendency.Run(RunActions: TmneRunActions); //please check dublicate in  M:\home\pascal\projects\miniEdit\source\extends\commons\mneCustomClasses.pas#DoRun
+begin
+  if (rnaExecute in RunActions) then
+  begin
+	  if (capCompile in Capabilities) and not (capExecute in Capabilities) then
+      RunActions := RunActions + [rnaCompile]
+    else if (capLint in Capabilities) and not (capExecute in Capabilities) then
+      RunActions := RunActions + [rnaLint];
+  end;
+  InternalRun(RunActions);
+end;
+
+procedure TEditorTendency.InternalRun(RunActions: TmneRunActions); //please check dublicate in  M:\home\pascal\projects\miniEdit\source\extends\commons\mneCustomClasses.pas#DoRun
 var
   p: TmneRunInfo;
   AOptions: TRunProjectOptions;

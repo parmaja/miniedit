@@ -14,7 +14,7 @@
       <ResourceType Value="res"/>
       <UseXPManifest Value="True"/>
       <XPManifest>
-        <DpiAware Value="Per-monitor"/>
+        <DpiAware Value="True"/>
         <TextName Value="PARMAJA.miniEdit.ide"/>
         <TextDesc Value="Mini programming editor"/>
       </XPManifest>
@@ -52,11 +52,6 @@
               <CStyleMacros Value="True"/>
             </SyntaxOptions>
           </Parsing>
-          <CodeGeneration>
-            <Optimizations>
-              <OptimizationLevel Value="4"/>
-            </Optimizations>
-          </CodeGeneration>
           <Linking>
             <Debugging>
               <UseExternalDbgSyms Value="True"/>
@@ -94,16 +89,14 @@
             </SyntaxOptions>
           </Parsing>
           <CodeGeneration>
-            <SmartLinkUnit Value="True"/>
-            <Optimizations>
-              <OptimizationLevel Value="4"/>
-            </Optimizations>
             <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
+              <UseLineInfoUnit Value="False"/>
               <StripSymbols Value="True"/>
+              <UseExternalDbgSyms Value="True"/>
             </Debugging>
             <Options>
               <Win32>
@@ -141,10 +134,6 @@
             </SyntaxOptions>
           </Parsing>
           <CodeGeneration>
-            <SmartLinkUnit Value="True"/>
-            <Optimizations>
-              <OptimizationLevel Value="4"/>
-            </Optimizations>
             <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
@@ -190,6 +179,9 @@
               <CStyleMacros Value="True"/>
             </SyntaxOptions>
           </Parsing>
+          <CodeGeneration>
+            <SmallerCode Value="True"/>
+          </CodeGeneration>
           <Linking>
             <Debugging>
               <UseExternalDbgSyms Value="True"/>
