@@ -2197,7 +2197,7 @@ procedure TMainForm.UpdateMenuItems;
 begin
   with Engine.CurrentTendency do
   begin
-    DBGRunAct.Enabled := Can(capExecute);
+    DBGRunAct.Enabled := CanAny([capExecute, capCompile, capLint]);
     DBGExecuteAct.Enabled := Can(capExecute);
     DBGCompileAct.Visible := Can(capCompile);
     DBGResetAct.Enabled := Can(capStop);

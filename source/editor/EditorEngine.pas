@@ -368,8 +368,8 @@ type
     capStop, //Stop executing or compiling
     capLint, //Check error of file without compiling or run
     capCompile, //Can compile this file
-    capLink, //Can need link before run
     capExecute, //Can run this file
+    capLink, //Can need link before run
     capDebug, //we can debug the project/file
     capEval, //Debugger can evaluate
     capTrace, //Steps (Step Into, Step Over etc...)
@@ -444,6 +444,7 @@ type
     //
     property Capabilities: TRunCapabilities read FCapabilities;
     function Can(ACapability: TRunCapability): Boolean;
+    function CanAny(ACapability: TRunCapabilities): Boolean;
 
     procedure EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips); virtual;
     function ReplaceVariables(S: String; EnumSkips: TEnumVariablesSkips): String; virtual;
@@ -3265,6 +3266,11 @@ begin
   Result := (ACapability in Capabilities) or ((Engine.Files.Current <> nil) and (ACapability in Engine.Files.Current.Group.Capapility));
 end;
 
+function TEditorTendency.CanAny(ACapability: TRunCapabilities): Boolean;
+begin
+  Result := ((ACapability * Capabilities) <> []) or ((Engine.Files.Current <> nil) and ((ACapability * Engine.Files.Current.Group.Capapility)<>[]));
+end;
+
 procedure TEditorTendency.EnumVariables(Values: TStringList; EnumSkips: TEnumVariablesSkips);
 begin
   if not (evsTendicy in EnumSkips) then
@@ -3377,9 +3383,9 @@ begin
   if (rnaExecute in RunActions) then
   begin
 	  if (capCompile in Capabilities) and not (capExecute in Capabilities) then
-      RunActions := RunActions + [rnaCompile]
+      RunActions := RunActions + [rnaCompile] - [rnaExecute]
     else if (capLint in Capabilities) and not (capExecute in Capabilities) then
-      RunActions := RunActions + [rnaLint];
+      RunActions := RunActions + [rnaLint] - [rnaExecute];
   end;
   InternalRun(RunActions);
 end;
