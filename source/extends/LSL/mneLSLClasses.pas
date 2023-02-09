@@ -187,11 +187,11 @@ procedure TLSLTendency.DoRun(Info: TmneRunInfo);
 var
   aRunItem: TmneRunItem;
 begin
+  Engine.SendAction(eaClearOutput);
   Engine.Session.Run.Clear;
 
   if rnaExecute in Info.Actions then //not yet
   begin
-    Engine.SendAction(eaClearOutput);
 
     aRunItem := Engine.Session.Run.Add;
     aRunItem.MessageType := msgtInteractive;
@@ -281,8 +281,8 @@ begin
         aMsg.FileName := GetStr(0);
         aMsg.Name := GetStr(1);
         aMsg.Message := Trim(SubStr(t, ':', 1));
-        t := Trim(SubStr(t, ':', 0));
 
+        t := Trim(SubStr(t, ':', 0));
         if LeftStr(t, 1) = '(' then
           t := Trim(MidStr(t, 2, Length(t) - 1));
         if RightStr(t, 1) = ')' then
@@ -298,6 +298,7 @@ begin
           m := t;
         aMsg.Line := StrToIntDef(m, 0);
         aMsg.Column := StrToIntDef(t, 0);
+
         if SameText(aMsg.Name, 'ERROR') then
           aMsg.Kind := mskError
         else if SameText(aMsg.Name, 'HINT') then

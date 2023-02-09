@@ -68,6 +68,7 @@ type
     procedure DoRun(Info: TmneRunInfo); override;
   public
     constructor Create; override;
+    procedure SendMessage(S: string; vMessageType: TNotifyMessageType); override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
     function CreateOptions: TEditorProjectOptions; override;
   published
@@ -193,6 +194,25 @@ begin
     aRunItem.Info.Run.AddParam(RunOptions.Params);
     aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
   end
+	else if (rnaLint in Info.Actions) then
+  begin
+    aRunItem := Engine.Session.Run.Add;
+    aRunItem.MessageType := msgtInteractive;
+    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
+    aRunItem.Info.CurrentDirectory := Info.Root;
+    aRunItem.Info.Run.Silent := True;
+    aRunItem.Info.Run.Console := False;
+
+    aRunItem.Info.StatusMessage := 'Linting ' + Info.MainFile;
+    aRunItem.Info.Run.AddParam(' --msg-template=''{abspath}::{category}::{msg_id}::{line:5d},{column}::{obj}::{msg}''');
+
+    {$ifdef windows}
+      aRunItem.Info.Run.Command := 'pylint';
+    {$else}
+      aRunItem.Info.Run.Command := 'lslint';
+    {$endif}
+    aRunItem.Info.Run.AddParam(' "' + Info.MainFile + '"');
+  end
   else if rnaCompile in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
@@ -217,6 +237,72 @@ begin
   end;
 
   Engine.Session.Run.Start(Debugger);
+end;
+
+procedure TPyTendency.SendMessage(S: string; vMessageType: TNotifyMessageType);
+var
+  aMsg: TMessageInfo;
+  p: Integer;
+  m, t : string;
+  list: TStringList;
+  function GetStr(Index: Integer): string;
+  begin
+    if Index >= list.Count then
+      Result := ''
+    else
+      Result := List[Index];
+  end;
+
+begin
+  //--msg-template='{abspath}::{category}::{msg_id}::{line:5d},{column}::{obj}::{msg}'
+  if (S <> '') and (vMessageType = msgtInteractive) then
+  begin
+    aMsg := Default(TMessageInfo);
+    list := TStringList.Create;
+    try
+      StrToStringsEx(Trim(S), List, ['::']);
+      t := GetStr(3);
+      if t <> '' then
+      begin
+        aMsg.Processed := True;
+        aMsg.MessageType := vMessageType;
+        aMsg.FileName := GetStr(0);
+        aMsg.Name := GetStr(1);
+        aMsg.Message := GetStr(6);
+
+        t := GetStr(3);
+        if LeftStr(t, 1) = '(' then
+          t := Trim(MidStr(t, 2, Length(t) - 1));
+        if RightStr(t, 1) = ')' then
+          t := Trim(MidStr(t, 1, Length(t) - 1));
+
+        p := Pos(',', t);
+        if p > 0 then
+        begin
+          m := Trim(MidStr(t, 1, p - 1));
+          t := Trim(MidStr(t, p + 1, MaxInt));
+        end
+        else
+          m := t;
+        aMsg.Line := StrToIntDef(m, 0);
+        aMsg.Column := StrToIntDef(t, 0);
+
+        if SameText(aMsg.Name, 'error') then
+          aMsg.Kind := mskError
+        else if SameText(aMsg.Name, 'convention') then
+          aMsg.Kind := mskHint
+        else if SameText(aMsg.Name, 'warning') then
+          aMsg.Kind := mskWarning;
+        Engine.SendMessage(S, aMsg);
+      end
+      else
+        inherited;
+    finally
+      list.Free;
+    end;
+  end
+  else
+    inherited;
 end;
 
 constructor TPyTendency.Create;
@@ -324,6 +410,6 @@ initialization
   begin
     Tendencies.Add(TPyTendency);
     Categories.Add(TPyFileCategory.Create(TPyTendency, 'Python', 'Python', [fckPublish]));
-    Groups.Add(TPyFile, 'py', 'Python', TPyFileCategory, ['.py'], [fgkAssociated, fgkBrowsable, fgkMain], [capExecute, capDebug]);
+    Groups.Add(TPyFile, 'py', 'Python', TPyFileCategory, ['.py'], [fgkAssociated, fgkBrowsable, fgkMain], [capExecute, capLint, capDebug]);
   end;
 end.

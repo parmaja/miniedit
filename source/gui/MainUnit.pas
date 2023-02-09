@@ -1279,17 +1279,17 @@ begin
   begin
     for i := 0 to FOutputs.Count-1 do
     begin
-      aLine := FOutputs[OutputEdit.CaretY - 1];
+      aLine := FOutputs[i];
       if aLine.Info.Kind = mskError then
       begin
         if aLine.Info.FileName <> '' then
         begin
           ShowFileAtLine(aLine.Info.FileName, aLine.Info.Line, aLine.Info.Column);
+          OutputEdit.CaretY := aLine.LogLine;
           break;
         end;
       end;
     end;
-
   end;
 end;
 
