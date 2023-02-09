@@ -69,6 +69,7 @@ type
   public
     constructor Create; override;
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType); override;
+    procedure PrepareSynEdit(SynEdit: TSynEdit); override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
     function CreateOptions: TEditorProjectOptions; override;
   published
@@ -303,6 +304,12 @@ begin
   end
   else
     inherited;
+end;
+
+procedure TPyTendency.PrepareSynEdit(SynEdit: TSynEdit);
+begin
+  inherited;
+  SynEdit.Options := SynEdit.Options + [eoSpacesToTabs];
 end;
 
 constructor TPyTendency.Create;

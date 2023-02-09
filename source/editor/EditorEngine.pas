@@ -33,7 +33,7 @@ interface
 
 uses
   Messages, SysUtils, Forms, StdCtrls, StrUtils, DateUtils, Dialogs, Variants, Classes, Menus, Controls,
-  LCLIntf, LConvEncoding, LazUTF8, fgl, LCLType,
+  LMessages, LCLIntf, LConvEncoding, LazUTF8, fgl, LCLType,
   FileUtil, LazFileUtils, Math, Masks,
   Graphics, Contnrs, Types, IniFiles,
   EditorOptions, EditorColors, EditorProfiles,
@@ -436,6 +436,7 @@ type
     function CreateProject: TEditorProject; virtual;
     property HaveOptions: Boolean read FHaveOptions;
 
+    procedure PrepareSynEdit(SynEdit: TSynEdit); virtual;
     procedure EnumRunCommands(Items: TStrings); virtual;
     function GetDefaultGroup: TFileGroup;
     //OSDepended: When save to file, the filename changed depend on the os system name
@@ -1707,8 +1708,46 @@ end;
 { TmneSynBeautifier }
 
 procedure TmneSynBeautifier.DoBeforeCommand(const ACaret: TSynEditCaret; var Command: TSynEditorCommand);
+var
+  Line: string;
+  CurrentSpaces: Integer;
+  Tabs, NewSpaces: Integer;
+
+  LogSpacePos, FillSpace: Integer;
+  LogCaret: TPoint;
 begin
-  if (Command <> ecDeleteLastChar) then //* Do not inherited it, i do not want AutoIndent work in Delete
+  if (Command = ecDeleteLastChar) then //* Do not inherited it, i do not want AutoIndent work in Delete
+  begin
+    if AutoIndent and (ACaret.CharPos > 1) and (not CurrentEditor.ReadOnly) //Should be but not implmented ```and (eoSpacesToTabs in CurrentEditor.Options)
+      and (eoTabIndent in CurrentEditor.Options)
+		    //and ((not CurrentEditor.SelAvail) or (eoPersistentBlock in CurrentEditor.Options2))
+		then
+		begin
+      CurrentLines.UndoList.CurrentReason := ecSmartUnindent;
+      Line := ACaret.LineText;
+      CurrentSpaces := GetIndentForLine(CurrentEditor, Line, true); // physical, desired pos
+      if (CurrentSpaces>0) and (CurrentSpaces = ACaret.CharPos - 1) then
+      begin
+        //removing spaces not same size of TabWidth
+        Tabs := (CurrentSpaces div TSynEdit(CurrentEditor).TabWidth);
+        NewSpaces := Tabs * TSynEdit(CurrentEditor).TabWidth;
+        //if not, remove last tab (4)
+        if NewSpaces = CurrentSpaces then
+          NewSpaces := (Tabs - 1) * TSynEdit(CurrentEditor).TabWidth;
+
+        LogSpacePos := CurrentLines.PhysicalToLogicalCol(Line, ACaret.LinePos-1, NewSpaces + 1);
+        FillSpace := NewSpaces + 1 - CurrentLines.LogicalToPhysicalCol(Line, ACaret.LinePos-1, LogSpacePos);
+        LogCaret := ACaret.LineBytePos;
+        CurrentLines.EditDelete(LogSpacePos, ACaret.LinePos, LogCaret.X - LogSpacePos);
+        if FillSpace > 0 then
+          CurrentLines.EditInsert(LogSpacePos, ACaret.LinePos, StringOfChar(' ', FillSpace));
+        ACaret.CharPos := NewSpaces + 1;
+        Command := ecNone;
+      end;
+    end;
+    //do not inherited i we dont unindent it
+  end
+  else
     inherited DoBeforeCommand(ACaret, Command);
 end;
 
@@ -2861,6 +2900,7 @@ begin
 
     if (Group <> nil) and (Group.Category.Highlighter <> nil) then
       Group.Category.Apply(Group.Category.Highlighter, aProfile.Attributes);
+    Tendency.PrepareSynEdit(SynEdit);
   end
   else if (Source is TEditorDesktopFile) then
   begin
@@ -3495,9 +3535,12 @@ begin
   Result := TRunProject.Create;
 end;
 
+procedure TEditorTendency.PrepareSynEdit(SynEdit: TSynEdit);
+begin
+end;
+
 procedure TEditorTendency.EnumRunCommands(Items: TStrings);
 begin
-
 end;
 
 function TEditorTendency.GetDefaultGroup: TFileGroup;
