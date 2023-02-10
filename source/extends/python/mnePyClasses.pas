@@ -71,7 +71,7 @@ type
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType); override;
     procedure PrepareSynEdit(SynEdit: TSynEdit); override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
-    function CreateOptions: TEditorProjectOptions; override;
+    function CreateProjectOptions: TEditorProjectOptions; override;
   published
   end;
 
@@ -332,7 +332,7 @@ begin
   Result := TdbgpDebugger.Create;
 end;
 
-function TPyTendency.CreateOptions: TEditorProjectOptions;
+function TPyTendency.CreateProjectOptions: TEditorProjectOptions;
 begin
   Result := TPyProjectOptions.Create;
 end;

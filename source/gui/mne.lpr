@@ -54,16 +54,16 @@ uses
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
 
   SearchProgressForms, SelectList, IniFiles, mneAssociateForm, mneExtends,
-  mneTyroClasses, mneViewClasses, mneCMDClasses, mneGoClasses, mneSARDClasses,
-  mneLSLClasses, mndManagerForms, mneBoardClasses, mneBoardForms,
-  mneSelectComponents, mneBoardComponents, mneFontGenForm, mneVerilogClasses,
-  SynHighlighterVerilog, mneCustomClasses, mnePasProjectFrames, mnePASClasses,
-  mneGccClasses, mneCSVClasses, mneDClasses, mneLuaClasses, LuaDBGServers,
-  mnMsgBox, GUIMsgBox, Classes, PHPUtils, ntvThemes, mneSetups, mneSettings,
-  EditorClasses, EditorColors, gdbClasses, mneCompilerProjectFrames,
-  mneRunFrames, mneClasses, mneRecentsForms, mneTendencyOptions, mneCSVForms,
-  mnUtils, mnStreams, mncCSV, mndOpenDatabases, mndSQLForms, mndEngines,
-  mndStdAddons, mndConnectServers, mndDBClasses;
+  mnePHPTendencyFrames, mneTyroClasses, mneViewClasses, mneCMDClasses,
+  mneGoClasses, mneSARDClasses, mneLSLClasses, mndManagerForms, mneBoardClasses,
+  mneBoardForms, mneSelectComponents, mneBoardComponents, mneFontGenForm,
+  mneVerilogClasses, SynHighlighterVerilog, mneCustomClasses,
+  mnePasProjectFrames, mnePASClasses, mneGccClasses, mneCSVClasses, mneDClasses,
+  mneLuaClasses, LuaDBGServers, mnMsgBox, GUIMsgBox, Classes, PHPUtils,
+  ntvThemes, mneSetups, mneSettings, EditorClasses, EditorColors, gdbClasses,
+  mneCompilerProjectFrames, mneRunFrames, mneClasses, mneRecentsForms,
+  mneTendencyOptions, mneCSVForms, mnUtils, mnStreams, mncCSV, mndOpenDatabases,
+  mndSQLForms, mndEngines, mndStdAddons, mndConnectServers, mndDBClasses;
 
 {$R *.res}
 {$i '..\lib\mne.inc'}

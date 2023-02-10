@@ -458,6 +458,7 @@ type
     procedure StepInto;
     procedure StepOut;
     procedure Run;
+    property Server: TdbgpServer read FServer;
   public
     constructor Create;
     destructor Destroy; override;

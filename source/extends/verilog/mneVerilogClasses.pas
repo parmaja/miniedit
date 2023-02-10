@@ -81,7 +81,7 @@ type
     procedure Created; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
-    function CreateOptions: TEditorProjectOptions; override;
+    function CreateProjectOptions: TEditorProjectOptions; override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
     property Compiler: string read FCompiler write FCompiler;
   end;
@@ -140,7 +140,7 @@ begin
   Result := nil;
 end;
 
-function TVerilogTendency.CreateOptions: TEditorProjectOptions;
+function TVerilogTendency.CreateProjectOptions: TEditorProjectOptions;
 begin
   Result := TVerilogProjectOptions.Create;
 end;

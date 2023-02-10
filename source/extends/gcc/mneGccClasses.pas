@@ -70,7 +70,7 @@ type
   public
     constructor Create; override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
-    function CreateOptions: TEditorProjectOptions; override;
+    function CreateProjectOptions: TEditorProjectOptions; override;
   published
   end;
 
@@ -315,7 +315,7 @@ begin
   Result := nil;
 end;
 
-function TGccTendency.CreateOptions: TEditorProjectOptions;
+function TGccTendency.CreateProjectOptions: TEditorProjectOptions;
 begin
   Result := TGccProjectOptions.Create;
 end;

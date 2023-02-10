@@ -79,7 +79,7 @@ type
     procedure Created; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
-    function CreateOptions: TEditorProjectOptions; override;
+    function CreateProjectOptions: TEditorProjectOptions; override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
   published
   end;
@@ -280,7 +280,7 @@ begin
   Result := nil;
 end;
 
-function TCustomTendency.CreateOptions: TEditorProjectOptions;
+function TCustomTendency.CreateProjectOptions: TEditorProjectOptions;
 begin
   Result := TCustomProjectOptions.Create;
 end;

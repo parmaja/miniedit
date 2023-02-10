@@ -64,7 +64,7 @@ type
     constructor Create; override;
     procedure HelpKeyword(AWord:string); override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
-    function CreateOptions: TEditorProjectOptions; override;
+    function CreateProjectOptions: TEditorProjectOptions; override;
     procedure EnumRunCommands(Items: TStrings); override;
   published
 
@@ -259,7 +259,7 @@ begin
   Result := TLuaDBGDebug.Create;
 end;
 
-function TLuaTendency.CreateOptions: TEditorProjectOptions;
+function TLuaTendency.CreateProjectOptions: TEditorProjectOptions;
 begin
   Result := TLuaProjectOptions.Create;
 end;

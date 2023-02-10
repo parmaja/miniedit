@@ -13,14 +13,14 @@ interface
 
 uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics,
-  LCLVersion,
-  Process, Contnrs, LCLintf, LCLType, Dialogs, EditorOptions,
+  LCLVersion, Process, Contnrs, LCLintf, LCLType, Dialogs, EditorOptions,
   SynEditHighlighter, SynEditSearch, SynEdit, Registry, EditorEngine,
   mnXMLRttiProfile, mnXMLUtils, SynEditTypes, SynCompletion,
   SynHighlighterHashEntries, EditorProfiles, SynHighlighterCSS,
   SynHighlighterSQL, SynHighlighterXML, SynHighlighterJScript,
   mnSynHighlighterXHTML, mnSynHighlighterMultiProc, HTMLProcessor,
-  EditorClasses, dbgpServers, mneClasses, mneRunFrames, EditorRun;
+  EditorClasses, dbgpServers, mneClasses, mneRunFrames, mnePHPTendencyFrames,
+  EditorRun;
 
 type
 
@@ -105,10 +105,22 @@ type
   published
   end;
 
+  TPHPTendency = class;
+
+  { TPHPDebugger }
+
+  TPHPDebugger = class(TdbgpDebugger)
+  protected
+    Tendency: TPHPTendency;
+  public
+    procedure Start; override;
+  end;
+
   { TPHPTendency }
 
   TPHPTendency = class(TEditorTendency)
   private
+    FDebugPort: string;
   protected
     function CreateDebugger: TEditorDebugger; override;
     procedure Created; override;
@@ -116,14 +128,23 @@ type
   public
     constructor Create; override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
-    function CreateOptions: TEditorProjectOptions; override;
+    function CreateProjectOptions: TEditorProjectOptions; override;
   published
+    property DebugPort: string read FDebugPort write FDebugPort;
   end;
 
 implementation
 
 uses
   IniFiles, mnStreams, mnUtils, PHPProcessor, SynEditStrConst;
+
+{ TPHPDebugger }
+
+procedure TPHPDebugger.Start;
+begin
+  Server.Port := Tendency.FDebugPort;
+  inherited Start;
+end;
 
 { TPHPProject }
 
@@ -279,25 +300,33 @@ end;
 constructor TPHPTendency.Create;
 begin
   inherited Create;
+  FDebugPort := '9000';
 end;
 
 procedure TPHPTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
 var
   aFrame: TRunFrameOptions;
+  aTendencyFrame: TPHPTendencyFrame;
 begin
   aFrame := TRunFrameOptions.Create(AOwner);
   aFrame.Options := ATendency.RunOptions;
   aFrame.CommandEdit.Items.Add('php');
-  aFrame.Caption := 'PHP Options';
+  aFrame.Caption := 'Options';
   AddFrame(aFrame);
+
+  aTendencyFrame := TPHPTendencyFrame.Create(AOwner);
+  aTendencyFrame.Tendency := ATendency;
+  aTendencyFrame.Caption := 'PHP Options';
+  AddFrame(aTendencyFrame);
 end;
 
 function TPHPTendency.CreateDebugger: TEditorDebugger;
 begin
-  Result := TdbgpDebugger.Create;
+  Result := TPHPDebugger.Create;
+  (Result as TPHPDebugger).Tendency := Self;
 end;
 
-function TPHPTendency.CreateOptions: TEditorProjectOptions;
+function TPHPTendency.CreateProjectOptions: TEditorProjectOptions;
 begin
   Result := TPHPProjectOptions.Create;
 end;

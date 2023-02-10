@@ -432,7 +432,7 @@ type
     procedure SendMessage(S: String; vMessageType: TNotifyMessageType); override;
 
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); virtual;
-    function CreateOptions: TEditorProjectOptions; virtual;
+    function CreateProjectOptions: TEditorProjectOptions; virtual;
     function CreateProject: TEditorProject; virtual;
     property HaveOptions: Boolean read FHaveOptions;
 
@@ -3525,7 +3525,7 @@ procedure TEditorTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEdi
 begin
 end;
 
-function TEditorTendency.CreateOptions: TEditorProjectOptions;
+function TEditorTendency.CreateProjectOptions: TEditorProjectOptions;
 begin
   Result := TEditorProjectOptions.Create;
 end;
@@ -7035,7 +7035,7 @@ end;
 procedure TEditorProject.RecreateOptions;
 begin
   FOptions.Free;
-  FOptions := FTendency.CreateOptions;
+  FOptions := FTendency.CreateProjectOptions;
 end;
 
 procedure TEditorProject.RttiCreateObject(var vObject: TObject; vInstance: TObject; vObjectClass: TClass; const vClassName, vName: String);

@@ -253,7 +253,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item9>
     </RequiredPackages>
-    <Units Count="62">
+    <Units Count="63">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -595,6 +595,13 @@
         <Filename Value="..\extends\tyro\mneTyroClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit61>
+      <Unit62>
+        <Filename Value="..\extends\php\mnePHPTendencyFrames.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="PHPTendencyFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit62>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

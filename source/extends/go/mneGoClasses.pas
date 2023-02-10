@@ -66,7 +66,7 @@ type
     procedure DoRun(Info: TmneRunInfo); override;
   public
     constructor Create; override;
-    function CreateOptions: TEditorProjectOptions; override;
+    function CreateProjectOptions: TEditorProjectOptions; override;
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType); override; //Please handle errors format in RunItems
   published
@@ -342,7 +342,7 @@ begin
   Result := TGDBDebug.Create;
 end;
 
-function TGoTendency.CreateOptions: TEditorProjectOptions;
+function TGoTendency.CreateProjectOptions: TEditorProjectOptions;
 begin
   Result := TGoProjectOptions.Create;
 end;

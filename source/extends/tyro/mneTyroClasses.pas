@@ -49,7 +49,7 @@ type
     procedure DoRun(Info: TmneRunInfo); override;
   public
     procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
-    function CreateOptions: TEditorProjectOptions; override;
+    function CreateProjectOptions: TEditorProjectOptions; override;
     property Compiler: string read FCompiler write FCompiler;
     property UseCFG: Boolean read FUseCFG write FUseCFG default True;
   end;
@@ -83,7 +83,7 @@ begin
   Result := TGDBDebug.Create;
 end;
 
-function TTyroTendency.CreateOptions: TEditorProjectOptions;
+function TTyroTendency.CreateProjectOptions: TEditorProjectOptions;
 begin
   Result := TTyroProjectOptions.Create;;
 end;
