@@ -499,7 +499,7 @@ initialization
   begin
     Tendencies.Add(TLSLTendency);
     Categories.Add(TLSLFileCategory.Create(TLSLTendency, 'LSL', 'SecondLife/OpenSIM Script'));
-    Groups.Add(TLSLFile, 'LSL', 'OpenSIM Script', TLSLFileCategory, ['.lsl', '.ossl'], [fgkAssociated, fgkFolding, fgkBrowsable], [capLint]);
+    Groups.Add(TLSLFile, 'LSL', 'OpenSIM Script', TLSLFileCategory, ['.lsl', '.ossl', '.lslo', '.oss'], [fgkAssociated, fgkFolding, fgkBrowsable], [capLint]);
     Categories.Add(TBVHFileCategory.Create(TLSLTendency, 'BVH', 'SecondLife/OpenSIM Animation'));
     Groups.Add(TBVHFile, 'BVH', 'Biovision Animation', TBVHFileCategory, ['.bvh'], [fgkAssociated, fgkBrowsable], []);
   end;
