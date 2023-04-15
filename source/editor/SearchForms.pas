@@ -80,12 +80,12 @@ end;
 
 procedure SearchTextNext(SynEdit: TSynEdit);
 begin
-  InternalSearchText(SynEdit, FSearchOptions - [ssoFindContinue, ssoEntireScope]);
+  InternalSearchText(SynEdit, FSearchOptions - [ssoSelectedOnly, ssoFindContinue, ssoEntireScope]);
 end;
 
 procedure SearchTextPrevious(SynEdit: TSynEdit);
 begin
-  InternalSearchText(SynEdit, FSearchOptions + [ssoFindContinue, ssoBackwards] - [ssoEntireScope]);
+  InternalSearchText(SynEdit, FSearchOptions + [ssoSelectedOnly, ssoFindContinue, ssoBackwards] - [ssoEntireScope]);
 end;
 
 procedure TSearchForm.SearchReplaceText(SynEdit: TSynEdit);
