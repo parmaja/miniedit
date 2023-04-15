@@ -6194,10 +6194,10 @@ begin
     c := c mod TabWidth;
   end
   else if Options = idntAlignSpaces then
-    c := Ceil(c / TabWidth) * TabWidth
+    c := Round(c / TabWidth) * TabWidth
   else if Options = idntAlignTabs then
   begin
-    c := Ceil(c / TabWidth) * TabWidth;
+    c := Round(c / TabWidth) * TabWidth;
     t := c div TabWidth;
     c := c mod TabWidth; //* or c := 0
   end;
