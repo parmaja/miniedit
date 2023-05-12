@@ -85,7 +85,7 @@ end;
 
 procedure SearchTextPrevious(SynEdit: TSynEdit);
 begin
-  InternalSearchText(SynEdit, FSearchOptions + [ssoSelectedOnly, ssoFindContinue, ssoBackwards] - [ssoEntireScope]);
+  InternalSearchText(SynEdit, FSearchOptions + [ssoBackwards] -  [ssoSelectedOnly, ssoFindContinue, ssoEntireScope]);
 end;
 
 procedure TSearchForm.SearchReplaceText(SynEdit: TSynEdit);
