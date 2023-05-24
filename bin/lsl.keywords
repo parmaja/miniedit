@@ -439,6 +439,7 @@ void llTargetedEmail( integer target, string header, string body )
 void llTeleportAgent( key avatar, string landmark, vector position, vector look_at )
 void llTeleportAgentGlobalCoords( key agent, vector global_coordinates, vector region_coordinates, vector look_at )
 void llTeleportAgentHome( key id )
+void osGrantScriptPermissions(key allowed_key, string function)
 void llTextBox( key avatar, string message, integer chat_channel )
 string llToLower( string src )
 string llToUpper( string src )
@@ -614,10 +615,9 @@ void osSetTerrainTextureHeight( integer corner, float low, float high )
 void osSetWindParam( string plugin, string param, float value )
 float osSunGetParam( string param )
 void osSunSetParam( string param, float value )
-void osTeleportAgent( string agent, string regionName, vector position, vector lookat )
-void osLocalTeleportAgent( string agent, vector position, vector lookat )
-//void osLocalTeleportAgent(key agentID, vector newPosition, vector newVelocity, vector newLookat, integer optionFlags)
-void osTeleportOwner( string regionName, vector position, vector lookat )
+void osTeleportAgent( key agent, string regionName, vector position, vector lookat )
+void osLocalTeleportAgent(key agentID, vector newPosition, vector newVelocity, vector newLookat, integer optionFlags)
+void osTeleportOwner(string regionName, vector position, vector lookat)
 void osTerrainFlush(  )
 float osTerrainGetHeight( integer x, integer y )
 integer osTerrainSetHeight( integer x, integer y, float val )
@@ -1536,6 +1536,11 @@ const integer XP_ERROR_THROTTLED = 1
 const integer XP_ERROR_UNKNOWN_ERROR = 10
 const rotation ZERO_ROTATION = <0.0, 0.0, 0.0, 1.0>
 const vector ZERO_VECTOR = <0.0, 0.0, 0.0>
+const integer OS_LTPAG_USEVEL = 1
+const integer OS_LTPAG_USELOOKAT = 2
+const integer OS_LTPAG_ALGNLV = 4
+const integer OS_LTPAG_FORCEFLY = 8
+const integer OS_LTPAG_FORCENOFLY = 4
 event at_rot_target( integer tnum, rotation targetrot, rotation ourrot )
 event at_target( integer tnum, vector targetpos, vector ourpos )
 event attach( key id )
