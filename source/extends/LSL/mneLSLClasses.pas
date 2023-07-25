@@ -230,6 +230,7 @@ begin
 
     aRunItem.Info.StatusMessage := 'Linting ' + Info.MainFile;
     aRunItem.Info.Run.AddParam('-p ');
+    //aRunItem.Info.Run.AddParam('-# '); // show error code
     //aRunItem.Info.Run.AddParam('-l ');
 
     {$ifdef windows}
@@ -237,7 +238,7 @@ begin
     {$else}
       aRunItem.Info.Run.Command := 'lslint';
     {$endif}
-    aRunItem.Info.Run.AddParam(' -b '+Application.Location+'lsl.keywords "' + Info.MainFile + '"');
+    aRunItem.Info.Run.AddParam(' -b ' + Application.Location + 'lsl.keywords "' + Info.MainFile + '"');
   end;
 
   if Engine.Session.Run.Active then //if there is items ready to run

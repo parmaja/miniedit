@@ -121,3 +121,9 @@ sensor(integer number_detected)
 {
     |
 }
+
+[run_time_permissions]
+run_time_permissions(integer perm)
+{
+    |
+}

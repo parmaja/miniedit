@@ -3192,21 +3192,24 @@ begin
 end;
 
 procedure TMainForm.ShowFileAtLine(vFileName: string; vLine: Integer; vColumn: Integer);
+var
+  aFile: TEditorFile;
 begin
-  Engine.Files.OpenFile(vFileName);
-  with Engine.Files do
-  begin
-    if Current is TTextEditorFile then
-      if vLine > 0 then
-        if (Current <> nil) and (Current.SynEdit <> nil) then
-        begin
-          Current.SynEdit.LogicalCaretXY := Point(vColumn, vLine);
-//          Current.SynEdit.SelectLine;
-          Current.SynEdit.EnsureCursorPosVisible;
-          Current.SetHighlightLine(vLine); //after changing
-          Current.SynEdit.SetFocus;
-        end;
-  end;
+  aFile := Engine.Files.OpenFile(vFileName);
+  if aFile <> nil then
+    with Engine.Files do
+    begin
+      if Current is TTextEditorFile then
+        if vLine > 0 then
+          if (Current <> nil) and (Current.SynEdit <> nil) then
+          begin
+            Current.SynEdit.LogicalCaretXY := Point(vColumn, vLine);
+  //          Current.SynEdit.SelectLine;
+            Current.SynEdit.EnsureCursorPosVisible;
+            Current.SetHighlightLine(vLine); //after changing
+            Current.SynEdit.SetFocus;
+          end;
+    end;
 end;
 
 procedure TMainForm.CheckChangedEvent(Data: PtrInt);

@@ -20,6 +20,7 @@ uses
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   SynHighlighterPython, EditorClasses, mneClasses,
+  mnSynUtils,
   mneCompilerProjectFrames, EditorRun, dbgpServers,
   mneRunFrames;
 

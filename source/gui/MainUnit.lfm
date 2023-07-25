@@ -6,7 +6,7 @@ object MainForm: TMainForm
   ActiveControl = LogEdit
   AllowDropFiles = True
   Caption = 'Mini Edit'
-  ClientHeight = 548
+  ClientHeight = 568
   ClientWidth = 1021
   Color = clWindow
   Menu = MainMenu
@@ -68,7 +68,7 @@ object MainForm: TMainForm
         Action = SaveAllAct
       end
       object RunBtn: TToolButton
-        Left = 702
+        Left = 705
         Top = 0
         Action = DBGRunAct
       end
@@ -94,7 +94,7 @@ object MainForm: TMainForm
         Style = tbsCheck
       end
       object ToolButton8: TToolButton
-        Left = 461
+        Left = 464
         Height = 23
         Top = 0
         Caption = 'ToolButton8'
@@ -102,20 +102,20 @@ object MainForm: TMainForm
         Style = tbsSeparator
       end
       object MainFileBtn: TToolButton
-        Left = 777
+        Left = 780
         Top = 0
         Action = MainFileAct
         AutoSize = True
         PopupMenu = MainFilePopupMnu
       end
       object ToolButton3: TToolButton
-        Left = 627
+        Left = 630
         Top = 0
         Action = DBGDebugModeAct
         Style = tbsCheck
       end
       object ToolButton9: TToolButton
-        Left = 619
+        Left = 622
         Height = 23
         Top = 0
         Caption = 'ToolButton9'
@@ -123,13 +123,13 @@ object MainForm: TMainForm
         Style = tbsSeparator
       end
       object CommitBtn: TToolButton
-        Left = 469
+        Left = 472
         Top = 0
         Action = DBCommitAct
         Style = tbsCheck
       end
       object RollbackBtn: TToolButton
-        Left = 544
+        Left = 547
         Top = 0
         Action = DBRollbackAct
         Style = tbsCheck
@@ -138,24 +138,26 @@ object MainForm: TMainForm
   end
   object ClientPnl: TPanel
     Left = 269
-    Height = 294
+    Height = 314
     Top = 29
     Width = 752
     Align = alClient
     BevelOuter = bvNone
-    ClientHeight = 294
+    ClientHeight = 314
     ClientWidth = 752
+    ParentBackground = False
     TabOrder = 0
     object EditorsPnl: TPanel
       Left = 0
-      Height = 269
+      Height = 289
       Top = 25
       Width = 752
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 269
+      ClientHeight = 289
       ClientWidth = 752
       FullRepaint = False
+      ParentBackground = False
       TabOrder = 0
       OnClick = EditorsPnlClick
       object FileTabs: TntvTabSet
@@ -185,6 +187,7 @@ object MainForm: TMainForm
       BorderWidth = 2
       ClientHeight = 25
       ClientWidth = 752
+      ParentBackground = False
       PopupMenu = FilePopupMenu
       TabOrder = 1
       Visible = False
@@ -196,7 +199,6 @@ object MainForm: TMainForm
         Width = 612
         Align = alClient
         AutoSize = False
-        Color = clDefault
         Layout = tlCenter
         ParentColor = False
         PopupMenu = FilePopupMenu
@@ -256,12 +258,13 @@ object MainForm: TMainForm
   object StatusPanel: TPanel
     Left = 0
     Height = 21
-    Top = 527
+    Top = 547
     Width = 1021
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 21
     ClientWidth = 1021
+    ParentBackground = False
     TabOrder = 1
     object MessageLabel: TPanel
       Left = 103
@@ -274,6 +277,7 @@ object MainForm: TMainForm
       Anchors = [akLeft, akRight, akBottom]
       BevelOuter = bvLowered
       BorderWidth = 2
+      ParentBackground = False
       TabOrder = 0
     end
     object CursorPnl: TPanel
@@ -287,6 +291,7 @@ object MainForm: TMainForm
       Anchors = [akRight, akBottom]
       BevelOuter = bvLowered
       BorderWidth = 2
+      ParentBackground = False
       TabOrder = 1
     end
     object StatePnl: TPanel
@@ -299,6 +304,7 @@ object MainForm: TMainForm
       Anchors = [akRight, akBottom]
       BevelOuter = bvLowered
       BorderWidth = 2
+      ParentBackground = False
       TabOrder = 2
       OnClick = StatePnlClick
     end
@@ -312,13 +318,14 @@ object MainForm: TMainForm
       Anchors = [akLeft, akBottom]
       BevelOuter = bvLowered
       BorderWidth = 2
+      ParentBackground = False
       TabOrder = 3
       OnDblClick = TendencyPnlDblClick
     end
   end
   object BrowserPnl: TntvPanel
     Left = 0
-    Height = 294
+    Height = 314
     Top = 29
     Width = 269
     Align = alLeft
@@ -326,7 +333,7 @@ object MainForm: TMainForm
     ResizeStyle = nrsUpdate
     object BrowserTabs: TntvPageControl
       Left = 0
-      Height = 289
+      Height = 309
       Top = 5
       Width = 261
       BorderSpacing.Top = 5
@@ -355,21 +362,21 @@ object MainForm: TMainForm
       TabOrder = 0
       object ProjectPnl: TntvPanel
         Left = 3
-        Height = 263
+        Height = 283
         Top = 23
         Width = 255
         Align = alClient
       end
       object DatabasePnl: TntvPanel
         Left = 3
-        Height = 263
+        Height = 283
         Top = 23
         Width = 255
         Align = alClient
       end
       object FolderPnl: TPanel
         Left = 3
-        Height = 263
+        Height = 283
         Top = 23
         Width = 255
         Align = alClient
@@ -377,12 +384,13 @@ object MainForm: TMainForm
         Caption = 'FolderPnl'
         ChildSizing.HorizontalSpacing = 3
         ChildSizing.VerticalSpacing = 3
-        ClientHeight = 263
+        ClientHeight = 283
         ClientWidth = 255
+        ParentBackground = False
         TabOrder = 0
         object FileList: TListView
           Left = 0
-          Height = 212
+          Height = 232
           Top = 23
           Width = 255
           Align = alClient
@@ -390,7 +398,7 @@ object MainForm: TMainForm
           Columns = <          
             item
               Caption = 'File Name'
-              Width = 251
+              Width = 255
             end>
           HideSelection = False
           ParentColor = True
@@ -408,12 +416,13 @@ object MainForm: TMainForm
         object Panel1: TPanel
           Left = 0
           Height = 25
-          Top = 238
+          Top = 258
           Width = 255
           Align = alBottom
           BevelOuter = bvNone
           ClientHeight = 25
           ClientWidth = 255
+          ParentBackground = False
           TabOrder = 1
           object FilesFilterEdit: TEdit
             Left = 2
@@ -455,6 +464,7 @@ object MainForm: TMainForm
           BevelOuter = bvNone
           ClientHeight = 20
           ClientWidth = 255
+          ParentBackground = False
           TabOrder = 2
           object FolderPathLbl: TLabel
             Left = 2
@@ -464,7 +474,6 @@ object MainForm: TMainForm
             Align = alClient
             BorderSpacing.Around = 2
             Caption = 'Path:'
-            Color = clDefault
             ParentColor = False
             PopupMenu = FolderMenu
           end
@@ -488,7 +497,7 @@ object MainForm: TMainForm
   object MessagesPnl: TntvPanel
     Left = 0
     Height = 183
-    Top = 323
+    Top = 343
     Width = 1021
     Align = alBottom
     Constraints.MinWidth = 100
@@ -1836,10 +1845,11 @@ object MainForm: TMainForm
   object MessagePanel: TPanel
     Left = 0
     Height = 21
-    Top = 506
+    Top = 526
     Width = 1021
     Align = alBottom
     BevelOuter = bvNone
+    ParentBackground = False
     TabOrder = 5
     Visible = False
   end
