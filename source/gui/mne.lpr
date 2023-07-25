@@ -60,6 +60,7 @@ uses
   mneVerilogClasses, SynHighlighterVerilog, mneCustomClasses,
   mnePasProjectFrames, mnePASClasses, mneGccClasses, mneCSVClasses, mneDClasses,
   mneLuaClasses, LuaDBGServers, mnMsgBox, GUIMsgBox, Classes, PHPUtils,
+  mneNimClasses,
   ntvThemes, mneSetups, mneSettings, EditorClasses, EditorColors, gdbClasses,
   mneCompilerProjectFrames, mneRunFrames, mneClasses, mneRecentsForms,
   mneTendencyOptions, mneCSVForms, mnUtils, mnStreams, mncCSV, mndOpenDatabases,

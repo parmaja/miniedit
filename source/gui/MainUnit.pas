@@ -2132,11 +2132,11 @@ begin
   AddFileToProjectAct.Enabled := b;
   CloseProjectAct.Enabled := b;
   ProjectExploreFolderAct.Enabled := b;
-  SCMMnu.Visible := Engine.SCM <> nil;
   if Engine.SCM <> nil then
     SCMMnu.Caption := Engine.SCM.Name
   else
     SCMMnu.Caption := '';
+  SCMMnu.Visible := Engine.SCM <> nil;
 
   UpdatePanel;
   Engine.Update([ecsMenu]);

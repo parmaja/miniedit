@@ -4163,7 +4163,9 @@ end;
 function TEditorEngine.GetSCM: TEditorSCM;
 begin
   if Session.Project <> nil then
-    Result := Session.Project.SCM;
+    Result := Session.Project.SCM
+  else
+    Result := nil;
 end;
 
 function TEditorEngine.GetCurrentTendency: TEditorTendency;
