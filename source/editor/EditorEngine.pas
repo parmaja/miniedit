@@ -1135,6 +1135,7 @@ type
 
     function GetIsText: Boolean; virtual;
 
+    // If filename is empty, that new we need new file
     function OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: String): TEditorFile; virtual;
 
   public
@@ -1919,10 +1920,14 @@ end;
 
 function TFileCategory.OpenFile(vGroup: TFileGroup; vFiles: TEditorFiles; vFileName, vFileParams: String): TEditorFile;
 begin
+  if vGroup = nil then
+    raise Exception.Create('Group is nil');
+  if (vFileName <> '') then
+    vFileName := ExpandFileName(vFileName);
   Result := vGroup.FFileClass.Create(vFiles);
   Result.Group := vGroup;
-  if (vFileName <> '') then
-    Result.LoadFromFile(vFileName);
+  if (vFileName <> '') and FileExists(vFileName) then
+    Result.LoadFromFile(vFileName)
 end;
 
 { TEditorDesktopFile }
