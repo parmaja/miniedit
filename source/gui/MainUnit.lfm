@@ -3219,8 +3219,8 @@ object MainForm: TMainForm
   object StatusTimer: TTimer
     Interval = 5000
     OnTimer = StatusTimerTimer
-    Left = 36
-    Top = 484
+    Left = 68
+    Top = 440
   end
   object MessagesPopup: TPopupMenu
     Left = 153
@@ -3301,5 +3301,12 @@ object MainForm: TMainForm
     OnTimer = FilesSearchTimerTimer
     Left = 184
     Top = 264
+  end
+  object ForgroundTimer: TTimer
+    Enabled = False
+    Interval = 100
+    OnTimer = ForgroundTimerTimer
+    Left = 460
+    Top = 268
   end
 end

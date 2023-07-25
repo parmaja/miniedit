@@ -701,6 +701,7 @@ type
     function Execute(RunInfo: TmneRunInfo): Boolean; virtual;
   public
     constructor Create(ACollection: TCollection); override;
+    procedure BeforeDestruction; override;
     destructor Destroy; override;
     procedure Assign(Source: TPersistent); override;
     procedure AssignTo(Dest: TPersistent); override;
@@ -874,7 +875,7 @@ type
   public
   end;
 
-  TOpenFileOption = (ofoActivate, ofoByParam);
+  TOpenFileOption = (ofoActivate, ofoByParam, ofoCheckExists);
   TOpenFileOptions = set of TOpenFileOption;
 
   { TEditorFiles }
@@ -2044,7 +2045,6 @@ end;
 
 destructor TTextEditorFile.Destroy;
 begin
-  Group.Category.EndEdit(FSynEdit);
   FreeAndNil(FSynEdit);
   inherited Destroy;
 end;
@@ -2716,7 +2716,7 @@ begin
     end;
 
     FGroup.Category.InitEdit(SynEdit);
-  end;
+  end
 end;
 
 procedure TSyntaxEditorFile.DoEdit(Sender: TObject);
@@ -4378,16 +4378,21 @@ begin
   end
   else
   begin
-    Result := LoadFile(vFileName, vFileParams);
-    if Result <> nil then
+    if not (ofoCheckExists in OpenFileOptions) or FileExists(vFileName) then
     begin
-      Current := Result;
-      if (ofoActivate in OpenFileOptions) and not Result.Activated then
-        Result.Activate;
-      if (ofoByParam in OpenFileOptions) and Result.CanAddRecentFiles and (not Engine.Session.Active) then
-        if Count = 1 then //first one
-          Engine.BrowseFolder := ExtractFilePath(vFileName);
-    end;
+      Result := LoadFile(vFileName, vFileParams);
+      if Result <> nil then
+      begin
+        Current := Result;
+        if (ofoActivate in OpenFileOptions) and not Result.Activated then
+          Result.Activate;
+        if (ofoByParam in OpenFileOptions) and Result.CanAddRecentFiles and (not Engine.Session.Active) then
+          if Count = 1 then //first one
+            Engine.BrowseFolder := ExtractFilePath(vFileName);
+      end;
+    end
+    else
+      Result := nil;
   end;
 end;
 
@@ -5389,6 +5394,13 @@ begin
   FFileEncoding := 'UTF8';
   FLinesMode := efmUnix;
   InitContents;
+end;
+
+procedure TEditorFile.BeforeDestruction;
+begin
+  if GetSynEdit <> nil then
+    Group.Category.EndEdit(GetSynEdit);
+  inherited;
 end;
 
 destructor TEditorFile.Destroy;

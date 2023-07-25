@@ -69,6 +69,7 @@ type
 
   TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
     ClearUndoAct: TAction;
+    ForgroundTimer: TTimer;
     RedoAct: TAction;
     UndoAct: TAction;
     CompareLocalAct: TAction;
@@ -443,6 +444,7 @@ type
     procedure CompareLocalActExecute(Sender: TObject);
     procedure DBDisconnectActExecute(Sender: TObject);
     procedure FileTendencyActExecute(Sender: TObject);
+    procedure ForgroundTimerTimer(Sender: TObject);
     procedure NewSQLActExecute(Sender: TObject);
     procedure AnsiMnuClick(Sender: TObject);
     procedure ApplicationPropertiesActivate(Sender: TObject);
@@ -995,6 +997,12 @@ begin
     ShowTendencyForm(Engine.Files.Current.Tendency);
 end;
 
+procedure TMainForm.ForgroundTimerTimer(Sender: TObject);
+begin
+  ForgroundTimer.Enabled := False;
+  ForceForegroundWindow;
+end;
+
 procedure TMainForm.FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
 begin
   Engine.Files.SetCurrentIndex(FileTabs.ItemIndex, True);
@@ -1045,7 +1053,8 @@ begin
   aProcessID := 0;
   aForeThread := GetWindowThreadProcessId(GetForegroundWindow(), aProcessID);
   aAppThread := GetCurrentThreadId();
-
+  if WindowState = wsMinimized then
+    Application.Restore;
   if (aForeThread <> aAppThread) then
   begin
     AttachThreadInput(aForeThread, aAppThread, True);
@@ -1067,9 +1076,12 @@ begin
     0: ForceForegroundWindow;
     1:
     begin
-      if Engine.Files.OpenFile(IPCServer.StringMessage, '') <> nil then
+      if Engine.Files.OpenFile(IPCServer.StringMessage, '', [ofoActivate, ofoCheckExists]) <> nil then
       begin
-        ForceForegroundWindow;
+        ForgroundTimer.Enabled := False;
+        ForgroundTimer.Enabled := True; //reset timer
+
+        //ForceForegroundWindow; //*TODO do not repeate for each file it is too heavy
       end;
     end;
   end;

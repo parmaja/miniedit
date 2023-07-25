@@ -253,7 +253,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item9>
     </RequiredPackages>
-    <Units Count="63">
+    <Units Count="64">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -602,6 +602,10 @@
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
       </Unit62>
+      <Unit63>
+        <Filename Value="..\..\..\..\programs\fpc\3.3\src\packages\fcl-process\src\simpleipc.pp"/>
+        <IsPartOfProject Value="True"/>
+      </Unit63>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

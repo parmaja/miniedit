@@ -110,7 +110,7 @@ end;
 destructor TSQLFile.Destroy;
 begin
   FreeAndNil(FContent);
-  inherited Destroy;
+  inherited;
 end;
 
 procedure TSQLFile.EnumSwitchControls(vList: TSwitchControls);
