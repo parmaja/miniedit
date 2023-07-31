@@ -237,8 +237,6 @@ begin
     //{'-m pyxdebug ' + }
     aRunItem.Info.Run.AddParam(Info.MainFile);
   end;
-
-  Engine.Session.Run.Start(Debugger);
 end;
 
 procedure TPyTendency.SendMessage(S: string; vMessageType: TNotifyMessageType);

@@ -159,8 +159,8 @@ type
     destructor Destroy; override;
     function Add(AItemClass: TmneRunItemClass = nil): TmneRunItem; //Return same as parameter
     procedure Clear;
-    procedure Start(ADebugger: TEditorDebugger; vCurrentDirectory: string = ''); //move vCurrentDirectory to RunItem
     procedure Show;
+    procedure Start(ADebugger: TEditorDebugger; vCurrentDirectory: string = ''); //move vCurrentDirectory to RunItem
     procedure Stop;
     property Active: Boolean read GetActive;
     property Pool: TmneRunPool read FPool;
@@ -508,11 +508,13 @@ end;
 
 procedure TmneRun.Start(ADebugger: TEditorDebugger; vCurrentDirectory: string);
 begin
-  FCurrentDirectory := vCurrentDirectory;
-  FDebugger := ADebugger;
-  if FPool = nil then
-    raise Exception.Create('There is no thread Pool');
-  FPool.Start;
+  if FPool <> nil then
+  begin
+    FCurrentDirectory := vCurrentDirectory;
+    FDebugger := ADebugger;
+    FPool.Start;
+  end;
+  //raise Exception.Create('There is no thread Pool');
 end;
 
 procedure TmneRun.Show;

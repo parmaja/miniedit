@@ -3517,7 +3517,10 @@ begin
 
         if (Engine.Session.Project.RunOptions.MainFile <> '') or (Engine.Files.Current = nil) or not Engine.Files.Current.Execute(p) then
           if (p.MainFile <> '') then
+          begin
             DoRun(p);
+            Engine.Session.Run.Start(Debugger, p.Root);
+          end;
         Engine.Update([ecsDebug]);
       end;
     end;

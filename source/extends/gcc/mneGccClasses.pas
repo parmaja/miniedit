@@ -291,8 +291,6 @@ begin
     aRunItem.Info.Run.AddParam(RunOptions.Params);
     aRunItem.Info.Run.AddParam(Engine.Session.Project.RunOptions.Params);
   end;
-
-  Engine.Session.Run.Start(Debugger);
 end;
 
 constructor TGccTendency.Create;

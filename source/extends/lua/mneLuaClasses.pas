@@ -226,9 +226,6 @@ begin
       aRunItem.Info.Run.AddParam(' "' + Info.MainFile + '"');
     //end
   end;
-
-  if Engine.Session.Run.Active then //if there is items ready to run
-    Engine.Session.Run.Start(Debugger);
 end;
 
 constructor TLuaTendency.Create;

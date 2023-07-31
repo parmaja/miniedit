@@ -292,8 +292,6 @@ begin
 
     aRunItem.Info.Run.AddParam(RunOptions.Params);
     aRunItem.Info.Run.AddParam(Engine.Session.Project.RunOptions.Params);
-
-    Engine.Session.Run.Start(Debugger);
   end;
 end;
 

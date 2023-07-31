@@ -144,9 +144,6 @@ begin
     {$endif}
     aRunItem.Info.Run.AddParam(' "' + Info.MainFile + '"');
   end;
-
-  if Engine.Session.Run.Active then //if there is items ready to run
-    Engine.Session.Run.Start(Debugger);
 end;
 
 { TSardFileCategory }

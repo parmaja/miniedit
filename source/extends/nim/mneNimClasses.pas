@@ -275,8 +275,6 @@ begin
       aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
     end;
   end;
-
-  Engine.Session.Run.Start(Debugger, Info.Root);
 end;
 
 procedure TNimTendency.SendMessage(S: string; vMessageType: TNotifyMessageType);
