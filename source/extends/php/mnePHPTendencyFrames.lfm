@@ -11,7 +11,7 @@ object PHPTendencyFrame: TPHPTendencyFrame
   object DebugPortEdit: TComboBox
     Left = 88
     Height = 23
-    Top = 29
+    Top = 16
     Width = 197
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 15
@@ -24,10 +24,9 @@ object PHPTendencyFrame: TPHPTendencyFrame
   object CompilerLabel: TLabel
     Left = 12
     Height = 15
-    Top = 32
+    Top = 19
     Width = 60
     Caption = 'Debug Port'
-    Color = clDefault
     ParentColor = False
   end
 end

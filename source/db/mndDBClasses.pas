@@ -13,7 +13,7 @@ uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs,
   LCLintf, LCLType, ExtCtrls, SynHighlighterSQL, EditorProfiles, GUIMsgBox, mnMsgBox,
   Dialogs, EditorEngine, EditorClasses, EditorOptions, SynCompletion, SynEditHighlighter, SynHighlighterHashEntries, SynEditSearch,
-  SynEdit, EditorRun,
+  SynEdit, EditorRun, mnSQLProcessor,
   mnSynHighlighterMultiProc, mndManagerForms, mndSQLForms, mndEngines;
 
 type
@@ -144,7 +144,21 @@ procedure TSQLFileCategory.InitMappers;
 begin
   with Highlighter as TmnSynStdSQLSyn do
   begin
+    Mapper.Add(WhitespaceAttri, attDefault);
     Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(KeywordAttri, attKeyword);
+    Mapper.Add(DocumentAttri, attDocument);
+    Mapper.Add(TypeAttri, attDataType);
+    Mapper.Add(FunctionAttri, attCommon);
+    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(TextAttri, attText);
+    Mapper.Add(NumberAttri, attNumber);
+    Mapper.Add(StringAttri, attQuotedString);
+    Mapper.Add(SymbolAttri, attSymbol);
+    Mapper.Add(VariableAttri, attVariable);
+    Mapper.Add(ProcessorAttri, attDirective);
+
+{    Mapper.Add(CommentAttri, attComment);
     Mapper.Add(TypeAttri, attDataType);
     Mapper.Add(ObjectAttri, attVariable);
     Mapper.Add(FunctionAttri, attCommon);
@@ -154,7 +168,7 @@ begin
     Mapper.Add(SpaceAttri, attDefault);
     Mapper.Add(StringAttri, attQuotedString);
     Mapper.Add(SymbolAttri, attSymbol);
-    Mapper.Add(VariableAttri, attVariable);
+    Mapper.Add(VariableAttri, attVariable);}
   end;
 end;
 

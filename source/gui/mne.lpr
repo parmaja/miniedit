@@ -60,8 +60,8 @@ uses
   mneVerilogClasses, SynHighlighterVerilog, mneCustomClasses,
   mnePasProjectFrames, mnePASClasses, mneGccClasses, mneCSVClasses, mneDClasses,
   mneLuaClasses, LuaDBGServers, mnMsgBox, GUIMsgBox, Classes, PHPUtils,
-  mneNimClasses,
-  ntvThemes, mneSetups, mneSettings, EditorClasses, EditorColors, gdbClasses,
+  mneNimClasses, mneNimTendencyFrames, ntvThemes, mnSQLProcessor, mneSetups,
+  mneSettings, EditorClasses, EditorColors, gdbClasses,
   mneCompilerProjectFrames, mneRunFrames, mneClasses, mneRecentsForms,
   mneTendencyOptions, mneCSVForms, mnUtils, mnStreams, mncCSV, mndOpenDatabases,
   mndSQLForms, mndEngines, mndStdAddons, mndConnectServers, mndDBClasses;
@@ -183,9 +183,9 @@ begin
   if not IsAnotherInstance then
   begin
     //DefaultSystemCodePage := widestringmanager.GetStandardCodePageProc(scpAnsi); //I fix it temporary that needed for AnsiToUtf8; //i commented cuz i cant convert to ansi in TTextEditorFile.DoSave
-  Application.Scaled :=True;
+    Application.Scaled :=True;
     Application.MainFormOnTaskBar := True; //this will resolve mainform sent to last application, when using Alt+Tab to back to it, it is the last one on tasks, now it is normal, idk why
-  Application.Title :='miniEdit';
+    Application.Title :='miniEdit';
     Application.Name := 'miniEdit';
     Application.BidiMode := bdLeftToRight;
     Application.Initialize;

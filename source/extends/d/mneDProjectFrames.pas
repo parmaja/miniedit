@@ -14,8 +14,6 @@ type
 
   TDProjectFrame = class(TFrame, IEditorOptions)
     DCompilerCbo: TComboBox;
-    ExpandPathsChk1: TCheckBox;
-    ExpandPathsChk2: TCheckBox;
     Label1: TLabel;
     procedure ExpandPathsChk1Change(Sender: TObject);
   private
@@ -39,7 +37,7 @@ end;
 
 procedure TDProjectFrame.Apply;
 begin
-  Options.CompilerType := DCompilerCbo.ItemIndex;
+  Options.CompilerType := TDCompilerType(DCompilerCbo.ItemIndex);
 end;
 
 procedure TDProjectFrame.Retrieve;
@@ -48,8 +46,9 @@ begin
   DCompilerCbo.Items.Add('DMD');
   DCompilerCbo.Items.Add('GDC');
   DCompilerCbo.Items.Add('LDC');
+
   Options := (Project.Options as TDProjectOptions);
-  DCompilerCbo.ItemIndex := Options.CompilerType;
+  DCompilerCbo.ItemIndex := ord(Options.CompilerType);
 end;
 
 end.

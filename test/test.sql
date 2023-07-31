@@ -1,1 +1,1 @@
-select * from Plants
+select * from ?Plants

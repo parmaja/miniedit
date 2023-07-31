@@ -253,7 +253,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item9>
     </RequiredPackages>
-    <Units Count="64">
+    <Units Count="67">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -606,6 +606,21 @@
         <Filename Value="..\..\..\..\programs\fpc\3.3\src\packages\fcl-process\src\simpleipc.pp"/>
         <IsPartOfProject Value="True"/>
       </Unit63>
+      <Unit64>
+        <Filename Value="..\..\..\minictrls\src\syn\mnSQLProcessor.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit64>
+      <Unit65>
+        <Filename Value="..\extends\nim\mneNimClasses.pas"/>
+        <IsPartOfProject Value="True"/>
+      </Unit65>
+      <Unit66>
+        <Filename Value="..\extends\nim\mneNimTendencyFrames.pas"/>
+        <IsPartOfProject Value="True"/>
+        <ComponentName Value="NimTendencyFrame"/>
+        <HasResources Value="True"/>
+        <ResourceBaseClass Value="Frame"/>
+      </Unit66>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -616,7 +631,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\db;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\basic;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\gcc;..\extends\fntgen;..\extends\designer;..\extends\go;..\extends\cmd;..\extends\lsl;..\extends\tyro;..\extends\nim"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\db;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\basic;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\gcc;..\extends\fntgen;..\extends\designer;..\extends\go;..\extends\cmd;..\extends\lsl;..\extends\tyro;..\extends\nim;..\..\..\minictrls\src\syn"/>
       <UnitOutputDirectory Value="..\..\units\debug"/>
     </SearchPaths>
     <Parsing>

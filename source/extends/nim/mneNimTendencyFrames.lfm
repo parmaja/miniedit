@@ -1,0 +1,27 @@
+object NimTendencyFrame: TNimTendencyFrame
+  Left = 0
+  Height = 267
+  Top = 0
+  Width = 468
+  ClientHeight = 267
+  ClientWidth = 468
+  TabOrder = 0
+  DesignLeft = 357
+  DesignTop = 223
+  object UseMainCfgChk: TCheckBox
+    Left = 25
+    Height = 19
+    Top = 40
+    Width = 333
+    Caption = 'Use cfg file with same name of main file, example: main.cfg'
+    TabOrder = 0
+  end
+  object RunWithCompileCommandChk: TCheckBox
+    Left = 25
+    Height = 19
+    Top = 15
+    Width = 169
+    Caption = 'Run with compile command'
+    TabOrder = 1
+  end
+end

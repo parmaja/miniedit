@@ -47,15 +47,18 @@ type
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
   end;
 
+
+  TDCompilerType = (cmpkDMD, cmpkGDC, cmpkLDC);
+
   { TDProjectOptions }
 
   TDProjectOptions = class(TEditorProjectOptions)
   private
-    FCompilerType: Integer;
+    FCompilerType: TDCompilerType;
   public
     procedure CreateOptionsFrame(AOwner: TComponent; AProject: TEditorProject; AddFrame: TAddFrameCallBack); override;
   published
-    property CompilerType: Integer read FCompilerType write FCompilerType default 0;
+    property CompilerType: TDCompilerType read FCompilerType write FCompilerType default cmpkDMD;
   end;
 
   { TDTendency }

@@ -1,0 +1,9 @@
+object NimProjectFrame: TNimProjectFrame
+  Left = 0
+  Height = 267
+  Top = 0
+  Width = 462
+  TabOrder = 0
+  DesignLeft = 363
+  DesignTop = 223
+end
