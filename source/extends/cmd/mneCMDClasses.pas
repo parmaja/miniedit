@@ -74,7 +74,7 @@ type
     procedure Created; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
-    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack); override;
   end;
 
 implementation
@@ -123,12 +123,12 @@ begin
   FImageIndex := -1;
 end;
 
-procedure TConsoleTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+procedure TConsoleTendency.CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack);
 var
   aFrame: TRunFrameOptions;
 begin
   aFrame := TRunFrameOptions.Create(AOwner);
-  aFrame.Options := ATendency.RunOptions;
+  aFrame.Options := RunOptions;
   EnumRunCommands(aFrame.CommandEdit.Items);
   aFrame.Caption := 'Options';
   AddFrame(aFrame);

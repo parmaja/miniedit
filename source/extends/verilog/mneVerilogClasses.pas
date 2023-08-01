@@ -82,7 +82,7 @@ type
     procedure DoRun(Info: TmneRunInfo); override;
   public
     function CreateProjectOptions: TEditorProjectOptions; override;
-    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack); override;
     property Compiler: string read FCompiler write FCompiler;
   end;
 
@@ -214,12 +214,12 @@ begin
   end;
 end;
 
-procedure TVerilogTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+procedure TVerilogTendency.CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack);
 {var
   aFrame: TVerilogTendencyFrame;}
 begin
   {aFrame := TVerilogTendencyFrame.Create(AOwner);
-  aFrame.FTendency := ATendency;
+  aFrame.FTendency := Self;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);}
 end;

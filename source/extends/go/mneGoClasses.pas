@@ -67,7 +67,7 @@ type
   public
     constructor Create; override;
     function CreateProjectOptions: TEditorProjectOptions; override;
-    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack); override;
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType); override; //Please handle errors format in RunItems
   published
     property UseCfg: boolean read FUseCfg write FUseCfg default false;
@@ -262,18 +262,18 @@ begin
   inherited Create;
 end;
 
-procedure TGoTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+procedure TGoTendency.CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack);
 var
   aFrame: TRunFrameOptions;
   aTendencyFrame: TGoTendencyFrame;
 begin
   aFrame := TRunFrameOptions.Create(AOwner);
-  aFrame.Options := ATendency.RunOptions;
+  aFrame.Options := RunOptions;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 
   aTendencyFrame := TGoTendencyFrame.Create(AOwner);
-  aTendencyFrame.Tendency := ATendency;
+  aTendencyFrame.Tendency := Self;
   aTendencyFrame.Caption := 'Go Options';
   AddFrame(aTendencyFrame);
 end;

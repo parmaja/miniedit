@@ -62,7 +62,7 @@ type
   public
     constructor Create; override;
     procedure HelpKeyword(AWord:string); override;
-    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack); override;
     function CreateProjectOptions: TEditorProjectOptions; override;
     procedure EnumRunCommands(Items: TStrings); override;
   published
@@ -238,12 +238,12 @@ begin
   //OpenURL('' + AWord);
 end;
 
-procedure TBasicTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+procedure TBasicTendency.CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack);
 var
   aFrame: TRunFrameOptions;
 begin
   aFrame := TRunFrameOptions.Create(AOwner);
-  aFrame.Options := ATendency.RunOptions;
+  aFrame.Options := RunOptions;
   EnumRunCommands(aFrame.CommandEdit.Items);
   aFrame.Caption := 'Options';
   AddFrame(aFrame);

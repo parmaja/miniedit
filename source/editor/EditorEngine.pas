@@ -56,7 +56,7 @@ type
   TFileGroups = class;
   TEditorFile = class;
   TEditorProject = class;
-  TRunProjectOptions = class;
+  TRunOptions = class;
 
   EEditorException = class(Exception)
   private
@@ -406,7 +406,7 @@ type
     FEnableMacros: Boolean;
     FGroups: TFileGroups;
     FOutputExtension: String;
-    FRunOptions: TRunProjectOptions;
+    FRunOptions: TRunOptions;
 
     FIndentMode: TIndentMode;
     FOverrideEditorOptions: Boolean;
@@ -431,7 +431,7 @@ type
     procedure Run(RunActions: TmneRunActions);
     procedure SendMessage(S: String; vMessageType: TNotifyMessageType); override;
 
-    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); virtual;
+    procedure CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack); virtual;
     function CreateProjectOptions: TEditorProjectOptions; virtual;
     function CreateProject: TEditorProject; virtual;
     property HaveOptions: Boolean read FHaveOptions;
@@ -462,7 +462,7 @@ type
     property TabWidth: Integer read FTabWidth write FTabWidth default 4;
     property IndentMode: TIndentMode read FIndentMode write FIndentMode default idntTabsToSpaces;
 
-    property RunOptions: TRunProjectOptions read FRunOptions;// write FRunOptions;
+    property RunOptions: TRunOptions read FRunOptions;// write FRunOptions;
     property EnableMacros: Boolean read FEnableMacros write FEnableMacros default False;
   end;
 
@@ -504,7 +504,7 @@ type
 
   TEditorSCMClass = class of TEditorSCM;
 
-  { TRunProjectOptions }
+  { TRunOptions }
 
   TRunProjectInfo = record
     Command: String;
@@ -520,7 +520,7 @@ type
     SharedLib: Boolean;
   end;
 
-  TRunProjectOptions = class(TPersistent)
+  TRunOptions = class(TPersistent)
   private
     FInfo: TRunProjectInfo;
     FPaths: TStrings;
@@ -528,8 +528,8 @@ type
     constructor Create; virtual;
     destructor Destroy; override;
     procedure SetPaths(AValue: TStrings);
-    procedure Merge(AOptions: TRunProjectOptions);
-    procedure Copy(AOptions: TRunProjectOptions);
+    procedure Merge(AOptions: TRunOptions);
+    procedure Copy(AOptions: TRunOptions);
     procedure Assign(Source: TPersistent); override;
   published
     property Pause: TThreeStates read FInfo.Pause write FInfo.Pause default stateTrue;
@@ -557,7 +557,7 @@ type
     FIgnoreNames: String;
     FFileFilter: String;
     FOptions: TEditorProjectOptions;
-    FRunOptions: TRunProjectOptions;
+    FRunOptions: TRunOptions;
     FTendencyName: String;
     FDescription: String;
     FFileName: String;
@@ -588,7 +588,7 @@ type
     function CreateMask(CreateMaskProc: TCreateMaskProc): String;
     //Tendency here point to one of Engine.Tendencies so it is not owned by project
     property Tendency: TEditorTendency read FTendency write SetTendency;
-    property RunOptions: TRunProjectOptions read FRunOptions write FRunOptions;
+    property RunOptions: TRunOptions read FRunOptions write FRunOptions;
     property IsActive: Boolean read GetIsActive;
     property DefaultPath: string read FDefaultPath;
   published
@@ -2465,14 +2465,14 @@ procedure TEditorProjectOptions.CreateProjectPanel(AOwner: TComponent; AProject:
 begin
 end;
 
-{ TRunProjectOptions }
+{ TRunOptions }
 
-procedure TRunProjectOptions.SetPaths(AValue: TStrings);
+procedure TRunOptions.SetPaths(AValue: TStrings);
 begin
   FPaths.Assign(AValue);
 end;
 
-procedure TRunProjectOptions.Merge(AOptions: TRunProjectOptions);
+procedure TRunOptions.Merge(AOptions: TRunOptions);
 
   function iif(v, s: String): String;
   begin
@@ -2511,21 +2511,21 @@ begin
   FPaths.AddStrings(AOptions.Paths);
 end;
 
-procedure TRunProjectOptions.Copy(AOptions: TRunProjectOptions);
+procedure TRunOptions.Copy(AOptions: TRunOptions);
 begin
   FInfo := AOptions.FInfo;
   FPaths.Assign(AOptions.Paths);
 end;
 
-procedure TRunProjectOptions.Assign(Source: TPersistent);
+procedure TRunOptions.Assign(Source: TPersistent);
 begin
-  if Source is TRunProjectOptions then
-    Copy(Source as TRunProjectOptions)
+  if Source is TRunOptions then
+    Copy(Source as TRunOptions)
   else
     inherited Assign(Source);
 end;
 
-constructor TRunProjectOptions.Create;
+constructor TRunOptions.Create;
 begin
   inherited;
   FPaths := TStringList.Create;
@@ -2533,7 +2533,7 @@ begin
   FInfo.Console := stateTrue;
 end;
 
-destructor TRunProjectOptions.Destroy;
+destructor TRunOptions.Destroy;
 begin
   FreeAndNil(FPaths);
   inherited Destroy;
@@ -3406,7 +3406,7 @@ constructor TEditorTendency.Create;
 begin
   inherited;
   FGroups := TFileGroups.Create(False);//it already owned by Engine.Groups
-  FRunOptions := TRunProjectOptions.Create;
+  FRunOptions := TRunOptions.Create;
   FTabWidth := 4;
   FIndentMode := idntTabsToSpaces;
   Created;
@@ -3438,12 +3438,12 @@ end;
 procedure TEditorTendency.InternalRun(RunActions: TmneRunActions); //please check dublicate in  M:\home\pascal\projects\miniEdit\source\extends\commons\mneCustomClasses.pas#DoRun
 var
   p: TmneRunInfo;
-  AOptions: TRunProjectOptions;
+  AOptions: TRunOptions;
 begin
   if (Debugger <> nil) and (Engine.Options.AutoStartDebug = asdRun) then
     Debugger.Active := True;
 
-  AOptions := TRunProjectOptions.Create;//Default options
+  AOptions := TRunOptions.Create;//Default options
   try
     AOptions.Copy(RunOptions);
     if (Engine.Session.Active) then
@@ -3479,8 +3479,10 @@ begin
       begin
         if Debugger.Active then
           p.Actions := p.Actions + [rnaDebug];
-        if rnaCompile in RunActions then
+
+        if (rnaCompile in RunActions) or (rnaLint in RunActions) then
           Engine.SendAction(eaClearOutput);
+
         p.Root := Engine.Session.GetRoot;
         p.Command := ReplaceVariables(AOptions.Command, []);
 
@@ -3529,7 +3531,7 @@ begin
   end;
 end;
 
-procedure TEditorTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+procedure TEditorTendency.CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack);
 begin
 end;
 
@@ -6976,7 +6978,7 @@ begin
   inherited Create;
   FDesktop := TEditorDesktop.Create;
   FDesktop.FProject := Self;
-  FRunOptions := TRunProjectOptions.Create;
+  FRunOptions := TRunOptions.Create;
   FSaveDesktop := True;
 end;
 

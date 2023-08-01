@@ -22,7 +22,7 @@
     </Desktop>
     <Options Class="TEditorProjectOptions">
     </Options>
-    <RunOptions Class="TRunProjectOptions">
+    <RunOptions Class="TRunOptions">
       <ExpandPaths>False</ExpandPaths>
       <Paths Class="TStringList">
       </Paths>

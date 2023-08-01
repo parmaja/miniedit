@@ -86,7 +86,7 @@ type
     procedure Created; override;
     procedure DoRun(Info: TmneRunInfo); override;
   public
-    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack); override;
     function CreateProjectOptions: TEditorProjectOptions; override;
     property Compiler: string read FCompiler write FCompiler;
     property UseCFG: Boolean read FUseCFG write FUseCFG default True;
@@ -267,12 +267,12 @@ begin
   end;
 end;
 
-procedure TPasTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+procedure TPasTendency.CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack);
 var
   aFrame: TRunFrameOptions;
 begin
   aFrame := TRunFrameOptions.Create(AOwner);
-  aFrame.Options := ATendency.RunOptions;
+  aFrame.Options := RunOptions;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 end;

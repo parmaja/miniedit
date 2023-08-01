@@ -30,7 +30,7 @@ type
   private
   protected
   public
-    Options : TRunProjectOptions;
+    Options : TRunOptions;
     procedure Apply;
     procedure Retrieve;
   end;

@@ -34,7 +34,7 @@
     </Desktop>
     <Options Class="TPasProjectOptions">
     </Options>
-    <RunOptions Class="TRunProjectOptions">
+    <RunOptions Class="TRunOptions">
       <Pause>False</Pause>
       <ExpandPaths>False</ExpandPaths>
       <Paths Class="TStringList">

@@ -127,6 +127,7 @@ begin
   Extensions.Add('firebird', 16);
   Extensions.Add('mysql', 17);
   Extensions.Add('csv', 18);
+  Extensions.Add('nim', 19);
 end;
 
 function TEditorResource.GetFileImageIndex(const FileName: string; DefaultImage: Integer): integer;

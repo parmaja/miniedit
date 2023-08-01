@@ -71,7 +71,7 @@ type
     constructor Create; override;
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType); override;
     procedure PrepareSynEdit(SynEdit: TSynEdit); override;
-    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack); override;
     function CreateProjectOptions: TEditorProjectOptions; override;
   published
   end;
@@ -316,12 +316,12 @@ begin
   inherited Create;
 end;
 
-procedure TPyTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+procedure TPyTendency.CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack);
 var
   aFrame: TRunFrameOptions;
 begin
   aFrame := TRunFrameOptions.Create(AOwner);
-  aFrame.Options := ATendency.RunOptions;
+  aFrame.Options := RunOptions;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 end;

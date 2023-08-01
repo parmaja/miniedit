@@ -95,7 +95,7 @@ var
   i: Integer;
 begin
   Caption := Caption + ' [' + FTendency.Name + ']';
-  FTendency.CreateOptionsFrame(Self, FTendency, @AddFrame);
+  FTendency.CreateOptionsFrame(Self, @AddFrame);
 
   for i := 0 to Length(FFrames) - 1 do
   begin

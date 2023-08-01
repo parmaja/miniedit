@@ -74,7 +74,7 @@ type
   public
     constructor Create; override;
     function CreateProjectOptions: TEditorProjectOptions; override;
-    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack); override;
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType); override; //Please handle errors format in RunItems
   published
     property CompilerType: Integer read FCompilerType write FCompilerType default 0;
@@ -278,18 +278,18 @@ begin
   inherited Create;
 end;
 
-procedure TDTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+procedure TDTendency.CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack);
 var
   aFrame: TRunFrameOptions;
   aTendencyFrame: TDTendencyFrame;
 begin
   aFrame := TRunFrameOptions.Create(AOwner);
-  aFrame.Options := ATendency.RunOptions;
+  aFrame.Options := RunOptions;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 
   aTendencyFrame := TDTendencyFrame.Create(AOwner);
-  aTendencyFrame.Tendency := ATendency;
+  aTendencyFrame.Tendency := Self;
   aTendencyFrame.Caption := 'D Options';
   AddFrame(aTendencyFrame);
 end;

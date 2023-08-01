@@ -127,7 +127,7 @@ type
     procedure DoRun(Info: TmneRunInfo); override;
   public
     constructor Create; override;
-    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack); override;
     function CreateProjectOptions: TEditorProjectOptions; override;
   published
     property DebugPort: string read FDebugPort write FDebugPort;
@@ -301,19 +301,19 @@ begin
   FDebugPort := '9000';
 end;
 
-procedure TPHPTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+procedure TPHPTendency.CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack);
 var
   aFrame: TRunFrameOptions;
   aTendencyFrame: TPHPTendencyFrame;
 begin
   aFrame := TRunFrameOptions.Create(AOwner);
-  aFrame.Options := ATendency.RunOptions;
+  aFrame.Options := RunOptions;
   aFrame.CommandEdit.Items.Add('php');
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 
   aTendencyFrame := TPHPTendencyFrame.Create(AOwner);
-  aTendencyFrame.Tendency := ATendency;
+  aTendencyFrame.Tendency := Self;
   aTendencyFrame.Caption := 'PHP Options';
   AddFrame(aTendencyFrame);
 end;

@@ -90,7 +90,7 @@ type
   public
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType); override;
     procedure HelpKeyword(AWord:string); override;
-    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack); override;
   end;
 
 implementation
@@ -172,12 +172,12 @@ begin
   Result := inherited CreateDebugger;
 end;
 
-procedure TLSLTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+procedure TLSLTendency.CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack);
 var
   aFrame: TRunFrameOptions;
 begin
   aFrame := TRunFrameOptions.Create(AOwner);
-  aFrame.Options := ATendency.RunOptions;
+  aFrame.Options := RunOptions;
   EnumRunCommands(aFrame.CommandEdit.Items);
   aFrame.Caption := 'Options';
   AddFrame(aFrame);

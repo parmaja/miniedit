@@ -7,10 +7,8 @@ unit mneNimClasses;
  * @author    Zaher Dirkey 
  *}
 {*
-TODO
-  add keywords
-    With
-    Self
+  @Ref:
+	  https://nim-lang.org/docs/nimc.html
 *}
 interface
 
@@ -72,7 +70,7 @@ type
     constructor Create; override;
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType); override;
     procedure PrepareSynEdit(SynEdit: TSynEdit); override;
-    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack); override;
     function CreateProjectOptions: TEditorProjectOptions; override;
   published
     property RunWithCompileCommand: Boolean read FRunWithCompileCommand write FRunWithCompileCommand default True;
@@ -181,7 +179,7 @@ var
 begin
   Engine.Session.Run.Clear;
 
-  if rnaCompile in Info.Actions then
+  if (rnaCompile in Info.Actions) or (rnaLint in Info.Actions) then
   begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Run.Silent := True;
@@ -197,15 +195,28 @@ begin
       {$endif}
     end;
 
-    aRunItem.Info.Run.AddParam('c ');
-
-    if RunWithCompileCommand and (rnaExecute in Info.Actions) then
+    if (rnaLint in Info.Actions) then
     begin
-      aRunItem.Info.Run.AddParam('-r');
-      aRunItem.Info.Run.Silent := False;
+      aRunItem.Info.Run.AddParam('check');
+      aRunItem.Info.Run.Silent := True;
+      aRunItem.Info.StatusMessage := 'Linting ' + Info.OutputFile;
     end
     else
-      aRunItem.Info.Run.Silent := True;
+    begin
+      aRunItem.Info.Run.AddParam('c');
+      if RunWithCompileCommand and (rnaExecute in Info.Actions) then
+      begin
+        aRunItem.Info.Run.AddParam('-r');
+        aRunItem.Info.Run.Silent := False;
+        aRunItem.Info.StatusMessage := 'Executing ' + Info.OutputFile;
+      end
+      else
+      begin
+        aRunItem.Info.Run.Silent := True;
+        aRunItem.Info.StatusMessage := 'Compiling ' + Info.OutputFile;
+      end;
+    end;
+
     aRunItem.MessageType := msgtInteractive;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
@@ -219,12 +230,13 @@ begin
     end;
 
 
-    if Info.OutputFile <> '' then
-      aRunItem.Info.Run.AddParam('-o:' + Info.OutputFile);
+    { TODO
+		  if Info.OutputFile <> '' then
+        aRunItem.Info.Run.AddParam('-o:' + Info.OutputFile);}
 
     if rnaDebug in Info.Actions then
     begin
-      //aRunItem.Info.Run.AddParam('-g');
+      //aRunItem.Info.Run.AddParam('-d:Debug');
     end;
 
     for i := 0 to RunOptions.Paths.Count - 1 do
@@ -240,7 +252,6 @@ begin
         aRunItem.Info.Run.AddParam('-p:' + aPath);
       end;
     end;
-    //aRunItem.Info.AddParam('-v');
 
     aMainFile := Info.MainFile;
     if RunOptions.ExpandPaths then
@@ -248,15 +259,13 @@ begin
     if not FileExists(aMainFile) then
       raise EEditorException.Create('File not exists: ' + aMainFile);
 
+    aRunItem.Info.Run.AddParam('--verbosity:0');
+    aRunItem.Info.Run.AddParam('--spellSuggest:0');
+
     aRunItem.Info.Run.AddParam(aMainFile);
 
     if rnaExecute in Info.Actions then
-    begin
       aRunItem.Info.Run.AddParam(Engine.Session.Project.RunOptions.Params);
-      aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
-    end
-    else
-      aRunItem.Info.StatusMessage := 'Compiling ' + Info.OutputFile;
   end;
 
   if (rnaExecute in Info.Actions) then
@@ -347,6 +356,7 @@ procedure TNimTendency.PrepareSynEdit(SynEdit: TSynEdit);
 begin
   inherited;
   SynEdit.Options := SynEdit.Options + [eoSpacesToTabs];
+  SynEdit.TabWidth := 2; //*hmmmm
 end;
 
 constructor TNimTendency.Create;
@@ -354,7 +364,7 @@ begin
   inherited Create;
 end;
 
-procedure TNimTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+procedure TNimTendency.CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack);
 var
   aFrame: TNimTendencyFrame;
 begin

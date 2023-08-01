@@ -31,9 +31,9 @@ type
 
   TmneRunAction = (
     rnaCompile, //Build
-    rnaExecute, //Execute , Build + Execute = Run
     rnaLint,
     rnaLink,
+    rnaExecute, //Execute , Build + Execute = Run
     rnaDebug,
     rnaShow,
     rnaKill

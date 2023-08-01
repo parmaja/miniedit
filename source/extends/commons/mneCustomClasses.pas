@@ -80,7 +80,7 @@ type
     procedure DoRun(Info: TmneRunInfo); override;
   public
     function CreateProjectOptions: TEditorProjectOptions; override;
-    procedure CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack); override;
+    procedure CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack); override;
   published
   end;
 
@@ -204,9 +204,9 @@ var
   i: Integer;
   aPath: string;
   aRunItem: TmneRunItem;
-  AOptions: TRunProjectOptions;
+  AOptions: TRunOptions;
 begin
-  AOptions := TRunProjectOptions.Create;//Default options
+  AOptions := TRunOptions.Create;//Default options
   try
     AOptions.Copy(RunOptions);
     if (Engine.Session.Active) then
@@ -263,12 +263,12 @@ begin
   end
 end;
 
-procedure TCustomTendency.CreateOptionsFrame(AOwner: TComponent; ATendency: TEditorTendency; AddFrame: TAddFrameCallBack);
+procedure TCustomTendency.CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack);
 var
   aFrame: TRunFrameOptions;
 begin
   aFrame := TRunFrameOptions.Create(AOwner);
-  aFrame.Options := ATendency.RunOptions;
+  aFrame.Options := RunOptions;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
 end;
