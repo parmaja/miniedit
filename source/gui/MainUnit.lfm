@@ -390,15 +390,15 @@ object MainForm: TMainForm
         TabOrder = 0
         object FileList: TListView
           Left = 0
-          Height = 232
-          Top = 23
+          Height = 231
+          Top = 24
           Width = 255
           Align = alClient
           AutoWidthLastColumn = True
           Columns = <          
             item
               Caption = 'File Name'
-              Width = 255
+              Width = 251
             end>
           HideSelection = False
           ParentColor = True
@@ -457,29 +457,30 @@ object MainForm: TMainForm
         end
         object Panel2: TPanel
           Left = 0
-          Height = 20
+          Height = 21
           Top = 0
           Width = 255
           Align = alTop
           BevelOuter = bvNone
-          ClientHeight = 20
+          ClientHeight = 21
           ClientWidth = 255
           ParentBackground = False
           TabOrder = 2
           object FolderPathLbl: TLabel
             Left = 2
-            Height = 16
+            Height = 17
             Top = 2
             Width = 235
             Align = alClient
+            AutoSize = False
             BorderSpacing.Around = 2
             Caption = 'Path:'
-            ParentColor = False
+            Layout = tlCenter
             PopupMenu = FolderMenu
           end
           object FolderCloseBtn1: TntvImgBtn
             Left = 239
-            Height = 20
+            Height = 21
             Top = 0
             Width = 16
             Images = EditorResource.PanelImages

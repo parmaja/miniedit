@@ -373,7 +373,6 @@ begin
   {$ifdef windows}
   OutputExtension := '.exe';
   {$endif}
-  FImageIndex := -1;
   AddGroup('cfg', 'cfg');
   AddGroup('ini', 'ini');
   AddGroup('txt', 'txt');

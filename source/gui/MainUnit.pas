@@ -1166,7 +1166,7 @@ begin
       end;
       //E := G.IndexOfName()
       //from old Engine.Files.New(Engine.Tendency.GetDefaultGroup);
-      if ShowSelectList('Select file tendency', G, [slfSearch, slfUseNameTitle], E) then
+      if ShowSelectList('Select file tendency', G, [slfSearch, slfUseNameTitle], E, EditorResource.FileImages) then
         Engine.Files.New(G[E]);
     finally
       G.Free;

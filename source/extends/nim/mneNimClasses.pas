@@ -18,7 +18,7 @@ uses
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   mnSynUtils, mnSynHighlighterNim, EditorClasses, mneClasses,
-  mneCompilerProjectFrames, EditorRun,
+  mneCompilerProjectFrames, EditorRun, mneResources,
   mneRunFrames, mneNimTendencyFrames;
 
 type
@@ -103,7 +103,7 @@ end;
 
 procedure TNimFile.NewContent;
 begin
-  //SynEdit.Text := cNimSample;
+  SynEdit.Text := cNimSample;
 end;
 
 { TNimFile }
@@ -391,7 +391,6 @@ begin
   FTitle := 'Nim Lang';
   FDescription := 'Nim Files, *.nim';
   FName := 'Nim';
-  FImageIndex := -1;
   //AddGroup('cfg', 'cfg');
 end;
 
@@ -412,6 +411,7 @@ procedure TNimFileCategory.DoAddKeywords;
 begin
   SynHighlighterHashEntries.EnumerateKeywords(Ord(attKeyword), sNimKeywords, Highlighter.IdentChars, @AddKeyword);
   SynHighlighterHashEntries.EnumerateKeywords(Ord(attDataType), sNimTypes, Highlighter.IdentChars, @AddKeyword);
+  SynHighlighterHashEntries.EnumerateKeywords(Ord(attCommon), sNimFunctions, Highlighter.IdentChars, @AddKeyword);
 end;
 
 procedure TNimFileCategory.DoFixTabsSpaces(Sender: TObject);

@@ -10,6 +10,7 @@ object EditorResource: TEditorResource
   Width = 288
   object FileImages: TImageList
     DrawingStyle = dsTransparent
+    ShareImages = True
     Left = 47
     Top = 100
     Bitmap = {
@@ -212,6 +213,7 @@ object EditorResource: TEditorResource
   end
   object ToolbarImageList: TImageList
     DrawingStyle = dsTransparent
+    ShareImages = True
     Left = 47
     Top = 21
     Bitmap = {
@@ -311,6 +313,7 @@ object EditorResource: TEditorResource
     }
   end
   object PanelImages: TImageList
+    ShareImages = True
     Left = 47
     Top = 185
     Bitmap = {

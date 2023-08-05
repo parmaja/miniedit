@@ -10,7 +10,7 @@ unit mneResources;
 interface
 
 uses
-  SysUtils, Classes, ImgList, Controls, contnrs,
+  SysUtils, Classes, ImgList, Controls, contnrs, StrUtils,
   LCLType,
   EditorEngine;
 
@@ -31,8 +31,8 @@ type
   private
   public
     Extensions: TEditorExtensions;
-    function GetFileImageIndex(const FileName: string; DefaultImage: Integer): integer;
-    function GetImageIndex(const AName: string; DefaultImage: Integer): integer;
+    function GetFileImageIndex(FileName: string; DefaultImage: Integer = -1): integer;
+    function GetImageIndex(AName: string; DefaultImage: Integer = -1): integer;
     procedure Switch(Style: TThemeStyle);
   end;
 
@@ -130,7 +130,7 @@ begin
   Extensions.Add('nim', 19);
 end;
 
-function TEditorResource.GetFileImageIndex(const FileName: string; DefaultImage: Integer): integer;
+function TEditorResource.GetFileImageIndex(FileName: string; DefaultImage: Integer): integer;
 var
   Extension: TEditorExtension;
   s: string;
@@ -162,10 +162,12 @@ begin
   end;
 end;
 
-function TEditorResource.GetImageIndex(const AName: string; DefaultImage: Integer): integer;
+function TEditorResource.GetImageIndex(AName: string; DefaultImage: Integer): integer;
 var
   Extension: TEditorExtension;
 begin
+  if LeftStr(AName, 1) = '.' then
+    AName := MidStr(AName, 2, MaxInt);
   Extension := Extensions.Find(LowerCase(AName));
   if Extension <> nil then
     Result := Extension.ImageIndex

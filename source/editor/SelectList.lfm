@@ -23,16 +23,20 @@ object SelectListForm: TSelectListForm
       item
         AutoSize = True
         Caption = 'Name'
-        MinWidth = 100
-        Width = 47
       end    
       item
         Caption = 'Description'
         Width = 404
       end>
     HideSelection = False
+    Items.LazData = {
+      530000000300000005000000FFFFFFFFFFFFFFFF00000000050000004974656D
+      30FFFFFFFFFFFFFFFFFFFFFFFF00000000050000004974656D31FFFFFFFFFFFF
+      FFFFFFFFFFFF00000000050000004974656D32
+    }
     ReadOnly = True
     RowSelect = True
+    SmallImagesWidth = 16
     SortType = stText
     TabOrder = 1
     ViewStyle = vsReport
@@ -75,7 +79,6 @@ object SelectListForm: TSelectListForm
     Top = 8
     Width = 34
     Caption = 'Search'
-    Color = clDefault
     ParentColor = False
   end
   object SearchTimer: TTimer

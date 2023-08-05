@@ -1234,6 +1234,7 @@ type
   public
     constructor Create; override;
     destructor Destroy; override;
+    procedure Init; virtual;
     function OpenFile(vFiles: TEditorFiles; vFileName, vFileParams: String): TEditorFile; virtual;
     procedure EnumExtensions(vExtensions: TStringList; Kind: TFileGroupKinds = []);
     procedure EnumExtensions(vExtensions: TEditorElements);
@@ -1256,6 +1257,8 @@ type
   protected
     procedure InternalAdd(GroupClass: TFileGroupClass; FileClass: TEditorFileClass; const Name, Title: String; Category: TFileCategoryClass; Extensions: array of String; Kind: TFileGroupKinds = []; Capapility: TRunCapabilities = []);
   public
+    procedure Init; virtual;
+
     function Find(vName: String): TFileGroup;
     function Find(vName, vCategory: String): TFileGroup;
     function IsExists(AGroup: TFileGroup): Boolean;
@@ -1468,7 +1471,7 @@ type
     procedure UnregisterNotify(NotifyEngine: INotifyEngine);
 
     procedure Prepare(vSafeMode: Boolean = False);
-    procedure Start; //After Createing MainForm
+    procedure Start; //After Creating MainForm
     procedure LoadOptions;
     procedure UpdatePath;
     procedure UpdateOptions;
@@ -3395,7 +3398,8 @@ end;
 
 procedure TEditorTendency.Init;
 begin
-
+  ImageIndex := EditorResource.GetImageIndex(Name, -1);
+  Groups.Init;
 end;
 
 procedure TEditorTendency.Created;
@@ -4764,7 +4768,7 @@ begin
     aName := vTendency.Name
   else
     aName := '';
-  Result := ShowSelectList('Select project tendency', Tendencies, [slfSearch], aName); //slfIncludeNone
+  Result := ShowSelectList('Select project tendency', Tendencies, [slfSearch], aName, EditorResource.FileImages); //slfIncludeNone
   if Result then
     vTendency := Tendencies.Find(aName);
 end;
@@ -4827,10 +4831,7 @@ var
 begin
   if (ParamCount > 0) then
   begin
-    if SameText(ParamStr(1), '/dde') then //idk what is it :-1
-      lFilePath := DequoteStr(ParamStr(2))
-    else
-      lFilePath := DequoteStr(ParamStr(1));
+    lFilePath := DequoteStr(ParamStr(1));
     if FileExists(lFilePath) then
     begin
       Session.SetProject(DefaultProject, False);
@@ -6818,7 +6819,6 @@ end;
 procedure TVirtualCategory.AddKeyword(AKeyword: String; AKind: Integer);
 var
   s: string;
-  i: Integer;
   map: TMap;
 begin
   //s := '\style{+B}' + Engine.Options.Profile.Attributes.AttributeName(AKind) + '\style{-B} : ' + AKeyword;
@@ -7242,6 +7242,12 @@ begin
   inherited;
 end;
 
+procedure TFileGroup.Init;
+begin
+  if (Extensions.Count>0) then
+    ImageIndex := EditorResource.GetImageIndex(Extensions[0].Name);
+end;
+
 function TFileGroup.OpenFile(vFiles: TEditorFiles; vFileName, vFileParams: String): TEditorFile;
 begin
   Result := Category.OpenFile(Self, vFiles, vFileName, vFileParams);
@@ -7277,6 +7283,16 @@ begin
   else
     aCategory.Tendency.Groups.Add(aGroup);
   inherited Add(aGroup);
+end;
+
+procedure TFileGroups.Init;
+var
+  i: Integer;
+begin
+  for i := 0 to Count-1 do
+  begin
+    Items[i].Init;
+  end;
 end;
 
 procedure TFileGroups.Add(FileClass: TEditorFileClass; const Name, Title: String; Category: TFileCategoryClass; Extensions: array of String; Kind: TFileGroupKinds; Capapility: TRunCapabilities);

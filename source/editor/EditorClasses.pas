@@ -144,8 +144,8 @@ end;
 
 constructor TEditorElement.Create;
 begin
-  inherited Create;
   FImageIndex := -1;
+  inherited Create;
 end;
 
 end.

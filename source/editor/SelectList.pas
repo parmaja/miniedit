@@ -44,8 +44,8 @@ type
     procedure ShowItems(vSelect: string; vFilter: string = '');
   end;
 
-function ShowSelectList(ACaption: string; vElements: TEditorElements; Style: TSelectListFormStyle; var vName: string): Boolean;
-function ShowSelectList(ACaption: string; vElements: TEditorElements; Style: TSelectListFormStyle; out vIndex: Integer): Boolean;
+function ShowSelectList(ACaption: string; vElements: TEditorElements; Style: TSelectListFormStyle; var vName: string; ImgList: TImageList = nil): Boolean;
+function ShowSelectList(ACaption: string; vElements: TEditorElements; Style: TSelectListFormStyle; out vIndex: Integer; ImgList: TImageList = nil): Boolean;
 
 implementation
 
@@ -54,7 +54,7 @@ uses
 
 {$R *.lfm}
 
-function ShowSelectList(ACaption: string; vElements: TEditorElements; Style: TSelectListFormStyle; var vName: string): Boolean;
+function ShowSelectList(ACaption: string; vElements: TEditorElements; Style: TSelectListFormStyle; var vName: string; ImgList: TImageList): Boolean;
 begin
   with TSelectListForm.Create(Application) do
   begin
@@ -63,6 +63,7 @@ begin
       FStyle := Style;
       UpdateStyle;
       Elements := vElements;
+      ItemsList.SmallImages := ImgList;
       ShowItems(vName);
       Result := (ShowModal = mrOK) and (ItemsList.Selected <> nil);
       if Result then
@@ -78,7 +79,7 @@ begin
   end;
 end;
 
-function ShowSelectList(ACaption: string; vElements: TEditorElements; Style: TSelectListFormStyle; out vIndex: Integer): Boolean;
+function ShowSelectList(ACaption: string; vElements: TEditorElements; Style: TSelectListFormStyle; out vIndex: Integer; ImgList: TImageList): Boolean;
 begin
   with TSelectListForm.Create(Application) do
   begin
@@ -87,6 +88,7 @@ begin
       FStyle := Style;
       UpdateStyle;
       Elements := vElements;
+      ItemsList.SmallImages := ImgList;
       ShowItems('');
       Result := (ShowModal = mrOK) and (ItemsList.Selected <> nil);
       if Result then
