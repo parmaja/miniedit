@@ -411,6 +411,7 @@ procedure TNimFileCategory.DoAddKeywords;
 begin
   SynHighlighterHashEntries.EnumerateKeywords(Ord(attKeyword), sNimKeywords, Highlighter.IdentChars, @AddKeyword);
   SynHighlighterHashEntries.EnumerateKeywords(Ord(attDataType), sNimTypes, Highlighter.IdentChars, @AddKeyword);
+  SynHighlighterHashEntries.EnumerateKeywords(Ord(attDataValue), sNimValues, Highlighter.IdentChars, @AddKeyword);
   SynHighlighterHashEntries.EnumerateKeywords(Ord(attCommon), sNimFunctions, Highlighter.IdentChars, @AddKeyword);
 end;
 
@@ -444,6 +445,7 @@ begin
     Mapper.Add(CommentAttri, attComment, ord(tkComment));
     Mapper.Add(KeywordAttri, attKeyword, ord(tkKeyword));
     Mapper.Add(TypeAttri, attDataType);
+    Mapper.Add(ValueAttri, attDataValue);
     Mapper.Add(DocumentAttri, attDocument, ord(tkDocument));
     Mapper.Add(FunctionAttri, attCommon, ord(tkFunction));
     Mapper.Add(IdentifierAttri, attIdentifier);
