@@ -417,6 +417,7 @@ var
   line: utf8string;
   declare, subdeclare, token: string;
   CharIndex, NextIndex: Integer;
+  MatchCount: Integer;
   att: TAttributeType;
 begin
   inherited;
@@ -433,11 +434,11 @@ begin
         line := trim(line);
         if LeftStr(line, 2) <> '//' then
         begin
-          if StrScanTo(line, 1, declare, CharIndex, NextIndex, [' ', '(', ')', ',', ';']) then
+          if StrScanTo(line, 1, declare, CharIndex, NextIndex, MatchCount, [' ', '(', ')', ',', ';']) then
           begin
             if SameText(declare, 'const') then
-              StrScanTo(line, NextIndex, subdeclare, CharIndex, NextIndex, [' ', '(', ')', ',', ';']);
-            StrScanTo(line, NextIndex, token, CharIndex, NextIndex, [' ', '(', ')', ',', ';']);
+              StrScanTo(line, NextIndex, subdeclare, CharIndex, NextIndex, MatchCount, [' ', '(', ')', ',', ';']);
+            StrScanTo(line, NextIndex, token, CharIndex, NextIndex, MatchCount, [' ', '(', ')', ',', ';']);
             if SameText(declare, 'const') then
               att := attDataValue
             else
@@ -445,7 +446,7 @@ begin
             end;
             with AddKeyword(token, declare, att, False) do
             begin
-              if StrScanTo(line, 0, token, CharIndex, NextIndex, ['(']) then
+              if StrScanTo(line, 0, token, CharIndex, NextIndex, MatchCount, ['(']) then
               begin
                 line := MidStr(line, NextIndex, MaxInt);
                 if RightStr(line, 1) = ')' then

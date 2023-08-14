@@ -366,12 +366,18 @@ end;
 
 procedure TNimTendency.CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack);
 var
-  aFrame: TNimTendencyFrame;
+  aFrame: TRunFrameOptions;
+  aNimFrame: TNimTendencyFrame;
 begin
-  aFrame := TNimTendencyFrame.Create(AOwner);
-  aFrame.Tendency := Self;
+  aFrame := TRunFrameOptions.Create(AOwner);
+  aFrame.Options := RunOptions;
   aFrame.Caption := 'Options';
   AddFrame(aFrame);
+
+  aNimFrame := TNimTendencyFrame.Create(AOwner);
+  aNimFrame.Tendency := Self;
+  aNimFrame.Caption := 'Nim Options';
+  AddFrame(aNimFrame);
 end;
 
 function TNimTendency.CreateDebugger: TEditorDebugger;

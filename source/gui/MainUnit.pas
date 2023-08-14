@@ -2608,6 +2608,7 @@ end;
 procedure TMainForm.EngineMessage(S: string; vMessageInfo: TMessageInfo);
 var
   aLine: TOutputLine;
+  MatchCount: Integer;
 begin
   case vMessageInfo.MessageType of
     msgtStatus:
@@ -2619,7 +2620,7 @@ begin
     end;
     msgtOutput:
     begin
-      StrToStringsExCallback(S, 1, self, @AddOutput, [#13#10, #13, #10], [], [], []);
+      StrToStringsExCallback(S, 1, self, [#13#10, #13, #10], MatchCount, @AddOutput, [], [], []);
       OutputEdit.CaretY := OutputEdit.Lines.Count;
     end;
     msgtInteractive:
