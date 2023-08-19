@@ -19,7 +19,8 @@ uses
   Contnrs, LazFileUtils, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  SynHighlighterPython, EditorClasses, mneClasses,
+  mnSynHighlighterPy,
+	EditorClasses, mneClasses,
   mnSynUtils,
   mneCompilerProjectFrames, EditorRun, dbgpServers,
   mneRunFrames;
@@ -353,7 +354,7 @@ end;
 
 function TPyFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
-  Result := TSynPythonSyn.Create(nil);
+  Result := TmnSynPySyn.Create(nil);
 end;
 
 procedure TPyFileCategory.InitCompletion(vSynEdit: TCustomSynEdit);
@@ -364,8 +365,10 @@ end;
 
 procedure TPyFileCategory.DoAddKeywords;
 begin
-  //this a hack to lazarus source, just make GetKeywordIdentifiers public
-  EnumerateKeywords(Ord(attKeyword), (Highlighter as TSynPythonSyn).GetKeywordIdentifiers, Highlighter.IdentChars, @AddKeyword);
+  SynHighlighterHashEntries.EnumerateKeywords(Ord(attKeyword), sPyKeywords, Highlighter.IdentChars, @AddKeyword);
+  SynHighlighterHashEntries.EnumerateKeywords(Ord(attDataType), sPyTypes, Highlighter.IdentChars, @AddKeyword);
+  SynHighlighterHashEntries.EnumerateKeywords(Ord(attDataValue), sPyValues, Highlighter.IdentChars, @AddKeyword);
+  SynHighlighterHashEntries.EnumerateKeywords(Ord(attCommon), sPyFunctions, Highlighter.IdentChars, @AddKeyword);
 end;
 
 procedure TPyFileCategory.DoFixTabsSpaces(Sender: TObject);
@@ -392,22 +395,22 @@ end;
 
 procedure TPyFileCategory.InitMappers;
 begin
-  with Highlighter as TSynPythonSyn do
+  with Highlighter as TmnSynPySyn do
   begin
+    Mapper.Add(WhitespaceAttri, attDefault);
     Mapper.Add(CommentAttri, attComment, ord(tkComment));
-    Mapper.Add(IdentifierAttri, attIdentifier, ord(tkIdentifier));
-    Mapper.Add(KeyAttri, attKeyword, ord(tkKeyword));
-    Mapper.Add(NonKeyAttri, attDefault);
-    Mapper.Add(SystemAttri, attDefault);
+    Mapper.Add(KeywordAttri, attKeyword, ord(tkKeyword));
+    Mapper.Add(TypeAttri, attDataType);
+    Mapper.Add(ValueAttri, attDataValue);
+    Mapper.Add(DocumentAttri, attDocument, ord(tkDocument));
+    Mapper.Add(FunctionAttri, attCommon, ord(tkFunction));
+    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(TextAttri, attText);
     Mapper.Add(NumberAttri, attNumber);
-    Mapper.Add(HexAttri, attQuotedString);
-    Mapper.Add(OctalAttri, attNumber);
-    Mapper.Add(FloatAttri, attNumber);
-    Mapper.Add(SpaceAttri, attDefault);
     Mapper.Add(StringAttri, attQuotedString);
-    Mapper.Add(DocStringAttri, attDocument, ord(tkDocument));
     Mapper.Add(SymbolAttri, attSymbol);
-    Mapper.Add(ErrorAttri, attDefault);
+    Mapper.Add(VariableAttri, attVariable);
+    Mapper.Add(ProcessorAttri, attDirective);
   end;
 end;
 
