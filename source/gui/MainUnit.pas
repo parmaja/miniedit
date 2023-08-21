@@ -3114,17 +3114,20 @@ begin
     aIndex := WatchesGrid.Row;
     WatchesGrid.BeginUpdate;
     try
-      WatchesGrid.RowCount := aTendency.Debugger.Watches.Count + 1;
-      DebugManager.Enter;
-      try
-        for i := 0 to aTendency.Debugger.Watches.Count - 1 do
-        begin
-          WatchesGrid.Cells[1, i + 1] := aTendency.Debugger.Watches[i].Name;
-          WatchesGrid.Cells[2, i + 1] := aTendency.Debugger.Watches[i].VarType;
-          WatchesGrid.Cells[3, i + 1] := aTendency.Debugger.Watches[i].Value;
+      if aTendency.Debugger.Watches <> nil then
+      begin
+        WatchesGrid.RowCount := aTendency.Debugger.Watches.Count + 1;
+        DebugManager.Enter;
+        try
+          for i := 0 to aTendency.Debugger.Watches.Count - 1 do
+          begin
+            WatchesGrid.Cells[1, i + 1] := aTendency.Debugger.Watches[i].Name;
+            WatchesGrid.Cells[2, i + 1] := aTendency.Debugger.Watches[i].VarType;
+            WatchesGrid.Cells[3, i + 1] := aTendency.Debugger.Watches[i].Value;
+          end;
+        finally
+          DebugManager.Leave;
         end;
-      finally
-        DebugManager.Leave;
       end;
     finally
       if (aIndex > 0) and (aIndex <= WatchesGrid.RowCount) then

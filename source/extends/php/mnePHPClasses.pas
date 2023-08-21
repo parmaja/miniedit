@@ -19,7 +19,7 @@ uses
   SynHighlighterHashEntries, EditorProfiles, SynHighlighterCSS,
   SynHighlighterSQL, SynHighlighterXML, SynHighlighterJScript,
   mnSynHighlighterXHTML, mnSynHighlighterMultiProc, HTMLProcessor,
-  EditorClasses, dbgpServers, mneClasses, mneRunFrames, mnePHPTendencyFrames,
+  EditorClasses, mneClasses, mneRunFrames, mnePHPTendencyFrames,
   EditorRun;
 
 type
@@ -109,13 +109,6 @@ type
 
   { TPHPDebugger }
 
-  TPHPDebugger = class(TdbgpDebugger)
-  protected
-    Tendency: TPHPTendency;
-  public
-    procedure Start; override;
-  end;
-
   { TPHPTendency }
 
   TPHPTendency = class(TEditorTendency)
@@ -136,7 +129,16 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, PHPProcessor, SynEditStrConst;
+  IniFiles, mnStreams, mnUtils, PHPProcessor, SynEditStrConst,
+	dbgpServers;
+
+type
+  TPHPDebugger = class(TdbgpDebugger)
+  protected
+    Tendency: TPHPTendency;
+  public
+    procedure Start; override;
+  end;
 
 { TPHPDebugger }
 

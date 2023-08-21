@@ -150,7 +150,6 @@ type
   TgdbAction = class(TDebugCommand)
   private
   protected
-    FTransactionID: Integer;
     procedure CheckError(AResponds: TMIResponds);
     procedure DoExecute(AResponds: TMIResponds); virtual; abstract;
     procedure Execute(AResponds: TMIResponds);

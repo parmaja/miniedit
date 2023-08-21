@@ -13,6 +13,7 @@ interface
 uses
   Forms, SysUtils, StrUtils, Classes, contnrs, SynEdit,
   mnUtils, ConsoleProcess, process, SyncObjs,
+  mnConnections, mnServers, Variants,
   mnStreams, EditorClasses, mnClasses, mnXMLUtils;
 
 {$i '..\lib\mne.inc'}
@@ -89,6 +90,7 @@ type
   TmneRunItem = class(TObject)
   private
     FBreakOnFail: Boolean;
+    FEnvironment: TStringList;
     FMessageType: TNotifyMessageType;
   protected
     FProcess: TProcess;
@@ -111,9 +113,11 @@ type
     procedure Execute; virtual;
     procedure Stop; virtual;
     constructor Create(APool: TmneRunPool);
+    destructor Destroy; override;
     property BreakOnFail: Boolean read FBreakOnFail write FBreakOnFail;
     property Process: TProcess read FProcess;
     property MessageType: TNotifyMessageType read FMessageType write FMessageType;
+    property Environment: TStringList read FEnvironment;
   end;
 
   TmneRunItemClass = class of TmneRunItem;
@@ -294,28 +298,201 @@ type
     FFlags: TDebugCommandFlags;
     FEvent: TEvent; //must be nil until we need one
   protected
+    FTransactionID: integer;
     function GetCommand: string; virtual;
     function GetData: string; virtual;
     function Stay: boolean; virtual;
     function Enabled: boolean; virtual;
     function Accept: boolean; virtual;
     procedure Created; virtual; //after create it
-    procedure Prepare; virtual; //after pop from spool
+    procedure Prepare; virtual; //after pop from Queue
     property Key: string read FKey;
     property Flags: TDebugCommandFlags read FFlags write FFlags;
   public
     constructor Create; virtual;
     destructor Destroy; override;
+    procedure Process; virtual;
     procedure CreateEvent; virtual;
     procedure FreeEvent; virtual;
     property Event: TEvent read FEvent;
     property KeepAlive: Boolean read FKeepAlive write FKeepAlive; //do no free it
   end;
 
-  {TDebugCommandSpool = class(specialize GItems<TDebugCommand>)
+  TDebugConnection = class;
+
+  TDebugServerAction = class(TDebugCommand)
+  private
+    FConnection: TDebugConnection;
+  protected
+    property Connection: TDebugConnection read FConnection;
+  public
+  end;
+
+  TDebugServerActionClass = class of TDebugServerAction;
+
+  { TdbgpQueue }
+
+  TDebugQueue = class(specialize TmnObjectList<TDebugServerAction>)
   private
   public
-  end;}
+  end;
+
+  TDebugServer = class;
+
+  //* Watches
+
+  { TdbgpWatch }
+
+  TdbgpWatch = class(TObject)
+  private
+    FHandle: integer;
+  public
+    Info: TDebugWatchInfo;
+    property Handle: integer read FHandle write FHandle;
+  published
+  end;
+
+  { TdbgpWatches }
+
+  TdbgpWatches = class(specialize TmnObjectList<TdbgpWatch>)
+  private
+    FServer: TDebugServer;
+    CurrentHandle: integer;
+    function GetValues(Name: string): variant;
+    procedure SetValues(Name: string; const Value: variant);
+  protected
+    property Server: TDebugServer read FServer;
+  public
+    function Find(Name: string): TdbgpWatch;
+    function Add(Name: string; Value: variant): integer; overload;
+    procedure AddWatch(Name: string);
+    procedure RemoveWatch(Name: string);
+    procedure Clean;
+    property Values[Name: string]: variant read GetValues write SetValues;
+  end;
+
+//* Breakpoints
+
+  { TdbgpBreakpoint }
+
+  TdbgpBreakpoint = class(TObject)
+  private
+    FDeleted: Boolean;
+    FID: integer;
+    FLine: integer;
+    FHandle: Integer;
+    FFileName: string;
+  public
+    property Handle: Integer read FHandle write FHandle;
+    property ID: integer read FID write FID;
+    property Deleted: Boolean read FDeleted write FDeleted;
+  published
+    property FileName: string read FFileName write FFileName;
+    property Line: integer read FLine write FLine;
+  end;
+
+  { TdbgpBreakpoints }
+
+  TdbgpBreakpoints = class(specialize TmnObjectList<TdbgpBreakpoint>)
+  private
+    CurrentHandle: Integer;
+    FServer: TDebugServer;
+  protected
+    property Server: TDebugServer read FServer;
+  public
+    function Add(FileName: string; Line: integer): integer; overload;
+    procedure Remove(Handle: Integer); overload;
+    procedure ForceRemove(Handle: Integer); overload;
+    function Find(Name: string; Line: integer; WithDeleted: Boolean = False): TdbgpBreakpoint; overload;
+    procedure Toggle(FileName: string; Line: integer);
+    procedure Clean;
+  end;
+
+  TdbgpOnServerEvent = procedure(Sender: TObject; Socket: TDebugConnection) of object;
+
+  { TDebugServerQueue }
+
+  TDebugServerQueue = class(TDebugQueue)
+  private
+    FConnection: TDebugConnection;
+  public
+    procedure Added(Action: TDebugServerAction); override;
+  end;
+
+  { TDebugConnection }
+
+  TDebugConnection = class(TmnServerConnection)
+  private
+    FQueue: TDebugServerQueue;
+    FKey: string;
+    function GetServer: TDebugServer;
+  public
+    FTransactionID: integer;
+  protected
+{$IFDEF SAVELOG}
+    procedure SaveLog(s: string);
+{$ENDIF}
+    function PopAction: TDebugServerAction;
+    procedure Prepare; override;
+    procedure DoExecute;
+    procedure Process; override;
+    procedure TerminatedSet; override;
+  public
+    constructor Create(vOwner: TmnConnections; vStream: TmnConnectionStream);
+    destructor Destroy; override;
+    function NewTransactionID: Integer;
+    property Key: string read FKey write FKey;
+    property Server: TDebugServer read GetServer;
+    property Queue: TDebugServerQueue read FQueue;
+  published
+  end;
+
+  { TDebugListener }
+
+  TDebugListener = class(TmnListener)
+  private
+  protected
+    function DoCreateConnection(vStream: TmnConnectionStream): TmnConnection; override;
+  public
+  end;
+
+  TDebugServer = class(TmnServer)
+  private
+    FWatches: TdbgpWatches;
+    FBreakpoints: TdbgpBreakpoints;
+    FBreakOnFirstLine: Boolean;
+    FQueue: TDebugServerQueue;
+    FStackDepth: Integer;
+    FRunCount: Integer;
+    FKey: string;
+  protected
+    function GetIsRuning: Boolean; virtual;
+    function CreateListener: TmnListener; override;
+    procedure DoChanged(vListener: TmnListener); override;
+    procedure DoStart; override;
+    procedure DoBeforeOpen; override;
+    procedure DoStop; override;
+    procedure WatchAdded; virtual;
+    procedure BreakPointAdded; virtual;
+    property Queue: TDebugServerQueue read FQueue;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure Resume;
+    procedure AddAction(vAction: TDebugServerAction); overload;
+    procedure AddAction(vActionClass: TDebugServerActionClass); overload;
+    procedure RemoveAction(vAction: TDebugServerAction);
+    procedure ExtractAction(vAction: TDebugServerAction);
+    procedure Clear;
+    property IsRuning: Boolean read GetIsRuning;
+    property StackDepth: Integer read FStackDepth write FStackDepth;
+    property BreakOnFirstLine: Boolean read FBreakOnFirstLine write FBreakOnFirstLine default False;
+    property Key: string read FKey;
+    property RunCount: Integer read FRunCount; //count of waiting action
+    property Watches: TdbgpWatches read FWatches;
+    property Breakpoints: TdbgpBreakpoints read FBreakpoints;
+  published
+  end;
 
   { TEditorDebugger }
 
@@ -607,12 +784,20 @@ begin
   BreakOnFail := True;
   FPool := APool;
   FMessageType := msgtOutput;
+  FEnvironment := TStringList.Create;
+end;
+
+destructor TmneRunItem.Destroy;
+begin
+  FreeAndNil(FEnvironment);
+  inherited Destroy;
 end;
 
 procedure TmneRunItem.CreateConsole(AInfo: TmneCommandInfo);
 var
   ProcessObject: TmnProcessObject;
   aOptions: TProcessOptions;
+  i: Integer;
 begin
   if (AInfo.StatusMessage <> '') then
   begin
@@ -631,6 +816,9 @@ begin
   WriteMessage('Executable: ' + FProcess.Executable);
   WriteMessage('Params: ' + ReplaceStr(AInfo.Run.Params, #13, ' '));
   CommandToList(AInfo.Run.Params, FProcess.Parameters);
+  for i := 0 to GetEnvironmentVariableCount -1 do
+     FProcess.Environment.Add(GetEnvironmentString(i));
+  FProcess.Environment.AddStrings(Environment);
 
   aOptions := [];
   if Info.Suspended then
@@ -879,10 +1067,465 @@ begin
   inherited;
 end;
 
+procedure TDebugCommand.Process;
+begin
+end;
+
 procedure TDebugCommand.Created;
 begin
   Flags := [dafSend];
 end;
+
+{ TdbgpWatches }
+
+function TdbgpWatches.Add(Name: string; Value: variant): integer;
+var
+  aWatch: TdbgpWatch;
+begin
+  Inc(CurrentHandle);
+  aWatch := TdbgpWatch.Create;
+  aWatch.Handle := CurrentHandle;
+  aWatch.Info.Name := Name;
+  aWatch.Info.VarType := '';
+  aWatch.Info.Value := Value;
+  Result := Add(aWatch);
+end;
+
+procedure TdbgpWatches.AddWatch(Name: string);
+begin
+  DebugManager.Enter;
+  try
+    Add(Name, '');
+  finally
+    DebugManager.Leave;
+  end;
+  if Server.IsRuning then
+  begin
+    DebugManager.Enter;
+    try
+      Server.WatchAdded;
+    finally
+      DebugManager.Leave;
+    end;
+    Server.Resume;
+  end;
+end;
+
+procedure TdbgpWatches.Clean;
+var
+  i: integer;
+begin
+  for i := 0 to Count - 1 do
+  begin
+    VarClear(Items[i].Info.Value);
+  end;
+end;
+
+function TdbgpWatches.Find(Name: string): TdbgpWatch;
+var
+  i: integer;
+begin
+  Result := nil;
+  for i := 0 to Count - 1 do
+  begin
+    if Items[i].Info.Name = Name then
+    begin
+      Result := Items[i];
+      break;
+    end;
+  end;
+end;
+
+function TdbgpWatches.GetValues(Name: string): variant;
+var
+  aWatch: TdbgpWatch;
+begin
+  aWatch := Find(Name);
+  if aWatch <> nil then
+    Result := aWatch.Info.Value
+  else
+    VarClear(Result);
+end;
+
+procedure TdbgpWatches.RemoveWatch(Name: string);
+var
+  i: integer;
+begin
+  for i := 0 to Count - 1 do
+  begin
+    if Items[i].Info.Name = Name then
+    begin
+      Delete(i);
+      break;
+    end;
+  end;
+  if Server.IsRuning then
+  begin
+    DebugManager.Enter;
+    try
+      Server.BreakPointAdded;
+    finally
+      DebugManager.Leave;
+    end;
+    Server.Resume;
+  end;
+end;
+
+procedure TdbgpWatches.SetValues(Name: string; const Value: variant);
+begin
+end;
+
+{ TdbgpBreakpoints }
+
+function TdbgpBreakpoints.Add(FileName: string; Line: integer): integer;
+var
+  aBreakpoint: TdbgpBreakpoint;
+begin
+  Result := -1;
+  Inc(CurrentHandle);
+  aBreakpoint := Find(FileName, Line, True);
+  if aBreakpoint = nil then
+  begin
+    aBreakpoint := TdbgpBreakpoint.Create;
+    aBreakpoint.Handle := CurrentHandle;
+    aBreakpoint.FileName := FileName;
+    aBreakpoint.Line := Line;
+    Result := Add(aBreakpoint);
+  end
+  else if aBreakpoint.Deleted then
+    aBreakpoint.Deleted := False
+  else
+    Raise Exception.Create('Break point already exists');
+end;
+
+function TdbgpBreakpoints.Find(Name: string; Line: integer; WithDeleted: Boolean): TdbgpBreakpoint;
+var
+  aItem: TdbgpBreakpoint;
+begin
+  Result := nil;
+  for aItem in Self do
+  begin
+    if (not aItem.Deleted or WithDeleted) and (aItem.line = Line) and SameText(aItem.FileName, Name) then
+    begin
+      Result := aItem;
+      break;
+    end;
+  end;
+end;
+
+procedure TdbgpBreakpoints.Remove(Handle: Integer);
+var
+  i: integer;
+begin
+  for i := 0 to Count - 1 do
+  begin
+    if Items[i].Handle = Handle then
+    begin
+      if Items[i].ID > 0 then
+        Items[i].Deleted := True
+      else
+        Delete(i);
+      break;
+    end;
+  end;
+end;
+
+procedure TdbgpBreakpoints.ForceRemove(Handle: Integer);
+var
+  i: integer;
+begin
+  for i := 0 to Count - 1 do
+  begin
+    if Items[i].Handle = Handle then
+    begin
+      Delete(i);
+      break;
+    end;
+  end;
+end;
+
+procedure TdbgpBreakpoints.Toggle(FileName: string; Line: integer);
+var
+  aBreakpoint: TdbgpBreakpoint;
+  //aSetBreakpoint: TdbgpSetBreakpoint;
+  //aRemoveBreakpoint: TdbgpRemoveBreakpoint;
+begin
+  aBreakpoint := Find(FileName, Line, True); //lookup it as normal
+  if (aBreakpoint <> nil) and (not aBreakpoint.Deleted) then
+  begin
+    if aBreakpoint.ID > 0 then
+      aBreakpoint.Deleted := True //Will be removed by action
+    else
+      Remove(ABreakpoint);
+  end
+  else
+  begin
+    if aBreakpoint <> nil then
+      aBreakpoint.Deleted := False
+    else
+      Add(FileName, Line);
+  end;
+end;
+
+procedure TdbgpBreakpoints.Clean;
+var
+  i: Integer;
+begin
+  i := 0;
+  while i < Count do
+  begin
+    if Items[i].Deleted then
+      Delete(i)
+    else
+    begin
+      Items[i].ID := 0;
+      Inc(i);
+    end;
+  end;
+end;
+
+{ TDebugServerQueue }
+
+procedure TDebugServerQueue.Added(Action: TDebugServerAction);
+begin
+  inherited Added(Action);
+  Action.FConnection := FConnection;
+end;
+
+{ TDebugConnection }
+
+function TDebugConnection.GetServer: TDebugServer;
+begin
+  Result := (Listener.Server as TDebugServer);
+end;
+
+function TDebugConnection.NewTransactionID: integer;
+begin
+  Inc(FTransactionID);
+  Result := FTransactionID;
+end;
+
+function TDebugConnection.PopAction: TDebugServerAction;
+var
+  aAction: TDebugServerAction;
+  i: integer;
+begin
+  if FQueue.Count = 0 then
+  begin
+    InterLockedIncrement(Server.FRunCount);
+    DebugManager.Event.WaitFor(INFINITE); //wait the ide to make resume
+    InterLockedDecrement(Server.FRunCount);
+
+    DebugManager.Enter;
+    try
+      i := 0;
+      while i < Server.Queue.Count do
+      begin
+        aAction := Server.Queue.Extract(Server.Queue[i]);
+        //        if aAction.Key = Key then
+        FQueue.Add(aAction);
+        //        else
+        //        inc(i);
+      end;
+    finally
+      DebugManager.Leave;
+    end;
+  end;
+  Result := nil;
+  while not Terminated and ((FQueue.Count > 0) and (Result = nil)) do
+  begin
+    Result := FQueue[0];
+    Result.Prepare;
+  end;
+end;
+
+procedure TDebugConnection.Prepare;
+begin
+  inherited Prepare;
+end;
+
+procedure TDebugConnection.DoExecute;
+begin
+end;
+
+procedure TDebugConnection.Process;
+var
+  aAction: TDebugServerAction;
+  aKeep: Boolean;
+begin
+  inherited;
+  //Allow one connection to Execute
+  //Listener.Enter;
+  try
+    DoExecute;
+    aAction := PopAction;
+    if aAction <> nil then
+    begin
+      if not aAction.Enabled then
+        FQueue.Remove(aAction)
+      else
+        try
+          aAction.Process;
+        finally
+          if not aAction.Stay then
+          begin
+            aKeep := (aAction.Event <> nil) or aAction.KeepAlive;
+            if aAction.Event <> nil then
+              aAction.Event.SetEvent;
+            if aKeep then
+              FQueue.Extract(aAction)
+            else
+              FQueue.Remove(aAction);
+          end;
+        end;
+    end;
+  finally
+    //Listener.Leave;
+  end;
+end;
+
+procedure TDebugConnection.TerminatedSet;
+begin
+  inherited TerminatedSet;
+  DebugManager.Event.SetEvent;
+end;
+
+constructor TDebugConnection.Create(vOwner: TmnConnections; vStream: TmnConnectionStream);
+begin
+  inherited;
+  FQueue := TDebugServerQueue.Create;
+  FQueue.FConnection := Self;
+  //KeepAlive := True;
+  Stream.ReadTimeout := 5000;
+end;
+
+destructor TDebugConnection.Destroy;
+begin
+  FreeAndNil(FQueue);
+  inherited;
+end;
+
+{ TDebugListener }
+
+function TDebugListener.DoCreateConnection(vStream: TmnConnectionStream): TmnConnection;
+begin
+  Result := TDebugConnection.Create(Self, vStream);
+end;
+
+function TDebugServer.GetIsRuning: Boolean;
+begin
+  Result := RunCount > 0;
+end;
+
+function TDebugServer.CreateListener: TmnListener;
+begin
+  Result := TDebugListener.Create;
+end;
+
+procedure TDebugServer.DoChanged(vListener: TmnListener);
+begin
+  inherited;
+  if vListener.Count = 0 then //TODO: i am not sure in Linux
+    Engine.DebugLink.SetExecutedLine('', '', 0);
+end;
+
+procedure TDebugServer.DoStart;
+begin
+  inherited DoStart;
+end;
+
+procedure TDebugServer.DoBeforeOpen;
+begin
+  Queue.Clear;
+  inherited;
+end;
+
+procedure TDebugServer.DoStop;
+begin
+  inherited;
+  if FQueue <> nil then //DoStop class when Server free
+    FQueue.Clear;
+end;
+
+procedure TDebugServer.WatchAdded;
+begin
+end;
+
+procedure TDebugServer.BreakPointAdded;
+begin
+end;
+
+constructor TDebugServer.Create;
+begin
+  inherited Create;
+  FQueue := TDebugServerQueue.Create(True);
+  FStackDepth := 10;
+  FBreakOnFirstLine := False;
+  FWatches := TdbgpWatches.Create;
+  FWatches.FServer := Self;
+  FBreakpoints := TdbgpBreakpoints.Create;
+  FBreakpoints.FServer := Self;
+  FBreakpoints.FServer := Self;
+end;
+
+destructor TDebugServer.Destroy;
+begin
+  FreeAndNil(FQueue);
+  FreeAndNil(FWatches);
+  FreeAndNil(FBreakpoints);
+  inherited;
+end;
+
+procedure TDebugServer.Resume;
+begin
+  DebugManager.Event.SetEvent;
+end;
+
+procedure TDebugServer.AddAction(vAction: TDebugServerAction);
+begin
+  DebugManager.Enter;
+  try
+    Queue.Add(vAction);
+  finally
+    DebugManager.Leave;
+  end;
+end;
+
+procedure TDebugServer.AddAction(vActionClass: TDebugServerActionClass);
+begin
+  AddAction(vActionClass.Create);
+end;
+
+procedure TDebugServer.RemoveAction(vAction: TDebugServerAction);
+begin
+  DebugManager.Enter;
+  try
+    Queue.Remove(vAction);
+  finally
+    DebugManager.Leave;
+  end;
+end;
+
+procedure TDebugServer.ExtractAction(vAction: TDebugServerAction);
+begin
+  DebugManager.Enter;
+  try
+    Queue.Extract(vAction);
+  finally
+    DebugManager.Leave;
+  end;
+end;
+
+procedure TDebugServer.Clear;
+begin
+  DebugManager.Enter;
+  try
+    Queue.Clear;
+  finally
+    DebugManager.Leave;
+  end;
+end;
+
 
 { TEditorDebugger }
 

@@ -36,35 +36,19 @@ type
 
   { TdbgpAction }
 
-  TdbgpAction = class(TDebugCommand)
+  TdbgpAction = class(TDebugServerAction)
   private
-    FConnection: TdbgpConnection;
   protected
-    FTransactionID: integer;
-    property Connection: TdbgpConnection read FConnection;
     procedure CheckError(Respond: TDebugCommandRespond);
     procedure DoExecute(Respond: TDebugCommandRespond); virtual; abstract;
     procedure Execute(Respond: TDebugCommandRespond);
+    function SendCommand(Command: string; Data: string): integer;
+    function ReadRespond: TDebugCommandRespond;
   public
+    procedure Process; override;
   end;
 
   TdbgpActionClass = class of TdbgpAction;
-
-  { TdbgpSpool }
-
-  TdbgpSpool = class(specialize TmnObjectList<TdbgpAction>)
-  private
-  public
-  end;
-
-  { TdbgpConnectionSpool }
-
-  TdbgpConnectionSpool = class(TdbgpSpool)
-  private
-    FConnection: TdbgpConnection;
-  public
-    procedure Added(Action: TdbgpAction); override;
-  end;
 
   { TdbgpInit }
 
@@ -108,6 +92,7 @@ type
     FCurFile: string;
     FCurLine: integer;
     FCallStack: TCallStackItems;
+  protected
     procedure ShowFile;
   public
     procedure Created; override;
@@ -171,7 +156,8 @@ type
   public
     Info: TDebugWatchInfo;
   end;
-  // Watches
+
+	// Watches
 
   { TdbgpCustomGetWatch }
 
@@ -260,109 +246,20 @@ type
     function Stay: Boolean; override;
   end;
 
-//* Watches
-
-  { TdbgpWatch }
-
-  TdbgpWatch = class(TObject)
-  private
-    FHandle: integer;
-  public
-    Info: TDebugWatchInfo;
-    property Handle: integer read FHandle write FHandle;
-  published
-  end;
-
-  { TdbgpWatches }
-
-  TdbgpWatches = class(specialize TmnObjectList<TdbgpWatch>)
-  private
-    FServer: TdbgpServer;
-    CurrentHandle: integer;
-    function GetValues(Name: string): variant;
-    procedure SetValues(Name: string; const Value: variant);
-  protected
-    property Server: TdbgpServer read FServer;
-  public
-    function Find(Name: string): TdbgpWatch;
-    function Add(Name: string; Value: variant): integer; overload;
-    procedure AddWatch(Name: string);
-    procedure RemoveWatch(Name: string);
-    procedure Clean;
-    property Values[Name: string]: variant read GetValues write SetValues;
-  end;
-
-//* Breakpoints
-
-  { TdbgpBreakpoint }
-
-  TdbgpBreakpoint = class(TObject)
-  private
-    FDeleted: Boolean;
-    FID: integer;
-    FLine: integer;
-    FHandle: Integer;
-    FFileName: string;
-  public
-    property Handle: Integer read FHandle write FHandle;
-    property ID: integer read FID write FID;
-    property Deleted: Boolean read FDeleted write FDeleted;
-  published
-    property FileName: string read FFileName write FFileName;
-    property Line: integer read FLine write FLine;
-  end;
-
-  { TdbgpBreakpoints }
-
-  TdbgpBreakpoints = class(specialize TmnObjectList<TdbgpBreakpoint>)
-  private
-    CurrentHandle: Integer;
-    FServer: TdbgpServer;
-  protected
-    property Server: TdbgpServer read FServer;
-  public
-    function Add(FileName: string; Line: integer): integer; overload;
-    procedure Remove(Handle: Integer); overload;
-    procedure ForceRemove(Handle: Integer); overload;
-    function Find(Name: string; Line: integer; WithDeleted: Boolean = False): TdbgpBreakpoint; overload;
-    procedure Toggle(FileName: string; Line: integer);
-    procedure Clean;
-  end;
-
-  TdbgpOnServerEvent = procedure(Sender: TObject; Socket: TdbgpConnection) of object;
-
   { TdbgpConnection }
 
-  TdbgpConnection = class(TmnServerConnection)
+  TdbgpConnection = class(TDebugConnection)
   private
-    FSpool: TdbgpConnectionSpool;
-    FKey: string;
-    function GetServer: TdbgpServer;
   public
-    FTransactionID: integer;
   protected
-    function NewTransactionID: integer;
-{$IFDEF SAVELOG}
-    procedure SaveLog(s: string);
-{$ENDIF}
-    function ReadRespond: TDebugCommandRespond;
-    function PopAction: TdbgpAction;
-    function SendCommand(Command: string; Data: string): integer;
     procedure Prepare; override;
-    procedure DoExecute;
-    procedure Process; override;
-    procedure TerminatedSet; override;
   public
-    constructor Create(vOwner: TmnConnections; vStream: TmnConnectionStream);
-    destructor Destroy; override;
-    property Key: string read FKey;
-    property Server: TdbgpServer read GetServer;
   published
   end;
 
-  { TmnDBGListener }
+  { TdbgpListener }
 
-  TmnDBGListener = class(TmnListener)
+  TdbgpListener = class(TDebugListener)
   private
   protected
     function DoCreateConnection(vStream: TmnConnectionStream): TmnConnection; override;
@@ -371,39 +268,16 @@ type
 
   { TdbgpServer }
 
-  TdbgpServer = class(TmnServer)
+  TdbgpServer = class(TDebugServer)
   private
-    FBreakOnFirstLine: Boolean;
-    FQueue: TdbgpSpool;
-    FStackDepth: Integer;
-    FWatches: TdbgpWatches;
-    FBreakpoints: TdbgpBreakpoints;
-    FRunCount: Integer;
-    FKey: string;
-    function GetIsRuning: Boolean;
   protected
+    function GetIsRuning: Boolean; override;
     function CreateListener: TmnListener; override;
-    procedure DoChanged(vListener: TmnListener); override;
-    procedure DoStart; override;
-    procedure DoBeforeOpen; override;
-    procedure DoStop; override;
-    property Queue: TdbgpSpool read FQueue;
+    procedure WatchAdded; override;
+    procedure BreakPointAdded; override;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure Resume;
-    procedure AddAction(vAction: TdbgpAction); overload;
-    procedure AddAction(vActionClass: TdbgpActionClass); overload;
-    procedure RemoveAction(vAction: TdbgpAction);
-    procedure ExtractAction(vAction: TdbgpAction);
-    procedure Clear;
-    property IsRuning: Boolean read GetIsRuning;
-    property Watches: TdbgpWatches read FWatches;
-    property StackDepth: Integer read FStackDepth write FStackDepth;
-    property Breakpoints: TdbgpBreakpoints read FBreakpoints;
-    property BreakOnFirstLine: Boolean read FBreakOnFirstLine write FBreakOnFirstLine default False;
-    property Key: string read FKey;
-    property RunCount: Integer read FRunCount; //count of waiting action
   published
   end;
 
@@ -488,6 +362,83 @@ begin
   DoExecute(Respond);
 end;
 
+function TdbgpAction.SendCommand(Command: string; Data: string): integer;
+var
+  s: string;
+begin
+  Result := Connection.NewTransactionID;
+  s := Command + ' -i ' + IntToStr(Result);
+  if Data <> '' then
+    s := s + ' -- ' + Data;
+  Connection.Stream.WriteString(s+#0);
+{$IFDEF SAVELOG}
+  SaveLog(s);
+{$ENDIF}
+end;
+
+function TdbgpAction.ReadRespond: TDebugCommandRespond;
+var
+  Reader: TmnXMLNodeReader;
+  s: string;
+  aMatched: boolean;
+begin
+  Result := nil;
+  Connection.Stream.ReadUntil(#0, true, s, aMatched);
+  if Connection.Connected and aMatched and (S <> '') then
+  begin
+    Result := TDebugCommandRespond.Create;
+    Connection.Stream.ReadUntil(#0, true, s, aMatched);
+    s := Trim(s);
+    {$IFDEF SAVELOG}
+    SaveLog(s);
+    {$ENDIF}
+    Result.Source := s;
+    Reader := TmnXMLNodeReader.Create;
+    try
+      Reader.Start;
+      Reader.Nodes := Result;
+       Reader.Parse(s);
+    finally
+      Reader.Free;
+    end;
+  end;
+end;
+
+procedure TdbgpAction.Process;
+var
+  aRespond: TDebugCommandRespond;
+  aCommand: string;
+begin
+  aCommand := GetCommand;
+  if (dafSend in Flags) and (aCommand <> '') then
+    FTransactionID := SendCommand(aCommand, GetData);
+  if Accept and Connection.Connected then
+  begin
+    aRespond := ReadRespond;
+    try
+      if (aRespond <> nil) and (aRespond.Root <> nil) then
+      begin
+        if (aRespond.GetAttribute('response', 'status') = 'stopping') then
+          Connection.Disconnect
+        else if (aRespond.GetAttribute('response', 'status') = 'stoped') then
+        begin
+          //Connection.Disconnect;
+        end
+        else
+        begin
+          try
+            if (aRespond <> nil) and Connection.Connected and (aRespond.Root <> nil) then
+              Execute(aRespond);
+          finally
+          end;
+        end;
+      end;
+    finally
+      FreeAndNil(aRespond);
+    end;
+  end;
+end;
+
 { TdbgpCommandSet }
 
 procedure TdbgpCommandSet.DoExecute(Respond: TDebugCommandRespond);
@@ -544,22 +495,11 @@ end;
 constructor TdbgpServer.Create;
 begin
   inherited;
-  FQueue := TdbgpSpool.Create(True);
   Port := '9000';
-  FStackDepth := 10;
-  FWatches := TdbgpWatches.Create;
-  FWatches.FServer := Self;
-  FBreakpoints := TdbgpBreakpoints.Create;
-  FBreakpoints.FServer := Self;
-  FBreakpoints.FServer := Self;
-  FBreakOnFirstLine := False;
 end;
 
 destructor TdbgpServer.Destroy;
 begin
-  FreeAndNil(FWatches);
-  FreeAndNil(FBreakpoints);
-  FreeAndNil(FQueue);
   inherited;
 end;
 
@@ -568,125 +508,34 @@ begin
   Result := RunCount > 0;
 end;
 
-constructor TdbgpConnection.Create(vOwner: TmnConnections; vStream: TmnConnectionStream);
-begin
-  inherited;
-  FSpool := TdbgpConnectionSpool.Create;
-  FSpool.FConnection := Self;
-  //KeepAlive := True;
-  Stream.ReadTimeout := 5000;
-end;
-
-destructor TdbgpConnection.Destroy;
-begin
-  FreeAndNil(FSpool);
-  inherited;
-end;
-
-{ TdbgpConnection }
-
-function TdbgpConnection.NewTransactionID: integer;
-begin
-  Inc(FTransactionID);
-  Result := FTransactionID;
-end;
+{ TdbgpGetCurrent }
 
 procedure TdbgpGetCurrent.ShowFile; //this function must Synchronize
 begin
   Engine.DebugLink.SetExecutedLine(FCurKey, FCurFile, FCurLine, FCallStack);
 end;
 
-procedure TdbgpConnection.DoExecute;
-var
-  aAction: TdbgpAction;
-  aRespond: TDebugCommandRespond;
-  aCommand: string;
-  aKeep: Boolean;
-begin
-  aAction := PopAction;
-  if aAction <> nil then
-  begin
-    if not aAction.Enabled then
-      FSpool.Remove(aAction)
-    else
-      try
-        aCommand := aAction.GetCommand;
-        if (dafSend in aAction.Flags) and (aCommand <> '') then
-          aAction.FTransactionID := SendCommand(aCommand, aAction.GetData);
-        if aAction.Accept and Connected then
-        begin
-          aRespond := ReadRespond;
-          try
-            if (aRespond <> nil) and (aRespond.Root <> nil) then
-            begin
-              if (aRespond.GetAttribute('response', 'status') = 'stopping') then
-                Disconnect
-              else if (aRespond.GetAttribute('response', 'status') = 'stoped') then
-              begin
-                //Disconnect;
-              end
-              else
-              begin
-                try
-                  if (aRespond <> nil) and Connected and (aRespond.Root <> nil) then
-                    aAction.Execute(aRespond);
-                finally
-                end;
-              end;
-            end;
-          finally
-            FreeAndNil(aRespond);
-          end;
-        end;
-      finally
-        if not aAction.Stay then
-        begin
-          aKeep := (aAction.Event <> nil) or aAction.KeepAlive;
-          if aAction.Event <> nil then
-            aAction.Event.SetEvent;
-          if aKeep then
-            FSpool.Extract(aAction)
-          else
-            FSpool.Remove(aAction);
-        end;
-      end;
-  end;
-end;
-
 { TdbgpSocketServer }
 
 function TdbgpServer.CreateListener: TmnListener;
 begin
-  Result := TmnDBGListener.Create;
+  Result := TdbgpListener.Create;
 end;
 
-function TdbgpConnection.ReadRespond: TDebugCommandRespond;
-var
-  Reader: TmnXMLNodeReader;
-  s: string;
-  aMatched: boolean;
+procedure TdbgpServer.WatchAdded;
 begin
-  Result := nil;
-  Stream.ReadUntil(#0, true, s, aMatched);
-  if Connected and aMatched and (S <> '') then
-  begin
-    Result := TDebugCommandRespond.Create;
-    Stream.ReadUntil(#0, true, s, aMatched);
-    s := Trim(s);
-    {$IFDEF SAVELOG}
-    SaveLog(s);
-    {$ENDIF}
-    Result.Source := s;
-    Reader := TmnXMLNodeReader.Create;
-    try
-      Reader.Start;
-      Reader.Nodes := Result;
-       Reader.Parse(s);
-    finally
-      Reader.Free;
-    end;
-  end;
+  inherited;
+  Queue.Add(TdbgpGetWatches.Create);
+  Queue.Add(TdbgpGetCurrent.Create);
 end;
+
+procedure TdbgpServer.BreakPointAdded;
+begin
+  inherited;
+  Queue.Add(TdbgpGetWatches.Create);
+  Queue.Add(TdbgpGetCurrent.Create);
+end;
+
 
 {$IFDEF SAVELOG}
 procedure TdbgpConnection.SaveLog(s: string);
@@ -721,72 +570,19 @@ end;
 
 {$ENDIF}
 
-function TdbgpConnection.SendCommand(Command: string; Data: string): integer;
-var
-  s: string;
-begin
-  Result := NewTransactionID;
-  s := Command + ' -i ' + IntToStr(Result);
-  if Data <> '' then
-    s := s + ' -- ' + Data;
-  Stream.WriteString(s+#0);
-{$IFDEF SAVELOG}
-  SaveLog(s);
-{$ENDIF}
-end;
-
-function TdbgpConnection.GetServer: TdbgpServer;
-begin
-  Result := (Listener.Server as TdbgpServer);
-end;
-
-function TdbgpConnection.PopAction: TdbgpAction;
-var
-  aAction: TdbgpAction;
-  i: integer;
-begin
-  if FSpool.Count = 0 then
-  begin
-    InterLockedIncrement(Server.FRunCount);
-    DebugManager.Event.WaitFor(INFINITE); //wait the ide to make resume
-    InterLockedDecrement(Server.FRunCount);
-
-    DebugManager.Enter;
-    try
-      i := 0;
-      while i < Server.Queue.Count do
-      begin
-        aAction := Server.Queue.Extract(Server.Queue[i]);
-        //        if aAction.Key = Key then
-        FSpool.Add(aAction);
-        //        else
-        //        inc(i);
-      end;
-    finally
-      DebugManager.Leave;
-    end;
-  end;
-  Result := nil;
-  while not Terminated and ((FSpool.Count > 0) and (Result = nil)) do
-  begin
-    Result := FSpool[0];
-    Result.Prepare;
-  end;
-end;
-
 procedure TdbgpConnection.Prepare;
 begin
   inherited;
   Server.Breakpoints.Clean;
 
-  FSpool.Add(TdbgpInit.Create);
-  FSpool.Add(TdbgpFeatureSet.CreateBy('show_hidden', '1'));
-  FSpool.Add(TdbgpFeatureSet.CreateBy('max_depth', IntToStr(Server.StackDepth)));
-  FSpool.Add(TdbgpFeatureSet.CreateBy('max_children', '100'));
+  Queue.Add(TdbgpInit.Create);
+  Queue.Add(TdbgpFeatureSet.CreateBy('show_hidden', '1'));
+  Queue.Add(TdbgpFeatureSet.CreateBy('max_depth', IntToStr(Server.StackDepth)));
+  Queue.Add(TdbgpFeatureSet.CreateBy('max_children', '100'));
 
-  FSpool.Add(TdbgpSetBreakpoints.Create);
-  FSpool.Add(TdbgpCommandSet.CreateBy('breakpoint_set', '-t exception -X Error -s enabled'));
-  FSpool.Add(TdbgpCommandSet.CreateBy('breakpoint_set', '-t exception -X Warning -s enabled'));
+  Queue.Add(TdbgpSetBreakpoints.Create);
+  Queue.Add(TdbgpCommandSet.CreateBy('breakpoint_set', '-t exception -X Error -s enabled'));
+  Queue.Add(TdbgpCommandSet.CreateBy('breakpoint_set', '-t exception -X Warning -s enabled'));
   { or
     breakpoint_set -t exception -X Error
     breakpoint_set -t exception -X Warning
@@ -795,65 +591,22 @@ begin
 
   if Server.BreakOnFirstLine then
   begin
-    FSpool.Add(TdbgpStepInto.Create);
-    FSpool.Add(TdbgpGetCurrent.Create);
+    Queue.Add(TdbgpStepInto.Create);
+    Queue.Add(TdbgpGetCurrent.Create);
   end
   else
   begin
-    FSpool.Add(TdbgpRun.Create);
-    FSpool.Add(TdbgpGetWatches.Create);
-    FSpool.Add(TdbgpGetCurrent.Create);
+    Queue.Add(TdbgpRun.Create);
+    Queue.Add(TdbgpGetWatches.Create);
+    Queue.Add(TdbgpGetCurrent.Create);
   end;
 end;
 
-procedure TdbgpConnection.Process;
-begin
-  inherited;
-  //Allow one connection to Execute
-  //Listener.Enter;
-  try
-    DoExecute;
-  finally
-    //Listener.Leave;
-  end;
-end;
+{ TdbgpListener }
 
-procedure TdbgpConnection.TerminatedSet;
-begin
-  inherited;
-  DebugManager.Event.SetEvent;
-end;
-
-{ TmnDBGListener }
-
-function TmnDBGListener.DoCreateConnection(vStream: TmnConnectionStream): TmnConnection;
+function TdbgpListener.DoCreateConnection(vStream: TmnConnectionStream): TmnConnection;
 begin
   Result := TdbgpConnection.Create(Self, vStream);
-end;
-
-procedure TdbgpServer.DoStart;
-begin
-  inherited;
-end;
-
-procedure TdbgpServer.DoBeforeOpen;
-begin
-  Queue.Clear;
-  inherited;
-end;
-
-procedure TdbgpServer.DoStop;
-begin
-  inherited;
-  if FQueue <> nil then //DoStop class when Server free
-    FQueue.Clear;
-end;
-
-procedure TdbgpServer.DoChanged(vListener: TmnListener);
-begin
-  inherited;
-  if vListener.Count = 0 then //TODO: i am not sure in Linux
-    Engine.DebugLink.SetExecutedLine('', '', 0);
 end;
 
 { TdbgpStepOver }
@@ -878,11 +631,6 @@ procedure TdbgpStepInto.DoExecute(Respond: TDebugCommandRespond);
 begin
 end;
 
-procedure TdbgpServer.Resume;
-begin
-  DebugManager.Event.SetEvent;
-end;
-
 { TdbgpInit }
 
 procedure TdbgpInit.Created;
@@ -901,7 +649,7 @@ begin
   DebugManager.Enter;
   try
     Connection.Server.Watches.Clean;
-    Connection.FKey := Respond.Root.Attributes['idekey'];
+    Connection.Key := Respond.Root.Attributes['idekey'];
   finally
     DebugManager.Leave;
   end;
@@ -948,7 +696,7 @@ begin
       FCurLine := StrToIntDef(Respond.GetAttribute('stack', 'lineno'), 0);
       try
         //Dont do any lock here
-        Connection.Synchronize(@ShowFile);
+        Connection.Synchronize(Connection, @ShowFile);
       finally
       end;
     end;
@@ -1018,107 +766,6 @@ procedure TdbgpStepOut.DoExecute(Respond: TDebugCommandRespond);
 begin
 end;
 
-{ TdbgpWatches }
-
-function TdbgpWatches.Add(Name: string; Value: variant): integer;
-var
-  aWatch: TdbgpWatch;
-begin
-  Inc(CurrentHandle);
-  aWatch := TdbgpWatch.Create;
-  aWatch.Handle := CurrentHandle;
-  aWatch.Info.Name := Name;
-  aWatch.Info.VarType := '';
-  aWatch.Info.Value := Value;
-  Result := Add(aWatch);
-end;
-
-procedure TdbgpWatches.AddWatch(Name: string);
-begin
-  DebugManager.Enter;
-  try
-    Add(Name, '');
-  finally
-    DebugManager.Leave;
-  end;
-  if Server.IsRuning then
-  begin
-    DebugManager.Enter;
-    try
-      Server.Queue.Add(TdbgpGetWatches.Create);
-      Server.Queue.Add(TdbgpGetCurrent.Create);
-    finally
-      DebugManager.Leave;
-    end;
-    Server.Resume;
-  end;
-end;
-
-procedure TdbgpWatches.Clean;
-var
-  i: integer;
-begin
-  for i := 0 to Count - 1 do
-  begin
-    VarClear(Items[i].Info.Value);
-  end;
-end;
-
-function TdbgpWatches.Find(Name: string): TdbgpWatch;
-var
-  i: integer;
-begin
-  Result := nil;
-  for i := 0 to Count - 1 do
-  begin
-    if Items[i].Info.Name = Name then
-    begin
-      Result := Items[i];
-      break;
-    end;
-  end;
-end;
-
-function TdbgpWatches.GetValues(Name: string): variant;
-var
-  aWatch: TdbgpWatch;
-begin
-  aWatch := Find(Name);
-  if aWatch <> nil then
-    Result := aWatch.Info.Value
-  else
-    VarClear(Result);
-end;
-
-procedure TdbgpWatches.RemoveWatch(Name: string);
-var
-  i: integer;
-begin
-  for i := 0 to Count - 1 do
-  begin
-    if Items[i].Info.Name = Name then
-    begin
-      Delete(i);
-      break;
-    end;
-  end;
-  if Server.IsRuning then
-  begin
-    DebugManager.Enter;
-    try
-      Server.Queue.Add(TdbgpGetWatches.Create);
-      Server.Queue.Add(TdbgpGetCurrent.Create);
-    finally
-      DebugManager.Leave;
-    end;
-    Server.Resume;
-  end;
-end;
-
-procedure TdbgpWatches.SetValues(Name: string; const Value: variant);
-begin
-end;
-
 { TdbgpGetWatch }
 
 procedure TdbgpGetWatch.DoExecute(Respond: TDebugCommandRespond);
@@ -1130,115 +777,6 @@ begin
     Connection.Server.Watches[Index].Info.VarType := Info.VarType;
   finally
     DebugManager.Leave;
-  end;
-end;
-
-{ TdbgpBreakpoints }
-
-function TdbgpBreakpoints.Add(FileName: string; Line: integer): integer;
-var
-  aBreakpoint: TdbgpBreakpoint;
-begin
-  Result := -1;
-  Inc(CurrentHandle);
-  aBreakpoint := Find(FileName, Line, True);
-  if aBreakpoint = nil then
-  begin
-    aBreakpoint := TdbgpBreakpoint.Create;
-    aBreakpoint.Handle := CurrentHandle;
-    aBreakpoint.FileName := FileName;
-    aBreakpoint.Line := Line;
-    Result := Add(aBreakpoint);
-  end
-  else if aBreakpoint.Deleted then
-    aBreakpoint.Deleted := False
-  else
-    Raise Exception.Create('Break point already exists');
-end;
-
-function TdbgpBreakpoints.Find(Name: string; Line: integer; WithDeleted: Boolean): TdbgpBreakpoint;
-var
-  aItem: TdbgpBreakpoint;
-begin
-  Result := nil;
-  for aItem in Self do
-  begin
-    if (not aItem.Deleted or WithDeleted) and (aItem.line = Line) and SameText(aItem.FileName, Name) then
-    begin
-      Result := aItem;
-      break;
-    end;
-  end;
-end;
-
-procedure TdbgpBreakpoints.Remove(Handle: Integer);
-var
-  i: integer;
-begin
-  for i := 0 to Count - 1 do
-  begin
-    if Items[i].Handle = Handle then
-    begin
-      if Items[i].ID > 0 then
-        Items[i].Deleted := True
-      else
-        Delete(i);
-      break;
-    end;
-  end;
-end;
-
-procedure TdbgpBreakpoints.ForceRemove(Handle: Integer);
-var
-  i: integer;
-begin
-  for i := 0 to Count - 1 do
-  begin
-    if Items[i].Handle = Handle then
-    begin
-      Delete(i);
-      break;
-    end;
-  end;
-end;
-
-procedure TdbgpBreakpoints.Toggle(FileName: string; Line: integer);
-var
-  aBreakpoint: TdbgpBreakpoint;
-  //aSetBreakpoint: TdbgpSetBreakpoint;
-  //aRemoveBreakpoint: TdbgpRemoveBreakpoint;
-begin
-  aBreakpoint := Find(FileName, Line, True); //lookup it as normal
-  if (aBreakpoint <> nil) and (not aBreakpoint.Deleted) then
-  begin
-    if aBreakpoint.ID > 0 then
-      aBreakpoint.Deleted := True //Will be removed by action
-    else
-      Remove(ABreakpoint);
-  end
-  else
-  begin
-    if aBreakpoint <> nil then
-      aBreakpoint.Deleted := False
-    else
-      Add(FileName, Line);
-  end;
-end;
-
-procedure TdbgpBreakpoints.Clean;
-var
-  i: Integer;
-begin
-  i := 0;
-  while i < Count do
-  begin
-    if Items[i].Deleted then
-      Delete(i)
-    else
-    begin
-      Items[i].ID := 0;
-      Inc(i);
-    end;
   end;
 end;
 
@@ -1380,14 +918,6 @@ begin
   Result := 'breakpoint_remove -d ' + IntToStr(BreakpointID);
 end;
 
-{ TdbgpConnectionSpool }
-
-procedure TdbgpConnectionSpool.Added(Action: TdbgpAction);
-begin
-  inherited Added(Action);
-  Action.FConnection := FConnection;
-end;
-
 {$IFDEF SAVELOG}
 procedure SaveLog(s: string);
 var
@@ -1419,51 +949,6 @@ begin
   end;
 end;
 {$ENDIF}
-
-procedure TdbgpServer.AddAction(vAction: TdbgpAction);
-begin
-  DebugManager.Enter;
-  try
-    Queue.Add(vAction);
-  finally
-    DebugManager.Leave;
-  end;
-end;
-
-procedure TdbgpServer.AddAction(vActionClass: TdbgpActionClass);
-begin
-  AddAction(vActionClass.Create);
-end;
-
-procedure TdbgpServer.RemoveAction(vAction: TdbgpAction);
-begin
-  DebugManager.Enter;
-  try
-    Queue.Remove(vAction);
-  finally
-    DebugManager.Leave;
-  end;
-end;
-
-procedure TdbgpServer.ExtractAction(vAction: TdbgpAction);
-begin
-  DebugManager.Enter;
-  try
-    Queue.Extract(vAction);
-  finally
-    DebugManager.Leave;
-  end;
-end;
-
-procedure TdbgpServer.Clear;
-begin
-  DebugManager.Enter;
-  try
-    Queue.Clear;
-  finally
-    DebugManager.Leave;
-  end;
-end;
 
 { TdbgpCustomGetWatch }
 
@@ -1712,7 +1197,7 @@ end;
 
 procedure TdbgpDebugger.Action(AAction: TDebugAction);
 begin
-    case AAction of
+  case AAction of
     dbaActivate: Start;
     dbaDeactivate: Stop;
     dbaReset: Reset;

@@ -41,7 +41,7 @@ uses
   SynEditTypes, SynEditMiscClasses, SynEditPlugins, SynPluginTemplateEdit,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
-  mncCSV, dbgpServers, mnXMLRttiProfile, mnXMLUtils, mnClasses,
+  mncCSV, mnXMLRttiProfile, mnXMLUtils, mnClasses,
   mnUtils, EditorClasses, EditorRun;
 
 type
@@ -7465,17 +7465,20 @@ begin
     lh := TSynEdit(SynEdit).LineHeight;
     iw := EditorResource.DebugImages.Width;
 
-    DebugManager.Enter;
-    try
-      for i := FirstLine to LastLine do
-      begin
-        aLine := TSynEdit(SynEdit).ScreenRowToRow(i);
-        if aTendency.Debugger.Breakpoints.IsExists(FEditorFile.FileName, aLine) then
-          DrawIndicator(i, DEBUG_IMAGE_BREAKPOINT);
-      end;
+    if aTendency.Debugger.Breakpoints <> nil then
+    begin
+      DebugManager.Enter;
+      try
+        for i := FirstLine to LastLine do
+        begin
+          aLine := TSynEdit(SynEdit).ScreenRowToRow(i);
+          if aTendency.Debugger.Breakpoints.IsExists(FEditorFile.FileName, aLine) then
+            DrawIndicator(i, DEBUG_IMAGE_BREAKPOINT);
+        end;
 
-    finally
-      DebugManager.Leave;
+      finally
+        DebugManager.Leave;
+      end;
     end;
 
     if (Engine.DebugLink.ExecutedControl = SynEdit) and (Engine.DebugLink.ExecutedLine >= 0) then
