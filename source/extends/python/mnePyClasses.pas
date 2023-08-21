@@ -19,10 +19,9 @@ uses
   Contnrs, LazFileUtils, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  mnSynHighlighterPy,
-	EditorClasses, mneClasses,
-  mnSynUtils,
-  mneCompilerProjectFrames, EditorRun, dbgpServers,
+  mnSynHighlighterPy, EditorClasses,
+	mneClasses, mnStreams, mnSynUtils, mnServers, mnConnections,
+  mneCompilerProjectFrames, EditorRun,
   mneRunFrames;
 
 type
@@ -77,10 +76,74 @@ type
   published
   end;
 
+  TmnDebugPyListener = class;
+
+  { TDebugPyConnection }
+
+  TDebugPyConnection = class(TmnServerConnection)
+  private
+  protected
+    function Listener: TmnDebugPyListener;
+    procedure Process; override;
+  public
+    constructor Create(vConnector: TmnConnections; vStream: TmnConnectionStream);
+    destructor Destroy; override;
+  end;
+
+  { TmnDebugPyListener }
+
+  TmnDebugPyListener = class(TmnListener)
+  private
+  protected
+    function DoCreateConnection(vStream: TmnConnectionStream): TmnConnection; override;
+  public
+    constructor Create;
+    destructor Destroy; override;
+  end;
+
+  { TDebugPyServer }
+
+  TDebugPyServer = class(TmnServer)
+  private
+    FKey: string;
+    function GetIsRuning: Boolean;
+  protected
+    function DoCreateListener: TmnListener; override;
+  public
+    property IsRuning: Boolean read GetIsRuning;
+
+  end;
+
+  { TDebugPyDebugger }
+
+  TDebugPyDebugger = class(TEditorDebugger)
+  private
+    FServer: TDebugPyServer;
+  protected
+    function CreateBreakPoints: TEditorBreakPoints; override;
+    function CreateWatches: TEditorWatches; override;
+
+    procedure Reset;
+    procedure Resume;
+    procedure StepOver;
+    procedure StepInto;
+    procedure StepOut;
+    procedure Run;
+    property Server: TDebugPyServer read FServer;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    procedure Start; override;
+    procedure Stop; override;
+    procedure Action(AAction: TDebugAction); override;
+    function GetState: TDebugStates; override;
+    function GetKey: string; override;
+  end;
+
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mnePyProjectFrames;
+  IniFiles, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mnePyProjectFrames, debugpyServers;
 
 { TDProject }
 
@@ -192,6 +255,11 @@ begin
       {$else}
         aRunItem.Info.Run.Command := 'python';
       {$endif}
+    end;
+    if rnaDebug in Info.Actions then
+    begin
+      aRunItem.Info.Run.AddParam('-m debugpy --connect localhost:9001');
+      aRunItem.Environment.Add('PYDEVD_DISABLE_FILE_VALIDATION=1');
     end;
     aRunItem.Info.Run.AddParam(' "' + Info.MainFile + '"');
     aRunItem.Info.Run.AddParam(RunOptions.Params);
@@ -329,7 +397,7 @@ end;
 
 function TPyTendency.CreateDebugger: TEditorDebugger;
 begin
-  Result := TdbgpDebugger.Create;
+  Result := TDebugPyDebugger.Create;
 end;
 
 function TPyTendency.CreateProjectOptions: TEditorProjectOptions;
@@ -348,6 +416,200 @@ begin
   AddGroup('cfg', 'cfg');
   AddGroup('ini', 'ini');
   AddGroup('txt', 'txt');
+end;
+
+//https://github.com/JetBrains/intellij-community/blob/master/python/helpers/pydev/_pydevd_bundle/pydevd_comm.py
+
+const
+  DEBUGBY_RUN = 101;
+  DEBUGBY_LIST_THREADS = 102;
+  DEBUGBY_THREAD_CREATE = 103;
+  DEBUGBY_THREAD_KILL = 104;
+  DEBUGBY_THREAD_SUSPEND = 105;
+  DEBUGBY_CMD_THREAD_RUN = 106;
+  DEBUGBY_STEP_INTO = 107;
+  DEBUGBY_STEP_OVER = 108;
+  DEBUGBY_STEP_RETURN = 109;
+  DEBUGBY_GET_VARIABLE = 110;
+  DEBUGBY_SET_BREAK = 111;
+  DEBUGBY_REMOVE_BREAK = 112;
+  DEBUGBY_CMD_EVALUATE_EXPRESSION = 113;
+  DEBUGBY_CMD_GET_FRAME = 114;
+  DEBUGBY_CMD_EXEC_EXPRESSION = 115;
+  DEBUGBY_CMD_WRITE_TO_CONSOLE = 116;
+  DEBUGBY_CMD_CHANGE_VARIABLE = 117;
+  DEBUGBY_CMD_RUN_TO_LINE = 118;
+  DEBUGBY_CMD_RELOAD_CODE = 119;
+  DEBUGBY_CMD_GET_COMPLETIONS = 120;
+  DEBUGBY_CMD_REDIRECT_OUTPUT = 200;
+
+function FormatCommand(CMD, SEQ: Integer; Msg: string = ''): string;
+begin
+  Result := CMD.ToString+#9+SEQ.ToString;
+  Result := Result + #9 + Msg;
+end;
+
+{ TDebugPyConnection }
+
+function TDebugPyConnection.Listener: TmnDebugPyListener;
+begin
+  Result := inherited Listener as TmnDebugPyListener;
+end;
+
+procedure TDebugPyConnection.Process;
+var
+  line: string;
+begin
+  Stream.WriteLineUTF8(FormatCommand(DEBUGBY_LIST_THREADS,1));
+  if Stream.WaitToRead then
+  begin
+    try
+      while Stream.Connected do
+      begin
+        Stream.ReadLineUTF8(line);
+{        if line = '' then
+          break;}
+      end;
+    finally
+    end;
+  end;
+end;
+
+constructor TDebugPyConnection.Create(vConnector: TmnConnections; vStream: TmnConnectionStream);
+begin
+  inherited;
+end;
+
+destructor TDebugPyConnection.Destroy;
+begin
+  inherited;
+end;
+
+{ TmnDebugPyListener }
+
+function TmnDebugPyListener.DoCreateConnection(vStream: TmnConnectionStream): TmnConnection;
+begin
+  Result := TDebugPyConnection.Create(Self, vStream);
+  vStream.EndOfLine := sWinEndOfLine;
+end;
+
+constructor TmnDebugPyListener.Create;
+begin
+  inherited;
+end;
+
+destructor TmnDebugPyListener.Destroy;
+begin
+  inherited;
+end;
+
+{ TDebugPyServer }
+
+function TDebugPyServer.GetIsRuning: Boolean;
+begin
+  Result := Count > 0;
+end;
+
+function TDebugPyServer.DoCreateListener: TmnListener;
+begin
+  Result := TmnDebugPyListener.Create;
+end;
+
+{ TDebugPyDebugger }
+
+function TDebugPyDebugger.CreateBreakPoints: TEditorBreakPoints;
+begin
+  Result := nil;
+end;
+
+function TDebugPyDebugger.CreateWatches: TEditorWatches;
+begin
+  Result := nil;
+end;
+
+procedure TDebugPyDebugger.Reset;
+begin
+
+end;
+
+procedure TDebugPyDebugger.Resume;
+begin
+
+end;
+
+procedure TDebugPyDebugger.StepOver;
+begin
+
+end;
+
+procedure TDebugPyDebugger.StepInto;
+begin
+
+end;
+
+procedure TDebugPyDebugger.StepOut;
+begin
+
+end;
+
+procedure TDebugPyDebugger.Run;
+begin
+
+end;
+
+constructor TDebugPyDebugger.Create;
+begin
+  inherited Create;
+  FServer := TDebugPyServer.Create;
+  FServer.Port := '9001';
+end;
+
+destructor TDebugPyDebugger.Destroy;
+begin
+  FreeAndNil(FServer);
+  inherited;
+end;
+
+procedure TDebugPyDebugger.Start;
+begin
+  FServer.Start;
+end;
+
+procedure TDebugPyDebugger.Stop;
+begin
+  inherited;
+  if FServer.Active then
+  begin
+  end;
+  FServer.Stop;
+end;
+
+procedure TDebugPyDebugger.Action(AAction: TDebugAction);
+begin
+  case AAction of
+    dbaActivate: Start;
+    dbaDeactivate: Stop;
+    dbaReset: Reset;
+    dbaResume: Resume;
+    dbaStepInto: StepInto;
+    dbaStepOver: StepOver;
+    dbaStepOut: StepOut;
+    dbaRun: Run;
+  end;
+end;
+
+function TDebugPyDebugger.GetState: TDebugStates;
+begin
+  Result := [];
+  if FServer.Active then
+    Result := Result + [dbsActive];
+  if FServer.IsRuning then
+    Result := Result + [dbsRunning, dbsDebugging];
+end;
+
+function TDebugPyDebugger.GetKey: string;
+begin
+  Result :=inherited GetKey;
 end;
 
 { TPyFileCategory }
