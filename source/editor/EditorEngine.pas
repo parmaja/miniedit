@@ -6025,6 +6025,8 @@ begin
     SetString(Contents, nil, Size);
     AStream.Read(Pointer(Contents)^, Size);
     FileEncoding := GuessEncoding(Contents);
+    if FileEncoding = '' then
+      FileEncoding := 'UTF8';
     if not SameText(FileEncoding, EncodingUTF8) then
       Contents := ConvertEncodingToUTF8(Contents, FileEncoding, Encoded);
     LinesMode := DetectLinesMode(Contents);
@@ -6079,6 +6081,7 @@ end;}
 procedure TEditorFile.ContentsSaveToStream(SynEdit: TSynEdit; AStream: TStream);
 var
 //  Contents: Rawbytestring;
+  aToEncoding, aLineEnding: string;
   IndentMode: TIndentMode;
   Line: Rawbytestring;
   i: Integer;
@@ -6089,7 +6092,7 @@ begin
 
   if not SameText(FileEncoding, EncodingUTF8) then
   begin
-    if FileEncoding = EncodingUTF8 then
+    if FileEncoding = EncodingUTF8BOM then
       AStream.WriteBuffer(UTF8BOM, Length(UTF8BOM))
     else if FileEncoding = EncodingUCS2LE then
       AStream.WriteBuffer(UTF16LEBOM, Length(UTF16LEBOM))
@@ -6097,21 +6100,26 @@ begin
       AStream.WriteBuffer(@UTF16BEBOM[1], Length(UTF16BEBOM))
   end;
 
+  if SameText(RightStr(FileEncoding, 3), 'BOM') then
+    aToEncoding := SubStr(FileEncoding, 1, -3)
+  else
+    aToEncoding := FileEncoding;
+
+  case LinesMode of
+    efmWindows:
+		  aLineEnding := #$D#$A;
+    efmMac:
+		  aLineEnding := #$D;
+    else
+      aLineEnding := #$A;
+  end;
+
   for i := 0 to SynEdit.Lines.Count - 1 do
   begin
     Line := ConvertLineIndents(SynEdit.Lines[i], SynEdit.TabWidth, IndentMode);
     if (i < SynEdit.Lines.Count - 1) then // Not Last Line
-    begin
-      case LinesMode of
-        efmWindows:
-				  Line := Line + #$D#$A;
-        efmMac:
-				  Line := Line + #$D;
-        else
-          Line := Line + #$A;
-      end;
-    end;
-    Line := ConvertEncoding(Line, EncodingUTF8, FileEncoding, False);
+      Line := Line + aLineEnding;
+    Line := ConvertEncoding(Line, EncodingUTF8, aToEncoding, False);
     AStream.WriteBuffer(Pointer(Line)^, Length(Line));
   end;
 end;
