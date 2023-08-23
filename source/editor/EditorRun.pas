@@ -26,6 +26,7 @@ type
     Params: string;
     Pause: Boolean;
     Silent: Boolean;
+    CatchOutput: Boolean;
     Console: Boolean;
     procedure AddParam(AParam: string);
   end;
@@ -286,7 +287,7 @@ type
     property CallStack: TCallStackItems read FCallStack;
   end;
 
-  TDebugCommandFlag = (dafSend, dafCheckError, dafStopOnError);
+  TDebugCommandFlag = (dafSend, dafRespond, dafCheckError, dafStopOnError);
   TDebugCommandFlags = set of TDebugCommandFlag;
 
   { TDebugCommand }
@@ -299,7 +300,6 @@ type
     FEvent: TEvent; //must be nil until we need one
   protected
     FTransactionID: integer;
-    function GetCommand: string; virtual;
     function GetData: string; virtual;
     function Stay: boolean; virtual;
     function Enabled: boolean; virtual;
@@ -330,7 +330,7 @@ type
 
   TDebugServerActionClass = class of TDebugServerAction;
 
-  { TdbgpQueue }
+  { TDebugQueue }
 
   TDebugQueue = class(specialize TmnObjectList<TDebugServerAction>)
   private
@@ -341,9 +341,9 @@ type
 
   //* Watches
 
-  { TdbgpWatch }
+  { TDebugWatch }
 
-  TdbgpWatch = class(TObject)
+  TDebugWatch = class(TObject)
   private
     FHandle: integer;
   public
@@ -352,9 +352,9 @@ type
   published
   end;
 
-  { TdbgpWatches }
+  { TDebugWatches }
 
-  TdbgpWatches = class(specialize TmnObjectList<TdbgpWatch>)
+  TDebugWatches = class(specialize TmnObjectList<TDebugWatch>)
   private
     FServer: TDebugServer;
     CurrentHandle: integer;
@@ -363,7 +363,7 @@ type
   protected
     property Server: TDebugServer read FServer;
   public
-    function Find(Name: string): TdbgpWatch;
+    function Find(Name: string): TDebugWatch;
     function Add(Name: string; Value: variant): integer; overload;
     procedure AddWatch(Name: string);
     procedure RemoveWatch(Name: string);
@@ -373,9 +373,9 @@ type
 
 //* Breakpoints
 
-  { TdbgpBreakpoint }
+  { TDebugBreakpoint }
 
-  TdbgpBreakpoint = class(TObject)
+  TDebugBreakpoint = class(TObject)
   private
     FDeleted: Boolean;
     FID: integer;
@@ -391,9 +391,9 @@ type
     property Line: integer read FLine write FLine;
   end;
 
-  { TdbgpBreakpoints }
+  { TDebugBreakpoints }
 
-  TdbgpBreakpoints = class(specialize TmnObjectList<TdbgpBreakpoint>)
+  TDebugBreakpoints = class(specialize TmnObjectList<TDebugBreakpoint>)
   private
     CurrentHandle: Integer;
     FServer: TDebugServer;
@@ -403,12 +403,12 @@ type
     function Add(FileName: string; Line: integer): integer; overload;
     procedure Remove(Handle: Integer); overload;
     procedure ForceRemove(Handle: Integer); overload;
-    function Find(Name: string; Line: integer; WithDeleted: Boolean = False): TdbgpBreakpoint; overload;
+    function Find(Name: string; Line: integer; WithDeleted: Boolean = False): TDebugBreakpoint; overload;
     procedure Toggle(FileName: string; Line: integer);
     procedure Clean;
   end;
 
-  TdbgpOnServerEvent = procedure(Sender: TObject; Socket: TDebugConnection) of object;
+  TDebugOnServerEvent = procedure(Sender: TObject; Socket: TDebugConnection) of object;
 
   { TDebugServerQueue }
 
@@ -458,8 +458,8 @@ type
 
   TDebugServer = class(TmnServer)
   private
-    FWatches: TdbgpWatches;
-    FBreakpoints: TdbgpBreakpoints;
+    FWatches: TDebugWatches;
+    FBreakpoints: TDebugBreakpoints;
     FBreakOnFirstLine: Boolean;
     FQueue: TDebugServerQueue;
     FStackDepth: Integer;
@@ -489,8 +489,8 @@ type
     property BreakOnFirstLine: Boolean read FBreakOnFirstLine write FBreakOnFirstLine default False;
     property Key: string read FKey;
     property RunCount: Integer read FRunCount; //count of waiting action
-    property Watches: TdbgpWatches read FWatches;
-    property Breakpoints: TdbgpBreakpoints read FBreakpoints;
+    property Watches: TDebugWatches read FWatches;
+    property Breakpoints: TDebugBreakpoints read FBreakpoints;
   published
   end;
 
@@ -824,15 +824,16 @@ begin
   if Info.Suspended then
     aOptions := [poRunSuspended];
 
+  if Info.Run.Silent then
+  begin
+    FProcess.ShowWindow := swoHide;
+    //FProcess.CloseInput;
+  end
+  else
+    FProcess.ShowWindow := swoShow;
+
   if FCatchOutput then
   begin
-    if Info.Run.Silent then
-    begin
-      FProcess.ShowWindow := swoHide;
-      //FProcess.CloseInput;
-    end
-    else
-      FProcess.ShowWindow := swoShow;
     FProcess.Options :=  aOptions + [poUsePipes, poStderrToOutPut, poNewProcessGroup];
     ProcessObject := TmnProcessObject.Create(FProcess, FPool, @WriteOutput);
     //FProcess.PipeBufferSize := 0; //80 char in line
@@ -852,7 +853,6 @@ begin
   else
   begin
     FProcess.Options :=  aOptions + [poWaitOnExit];
-    FProcess.ShowWindow := swoShow;
     //FProcess.CloseInput;
     FProcess.Execute;
   end;
@@ -916,7 +916,7 @@ begin
   begin
     //Info.Run.Command := Info.GetCommandLine;
     if Info.Run.Silent then
-      FCatchOutput := True;
+      FCatchOutput := Info.Run.CatchOutput;
     CreateConsole(Info);
   end
 end;
@@ -1014,11 +1014,6 @@ end;
 
 { TDebugCommand }
 
-function TDebugCommand.GetCommand: string;
-begin
-  Result := '';
-end;
-
 function TDebugCommand.GetData: string;
 begin
   Result := '';
@@ -1073,17 +1068,17 @@ end;
 
 procedure TDebugCommand.Created;
 begin
-  Flags := [dafSend];
+  Flags := [dafSend, dafRespond];
 end;
 
-{ TdbgpWatches }
+{ TDebugWatches }
 
-function TdbgpWatches.Add(Name: string; Value: variant): integer;
+function TDebugWatches.Add(Name: string; Value: variant): integer;
 var
-  aWatch: TdbgpWatch;
+  aWatch: TDebugWatch;
 begin
   Inc(CurrentHandle);
-  aWatch := TdbgpWatch.Create;
+  aWatch := TDebugWatch.Create;
   aWatch.Handle := CurrentHandle;
   aWatch.Info.Name := Name;
   aWatch.Info.VarType := '';
@@ -1091,7 +1086,7 @@ begin
   Result := Add(aWatch);
 end;
 
-procedure TdbgpWatches.AddWatch(Name: string);
+procedure TDebugWatches.AddWatch(Name: string);
 begin
   DebugManager.Enter;
   try
@@ -1111,7 +1106,7 @@ begin
   end;
 end;
 
-procedure TdbgpWatches.Clean;
+procedure TDebugWatches.Clean;
 var
   i: integer;
 begin
@@ -1121,7 +1116,7 @@ begin
   end;
 end;
 
-function TdbgpWatches.Find(Name: string): TdbgpWatch;
+function TDebugWatches.Find(Name: string): TDebugWatch;
 var
   i: integer;
 begin
@@ -1136,9 +1131,9 @@ begin
   end;
 end;
 
-function TdbgpWatches.GetValues(Name: string): variant;
+function TDebugWatches.GetValues(Name: string): variant;
 var
-  aWatch: TdbgpWatch;
+  aWatch: TDebugWatch;
 begin
   aWatch := Find(Name);
   if aWatch <> nil then
@@ -1147,7 +1142,7 @@ begin
     VarClear(Result);
 end;
 
-procedure TdbgpWatches.RemoveWatch(Name: string);
+procedure TDebugWatches.RemoveWatch(Name: string);
 var
   i: integer;
 begin
@@ -1171,22 +1166,22 @@ begin
   end;
 end;
 
-procedure TdbgpWatches.SetValues(Name: string; const Value: variant);
+procedure TDebugWatches.SetValues(Name: string; const Value: variant);
 begin
 end;
 
-{ TdbgpBreakpoints }
+{ TDebugBreakpoints }
 
-function TdbgpBreakpoints.Add(FileName: string; Line: integer): integer;
+function TDebugBreakpoints.Add(FileName: string; Line: integer): integer;
 var
-  aBreakpoint: TdbgpBreakpoint;
+  aBreakpoint: TDebugBreakpoint;
 begin
   Result := -1;
   Inc(CurrentHandle);
   aBreakpoint := Find(FileName, Line, True);
   if aBreakpoint = nil then
   begin
-    aBreakpoint := TdbgpBreakpoint.Create;
+    aBreakpoint := TDebugBreakpoint.Create;
     aBreakpoint.Handle := CurrentHandle;
     aBreakpoint.FileName := FileName;
     aBreakpoint.Line := Line;
@@ -1198,9 +1193,9 @@ begin
     Raise Exception.Create('Break point already exists');
 end;
 
-function TdbgpBreakpoints.Find(Name: string; Line: integer; WithDeleted: Boolean): TdbgpBreakpoint;
+function TDebugBreakpoints.Find(Name: string; Line: integer; WithDeleted: Boolean): TDebugBreakpoint;
 var
-  aItem: TdbgpBreakpoint;
+  aItem: TDebugBreakpoint;
 begin
   Result := nil;
   for aItem in Self do
@@ -1213,7 +1208,7 @@ begin
   end;
 end;
 
-procedure TdbgpBreakpoints.Remove(Handle: Integer);
+procedure TDebugBreakpoints.Remove(Handle: Integer);
 var
   i: integer;
 begin
@@ -1230,7 +1225,7 @@ begin
   end;
 end;
 
-procedure TdbgpBreakpoints.ForceRemove(Handle: Integer);
+procedure TDebugBreakpoints.ForceRemove(Handle: Integer);
 var
   i: integer;
 begin
@@ -1244,11 +1239,11 @@ begin
   end;
 end;
 
-procedure TdbgpBreakpoints.Toggle(FileName: string; Line: integer);
+procedure TDebugBreakpoints.Toggle(FileName: string; Line: integer);
 var
-  aBreakpoint: TdbgpBreakpoint;
-  //aSetBreakpoint: TdbgpSetBreakpoint;
-  //aRemoveBreakpoint: TdbgpRemoveBreakpoint;
+  aBreakpoint: TDebugBreakpoint;
+  //aSetBreakpoint: TDebugSetBreakpoint;
+  //aRemoveBreakpoint: TDebugRemoveBreakpoint;
 begin
   aBreakpoint := Find(FileName, Line, True); //lookup it as normal
   if (aBreakpoint <> nil) and (not aBreakpoint.Deleted) then
@@ -1267,7 +1262,7 @@ begin
   end;
 end;
 
-procedure TdbgpBreakpoints.Clean;
+procedure TDebugBreakpoints.Clean;
 var
   i: Integer;
 begin
@@ -1365,7 +1360,8 @@ begin
         FQueue.Remove(aAction)
       else
         try
-          aAction.Process;
+          if Connected then
+            aAction.Process;
         finally
           if not aAction.Stay then
           begin
@@ -1461,9 +1457,9 @@ begin
   FQueue := TDebugServerQueue.Create(True);
   FStackDepth := 10;
   FBreakOnFirstLine := False;
-  FWatches := TdbgpWatches.Create;
+  FWatches := TDebugWatches.Create;
   FWatches.FServer := Self;
-  FBreakpoints := TdbgpBreakpoints.Create;
+  FBreakpoints := TDebugBreakpoints.Create;
   FBreakpoints.FServer := Self;
   FBreakpoints.FServer := Self;
 end;

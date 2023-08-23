@@ -208,6 +208,7 @@ begin
       aRunItem.Info.Run.Command := 'fpc.exe';
 
     aRunItem.Info.Run.Silent := True;
+    aRunItem.Info.Run.CatchOutput := True;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
 

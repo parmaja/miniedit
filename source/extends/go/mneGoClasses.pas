@@ -180,6 +180,7 @@ begin
   begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Run.Silent := True;
+    aRunItem.Info.Run.CatchOutput := True;
 
     aRunItem.Info.Run.Command := Info.Command;
     if aRunItem.Info.Run.Command = '' then
@@ -192,6 +193,7 @@ begin
     end;
 
     aRunItem.Info.Run.Silent := True;
+    aRunItem.Info.Run.CatchOutput := True;
     aRunItem.MessageType := msgtInteractive;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;

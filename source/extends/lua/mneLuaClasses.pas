@@ -14,7 +14,7 @@ uses
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   LazFileUtils, mnSynHighlighterLua, EditorClasses, mneClasses,
-  mneCompilerProjectFrames, EditorRun, LuaDBGServers,
+  mneCompilerProjectFrames, EditorRun,
   mneRunFrames;
 
 type
@@ -201,6 +201,7 @@ begin
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Run.Silent := True;
+    aRunItem.Info.Run.CatchOutput := True;
     aRunItem.Info.Run.Console := False;
 
     if (rnaCompile in Info.Actions) then
@@ -253,7 +254,7 @@ end;
 
 function TLuaTendency.CreateDebugger: TEditorDebugger;
 begin
-  Result := TLuaDBGDebug.Create;
+  Result := nil;
 end;
 
 function TLuaTendency.CreateProjectOptions: TEditorProjectOptions;

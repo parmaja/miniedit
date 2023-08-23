@@ -42,6 +42,7 @@ type
     procedure CheckError(Respond: TDebugCommandRespond);
     procedure DoExecute(Respond: TDebugCommandRespond); virtual; abstract;
     procedure Execute(Respond: TDebugCommandRespond);
+    function GetCommand: String; virtual; abstract;
     function SendCommand(Command: string; Data: string): integer;
     function ReadRespond: TDebugCommandRespond;
   public
@@ -288,7 +289,7 @@ type
   TdbgpDebuggerBreakPoints = class(TEditorBreakPoints)
   protected
     FDebug: TdbgpDebugger;
-    FBreakpoints: TdbgpBreakpoints; //Cache of undeleted breakpoints
+    FBreakpoints: TDebugBreakpoints; //Cache of undeleted breakpoints
     function GetCount: integer; override;
     function GetItems(Index: integer): TDebugBreakpointInfo; override;
     procedure UpdateBreakpoints;
@@ -1029,7 +1030,7 @@ end;
 
 function TdbgpDebuggerWatches.GetItems(Index: integer): TDebugWatchInfo;
 var
-  aWt: TdbgpWatch;
+  aWt: TDebugWatch;
 begin
   with FDebug.FServer do
     aWt := Watches[Index];
@@ -1094,7 +1095,7 @@ end;
 
 function TdbgpDebuggerBreakPoints.GetItems(Index: integer): TDebugBreakpointInfo;
 var
-  aBP: TdbgpBreakpoint;
+  aBP: TDebugBreakpoint;
 begin
   aBP := FBreakpoints[Index];
   Result.FileName := aBP.FileName;
@@ -1104,7 +1105,7 @@ end;
 
 procedure TdbgpDebuggerBreakPoints.UpdateBreakpoints;
 var
-  aItem: TdbgpBreakpoint;
+  aItem: TDebugBreakpoint;
 begin
   FBreakpoints.Clear;
   for aItem in FDebug.FServer.Breakpoints do
@@ -1115,7 +1116,7 @@ end;
 constructor TdbgpDebuggerBreakPoints.Create;
 begin
   inherited Create;
-  FBreakpoints := TdbgpBreakpoints.Create(False);
+  FBreakpoints := TDebugBreakpoints.Create(False);
 end;
 
 destructor TdbgpDebuggerBreakPoints.Destroy;
@@ -1152,7 +1153,7 @@ end;
 
 procedure TdbgpDebuggerBreakPoints.Remove(FileName: string; Line: integer);
 var
-  aBP: TdbgpBreakpoint;
+  aBP: TDebugBreakpoint;
 begin
   with FDebug.FServer do
     aBP := Breakpoints.Find(FileName, Line);

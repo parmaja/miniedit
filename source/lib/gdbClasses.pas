@@ -150,6 +150,7 @@ type
   TgdbAction = class(TDebugCommand)
   private
   protected
+    function GetCommand: String; virtual; abstract;
     procedure CheckError(AResponds: TMIResponds);
     procedure DoExecute(AResponds: TMIResponds); virtual; abstract;
     procedure Execute(AResponds: TMIResponds);

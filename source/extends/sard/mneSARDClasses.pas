@@ -132,6 +132,7 @@ begin
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.MainFile);
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Run.Silent := True;
+    aRunItem.Info.Run.CatchOutput := True;
     aRunItem.Info.Run.Console := False;
 
     aRunItem.Info.StatusMessage := 'Linting ' + Info.MainFile;

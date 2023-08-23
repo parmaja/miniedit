@@ -183,6 +183,7 @@ begin
   begin
     aRunItem := Engine.Session.Run.Add;
     aRunItem.Info.Run.Silent := True;
+    aRunItem.Info.Run.CatchOutput := True;
     aRunItem.MessageType := msgtInteractive;
 
     aRunItem.Info.Run.Command := Info.Command;
@@ -198,6 +199,7 @@ begin
     if (rnaLint in Info.Actions) then
     begin
       aRunItem.Info.Run.AddParam('check');
+      aRunItem.Info.Run.CatchOutput := True;
       aRunItem.Info.Run.Silent := True;
       aRunItem.Info.StatusMessage := 'Linting ' + Info.OutputFile;
     end
@@ -213,6 +215,7 @@ begin
       else
       begin
         aRunItem.Info.Run.Silent := True;
+        aRunItem.Info.Run.CatchOutput := True;
         aRunItem.Info.StatusMessage := 'Compiling ' + Info.OutputFile;
       end;
     end;
