@@ -68,6 +68,8 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
+    DBGRunConsoleMnu: TMenuItem;
+    DBGRunConsoleAct: TAction;
     ClearUndoAct: TAction;
     ForgroundTimer: TTimer;
     RedoAct: TAction;
@@ -443,8 +445,10 @@ type
     procedure ClearUndoActUpdate(Sender: TObject);
     procedure CompareLocalActExecute(Sender: TObject);
     procedure DBDisconnectActExecute(Sender: TObject);
+    procedure DBGRunConsoleActExecute(Sender: TObject);
     procedure FileTendencyActExecute(Sender: TObject);
     procedure ForgroundTimerTimer(Sender: TObject);
+    procedure DBGRunConsoleMnuClick(Sender: TObject);
     procedure NewSQLActExecute(Sender: TObject);
     procedure AnsiMnuClick(Sender: TObject);
     procedure ApplicationPropertiesActivate(Sender: TObject);
@@ -991,6 +995,11 @@ begin
   DBEngine.CloseDatabase;
 end;
 
+procedure TMainForm.DBGRunConsoleActExecute(Sender: TObject);
+begin
+  Engine.Options.RunConsole := DBGRunConsoleAct.Checked;
+end;
+
 procedure TMainForm.FileTendencyActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
@@ -1001,6 +1010,11 @@ procedure TMainForm.ForgroundTimerTimer(Sender: TObject);
 begin
   ForgroundTimer.Enabled := False;
   ForceForegroundWindow;
+end;
+
+procedure TMainForm.DBGRunConsoleMnuClick(Sender: TObject);
+begin
+
 end;
 
 procedure TMainForm.FileTabsTabSelected(Sender: TObject; OldTab, NewTab: TntvTabItem);
@@ -2002,6 +2016,7 @@ begin
     MessagesAct.Checked := Engine.Options.ShowMessages;
     BrowserPnl.Width := Engine.Options.FoldersPanelWidth;
     ShowToolbarAct.Checked := Engine.Options.ShowToolbar;
+    DBGRunConsoleAct.Checked := Engine.Options.RunConsole;
 
     with MessagesPnl, BoundsRect do
       BoundsRect := Rect(Left, Bottom - Engine.Options.MessagesHeight, Right, Bottom);
@@ -2097,6 +2112,7 @@ begin
   Engine.Options.ShowMessages := MessagesAct.Checked;
   Engine.Options.MessagesHeight := MessagesPnl.Height;
   Engine.Options.ShowToolbar := ShowToolbarAct.Checked;
+  Engine.Options.RunConsole := DBGRunConsoleAct.Checked;
   Engine.Options.FoldersPanelWidth := BrowserPnl.Width;
   if Engine.Session.Active then
     Engine.Options.LastProject := Engine.Session.Project.FileName

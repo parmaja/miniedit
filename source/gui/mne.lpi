@@ -253,7 +253,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item9>
     </RequiredPackages>
-    <Units Count="67">
+    <Units Count="66">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -459,168 +459,164 @@
         <IsPartOfProject Value="True"/>
       </Unit35>
       <Unit36>
-        <Filename Value="..\extends\lua\LuaDBGServers.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit36>
-      <Unit37>
         <Filename Value="..\extends\commons\mneRunFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="RunFrameOptions"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit37>
-      <Unit38>
+      </Unit36>
+      <Unit37>
         <Filename Value="..\extends\commons\mneCompilerProjectFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="CompilerProjectFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit38>
-      <Unit39>
+      </Unit37>
+      <Unit38>
         <Filename Value="..\extends\fntgen\mneFontGenForm.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="FontGenForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit38>
+      <Unit39>
+        <Filename Value="mneConsts.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit39>
       <Unit40>
-        <Filename Value="mneConsts.pas"/>
+        <Filename Value="..\extends\designer\mneBoardClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit40>
       <Unit41>
-        <Filename Value="..\extends\designer\mneBoardClasses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit41>
-      <Unit42>
         <Filename Value="..\extends\designer\mneBoardForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="BoardForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit42>
-      <Unit43>
+      </Unit41>
+      <Unit42>
         <Filename Value="..\extends\designer\mneSelectComponents.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SelectComponentForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit43>
-      <Unit44>
+      </Unit42>
+      <Unit43>
         <Filename Value="..\extends\designer\mneBoardComponents.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit44>
-      <Unit45>
+      </Unit43>
+      <Unit44>
         <Filename Value="..\editor\EditorColors.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="EditorColorsForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit45>
-      <Unit46>
+      </Unit44>
+      <Unit45>
         <Filename Value="..\extends\sard\mneSARDClasses.pas"/>
         <IsPartOfProject Value="True"/>
         <UnitName Value="mneSardClasses"/>
+      </Unit45>
+      <Unit46>
+        <Filename Value="..\extends\commons\mneClasses.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit46>
       <Unit47>
-        <Filename Value="..\extends\commons\mneClasses.pas"/>
+        <Filename Value="..\extends\go\mneGoClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit47>
       <Unit48>
-        <Filename Value="..\extends\go\mneGoClasses.pas"/>
+        <Filename Value="..\extends\cmd\mneCMDClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit48>
       <Unit49>
-        <Filename Value="..\extends\cmd\mneCMDClasses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit49>
-      <Unit50>
         <Filename Value="..\db\mndSQLForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="SQLEditForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit50>
-      <Unit51>
+      </Unit49>
+      <Unit50>
         <Filename Value="..\db\mndManagerForms.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="DBManagerForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit51>
-      <Unit52>
+      </Unit50>
+      <Unit51>
         <Filename Value="..\db\mndOpenDatabases.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="OpenDatabaseForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit52>
-      <Unit53>
+      </Unit51>
+      <Unit52>
         <Filename Value="..\db\mndStdAddons.pas"/>
         <IsPartOfProject Value="True"/>
-      </Unit53>
-      <Unit54>
+      </Unit52>
+      <Unit53>
         <Filename Value="..\db\mndConnectServers.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="ConnectDBServerForm"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
-      </Unit54>
-      <Unit55>
+      </Unit53>
+      <Unit54>
         <Filename Value="mneAssociateForm.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="AssociateForm"/>
         <ResourceBaseClass Value="Form"/>
+      </Unit54>
+      <Unit55>
+        <Filename Value="..\db\mndEngines.pas"/>
+        <IsPartOfProject Value="True"/>
       </Unit55>
       <Unit56>
-        <Filename Value="..\db\mndEngines.pas"/>
+        <Filename Value="..\extends\gcc\mneGccClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit56>
       <Unit57>
-        <Filename Value="..\extends\gcc\mneGccClasses.pas"/>
+        <Filename Value="..\extends\lsl\mneLSLClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit57>
       <Unit58>
-        <Filename Value="..\extends\lsl\mneLSLClasses.pas"/>
+        <Filename Value="..\extends\image\mneViewClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit58>
       <Unit59>
-        <Filename Value="..\extends\image\mneViewClasses.pas"/>
+        <Filename Value="..\db\mndDBClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit59>
       <Unit60>
-        <Filename Value="..\db\mndDBClasses.pas"/>
+        <Filename Value="..\extends\tyro\mneTyroClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit60>
       <Unit61>
-        <Filename Value="..\extends\tyro\mneTyroClasses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit61>
-      <Unit62>
         <Filename Value="..\extends\php\mnePHPTendencyFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="PHPTendencyFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
+      </Unit61>
+      <Unit62>
+        <Filename Value="..\..\..\..\programs\fpc\3.3\src\packages\fcl-process\src\simpleipc.pp"/>
+        <IsPartOfProject Value="True"/>
       </Unit62>
       <Unit63>
-        <Filename Value="..\..\..\..\programs\fpc\3.3\src\packages\fcl-process\src\simpleipc.pp"/>
+        <Filename Value="..\..\..\minictrls\src\syn\mnSQLProcessor.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit63>
       <Unit64>
-        <Filename Value="..\..\..\minictrls\src\syn\mnSQLProcessor.pas"/>
+        <Filename Value="..\extends\nim\mneNimClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit64>
       <Unit65>
-        <Filename Value="..\extends\nim\mneNimClasses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit65>
-      <Unit66>
         <Filename Value="..\extends\nim\mneNimTendencyFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="NimTendencyFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit66>
+      </Unit65>
     </Units>
   </ProjectOptions>
   <CompilerOptions>

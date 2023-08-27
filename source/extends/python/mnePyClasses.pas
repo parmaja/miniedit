@@ -220,7 +220,7 @@ begin
     {$ifdef windows}
       aRunItem.Info.Run.Command := 'pylint';
     {$else}
-      aRunItem.Info.Run.Command := 'lslint';
+      aRunItem.Info.Run.Command := 'pylint';
     {$endif}
     aRunItem.Info.Run.AddParam(' "' + Info.MainFile + '"');
   end
@@ -243,7 +243,6 @@ begin
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aRunItem.Info.StatusMessage := 'Runing ' + Info.MainFile;
-    //{'-m pyxdebug ' + }
     aRunItem.Info.Run.AddParam(Info.MainFile);
   end;
 end;

@@ -984,6 +984,7 @@ type
     FIgnoreNames: String;
     FLastFolder: String;
     FLastProject: String;
+    FRunConsole: Boolean;
     FShowFolder: Boolean;
     FShowToolbar: Boolean;
     FShowFolderFiles: TShowFolderFiles;
@@ -1055,6 +1056,7 @@ type
     property MessagesHeight: Integer read FMessagesHeight write FMessagesHeight default 100;
     property FoldersPanelWidth: Integer read FFoldersPanelWidth write FFoldersPanelWidth default 180;
     property AutoStartDebug: TAutoStartDebug read FAutoStartDebug write FAutoStartDebug default asdNo;
+    property RunConsole: Boolean read FRunConsole write FRunConsole default True;
     property FallbackToText: Boolean read FFallbackToText write FFallbackToText default False;
     property AnsiCodePage: Integer read GetAnsiCodePage write SetAnsiCodePage;
     property WindowMaxmized: Boolean read FWindowMaxmized write FWindowMaxmized default False;
@@ -2505,7 +2507,7 @@ begin
   FInfo.Command := iif(FInfo.Command, AOptions.Command);
   FInfo.Params := iif(FInfo.Params, AOptions.Params);
   FInfo.Pause := iif(FInfo.Pause, AOptions.Pause);
-  FInfo.Console := iif(FInfo.Pause, AOptions.Console);
+  FInfo.Console := iif(FInfo.Console, AOptions.Console);
   FInfo.MainFile := iif(FInfo.MainFile, AOptions.MainFile);
   FInfo.OutputFile := iif(FInfo.OutputFile, AOptions.OutputFile);
   FInfo.Require := iif(FInfo.Require, AOptions.Require);
@@ -3453,6 +3455,12 @@ begin
     if (Engine.Session.Active) then
       AOptions.Merge(Engine.Session.Project.RunOptions);
 
+		if (AOptions.Console = stateNone) then
+      if Engine.Options.RunConsole then
+        AOptions.Console := stateTrue
+      else
+        AOptions.Console := stateFalse;
+
     p.Actions := RunActions;
     if (Debugger <> nil) and (Debugger.Running) then
     begin
@@ -3490,7 +3498,7 @@ begin
         p.Root := Engine.Session.GetRoot;
         p.Command := ReplaceVariables(AOptions.Command, []);
 
-        p.Pause := AOptions.Pause in [stateTrue];
+        p.Pause := AOptions.Pause in [stateTrue, stateNone];
         p.Console := AOptions.Console in [stateTrue, stateNone];
 
         if Engine.Session = nil then
@@ -6406,6 +6414,7 @@ begin
   FMessagesHeight := 100;
   FFoldersPanelWidth := 180;
   FShowToolbar := True;
+  FRunConsole := True;
 end;
 
 destructor TEditorOptions.Destroy;
