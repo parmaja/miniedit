@@ -73,6 +73,8 @@ type
     ClearUndoAct: TAction;
     ForgroundTimer: TTimer;
     RedoAct: TAction;
+    ToolButton10: TToolButton;
+    ToolButton4: TToolButton;
     UndoAct: TAction;
     CompareLocalAct: TAction;
     FileTendencyAct: TAction;
@@ -446,6 +448,7 @@ type
     procedure CompareLocalActExecute(Sender: TObject);
     procedure DBDisconnectActExecute(Sender: TObject);
     procedure DBGRunConsoleActExecute(Sender: TObject);
+    procedure DBGRunConsoleActUpdate(Sender: TObject);
     procedure FileTendencyActExecute(Sender: TObject);
     procedure ForgroundTimerTimer(Sender: TObject);
     procedure DBGRunConsoleMnuClick(Sender: TObject);
@@ -550,6 +553,7 @@ type
     procedure StatePnlClick(Sender: TObject);
     procedure ToolButton4Click(Sender: TObject);
     procedure ToolsMnuClick(Sender: TObject);
+    procedure TopToolbarClick(Sender: TObject);
     procedure TypeOptionsActExecute(Sender: TObject);
     procedure TypePnlClick(Sender: TObject);
     procedure TendencyPnlDblClick(Sender: TObject);
@@ -998,6 +1002,11 @@ end;
 procedure TMainForm.DBGRunConsoleActExecute(Sender: TObject);
 begin
   Engine.Options.RunConsole := DBGRunConsoleAct.Checked;
+end;
+
+procedure TMainForm.DBGRunConsoleActUpdate(Sender: TObject);
+begin
+  DBGRunConsoleAct.Checked := Engine.Options.RunConsole;
 end;
 
 procedure TMainForm.FileTendencyActExecute(Sender: TObject);
@@ -1895,6 +1904,11 @@ end;
 procedure TMainForm.ToolsMnuClick(Sender: TObject);
 begin
   //
+end;
+
+procedure TMainForm.TopToolbarClick(Sender: TObject);
+begin
+
 end;
 
 procedure TMainForm.TypeOptionsActExecute(Sender: TObject);
