@@ -533,7 +533,7 @@ type
     procedure Assign(Source: TPersistent); override;
   published
     property Pause: TThreeStates read FInfo.Pause write FInfo.Pause default stateTrue;
-    property Console: TThreeStates read FInfo.Console write FInfo.Console default stateTrue;
+    property Console: TThreeStates read FInfo.Console write FInfo.Console default stateFalse;
     property Command: String read FInfo.Command write FInfo.Command;
     property Params: String read FInfo.Params write FInfo.Params;
     property Require: String read FInfo.Require write FInfo.Require;
@@ -2535,7 +2535,7 @@ begin
   inherited;
   FPaths := TStringList.Create;
   FInfo.Pause := stateTrue;
-  FInfo.Console := stateTrue;
+  FInfo.Console := stateFalse;
 end;
 
 destructor TRunOptions.Destroy;
