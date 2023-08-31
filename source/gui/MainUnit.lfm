@@ -10,16 +10,16 @@ object MainForm: TMainForm
   ClientWidth = 1022
   Color = clWindow
   Menu = MainMenu
+  ParentFont = True
+  Position = poDefaultPosOnly
+  ShowHint = True
+  LCLVersion = '3.99.0.0'
   OnClose = FormClose
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnDropFiles = FormDropFiles
   OnShow = FormShow
-  ParentFont = True
-  Position = poDefaultPosOnly
-  ShowHint = True
-  LCLVersion = '2.3.0.0'
   object TopToolbar: TToolBar
     Left = 0
     Height = 29
@@ -449,10 +449,10 @@ object MainForm: TMainForm
             BorderSpacing.Around = 2
             BorderStyle = bsNone
             Color = clWindow
-            OnChange = FilesFilterEditChange
-            OnKeyPress = FilesFilterEditKeyPress
             TabOrder = 0
             TextHint = 'Files filter'
+            OnChange = FilesFilterEditChange
+            OnKeyPress = FilesFilterEditKeyPress
           end
           object FilesFilterClearBtn: TntvImgBtn
             AnchorSideTop.Control = BugSignBtn
@@ -2323,24 +2323,24 @@ object MainForm: TMainForm
       Category = 'Edit'
       Caption = 'Paste'
       ImageIndex = 9
+      ShortCut = 16470
       OnExecute = PasteActExecute
       OnUpdate = PasteActUpdate
-      ShortCut = 16470
     end
     object CopyAct: TAction
       Category = 'Edit'
       Caption = 'Copy'
       ImageIndex = 7
+      ShortCut = 16451
       OnExecute = CopyActExecute
       OnUpdate = CopyActUpdate
-      ShortCut = 16451
     end
     object OpenIncludeAct: TAction
       Category = 'Edit'
       Caption = 'Open Include'
+      ShortCut = 16397
       OnExecute = OpenIncludeActExecute
       OnUpdate = OpenIncludeActUpdate
-      ShortCut = 16397
     end
     object FolderOpenAct: TAction
       Category = 'Folder'
@@ -2351,31 +2351,31 @@ object MainForm: TMainForm
     object SelectAllAct: TAction
       Category = 'Edit'
       Caption = 'Select All'
+      ShortCut = 16449
       OnExecute = SelectAllActExecute
       OnUpdate = SelectAllActUpdate
-      ShortCut = 16449
     end
     object HelpKeywordAct: TAction
       Category = 'Help'
       Caption = 'Help Keyword'
-      OnExecute = HelpKeywordActExecute
       ShortCut = 112
+      OnExecute = HelpKeywordActExecute
     end
     object SaveAllAct: TAction
       Category = 'File'
       Caption = 'Save all'
       Hint = 'Save all changed files'
       ImageIndex = 5
-      OnExecute = SaveAllActExecute
       ShortCut = 24659
+      OnExecute = SaveAllActExecute
     end
     object CutAct: TAction
       Category = 'Edit'
       Caption = 'Cut'
       ImageIndex = 8
+      ShortCut = 16472
       OnExecute = CutActExecute
       OnUpdate = CutActUpdate
-      ShortCut = 16472
     end
     object SaveAsAct: TAction
       Category = 'File'
@@ -2388,19 +2388,19 @@ object MainForm: TMainForm
       Caption = '&Open'
       Hint = 'Open exist file'
       ImageIndex = 3
-      OnExecute = OpenActExecute
       SecondaryShortCuts.Strings = (
         'CTRL+SHIFT+O'
       )
       ShortCut = 16463
+      OnExecute = OpenActExecute
     end
     object SaveAct: TAction
       Category = 'File'
       Caption = 'Save'
       Hint = 'Save current file'
       ImageIndex = 4
-      OnExecute = SaveActExecute
       ShortCut = 16467
+      OnExecute = SaveActExecute
     end
     object CloseAllFilesAct: TAction
       Category = 'File'
@@ -2420,36 +2420,36 @@ object MainForm: TMainForm
       Caption = 'Browse'
       Checked = True
       ImageIndex = 2
-      OnExecute = FoldersActExecute
       ShortCut = 49222
+      OnExecute = FoldersActExecute
     end
     object NextAct: TAction
       Category = 'View'
       Caption = 'Next Window'
-      OnExecute = NextActExecute
       SecondaryShortCuts.Strings = (
         'Ctrl+PageDown'
       )
       ShortCut = 16393
+      OnExecute = NextActExecute
     end
     object PriorAct: TAction
       Category = 'View'
       Caption = 'Prior Window'
-      OnExecute = PriorActExecute
       SecondaryShortCuts.Strings = (
         'Ctrl+PageUp'
       )
       ShortCut = 24585
+      OnExecute = PriorActExecute
     end
     object CloseAct: TAction
       Category = 'File'
       Caption = 'Close'
       ImageIndex = 30
-      OnExecute = CloseActExecute
       SecondaryShortCuts.Strings = (
         'Ctrl+W'
       )
       ShortCut = 16499
+      OnExecute = CloseActExecute
     end
     object ExitAct: TFileExit
       Category = 'File'
@@ -2467,16 +2467,16 @@ object MainForm: TMainForm
       Caption = 'Run'
       Hint = 'Execute and Debug'
       ImageIndex = 17
-      OnExecute = DBGRunActExecute
       ShortCut = 120
+      OnExecute = DBGRunActExecute
     end
     object DBGCompileAct: TAction
       Category = 'Debug'
       Caption = 'Compile'
       Hint = 'Compile or check syntax without run'
       ImageIndex = 16
-      OnExecute = DBGCompileActExecute
       ShortCut = 16504
+      OnExecute = DBGCompileActExecute
     end
     object FolderOpenAllAct: TAction
       Category = 'Folder'
@@ -2488,17 +2488,17 @@ object MainForm: TMainForm
       Category = 'Edit'
       Caption = 'Find'
       ImageIndex = 10
-      OnExecute = FindActExecute
       SecondaryShortCuts.Strings = (
         'Ctrl+F'
       )
       ShortCut = 16498
+      OnExecute = FindActExecute
     end
     object FindNextAct: TAction
       Category = 'Edit'
       Caption = 'Find next'
-      OnExecute = FindNextActExecute
       ShortCut = 114
+      OnExecute = FindNextActExecute
     end
     object EditorOptionsAct: TAction
       Category = 'File'
@@ -2538,8 +2538,8 @@ object MainForm: TMainForm
       Category = 'Project'
       Caption = 'Select File'
       ImageIndex = 7
-      OnExecute = SelectFileActExecute
       ShortCut = 16507
+      OnExecute = SelectFileActExecute
     end
     object AddFileToProjectAct: TAction
       Category = 'Project'
@@ -2556,8 +2556,8 @@ object MainForm: TMainForm
       Caption = 'Manage'
       Hint = 'Open manage projects and recent files dialog'
       ImageIndex = 13
-      OnExecute = ManageActExecute
       ShortCut = 123
+      OnExecute = ManageActExecute
     end
     object SelectSCMTypeAct: TAction
       Category = 'Project'
@@ -2589,41 +2589,41 @@ object MainForm: TMainForm
       Checked = True
       Hint = 'Show messages panel'
       ImageIndex = 14
-      OnExecute = MessagesActExecute
       ShortCut = 49229
+      OnExecute = MessagesActExecute
     end
     object GotoLineAct: TAction
       Category = 'Edit'
       Caption = 'Go to Line'
-      OnExecute = GotoLineActExecute
-      OnUpdate = GotoLineActUpdate
       SecondaryShortCuts.Strings = (
         'Alt+G'
       )
       ShortCut = 16455
+      OnExecute = GotoLineActExecute
+      OnUpdate = GotoLineActUpdate
     end
     object ReplaceAct: TAction
       Category = 'Edit'
       Caption = 'Replace'
-      OnExecute = ReplaceActExecute
       SecondaryShortCuts.Strings = (
         'CTRL+H'
       )
       ShortCut = 16466
+      OnExecute = ReplaceActExecute
     end
     object RevertAct: TAction
       Category = 'File'
       Caption = 'Re&vert'
       Hint = 'Reload file and descard the changes'
-      OnExecute = RevertActExecute
       ShortCut = 49238
+      OnExecute = RevertActExecute
     end
     object OpenColorAct: TAction
       Category = 'Edit'
       Caption = 'Edit Color'
+      ShortCut = 32781
       OnExecute = OpenColorActExecute
       OnUpdate = OpenColorActUpdate
-      ShortCut = 32781
     end
     object SCMCommitAct: TAction
       Category = 'SCM'
@@ -2669,20 +2669,20 @@ object MainForm: TMainForm
     object FindInFilesAct: TAction
       Category = 'Edit'
       Caption = 'Find in Files'
-      OnExecute = FindInFilesActExecute
       ShortCut = 16457
+      OnExecute = FindInFilesActExecute
     end
     object NextMessageAct: TAction
       Category = 'View'
       Caption = 'Next Message'
-      OnExecute = NextMessageActExecute
       ShortCut = 32887
+      OnExecute = NextMessageActExecute
     end
     object PriorMessageAct: TAction
       Category = 'View'
       Caption = 'Prior Message'
-      OnExecute = PriorMessageActExecute
       ShortCut = 32886
+      OnExecute = PriorMessageActExecute
     end
     object SCMCompareToAct: TAction
       Category = 'SCM'
@@ -2692,8 +2692,8 @@ object MainForm: TMainForm
     object SwitchFocusAct: TAction
       Category = 'View'
       Caption = 'Switch Focus'
-      OnExecute = SwitchFocusActExecute
       ShortCut = 117
+      OnExecute = SwitchFocusActExecute
     end
     object ShowTendencyFilterAct: TAction
       Category = 'Files'
@@ -2722,14 +2722,14 @@ object MainForm: TMainForm
     object FindPreviousAct: TAction
       Category = 'Edit'
       Caption = 'Find Previous'
-      OnExecute = FindPreviousActExecute
       ShortCut = 8306
+      OnExecute = FindPreviousActExecute
     end
     object RenameAct: TAction
       Category = 'File'
       Caption = 'Re&name File'
-      OnExecute = RenameActExecute
       ShortCut = 113
+      OnExecute = RenameActExecute
     end
     object DeleteAct: TAction
       Category = 'File'
@@ -2740,15 +2740,15 @@ object MainForm: TMainForm
       Category = 'Debug'
       Caption = 'Execute'
       Hint = 'Run without debug'
-      OnExecute = DBGExecuteActExecute
       ShortCut = 24696
+      OnExecute = DBGExecuteActExecute
     end
     object DBGLintAct: TAction
       Category = 'Debug'
       Caption = 'Lint'
       Hint = 'Check syntax'
-      OnExecute = DBGLintActExecute
       ShortCut = 8312
+      OnExecute = DBGLintActExecute
     end
     object DBGDebugModeAct: TAction
       Category = 'Debug'
@@ -2756,33 +2756,33 @@ object MainForm: TMainForm
       DisableIfNoHandler = False
       Hint = 'Start/Stop Debug Mode'
       ImageIndex = 20
+      ShortCut = 16452
       OnExecute = DBGDebugModeActExecute
       OnUpdate = DBGDebugModeActUpdate
-      ShortCut = 16452
     end
     object DBGStepIntoAct: TAction
       Category = 'Debug'
       Caption = 'Step Into'
       Hint = 'Step into'
       ImageIndex = 21
-      OnExecute = DBGStepIntoActExecute
       ShortCut = 118
+      OnExecute = DBGStepIntoActExecute
     end
     object DBGStepOverAct: TAction
       Category = 'Debug'
       Caption = 'Step Over'
       Hint = 'Step over'
       ImageIndex = 23
-      OnExecute = DBGStepOverActExecute
       ShortCut = 119
+      OnExecute = DBGStepOverActExecute
     end
     object DBGStepOutAct: TAction
       Category = 'Debug'
       Caption = 'Step Out'
       Hint = 'Step out'
       ImageIndex = 22
-      OnExecute = DBGStepOutActExecute
       ShortCut = 8310
+      OnExecute = DBGStepOutActExecute
     end
     object DBGRunToCursorAct: TAction
       Category = 'Debug'
@@ -2794,29 +2794,29 @@ object MainForm: TMainForm
       Caption = 'Toggle Breakpoint'
       Hint = 'Toggle point at line and currrent file'
       ImageIndex = 24
-      OnExecute = DBGToggleBreakpointActExecute
       ShortCut = 116
+      OnExecute = DBGToggleBreakpointActExecute
     end
     object DBGBreakpointsAct: TAction
       Category = 'Debug'
       Caption = 'Breakpoints'
-      OnExecute = DBGBreakpointsActExecute
       ShortCut = 49218
+      OnExecute = DBGBreakpointsActExecute
     end
     object DBGResetAct: TAction
       Category = 'Debug'
       Caption = 'Reset'
       Hint = 'Reset or break executing'
       ImageIndex = 26
-      OnExecute = DBGResetActExecute
       ShortCut = 32888
+      OnExecute = DBGResetActExecute
     end
     object DBGAddWatchAct: TAction
       Category = 'Debug'
       Caption = 'Add Watch'
       ImageIndex = 25
-      OnExecute = DBGAddWatchActExecute
       ShortCut = 16500
+      OnExecute = DBGAddWatchActExecute
     end
     object TendenciesOptionsAct: TAction
       Category = 'Tools'
@@ -2827,8 +2827,8 @@ object MainForm: TMainForm
       Category = 'Project'
       Caption = 'Options'
       ImageIndex = 12
-      OnExecute = ProjectOptionsActExecute
       ShortCut = 24698
+      OnExecute = ProjectOptionsActExecute
     end
     object ShowSpecialCharsAct: TAction
       Category = 'View'
@@ -2857,8 +2857,8 @@ object MainForm: TMainForm
       OnExecute = ResetMainFileActExecute
     end
     object MainFileAct: TAction
-      OnExecute = MainFileActExecute
       Visible = False
+      OnExecute = MainFileActExecute
     end
     object ChangeExtAct: TAction
       Category = 'File'
@@ -2952,8 +2952,8 @@ object MainForm: TMainForm
     object BackwordSwitchFocusAct: TAction
       Category = 'View'
       Caption = 'Backword Switch Focus'
-      OnExecute = BackwordSwitchFocusActExecute
       ShortCut = 8309
+      OnExecute = BackwordSwitchFocusActExecute
     end
     object DBStartAct: TAction
       Category = 'Database'
@@ -3269,8 +3269,8 @@ object MainForm: TMainForm
     OnMessage = IPCServerMessage
     OnMessageQueued = IPCServerMessageQueued
     Threaded = False
-    Left = 72
-    Top = 169
+    Left = 40
+    Top = 208
   end
   object ApplicationProperties: TApplicationProperties
     ExceptionDialog = aedOkMessageBox
