@@ -69,7 +69,7 @@ object MainForm: TMainForm
         Action = SaveAllAct
       end
       object RunBtn: TToolButton
-        Left = 790
+        Left = 788
         Top = 0
         Action = DBGRunAct
       end
@@ -103,7 +103,7 @@ object MainForm: TMainForm
         Style = tbsSeparator
       end
       object MainFileBtn: TToolButton
-        Left = 865
+        Left = 863
         Top = 0
         Action = MainFileAct
         AutoSize = True
@@ -3000,6 +3000,7 @@ object MainForm: TMainForm
       AutoCheck = True
       Caption = 'Run Console'
       Checked = True
+      Hint = 'Run program in console'
       ImageIndex = 37
       OnExecute = DBGRunConsoleActExecute
       OnUpdate = DBGRunConsoleActUpdate

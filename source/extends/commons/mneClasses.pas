@@ -419,7 +419,7 @@ initialization
 
     Categories.Add(TCFGFileCategory.Create(DefaultProject.Tendency, 'cfg', 'Config and INI'));
     Groups.Add(TINIConfigFile, 'ini', 'INI', TCFGFileCategory, ['.ini', '.pls', '.isl'], [fgkAssociated, fgkBrowsable]);
-    Groups.Add(TCFGConfigFile, 'cfg', 'Config', TCFGFileCategory, ['.cfg', '.conf', '.config', 'config'], [fgkAssociated, fgkBrowsable]);
+    Groups.Add(TCFGConfigFile, 'cfg', 'Config', TCFGFileCategory, ['.cfg', '.config', 'config'], [fgkAssociated, fgkBrowsable]); //'.conf' for Apache
 
     Categories.Add(TYamlFileCategory.Create(DefaultProject.Tendency, 'yaml', 'YAML'));
     Groups.Add(TYamlConfigFile, 'yaml', 'YAML', TYamlFileCategory, ['.yaml'], [fgkAssociated, fgkBrowsable]);
