@@ -138,7 +138,7 @@ type
     ShowToolbarMnu: TMenuItem;
     ShowToolbarAct: TAction;
     CloseAllAct: TAction;
-    EditorColorsAct: TAction;
+    EditorStyleAct: TAction;
     CreateFolderAct: TAction;
     CloseOthersAct: TAction;
     ChangeExtAct: TAction;
@@ -470,7 +470,7 @@ type
     procedure DBDisconnectMnuClick(Sender: TObject);
     procedure DBGCompileActExecute(Sender: TObject);
     procedure DeleteActExecute(Sender: TObject);
-    procedure EditorColorsActExecute(Sender: TObject);
+    procedure EditorStyleActExecute(Sender: TObject);
     procedure EditorPopupMenuPopup(Sender: TObject);
     procedure EditorsPnlClick(Sender: TObject);
     procedure FetchCallStackBtnClick(Sender: TObject);
@@ -868,7 +868,7 @@ begin
   end;
 end;
 
-procedure TMainForm.EditorColorsActExecute(Sender: TObject);
+procedure TMainForm.EditorStyleActExecute(Sender: TObject);
 begin
   Engine.Options.ColorsShow;
 end;
