@@ -3348,7 +3348,7 @@ procedure TEditorTendency.UpdatePath;
 begin
   if RunOptions.MainPath <> '' then
     FDefaultPath := ExpandToPath(RunOptions.MainPath, Engine.DefaultPath)
-   else
+  else
     FDefaultPath := Engine.DefaultPath;
 end;
 

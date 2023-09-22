@@ -88,7 +88,7 @@ Geany https://www.geany.org/
 
 Textadept https://foicica.com/textadept/
 
-CudaText http://uvviewsoft.com/cudatext/
+CudaText https://cudatext.github.io/
 
 PINote https://pinote.sourceforge.io/
 
