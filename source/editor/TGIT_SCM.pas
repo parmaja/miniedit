@@ -30,7 +30,10 @@ type
     function GetTortoiseMerge: string;
   public
     constructor Create; override;
+    function GetCapability: TSCMCapability; override;
     procedure CommitDirectory(Directory: string); override;
+    procedure Commit; override;
+    procedure Push; override;
     procedure CommitFile(FileName: string); override;
     procedure UpdateDirectory(Directory: string); override;
     procedure UpdateFile(FileName: string); override;
@@ -52,19 +55,29 @@ begin
   Execute(TortoiseProc, '/command:commit /path:"' + Directory + '" /notempfile /closeonend');
 end;
 
+procedure TTGIT_SCM.Commit;
+begin
+  Execute(TortoiseProc, '/command:commit /notempfile /closeonend');
+end;
+
+procedure TTGIT_SCM.Push;
+begin
+  Execute(TortoiseProc, '/command:push /notempfile /closeonend');
+end;
+
 procedure TTGIT_SCM.CommitFile(FileName: string);
 begin
-  Execute(TortoiseProc, '/command:commit /path:"' + FileName + '" /notempfile /closeonend');
+  Execute(TortoiseProc, '/command:commit /path:"' + FileName + '" /closeonend:2');
 end;
 
 procedure TTGIT_SCM.UpdateDirectory(Directory: string);
 begin
-  Execute(TortoiseProc, '/command:update /path:"' + Directory + '" /notempfile /closeonend');
+  Execute(TortoiseProc, '/command:pull /path:"' + Directory + '" /notempfile /closeonend');
 end;
 
 procedure TTGIT_SCM.UpdateFile(FileName: string);
 begin
-  Execute(TortoiseProc, '/command:update /path:"' + FileName + '" /notempfile /closeonend');
+  Execute(TortoiseProc, '/command:pull /path:"' + FileName + '" /notempfile /closeonend');
 end;
 
 procedure TTGIT_SCM.RevertDirectory(Directory: string);
@@ -137,6 +150,11 @@ begin
   FName := 'GIT';
   FTitle := 'Tortoise GIT';
   FDescription := 'Tortoise GIT for windows';
+end;
+
+function TTGIT_SCM.GetCapability: TSCMCapability;
+begin
+  Result := [scmPush, scmCommit, scmCommitFile, scmCommitPath];  //-[scmUpdateFile]
 end;
 
 initialization

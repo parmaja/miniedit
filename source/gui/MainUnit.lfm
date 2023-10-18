@@ -2265,13 +2265,23 @@ object MainForm: TMainForm
     object SCMMnu: TMenuItem
       Caption = 'SCM'
       Visible = False
+      object SCMAddFileMnu: TMenuItem
+        Action = SCMAddFileAct
+      end
       object CommitMnu: TMenuItem
         Action = SCMCommitAct
         OnClick = SCMCommitActExecute
       end
+      object MenuItem58: TMenuItem
+        Action = SCMCommitPathAct
+      end
       object CommitFileMnu: TMenuItem
         Action = SCMCommitFileAct
         OnClick = SCMCommitFileActExecute
+      end
+      object MenuItem57: TMenuItem
+        Action = SCMPushAct
+        OnClick = MenuItem57Click
       end
       object UpdateMnu: TMenuItem
         Action = SCMUpdateAct
@@ -2280,9 +2290,6 @@ object MainForm: TMainForm
       object UpdateFileMnu: TMenuItem
         Action = SCMUpdateFileAct
         OnClick = SCMUpdateFileActExecute
-      end
-      object SCMAddFileMnu: TMenuItem
-        Action = SCMAddFileAct
       end
       object RevertMnu: TMenuItem
         Action = SCMRevertAct
@@ -2323,8 +2330,8 @@ object MainForm: TMainForm
   end
   object ActionList: TActionList
     Images = EditorResource.ToolbarImageList
-    Left = 297
-    Top = 187
+    Left = 296
+    Top = 188
     object PasteAct: TAction
       Category = 'Edit'
       Caption = 'Paste'
@@ -2637,31 +2644,6 @@ object MainForm: TMainForm
       ImageIndex = 27
       OnExecute = SCMCommitActExecute
     end
-    object SCMDiffFileAct: TAction
-      Category = 'SCM'
-      Caption = 'Diff File'
-      OnExecute = SCMDiffFileActExecute
-    end
-    object SCMCommitFileAct: TAction
-      Category = 'SCM'
-      Caption = 'Commit File'
-      OnExecute = SCMCommitFileActExecute
-    end
-    object SCMUpdateFileAct: TAction
-      Category = 'SCM'
-      Caption = 'Update File'
-      OnExecute = SCMUpdateFileActExecute
-    end
-    object SCMRevertAct: TAction
-      Category = 'SCM'
-      Caption = 'Revert'
-      OnExecute = SCMRevertActExecute
-    end
-    object SCMUpdateAct: TAction
-      Category = 'SCM'
-      Caption = 'Update'
-      OnExecute = SCMUpdateActExecute
-    end
     object CopyFileNameAct: TAction
       Category = 'File'
       Caption = 'Copy file name'
@@ -2689,11 +2671,6 @@ object MainForm: TMainForm
       Caption = 'Prior Message'
       ShortCut = 32886
       OnExecute = PriorMessageActExecute
-    end
-    object SCMCompareToAct: TAction
-      Category = 'SCM'
-      Caption = 'Compare To'
-      OnExecute = SCMCompareToActExecute
     end
     object SwitchFocusAct: TAction
       Category = 'View'
@@ -2842,11 +2819,6 @@ object MainForm: TMainForm
       ImageIndex = 29
       OnExecute = ShowSpecialCharsActExecute
     end
-    object SCMAddFileAct: TAction
-      Category = 'SCM'
-      Caption = 'Add File'
-      OnExecute = SCMAddFileActExecute
-    end
     object SetAsMainFileAc: TAction
       Category = 'Project'
       Caption = 'Set as Main file'
@@ -2978,11 +2950,6 @@ object MainForm: TMainForm
       Caption = 'File Tendency'
       OnExecute = FileTendencyActExecute
     end
-    object SCMCompareLocalAct: TAction
-      Category = 'SCM'
-      Caption = 'Compare with Local'
-      OnExecute = SCMCompareLocalActExecute
-    end
     object UndoAct: TAction
       Category = 'Edit'
       Caption = 'Undo'
@@ -3011,10 +2978,64 @@ object MainForm: TMainForm
       OnExecute = DBGRunConsoleActExecute
       OnUpdate = DBGRunConsoleActUpdate
     end
+    object SCMPushAct: TAction
+      Category = 'SCM'
+      Caption = 'Push'
+      OnExecute = SCMPushActExecute
+    end
+    object SCMDiffFileAct: TAction
+      Category = 'SCM'
+      Caption = 'Diff File'
+      ImageIndex = 38
+      OnExecute = SCMDiffFileActExecute
+    end
+    object SCMCommitPathAct: TAction
+      Category = 'SCM'
+      Caption = 'Commit Path'
+      OnExecute = SCMCommitPathActExecute
+    end
+    object SCMCommitFileAct: TAction
+      Category = 'SCM'
+      Caption = 'Commit File'
+      OnExecute = SCMCommitFileActExecute
+    end
+    object SCMUpdateFileAct: TAction
+      Category = 'SCM'
+      Caption = 'Update File'
+      OnExecute = SCMUpdateFileActExecute
+    end
+    object SCMRevertAct: TAction
+      Category = 'SCM'
+      Caption = 'Revert'
+      OnExecute = SCMRevertActExecute
+    end
+    object SCMUpdateAct: TAction
+      Category = 'SCM'
+      Caption = 'Update'
+      OnExecute = SCMUpdateActExecute
+    end
+    object SCMCompareToAct: TAction
+      Category = 'SCM'
+      Caption = 'Compare To'
+      ImageIndex = 38
+      OnExecute = SCMCompareToActExecute
+    end
+    object SCMAddFileAct: TAction
+      Category = 'SCM'
+      Caption = 'Add File'
+      OnExecute = SCMAddFileActExecute
+    end
     object SCMExploreLocalFolderAct: TAction
       Category = 'SCM'
       Caption = 'Explore Local folder'
+      ImageIndex = 33
       OnExecute = SCMExploreLocalFolderActExecute
+    end
+    object SCMCompareLocalAct: TAction
+      Category = 'SCM'
+      Caption = 'Compare with Local'
+      ImageIndex = 38
+      OnExecute = SCMCompareLocalActExecute
     end
   end
   object FolderMenu: TPopupMenu

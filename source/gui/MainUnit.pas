@@ -68,6 +68,10 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
+    MenuItem58: TMenuItem;
+    SCMCommitPathAct: TAction;
+    MenuItem57: TMenuItem;
+    SCMPushAct: TAction;
     SCMCompareLocalMnu: TMenuItem;
     SCMExploreLocalFolderMnu: TMenuItem;
     SCMExploreLocalFolderAct: TAction;
@@ -448,7 +452,9 @@ type
     procedure BackwordSwitchFocusActExecute(Sender: TObject);
     procedure ClearUndoActExecute(Sender: TObject);
     procedure ClearUndoActUpdate(Sender: TObject);
+    procedure MenuItem57Click(Sender: TObject);
     procedure MenuItem58Click(Sender: TObject);
+    procedure SCMCommitPathActExecute(Sender: TObject);
     procedure SCMCompareLocalActExecute(Sender: TObject);
     procedure DBDisconnectActExecute(Sender: TObject);
     procedure DBGRunConsoleActExecute(Sender: TObject);
@@ -520,6 +526,7 @@ type
     procedure ResetMainFileActExecute(Sender: TObject);
     procedure SCMAddFileActExecute(Sender: TObject);
     procedure SCMExploreLocalFolderActExecute(Sender: TObject);
+    procedure SCMPushActExecute(Sender: TObject);
     procedure SearchGridDblClick(Sender: TObject);
     procedure SearchGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
     procedure SearchGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -973,9 +980,19 @@ begin
   ClearUndoAct.Enabled := (Engine.Files.Current <> nil) and Engine.Files.Current.CanUndo;
 end;
 
+procedure TMainForm.MenuItem57Click(Sender: TObject);
+begin
+
+end;
+
 procedure TMainForm.MenuItem58Click(Sender: TObject);
 begin
 
+end;
+
+procedure TMainForm.SCMCommitPathActExecute(Sender: TObject);
+begin
+  Engine.SCM.CommitDirectory(Folder);
 end;
 
 procedure TMainForm.SCMCompareLocalActExecute(Sender: TObject);
@@ -1465,6 +1482,11 @@ begin
       Values.Free;
     end;
   end;
+end;
+
+procedure TMainForm.SCMPushActExecute(Sender: TObject);
+begin
+  Engine.SCM.Push;
 end;
 
 procedure TMainForm.SearchGridDblClick(Sender: TObject);
@@ -2213,6 +2235,13 @@ begin
     SCMMnu.Caption := Engine.SCM.Name
   else
     SCMMnu.Caption := '';
+  if (Engine.SCM <> nil) then
+  begin
+    SCMCommitFileAct.Visible := scmCommitFile in Engine.SCM.GetCapability;
+    SCMCommitPathAct.Visible := scmCommitPath in Engine.SCM.GetCapability;
+    SCMUpdateFileAct.Visible := scmUpdateFile in Engine.SCM.GetCapability;
+    SCMPushAct.Visible := scmPush in Engine.SCM.GetCapability;
+  end;
   SCMMnu.Visible := Engine.SCM <> nil;
 
   UpdatePanel;
@@ -2932,7 +2961,7 @@ end;
 
 procedure TMainForm.SCMCommitActExecute(Sender: TObject);
 begin
-  Engine.SCM.CommitDirectory(Folder);
+  Engine.SCM.Commit;
 end;
 
 procedure TMainForm.SCMDiffFileActExecute(Sender: TObject);

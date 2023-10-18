@@ -482,6 +482,8 @@ type
   public
   end;
 
+  TSCMCapability  = set of (scmPush, scmCommit, scmCommitFile, scmCommitPath, scmUpdateFile);
+
   { TEditorSCM }
 
   TEditorSCM = class(TEditorElement)
@@ -492,6 +494,8 @@ type
     constructor Create; override;
     destructor Destroy; override;
     procedure CommitDirectory(Directory: String); virtual; abstract;
+    procedure Commit; virtual;
+    procedure Push; virtual;
     procedure CommitFile(FileName: String); virtual; abstract;
     procedure UpdateDirectory(Directory: String); virtual; abstract;
     procedure UpdateFile(FileName: String); virtual; abstract;
@@ -500,6 +504,7 @@ type
     procedure DiffFile(FileName: String); virtual; abstract;
     procedure DiffToFile(FileName, ToFileName: String); virtual; abstract;
     procedure AddFile(FileName: String); virtual; abstract;
+    function GetCapability: TSCMCapability; virtual;
   end;
 
   TEditorSCMClass = class of TEditorSCM;
@@ -3210,6 +3215,20 @@ end;
 destructor TEditorSCM.Destroy;
 begin
   inherited Destroy;
+end;
+
+procedure TEditorSCM.Commit;
+begin
+
+end;
+
+procedure TEditorSCM.Push;
+begin
+end;
+
+function TEditorSCM.GetCapability: TSCMCapability;
+begin
+  Result :=  [scmPush, scmCommitFile, scmUpdateFile];
 end;
 
 { TSourceManagements }
