@@ -3518,7 +3518,11 @@ begin
         p.Command := ReplaceVariables(AOptions.Command, []);
 
         p.Pause := AOptions.Pause in [stateTrue, stateNone];
-        p.Console := AOptions.Console in [stateTrue, stateNone];
+
+    		if (AOptions.Console = stateNone) then
+          p.Console := Engine.Options.RunConsole
+        else
+          p.Console := AOptions.Console = stateTrue;
 
         if Engine.Session = nil then
           raise Exception.Create('No Session active!');
