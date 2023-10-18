@@ -1873,7 +1873,7 @@ object MainForm: TMainForm
   object MainMenu: TMainMenu
     Images = EditorResource.ToolbarImageList
     Left = 196
-    Top = 114
+    Top = 112
     object file1: TMenuItem
       Caption = '&File'
       Hint = 'Exit|Quits the application'
@@ -1971,7 +1971,7 @@ object MainForm: TMainForm
         Caption = '-'
       end
       object MenuItem51: TMenuItem
-        Action = NewSQLAct
+        Action = DBNewSQLAct
       end
       object MenuItem52: TMenuItem
         Caption = '-'
@@ -2246,7 +2246,7 @@ object MainForm: TMainForm
         OnClick = EditorOptionsActExecute
       end
       object EditorColorsMnu: TMenuItem
-        Action = EditorColorsAct
+        Action = EditorStyleAct
       end
       object TypeOptionsForMnu: TMenuItem
         Action = TendenciesOptionsAct
@@ -2297,8 +2297,14 @@ object MainForm: TMainForm
         Action = SCMCompareToAct
         OnClick = SCMCompareToActExecute
       end
-      object CompareLocalMnu: TMenuItem
-        Action = CompareLocalAct
+      object Separator2: TMenuItem
+        Caption = '-'
+      end
+      object SCMCompareLocalMnu: TMenuItem
+        Action = SCMCompareLocalAct
+      end
+      object SCMExploreLocalFolderMnu: TMenuItem
+        Action = SCMExploreLocalFolderAct
       end
     end
     object Help1: TMenuItem
@@ -2875,11 +2881,11 @@ object MainForm: TMainForm
       Caption = 'New Folder'
       OnExecute = CreateFolderActExecute
     end
-    object EditorColorsAct: TAction
+    object EditorStyleAct: TAction
       Category = 'View'
-      Caption = 'Colors Options'
+      Caption = 'Style Options'
       ImageIndex = 31
-      OnExecute = EditorColorsActExecute
+      OnExecute = EditorStyleActExecute
     end
     object CloseAllAct: TAction
       Category = 'File'
@@ -2943,11 +2949,11 @@ object MainForm: TMainForm
       GroupIndex = 6
       OnExecute = SortByExtensionsActExecute
     end
-    object NewSQLAct: TAction
-      Category = 'Debug'
+    object DBNewSQLAct: TAction
+      Category = 'Database'
       Caption = 'SQL'
       ImageIndex = 36
-      OnExecute = NewSQLActExecute
+      OnExecute = DBNewSQLActExecute
     end
     object BackwordSwitchFocusAct: TAction
       Category = 'View'
@@ -2972,10 +2978,10 @@ object MainForm: TMainForm
       Caption = 'File Tendency'
       OnExecute = FileTendencyActExecute
     end
-    object CompareLocalAct: TAction
+    object SCMCompareLocalAct: TAction
       Category = 'SCM'
       Caption = 'Compare with Local'
-      OnExecute = CompareLocalActExecute
+      OnExecute = SCMCompareLocalActExecute
     end
     object UndoAct: TAction
       Category = 'Edit'
@@ -3004,6 +3010,11 @@ object MainForm: TMainForm
       ImageIndex = 37
       OnExecute = DBGRunConsoleActExecute
       OnUpdate = DBGRunConsoleActUpdate
+    end
+    object SCMExploreLocalFolderAct: TAction
+      Category = 'SCM'
+      Caption = 'Explore Local folder'
+      OnExecute = SCMExploreLocalFolderActExecute
     end
   end
   object FolderMenu: TPopupMenu
@@ -3193,7 +3204,7 @@ object MainForm: TMainForm
       OnClick = EditorOptionsActExecute
     end
     object MenuItem40: TMenuItem
-      Action = EditorColorsAct
+      Action = EditorStyleAct
     end
     object MenuItem53: TMenuItem
       Action = FileTendencyAct

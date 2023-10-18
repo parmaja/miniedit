@@ -1026,7 +1026,7 @@ type
     procedure Load(vWorkspace: String);
     procedure Save(vWorkspace: String);
     procedure OptionsShow;
-    procedure ColorsShow;
+    procedure StyleShow;
 
     property BoundRect: TRect read FBoundRect write FBoundRect; //not saved yet
     property RecentFiles: TRecentItems read FRecentFiles write SetRecentFiles;
@@ -4733,7 +4733,7 @@ begin
   end;
 end;
 
-procedure TEditorOptions.ColorsShow;
+procedure TEditorOptions.StyleShow;
 var
   aSelect: String;
 begin

@@ -1,7 +1,7 @@
-## Mini Edit 
+## Mini Edit
 
 MiniEdit is an open source desktop application for editing files like PHP, HTML, CSS, Python, D, C and Pascal using UTF8 encoding.
-Also it can compile or run script of this files, if your already installed its compilers in your system, without need to open a project for it, 
+Also it can compile or run script of this files, if your already installed its compilers in your system, without need to open a project for it,
 if you are editing multiple files, e.g. Python, PHP it can run this files into console(cmd) or terminal(xterm).
 
 ### Target
@@ -26,7 +26,8 @@ if you are editing multiple files, e.g. Python, PHP it can run this files into c
  * Works in Windows and Linux
  * Compile and run Pascal, D, Go, Cpp (cpp todo not yet)
  * Run PHP, CMD, SH, BAT, Lua, Py
- * Themed colors can be customized easy
+ * Themed colors one for all languages, can be customized easy
+ * Saving macros https://github.com/parmaja/miniedit/wiki/SL-OSSL#macros
 
 ### Languages supported
 
@@ -44,11 +45,9 @@ if you are editing multiple files, e.g. Python, PHP it can run this files into c
  | CMD, Bat		| run			| cmd.exe		|
  | sh 			| run			| sh			|
  | csv 			| show			| 				|
- | btfont [TODO]| edit, show	| 				|
 
- 
 ### Disadvantages
-  
+
  * Not good in auto complete
  * Can't open unkown files
  * Can't open a huge file like logs

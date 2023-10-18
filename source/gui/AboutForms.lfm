@@ -9,10 +9,10 @@ object AboutForm: TAboutForm
   ClientWidth = 415
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
+  Position = poMainFormCenter
+  LCLVersion = '3.99.0.0'
   OnClose = FormClose
   OnCreate = FormCreate
-  Position = poMainFormCenter
-  LCLVersion = '2.1.0.0'
   object NameLbl: TLabel
     Left = 51
     Height = 13
@@ -11614,9 +11614,9 @@ object AboutForm: TAboutForm
     Left = 21
     Height = 13
     Top = 161
-    Width = 34
+    Width = 35
     Anchors = [akLeft, akBottom]
-    Caption = 'version'
+    Caption = 'Version'
     ParentColor = False
   end
   object Label8: TLabel

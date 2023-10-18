@@ -59,7 +59,7 @@ type
 
 const
   //force to have this options
-  cSynRequiredOptions = [eoSpacesToTabs, eoDragDropEditing, eoTrimTrailingSpaces, eoDropFiles, eoShowCtrlMouseLinks, eoAltSetsColumnMode, eoScrollPastEol, eoRightMouseMovesCursor, eoHideRightMargin];
+  cSynRequiredOptions = [eoEnhanceHomeKey, eoSpacesToTabs, eoDragDropEditing, eoTrimTrailingSpaces, eoDropFiles, eoShowCtrlMouseLinks, eoAltSetsColumnMode, eoScrollPastEol, eoRightMouseMovesCursor, eoHideRightMargin];
 
   //force to remove this option
   cSynRemoveOptions = [eoPersistentCaret, eoTabsToSpaces, eoSmartTabs, eoSmartTabDelete, eoShowSpecialChars, eoScrollPastEof];

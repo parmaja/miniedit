@@ -68,26 +68,29 @@ type
   { TMainForm }
 
   TMainForm = class(TForm, INotifyEngine, INotifyEngineState, INotifyEngineEditor)
+    SCMCompareLocalMnu: TMenuItem;
+    SCMExploreLocalFolderMnu: TMenuItem;
+    SCMExploreLocalFolderAct: TAction;
     DBGRunConsoleMnu: TMenuItem;
     DBGRunConsoleAct: TAction;
     ClearUndoAct: TAction;
     ForgroundTimer: TTimer;
     RedoAct: TAction;
+    Separator2: TMenuItem;
     ToolButton10: TToolButton;
     ToolButton4: TToolButton;
     UndoAct: TAction;
-    CompareLocalAct: TAction;
+    SCMCompareLocalAct: TAction;
     FileTendencyAct: TAction;
     DBStartAct: TAction;
     BackwordSwitchFocusAct: TAction;
     MenuItem51: TMenuItem;
     MenuItem52: TMenuItem;
     MenuItem53: TMenuItem;
-    CompareLocalMnu: TMenuItem;
     MenuItem54: TMenuItem;
     MenuItem55: TMenuItem;
     MenuItem56: TMenuItem;
-    NewSQLAct: TAction;
+    DBNewSQLAct: TAction;
     DBRollbackAct: TAction;
     DBCommitAct: TAction;
     FilesFilterEdit: TEdit;
@@ -445,14 +448,15 @@ type
     procedure BackwordSwitchFocusActExecute(Sender: TObject);
     procedure ClearUndoActExecute(Sender: TObject);
     procedure ClearUndoActUpdate(Sender: TObject);
-    procedure CompareLocalActExecute(Sender: TObject);
+    procedure MenuItem58Click(Sender: TObject);
+    procedure SCMCompareLocalActExecute(Sender: TObject);
     procedure DBDisconnectActExecute(Sender: TObject);
     procedure DBGRunConsoleActExecute(Sender: TObject);
     procedure DBGRunConsoleActUpdate(Sender: TObject);
     procedure FileTendencyActExecute(Sender: TObject);
     procedure ForgroundTimerTimer(Sender: TObject);
     procedure DBGRunConsoleMnuClick(Sender: TObject);
-    procedure NewSQLActExecute(Sender: TObject);
+    procedure DBNewSQLActExecute(Sender: TObject);
     procedure AnsiMnuClick(Sender: TObject);
     procedure ApplicationPropertiesActivate(Sender: TObject);
     procedure ApplicationPropertiesHint(Sender: TObject);
@@ -515,6 +519,7 @@ type
     procedure RedoActUpdate(Sender: TObject);
     procedure ResetMainFileActExecute(Sender: TObject);
     procedure SCMAddFileActExecute(Sender: TObject);
+    procedure SCMExploreLocalFolderActExecute(Sender: TObject);
     procedure SearchGridDblClick(Sender: TObject);
     procedure SearchGridDrawCell(Sender: TObject; aCol, aRow: Integer; aRect: TRect; aState: TGridDrawState);
     procedure SearchGridKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -870,7 +875,7 @@ end;
 
 procedure TMainForm.EditorStyleActExecute(Sender: TObject);
 begin
-  Engine.Options.ColorsShow;
+  Engine.Options.StyleShow;
 end;
 
 procedure TMainForm.EditorPopupMenuPopup(Sender: TObject);
@@ -944,7 +949,7 @@ begin
   Engine.Files.Current.FileEncoding := EncodingAnsi;
 end;
 
-procedure TMainForm.NewSQLActExecute(Sender: TObject);
+procedure TMainForm.DBNewSQLActExecute(Sender: TObject);
 begin
   with Engine.Files.New('sql') do
   begin
@@ -968,7 +973,12 @@ begin
   ClearUndoAct.Enabled := (Engine.Files.Current <> nil) and Engine.Files.Current.CanUndo;
 end;
 
-procedure TMainForm.CompareLocalActExecute(Sender: TObject);
+procedure TMainForm.MenuItem58Click(Sender: TObject);
+begin
+
+end;
+
+procedure TMainForm.SCMCompareLocalActExecute(Sender: TObject);
 var
   aFileName: string;
   Values: TStringList;
@@ -1430,6 +1440,31 @@ procedure TMainForm.SCMAddFileActExecute(Sender: TObject);
 begin
   if Engine.Files.Current <> nil then
     Engine.SCM.AddFile(Engine.Files.Current.FileName);
+end;
+
+procedure TMainForm.SCMExploreLocalFolderActExecute(Sender: TObject);
+var
+  aFileName: string;
+  Values: TStringList;
+begin
+  if Engine.Files.Current <> nil then
+  begin
+    Values := TStringList.Create;
+    try
+      if Engine.Files.Current.Tendency.EnableMacros then
+      begin
+        Engine.Files.Current.ScanValues(Values);
+        aFileName := DequoteStr(Values.Values['@localfile']);
+        aFileName := ExpandToPath(aFileName , Engine.Session.Project.DefaultPath);
+        if (aFileName <> '') and FileExists(aFileName) then
+        begin
+          ExploreFile(aFileName);
+        end;
+      end;
+    finally
+      Values.Free;
+    end;
+  end;
 end;
 
 procedure TMainForm.SearchGridDblClick(Sender: TObject);
