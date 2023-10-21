@@ -3305,7 +3305,7 @@ procedure TMainForm.ShowFileAtLine(vFileName: string; vLine: Integer; vColumn: I
 var
   aFile: TEditorFile;
 begin
-  aFile := Engine.Files.OpenFile(vFileName);
+  aFile := Engine.Files.OpenFile(vFileName, '', [ofoCheckExists]);
   if aFile <> nil then
     with Engine.Files do
     begin
