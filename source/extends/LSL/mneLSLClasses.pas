@@ -428,7 +428,7 @@ begin
 
   if FileExistsUTF8(Application.Location + 'lsl.keywords') then
   begin
-    stream := TmnWrapperStream.Create(TFileStream.Create(Application.Location + 'lsl.keywords', fmOpenRead), True);
+    stream := TmnWrapperStream.Create(TFileStream.Create(Application.Location + 'lsl.keywords', fmOpenRead or fmShareDenyNone), True);
     try
       while stream.ReadLine(line) do
       begin
@@ -438,25 +438,30 @@ begin
           if StrScanTo(line, 1, declare, CharIndex, NextIndex, MatchCount, [' ', '(', ')', ',', ';']) then
           begin
             if SameText(declare, 'const') then
+            begin
+              att := attDataValue;
               StrScanTo(line, NextIndex, subdeclare, CharIndex, NextIndex, MatchCount, [' ', '(', ')', ',', ';']);
-            StrScanTo(line, NextIndex, token, CharIndex, NextIndex, MatchCount, [' ', '(', ')', ',', ';']);
-            if SameText(declare, 'const') then
-              att := attDataValue
+            end
             else
               att := attCommon;
-            end;
+
+            StrScanTo(line, NextIndex, token, CharIndex, NextIndex, MatchCount, [' ', '(', ')', ',', ';']);
+
             with AddKeyword(token, declare, att, False) do
             begin
-              if StrScanTo(line, 0, token, CharIndex, NextIndex, MatchCount, ['(']) then
-              begin
-                line := MidStr(line, NextIndex, MaxInt);
-                if RightStr(line, 1) = ')' then
-                  line := MidStr(line, 1, Length(line) - 1);
-                StrToStrings(Trim(line), Params, [','], [' ']);
-              end;
+                if StrScanTo(line, 0, token, CharIndex, NextIndex, MatchCount, ['(']) then
+                  line := Trim(MidStr(line, NextIndex, MaxInt));
+                if line <> '' then
+                begin
+                  if RightStr(line, 1) = ')' then
+                    line := Trim(MidStr(line, 1, Length(line) - 1));
+                  if line <> '' then
+                    StrToStrings(Trim(line), Params, [','], [' ']);
+                end;
             end;
           end;
         end;
+      end;
     finally
       stream.Free;
     end;
