@@ -5570,11 +5570,13 @@ var
   p: String;
   aExt: String;
   aGroup: TFileGroup;
+  oldName: string;
 begin
   Engine.BeginUpdate;
   try
     if FileName <> '' then
     begin
+      oldName := FileName;
       p := ExtractFilePath(FileName);
       if RenameFile(FileName, p + ToName) then
       begin
@@ -5587,6 +5589,10 @@ begin
           aExt := '.' + aExt;
         aGroup := Engine.Groups.FindGroup(aExt);
         Group := aGroup;
+      end;
+      if Engine.Session.Project.RunOptions.MainFile = oldName then
+      begin
+        Engine.Session.Project.RunOptions.MainFile := ToName;
       end;
     end
     else

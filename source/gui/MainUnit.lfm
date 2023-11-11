@@ -2,12 +2,12 @@ object MainForm: TMainForm
   Left = 392
   Height = 568
   Top = 182
-  Width = 1022
+  Width = 1080
   ActiveControl = LogEdit
   AllowDropFiles = True
   Caption = 'Mini Edit'
   ClientHeight = 568
-  ClientWidth = 1022
+  ClientWidth = 1080
   Color = clWindow
   Menu = MainMenu
   ParentFont = True
@@ -24,7 +24,7 @@ object MainForm: TMainForm
     Left = 0
     Height = 29
     Top = 0
-    Width = 1022
+    Width = 1080
     AutoSize = True
     Color = clWindow
     EdgeBorders = [ebTop, ebBottom]
@@ -37,8 +37,8 @@ object MainForm: TMainForm
       Left = 1
       Height = 23
       Top = 2
-      Width = 947
-      AutoSize = True
+      Width = 1247
+      Align = alClient
       ButtonHeight = 23
       ButtonWidth = 75
       EdgeBorders = []
@@ -156,22 +156,22 @@ object MainForm: TMainForm
     Left = 269
     Height = 314
     Top = 29
-    Width = 753
+    Width = 811
     Align = alClient
     BevelOuter = bvNone
     ClientHeight = 314
-    ClientWidth = 753
+    ClientWidth = 811
     ParentBackground = False
     TabOrder = 0
     object EditorsPnl: TPanel
       Left = 0
       Height = 289
       Top = 25
-      Width = 753
+      Width = 811
       Align = alClient
       BevelOuter = bvNone
       ClientHeight = 289
-      ClientWidth = 753
+      ClientWidth = 811
       FullRepaint = False
       ParentBackground = False
       TabOrder = 0
@@ -180,7 +180,7 @@ object MainForm: TMainForm
         Left = 0
         Height = 25
         Top = 0
-        Width = 753
+        Width = 811
         AutoSize = True
         ShowButtons = False
         TabStyle = tbsSheet
@@ -196,13 +196,13 @@ object MainForm: TMainForm
       Left = 0
       Height = 25
       Top = 0
-      Width = 753
+      Width = 811
       Align = alTop
       Alignment = taLeftJustify
       BevelOuter = bvNone
       BorderWidth = 2
       ClientHeight = 25
-      ClientWidth = 753
+      ClientWidth = 811
       ParentBackground = False
       PopupMenu = FilePopupMenu
       TabOrder = 1
@@ -212,7 +212,7 @@ object MainForm: TMainForm
         Height = 21
         Hint = 'File name'
         Top = 2
-        Width = 613
+        Width = 671
         Align = alClient
         AutoSize = False
         Layout = tlCenter
@@ -221,7 +221,7 @@ object MainForm: TMainForm
       end
       object FileCloseBtn: TntvImgBtn
         AnchorSideRight.Control = FileHeaderPanel
-        Left = 735
+        Left = 793
         Height = 21
         Top = 2
         Width = 16
@@ -234,7 +234,7 @@ object MainForm: TMainForm
       object BugSignBtn: TntvImgBtn
         AnchorSideRight.Control = FileCloseBtn
         AnchorSideBottom.Side = asrBottom
-        Left = 719
+        Left = 777
         Height = 21
         Top = 2
         Width = 16
@@ -246,7 +246,7 @@ object MainForm: TMainForm
       object FileEncodeBtn: TntvImgBtn
         AnchorSideRight.Control = LinesModeBtn
         AnchorSideBottom.Side = asrBottom
-        Left = 615
+        Left = 673
         Height = 21
         Top = 2
         Width = 73
@@ -260,7 +260,7 @@ object MainForm: TMainForm
         AnchorSideRight.Control = BugSignBtn
         AnchorSideBottom.Control = BugSignBtn
         AnchorSideBottom.Side = asrBottom
-        Left = 688
+        Left = 746
         Height = 21
         Top = 2
         Width = 31
@@ -275,11 +275,11 @@ object MainForm: TMainForm
     Left = 0
     Height = 21
     Top = 547
-    Width = 1022
+    Width = 1080
     Align = alBottom
     BevelOuter = bvNone
     ClientHeight = 21
-    ClientWidth = 1022
+    ClientWidth = 1080
     ParentBackground = False
     TabOrder = 1
     object MessageLabel: TPanel
@@ -287,7 +287,7 @@ object MainForm: TMainForm
       Height = 21
       Hint = 'Message'
       Top = 0
-      Width = 743
+      Width = 801
       Align = alClient
       Alignment = taLeftJustify
       Anchors = [akLeft, akRight, akBottom]
@@ -297,7 +297,7 @@ object MainForm: TMainForm
       TabOrder = 0
     end
     object CursorPnl: TPanel
-      Left = 866
+      Left = 924
       Height = 21
       Hint = 'Caret Position'
       Top = 0
@@ -311,7 +311,7 @@ object MainForm: TMainForm
       TabOrder = 1
     end
     object StatePnl: TPanel
-      Left = 846
+      Left = 904
       Height = 21
       Hint = 'State'
       Top = 0
@@ -515,7 +515,7 @@ object MainForm: TMainForm
     Left = 0
     Height = 183
     Top = 343
-    Width = 1022
+    Width = 1080
     Align = alBottom
     Constraints.MinWidth = 100
     ResizeStyle = nrsUpdate
@@ -523,7 +523,7 @@ object MainForm: TMainForm
       Left = 0
       Height = 173
       Top = 10
-      Width = 1022
+      Width = 1080
       Margin = 1
       BorderSpacing.Top = 2
       ShowButtons = False
@@ -572,7 +572,7 @@ object MainForm: TMainForm
         Left = 1
         Height = 151
         Top = 21
-        Width = 1020
+        Width = 1078
         Align = alClient
         Constraints.MinHeight = 60
         Font.Height = -13
@@ -1128,7 +1128,7 @@ object MainForm: TMainForm
         Left = 1
         Height = 151
         Top = 21
-        Width = 1020
+        Width = 1078
         Align = alClient
         ColCount = 3
         Columns = <        
@@ -1168,7 +1168,7 @@ object MainForm: TMainForm
         Left = 1
         Height = 151
         Top = 21
-        Width = 1020
+        Width = 1078
         Align = alClient
         ColCount = 4
         Columns = <        
@@ -1213,7 +1213,7 @@ object MainForm: TMainForm
         Left = 1
         Height = 151
         Top = 21
-        Width = 1020
+        Width = 1078
         Align = alClient
         ColCount = 4
         Flat = True
@@ -1254,7 +1254,7 @@ object MainForm: TMainForm
         Left = 1
         Height = 151
         Top = 21
-        Width = 1020
+        Width = 1078
         Align = alClient
         DefaultRowHeight = 23
         Flat = True
@@ -1298,7 +1298,7 @@ object MainForm: TMainForm
         Left = 1
         Height = 151
         Top = 21
-        Width = 1020
+        Width = 1078
         Align = alClient
         Constraints.MinHeight = 60
         Font.Height = -13
@@ -1863,7 +1863,7 @@ object MainForm: TMainForm
     Left = 0
     Height = 21
     Top = 526
-    Width = 1022
+    Width = 1080
     Align = alBottom
     BevelOuter = bvNone
     ParentBackground = False

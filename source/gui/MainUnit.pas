@@ -1601,7 +1601,9 @@ begin
   begin
     s := Engine.Files.Current.NickName;
     if MsgBox.Input(s, 'Please enter new name for ' + s) then
+    begin
       Engine.Files.Current.NickName := s;
+    end;
   end;
 end;
 
