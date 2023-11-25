@@ -127,3 +127,9 @@ run_time_permissions(integer perm)
 {
     |
 }
+
+[http_response]
+http_response(key request_id, integer status, list metadata, string body)
+{
+    |
+}
