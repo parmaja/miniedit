@@ -180,6 +180,13 @@ type
     procedure Clear; override;
   end;
 
+  { TmneSynEditAutoComplete }
+
+  TmneSynEditAutoComplete = class(TSynEditAutoComplete)
+  public
+    procedure ParseCompletionList; override;
+  end;
+
   TmneSynEditCommand = (mscUUID); // msPaused = paused recording
 
   { TmneSynEditPlugin }
@@ -1117,7 +1124,7 @@ type
   protected
     FKeywords: TKeywordList;
     FCompletion: TmneSynCompletion;
-    FAutoComplete: TSynEditAutoComplete;
+    FAutoComplete: TmneSynEditAutoComplete;
 
     function GetFileCaption(AFile: TEditorFile; FileName: String): String; virtual;
 
@@ -1174,7 +1181,7 @@ type
     property IsText: Boolean read GetIsText;
     property Highlighter: TSynCustomHighlighter read GetHighlighter;
     property Completion:  TmneSynCompletion read FCompletion;
-    property AutoComplete: TSynEditAutoComplete read FAutoComplete;
+    property AutoComplete: TmneSynEditAutoComplete read FAutoComplete;
     property Kind: TFileCategoryKinds read FKind;
     property ImageName: String read FImageName write FImageName;
     property Items[Index: Integer]: TFileGroup read GetItem; default;
@@ -3203,6 +3210,98 @@ procedure TmneSynCompletion.Clear;
 begin
  inherited Sort;
  (TheForm as TmneSynCompletionForm).Keywords.Clear;
+end;
+
+{ TmneSynEditAutoComplete }
+
+procedure TmneSynEditAutoComplete.ParseCompletionList;
+var
+  sComplKey, sComment, sComplValue: string;
+
+  procedure SaveEntry;
+  var
+    //CurAttributes: TStrings;
+    StartI, EndI: Integer;
+  begin
+    fCompletions.Add(sComplKey);
+    sComplKey := '';
+    fCompletionComments.Add(sComment);
+    sComment := '';
+    //CurAttributes:=TStringListUTF8Fast.Create;
+    Assert(not StartsStr(CodeTemplateMacroMagic, sComplValue), 'SaveEntry: Found '+CodeTemplateMacroMagic);
+    if StartsStr(CodeTemplateAttributesStartMagic, sComplValue) then
+    begin
+      // Start of attributes
+      StartI := Length(CodeTemplateAttributesStartMagic) + 1;
+      while (StartI <= Length(sComplValue)) and (sComplValue[StartI] in [#10,#13]) do
+        Inc(StartI);
+      EndI := PosEx(CodeTemplateAttributesEndMagic, sComplValue, StartI);
+      if EndI = 0 then
+        raise Exception.Create('ParseCompletionList: "' + CodeTemplateAttributesEndMagic + '" not found.');
+      //CurAttributes.Text := Copy(sComplValue, StartI, EndI-StartI);
+      // Start of value
+      StartI := EndI + Length(CodeTemplateAttributesEndMagic);
+      while (StartI <= Length(sComplValue)) and (sComplValue[StartI] in [#10,#13]) do
+        Inc(StartI);
+      sComplValue := Copy(sComplValue, StartI, Length(sComplValue));
+    end;
+    fCompletionValues.Add(sComplValue);
+    sComplValue := '';
+    //Attributes.Add(CurAttributes);
+  end;
+
+var
+  i, j, Len: integer;
+  S: string;
+  TemplateStarted: Boolean;
+begin
+  fCompletions.Clear;
+  fCompletionComments.Clear;
+  fCompletionValues.Clear;
+  //ClearAttributes;
+  if AutoCompleteList.Count > 0 then
+	begin
+    S := AutoCompleteList[0];
+    TemplateStarted := False;
+    for i := 0 to AutoCompleteList.Count - 1 do
+		begin
+      S := AutoCompleteList[i];
+      Len := Length(S);
+      // the style of the Delphi32.dci file
+      if (Len > 0) and (S[1] = '[') then begin
+        // save last entry
+        if sComplKey <> '' then
+          SaveEntry;
+        // new completion entry
+        j := 2;
+        while (j <= Len) and (S[j] > ' ') do
+          Inc(j);
+        sComplKey := Copy(S, 2, j - 2);
+        if (sComplKey<> '') and (sComplKey[Length(sComplKey)] in ['|', ']']) then //* to accept format [keyword] or [keyword|]
+          SetLength(sComplKey, Length(sComplKey) - 1);
+        // start of comment in DCI file
+        while (j <= Len) and (S[j] <= ' ') do
+          Inc(j);
+        if (j <= Len) and (S[j] = '|') then
+          Inc(j);
+        while (j <= Len) and (S[j] <= ' ') do
+          Inc(j);
+        sComment := Copy(S, j, Len);
+        if (sComment <> '') and (sComment[Length(sComment)] = ']') then
+          SetLength(sComment, Length(sComment) - 1);
+        TemplateStarted:=true;
+      end else begin
+        if not TemplateStarted then
+          sComplValue := sComplValue + LineEnding;
+        TemplateStarted:=false;
+        sComplValue := sComplValue + S;
+      end;
+
+    end;
+    if sComplKey <> '' then
+      SaveEntry;
+  end;
+  fParsed:=true;
 end;
 
 { TEditorSCM }
@@ -6820,7 +6919,7 @@ procedure TVirtualCategory.InitCompletion(vSynEdit: TCustomSynEdit);
 begin
   if FAutoComplete = nil then
   begin
-    FAutoComplete := TSynEditAutoComplete.Create(nil);
+    FAutoComplete := TmneSynEditAutoComplete.Create(nil);
     AutoComplete.EndOfTokenChr := '{}()[].<>/\:!&*+-=%;,';
   end;
   AutoComplete.AddEditor(vSynEdit);
