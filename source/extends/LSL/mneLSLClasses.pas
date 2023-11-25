@@ -415,7 +415,7 @@ end;
 procedure TLSLFileCategory.DoAddKeywords;
 var
   stream: TmnWrapperStream;
-  line: utf8string;
+  line: string;
   declare, subdeclare, token: string;
   CharIndex, NextIndex: Integer;
   MatchCount: Integer;
@@ -433,7 +433,7 @@ begin
       while stream.ReadLine(line) do
       begin
         line := trim(line);
-        if LeftStr(line, 2) <> '//' then
+        if StartsStr('//', line) then
         begin
           if StrScanTo(line, 1, declare, CharIndex, NextIndex, MatchCount, [' ', '(', ')', ',', ';']) then
           begin
