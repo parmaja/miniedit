@@ -433,7 +433,7 @@ begin
       while stream.ReadLine(line) do
       begin
         line := trim(line);
-        if StartsStr('//', line) then
+        if not StartsStr('//', line) then
         begin
           if StrScanTo(line, 1, declare, CharIndex, NextIndex, MatchCount, [' ', '(', ')', ',', ';']) then
           begin
