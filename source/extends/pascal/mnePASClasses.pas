@@ -256,9 +256,10 @@ begin
   if (rnaExecute in Info.Actions) then
   begin
     aRunItem := Engine.Session.Run.Add;
-    aRunItem.Info.Run.Pause := Info.Pause;
-    aRunItem.Info.Run.Console := Info.Console;
     aRunItem.Info.CurrentDirectory := Info.Root;
+    aRunItem.Info.Run.Pause := Info.Pause;
+    aRunItem.Info.Run.Silent := not aRunItem.Info.Run.Console;
+    aRunItem.Info.Run.Console := Info.Console;
     aRunItem.Info.StartDebug := rnaDebug in Info.Actions;
     aRunItem.Info.Title := ExtractFileName(Info.OutputFile);
     aRunItem.Info.Run.Command := Info.RunFile;

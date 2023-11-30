@@ -241,7 +241,12 @@ begin
 
     aRunItem.Info.Run.Command := Info.Command;
     if aRunItem.Info.Run.Command = '' then
-      aRunItem.Info.Run.Command := 'cpp.exe';
+      {$ifdef windows}
+      aRunItem.Info.Run.Command := 'g++.exe';
+      {$else}
+      aRunItem.Info.Run.Command := 'g++';
+      {$endif}
+
 
     aRunItem.Info.Run.Silent := True;
     aRunItem.Info.Run.CatchOutput := True;
@@ -284,13 +289,17 @@ begin
   if rnaExecute in Info.Actions then
   begin
     aRunItem := Engine.Session.Run.Add;
-    aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
     aRunItem.Info.CurrentDirectory := Info.Root;
     aRunItem.Info.Run.Pause := Info.Pause;
-    aRunItem.Info.Title := ExtractFileName(Info.OutputFile);;
+    aRunItem.Info.Run.Console := Info.Console;
+    if not aRunItem.Info.Run.Console then
+      aRunItem.Info.Run.Silent := True;
+    aRunItem.Info.StartDebug := rnaDebug in Info.Actions;
+    aRunItem.Info.Title := ExtractFileName(Info.OutputFile);
     aRunItem.Info.Run.Command := Info.RunFile;
     aRunItem.Info.Run.AddParam(RunOptions.Params);
     aRunItem.Info.Run.AddParam(Engine.Session.Project.RunOptions.Params);
+    aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
   end;
 end;
 
@@ -326,6 +335,7 @@ begin
   FTitle := 'GCC Gcc C/C++';
   FDescription := 'Gcc C/C++ Files, *.cpp, *.c, *.h, *.ino';
   FName := 'Gcc';
+  OutputExtension := '.exe';
   FImageIndex := -1;
 end;
 
