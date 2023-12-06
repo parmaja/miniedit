@@ -48,7 +48,7 @@ type
     procedure MangleCodeClick(Sender: TObject);
   protected
     function GetFileCaption(AFile: TEditorFile; FileName: string): string; override;
-    procedure GetHintString(Token: string; ParamIndex: Integer; out AHint: String); override;
+    procedure GetHintString(const Token: string; ParamIndex: Integer; out AHint: String); override;
     procedure InitMappers; override;
     procedure DoAddKeywords; override;
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
@@ -357,7 +357,7 @@ begin
     Result := FileName;
 end;
 
-procedure TLSLFileCategory.GetHintString(Token: string; ParamIndex: Integer; out AHint: String);
+procedure TLSLFileCategory.GetHintString(const Token: string; ParamIndex: Integer; out AHint: String);
 var
   KeywordItem: TKeywordItem;
   i: Integer;
@@ -420,6 +420,7 @@ var
   CharIndex, NextIndex: Integer;
   MatchCount: Integer;
   att: TAttributeType;
+  AKind: TtkTokenKind;
 begin
   inherited;
 
@@ -440,13 +441,18 @@ begin
             if SameText(declare, 'const') then
             begin
               att := attDataValue;
+              AKind := tkValue;
               StrScanTo(line, NextIndex, subdeclare, CharIndex, NextIndex, MatchCount, [' ', '(', ')', ',', ';']);
             end
             else
+            begin
               att := attCommon;
+              aKind := tkFunction;
+            end;
 
             StrScanTo(line, NextIndex, token, CharIndex, NextIndex, MatchCount, [' ', '(', ')', ',', ';']);
 
+            LSLKeywords.Update(Token, AKind);
             with AddKeyword(token, declare, att, False) do
             begin
                 if StrScanTo(line, 0, token, CharIndex, NextIndex, MatchCount, ['(']) then

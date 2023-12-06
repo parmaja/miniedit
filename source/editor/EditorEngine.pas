@@ -1136,12 +1136,13 @@ type
 
 
     //run once but when category ini
-    procedure GetHintString(Token: string; ParamIndex: Integer; out AHint: String); virtual;
+    procedure GetHintString(const Token: string; ParamIndex: Integer; out AHint: String); virtual;
 
-    procedure AddKeyword(AKeyword: String; AKind: Integer); deprecated;
-    function AddKeyword(AKeyword: String; AttributeName: string; AKind: TAttributeType; Temp: Boolean = False): TKeywordItem; virtual;
+    procedure AddKeyword(AKeyword: String; AKind: Integer);
+    function AddKeyword(const AKeyword: String; const AttributeName: string; AKind: TAttributeType; Temp: Boolean = False): TKeywordItem; virtual;
 
     procedure DoAddKeywords; virtual;
+
     procedure InitCompletion(vSynEdit: TCustomSynEdit); virtual;
 
     procedure DoPrepareCompletion(AEditor: TCustomSynEdit); virtual; //TODO move it to CodeFileCategory
@@ -6975,7 +6976,7 @@ begin
   AddKeyword(AKeyword, s, TAttributeType(AKind), False);
 end;
 
-function TVirtualCategory.AddKeyword(AKeyword: String; AttributeName: string; AKind: TAttributeType; Temp: Boolean): TKeywordItem;
+function TVirtualCategory.AddKeyword(const AKeyword: String; const AttributeName: string; AKind: TAttributeType; Temp: Boolean): TKeywordItem;
 var
   s: string;
   i: Integer;
@@ -6985,9 +6986,10 @@ begin
   map := Mapper.FindByAttribute(AKind);
   if map = nil then
     raise Exception.Create('Highlighter Map not exists');
-  if AttributeName = '' then
-    AttributeName := map.Name;
-  s := AttributeName + ': \tab{6}\color{$'+IntToHex(map.Attribute.Foreground)+'}' + AKeyword;
+  s := AttributeName;
+  if s = '' then
+    s := map.Name;
+  s := s + ': \tab{6}\color{$'+IntToHex(map.Attribute.Foreground)+'}' + AKeyword;
   i := AutoComplete.Completions.IndexOf(AKeyword);
   if i>=0 then
     s := s + '\hspace{16}' + AutoComplete.CompletionComments[i];
@@ -7026,7 +7028,7 @@ begin
   Completion.RemoveEditor(vSynEdit);
 end;
 
-procedure TVirtualCategory.GetHintString(Token: string; ParamIndex: Integer; out AHint: String);
+procedure TVirtualCategory.GetHintString(const Token: string; ParamIndex: Integer; out AHint: String);
 var
   KeywordItem: TKeywordItem;
 begin
@@ -7772,7 +7774,6 @@ begin
     Result.Name := Name;
   end;
   Add(Result);
-
 end;
 
 finalization
