@@ -1751,4 +1751,4 @@ event touch_start( integer num_detected )
 event transaction_result( key id, integer success, string data )
 //Added by me
 void osGrantScriptPermissions(key allowed_key, string function)
-void osLocalTeleportAgent( string agent, vector position, vector lookat )
+//void osLocalTeleportAgent( string agent, vector position, vector lookat )
