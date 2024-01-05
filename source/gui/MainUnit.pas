@@ -1412,7 +1412,7 @@ begin
     answer := MsgBox.Ask('There a files changed but not saved'#13, [Choice('Save &All', msgcYes), Choice('Ig&nore All', msgcNo), Choice('A&sk'), Choice('&Cancel', msgcCancel)], 0, 3, msgkConfirmation);
     //mr := MsgBox.YesNoCancel();
     if answer = 0 then
-      Engine.Files.SaveAll([saveTemporary]) //force save all
+      Engine.Files.SaveAll([saveNew, saveTemporary]) //force save all
     else if answer = 1 then
       Engine.Files.CancelAll
     else if answer = 3 then
@@ -1609,7 +1609,7 @@ end;
 
 procedure TMainForm.SaveActExecute(Sender: TObject);
 begin
-  Engine.Files.SaveCurrent([saveTemporary]);
+  Engine.Files.SaveCurrent([saveNew, saveUnmodified, saveTemporary]);
 end;
 
 procedure TMainForm.EngineEdited;
@@ -1636,7 +1636,7 @@ end;
 
 procedure TMainForm.SaveAllActExecute(Sender: TObject);
 begin
-  Engine.SaveAll([]);
+  Engine.SaveAll([saveNew]);
 end;
 
 procedure TMainForm.FolderOpenAllActExecute(Sender: TObject);

@@ -653,7 +653,7 @@ type
     property MarkupInfo;
   end;
 
-  TEditorSaveOption = (saveAsNew, saveTemporary, saveUnmodified);
+  TEditorSaveOption = (saveNew, saveAsNew, saveTemporary, saveUnmodified);
   TEditorSaveOptions = set of TEditorSaveOption;
 
   TSwitchControls = specialize TFPGList<TWinControl>;
@@ -5491,7 +5491,7 @@ begin
       if mr = msgcCancel then
         Abort
       else if mr = msgcYes then
-        Save([]);
+        Save([saveNew]);
     end;
     if (FileName <> '') and CanAddRecentFiles then
       Engine.ProcessRecentFile(FileName);
@@ -5760,9 +5760,10 @@ var
 begin
   DoRecent := False;
   aName := '';
+  aSave := False;
   if (not IsTemporary or (saveTemporary in SaveOptions)) and (IsChanged or (saveUnmodified in SaveOptions)) then
   begin
-    if (IsNew or (FFileName = '') or (saveAsNew in SaveOptions)) then
+    if ((IsNew or (FFileName = '')) and (saveNew in SaveOptions)) or (saveAsNew in SaveOptions) then
     begin
       aDialog := TSaveDialog.Create(nil);
       aDialog.Title := 'Save file';
@@ -5795,15 +5796,14 @@ begin
         DoRecent := True;
       end;
       aDialog.Free;
-    end
-    else
+    end;
+
+    if FFileName <> '' then
     begin
       aName := FFileName;
       aSave := True;
     end;
-  end
-  else
-    aSave := False;
+  end;
 
   if aSave then
   begin
@@ -5821,7 +5821,7 @@ end;
 
 procedure TEditorFile.Save;
 begin
-  Save([saveTemporary, saveUnmodified]);
+  Save([saveNew, saveTemporary, saveUnmodified]);
 end;
 
 function TEditorFile.CheckChanged(Force: Boolean): Boolean;
