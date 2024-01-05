@@ -151,7 +151,7 @@ end;
 
 procedure TBVHFile.NewContent;
 begin
-  inherited NewContent;
+  inherited;
 end;
 
 { TLSLTendency }
@@ -490,14 +490,14 @@ procedure TLSLFileCategory.EnumMenuItems(AddItems: TAddClickCallBack);
 begin
   inherited;
 //  AddItems('FormatCode', 'Format Code', 'Edit', @FormatCodeClick, scCtrl + scAlt + VK_F);
-  AddItems('MangleCode', 'Mangle Code', 'Edit', @MangleCodeClick);
+//  AddItems('MangleCode', 'Mangle Code', 'Edit', @MangleCodeClick);
 end;
 
 { TLSLFile }
 
 procedure TLSLFile.NewContent;
 begin
-  inherited NewContent;
+  inherited;
 end;
 
 function TLSLFile.CanAddRecentFiles: Boolean;

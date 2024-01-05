@@ -120,7 +120,7 @@ begin
   begin
     Engine.Files.CheckingChanged := True; //stop auto check file age, we will reload them all
     if MsgBox.Yes('Replace in files need to save all changed files, do you want to save it?') then
-      Engine.Files.SaveAll(False)
+      Engine.Files.SaveAll([])
     else
       Abort;
   end;

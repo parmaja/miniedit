@@ -653,6 +653,9 @@ type
     property MarkupInfo;
   end;
 
+  TEditorSaveOption = (saveAsNew, saveTemporary, saveUnmodified);
+  TEditorSaveOptions = set of TEditorSaveOption;
+
   TSwitchControls = specialize TFPGList<TWinControl>;
 
   TEditorLinesMode = (efmUnix, efmWindows, efmMac);
@@ -720,7 +723,7 @@ type
     procedure LoadFromFile(AFileName: String);
     procedure Load;
     procedure SaveToFile(AFileName: String);
-    procedure Save(Force: Boolean; Extension: String = ''; AsNewFile: Boolean = False); virtual;
+    procedure Save(SaveOptions: TEditorSaveOptions = []; Extension: String = ''); virtual;
     procedure Save;
 
     //Utils for SynEdit loading/saving
@@ -916,8 +919,8 @@ type
     function New(GroupName: String): TEditorFile; overload;
 
     procedure Open;
-    procedure Save(Force: Boolean);
-    procedure SaveAll(Force: Boolean);
+    procedure SaveCurrent(SaveOptions: TEditorSaveOptions = []);
+    procedure SaveAll(SaveOptions: TEditorSaveOptions = []);
     procedure CancelAll;
     procedure ReloadAll;
     procedure CheckAll;
@@ -1558,9 +1561,8 @@ type
     procedure SendMessage(S: String; vMessageInfo: TMessageInfo);
     procedure SendAction(EditorAction: TEditorAction);
 
-    procedure SaveAll(Force: Boolean);
-    procedure Run;
-    procedure Execute;
+    procedure SaveAll(vSaveOptions: TEditorSaveOptions = []);
+    procedure Run(RunActions: TmneRunActions); // = [rnaCompile, rnaExecute]
 
     property DefaultPath: string read FDefaultPath;
     property Environment: TStringList read FEnvironment write FEnvironment;
@@ -4659,19 +4661,19 @@ begin
   Update([ecsRecents]);
 end;
 
-procedure TEditorFiles.Save(Force: Boolean);
+procedure TEditorFiles.SaveCurrent(SaveOptions: TEditorSaveOptions);
 begin
   if Current <> nil then
-    Current.Save(Force);
+    Current.Save(SaveOptions);
 end;
 
-procedure TEditorFiles.SaveAll(Force: Boolean);
+procedure TEditorFiles.SaveAll(SaveOptions: TEditorSaveOptions);
 var
   i: Integer;
 begin
   for i := 0 to Count - 1 do
   begin
-    Items[i].Save(Force);
+    Items[i].Save(SaveOptions);
   end;
 end;
 
@@ -4718,7 +4720,7 @@ end;
 procedure TEditorFiles.SaveAs;
 begin
   if Current <> nil then
-    Current.Save(True, ExtractFileExt(Current.FileName), True);
+    Current.Save([saveAsNew, saveUnmodified, saveTemporary], ExtractFileExt(Current.FileName));
 end;
 
 procedure TEditorOptions.Save(vWorkspace: String);
@@ -5281,24 +5283,17 @@ begin
   end;
 end;
 
-procedure TEditorEngine.SaveAll(Force: Boolean);
+procedure TEditorEngine.SaveAll(vSaveOptions: TEditorSaveOptions);
 begin
   Session.Save;
-  Files.SaveAll(Force);
+  Files.SaveAll(vSaveOptions);
 end;
 
-procedure TEditorEngine.Run;
+procedure TEditorEngine.Run(RunActions: TmneRunActions);
 begin
   if Files.Count > 0 then
-    SaveAll(False);
+    SaveAll([]);
   CurrentTendency.Run([rnaCompile, rnaExecute]);
-end;
-
-procedure TEditorEngine.Execute;
-begin
-  if Files.Count > 0 then
-    SaveAll(False);
-  CurrentTendency.Run([rnaExecute]);
 end;
 
 procedure TEditorEngine.DoChangedState(State: TEditorChangeStates);
@@ -5496,7 +5491,7 @@ begin
       if mr = msgcCancel then
         Abort
       else if mr = msgcYes then
-        Save(True);
+        Save([]);
     end;
     if (FileName <> '') and CanAddRecentFiles then
       Engine.ProcessRecentFile(FileName);
@@ -5757,7 +5752,7 @@ begin
   Result := (Content <> nil) and (Content.Visible);
 end;
 
-procedure TEditorFile.Save(Force: Boolean; Extension: String; AsNewFile: Boolean);
+procedure TEditorFile.Save(SaveOptions: TEditorSaveOptions; Extension: String);
 var
   aDialog: TSaveDialog;
   aSave, DoRecent: Boolean;
@@ -5765,9 +5760,9 @@ var
 begin
   DoRecent := False;
   aName := '';
-  if (((FileName <> '') or not IsTemporary) or Force) then
+  if (not IsTemporary or (saveTemporary in SaveOptions)) and (IsChanged or (saveUnmodified in SaveOptions)) then
   begin
-    if (IsNew or (FFileName = '') or AsNewFile) then
+    if (IsNew or (FFileName = '') or (saveAsNew in SaveOptions)) then
     begin
       aDialog := TSaveDialog.Create(nil);
       aDialog.Title := 'Save file';
@@ -5826,7 +5821,7 @@ end;
 
 procedure TEditorFile.Save;
 begin
-  Save(True);
+  Save([saveTemporary, saveUnmodified]);
 end;
 
 function TEditorFile.CheckChanged(Force: Boolean): Boolean;

@@ -1674,7 +1674,7 @@ end;
 destructor TEditorDebugLink.Destroy;
 begin
   FreeAndNil(FCallStack);
-  inherited Destroy;
+  inherited;
 end;
 
 procedure TTendency.SetDebugger(AValue: TEditorDebugger);
