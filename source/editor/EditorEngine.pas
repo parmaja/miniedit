@@ -5796,12 +5796,11 @@ begin
         DoRecent := True;
       end;
       aDialog.Free;
-    end;
-
-    if FFileName <> '' then
+    end
+    else
     begin
+      aSave := FFileName <> '';
       aName := FFileName;
-      aSave := True;
     end;
   end;
 
