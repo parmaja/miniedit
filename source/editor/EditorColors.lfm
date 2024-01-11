@@ -1,38 +1,37 @@
 object EditorColorsForm: TEditorColorsForm
   Left = 368
-  Height = 420
+  Height = 425
   Top = 116
-  Width = 469
+  Width = 476
   BorderStyle = bsDialog
   Caption = 'Editor Options'
-  ClientHeight = 420
-  ClientWidth = 469
+  ClientHeight = 425
+  ClientWidth = 476
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
-  OnCreate = FormCreate
-  OnShow = FormShow
   Position = poScreenCenter
   ShowHint = True
-  LCLVersion = '2.3.0.0'
+  LCLVersion = '3.99.0.0'
+  OnCreate = FormCreate
+  OnShow = FormShow
   object OkBtn: TButton
-    Left = 390
+    Left = 397
     Height = 27
-    Top = 390
+    Top = 395
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&OK'
     Default = True
     ModalResult = 1
-    OnClick = OkBtnClick
     TabOrder = 0
+    OnClick = OkBtnClick
   end
   object CancelBtn: TButton
-    Left = 315
+    Left = 322
     Height = 27
-    Top = 390
+    Top = 395
     Width = 75
     Anchors = [akRight, akBottom]
-    Cancel = True
     Caption = '&Cancel'
     ModalResult = 2
     TabOrder = 1
@@ -40,18 +39,18 @@ object EditorColorsForm: TEditorColorsForm
   object RevertBtn: TButton
     Left = 6
     Height = 27
-    Top = 390
+    Top = 395
     Width = 78
     Anchors = [akLeft, akBottom]
     Caption = 'Revert'
-    OnClick = RevertBtnClick
     TabOrder = 2
+    OnClick = RevertBtnClick
   end
   object Bevel1: TBevel
     Left = 6
     Height = 26
     Top = 15
-    Width = 361
+    Width = 368
     Anchors = [akTop, akLeft, akRight]
   end
   object Label11: TLabel
@@ -65,58 +64,58 @@ object EditorColorsForm: TEditorColorsForm
     Left = 105
     Height = 22
     Top = 101
-    Width = 262
+    Width = 269
     DefaultColorColor = clWhite
     NoneColorColor = clWhite
     Selected = clWhite
     Style = [cbStandardColors, cbExtendedColors, cbCustomColor, cbPrettyNames, cbCustomColors]
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 16
-    OnChange = BackgroundCboChange
     PopupMenu = ColorPopupMenu
     TabOrder = 3
+    OnChange = BackgroundCboChange
   end
   object ForegroundCbo: TColorBox
     Left = 105
     Height = 22
     Top = 74
-    Width = 262
+    Width = 269
     Style = [cbStandardColors, cbExtendedColors, cbCustomColor, cbPrettyNames, cbCustomColors]
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 16
     ItemWidth = 300
-    OnChange = ForegroundCboChange
     PopupMenu = ColorPopupMenu
     TabOrder = 4
+    OnChange = ForegroundCboChange
   end
   object AttributeCbo: TComboBox
     Left = 64
     Height = 21
     Top = 45
-    Width = 303
+    Width = 310
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 13
-    OnSelect = AttributeCboSelect
     Style = csDropDownList
     TabOrder = 5
+    OnSelect = AttributeCboSelect
   end
   object BackgroundChk: TCheckBox
     Left = 8
-    Height = 19
+    Height = 17
     Top = 102
-    Width = 78
+    Width = 76
     Caption = 'Background'
-    OnClick = BoldChkClick
     TabOrder = 6
+    OnClick = BoldChkClick
   end
   object ForegroundChk: TCheckBox
     Left = 8
-    Height = 19
+    Height = 17
     Top = 76
-    Width = 74
+    Width = 72
     Caption = 'Foreground'
-    OnClick = BoldChkClick
     TabOrder = 7
+    OnClick = BoldChkClick
   end
   object FontLbl: TLabel
     Left = 13
@@ -126,93 +125,94 @@ object EditorColorsForm: TEditorColorsForm
     Caption = 'Courier New 10pt'
   end
   object FontBtn: TButton
-    Left = 370
+    Left = 377
     Height = 25
     Top = 14
     Width = 68
     Anchors = [akTop, akRight]
     Caption = 'Font'
-    OnClick = FontBtnClick
     TabOrder = 8
+    OnClick = FontBtnClick
   end
   object AntialiasingChk: TCheckBox
-    Left = 377
-    Height = 19
+    Left = 386
+    Height = 17
     Top = 43
-    Width = 73
+    Width = 71
     Anchors = [akTop, akRight]
     Caption = '&Antialiasing'
-    OnChange = AntialiasingChkChange
     TabOrder = 9
+    OnChange = AntialiasingChkChange
   end
   object SaveBtn: TButton
-    Left = 325
+    Left = 332
     Height = 25
-    Top = 362
+    Top = 367
     Width = 70
     Anchors = [akRight, akBottom]
     Caption = 'Save'
-    OnClick = SaveBtnClick
     TabOrder = 10
+    OnClick = SaveBtnClick
   end
   object LoadBtn: TButton
-    Left = 255
+    Left = 262
     Height = 25
-    Top = 362
+    Top = 367
     Width = 70
     Anchors = [akRight, akBottom]
     Caption = 'Load'
-    OnClick = LoadBtnClick
     TabOrder = 11
+    OnClick = LoadBtnClick
   end
   object ResetBtn: TButton
-    Left = 395
+    Left = 402
     Height = 25
-    Top = 362
+    Top = 367
     Width = 70
     Anchors = [akRight, akBottom]
     Caption = 'Reset'
-    OnClick = ResetBtnClick
     TabOrder = 12
+    OnClick = ResetBtnClick
   end
   object ForegroundBtn: TButton
-    Left = 370
+    Left = 377
     Height = 22
     Top = 74
     Width = 22
     Anchors = [akTop, akRight]
     Caption = '...'
-    OnClick = ForegroundBtnClick
     PopupMenu = ColorPopupMenu
     TabOrder = 13
+    OnClick = ForegroundBtnClick
   end
   object BackgroundBtn: TButton
-    Left = 370
+    Left = 377
     Height = 22
     Top = 101
     Width = 22
     Anchors = [akTop, akRight]
     Caption = '...'
-    OnClick = BackgroundBtnClick
     PopupMenu = ColorPopupMenu
     TabOrder = 14
+    OnClick = BackgroundBtnClick
   end
   object PanelPnl: TPanel
     Left = 6
-    Height = 225
+    Height = 210
     Top = 135
-    Width = 459
+    Width = 466
+    Anchors = [akTop, akLeft, akRight, akBottom]
     BevelOuter = bvLowered
     Caption = 'PanelPnl'
-    ClientHeight = 225
-    ClientWidth = 459
+    ClientHeight = 210
+    ClientWidth = 466
     TabOrder = 15
     OnClick = PanelPnlClick
     inline SampleEdit: TSynEdit
       Left = 16
-      Height = 191
+      Height = 176
       Top = 34
-      Width = 442
+      Width = 449
       Anchors = [akTop, akLeft, akRight, akBottom]
       Font.Height = -13
       Font.Name = 'Courier New'
@@ -848,27 +848,39 @@ object EditorColorsForm: TEditorColorsForm
       Left = 166
       Height = 21
       Top = 7
-      Width = 282
+      Width = 289
       Anchors = [akTop, akLeft, akRight]
       ItemHeight = 13
-      OnSelect = CategoryCboSelect
       Style = csDropDownList
       TabOrder = 1
+      OnSelect = CategoryCboSelect
     end
   end
   object NameEdit: TEdit
     Left = 54
     Height = 21
-    Top = 364
+    Top = 367
     Width = 140
+    Anchors = [akLeft, akBottom]
     TabOrder = 16
   end
   object Label1: TLabel
     Left = 10
     Height = 13
-    Top = 368
+    Top = 371
     Width = 28
+    Anchors = [akLeft, akBottom]
     Caption = 'Name'
+  end
+  object DarkThemeChk: TCheckBox
+    Left = 7
+    Height = 17
+    Top = 348
+    Width = 77
+    Anchors = [akTop, akRight]
+    Caption = 'Dark Theme'
+    TabOrder = 17
+    OnChange = AntialiasingChkChange
   end
   object FontDialog: TFontDialog
     Font.Height = -11
@@ -900,13 +912,13 @@ object EditorColorsForm: TEditorColorsForm
   object ColorPopupMenu: TPopupMenu
     Left = 218
     Top = 176
-    object MenuItem1: TMenuItem
+    object CopyColorMnu: TMenuItem
       Caption = 'Copy Color'
-      OnClick = MenuItem1Click
+      OnClick = CopyColorMnuClick
     end
-    object MenuItem2: TMenuItem
+    object PasteColorMnu: TMenuItem
       Caption = 'Paste Color'
-      OnClick = MenuItem2Click
+      OnClick = PasteColorMnuClick
     end
   end
 end

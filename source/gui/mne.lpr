@@ -52,7 +52,6 @@ uses
   EditorRun in '..\editor\EditorRun.pas',
   mneBreakpoints in 'mneBreakpoints.pas' {BreakpointsForm},
   SearchInFilesForms in '..\editor\SearchInFilesForms.pas' {SearchInFilesForm},
-
   SearchProgressForms, SelectList, IniFiles, mneAssociateForm, mneExtends,
   mnePHPTendencyFrames, mneTyroClasses, mneViewClasses, mneCMDClasses,
   mneGoClasses, mneSARDClasses, mneLSLClasses, mndManagerForms, mneBoardClasses,

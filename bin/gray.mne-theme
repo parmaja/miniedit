@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <rtti version="1.0" author="MiniXML">
   <Object Type="TGlobalAttributes">
     <Name>gray</Name>
@@ -41,12 +41,12 @@
     </Modified>
     <Keyword Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>16759187</ForeColor>
+      <ForeColor>15173072</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Keyword>
     <Symbol Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>clWhite</ForeColor>
+      <ForeColor>4227327</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Symbol>
     <Number Class="TGlobalAttribute">
@@ -66,12 +66,12 @@
     </Identifier>
     <Variable Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>clSkyBlue</ForeColor>
+      <ForeColor>6513636</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Variable>
     <Common Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>15173072</ForeColor>
+      <ForeColor>16763283</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Common>
     <DataValue Class="TGlobalAttribute">
@@ -79,12 +79,12 @@
     </DataValue>
     <DataType Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>4227327</ForeColor>
+      <ForeColor>5219568</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </DataType>
     <Document Class="TGlobalAttribute">
       <BackColor>3420206</BackColor>
-      <ForeColor>7653253</ForeColor>
+      <ForeColor>4803044</ForeColor>
     </Document>
     <Text Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
@@ -106,8 +106,8 @@
       <ForeColor>5163369</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </QuotedString>
-    <FontName>Consolas</FontName>
-    <FontSize>12</FontSize>
+    <FontName>DejaVu Sans Mono</FontName>
+    <FontSize>11</FontSize>
     <FontNoAntialiasing>False</FontNoAntialiasing>
     <CodeFolding>True</CodeFolding>
   </Object>

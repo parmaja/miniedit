@@ -79,6 +79,8 @@ Open each package in Lazarus and compile it in order.
 
     minictrls\src\MiniCtrls.lpk
 
+    https://github.com/zamtmn/metadarkstyle
+
 #### Competitions
 
 Notepad++ https://notepad-plus-plus.org/

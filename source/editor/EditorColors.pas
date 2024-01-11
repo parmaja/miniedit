@@ -32,6 +32,7 @@ type
   { TEditorColorsForm }
 
   TEditorColorsForm = class(TForm)
+    DarkThemeChk: TCheckBox;
     AttributeCbo: TComboBox;
     BackgroundCbo: TColorBox;
     BackgroundChk: TCheckBox;
@@ -49,8 +50,8 @@ type
     Label1: TLabel;
     Label11: TLabel;
     LoadBtn: TButton;
-    MenuItem1: TMenuItem;
-    MenuItem2: TMenuItem;
+    CopyColorMnu: TMenuItem;
+    PasteColorMnu: TMenuItem;
     AntialiasingChk: TCheckBox;
     OpenDialog: TOpenDialog;
     ColorPopupMenu: TPopupMenu;
@@ -69,8 +70,8 @@ type
     procedure ForegroundCboChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure LoadBtnClick(Sender: TObject);
-    procedure MenuItem1Click(Sender: TObject);
-    procedure MenuItem2Click(Sender: TObject);
+    procedure CopyColorMnuClick(Sender: TObject);
+    procedure PasteColorMnuClick(Sender: TObject);
     procedure AntialiasingChkChange(Sender: TObject);
     procedure DefaultBackgroundCboSelect(Sender: TObject);
     procedure DefaultForegroundCboSelect(Sender: TObject);
@@ -184,6 +185,7 @@ begin
   if not InChanging then
   begin
     FProfile.Attributes.FontNoAntialiasing := not AntialiasingChk.Checked;
+    FProfile.Attributes.DarkTheme := DarkThemeChk.Checked;
     ChangeEdit;
   end;
 end;
@@ -198,7 +200,7 @@ begin
   end;
 end;
 
-procedure TEditorColorsForm.MenuItem1Click(Sender: TObject);
+procedure TEditorColorsForm.CopyColorMnuClick(Sender: TObject);
 begin
   if (ColorPopupMenu.PopupComponent = ForegroundCbo) or (ColorPopupMenu.PopupComponent = ForegroundBtn) then
     Clipboard.AsText := ColorToString(ForegroundCbo.Selected)
@@ -206,7 +208,7 @@ begin
     Clipboard.AsText := ColorToString(BackgroundCbo.Selected);
 end;
 
-procedure TEditorColorsForm.MenuItem2Click(Sender: TObject);
+procedure TEditorColorsForm.PasteColorMnuClick(Sender: TObject);
 var
   aColor: TColor;
 begin
@@ -541,6 +543,7 @@ begin
   InChanging := True;
   try
     AntialiasingChk.Checked := not FProfile.Attributes.FontNoAntialiasing;
+    DarkThemeChk.Checked := FProfile.Attributes.DarkTheme;
 
   finally
     InChanging := False;
@@ -579,6 +582,7 @@ begin
 
   //Font
   FProfile.Attributes.FontNoAntialiasing := not AntialiasingChk.Checked;
+  FProfile.Attributes.DarkTheme := DarkThemeChk.Checked;
   FProfile.Attributes.Assign(FProfile.Attributes);
   ApplyAttribute;
 end;

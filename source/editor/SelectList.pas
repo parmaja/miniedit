@@ -37,11 +37,11 @@ type
     FStyle: TSelectListFormStyle;
   protected
     procedure DoShow; override;
+		procedure ShowItems(vFilter: string = ''; vSelect: string = '');
   public
     FLastSearch: string;
     Elements: TEditorElements;
     procedure UpdateStyle;
-    procedure ShowItems(vSelect: string; vFilter: string = '');
   end;
 
 function ShowSelectList(ACaption: string; vElements: TEditorElements; Style: TSelectListFormStyle; var vName: string; ImgList: TImageList = nil): Boolean;
@@ -64,7 +64,7 @@ begin
       UpdateStyle;
       Elements := vElements;
       ItemsList.SmallImages := ImgList;
-      ShowItems(vName);
+      ShowItems('', vName);
       Result := (ShowModal = mrOK) and (ItemsList.Selected <> nil);
       if Result then
       begin
@@ -89,7 +89,7 @@ begin
       UpdateStyle;
       Elements := vElements;
       ItemsList.SmallImages := ImgList;
-      ShowItems('');
+      ShowItems;
       Result := (ShowModal = mrOK) and (ItemsList.Selected <> nil);
       if Result then
         if ItemsList.Selected.Data <> nil then
@@ -107,7 +107,7 @@ begin
   ModalResult := mrOK;
 end;
 
-procedure TSelectListForm.ShowItems(vSelect: string; vFilter: string);
+procedure TSelectListForm.ShowItems(vFilter: string; vSelect: string);
 var
   i, c, t: Integer;
   aItem: TListItem;
@@ -189,7 +189,7 @@ end;
 procedure TSelectListForm.SearchTimerTimer(Sender: TObject);
 begin
   FLastSearch := SearchEdit.Text;
-  ShowItems('', FLastSearch);
+  ShowItems(FLastSearch);
   SearchTimer.Enabled := False;
 end;
 

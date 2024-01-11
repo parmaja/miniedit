@@ -493,6 +493,7 @@ var
   aMetaItem: TmncMetaItem;
 begin
   MembersGrid.BeginUpdate;
+  if Members <> nil then
   try
     MembersGrid.Reset;
 

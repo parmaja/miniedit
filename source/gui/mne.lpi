@@ -65,6 +65,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5024="True"/>
             </CompilerMessages>
+            <CustomOptions Value="-dDEBUG"/>
           </Other>
         </CompilerOptions>
       </Item2>
@@ -116,10 +117,14 @@
             <CompilerMessages>
               <IgnoredMessages idx5024="True"/>
             </CompilerMessages>
+            <CustomOptions Value="-dRelease"/>
           </Other>
         </CompilerOptions>
       </Item3>
       <Item4 Name="Win64">
+        <MacroValues Count="1">
+          <Macro2 Name="LCLWidgetType" Value="win32"/>
+        </MacroValues>
         <CompilerOptions>
           <Version Value="11"/>
           <PathDelim Value="\"/>
@@ -137,11 +142,13 @@
             </SyntaxOptions>
           </Parsing>
           <CodeGeneration>
+            <TargetCPU Value="x86_64"/>
             <SmallerCode Value="True"/>
           </CodeGeneration>
           <Linking>
             <Debugging>
               <GenerateDebugInfo Value="False"/>
+              <DebugInfoType Value="dsDwarf3"/>
               <StripSymbols Value="True"/>
             </Debugging>
             <Options>
@@ -159,6 +166,7 @@
             <CompilerMessages>
               <IgnoredMessages idx5024="True"/>
             </CompilerMessages>
+            <CustomOptions Value="-dRelease"/>
           </Other>
         </CompilerOptions>
       </Item4>
@@ -170,11 +178,11 @@
           <Version Value="11"/>
           <PathDelim Value="\"/>
           <Target>
-            <Filename Value="..\..\bin\mne32"/>
+            <Filename Value="..\..\bin\mneQt"/>
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\db;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\basic;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\gcc;..\extends\fntgen;..\extends\designer;..\extends\go;..\extends\cmd;..\extends\lsl;..\extends\tyro"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\db;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\basic;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\gcc;..\extends\fntgen;..\extends\designer;..\extends\go;..\extends\cmd;..\extends\lsl;..\extends\tyro;..\extends\nim;..\..\..\minictrls\src\syn"/>
             <UnitOutputDirectory Value="..\..\units\debug"/>
           </SearchPaths>
           <Parsing>
@@ -187,6 +195,7 @@
           </CodeGeneration>
           <Linking>
             <Debugging>
+              <DebugInfoType Value="dsDwarf3"/>
               <UseExternalDbgSyms Value="True"/>
             </Debugging>
             <Options>
@@ -212,7 +221,7 @@
       </Item5>
       <SharedMatrixOptions Count="4">
         <Item1 ID="971028019367" Modes="Debug" Value="-dDEBUG"/>
-        <Item2 ID="142010062422" Modes="Win32" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
+        <Item2 ID="142010062422" Modes="Win32,Win64" Type="IDEMacro" MacroName="LCLWidgetType" Value="win32"/>
         <Item3 ID="404340325604" Modes="Linux" Type="IDEMacro" MacroName="LCLWidgetType" Value="gtk2"/>
         <Item4 ID="250113919883" Modes="Qt" Type="IDEMacro" MacroName="LCLWidgetType" Value="qt5"/>
       </SharedMatrixOptions>
@@ -223,38 +232,41 @@
     <RunParams>
       <FormatVersion Value="2"/>
     </RunParams>
-    <RequiredPackages Count="9">
+    <RequiredPackages Count="10">
       <Item1>
-        <PackageName Value="MiniLib"/>
+        <PackageName Value="MetaDarkStyle"/>
       </Item1>
       <Item2>
-        <PackageName Value="MiniCtrls"/>
+        <PackageName Value="MiniLib"/>
       </Item2>
       <Item3>
-        <PackageName Value="MiniConnections"/>
+        <PackageName Value="MiniCtrls"/>
       </Item3>
       <Item4>
-        <PackageName Value="MiniSockets"/>
+        <PackageName Value="MiniConnections"/>
       </Item4>
       <Item5>
-        <PackageName Value="MiniXML"/>
-        <MinVersion Valid="True"/>
+        <PackageName Value="MiniSockets"/>
       </Item5>
       <Item6>
-        <PackageName Value="SynEdit"/>
-        <MinVersion Major="1" Valid="True"/>
+        <PackageName Value="MiniXML"/>
+        <MinVersion Valid="True"/>
       </Item6>
       <Item7>
-        <PackageName Value="LCL"/>
+        <PackageName Value="SynEdit"/>
+        <MinVersion Major="1" Valid="True"/>
       </Item7>
       <Item8>
-        <PackageName Value="LCLBase"/>
-        <MinVersion Major="1" Release="1" Valid="True"/>
+        <PackageName Value="LCL"/>
       </Item8>
       <Item9>
-        <PackageName Value="FCL"/>
+        <PackageName Value="LCLBase"/>
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item9>
+      <Item10>
+        <PackageName Value="FCL"/>
+        <MinVersion Major="1" Release="1" Valid="True"/>
+      </Item10>
     </RequiredPackages>
     <Units Count="66">
       <Unit0>

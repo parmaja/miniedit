@@ -7624,7 +7624,7 @@ begin
 
     if (Engine.DebugLink.ExecutedControl = SynEdit) and (Engine.DebugLink.ExecutedLine >= 0) then
     begin
-      aLine := TSynEdit(SynEdit).RowToScreenRow(Engine.DebugLink.ExecutedLine);//TODO use TextXYToScreenXY
+      aLine := TSynEdit(SynEdit).RowToScreenRow(Engine.DebugLink.ExecutedLine); //TODO use TextXYToScreenXY
       DrawIndicator(aLine, DEBUG_IMAGE_EXECUTE);
     end;
   end;

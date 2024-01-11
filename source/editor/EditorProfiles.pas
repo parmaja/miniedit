@@ -122,6 +122,7 @@ type
     Name: string;
     FontName: String;
     FontNoAntialiasing: Boolean;
+    DarkTheme: Boolean;
     FontSize: Integer;
     GutterAutoSize: boolean;
     GutterLeftOffset: integer;
@@ -217,6 +218,7 @@ type
     property FontName: String read FInfo.FontName write FInfo.FontName;
     property FontSize: Integer read FInfo.FontSize write FInfo.FontSize;
     property FontNoAntialiasing: Boolean read FInfo.FontNoAntialiasing write FInfo.FontNoAntialiasing default True;
+    property DarkTheme: Boolean read FInfo.DarkTheme write FInfo.DarkTheme default False;
     property CodeFolding: Boolean read FInfo.CodeFolding write FInfo.CodeFolding default False;
 
     property GutterAutoSize: boolean read FInfo.GutterAutoSize write FInfo.GutterAutoSize default True;

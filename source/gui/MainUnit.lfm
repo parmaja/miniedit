@@ -119,21 +119,24 @@ object MainForm: TMainForm
         Left = 622
         Height = 23
         Top = 0
-        Caption = 'ToolButton9'
+        Caption = 'DBSeparator'
         ImageIndex = 28
         Style = tbsSeparator
+        Visible = False
       end
-      object CommitBtn: TToolButton
+      object DBCommitBtn: TToolButton
         Left = 472
         Top = 0
         Action = DBCommitAct
         Style = tbsCheck
+        Visible = False
       end
-      object RollbackBtn: TToolButton
+      object DBRollbackBtn: TToolButton
         Left = 547
         Top = 0
         Action = DBRollbackAct
         Style = tbsCheck
+        Visible = False
       end
       object ToolButton4: TToolButton
         Left = 705
@@ -165,12 +168,12 @@ object MainForm: TMainForm
     TabOrder = 0
     object EditorsPnl: TPanel
       Left = 0
-      Height = 289
-      Top = 25
+      Height = 288
+      Top = 26
       Width = 811
       Align = alClient
       BevelOuter = bvNone
-      ClientHeight = 289
+      ClientHeight = 288
       ClientWidth = 811
       FullRepaint = False
       ParentBackground = False
@@ -194,14 +197,14 @@ object MainForm: TMainForm
     end
     object FileHeaderPanel: TPanel
       Left = 0
-      Height = 25
+      Height = 26
       Top = 0
       Width = 811
       Align = alTop
       Alignment = taLeftJustify
       BevelOuter = bvNone
       BorderWidth = 2
-      ClientHeight = 25
+      ClientHeight = 26
       ClientWidth = 811
       ParentBackground = False
       PopupMenu = FilePopupMenu
@@ -209,7 +212,7 @@ object MainForm: TMainForm
       Visible = False
       object FileNameLbl: TLabel
         Left = 2
-        Height = 21
+        Height = 22
         Hint = 'File name'
         Top = 2
         Width = 671
@@ -222,7 +225,7 @@ object MainForm: TMainForm
       object FileCloseBtn: TntvImgBtn
         AnchorSideRight.Control = FileHeaderPanel
         Left = 793
-        Height = 21
+        Height = 22
         Top = 2
         Width = 16
         Images = EditorResource.PanelImages
@@ -235,7 +238,7 @@ object MainForm: TMainForm
         AnchorSideRight.Control = FileCloseBtn
         AnchorSideBottom.Side = asrBottom
         Left = 777
-        Height = 21
+        Height = 22
         Top = 2
         Width = 16
         Images = EditorResource.ToolbarImageList
@@ -247,7 +250,7 @@ object MainForm: TMainForm
         AnchorSideRight.Control = LinesModeBtn
         AnchorSideBottom.Side = asrBottom
         Left = 673
-        Height = 21
+        Height = 22
         Top = 2
         Width = 73
         Caption = 'UTF8'
@@ -261,7 +264,7 @@ object MainForm: TMainForm
         AnchorSideBottom.Control = BugSignBtn
         AnchorSideBottom.Side = asrBottom
         Left = 746
-        Height = 21
+        Height = 22
         Top = 2
         Width = 31
         Caption = 'U'
@@ -376,20 +379,6 @@ object MainForm: TMainForm
       TabStyle = tbsSheet
       Align = alClient
       TabOrder = 0
-      object ProjectPnl: TntvPanel
-        Left = 3
-        Height = 283
-        Top = 23
-        Width = 255
-        Align = alClient
-      end
-      object DatabasePnl: TntvPanel
-        Left = 3
-        Height = 283
-        Top = 23
-        Width = 255
-        Align = alClient
-      end
       object FolderPnl: TPanel
         Left = 3
         Height = 283
@@ -508,6 +497,21 @@ object MainForm: TMainForm
             AutoCheck = False
           end
         end
+      end
+      object DatabasePnl: TntvPanel
+        Left = 3
+        Height = 283
+        Top = 23
+        Width = 255
+        Align = alClient
+        Visible = False
+      end
+      object ProjectPnl: TntvPanel
+        Left = 3
+        Height = 283
+        Top = 23
+        Width = 255
+        Align = alClient
       end
     end
   end
@@ -1952,6 +1956,7 @@ object MainForm: TMainForm
     end
     object DatabaseMnu: TMenuItem
       Caption = 'Database'
+      Visible = False
       object MenuItem33: TMenuItem
         Action = DBBrowseAct
         Caption = 'Connect Server'

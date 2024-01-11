@@ -156,8 +156,8 @@ type
     DBConnectMnu: TMenuItem;
     DBDisconnectMnu: TMenuItem;
     FilesSearchTimer: TTimer;
-    CommitBtn: TToolButton;
-    RollbackBtn: TToolButton;
+    DBCommitBtn: TToolButton;
+    DBRollbackBtn: TToolButton;
     MessagePanel: TPanel;
     ToolButton9: TToolButton;
     UTF8BOMMnu: TMenuItem;
@@ -727,6 +727,7 @@ var
 implementation
 
 uses
+  uDarkStyleParams, uWin32WidgetSetDark, uDarkStyleSchemes, uMetaDarkStyle,
   mnXMLUtils, StrUtils, SearchForms, mneProjectOptions, EditorOptions,
   EditorProfiles, mneSetups, Clipbrd, ColorUtils,
   SelectFiles, mneSettings, mneConsts,
@@ -1197,29 +1198,25 @@ end;
 
 procedure TMainForm.NewActExecute(Sender: TObject);
 var
-  G: TFileGroups;
-  E: Integer;
+  index: Integer;
   i: Integer;
-  aGroups: TFileGroups;
+  aGroups, aList: TFileGroups;
 begin
   try
-{    if Engine.Session.Active then
-      aGroups := Engine.Session.Project.Tendency.Groups
-    else}
-      aGroups := Engine.Groups;
-    G := TFileGroups.Create(False);
+    aGroups := Engine.Groups;
+    aList := TFileGroups.Create(False);
     try
       for i := 0 to aGroups.Count - 1  do
       begin
         if not (fgkUneditable in aGroups[i].Kind) then
-          G.Add(aGroups[i]);
+          aList.Add(aGroups[i]);
       end;
       //E := G.IndexOfName()
       //from old Engine.Files.New(Engine.Tendency.GetDefaultGroup);
-      if ShowSelectList('Select file tendency', G, [slfSearch, slfUseNameTitle], E, EditorResource.FileImages) then
-        Engine.Files.New(G[E]);
+      if ShowSelectList('Select file tendency', aList, [slfSearch, slfUseNameTitle], index, EditorResource.FileImages) then
+        Engine.Files.New(aList[index]);
     finally
-      G.Free;
+      aList.Free;
     end;
   finally
   end;
@@ -2081,6 +2078,12 @@ begin
 
   Engine.Prepare(GetKeyShiftState = [ssShift]);
 
+  if Engine.Options.Profile.Attributes.DarkTheme then
+  begin
+    PreferredAppMode:=pamForceDark;
+    uMetaDarkStyle.ApplyMetaDarkStyle(DefaultDark);
+  end;
+
   Engine.BeginUpdate;
   try
     ShowFolderFiles := Engine.Options.ShowFolderFiles;
@@ -2104,6 +2107,16 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
+  {$ifdef DATABASE}
+  DatabasePnl.Visible := True;
+  DatabaseMnu.Visible := True;
+  DBSeparator.Visible := True;
+  DBRollbackBtn.Visible := True;
+  DBCommitBtn.Visible := True;
+  BrowserTabs.Page[DatabasePnl].Visible := True;
+  {$else}
+  BrowserTabs.Page[DatabasePnl].Visible := False;
+  {$endif}
   Application.OnException := @CatchErr;
 
   FMessages := Engine.MessagesList.GetMessages('Messages');
