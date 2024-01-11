@@ -33,7 +33,7 @@ type
     Extensions: TEditorExtensions;
     function GetFileImageIndex(FileName: string; DefaultImage: Integer = -1): integer;
     function GetImageIndex(AName: string; DefaultImage: Integer = -1): integer;
-    procedure Switch(Style: TThemeStyle);
+    procedure Invert(Style: TThemeStyle);
   end;
 
 const
@@ -51,7 +51,7 @@ implementation
 uses
   Graphics, GraphType;
 
-procedure TEditorResource.Switch(Style: TThemeStyle);
+procedure TEditorResource.Invert(Style: TThemeStyle);
 var
   img: TRawImage;
   Bmp: TBitmap;

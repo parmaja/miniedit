@@ -45,9 +45,7 @@ type
     IndentModeCbo: TComboBox;
     Label10: TLabel;
     Label3: TLabel;
-    Label8: TLabel;
     Label9: TLabel;
-    LineSpacingEdit: TEdit;
     RevertBtn: TButton;
     OkBtn: TButton;
     CancelBtn: TButton;
@@ -171,9 +169,6 @@ begin
 
     GutterShowLeaderZerosChk.Checked := FProfile.Attributes.GutterLeadingZeros;
 
-    //Line Spacing
-    LineSpacingEdit.Text := IntToStr(FProfile.ExtraLineSpacing);
-
     //Options
     AutoIndentChk.Checked := eoAutoIndent in FProfile.EditorOptions;
     TabIndentChk.Checked := eoTabIndent in FProfile.EditorOptions;
@@ -237,8 +232,6 @@ begin
   FProfile.Attributes.GutterLeadingZeros := GutterShowLeaderZerosChk.Checked;
   FProfile.Attributes.CodeFolding := CodeFoldingChk.Checked;
 
-  //Spacing
-  FProfile.ExtraLineSpacing := StrToIntDef(LineSpacingEdit.Text, 0);
   FProfile.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
   FProfile.IndentMode := TIndentMode(IndentModeCbo.ItemIndex);
   FProfile.AutoUpdateFile := AutoUpdateFileChk.Checked;

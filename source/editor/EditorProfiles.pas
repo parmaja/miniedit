@@ -122,6 +122,7 @@ type
     Name: string;
     FontName: String;
     FontNoAntialiasing: Boolean;
+    ExtraLineSpacing: Integer;
     DarkTheme: Boolean;
     FontSize: Integer;
     GutterAutoSize: boolean;
@@ -218,6 +219,8 @@ type
     property FontName: String read FInfo.FontName write FInfo.FontName;
     property FontSize: Integer read FInfo.FontSize write FInfo.FontSize;
     property FontNoAntialiasing: Boolean read FInfo.FontNoAntialiasing write FInfo.FontNoAntialiasing default True;
+    property ExtraLineSpacing: Integer read FInfo.ExtraLineSpacing write FInfo.ExtraLineSpacing default 0;
+
     property DarkTheme: Boolean read FInfo.DarkTheme write FInfo.DarkTheme default False;
     property CodeFolding: Boolean read FInfo.CodeFolding write FInfo.CodeFolding default False;
 
@@ -235,7 +238,6 @@ type
   TEditorProfileInfo = record
     DrawDivider: Boolean;
     MaxUndo: Integer;
-    ExtraLineSpacing: Integer;
     TabWidth: Integer;
     IndentMode: TIndentMode;
     AutoUpdateFile: Boolean;
@@ -268,7 +270,6 @@ type
 
     property EditorOptions: TSynEditorOptions read FInfo.EditorOptions write FInfo.EditorOptions default cSynDefaultOptions;
     property ExtEditorOptions: TSynEditorOptions2 read FInfo.ExtEditorOptions write FInfo.ExtEditorOptions default [];
-    property ExtraLineSpacing: Integer read FInfo.ExtraLineSpacing write FInfo.ExtraLineSpacing default 0;
     property MaxUndo: Integer read FInfo.MaxUndo write FInfo.MaxUndo default 1024;
     property DrawDivider: Boolean read FInfo.DrawDivider write FInfo.DrawDivider default False; //TODO not yet
     //Can be overriden by project options
@@ -344,7 +345,7 @@ begin
     if SpecialChars then
       SynEdit.Options := SynEdit.Options + [eoShowSpecialChars];
 
-    SynEdit.ExtraLineSpacing := ExtraLineSpacing;
+    SynEdit.ExtraLineSpacing := Attributes.ExtraLineSpacing;
     SynEdit.InsertCaret := ctVerticalLine;
     SynEdit.OverwriteCaret := ctBlock;
     SynEdit.MaxUndo := MaxUndo;
@@ -365,7 +366,6 @@ end;
 procedure TEditorProfile.Init;
 begin
   EditorOptions := cSynDefaultOptions;
-  ExtraLineSpacing := 0;
   MaxUndo := 1024;
   TabWidth := 4;
   IndentMode := idntTabsToSpaces;

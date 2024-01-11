@@ -38,6 +38,8 @@ type
     BackgroundChk: TCheckBox;
     Bevel1: TBevel;
     CategoryCbo: TComboBox;
+    Label8: TLabel;
+    LineSpacingEdit: TEdit;
     NameEdit: TEdit;
     ForegroundBtn: TButton;
     BackgroundBtn: TButton;
@@ -69,6 +71,7 @@ type
     procedure BackgroundBtnClick(Sender: TObject);
     procedure ForegroundCboChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure LineSpacingEditChange(Sender: TObject);
     procedure LoadBtnClick(Sender: TObject);
     procedure CopyColorMnuClick(Sender: TObject);
     procedure PasteColorMnuClick(Sender: TObject);
@@ -186,6 +189,7 @@ begin
   begin
     FProfile.Attributes.FontNoAntialiasing := not AntialiasingChk.Checked;
     FProfile.Attributes.DarkTheme := DarkThemeChk.Checked;
+    FProfile.Attributes.ExtraLineSpacing := StrToIntDef(LineSpacingEdit.Text, 0);
     ChangeEdit;
   end;
 end;
@@ -242,6 +246,11 @@ end;
 
 procedure TEditorColorsForm.FormCreate(Sender: TObject);
 begin
+end;
+
+procedure TEditorColorsForm.LineSpacingEditChange(Sender: TObject);
+begin
+  Apply;
 end;
 
 procedure TEditorColorsForm.BackgroundCboChange(Sender: TObject);
@@ -544,6 +553,7 @@ begin
   try
     AntialiasingChk.Checked := not FProfile.Attributes.FontNoAntialiasing;
     DarkThemeChk.Checked := FProfile.Attributes.DarkTheme;
+    LineSpacingEdit.Text := FProfile.Attributes.ExtraLineSpacing.ToString;
 
   finally
     InChanging := False;
@@ -583,6 +593,8 @@ begin
   //Font
   FProfile.Attributes.FontNoAntialiasing := not AntialiasingChk.Checked;
   FProfile.Attributes.DarkTheme := DarkThemeChk.Checked;
+  FProfile.Attributes.ExtraLineSpacing := StrToIntDef(LineSpacingEdit.Text, 0);
+
   FProfile.Attributes.Assign(FProfile.Attributes);
   ApplyAttribute;
 end;

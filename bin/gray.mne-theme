@@ -109,6 +109,7 @@
     <FontName>DejaVu Sans Mono</FontName>
     <FontSize>11</FontSize>
     <FontNoAntialiasing>False</FontNoAntialiasing>
+    <DarkTheme>True</DarkTheme>
     <CodeFolding>True</CodeFolding>
   </Object>
 </rtti>

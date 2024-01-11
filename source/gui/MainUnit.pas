@@ -3153,9 +3153,9 @@ begin
   Font.Color := Engine.Options.Profile.Attributes.Panel.Foreground;
 
   if IsDarkColor(Engine.Options.Profile.Attributes.Panel.Background) then
-    EditorResource.Switch(thsDark)
+    EditorResource.Invert(thsDark)
   else
-    EditorResource.Switch(thsLight);
+    EditorResource.Invert(thsLight);
 
   //Theme.Active.Background := MixColors(Engine.Options.Profile.Attributes.Panel.Foreground, Engine.Options.Profile.Attributes.Panel.Background, 50);
   //Theme.Separator.Foreground := Lighten(Theme.Active.Background, 10);
