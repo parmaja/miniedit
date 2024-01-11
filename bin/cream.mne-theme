@@ -1,10 +1,10 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <rtti version="1.0" author="MiniXML">
   <Object Type="TGlobalAttributes">
-    <Name>dark</Name>
+    <Name>cream</Name>
     <Default Class="TGlobalAttribute">
-      <BackColor>2564639</BackColor>
-      <ForeColor>clWhite</ForeColor>
+      <BackColor>15264496</BackColor>
+      <ForeColor>clBlack</ForeColor>
     </Default>
     <Link Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
@@ -12,28 +12,31 @@
       <Options>gaoDefaultBackground,gaoDefaultForeground</Options>
     </Link>
     <Panel Class="TGlobalAttribute">
-      <BackColor>2564639</BackColor>
-      <ForeColor>clWhite</ForeColor>
+      <BackColor>13619151</BackColor>
+      <ForeColor>clBlack</ForeColor>
     </Panel>
     <Selected Class="TGlobalAttribute">
       <BackColor>13280646</BackColor>
       <ForeColor>clBlack</ForeColor>
+      <Options>gaoDefaultForeground</Options>
     </Selected>
     <Highlighted Class="TGlobalAttribute">
-      <BackColor>10994927</BackColor>
-      <ForeColor>clBlack</ForeColor>
+      <ForeColor>4275665</ForeColor>
+      <Options>gaoDefaultBackground</Options>
     </Highlighted>
     <Active Class="TGlobalAttribute">
-      <BackColor>7691082</BackColor>
+      <BackColor>11836041</BackColor>
       <ForeColor>clWhite</ForeColor>
+      <Options>gaoDefaultForeground</Options>
     </Active>
     <Gutter Class="TGlobalAttribute">
-      <BackColor>2564639</BackColor>
-      <ForeColor>clWhite</ForeColor>
+      <BackColor>15329769</BackColor>
+      <ForeColor>clBlack</ForeColor>
+      <Options>gaoDefaultForeground</Options>
     </Gutter>
     <Separator Class="TGlobalAttribute">
-      <BackColor>6243892</BackColor>
-      <ForeColor>9924691</ForeColor>
+      <BackColor>13487565</BackColor>
+      <ForeColor>11842740</ForeColor>
     </Separator>
     <Modified Class="TGlobalAttribute">
       <BackColor>clGreen</BackColor>
@@ -41,48 +44,48 @@
     </Modified>
     <Keyword Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>15641118</ForeColor>
+      <ForeColor>14291619</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Keyword>
     <Symbol Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>16772561</ForeColor>
+      <ForeColor>7094528</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Symbol>
     <Number Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>1491229</ForeColor>
+      <ForeColor>35872</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Number>
     <Directive Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>4276694</ForeColor>
+      <ForeColor>2434477</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Directive>
     <Identifier Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>clWhite</ForeColor>
+      <ForeColor>clBlack</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Identifier>
     <Variable Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>14182588</ForeColor>
+      <ForeColor>12224027</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Variable>
-    <Standard Class="TGlobalAttribute">
-      <ForeColor>15895214</ForeColor>
-    </Standard>
+    <Common Class="TGlobalAttribute">
+      <ForeColor>20123</ForeColor>
+    </Common>
     <DataValue Class="TGlobalAttribute">
-      <ForeColor>14408491</ForeColor>
+      <ForeColor>clGreen</ForeColor>
     </DataValue>
     <DataType Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>6725096</ForeColor>
+      <ForeColor>13334580</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </DataType>
     <Document Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>10540718</ForeColor>
+      <ForeColor>4210816</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Document>
     <Text Class="TGlobalAttribute">
@@ -97,16 +100,16 @@
     </EmbedText>
     <Comment Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>11374450</ForeColor>
+      <ForeColor>9803159</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Comment>
     <QuotedString Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>1491229</ForeColor>
+      <ForeColor>35872</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </QuotedString>
-    <FontName>Courier New</FontName>
-    <FontSize>12</FontSize>
+    <FontName>DejaVu Sans Mono</FontName>
+    <FontSize>11</FontSize>
     <FontNoAntialiasing>False</FontNoAntialiasing>
     <CodeFolding>True</CodeFolding>
   </Object>

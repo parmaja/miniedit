@@ -32,6 +32,7 @@ object EditorColorsForm: TEditorColorsForm
     Top = 404
     Width = 75
     Anchors = [akRight, akBottom]
+    Cancel = True
     Caption = '&Cancel'
     ModalResult = 2
     TabOrder = 1

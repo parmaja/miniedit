@@ -379,6 +379,21 @@ object MainForm: TMainForm
       TabStyle = tbsSheet
       Align = alClient
       TabOrder = 0
+      object DatabasePnl: TntvPanel
+        Left = 3
+        Height = 283
+        Top = 23
+        Width = 255
+        Align = alClient
+        Visible = False
+      end
+      object ProjectPnl: TntvPanel
+        Left = 3
+        Height = 283
+        Top = 23
+        Width = 255
+        Align = alClient
+      end
       object FolderPnl: TPanel
         Left = 3
         Height = 283
@@ -497,21 +512,6 @@ object MainForm: TMainForm
             AutoCheck = False
           end
         end
-      end
-      object DatabasePnl: TntvPanel
-        Left = 3
-        Height = 283
-        Top = 23
-        Width = 255
-        Align = alClient
-        Visible = False
-      end
-      object ProjectPnl: TntvPanel
-        Left = 3
-        Height = 283
-        Top = 23
-        Width = 255
-        Align = alClient
       end
     end
   end

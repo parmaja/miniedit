@@ -1,8 +1,9 @@
-<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <rtti version="1.0" author="MiniXML">
   <Object Type="TGlobalAttributes">
+    <Name>black</Name>
     <Default Class="TGlobalAttribute">
-      <BackColor>clBlack</BackColor>
+      <BackColor>855309</BackColor>
       <ForeColor>clWhite</ForeColor>
     </Default>
     <Link Class="TGlobalAttribute">
@@ -25,7 +26,7 @@
       <ForeColor>clBlack</ForeColor>
     </Active>
     <Gutter Class="TGlobalAttribute">
-      <BackColor>3158064</BackColor>
+      <BackColor>1973790</BackColor>
       <ForeColor>clWhite</ForeColor>
     </Gutter>
     <Separator Class="TGlobalAttribute">
@@ -71,6 +72,8 @@
       <ForeColor>4107007</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Common>
+    <DataValue Class="TGlobalAttribute">
+    </DataValue>
     <DataType Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
       <ForeColor>3111647</ForeColor>
@@ -101,9 +104,9 @@
       <ForeColor>1491229</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </QuotedString>
-    <FontName>Consolas</FontName>
-    <FontSize>12</FontSize>
-    <FontNoAntialiasing>False</FontNoAntialiasing>
+    <FontName>DejaVu Sans Mono</FontName>
+    <FontSize>10</FontSize>
+    <DarkTheme>True</DarkTheme>
     <CodeFolding>True</CodeFolding>
   </Object>
 </rtti>

@@ -113,7 +113,7 @@ implementation
 {$R *.lfm}
 
 uses
-  mnXMLRttiProfile,EditorEngine, SynEditTypes;
+  mnXMLRttiProfile, EditorEngine, SynEditTypes;
 
 { TEditorColorsForm }
 
@@ -188,7 +188,6 @@ begin
   if not InChanging then
   begin
     FProfile.Attributes.FontNoAntialiasing := not AntialiasingChk.Checked;
-    FProfile.Attributes.DarkTheme := DarkThemeChk.Checked;
     FProfile.Attributes.ExtraLineSpacing := StrToIntDef(LineSpacingEdit.Text, 0);
     ChangeEdit;
   end;
@@ -554,7 +553,6 @@ begin
     AntialiasingChk.Checked := not FProfile.Attributes.FontNoAntialiasing;
     DarkThemeChk.Checked := FProfile.Attributes.DarkTheme;
     LineSpacingEdit.Text := FProfile.Attributes.ExtraLineSpacing.ToString;
-
   finally
     InChanging := False;
   end;

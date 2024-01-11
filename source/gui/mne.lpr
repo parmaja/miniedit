@@ -38,6 +38,7 @@ uses
   LCLVersion,
   simpleipc,
   Themes, Interfaces,
+  uDarkStyleParams, uWin32WidgetSetDark, uDarkStyleSchemes, uMetaDarkStyle,
   MainUnit in 'MainUnit.pas' {MainForm},
   mneProjectOptions in 'mneProjectOptions.pas' {ProjectForm},
   SearchForms in '..\editor\SearchForms.pas' {SearchForm},
@@ -178,14 +179,14 @@ begin
 end;
 
 begin
-
 //  FirstDotAtFileNameStartIsExtension := False;
   if not IsAnotherInstance then
   begin
+
     //DefaultSystemCodePage := widestringmanager.GetStandardCodePageProc(scpAnsi); //I fix it temporary that needed for AnsiToUtf8; //i commented cuz i cant convert to ansi in TTextEditorFile.DoSave
-  Application.Scaled :=True;
+    Application.Scaled :=True;
     Application.MainFormOnTaskBar := True; //this will resolve mainform sent to last application, when using Alt+Tab to back to it, it is the last one on tasks, now it is normal, idk why
-  Application.Title :='miniEdit';
+    Application.Title :='miniEdit';
     Application.Name := 'miniEdit';
     Application.BidiMode := bdLeftToRight;
     Application.Initialize;

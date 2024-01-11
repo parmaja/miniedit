@@ -465,6 +465,7 @@ end;
 
 procedure TGlobalAttributes.Init;
 begin
+  FInfo := System.Default(TGlobalAttributesInfo); //to zero values, no not Initialize
   FontName := 'Courier New';
   FontSize := 10;
   FontNoAntialiasing := True;
