@@ -843,7 +843,12 @@ begin
         Status := ProcessObject.ReadStream(FProcess.Output);
         except
           on E: Exception do
-            WriteMessage(E.Message, msgtLog);
+          begin
+            Status := Process.ExitStatus;
+            WriteMessage(FProcess.Executable + ' ' + E.Message, msgtOutput);
+            if Status = 0 then
+              Status := $1000; //$1000? idk just random number
+          end
         end;
     finally
       FreeAndNil(FProcess);

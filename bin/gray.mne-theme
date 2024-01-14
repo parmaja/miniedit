@@ -20,12 +20,12 @@
       <ForeColor>clBlack</ForeColor>
     </Selected>
     <Highlighted Class="TGlobalAttribute">
-      <BackColor>204</BackColor>
-      <ForeColor>16759187</ForeColor>
+      <BackColor>14211288</BackColor>
+      <ForeColor>clBlack</ForeColor>
     </Highlighted>
     <Active Class="TGlobalAttribute">
-      <BackColor>7691082</BackColor>
-      <ForeColor>clWhite</ForeColor>
+      <BackColor>3289765</BackColor>
+      <ForeColor>15329769</ForeColor>
     </Active>
     <Gutter Class="TGlobalAttribute">
       <BackColor>3947580</BackColor>
@@ -83,8 +83,8 @@
       <Options>gaoDefaultBackground</Options>
     </DataType>
     <Document Class="TGlobalAttribute">
-      <BackColor>3420206</BackColor>
-      <ForeColor>4803044</ForeColor>
+      <BackColor>4077879</BackColor>
+      <ForeColor>10213526</ForeColor>
     </Document>
     <Text Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
@@ -98,12 +98,12 @@
     </EmbedText>
     <Comment Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>13619151</ForeColor>
+      <ForeColor>9737364</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </Comment>
     <QuotedString Class="TGlobalAttribute">
       <BackColor>2758927</BackColor>
-      <ForeColor>5163369</ForeColor>
+      <ForeColor>10800517</ForeColor>
       <Options>gaoDefaultBackground</Options>
     </QuotedString>
     <FontName>DejaVu Sans Mono</FontName>

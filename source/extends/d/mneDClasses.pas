@@ -182,6 +182,7 @@ var
   aRunItem: TmneRunItem;
 begin
   Engine.Session.Run.Clear;
+  Engine.SendAction(eaClearOutput);
 
   if rnaCompile in Info.Actions then
   begin
@@ -191,6 +192,7 @@ begin
     aRunItem.MessageType := msgtInteractive;
 
     aRunItem.Info.Run.Command := Info.Command;
+
     if aRunItem.Info.Run.Command = '' then
     begin
       case CompilerType of
@@ -256,6 +258,7 @@ begin
         end;
       end;
     end;
+
     //aRunItem.Info.AddParam('-v');
     aRunItem.Info.StatusMessage := 'Compiling ' + Info.OutputFile;
   end;

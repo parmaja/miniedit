@@ -2245,18 +2245,20 @@ begin
   AddFileToProjectAct.Enabled := b;
   CloseProjectAct.Enabled := b;
   ProjectExploreFolderAct.Enabled := b;
-  if Engine.SCM <> nil then
-    SCMMnu.Caption := Engine.SCM.Name
-  else
-    SCMMnu.Caption := '';
   if (Engine.SCM <> nil) then
   begin
-    SCMCommitFileAct.Visible := scmCommitFile in Engine.SCM.GetCapability;
-    SCMCommitPathAct.Visible := scmCommitPath in Engine.SCM.GetCapability;
-    SCMUpdateFileAct.Visible := scmUpdateFile in Engine.SCM.GetCapability;
-    SCMPushAct.Visible := scmPush in Engine.SCM.GetCapability;
+    SCMMnu.Caption := Engine.SCM.Name;
+    //SCMMnu.Visible := True;
+    SCMCommitFileAct.Enabled := scmCommitFile in Engine.SCM.GetCapability;
+    SCMCommitPathAct.Enabled := scmCommitPath in Engine.SCM.GetCapability;
+    SCMUpdateFileAct.Enabled := scmUpdateFile in Engine.SCM.GetCapability;
+    SCMPushAct.Enabled := scmPush in Engine.SCM.GetCapability;
+  end
+  else
+  begin
+    SCMMnu.Caption := 'SCM';
+    //SCMMnu.Visible := False;
   end;
-  SCMMnu.Visible := Engine.SCM <> nil;
 
   UpdatePanel;
   Engine.Update([ecsMenu]);

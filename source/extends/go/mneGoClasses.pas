@@ -183,6 +183,7 @@ begin
     aRunItem.Info.Run.CatchOutput := True;
 
     aRunItem.Info.Run.Command := Info.Command;
+
     if aRunItem.Info.Run.Command = '' then
     begin
       {$ifdef windows}
@@ -199,14 +200,6 @@ begin
     aRunItem.Info.CurrentDirectory := Info.Root;
 
     aRunItem.Info.Run.AddParam('build');
-
-    {if RunOptions.ConfigFile <> '' then
-      aRunItem.Info.Run.AddParam('@' + Engine.EnvReplace(RunOptions.ConfigFile))
-    else if UseCfg then
-    begin
-      if FileExists(ChangeFileExt(Info.MainFile, '.cfg')) then
-        aRunItem.Info.Run.AddParam('@' + ExtractFileNameWithoutExt(ExtractFileName(Info.MainFile))+'.cfg');
-    end;}
 
     if Info.OutputFile <> '' then
       aRunItem.Info.Run.AddParam('-o "' + Info.OutputFile+'"');
@@ -233,6 +226,7 @@ begin
          aRunItem.Info.Run.AddParam('-I' + aPath);
       end;
     end;}
+
     aPath := Info.MainFile;
     if RunOptions.ExpandPaths then
       aPath := Engine.ExpandFile(aPath);

@@ -11603,11 +11603,7 @@ object AboutForm: TAboutForm
     Top = 50
     Width = 192
     Caption = 'http://www.github.com/parmaja/miniedit'
-    Font.Color = clBlue
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
     ParentColor = False
-    ParentFont = False
     OnClick = SiteLblClick
   end
   object EnvVersionLbl: TLabel
@@ -11644,11 +11640,7 @@ object AboutForm: TAboutForm
     Width = 161
     Anchors = [akLeft, akBottom]
     Caption = 'http://www.lazarus.freepascal.org'
-    Font.Color = clBlue
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
     ParentColor = False
-    ParentFont = False
     OnClick = SiteLblClick
   end
   object Label4: TLabel
@@ -11668,11 +11660,7 @@ object AboutForm: TAboutForm
     Width = 111
     Anchors = [akLeft, akBottom]
     Caption = 'http://www.xdebug.org'
-    Font.Color = clBlue
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
     ParentColor = False
-    ParentFont = False
     OnClick = SiteLblClick
   end
   object Label10: TLabel
@@ -11692,11 +11680,7 @@ object AboutForm: TAboutForm
     Width = 125
     Anchors = [akLeft, akBottom]
     Caption = 'http://www.freepascal.org'
-    Font.Color = clBlue
-    Font.Height = -11
-    Font.Name = 'MS Sans Serif'
     ParentColor = False
-    ParentFont = False
     OnClick = SiteLblClick
   end
   object Label12: TLabel

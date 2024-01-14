@@ -2269,7 +2269,6 @@ object MainForm: TMainForm
     end
     object SCMMnu: TMenuItem
       Caption = 'SCM'
-      Visible = False
       object SCMAddFileMnu: TMenuItem
         Action = SCMAddFileAct
       end
