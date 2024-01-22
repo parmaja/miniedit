@@ -2932,6 +2932,9 @@ begin
       aIndentMode := Engine.DefaultProject.Options.IndentMode;
     end;
 
+    SynEdit.TabWidth := aTabWidth;
+    SynEdit.BlockIndent := SynEdit.TabWidth;
+
     case aIndentMode of
       idntNone:
         SynEdit.Options := SynEdit.Options - [eoTabsToSpaces, eoSpacesToTabs];
@@ -2940,9 +2943,6 @@ begin
       idntSpacesToTabs, idntAlignTabs:
         SynEdit.Options := SynEdit.Options + [eoSpacesToTabs] - [eoTabsToSpaces];
     end;
-
-    SynEdit.TabWidth := aTabWidth;
-    SynEdit.BlockIndent := SynEdit.TabWidth;
 
     if (Group <> nil) and (Group.Category.Highlighter <> nil) then
       Group.Category.Apply(Group.Category.Highlighter, aProfile.Attributes);
@@ -2959,7 +2959,7 @@ begin
     end;
   end
   else
-    inherited Assign(Source);
+    inherited;
 end;
 
 procedure TSyntaxEditorFile.AssignTo(Dest: TPersistent);

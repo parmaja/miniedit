@@ -95,37 +95,19 @@ object EditorOptionsForm: TEditorOptionsForm
     Left = 14
     Height = 17
     Hint = 'When undoing/redoing actions, handle all continous changes of the same kind in one call instead undoing/redoing each command separately'
-    Top = 71
+    Top = 51
     Width = 74
     Caption = 'Group undo'
     TabOrder = 8
-  end
-  object EnhanceHomeKeyChk: TCheckBox
-    Left = 14
-    Height = 17
-    Hint = 'enhances home key positioning, similar to visual studio'
-    Top = 51
-    Width = 151
-    Caption = 'Home key jumps to first char'
-    TabOrder = 9
   end
   object WordWrapChk: TCheckBox
     Left = 14
     Height = 17
     Hint = 'if enabled, then the scrollbars will only show when necessary.  If you have ScrollPastEOL, then it the horizontal bar will always be there (it uses MaxLength instead)'
-    Top = 90
+    Top = 70
     Width = 73
     Caption = 'Word Wrap'
-    TabOrder = 10
-  end
-  object BracketHighlightChk: TCheckBox
-    Left = 14
-    Height = 17
-    Hint = 'Shows linebreaks, spaces and tabs using special symbols'
-    Top = 109
-    Width = 97
-    Caption = 'Bracket highlight'
-    TabOrder = 11
+    TabOrder = 9
   end
   object Label9: TLabel
     Left = 11
@@ -140,7 +122,7 @@ object EditorOptionsForm: TEditorOptionsForm
     Height = 21
     Top = 272
     Width = 52
-    TabOrder = 12
+    TabOrder = 10
     Text = '4'
   end
   object GutterGrp: TGroupBox
@@ -152,7 +134,7 @@ object EditorOptionsForm: TEditorOptionsForm
     Caption = 'Gutter'
     ClientHeight = 106
     ClientWidth = 202
-    TabOrder = 13
+    TabOrder = 11
     object GutterAutosizeChk: TCheckBox
       Left = 9
       Height = 17
@@ -194,15 +176,6 @@ object EditorOptionsForm: TEditorOptionsForm
       TabOrder = 4
     end
   end
-  object TabIndentChk: TCheckBox
-    Left = 14
-    Height = 17
-    Hint = 'When active <Tab> and <Shift><Tab> act as block indent, unindent when text is selected'
-    Top = 32
-    Width = 70
-    Caption = 'Tab Indent'
-    TabOrder = 14
-  end
   object Label10: TLabel
     Left = 9
     Height = 13
@@ -227,7 +200,7 @@ object EditorOptionsForm: TEditorOptionsForm
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 13
     Style = csDropDownList
-    TabOrder = 15
+    TabOrder = 13
   end
   object AutoUpdateFileChk: TCheckBox
     Left = 14
@@ -236,16 +209,15 @@ object EditorOptionsForm: TEditorOptionsForm
     Top = 191
     Width = 139
     Caption = 'Autoupdate if not modifed'
-    TabOrder = 16
+    TabOrder = 14
   end
   object AutoIndentOnPasteChk: TCheckBox
-    Left = 40
+    Left = 14
     Height = 17
     Hint = 'Allows to indent text pasted from clipboard'
-    Top = 156
+    Top = 32
     Width = 120
     Caption = 'Auto Indent On Paste'
-    TabOrder = 17
-    Visible = False
+    TabOrder = 12
   end
 end

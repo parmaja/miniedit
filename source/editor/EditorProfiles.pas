@@ -59,14 +59,15 @@ type
 
 const
   //force to have this options
-  cSynRequiredOptions = [eoEnhanceHomeKey, eoSpacesToTabs, eoDragDropEditing, eoTrimTrailingSpaces, eoDropFiles, eoShowCtrlMouseLinks, eoAltSetsColumnMode, eoScrollPastEol, eoRightMouseMovesCursor, eoHideRightMargin];
+  cSynRequiredOptions = [eoTabIndent, eoEnhanceHomeKey, eoSpacesToTabs, eoBracketHighlight, eoDragDropEditing, eoTrimTrailingSpaces, eoDropFiles, eoShowCtrlMouseLinks, eoAltSetsColumnMode,
+	                        eoScrollPastEol, eoRightMouseMovesCursor, eoHideRightMargin];
 
   //force to remove this option
   cSynRemoveOptions = [eoPersistentCaret, eoTabsToSpaces, eoSmartTabs, eoSmartTabDelete, eoShowSpecialChars, eoScrollPastEof];
 
   //default option before overrided by config file
   cSynDefaultOptions = cSynRequiredOptions +
-	                     [eoAutoIndent, eoAutoIndentOnPaste, eoTabIndent, eoBracketHighlight, eoShowScrollHint, eoKeepCaretX];
+	                     [eoAutoIndent, eoAutoIndentOnPaste, eoShowScrollHint, eoKeepCaretX];
 
 type
   TGlobalAttributes = class;

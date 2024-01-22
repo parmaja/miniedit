@@ -33,10 +33,8 @@ type
 
   TEditorOptionsForm = class(TForm)
     AutoIndentChk: TCheckBox;
-    BracketHighlightChk: TCheckBox;
     AutoUpdateFileChk: TCheckBox;
     CodeFoldingChk: TCheckBox;
-    EnhanceHomeKeyChk: TCheckBox;
     GroupUndoChk: TCheckBox;
     GutterAutosizeChk: TCheckBox;
     GutterGrp: TGroupBox;
@@ -54,7 +52,6 @@ type
     ShowModifiedLinesChk: TCheckBox;
     ShowScrollHintChk: TCheckBox;
     ShowSeparatorChk: TCheckBox;
-    TabIndentChk: TCheckBox;
     AutoIndentOnPasteChk: TCheckBox;
     TabWidthEdit: TEdit;
     WordWrapChk: TCheckBox;
@@ -171,14 +168,13 @@ begin
 
     //Options
     AutoIndentChk.Checked := eoAutoIndent in FProfile.EditorOptions;
-    TabIndentChk.Checked := eoTabIndent in FProfile.EditorOptions;
     AutoIndentOnPasteChk.Checked := eoAutoIndentOnPaste in FProfile.EditorOptions;
-    HalfPageScrollChk.Checked := eoHalfPageScroll in FProfile.EditorOptions;
+
+	HalfPageScrollChk.Checked := eoHalfPageScroll in FProfile.EditorOptions;
     ScrollByOneLessChk.Checked := eoScrollByOneLess in FProfile.EditorOptions;
     ShowScrollHintChk.Checked := eoShowScrollHint in FProfile.EditorOptions;
-    EnhanceHomeKeyChk.Checked := eoEnhanceHomeKey in FProfile.EditorOptions;
     GroupUndoChk.Checked := eoGroupUndo in FProfile.EditorOptions;
-    BracketHighlightChk.Checked := eoBracketHighlight in FProfile.EditorOptions;
+
     //Can be override by project options
     TabWidthEdit.Text := IntToStr(FProfile.TabWidth);
     IndentModeCbo.ItemIndex := Ord(FProfile.IndentMode);
@@ -213,14 +209,11 @@ begin
   aOptions := FProfile.EditorOptions; //Keep old values for unsupported options
   aExtOptions := FProfile.ExtEditorOptions;
   SetFlag(eoAutoIndent, AutoIndentChk.Checked);
-  SetFlag(eoTabIndent, TabIndentChk.Checked);
   SetFlag(eoAutoIndentOnPaste, AutoIndentOnPasteChk.Checked);
   SetFlag(eoHalfPageScroll, HalfPageScrollChk.Checked);
   SetFlag(eoScrollByOneLess, ScrollByOneLessChk.Checked);
   SetFlag(eoShowScrollHint, ShowScrollHintChk.Checked);
-  SetFlag(eoEnhanceHomeKey, EnhanceHomeKeyChk.Checked);
   SetFlag(eoGroupUndo, GroupUndoChk.Checked);
-  SetFlag(eoBracketHighlight, BracketHighlightChk.Checked);
 
   FProfile.EditorOptions := aOptions;
   FProfile.ExtEditorOptions := aExtOptions;
