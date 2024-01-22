@@ -2904,6 +2904,9 @@ end;
 procedure TSyntaxEditorFile.Assign(Source: TPersistent);
 var
   aProfile: TEditorProfile;
+  aTabWidth: Integer;
+  aIndentMode: TIndentMode;
+  aAddOptions, aRemoveOptions: TSynEditorOptions;
 begin
   if Source is TEditorProfile then
   begin
@@ -2911,20 +2914,39 @@ begin
 
     aProfile.AssignTo(SynEdit);
 
+    //Take it from project
     if (Engine.Session.Active) and Engine.Session.Project.Options.OverrideEditorOptions then
     begin
-      SynEdit.TabWidth := Engine.Session.Project.Options.TabWidth;
-      SynEdit.BlockIndent := Engine.Session.Project.Options.TabWidth;
-    end
+      aTabWidth := Engine.Session.Project.Options.TabWidth;
+      aIndentMode := Engine.Session.Project.Options.IndentMode;
+    end //if not project opened, take it from tendency
     else if (Tendency <> nil) and Tendency.OverrideEditorOptions then
     begin
       //SynEdit.Options := SynEdit.Options - cSynOverridedOptions + Tendency.EditorOptions;
-      SynEdit.TabWidth := Tendency.TabWidth;
-      SynEdit.BlockIndent := Tendency.TabWidth;
+      aIndentMode := Tendency.IndentMode;
+      aTabWidth := Tendency.TabWidth;
+    end
+    else
+    begin
+      aTabWidth := Engine.DefaultProject.Options.TabWidth;
+      aIndentMode := Engine.DefaultProject.Options.IndentMode;
     end;
+
+    case aIndentMode of
+      idntNone:
+        SynEdit.Options := SynEdit.Options - [eoTabsToSpaces, eoSpacesToTabs];
+      idntTabsToSpaces, idntAlignSpaces:
+        SynEdit.Options := SynEdit.Options + [eoTabsToSpaces] - [eoSpacesToTabs];
+      idntSpacesToTabs, idntAlignTabs:
+        SynEdit.Options := SynEdit.Options + [eoSpacesToTabs] - [eoTabsToSpaces];
+    end;
+
+    SynEdit.TabWidth := aTabWidth;
+    SynEdit.BlockIndent := SynEdit.TabWidth;
 
     if (Group <> nil) and (Group.Category.Highlighter <> nil) then
       Group.Category.Apply(Group.Category.Highlighter, aProfile.Attributes);
+
     Tendency.PrepareSynEdit(SynEdit);
   end
   else if (Source is TEditorDesktopFile) then

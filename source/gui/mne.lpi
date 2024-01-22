@@ -182,7 +182,7 @@
           </Target>
           <SearchPaths>
             <IncludeFiles Value="$(ProjOutDir)"/>
-            <OtherUnitFiles Value="..\editor;..\lib;..\db;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\basic;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\gcc;..\extends\fntgen;..\extends\designer;..\extends\go;..\extends\cmd;..\extends\lsl;..\extends\tyro;..\extends\nim;..\..\..\minictrls\src\syn"/>
+            <OtherUnitFiles Value="..\editor;..\lib;..\db;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\basic;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\gcc;..\extends\fntgen;..\extends\designer;..\extends\go;..\extends\cmd;..\extends\lsl;..\extends\tyro;..\extends\nim"/>
             <UnitOutputDirectory Value="..\..\units\debug"/>
           </SearchPaths>
           <Parsing>
@@ -268,7 +268,7 @@
         <MinVersion Major="1" Release="1" Valid="True"/>
       </Item10>
     </RequiredPackages>
-    <Units Count="66">
+    <Units Count="65">
       <Unit0>
         <Filename Value="mne.lpr"/>
         <IsPartOfProject Value="True"/>
@@ -614,24 +614,21 @@
         <ResourceBaseClass Value="Frame"/>
       </Unit61>
       <Unit62>
-        <Filename Value="..\..\..\..\programs\fpc\3.3\src\packages\fcl-process\src\simpleipc.pp"/>
+        <Filename Value="..\extends\nim\mneNimClasses.pas"/>
         <IsPartOfProject Value="True"/>
       </Unit62>
       <Unit63>
-        <Filename Value="..\..\..\minictrls\src\syn\mnSQLProcessor.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit63>
-      <Unit64>
-        <Filename Value="..\extends\nim\mneNimClasses.pas"/>
-        <IsPartOfProject Value="True"/>
-      </Unit64>
-      <Unit65>
         <Filename Value="..\extends\nim\mneNimTendencyFrames.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="NimTendencyFrame"/>
         <HasResources Value="True"/>
         <ResourceBaseClass Value="Frame"/>
-      </Unit65>
+      </Unit63>
+      <Unit64>
+        <Filename Value="..\..\..\..\programs\lazarus\components\synedit\synedit.pp"/>
+        <IsPartOfProject Value="True"/>
+        <UnitName Value="SynEdit"/>
+      </Unit64>
     </Units>
   </ProjectOptions>
   <CompilerOptions>
@@ -642,7 +639,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\db;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\basic;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\gcc;..\extends\fntgen;..\extends\designer;..\extends\go;..\extends\cmd;..\extends\lsl;..\extends\tyro;..\extends\nim;..\..\..\minictrls\src\syn"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\db;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\basic;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\gcc;..\extends\fntgen;..\extends\designer;..\extends\go;..\extends\cmd;..\extends\lsl;..\extends\tyro;..\extends\nim;..\..\..\..\programs\lazarus\components\synedit"/>
       <UnitOutputDirectory Value="..\..\units\debug"/>
     </SearchPaths>
     <Parsing>

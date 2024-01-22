@@ -847,7 +847,7 @@ begin
             Status := Process.ExitStatus;
             WriteMessage(FProcess.Executable + ' ' + E.Message, msgtOutput);
             if Status = 0 then
-              Status := $1000; //$1000? idk just random number
+              Status := $1000; //number $1000? idk just random number
           end
         end;
     finally
