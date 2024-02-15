@@ -15,8 +15,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
-  mnSynHighlighterD, gdbClasses,
-  EditorClasses, mneClasses, mnMsgBox,
+  gdbClasses, EditorClasses, mneClasses, mnMsgBox,
   mneCompilerProjectFrames, mneDTendencyFrames, EditorRun, mneRunFrames;
 
 type
@@ -84,7 +83,7 @@ type
 implementation
 
 uses
-  IniFiles, mnStreams, mnUtils, mnSynHighlighterMultiProc, SynEditStrConst, mneDProjectFrames, LCLProc;
+  IniFiles, mnStreams, mnUtils, mnSynHighlighterD, mnSynHighlighterMultiProc, SynEditStrConst, mneDProjectFrames, LCLProc;
 
 { TDProject }
 

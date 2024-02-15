@@ -1738,7 +1738,11 @@ var
   LogSpacePos, FillSpace: Integer;
   LogCaret: TPoint;
 begin
-  if (Command = ecDeleteLastChar) then //* Do not inherited it, i do not want AutoIndent work in Delete
+  if (Command = ecPaste) then
+  begin
+    inherited;
+  end
+  else if (Command = ecDeleteLastChar) then //* Do not inherited it, i do not want AutoIndent work in Delete
   begin
     if AutoIndent and (ACaret.CharPos > 1) and (not CurrentEditor.ReadOnly) //Should be but not implmented ```and (eoSpacesToTabs in CurrentEditor.Options)
       and (eoTabIndent in CurrentEditor.Options)
@@ -1767,10 +1771,10 @@ begin
         Command := ecNone;
       end;
     end;
-    //do not inherited i we dont unindent it
+    //do not inherited we dont unindent it
   end
   else
-    inherited DoBeforeCommand(ACaret, Command);
+    inherited;
 end;
 
 constructor TmneSynBeautifier.Create(AOwner: TComponent);

@@ -59,15 +59,17 @@ type
 
 const
   //force to have this options
-  cSynRequiredOptions = [eoTabIndent, eoEnhanceHomeKey, eoSpacesToTabs, eoBracketHighlight, eoDragDropEditing, eoTrimTrailingSpaces, eoDropFiles, eoShowCtrlMouseLinks, eoAltSetsColumnMode,
+  cSynRequiredOptions = [eoTabIndent, eoEnhanceHomeKey, eoBracketHighlight, eoDragDropEditing, eoTrimTrailingSpaces, eoDropFiles, eoShowCtrlMouseLinks, eoAltSetsColumnMode,
 	                        eoScrollPastEol, eoRightMouseMovesCursor, eoHideRightMargin];
 
   //force to remove this option
-  cSynRemoveOptions = [eoPersistentCaret, eoTabsToSpaces, eoSmartTabs, eoSmartTabDelete, eoShowSpecialChars, eoScrollPastEof];
+  cSynRemoveOptions = [eoPersistentCaret, eoTabsToSpaces, eoSpacesToTabs, eoSmartTabs, eoSmartTabDelete, eoShowSpecialChars, eoScrollPastEof];
 
   //default option before overrided by config file
   cSynDefaultOptions = cSynRequiredOptions +
 	                     [eoAutoIndent, eoAutoIndentOnPaste, eoShowScrollHint, eoKeepCaretX];
+
+  cSynRequiredOptions2 = [eoEnhanceEndKey];
 
 type
   TGlobalAttributes = class;
@@ -343,6 +345,8 @@ begin
 
     SpecialChars := eoShowSpecialChars in SynEdit.Options; //Save it maybe set by MainForm
     SynEdit.Options := EditorOptions + cSynRequiredOptions - cSynRemoveOptions;
+    SynEdit.Options2 := SynEdit.Options2 + cSynRequiredOptions2;
+
     if SpecialChars then
       SynEdit.Options := SynEdit.Options + [eoShowSpecialChars];
 
@@ -357,7 +361,7 @@ begin
     SynEdit.Gutter.Assign(Attributes);
   end
   else
-    inherited AssignTo(Dest);
+    inherited;
 end;
 
 constructor TEditorProfile.AssignFrom(SynEdit: TSynEdit);

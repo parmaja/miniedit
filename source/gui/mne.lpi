@@ -580,6 +580,7 @@
         <Filename Value="mneAssociateForm.pas"/>
         <IsPartOfProject Value="True"/>
         <ComponentName Value="AssociateForm"/>
+        <HasResources Value="True"/>
         <ResourceBaseClass Value="Form"/>
       </Unit54>
       <Unit55>
@@ -639,7 +640,7 @@
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
-      <OtherUnitFiles Value="..\editor;..\lib;..\db;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\basic;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\gcc;..\extends\fntgen;..\extends\designer;..\extends\go;..\extends\cmd;..\extends\lsl;..\extends\tyro;..\extends\nim;..\..\..\..\programs\lazarus\components\synedit"/>
+      <OtherUnitFiles Value="..\editor;..\lib;..\db;..\extends;..\extends\php;..\extends\sard;..\extends\lua;..\extends\image;..\extends\commons;..\extends\pascal;..\extends\basic;..\extends\d;..\extends\csv;..\extends\python;..\extends\verilog;..\extends\gcc;..\extends\fntgen;..\extends\designer;..\extends\go;..\extends\cmd;..\extends\lsl;..\extends\tyro;..\extends\nim"/>
       <UnitOutputDirectory Value="..\..\units\debug"/>
     </SearchPaths>
     <Parsing>

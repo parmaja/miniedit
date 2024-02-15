@@ -40,7 +40,7 @@ implementation
 {$R *.lfm}
 
 uses
-  {$ifdef Windows}Windows, Registry, ShlObj,{$endif} EditorEngine;
+  Windows, Registry, ShlObj, EditorEngine;
 
 procedure TAssociateForm.Apply;
 var
@@ -77,14 +77,11 @@ begin
     AddEdit;
   end;
 
-  {$ifdef Windows}
   SHChangeNotify(SHCNE_ASSOCCHANGED, SHCNF_IDLIST, nil, nil);
 //  SendMessageTimeout(HWND_BROADCAST, WM_SETTINGCHANGE, 0, LPARAM(PChar('Environment')), SMTO_ABORTIFHUNG, 5000, MsgResult);
-  {$endif}
 end;
 
 procedure TAssociateForm.AssociateNow(Cmd, Ext, FileType, WithApplication, Description, Mime: string; WithDDE: Boolean);
-{$ifdef Windows}
 var
   aReg: TRegistry;
 begin
@@ -129,13 +126,8 @@ begin
     aReg.Free;
   end;
 end;
-{$else}
-begin
-end;
-{$endif}
 
 function TAssociateForm.GetAssociated(Cmd, FileType, Ext: string): Boolean;
-{$ifdef Windows}
 var
   aReg: TRegistry;
 begin
@@ -152,13 +144,8 @@ begin
     aReg.Free;
   end;
 end;
-{$else}
-begin
-end;
-{$endif}
 
 procedure TAssociateForm.AddEdit;
-{$ifdef Windows}
 var
   aReg: TRegistry;
 begin
@@ -181,10 +168,6 @@ begin
     aReg.Free;
   end;
 end;
-{$else}
-begin
-end;
-{$endif}
 
 procedure TAssociateForm.Retrieve;
 begin

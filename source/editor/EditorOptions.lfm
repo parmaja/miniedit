@@ -1,11 +1,11 @@
 object EditorOptionsForm: TEditorOptionsForm
   Left = 368
-  Height = 330
+  Height = 295
   Top = 116
   Width = 423
   BorderStyle = bsDialog
   Caption = 'Editor Options'
-  ClientHeight = 330
+  ClientHeight = 295
   ClientWidth = 423
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
@@ -16,7 +16,7 @@ object EditorOptionsForm: TEditorOptionsForm
   object OkBtn: TButton
     Left = 338
     Height = 27
-    Top = 300
+    Top = 265
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&OK'
@@ -28,7 +28,7 @@ object EditorOptionsForm: TEditorOptionsForm
   object CancelBtn: TButton
     Left = 262
     Height = 27
-    Top = 300
+    Top = 265
     Width = 75
     Anchors = [akRight, akBottom]
     Cancel = True
@@ -39,7 +39,7 @@ object EditorOptionsForm: TEditorOptionsForm
   object RevertBtn: TButton
     Left = 6
     Height = 27
-    Top = 300
+    Top = 265
     Width = 78
     Anchors = [akLeft, akBottom]
     Caption = 'Revert'
@@ -47,64 +47,64 @@ object EditorOptionsForm: TEditorOptionsForm
     OnClick = RevertBtnClick
   end
   object AutoIndentChk: TCheckBox
-    Left = 14
+    Left = 232
     Height = 17
     Hint = 'Will indent the caret on new lines with the same amount of leading white space as the preceding line'
-    Top = 12
+    Top = 14
     Width = 72
     Caption = 'Auto indent'
     TabOrder = 3
   end
   object HalfPageScrollChk: TCheckBox
-    Left = 218
+    Left = 232
     Height = 17
     Hint = 'When scrolling with page-up and page-down commands, only scroll a half page at a time'
-    Top = 30
+    Top = 121
     Width = 91
     Caption = 'Half page scroll'
     TabOrder = 4
   end
   object ScrollByOneLessChk: TCheckBox
-    Left = 218
+    Left = 232
     Height = 17
     Hint = 'Forces scrolling to be one less'
-    Top = 49
+    Top = 140
     Width = 100
     Caption = 'Scroll by one less'
     TabOrder = 5
   end
   object ShowScrollHintChk: TCheckBox
-    Left = 218
+    Left = 232
     Height = 17
     Hint = 'Shows a hint of the visible line numbers when scrolling vertically'
-    Top = 12
+    Top = 103
     Width = 92
     Caption = 'Show scroll hint'
     TabOrder = 6
   end
   object ScrollHintFollowsChk: TCheckBox
-    Left = 218
+    Left = 232
     Height = 17
     Hint = 'The scroll hint follows the mouse when scrolling vertically'
-    Top = 69
+    Top = 160
     Width = 133
     Caption = 'Scroll hint follows mouse'
     TabOrder = 7
   end
   object GroupUndoChk: TCheckBox
-    Left = 14
+    Left = 232
     Height = 17
     Hint = 'When undoing/redoing actions, handle all continous changes of the same kind in one call instead undoing/redoing each command separately'
-    Top = 51
+    Top = 53
     Width = 74
     Caption = 'Group undo'
     TabOrder = 8
   end
   object WordWrapChk: TCheckBox
-    Left = 14
+    Left = 232
     Height = 17
     Hint = 'if enabled, then the scrollbars will only show when necessary.  If you have ScrollPastEOL, then it the horizontal bar will always be there (it uses MaxLength instead)'
-    Top = 70
+    Top = 72
     Width = 73
     Caption = 'Word Wrap'
     TabOrder = 9
@@ -112,7 +112,7 @@ object EditorOptionsForm: TEditorOptionsForm
   object Label9: TLabel
     Left = 11
     Height = 13
-    Top = 277
+    Top = 241
     Width = 53
     Caption = 'Tab Width:'
     ParentColor = False
@@ -120,15 +120,15 @@ object EditorOptionsForm: TEditorOptionsForm
   object TabWidthEdit: TEdit
     Left = 92
     Height = 21
-    Top = 272
+    Top = 236
     Width = 52
     TabOrder = 10
     Text = '4'
   end
   object GutterGrp: TGroupBox
-    Left = 207
+    Left = 11
     Height = 124
-    Top = 93
+    Top = 8
     Width = 206
     Anchors = [akTop, akLeft, akRight]
     Caption = 'Gutter'
@@ -179,7 +179,7 @@ object EditorOptionsForm: TEditorOptionsForm
   object Label10: TLabel
     Left = 9
     Height = 13
-    Top = 226
+    Top = 190
     Width = 228
     Caption = 'Tabs in editors, Can be overriden by project type'
     ParentColor = False
@@ -187,7 +187,7 @@ object EditorOptionsForm: TEditorOptionsForm
   object Label3: TLabel
     Left = 10
     Height = 13
-    Top = 250
+    Top = 214
     Width = 60
     Caption = 'Indent Mode'
     ParentColor = False
@@ -195,7 +195,7 @@ object EditorOptionsForm: TEditorOptionsForm
   object IndentModeCbo: TComboBox
     Left = 92
     Height = 21
-    Top = 246
+    Top = 210
     Width = 144
     Anchors = [akTop, akLeft, akRight]
     ItemHeight = 13
@@ -203,19 +203,19 @@ object EditorOptionsForm: TEditorOptionsForm
     TabOrder = 13
   end
   object AutoUpdateFileChk: TCheckBox
-    Left = 14
+    Left = 20
     Height = 17
     Hint = 'Shows linebreaks, spaces and tabs using special symbols'
-    Top = 191
+    Top = 140
     Width = 139
     Caption = 'Autoupdate if not modifed'
     TabOrder = 14
   end
   object AutoIndentOnPasteChk: TCheckBox
-    Left = 14
+    Left = 232
     Height = 17
     Hint = 'Allows to indent text pasted from clipboard'
-    Top = 32
+    Top = 34
     Width = 120
     Caption = 'Auto Indent On Paste'
     TabOrder = 12
