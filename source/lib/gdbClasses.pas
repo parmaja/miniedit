@@ -78,17 +78,20 @@ type
 
   { TGDBWatchItem }
 
-  TGDBWatchItem = class(TObject)
+  TGDBWatchItem = class(TNoRefCountObject, INamedObject)
+  private
+    function GetName: String;
+  protected
   public
     Info: TDebugWatchInfo;
-    property Name: String read Info.Name write Info.Name;
+    property Name: String read GetName write Info.Name;
     property VarType: String read Info.VarType write Info.VarType;
     property Value: Variant read Info.Value write Info.Value;
   end;
 
   { TGDBWatchList }
 
-  TGDBWatchList = class(specialize TmnNamedObjectList<TGDBWatchItem>)
+  TGDBWatchList = class(specialize TINamedObjects<TGDBWatchItem>)
   private
   protected
   public
@@ -126,13 +129,11 @@ type
 
   { TMIRespond }
 
-  TMIRespond = class(TObject)
+  TMIRespond = class(TmnNamedObject)
   private
-    FName: String;
     FValue: String;
   public
     ResType: TMIRespondType;
-    property Name: String read FName write FName;
     property Value: String read FValue write FValue;
   end;
 
@@ -716,6 +717,13 @@ begin
   end;
   if f >= 0 then
     BreakPoints.Delete(i);
+end;
+
+{ TGDBWatchItem }
+
+function TGDBWatchItem.GetName: String;
+begin
+  Result := Info.Name;
 end;
 
 { TGDBDebug }

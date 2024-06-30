@@ -33,7 +33,7 @@ interface
 
 uses
   Messages, SysUtils, Forms, StdCtrls, StrUtils, DateUtils, Dialogs, Variants, Classes, Menus, Controls,
-  LMessages, LCLIntf, LConvEncoding, LazUTF8, fgl, LCLType,
+  LMessages, LCLIntf, LConvEncoding, LazUTF8, LazStringUtils, fgl, LCLType,
   FileUtil, LazFileUtils, Math, Masks,
   Graphics, Contnrs, Types, IniFiles,
   EditorOptions, EditorColors, EditorProfiles,
@@ -42,7 +42,8 @@ uses
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
   SynEdit, SynEditTextTrimmer, SynTextDrawer, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
   mncCSV, mnXMLRttiProfile, mnXMLUtils, mnClasses,
-  mnUtils, EditorClasses, EditorRun;
+  mnUtils, EditorClasses, EditorRun,
+	ntvUtils;
 
 type
   TThreeStates = (stateNone, stateFalse, stateTrue);
@@ -214,9 +215,8 @@ type
 
   { TEditorExtension }
 
-  TEditorExtension = class(TObject)
+  TEditorExtension = class(TmnNamedObject)
   public
-    Name: String;
     ImageIndex: Integer;
   end;
 
@@ -1082,8 +1082,8 @@ type
     property Custom: TStringList read FCustom;
   end;
 
-  TMap = class(TObject)
-    Name: String;
+  TMap = class(TmnNamedObject)
+  public
     AttType: TAttributeType;
     TokenID: Integer;
     Attribute: TSynHighlighterAttributes;
@@ -1112,7 +1112,7 @@ type
 
   { TVirtualCategory }
 
-  TVirtualCategory = class(TEditorElements)
+  TVirtualCategory = class(TEditorElements, INamedObject)
   private
     FImageName: String;
     FName: String;
@@ -1124,6 +1124,7 @@ type
     function GetHighlighter: TSynCustomHighlighter;
     function GetItem(Index: Integer): TFileGroup;
     function GetMapper: TMapper;
+    function GetName: String;
   protected
     FKeywords: TKeywordList;
     FCompletion: TmneSynCompletion;
@@ -1166,7 +1167,7 @@ type
     procedure InitHighlighter;
     property Mapper: TMapper read GetMapper write FMapper;
     procedure Apply(AHighlighter: TSynCustomHighlighter; Attributes: TGlobalAttributes);
-    property Name: String read FName write FName;
+    property Name: String read GetName write FName;
     property Title: String read FTitle write FTitle;
     function Find(vName: String): TFileGroup;
     procedure EnumExtensions(vExtensions: TStringList);
@@ -1196,7 +1197,7 @@ type
 
   { TFileCategories }
 
-  TFileCategories = class(specialize TmnNamedObjectList<TVirtualCategory>)
+  TFileCategories = class(specialize TINamedObjects<TVirtualCategory>)
   public
     function FindByClass(CategoryClass: TFileCategoryClass): TVirtualCategory;
     function Add(vCategory: TVirtualCategory): Integer;
@@ -1409,15 +1410,18 @@ type
     property Text: String read FText write FText;
   end;
 
-  TEditorMessages = class(specialize TmnObjectList<TEditorMessage>)
+  { TEditorMessages }
+
+  TEditorMessages = class(specialize TmnObjectList<TEditorMessage>, INamedObject)
   private
     FName: String;
+    function GetName: String;
   public
     function GetText(Index: Integer): String;
-    property Name: String read FName write FName;
+    property Name: String read GetName write FName;
   end;
 
-  TEditorMessagesList = class(specialize TmnNamedObjectList<TEditorMessages>)
+  TEditorMessagesList = class(specialize TINamedObjects<TEditorMessages>)
   private
   public
     function GetMessages(Name: String): TEditorMessages;
@@ -2264,7 +2268,7 @@ var
   end;
 
 var
-  item: TScannedValue;
+  aItem: TScannedValue;
   rev: Integer;
   p1, p2: TPoint;
 begin
@@ -2334,16 +2338,16 @@ begin
       begin
         aSynEdit.BeginUpdate(False);
         try
-          for item in ScannedValues do
+          for aItem in ScannedValues do
           begin
             {
             nop no undo work into
-            Line := aSynEdit.Lines[item.Line];
-            aSynEdit.Lines[Item.Line] := MidStr(aLine, 1, item.x1) + Item.Value + MidStr(aLine, item.x2, MaxInt);
+            Line := aSynEdit.Lines[aItem.Line];
+            aSynEdit.Lines[aItem.Line] := MidStr(aLine, 1, aItem.x1) + aItem.Value + MidStr(aLine, aItem.x2, MaxInt);
             }
-            p1 := Point(item.X1 + 1, item.Line + 1);
-            p2 := Point(Item.X2, item.Line + 1);
-            aSynEdit.TextBetweenPointsEx[p1, p2, scamIgnore] := Item.Value;
+            p1 := Point(aItem.X1 + 1, aItem.Line + 1);
+            p2 := Point(aItem.X2, aItem.Line + 1);
+            aSynEdit.TextBetweenPointsEx[p1, p2, scamIgnore] := aItem.Value;
 
           end;
         finally
@@ -3245,38 +3249,41 @@ end;
 
 procedure TmneSynEditAutoComplete.ParseCompletionList;
 var
-  sComplKey, sComment, sComplValue: string;
+  sKey, sValue, sComment: string;
 
   procedure SaveEntry;
   var
-    //CurAttributes: TStrings;
-    StartI, EndI: Integer;
+//    StartI, EndI: Integer;
+    Template: TTemplate;
   begin
-    fCompletions.Add(sComplKey);
-    sComplKey := '';
-    fCompletionComments.Add(sComment);
-    sComment := '';
-    //CurAttributes:=TStringListUTF8Fast.Create;
-    Assert(not StartsStr(CodeTemplateMacroMagic, sComplValue), 'SaveEntry: Found '+CodeTemplateMacroMagic);
-    if StartsStr(CodeTemplateAttributesStartMagic, sComplValue) then
+    Template := TTemplate.Create;
+    Template.Key := sKey;
+    Template.Comment := sComment;
+    {Assert(not LazStartsStr(CodeTemplateMacroMagic, sValue), 'SaveEntry: Found '+CodeTemplateMacroMagic);
+    if LazStartsStr(CodeTemplateAttributesStartMagic;, sValue) then
     begin
       // Start of attributes
       StartI := Length(CodeTemplateAttributesStartMagic) + 1;
-      while (StartI <= Length(sComplValue)) and (sComplValue[StartI] in [#10,#13]) do
+      while (StartI <= Length(sValue)) and (sValue[StartI] in [#10,#13]) do
         Inc(StartI);
-      EndI := PosEx(CodeTemplateAttributesEndMagic, sComplValue, StartI);
+      EndI := PosEx(CodeTemplateAttributesEndMagic, sValue, StartI);
       if EndI = 0 then
-        raise Exception.Create('ParseCompletionList: "' + CodeTemplateAttributesEndMagic + '" not found.');
-      //CurAttributes.Text := Copy(sComplValue, StartI, EndI-StartI);
+        raise Exception.Create('TCustomSynAutoComplete.ParseCompletionList: "'
+                              + CodeTemplateAttributesEndMagic + '" not found.');
+      a := Copy(sValue, StartI, EndI-StartI);
+      Template.Attributes.Text := a;
       // Start of value
       StartI := EndI + Length(CodeTemplateAttributesEndMagic);
-      while (StartI <= Length(sComplValue)) and (sComplValue[StartI] in [#10,#13]) do
+      while (StartI <= Length(sValue)) and (sValue[StartI] in [#10,#13]) do
         Inc(StartI);
-      sComplValue := Copy(sComplValue, StartI, Length(sComplValue));
-    end;
-    fCompletionValues.Add(sComplValue);
-    sComplValue := '';
-    //Attributes.Add(CurAttributes);
+      Template.Value := Copy(sValue, StartI, Length(sValue));
+    end
+    else}
+      Template.Value := sValue;
+    fCodeTemplates.Add(Template);
+    sKey := '';
+    sValue := '';
+    sComment := '';
   end;
 
 var
@@ -3284,30 +3291,30 @@ var
   S: string;
   TemplateStarted: Boolean;
 begin
-  fCompletions.Clear;
-  fCompletionComments.Clear;
-  fCompletionValues.Clear;
-  //ClearAttributes;
-  if AutoCompleteList.Count > 0 then
+  FCodeTemplates.Clear;
+  sKey := '';
+  sValue := '';
+  sComment := '';
+  if FCodeTemplSource.Count > 0 then
 	begin
-    S := AutoCompleteList[0];
+    S := fCodeTemplSource[0];
     TemplateStarted := False;
-    for i := 0 to AutoCompleteList.Count - 1 do
+    for i := 0 to FCodeTemplSource.Count - 1 do
 		begin
-      S := AutoCompleteList[i];
+      S := fCodeTemplSource[i];
       Len := Length(S);
       // the style of the Delphi32.dci file
       if (Len > 0) and (S[1] = '[') then begin
         // save last entry
-        if sComplKey <> '' then
+        if sKey <> '' then
           SaveEntry;
         // new completion entry
         j := 2;
         while (j <= Len) and (S[j] > ' ') do
           Inc(j);
-        sComplKey := Copy(S, 2, j - 2);
-        if (sComplKey<> '') and (sComplKey[Length(sComplKey)] in ['|', ']']) then //* to accept format [keyword] or [keyword|]
-          SetLength(sComplKey, Length(sComplKey) - 1);
+        sKey := Copy(S, 2, j - 2);
+        if (sKey<> '') and (sKey[Length(sKey)] in ['|', ']']) then //* to accept format [keyword] or [keyword|]
+          SetLength(sKey, Length(sKey) - 1);
         // start of comment in DCI file
         while (j <= Len) and (S[j] <= ' ') do
           Inc(j);
@@ -3321,15 +3328,15 @@ begin
         TemplateStarted:=true;
       end else begin
         if not TemplateStarted then
-          sComplValue := sComplValue + LineEnding;
+          sValue := sValue + LineEnding;
         TemplateStarted:=false;
-        sComplValue := sComplValue + S;
+        sValue := sValue + S;
       end;
-
     end;
-    if sComplKey <> '' then
+    if sKey <> '' then
       SaveEntry;
   end;
+  fCodeTemplates.Sorted := True;
   fParsed:=true;
 end;
 
@@ -3347,7 +3354,6 @@ end;
 
 procedure TEditorSCM.Commit;
 begin
-
 end;
 
 procedure TEditorSCM.Push;
@@ -6972,9 +6978,9 @@ begin
 
   Completion.AutoUseSingleIdent := True;
 
-  if AutoComplete.AutoCompleteList.Count = 0 then
+  if AutoComplete.CodeTemplSource.Count = 0 then
     if FileExistsUTF8(LowerCase(Application.Location + FName + '.template')) then
-      AutoComplete.AutoCompleteList.LoadFromFile(LowerCase(Application.Location + Name + '.template'));
+      AutoComplete.CodeTemplSource.LoadFromFile(LowerCase(Application.Location + Name + '.template'));
 
   if Keywords.Count = 0 then
   begin
@@ -7001,6 +7007,7 @@ var
   s: string;
   i: Integer;
   map: TMap;
+  t: TTemplate;
 begin
   //s := '\style{+B}' + Engine.Options.Profile.Attributes.AttributeName(AKind) + '\style{-B} : ' + AKeyword;
   map := Mapper.FindByAttribute(AKind);
@@ -7010,9 +7017,9 @@ begin
   if s = '' then
     s := map.Name;
   s := s + ': \tab{6}\color{$'+IntToHex(map.Attribute.Foreground)+'}' + AKeyword;
-  i := AutoComplete.Completions.IndexOf(AKeyword);
-  if i>=0 then
-    s := s + '\hspace{16}' + AutoComplete.CompletionComments[i];
+  t := AutoComplete.CodeTemplates.ByKey(AKeyword);
+  if t<>nil then
+    s := s + '\hspace{16}' + t.Comment;
   //Completion.AddItem(S, AKeyword, TObject(IntPtr(Ord(AKind))));
   Result := Keywords.AddItem(AKeyword, S, AttributeName, AKind, Temp);
 end;
@@ -7111,6 +7118,11 @@ begin
   Result := FMapper;
   if FMapper = nil then
     raise Exception.Create('Mapper is null');
+end;
+
+function TVirtualCategory.GetName: String;
+begin
+  Result := FName;
 end;
 
 function TVirtualCategory.GetFileCaption(AFile: TEditorFile; FileName: String): String;
@@ -7774,6 +7786,11 @@ begin
 end;
 
 { TEditorMessages }
+
+function TEditorMessages.GetName: String;
+begin
+  Result := FName;
+end;
 
 function TEditorMessages.GetText(Index: Integer): String;
 begin

@@ -19,10 +19,9 @@ type
 
   { TBoardComponent }
 
-  TBoardComponent = class(TPersistent)
+  TBoardComponent = class(TmnNamedObject)
   public
     Info: TStringList;
-    Name: string;
     Caption: string;
     ImageFile: string;
     Image: TGraphic;

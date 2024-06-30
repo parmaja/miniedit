@@ -11,7 +11,7 @@ unit EditorClasses;
 interface
 
 uses
-  Classes, SysUtils, Contnrs, mnClasses, SynEdit;
+  Classes, SysUtils, Contnrs, mnClasses, SynEdit, ntvUtils;
 
   type
     IFileEditor = interface
@@ -43,8 +43,10 @@ uses
 
     { TEditorElement }
 
-    TEditorElement = class(TPersistent)
+    TEditorElement = class(TInterfacedPersistent, INamedObject)
     private
+      function GetName: string;
+      procedure SetName(const AValue: string);
     protected
       FName: string;
       FTitle: string;
@@ -54,7 +56,7 @@ uses
     public
       constructor Create; virtual;
 
-      property Name: string read FName write FName;
+      property Name: string read GetName write SetName;
       property Title: string read FTitle write FTitle;
       property Description: string read GetDescription write FDescription;
       property ImageIndex: integer read FImageIndex write FImageIndex;
@@ -62,7 +64,7 @@ uses
 
     { TEditorElements }
 
-    TEditorElements = class(specialize TmnNamedObjectList<TEditorElement>)
+    TEditorElements = class(specialize TINamedObjects<TEditorElement>)
     private
     public
     end;
@@ -136,6 +138,16 @@ uses
 implementation
 
 { TEditorElement }
+
+function TEditorElement.GetName: string;
+begin
+    Result := FName;
+end;
+
+procedure TEditorElement.SetName(const AValue: string);
+begin
+  FName := AValue;
+end;
 
 function TEditorElement.GetDescription: string;
 begin
