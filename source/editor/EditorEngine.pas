@@ -2305,7 +2305,7 @@ begin
                     aValue := Trim(aValue);
                     if aName = '@updated' then
                     begin
-                      aValue := ' "' + ISODateToStr(AFile.FileDate, '-', ' ', True) + '"';
+                      aValue := ' "' + ISODateTimeToStr(AFile.FileDate) + '"';
                       UpdateValue(aName, aValue);
                     end
                     else if aName = '@timestamp' then
@@ -5196,12 +5196,12 @@ var
 begin
   if not (evsEngine in EnumSkips) then
   begin
-    Values.Merge('Date', ISODateToStr(Now, '-', ' ', False));
-    Values.Merge('DateTime', ISODateToStr(Now, '-', ' ', True));
+    Values.Merge('Date', ISODateToStr(Now));
+    Values.Merge('DateTime', ISODateToStr(Now));
     Values.Merge('TimeStamp', IntToStr(DateTimeToUnix(Now)));
 
-    Values.Merge('FileDate', ISODateToStr(Now, '-', '-', '-', False));
-    Values.Merge('FileDateTime', ISODateToStr(Now, '-', '-', '-', True));
+    Values.Merge('FileDate', ISODateToStr(Now, '-', '-', '-'));
+    Values.Merge('FileDateTime', ISODateToStr(Now, '-', '-', '-'));
 
     if not (evsEnviroment in EnumSkips) then
       Values.Merge(Environment);

@@ -1,4 +1,3 @@
-
 unit mndStdAddons;
 {**
  *  This file is part of the "MiniEdit"

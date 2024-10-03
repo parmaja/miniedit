@@ -206,7 +206,7 @@
           </Linking>
           <Other>
             <Verbosity>
-              <ShoLineNum Value="True"/>
+              <ShowLineNum Value="True"/>
               <ShowUsedFiles Value="True"/>
               <ShowTriedFiles Value="True"/>
               <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
@@ -648,6 +648,9 @@
         <CStyleMacros Value="True"/>
       </SyntaxOptions>
     </Parsing>
+    <CodeGeneration>
+      <TargetCPU Value="x86_64"/>
+    </CodeGeneration>
     <Linking>
       <Debugging>
         <DebugInfoType Value="dsDwarf3"/>
@@ -662,7 +665,7 @@
     </Linking>
     <Other>
       <Verbosity>
-        <ShoLineNum Value="True"/>
+        <ShowLineNum Value="True"/>
         <ShowUsedFiles Value="True"/>
         <ShowTriedFiles Value="True"/>
         <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
