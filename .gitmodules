@@ -1,0 +1,9 @@
+[submodule "use/minilib"]
+	path = use/minilib
+	url = git@github.com:parmaja/minilib.git
+[submodule "use/minictrls"]
+	path = use/minictrls
+	url = git@github.com:parmaja/minictrls.git
+[submodule "use/metadarkstyle"]
+	path = use/metadarkstyle
+	url = https://github.com/zamtmn/metadarkstyle.git

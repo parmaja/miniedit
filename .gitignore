@@ -8,3 +8,5 @@ units
 /source/gui/mne.res
 /release
 /bin/ThemeDefault.inc
+*.lps
+*.res
