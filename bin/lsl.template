@@ -1,5 +1,6 @@
 [default]
-default {
+default
+ {
     state_entry()
     {
         |;
@@ -67,7 +68,7 @@ land_collision_start(vector pos)
 }
 
 [link_message]
-link_message( integer sender_num, integer num, string message, key id )
+link_message( integer sender_number, integer number, string message, key id )
 {
     |;
 }

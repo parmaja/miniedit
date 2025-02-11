@@ -175,7 +175,7 @@ begin
   aHighlighter := SampleEdit.Highlighter;
   SampleEdit.Highlighter := nil;
   aHighlighter.Free;
-  inherited Destroy;
+  inherited;
 end;
 
 procedure TEditorColorsForm.AttributeCboSelect(Sender: TObject);

@@ -224,7 +224,7 @@ begin
     2:
       if RFilesList.ItemIndex >= 0 then
       begin
-        Engine.Files.OpenFile(RFilesList.Items[RFilesList.ItemIndex], ''); //TODO pass the params
+        Engine.Files.OpenFile(RFilesList.Items[RFilesList.ItemIndex]); //TODO pass the params
         Close;
       end;
   end;

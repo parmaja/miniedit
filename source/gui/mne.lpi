@@ -23,7 +23,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="13"/>
+      <MinorVersionNr Value="14"/>
       <RevisionNr Value="1"/>
       <BuildNr Value="207"/>
       <CharSet Value="04B0"/>
@@ -652,6 +652,7 @@
     <Linking>
       <Debugging>
         <DebugInfoType Value="dsDwarf3"/>
+        <UseExternalDbgSyms Value="True"/>
       </Debugging>
       <Options>
         <Win32>

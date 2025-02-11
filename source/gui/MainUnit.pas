@@ -769,7 +769,7 @@ var
 begin
   if CallStackGrid.Row > 0 then
   begin
-    Engine.Files.OpenFile(CallStackGrid.Cells[1, CallStackGrid.Row], '');
+    Engine.Files.OpenFile(CallStackGrid.Cells[1, CallStackGrid.Row]);
     s := CallStackGrid.Cells[2, CallStackGrid.Row];
     if s <> '' then
     begin
@@ -1150,7 +1150,7 @@ end;
 procedure TMainForm.MainFileActExecute(Sender: TObject);
 begin
   if Engine.Session.Project.RunOptions.MainFile <> '' then
-    Engine.Files.OpenFile(Engine.Session.MainFile, '');
+    Engine.Files.OpenFile(Engine.Session.MainFile);
 end;
 
 procedure TMainForm.MenuItem22Click(Sender: TObject);
@@ -1493,7 +1493,7 @@ var
 begin
   if SearchGrid.Row > 0 then
   begin
-    Engine.Files.OpenFile(SearchGrid.Cells[1, SearchGrid.Row], '');
+    Engine.Files.OpenFile(SearchGrid.Cells[1, SearchGrid.Row]);
     s := SearchGrid.Cells[2, SearchGrid.Row];
     if s <> '' then
     begin
@@ -1816,7 +1816,8 @@ begin
     aFile := (Sender as TMenuItem).Caption;
     if Engine.Session.Active then
       aFile := ExpandToPath(aFile, Engine.Session.Project.RunOptions.MainPath);
-    Engine.Files.OpenFile(aFile);
+    if Engine.Files.OpenFile(aFile, [ofoCheckExists]) = nil then
+      Engine.SendLog('File is not exists: ' + aFile);
   end;
 end;
 
@@ -3718,6 +3719,7 @@ end;
 procedure TMainForm.CatchErr(Sender: TObject; e: exception);
 begin
   MsgBox.Error(e.Message);
+
 end;
 
 end.

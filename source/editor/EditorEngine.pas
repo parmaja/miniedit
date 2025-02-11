@@ -913,7 +913,9 @@ type
     function LoadFile(vFileName, vFileParams: String; AppendToRecent: Boolean = True): TEditorFile;
     function ShowFile(vFileName: String): TEditorFile; overload; //open it without add to recent, for debuging
     function ShowFile(const FileName: String; Line: Integer): TEditorFile; overload;
-    function OpenFile(vFileName: String; vFileParams: String = ''; OpenFileOptions: TOpenFileOptions = []): TEditorFile;
+    function OpenFile(vFileName: String; vFileParams: String; OpenFileOptions: TOpenFileOptions): TEditorFile;
+    function OpenFile(vFileName: String; OpenFileOptions: TOpenFileOptions): TEditorFile;
+    function OpenFile(vFileName: String): TEditorFile;
     procedure SetCurrentIndex(Index: Integer; vRefresh: Boolean);
     function New(vGroup: TFileGroup = nil): TEditorFile; overload;
     function New(GroupName: String): TEditorFile; overload;
@@ -1232,9 +1234,10 @@ type
 
   TCodeFileCategory = class(TTextFileCategory)
   protected
-    procedure ScanValues(AFile: TEditorFile; Values: TStringList; UpdateValues: Boolean = False); override;
     procedure CacheKeywords(Files: TStringList); virtual;
     procedure DoPrepareCompletion(AEditor: TCustomSynEdit); override;
+  public
+    procedure ScanValues(AFile: TEditorFile; Values: TStringList; UpdateValues: Boolean = False); override;
   end;
 
   { TFileGroup }
@@ -2891,6 +2894,24 @@ begin
     Command := ecAutoCompletion;
   end;
 
+  with SynEdit.Keystrokes.Add do
+  begin
+    Key := VK_K;
+    Shift := [ssCtrl];
+    Key2 := VK_RIGHT;
+    Shift2 := [ssCtrl];
+    Command := ecWordEndRight;
+  end;
+
+  with SynEdit.Keystrokes.Add do
+  begin
+    Key := VK_K;
+    Shift := [ssCtrl];
+    Key2 := VK_LEFT;
+    Shift2 := [ssCtrl];
+    Command := ecWordEndLeft;
+  end;
+
   Engine.MacroRecorder.AddEditor(SynEdit);
   Engine.EditorPlugin.AddEditor(SynEdit);
   Engine.HintParams.AddEditor(SynEdit);
@@ -4402,7 +4423,11 @@ procedure TEditorOptions.Load(vWorkspace: String);
   procedure SafeLoad(s: TRecentItems; vName: String);
   begin
     if FileExists(vName) then
+    try
       s.LoadFromFile(vName);
+    except
+      Engine.SendLog('Fail to load: ' + vName);
+    end;
   end;
 
   procedure SafeLoad(s: TStringList; vName: String);
@@ -4568,6 +4593,16 @@ begin
     else
       Result := nil;
   end;
+end;
+
+function TEditorFiles.OpenFile(vFileName: String; OpenFileOptions: TOpenFileOptions): TEditorFile;
+begin
+  Result := OpenFile(vFileName, '', OpenFileOptions);
+end;
+
+function TEditorFiles.OpenFile(vFileName: String): TEditorFile;
+begin
+  Result := OpenFile(vFileName, '', []);
 end;
 
 procedure TEditorSession.Open;
