@@ -23,7 +23,7 @@
     <VersionInfo>
       <UseVersionInfo Value="True"/>
       <MajorVersionNr Value="1"/>
-      <MinorVersionNr Value="12"/>
+      <MinorVersionNr Value="13"/>
       <RevisionNr Value="1"/>
       <BuildNr Value="207"/>
       <CharSet Value="04B0"/>
@@ -54,6 +54,7 @@
           </Parsing>
           <Linking>
             <Debugging>
+              <DebugInfoType Value="dsDwarf3"/>
               <UseExternalDbgSyms Value="True"/>
             </Debugging>
           </Linking>
@@ -636,7 +637,7 @@
     <Version Value="11"/>
     <PathDelim Value="\"/>
     <Target>
-      <Filename Value="..\..\bin\mne"/>
+      <Filename Value="..\..\bin\mne64"/>
     </Target>
     <SearchPaths>
       <IncludeFiles Value="$(ProjOutDir)"/>
@@ -648,14 +649,9 @@
         <CStyleMacros Value="True"/>
       </SyntaxOptions>
     </Parsing>
-    <CodeGeneration>
-      <TargetCPU Value="x86_64"/>
-    </CodeGeneration>
     <Linking>
       <Debugging>
         <DebugInfoType Value="dsDwarf3"/>
-        <UseValgrind Value="True"/>
-        <UseExternalDbgSyms Value="True"/>
       </Debugging>
       <Options>
         <Win32>
@@ -664,17 +660,10 @@
       </Options>
     </Linking>
     <Other>
-      <Verbosity>
-        <ShowLineNum Value="True"/>
-        <ShowUsedFiles Value="True"/>
-        <ShowTriedFiles Value="True"/>
-        <ShowHintsForUnusedUnitsInMainSrc Value="True"/>
-      </Verbosity>
       <WriteFPCLogo Value="False"/>
       <CompilerMessages>
         <IgnoredMessages idx5024="True" idx5023="True"/>
       </CompilerMessages>
-      <CustomOptions Value="-dDEBUG"/>
     </Other>
   </CompilerOptions>
   <Debugging>
