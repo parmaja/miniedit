@@ -10,7 +10,7 @@ unit EditorColors;
 interface
 
 uses
-  Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, Clipbrd,
+  Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, Clipbrd, StrUtils,
   Registry, ExtCtrls, Buttons, ImgList, Menus, ColorBox, SynEdit, SynGutter, SynEditMarkupWordGroup,
   SynEditHighlighter, SynEditMiscClasses, SynEditKeyCmds, Classes, SysUtils, typinfo, LazFileUtils,
   EditorProfiles, SynGutterBase, SynEditMarks, mnStreams, Types;
@@ -497,20 +497,31 @@ var
     if gaoDefaultForeground in op then
       Add('gaoDefaultForeground');
   end;
+
+  procedure WriteLine(s: string);
+  begin
+    s := '  ' + s +';'#13#10;
+    Stream.WriteBuffer(Pointer(s)^, length(s));
+  end;
+
 begin
   Stream := TFileStream.Create(Application.Location + 'ThemeDefault.inc', fmCreate);
   try
+    WriteLine('DarkTheme := '+BoolToStr(FProfile.Attributes.DarkTheme, True));
+    WriteLine('FontNoAntialiasing := '+BoolToStr(FProfile.Attributes.FontNoAntialiasing, True));
+    WriteLine('FontName := '+ QuotedStr(FProfile.Attributes.FontName));
+    WriteLine('FontSize := '+ FProfile.Attributes.FontSize.ToString);
     for i := 0 to FProfile.Attributes.Count -1 do
     begin
       aName := GetEnumName(typeinfo(TAttributeType), ord(FProfile.Attributes[i].AttType));
       //v := Integer(FProfile.Attributes[i].Style);
-      s := '  Add(F'+Copy(aName, 4, MaxInt) + ', ' +
+      s := 'Add(F'+Copy(aName, 4, MaxInt) + ', ' +
         aName + ', ''' + FProfile.Attributes[i].Title + ''', ''' + FProfile.Attributes[i].Description + ''', ' +
         ColorToString(FProfile.Attributes[i].ForeColor) + ', ' + ColorToString(FProfile.Attributes[i].BackColor) + ', ' +
 
         '['+GetStyle(FProfile.Attributes[i].Options)+']'+
-        ');'+#13#10;
-       Stream.WriteBuffer(Pointer(s)^, length(s));
+        ')';
+       WriteLine(s);
     end;
   finally
     Stream.Free;

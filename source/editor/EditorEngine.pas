@@ -4585,7 +4585,7 @@ begin
         Current := Result;
         if (ofoActivate in OpenFileOptions) and not Result.Activated then
           Result.Activate;
-        if (ofoByParam in OpenFileOptions) and Result.CanAddRecentFiles and (not Engine.Session.Active) then
+        if ((ofoByParam in OpenFileOptions) or (Engine.BrowseFolder = '')) and Result.CanAddRecentFiles and (not Engine.Session.Active) then
           if Count = 1 then //first one
             Engine.BrowseFolder := ExtractFilePath(vFileName);
       end;

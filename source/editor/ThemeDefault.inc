@@ -1,3 +1,7 @@
+  DarkTheme := True;
+  FontNoAntialiasing := False;
+  FontName := 'DejaVu Sans Mono';
+  FontSize := 12;
   Add(FDefault, attDefault, 'Default', 'Default colors', clWhite, $002A2A2A, []);
   Add(FPanel, attPanel, 'Panel', 'GUI Panel', clWhite, $005D5D5D, []);
   Add(FLink, attLink, 'Link', 'URL Links of follow defines highlight', clWhite, $002A190F, [gaoDefaultBackground, gaoDefaultForeground]);
