@@ -1922,7 +1922,7 @@ begin
   if Command = FCommandIDs[mscUUID] then
   begin
     CreateGUID(aGUID);
-    TCustomSynEdit(Sender).InsertTextAtCaret(LowerCase(RemoveEncloseStr(GUIDToString(aGUID), '{', '}')));
+    TCustomSynEdit(Sender).InsertTextAtCaret(LowerCase(UncloseStr(GUIDToString(aGUID), '{', '}')));
     Handled := True;
   end;
 end;

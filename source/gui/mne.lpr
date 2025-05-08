@@ -142,12 +142,12 @@ end;
 
 procedure Run;
 begin
-  {$IFDEF DEBUG}
+  {$ifdef debug}
   //* http://wiki.freepascal.org/leakview
   {if FileExists(Application.Location+'heap.trc') then
     DeleteFile(Application.Location+'heap.trc');
   SetHeapTraceOutput(Application.Location+'heap.trc');}
-  {$ENDIF DEBUG}
+  {$endif debug}
   Engine.BeginUpdate;
   try
     Application.CreateForm(TEditorResource, EditorResource);
@@ -175,12 +175,12 @@ begin
 end;
 
 begin
-  PreferredAppMode:=pamAllowDark;
   //uMetaDarkStyle.ApplyMetaDarkStyle(DefaultDark);
-//  FirstDotAtFileNameStartIsExtension := False;
+  //FirstDotAtFileNameStartIsExtension := False;
   if IsAnotherInstance then
     exit;
-    //DefaultSystemCodePage := widestringmanager.GetStandardCodePageProc(scpAnsi); //I fix it temporary that needed for AnsiToUtf8; //i commented cuz i cant convert to ansi in TTextEditorFile.DoSave
+  PreferredAppMode:=pamAllowDark;
+  //DefaultSystemCodePage := widestringmanager.GetStandardCodePageProc(scpAnsi); //I fix it temporary that needed for AnsiToUtf8; //i commented cuz i cant convert to ansi in TTextEditorFile.DoSave
   Application.Scaled:=True;
   Application.MainFormOnTaskBar := True; //this will resolve mainform sent to last application, when using Alt+Tab to back to it, it is the last one on tasks, now it is normal, idk why
   Application.Title:='miniEdit';

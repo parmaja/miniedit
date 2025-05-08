@@ -307,7 +307,7 @@ var
 begin
   Result := Connection.NewTransactionID;
   s := FormatCommand(Command,Result,Data);
-  Connection.Stream.WriteLineUTF8(s);
+  Connection.Stream.WriteUTF8Line(s);
 {$IFDEF SAVELOG}
   SaveLog(s);
 {$ENDIF}

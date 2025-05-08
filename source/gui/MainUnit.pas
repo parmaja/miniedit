@@ -1010,11 +1010,21 @@ begin
         Engine.Files.Current.ScanValues(Values);
         aFileName := DequoteStr(Values.Values['@localfile']);
         aFileName := ExpandToPath(aFileName , Engine.Session.Project.DefaultPath);
-        if (aFileName <> '') and FileExists(aFileName) and not SameFileName(aFileName, Engine.Files.Current.FileName) then
+        if Engine.SCM = nil then
         begin
-          Engine.SCM.DiffToFile(aFileName, Engine.Files.Current.FileName);
-          Engine.Files.CheckChanged;
+          Engine.SendLog('No SCM!!!');
+          exit;
         end;
+        if (aFileName <> '') and FileExists(aFileName) then
+        begin
+          if not SameFileName(aFileName, Engine.Files.Current.FileName) then
+          begin
+            Engine.SCM.DiffToFile(aFileName, Engine.Files.Current.FileName);
+            Engine.Files.CheckChanged;
+          end;
+        end
+        else
+          Engine.SendLog('No file exists: ' + aFileName);
       end;
     finally
       Values.Free;
@@ -2081,7 +2091,7 @@ begin
 
   if Engine.Options.Profile.Attributes.DarkTheme then
   begin
-    PreferredAppMode:=pamForceDark;
+    PreferredAppMode := pamForceDark;
     uMetaDarkStyle.ApplyMetaDarkStyle(DefaultDark);
   end;
 
@@ -2111,7 +2121,7 @@ begin
   {$ifdef DATABASE}
   DatabasePnl.Visible := True;
   DatabaseMnu.Visible := True;
-  DBSeparator.Visible := True;
+  //DBSeparator.Visible := True;
   DBRollbackBtn.Visible := True;
   DBCommitBtn.Visible := True;
   BrowserTabs.Page[DatabasePnl].Visible := True;
@@ -2249,7 +2259,7 @@ begin
   if (Engine.SCM <> nil) then
   begin
     SCMMnu.Caption := Engine.SCM.Name;
-    //SCMMnu.Visible := True;
+    SCMMnu.Visible := True;
     SCMCommitFileAct.Enabled := scmCommitFile in Engine.SCM.GetCapability;
     SCMCommitPathAct.Enabled := scmCommitPath in Engine.SCM.GetCapability;
     SCMUpdateFileAct.Enabled := scmUpdateFile in Engine.SCM.GetCapability;
@@ -2258,7 +2268,7 @@ begin
   else
   begin
     SCMMnu.Caption := 'SCM';
-    //SCMMnu.Visible := False;
+    SCMMnu.Visible := False;
   end;
 
   UpdatePanel;

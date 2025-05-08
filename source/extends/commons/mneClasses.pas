@@ -252,7 +252,7 @@ end;
 
 function TYaccFileCategory.CreateHighlighter: TSynCustomHighlighter;
 begin
-
+  Result := nil;
 end;
 
 { TmneProjectFileCategory }

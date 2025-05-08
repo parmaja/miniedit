@@ -665,6 +665,10 @@
       <CompilerMessages>
         <IgnoredMessages idx5024="True" idx5023="True"/>
       </CompilerMessages>
+      <CustomOptions Value="-dDatabase"/>
+      <OtherDefines Count="1">
+        <Define0 Value="Database"/>
+      </OtherDefines>
     </Other>
   </CompilerOptions>
   <Debugging>

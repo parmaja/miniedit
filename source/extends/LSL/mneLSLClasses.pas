@@ -74,6 +74,7 @@ type
     procedure InitCompletion(vSynEdit: TCustomSynEdit); override;
     procedure DoPrepareCompletion(AEditor: TCustomSynEdit); override;
   public
+  procedure Created; override;
     function CreateHighlighter: TSynCustomHighlighter; override;
   end;
 
@@ -91,6 +92,7 @@ type
     procedure SendMessage(S: string; vMessageType: TNotifyMessageType); override;
     procedure HelpKeyword(AWord:string); override;
     procedure CreateOptionsFrame(AOwner: TComponent; AddFrame: TAddFrameCallBack); override;
+    property EnableMacros default True;
   end;
 
 implementation
@@ -147,6 +149,11 @@ begin
   end;
 end;
 
+procedure TBVHFileCategory.Created;
+begin
+  inherited;
+end;
+
 { TBVHFile }
 
 procedure TBVHFile.NewContent;
@@ -159,6 +166,7 @@ end;
 procedure TLSLTendency.Created;
 begin
   FCapabilities := [{capExecute, } capLint];
+  EnableMacros := True;
   FHaveOptions := True;
   FName := 'LSL';
   FTitle := 'LSL/OSSL project';
