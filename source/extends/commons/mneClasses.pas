@@ -11,7 +11,7 @@ interface
 
 uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics, Contnrs, StdCtrls,
-  LCLintf, LCLType,
+  LCLintf, LCLType, LazEditTextAttributes,
   Dialogs, EditorOptions, SynEditHighlighter, SynEditSearch, SynEdit,
   Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
@@ -128,7 +128,7 @@ function StatesToCheckBoxState(State: TThreeStates): TCheckBoxState;
 const
   sSoftwareRegKey = 'Software\miniEdit\';
 
-function GetHighlighterAttriAtRowColExtend(SynEdit: TCustomSynEdit; const XY: TPoint; out Token: string; out TokenType, Start: integer; out Attri: TSynHighlighterAttributes; out Range: Pointer): boolean;
+function GetHighlighterAttriAtRowColExtend(SynEdit: TCustomSynEdit; const XY: TPoint; out Token: string; out TokenType, Start: integer; out Attri: TLazEditTextAttribute; out Range: Pointer): boolean;
 
 implementation
 
@@ -199,7 +199,7 @@ end;
 type
   TSynCustomHighlighterHack = class(TSynCustomHighlighter);
 
-function GetHighlighterAttriAtRowColExtend(SynEdit: TCustomSynEdit; const XY: TPoint; out Token: string; out TokenType, Start: integer; out Attri: TSynHighlighterAttributes; out Range: Pointer): boolean;
+function GetHighlighterAttriAtRowColExtend(SynEdit: TCustomSynEdit; const XY: TPoint; out Token: string; out TokenType, Start: integer; out Attri: TLazEditTextAttribute; out Range: Pointer): boolean;
 var
   PosX, PosY: integer;
   Line: string;

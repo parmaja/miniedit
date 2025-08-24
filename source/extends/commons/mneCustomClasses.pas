@@ -19,6 +19,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
+  LazEditTextAttributes,
   LazFileUtils, mnSynHighlighterD, EditorClasses, mneClasses,
   mneCompilerProjectFrames, EditorRun, mnSynHighlighterMultiProc,
   mneRunFrames;
@@ -139,7 +140,7 @@ end;
 procedure TCustomFile.OpenInclude;
 var
   P: TPoint;
-  Attri: TSynHighlighterAttributes;
+  Attri: TLazEditTextAttribute;
   aToken: string;
   aTokenType: integer;
   aStart: integer;
@@ -179,7 +180,7 @@ end;
 function TCustomFile.CanOpenInclude: Boolean;
 var
   P: TPoint;
-  Attri: TSynHighlighterAttributes;
+  Attri: TLazEditTextAttribute;
   aToken: string;
   aTokenType: integer;
   aStart: integer;

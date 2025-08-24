@@ -13,6 +13,7 @@ uses
   Messages, Graphics, Controls, Forms, Dialogs, StdCtrls, ComCtrls, Clipbrd, StrUtils,
   Registry, ExtCtrls, Buttons, ImgList, Menus, ColorBox, SynEdit, SynGutter, SynEditMarkupWordGroup,
   SynEditHighlighter, SynEditMiscClasses, SynEditKeyCmds, Classes, SysUtils, typinfo, LazFileUtils,
+  LazEditTextAttributes,
   EditorProfiles, SynGutterBase, SynEditMarks, mnStreams, Types;
 
 type
@@ -397,7 +398,7 @@ end;
 
 procedure TEditorColorsForm.SampleEditMouseUp(Sender: TObject; Button: TMouseButton; Shift: TShiftState; X, Y: integer);
 var
-  Attributes: TSynHighlighterAttributes;
+  Attributes: TLazEditTextAttribute;
   M: TMap;
   G: TGlobalAttribute;
   p: TPoint;

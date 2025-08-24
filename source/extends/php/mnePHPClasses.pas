@@ -17,6 +17,7 @@ uses
   SynEditHighlighter, SynEditSearch, SynEdit, Registry, EditorEngine,
   mnXMLRttiProfile, mnXMLUtils, SynEditTypes, SynCompletion,
   SynHighlighterHashEntries, EditorProfiles, SynHighlighterCSS,
+  LazEditTextAttributes,
   SynHighlighterSQL, SynHighlighterXML, SynHighlighterJScript,
   mnSynHighlighterXHTML, mnSynHighlighterMultiProc, HTMLProcessor,
   EditorClasses, mneClasses, mneRunFrames, mnePHPTendencyFrames,
@@ -198,7 +199,7 @@ end;
 procedure TPHPFile.OpenInclude;
 var
   P: TPoint;
-  Attri: TSynHighlighterAttributes;
+  Attri: TLazEditTextAttribute;
   aToken: string;
   aTokenType: integer;
   aStart: integer;
@@ -238,7 +239,7 @@ end;
 function TPHPFile.CanOpenInclude: Boolean;
 var
   P: TPoint;
-  Attri: TSynHighlighterAttributes;
+  Attri: TLazEditTextAttribute;
   aToken: string;
   aTokenType: integer;
   aStart: integer;
@@ -392,7 +393,7 @@ var
   aTokenType, aStart: integer;
   aRange: pointer;
   P: TPoint;
-  Attri: TSynHighlighterAttributes;
+  Attri: TLazEditTextAttribute;
   aFiles: TStringList;
 begin
   aSynEdit := Completion.TheForm.CurrentEditor as TCustomSynEdit;

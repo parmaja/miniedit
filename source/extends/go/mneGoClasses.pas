@@ -15,6 +15,7 @@ uses
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
+  LazEditTextAttributes,
   gdbClasses, mnSynHighlighterGo,
   EditorClasses, mneClasses, mnMsgBox,
   mneCompilerProjectFrames, mneGoTendencyFrames, EditorRun,
@@ -107,7 +108,7 @@ end;
 procedure TGoFile.OpenInclude;
 var
   P: TPoint;
-  Attri: TSynHighlighterAttributes;
+  Attri: TLazEditTextAttribute;
   aToken: string;
   aTokenType: integer;
   aStart: integer;
@@ -147,7 +148,7 @@ end;
 function TGoFile.CanOpenInclude: Boolean;
 var
   P: TPoint;
-  Attri: TSynHighlighterAttributes;
+  Attri: TLazEditTextAttribute;
   aToken: string;
   aTokenType: integer;
   aStart: integer;

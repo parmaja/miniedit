@@ -12,6 +12,7 @@ uses
   Messages, Forms, SysUtils, StrUtils, Variants, Classes, Controls, Graphics,
   Contnrs, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
+  LazEditTextAttributes,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   LazFileUtils, mnSynHighlighterLua, EditorClasses, mneClasses,
   mneCompilerProjectFrames, EditorRun,
@@ -104,7 +105,7 @@ end;
 procedure TLuaFile.OpenInclude;
 var
   P: TPoint;
-  Attri: TSynHighlighterAttributes;
+  Attri: TLazEditTextAttribute;
   aToken: string;
   aTokenType: integer;
   aStart: integer;
@@ -144,7 +145,7 @@ end;
 function TLuaFile.CanOpenInclude: Boolean;
 var
   P: TPoint;
-  Attri: TSynHighlighterAttributes;
+  Attri: TLazEditTextAttribute;
   aToken: string;
   aTokenType: integer;
   aStart: integer;

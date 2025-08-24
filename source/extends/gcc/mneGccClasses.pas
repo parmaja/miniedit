@@ -19,6 +19,7 @@ uses
   Contnrs, LazFileUtils, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
+  LazEditTextAttributes,
   mnSynHighlighterCpp, EditorClasses, mneClasses, mnMsgBox,
   mneCompilerProjectFrames, EditorRun, SynHighlighterCpp,
   mneRunFrames;
@@ -167,7 +168,7 @@ end;
 procedure TCppFile.OpenInclude;
 var
   P: TPoint;
-  Attri: TSynHighlighterAttributes;
+  Attri: TLazEditTextAttribute;
   aToken: string;
   aTokenType: integer;
   aStart: integer;
@@ -207,7 +208,7 @@ end;
 function TCppFile.CanOpenInclude: Boolean;
 var
   P: TPoint;
-  Attri: TSynHighlighterAttributes;
+  Attri: TLazEditTextAttribute;
   aToken: string;
   aTokenType: integer;
   aStart: integer;

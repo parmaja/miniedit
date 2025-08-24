@@ -33,14 +33,14 @@ interface
 
 uses
   Messages, SysUtils, Forms, StdCtrls, StrUtils, DateUtils, Dialogs, Variants, Classes, Menus, Controls,
-  LMessages, LCLIntf, LConvEncoding, LazUTF8, LazStringUtils, fgl, LCLType,
+  LMessages, LCLIntf, LConvEncoding, LazUTF8, LazStringUtils, fgl, LCLType, LazEditTextAttributes,
   FileUtil, LazFileUtils, Math, Masks,
   Graphics, Contnrs, Types, IniFiles,
   EditorOptions, EditorColors, EditorProfiles,
   SynBeautifier, SynEditMarks, mnSynCompletion, mnSynParamsHint, SynEditAutoComplete,
   SynEditTypes, SynEditMiscClasses, SynEditPlugins, SynPluginTemplateEdit,
   SynEditHighlighter, SynEditKeyCmds, SynEditMarkupBracket, SynEditSearch, ColorUtils,
-  SynEdit, SynEditTextTrimmer, SynTextDrawer, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
+  SynEdit, SynEditTextTrimmer, SynGutterBase, SynEditPointClasses, SynMacroRecorder,
   mncCSV, mnXMLRttiProfile, mnXMLUtils, mnClasses,
   mnUtils, EditorClasses, EditorRun,
 	ntvUtils;
@@ -1088,7 +1088,7 @@ type
   public
     AttType: TAttributeType;
     TokenID: Integer;
-    Attribute: TSynHighlighterAttributes;
+    Attribute: TLazEditTextAttribute;
     ForignName: string;
   end;
 
@@ -1097,8 +1097,8 @@ type
   TMapper = class(specialize TmnNamedObjectList<TMap>)
   private
   public
-    function Add(Attribute: TSynHighlighterAttributes; AttType: TAttributeType; TokenID: Integer = -1): TMap;
-    function Add(ForignName: string; Attribute: TSynHighlighterAttributes; AttType: TAttributeType; TokenID: Integer = -1): TMap;
+    function Add(Attribute: TLazEditTextAttribute; AttType: TAttributeType; TokenID: Integer = -1): TMap;
+    function Add(ForignName: string; Attribute: TLazEditTextAttribute; AttType: TAttributeType; TokenID: Integer = -1): TMap;
     function IndexOfAttribute(AttributeType: TAttributeType): Integer;
     function FindByAttribute(AttributeType: TAttributeType): TMap;
     function FindByTokenID(TokenID: Integer): TMap;
@@ -1994,14 +1994,14 @@ end;
 
 constructor TRecentItem.Create;
 begin
-  inherited Create;
+  inherited;
 end;
 
 { TRecentItems }
 
 constructor TRecentItems.Create(AMax: Integer);
 begin
-  inherited Create;
+  inherited Create(True);
   FMax := AMax;
 end;
 
@@ -2594,7 +2594,7 @@ end;
 
 { TMapper }
 
-function TMapper.Add(Attribute: TSynHighlighterAttributes; AttType: TAttributeType; TokenID: Integer): TMap;
+function TMapper.Add(Attribute: TLazEditTextAttribute; AttType: TAttributeType; TokenID: Integer): TMap;
 begin
   Result := TMap.Create;
   Result.Attribute := Attribute;
@@ -2604,7 +2604,7 @@ begin
   inherited Add(Result); //if there is a bug inside add, you need to fix it by code, so no need to catch it
 end;
 
-function TMapper.Add(ForignName: string; Attribute: TSynHighlighterAttributes; AttType: TAttributeType; TokenID: Integer): TMap;
+function TMapper.Add(ForignName: string; Attribute: TLazEditTextAttribute; AttType: TAttributeType; TokenID: Integer): TMap;
 begin
  Result := TMap.Create;
  Result.Attribute := Attribute;
@@ -6957,7 +6957,7 @@ var
   i: Integer;
   M: TMap;
   G: TGlobalAttribute;
-  Att: TSynHighlighterAttributes;
+  Att: TLazEditTextAttribute;
 begin
   for i := 0 to AHighlighter.AttrCount - 1 do
   begin

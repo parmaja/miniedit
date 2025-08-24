@@ -17,6 +17,7 @@ uses
   Contnrs, LazFileUtils, LCLintf, LCLType, Dialogs, EditorOptions, SynEditHighlighter,
   SynEditSearch, SynEdit, Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
+  LazEditTextAttributes,
   mnSynUtils, mnSynHighlighterNim, EditorClasses, mneClasses,
   mneCompilerProjectFrames, EditorRun, mneResources,
   mneRunFrames, mneNimTendencyFrames;
@@ -111,7 +112,7 @@ end;
 procedure TNimFile.OpenInclude;
 var
   P: TPoint;
-  Attri: TSynHighlighterAttributes;
+  Attri: TLazEditTextAttribute;
   aToken: string;
   aTokenType: integer;
   aStart: integer;
@@ -151,7 +152,7 @@ end;
 function TNimFile.CanOpenInclude: Boolean;
 var
   P: TPoint;
-  Attri: TSynHighlighterAttributes;
+  Attri: TLazEditTextAttribute;
   aToken: string;
   aTokenType: integer;
   aStart: integer;

@@ -11,7 +11,7 @@ object EditorColorsForm: TEditorColorsForm
   Font.Name = 'MS Sans Serif'
   Position = poScreenCenter
   ShowHint = True
-  LCLVersion = '3.99.0.0'
+  LCLVersion = '4.99.0.0'
   OnCreate = FormCreate
   OnShow = FormShow
   object OkBtn: TButton
@@ -219,6 +219,7 @@ object EditorColorsForm: TEditorColorsForm
       Font.Name = 'Courier New'
       Font.Pitch = fpFixed
       Font.Quality = fqNonAntialiased
+      Font.Style = [fsBold]
       ParentColor = False
       ParentFont = False
       TabOrder = 0
@@ -737,35 +738,43 @@ object EditorColorsForm: TEditorColorsForm
           Command = emcStartDragMove
         end>
       VisibleSpecialChars = [vscSpace, vscTabAtLast]
-      SelectedColor.BackPriority = 50
       SelectedColor.ForePriority = 50
+      SelectedColor.BackPriority = 50
       SelectedColor.FramePriority = 50
-      SelectedColor.BoldPriority = 50
-      SelectedColor.ItalicPriority = 50
-      SelectedColor.UnderlinePriority = 50
-      SelectedColor.StrikeOutPriority = 50
+      SelectedColor.BoldPriority = 0
+      SelectedColor.ItalicPriority = 0
+      SelectedColor.UnderlinePriority = 0
+      SelectedColor.StrikeOutPriority = 0
+      SelectedColor.ExtendPastEol = True
+      IncrementColor.ExtendPastEol = False
       BracketHighlightStyle = sbhsBoth
-      BracketMatchColor.Background = clNone
       BracketMatchColor.Foreground = clNone
+      BracketMatchColor.Background = clNone
       BracketMatchColor.Style = [fsBold]
-      FoldedCodeColor.Background = clNone
       FoldedCodeColor.Foreground = clGray
+      FoldedCodeColor.Background = clNone
       FoldedCodeColor.FrameColor = clGray
-      MouseLinkColor.Background = clNone
       MouseLinkColor.Foreground = clBlue
-      LineHighlightColor.Background = clNone
+      MouseLinkColor.Background = clNone
       LineHighlightColor.Foreground = clNone
+      LineHighlightColor.Background = clNone
       OnGutterClick = SampleEditGutterClick
       inline SynGutterPartList1: TSynGutterPartList
         object SynGutterMarks1: TSynGutterMarks
           Width = 24
           MouseActions = <>
+          MaxExtraMarksColums = 0
+          Options = [sgmoDeDuplicateMarksOnOverflow]
+          MarkupInfo.Background = clBtnFace
+          MarkupInfoCurrentLine.Foreground = clNone
+          MarkupInfoCurrentLine.Background = clNone
         end
         object SynGutterLineNumber1: TSynGutterLineNumber
           Width = 17
           MouseActions = <>
           MarkupInfo.Background = clBtnFace
-          MarkupInfo.Foreground = clNone
+          MarkupInfoCurrentLine.Foreground = clNone
+          MarkupInfoCurrentLine.Background = clNone
           DigitCount = 2
           ShowOnlyLineNumbersMultiplesOf = 1
           ZeroStart = False
@@ -776,12 +785,18 @@ object EditorColorsForm: TEditorColorsForm
           MouseActions = <>
           ModifiedColor = 59900
           SavedColor = clGreen
+          MarkupInfo.Foreground = clGreen
+          MarkupInfo.FrameColor = 59900
+          MarkupInfoCurrentLine.Foreground = clNone
+          MarkupInfoCurrentLine.Background = clNone
         end
         object SynGutterSeparator1: TSynGutterSeparator
           Width = 2
           MouseActions = <>
-          MarkupInfo.Background = clWhite
           MarkupInfo.Foreground = clGray
+          MarkupInfo.Background = clWhite
+          MarkupInfoCurrentLine.Foreground = clNone
+          MarkupInfoCurrentLine.Background = clNone
         end
         object SynGutterCodeFolding1: TSynGutterCodeFolding
           Width = 0
@@ -811,8 +826,9 @@ object EditorColorsForm: TEditorColorsForm
               ClickDir = cdDown
               Command = emcNone
             end>
-          MarkupInfo.Background = clNone
           MarkupInfo.Foreground = clGray
+          MarkupInfoCurrentLine.Foreground = clNone
+          MarkupInfoCurrentLine.Background = clNone
           MouseActionsExpanded = <          
             item
               ClickCount = ccAny
