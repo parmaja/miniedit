@@ -68,7 +68,7 @@ land_collision_start(vector pos)
 }
 
 [link_message]
-link_message( integer sender_number, integer number, string message, key id )
+link_message( integer sender_link, integer number, string message, key id )
 {
     |;
 }

@@ -6,6 +6,7 @@ object CSVForm: TCSVForm
   ClientHeight = 432
   ClientWidth = 741
   Color = clDefault
+  LCLVersion = '4.99.0.0'
   ParentColor = False
   TabOrder = 0
   DesignLeft = 438
@@ -109,8 +110,8 @@ object CSVForm: TCSVForm
           Width = 53
           Align = alRight
           Caption = '&Clear'
-          OnClick = ClearBtnClick
           TabOrder = 4
+          OnClick = ClearBtnClick
         end
         object StopBtn: TButton
           Left = 691
@@ -119,8 +120,8 @@ object CSVForm: TCSVForm
           Width = 50
           Align = alRight
           Caption = 'S&top'
-          OnClick = StopBtnClick
           TabOrder = 3
+          OnClick = StopBtnClick
         end
         object OptionsBtn: TButton
           Left = 0
@@ -129,8 +130,8 @@ object CSVForm: TCSVForm
           Width = 60
           Align = alLeft
           Caption = '&Options'
-          OnClick = OptionsBtnClick
           TabOrder = 0
+          OnClick = OptionsBtnClick
         end
         object DelConfigFileBtn: TButton
           Left = 60
@@ -139,9 +140,9 @@ object CSVForm: TCSVForm
           Width = 93
           Align = alLeft
           Caption = '&Delete Config'
-          OnClick = DelConfigFileBtnClick
           TabOrder = 1
           Visible = False
+          OnClick = DelConfigFileBtnClick
         end
         object SaveConfigFileBtn: TButton
           Left = 153
@@ -150,8 +151,8 @@ object CSVForm: TCSVForm
           Width = 86
           Align = alLeft
           Caption = '&Save Config'
-          OnClick = ConfigFileBtnClick
           TabOrder = 2
+          OnClick = ConfigFileBtnClick
         end
       end
     end

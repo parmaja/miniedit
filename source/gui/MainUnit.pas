@@ -3729,7 +3729,6 @@ end;
 procedure TMainForm.CatchErr(Sender: TObject; e: exception);
 begin
   MsgBox.Error(e.Message);
-
 end;
 
 end.

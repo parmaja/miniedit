@@ -22,7 +22,7 @@ interface
 uses
   Classes, SysUtils, Forms, Controls, Grids, ExtCtrls, StdCtrls,
   FileUtil, LCLType, Graphics, Menus, Buttons, EditorEngine, IniFiles,
-  mnMsgBox, mnStreams, ntvGrids, ntvPageControls, mncConnections, mncCSV, ntvTabSets, ntvTabs;
+  mnTypes, mnMsgBox, mnStreams, ntvGrids, ntvPageControls, mncConnections, mncCSV, ntvTabSets, ntvTabs;
 
 type
   TCSVFileMode = (csvmGrid, csvmText);

@@ -36,7 +36,7 @@ interface
 uses
   //Windows,
   Classes, SysUtils, StrUtils,
-  mnClasses, syncobjs, process, fpjson, EditorRun,
+  mnTypes, mnClasses, syncobjs, process, fpjson, EditorRun,
   mnUtils, mnStreams, ConsoleProcess, EditorEngine;
 
 type
