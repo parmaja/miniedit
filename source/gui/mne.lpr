@@ -53,7 +53,7 @@ uses
   mnePHPTendencyFrames, mneTyroClasses, mneViewClasses, mneCMDClasses,
   mneGoClasses, mneSARDClasses, mneLSLClasses, mndManagerForms, mneBoardClasses,
   mneBoardForms, mneSelectComponents, mneBoardComponents, mneFontGenForm,
-  mneVerilogClasses, SynHighlighterVerilog, mneCustomClasses,
+  mneVerilogClasses, SynHighlighterVerilog,
   mnePasProjectFrames, mnePASClasses, mneGccClasses, mneCSVClasses, mneDClasses,
   mneLuaClasses, mnMsgBox, GUIMsgBox, Classes, PHPUtils,
   mneNimClasses, mneNimTendencyFrames, ntvThemes, mneSetups,

@@ -624,6 +624,5 @@ initialization
     Groups.Add(TXHTMLFile, 'html', 'HTML', TXHTMLFileCategory, ['.html', '.xhtml', '.htm', '.tpl'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TCssFile, 'css', 'CSS', TCSSFileCategory, ['.css'], [fgkAssociated, fgkBrowsable]);
     Groups.Add(TJSFile,'js', 'Java Script', TJSFileCategory, ['.js'], [fgkAssociated, fgkBrowsable], [capExecute]);
-    Groups.Add(TJSFile,'json', 'JSON', TJSFileCategory, ['.json'], [fgkAssociated, fgkBrowsable]);
   end;
 end.

@@ -1099,10 +1099,6 @@ object MainForm: TMainForm
         SelectedColor.ForePriority = 50
         SelectedColor.BackPriority = 50
         SelectedColor.FramePriority = 50
-        SelectedColor.BoldPriority = 0
-        SelectedColor.ItalicPriority = 0
-        SelectedColor.UnderlinePriority = 0
-        SelectedColor.StrikeOutPriority = 0
         SelectedColor.ExtendPastEol = True
         IncrementColor.ExtendPastEol = False
         BracketHighlightStyle = sbhsBoth
@@ -1834,10 +1830,6 @@ object MainForm: TMainForm
         SelectedColor.ForePriority = 50
         SelectedColor.BackPriority = 50
         SelectedColor.FramePriority = 50
-        SelectedColor.BoldPriority = 0
-        SelectedColor.ItalicPriority = 0
-        SelectedColor.UnderlinePriority = 0
-        SelectedColor.StrikeOutPriority = 0
         SelectedColor.ExtendPastEol = True
         IncrementColor.ExtendPastEol = False
         BracketHighlightStyle = sbhsBoth

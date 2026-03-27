@@ -16,7 +16,7 @@ uses
   Registry, EditorEngine, mnXMLRttiProfile, mnXMLUtils,
   SynEditTypes, SynCompletion, SynHighlighterHashEntries, EditorProfiles,
   SynHighlighterXML, mnSynHighlighterApache, mnSynHighlighterConfig, SynHighlighterINI,
-  SynHighlighterPython;
+  mnSynHighlighterJSON5, SynHighlighterPython;
 
 type
 
@@ -43,6 +43,10 @@ type
   end;
 
   TYamlConfigFile = class(TTextEditorFile)
+  public
+  end;
+
+  TJSON5ConfigFile = class(TTextEditorFile)
   public
   end;
 
@@ -81,6 +85,16 @@ type
   public
     function CreateHighlighter: TSynCustomHighlighter; override;
   end;
+
+  { TJSON5FileCategory }
+
+  TJSON5FileCategory = class(TTextFileCategory)
+  protected
+    procedure InitMappers; override;
+  public
+    function CreateHighlighter: TSynCustomHighlighter; override;
+  end;
+
 
   { TTXTFileCategory }
 
@@ -293,6 +307,33 @@ begin
   end;
 end;
 
+{ TJSON5FileCategory }
+
+function TJSON5FileCategory.CreateHighlighter: TSynCustomHighlighter;
+begin
+  Result := TSynJSON5Syn.Create(nil);
+end;
+
+procedure TJSON5FileCategory.InitMappers;
+begin
+  with Highlighter as TSynJSON5Syn do
+  begin
+    Mapper.Add(WhitespaceAttri, attDefault);
+    Mapper.Add(CommentAttri, attComment);
+    Mapper.Add(KeywordAttri, attKeyword);
+    Mapper.Add(DocumentAttri, attDocument);
+    Mapper.Add(TypeAttri, attDataType);
+    Mapper.Add(FunctionAttri, attCommon);
+    Mapper.Add(IdentifierAttri, attIdentifier);
+    Mapper.Add(TextAttri, attText);
+    Mapper.Add(NumberAttri, attNumber);
+    Mapper.Add(StringAttri, attQuotedString);
+    Mapper.Add(SymbolAttri, attSymbol);
+    Mapper.Add(VariableAttri, attVariable);
+    Mapper.Add(ProcessorAttri, attDirective);
+  end;
+end;
+
 { TMDFileCategory }
 
 function TMDFileCategory.CreateHighlighter: TSynCustomHighlighter;
@@ -423,5 +464,8 @@ initialization
 
     Categories.Add(TYamlFileCategory.Create(DefaultProject.Tendency, 'yaml', 'YAML'));
     Groups.Add(TYamlConfigFile, 'yaml', 'YAML', TYamlFileCategory, ['.yaml'], [fgkAssociated, fgkBrowsable]);
+
+    Categories.Add(TJSON5FileCategory.Create(DefaultProject.Tendency, 'json5', 'JSON5'));
+    Groups.Add(TJSON5ConfigFile, 'json5', 'JSON5', TJSON5FileCategory, ['.json', '.json5', '.json5+'], [fgkAssociated, fgkBrowsable]);
   end;
 end.
