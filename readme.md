@@ -21,10 +21,10 @@ if you are editing multiple files, e.g. Python, PHP it can run this files into c
  * Search in files
  * Search for file
  * PHP XDebug
- * Tortoise SVN/GIT integrated in Windows, [TODO] RabbitVCS in Linux
+ * Tortoise /GIT integrated in Windows, --[TODO] RabbitVCS in Linux--
  * [TODO] GDB debugging
  * Works in Windows and Linux
- * Compile and run Pascal, D, Go, Cpp (cpp todo not yet)
+ * Compile and run Pascal, D, Go, Cpp (TODO cpp not yet)
  * Run PHP, CMD, SH, BAT, Lua, Py
  * Themed colors one for all languages, can be customized easy
  * Saving macros https://github.com/parmaja/miniedit/wiki/SL-OSSL#macros
@@ -34,7 +34,7 @@ if you are editing multiple files, e.g. Python, PHP it can run this files into c
  | Name       	| Methods     	| Engine     	|
  |--------------|--------------	|---------------|
  | PHP 			| run, debug 	| PHP 			|
- | Lua 			| run           | lua, luac, internal		|
+ | Lua 			| run           | lua, luac,    |
  | Python 		| run           | python        |
  | Basic 		| run 			| SmallBasic, YaBasic|
  | Pascal 		| compile, run	| FPC           |

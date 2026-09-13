@@ -311,22 +311,22 @@ begin
     else if c = '&' then //echo
     begin
       ResType := miEcho;
-      Result := DescapeStringC(DequoteStr(Result))
+      Result := DescapeCString(DequoteStr(Result))
     end
     else if c = '*' then //command
     begin
       ResType := miCommand;
-      Result := DescapeStringC(DequoteStr(Result))
+      Result := DescapeCString(DequoteStr(Result))
     end
     else if c = '~' then //info
     begin
       ResType := miInfo;
-      Result := DescapeStringC(DequoteStr(Result))
+      Result := DescapeCString(DequoteStr(Result))
     end
     else if c = '=' then
     begin
       ResType := miCommand;
-      Result := DescapeStringC(DequoteStr(Result))
+      Result := DescapeCString(DequoteStr(Result))
     end
     else
     begin

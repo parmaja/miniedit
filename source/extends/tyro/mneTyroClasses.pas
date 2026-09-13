@@ -177,8 +177,8 @@ initialization
   with Engine do
   begin
     Tendencies.Add(TTyroTendency);
-    Categories.Add(TPSFileCategory.Create(TTyroTendency, 'ps', 'Pascal Script'));
-    Groups.Add(TPASFile, 'ps', 'Pascal Script', TPSFileCategory, ['.rops', '.ps', '.pascal'], [fgkAssociated, fgkFolding, fgkBrowsable], [capExecute, capDebug]);
+    //Categories.Add(TPSFileCategory.Create(TTyroTendency, 'ps', 'Pascal Script'));
+    //Groups.Add(TPASFile, 'ps', 'Pascal Script', TPSFileCategory, ['.rops', '.ps', '.pascal'], [fgkAssociated, fgkFolding, fgkBrowsable], [capExecute, capDebug]);
 
     Categories.Add(TLSFileCategory.Create(TTyroTendency, 'ls', 'Lua Script'));
     Groups.Add(TLuaFile, 'ls', 'Lua Script', TLSFileCategory, ['.ls'], [fgkAssociated, fgkFolding, fgkBrowsable], [capExecute, capDebug]);
