@@ -283,7 +283,7 @@ begin
       aRunItem.Info.StartDebug := rnaDebug in Info.Actions;
       aRunItem.Info.Title := ExtractFileName(Info.OutputFile);
       aRunItem.Info.Run.Command := Info.RunFile;
-      aRunItem.Info.Run.AddParam(RunOptions.Params);
+      aRunItem.Info.Run.AddParam(Info.Params);
       aRunItem.Info.Run.AddParam(Engine.Session.Project.RunOptions.Params);
       aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
     end;

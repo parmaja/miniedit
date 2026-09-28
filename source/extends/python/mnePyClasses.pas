@@ -186,7 +186,7 @@ begin
     aRunItem.Info.Run.Console := Info.Console;
     if not aRunItem.Info.Run.Console then
       aRunItem.Info.Run.Silent := True;
-    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);;
+    aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);
     aRunItem.Info.Run.Command := Info.Command;
     if Info.Command = '' then
     begin
@@ -202,7 +202,7 @@ begin
       aRunItem.Environment.Add('PYDEVD_DISABLE_FILE_VALIDATION=1');
     end;
     aRunItem.Info.Run.AddParam(' "' + Info.MainFile + '"');
-    aRunItem.Info.Run.AddParam(RunOptions.Params);
+    aRunItem.Info.Run.AddParam(Info.Params);
     aRunItem.Info.StatusMessage := 'Running ' + Info.OutputFile;
   end
 	else if (rnaLint in Info.Actions) then

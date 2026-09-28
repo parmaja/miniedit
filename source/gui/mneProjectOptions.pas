@@ -28,6 +28,7 @@ type
     Label1: TLabel;
     Label10: TLabel;
     Label11: TLabel;
+    Label12: TLabel;
     Label2: TLabel;
     Label6: TLabel;
     Label7: TLabel;
@@ -46,6 +47,7 @@ type
     FileFilterEdit: TEdit;
     OverrideOptionsChk: TCheckBox;
     MainPathEdit: TEdit;
+    RunParamsEdit: TEdit;
     SaveDesktopChk: TCheckBox;
     SCMCbo: TComboBox;
     TabWidthEdit: TEdit;
@@ -177,6 +179,7 @@ begin
   else
     SCMCbo.ItemIndex := 0;
   MainEdit.Text := FProject.RunOptions.MainFile;
+  RunParamsEdit.Text := FProject.RunOptions.Params;
 
   //Add any new overrided options to cSynOverridedOptions in EditorProfiles unit
   EnumIndentMode(IndentModeCbo.Items);
@@ -196,6 +199,7 @@ begin
   FProject.SaveDesktop := SaveDesktopChk.Checked;
   FProject.SetSCMClass(TEditorSCM(SCMCbo.Items.Objects[SCMCbo.ItemIndex]));
   FProject.RunOptions.MainFile := MainEdit.Text;
+  FProject.RunOptions.Params := RunParamsEdit.Text;
 
   //FProject.Options.EditorOptions := [];
   FProject.Options.OverrideEditorOptions := OverrideOptionsChk.Checked;

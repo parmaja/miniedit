@@ -210,7 +210,7 @@ begin
     aRunItem.Info.Run.Pause := Info.Pause;
     aRunItem.Info.Title := ExtractFileNameWithoutExt(Info.OutputFile);
     aRunItem.Info.Run.Command := Info.RunFile;
-    aRunItem.Info.Run.AddParam(RunOptions.Params);
+    aRunItem.Info.Run.AddParam(Info.Params);
     aRunItem.Info.Run.AddParam(Engine.Session.Project.RunOptions.Params);
   end;
 end;

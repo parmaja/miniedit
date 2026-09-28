@@ -293,7 +293,7 @@ begin
     if Info.MainFile <> '' then
       aRunItem.Info.Run.AddParam(Info.MainFile);
 
-    aRunItem.Info.Run.AddParam(RunOptions.Params);
+    aRunItem.Info.Run.AddParam(Info.Params);
     aRunItem.Info.Run.AddParam(Engine.Session.Project.RunOptions.Params);
   end;
 end;

@@ -21,6 +21,7 @@ type
   TTendencyForm = class(TForm)
     Button3: TButton;
     Label1: TLabel;
+    Label12: TLabel;
     Label3: TLabel;
     IndentModeCbo: TComboBox;
     GroupBox1: TGroupBox;
@@ -32,6 +33,7 @@ type
     PageControl: TPageControl;
     GeneralSheet: TTabSheet;
     MainPathEdit: TEdit;
+    RunParamsEdit: TEdit;
     TabWidthEdit: TEdit;
     procedure Button3Click(Sender: TObject);
     procedure PageControlChanging(Sender: TObject; var AllowChange: Boolean);
@@ -85,6 +87,7 @@ begin
   FTendency.TabWidth := StrToIntDef(TabWidthEdit.Text, 4);
   FTendency.IndentMode := TIndentMode(IndentModeCbo.ItemIndex);
   FTendency.RunOptions.MainPath := MainPathEdit.Text;
+  FTendency.RunOptions.Params := RunParamsEdit.Text;
   FTendency.EnableMacros := MacrosChk.Checked;
   FTendency.UpdatePath;
 end;
@@ -118,6 +121,7 @@ begin
   TabWidthEdit.Text := IntToStr(FTendency.TabWidth);
   IndentModeCbo.ItemIndex := Ord(FTendency.IndentMode);
   MainPathEdit.Text := FTendency.RunOptions.MainPath;
+  RunParamsEdit.Text := FTendency.RunOptions.Params;
   MacrosChk.Checked := FTendency.EnableMacros;
 end;
 

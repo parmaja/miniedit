@@ -1,53 +1,51 @@
 object ProjectForm: TProjectForm
   Left = 461
-  Height = 312
+  Height = 388
   Top = 184
   Width = 471
   BorderStyle = bsDialog
   Caption = 'Project Options'
-  ClientHeight = 312
+  ClientHeight = 388
   ClientWidth = 471
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
-  OnCreate = FormCreate
   Position = poMainFormCenter
-  LCLVersion = '2.3.0.0'
+  LCLVersion = '4.99.0.0'
+  OnCreate = FormCreate
   object OkBtn: TButton
     Left = 392
     Height = 25
-    Top = 285
+    Top = 361
     Width = 75
     Anchors = [akRight, akBottom]
     Caption = '&Ok'
-    Default = True
     ModalResult = 1
     TabOrder = 1
   end
   object CancelBtn: TButton
     Left = 316
     Height = 25
-    Top = 285
+    Top = 361
     Width = 75
     Anchors = [akRight, akBottom]
-    Cancel = True
     Caption = '&Cancel'
     ModalResult = 2
     TabOrder = 2
   end
   object PageControl: TPageControl
     Left = 4
-    Height = 277
+    Height = 353
     Top = 5
     Width = 463
-    ActivePage = GeneralSheet
+    ActivePage = GeneralOptionsSheet
     Anchors = [akTop, akLeft, akRight, akBottom]
-    TabIndex = 0
+    Options = [nboKeyboardTabSwitch]
+    TabIndex = 1
     TabOrder = 0
     OnChanging = PageControlChanging
-    Options = [nboKeyboardTabSwitch]
     object GeneralSheet: TTabSheet
       Caption = 'General'
-      ClientHeight = 251
+      ClientHeight = 327
       ClientWidth = 455
       object Label3: TLabel
         Left = 12
@@ -55,7 +53,6 @@ object ProjectForm: TProjectForm
         Top = 40
         Width = 56
         Caption = 'Project &Title'
-        Color = clDefault
         FocusControl = NameEdit
         ParentColor = False
       end
@@ -65,7 +62,6 @@ object ProjectForm: TProjectForm
         Top = 62
         Width = 53
         Caption = '&Description'
-        Color = clDefault
         ParentColor = False
       end
       object NameEdit: TEdit
@@ -88,7 +84,6 @@ object ProjectForm: TProjectForm
         Top = 14
         Width = 64
         Caption = 'Project &Name'
-        Color = clDefault
         FocusControl = TitleEdit
         ParentColor = False
       end
@@ -101,18 +96,17 @@ object ProjectForm: TProjectForm
         TabOrder = 4
       end
       object Label8: TLabel
-        Left = 12
+        Left = 16
         Height = 13
-        Top = 203
+        Top = 205
         Width = 70
         Caption = 'Source Control'
-        Color = clDefault
         ParentColor = False
       end
       object SCMCbo: TComboBox
-        Left = 108
+        Left = 112
         Height = 21
-        Top = 199
+        Top = 201
         Width = 303
         ItemHeight = 13
         Style = csDropDownList
@@ -139,7 +133,6 @@ object ProjectForm: TProjectForm
         Top = 118
         Width = 107
         Caption = 'Filter files (eg .ini;.conf)'
-        Color = clDefault
         FocusControl = TitleEdit
         ParentColor = False
       end
@@ -149,7 +142,6 @@ object ProjectForm: TProjectForm
         Top = 160
         Width = 68
         Caption = 'Execlude Files'
-        Color = clDefault
         FocusControl = TitleEdit
         ParentColor = False
       end
@@ -163,69 +155,66 @@ object ProjectForm: TProjectForm
     end
     object GeneralOptionsSheet: TTabSheet
       Caption = 'Options'
-      ClientHeight = 251
+      ClientHeight = 327
       ClientWidth = 455
       object Label1: TLabel
         Left = 8
         Height = 13
-        Top = 121
+        Top = 152
         Width = 274
         Caption = 'Roo&t path of your project useful when enumerate your files'
-        Color = clDefault
         ParentColor = False
       end
       object MainPathEdit: TEdit
         Left = 8
         Height = 21
-        Top = 138
+        Top = 169
         Width = 382
         PopupMenu = PathPopupMenu
         TabOrder = 1
       end
       object Button3: TButton
-        Left = 400
+        Left = 398
         Height = 22
-        Top = 137
-        Width = 22
+        Top = 168
+        Width = 24
         Caption = '...'
-        OnClick = Button3Click
         TabOrder = 2
+        OnClick = Button3Click
       end
       object Label2: TLabel
         Left = 8
         Height = 13
-        Top = 174
+        Top = 202
         Width = 39
         Caption = 'Main file'
-        Color = clDefault
         ParentColor = False
       end
       object MainEdit: TEdit
         Left = 64
         Height = 21
-        Top = 170
+        Top = 201
         Width = 326
         Anchors = [akTop, akLeft, akRight]
         PopupMenu = PathPopupMenu
         TabOrder = 3
       end
       object Button4: TButton
-        Left = 400
+        Left = 398
         Height = 23
-        Top = 169
+        Top = 200
         Width = 24
         Anchors = [akTop, akRight]
         Caption = '...'
-        OnClick = Button4Click
         TabOrder = 4
+        OnClick = Button4Click
       end
       object Label9: TLabel
         Left = 8
         Height = 13
-        Top = 194
+        Top = 225
         Width = 297
         Caption = 'If empty, we will take the current opened file, or pass the folder.'
-        Color = clDefault
         ParentColor = False
         WordWrap = True
       end
@@ -251,7 +240,6 @@ object ProjectForm: TProjectForm
           Top = 38
           Width = 53
           Caption = 'Tab Width:'
-          Color = clDefault
           ParentColor = False
         end
         object Label6: TLabel
@@ -260,7 +248,6 @@ object ProjectForm: TProjectForm
           Top = 12
           Width = 60
           Caption = 'Indent Mode'
-          Color = clDefault
           ParentColor = False
         end
         object IndentModeCbo: TComboBox
@@ -281,6 +268,22 @@ object ProjectForm: TProjectForm
           Caption = 'Override Options'
           TabOrder = 0
         end
+      end
+      object RunParamsEdit: TEdit
+        Left = 89
+        Height = 21
+        Top = 116
+        Width = 333
+        Anchors = [akTop, akLeft, akRight]
+        TabOrder = 5
+      end
+      object Label12: TLabel
+        Left = 8
+        Height = 13
+        Top = 119
+        Width = 58
+        Caption = 'Run Params'
+        ParentColor = False
       end
     end
   end

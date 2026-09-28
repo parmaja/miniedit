@@ -5,13 +5,14 @@ object CompilerProjectFrame: TCompilerProjectFrame
   Width = 462
   ClientHeight = 298
   ClientWidth = 462
+  LCLVersion = '4.99.0.0'
   TabOrder = 0
   DesignLeft = 363
   DesignTop = 223
   inline PathsEdit: TSynEdit
     Left = 5
-    Height = 116
-    Top = 176
+    Height = 132
+    Top = 160
     Width = 451
     Anchors = [akTop, akLeft, akRight, akBottom]
     Constraints.MinHeight = 60
@@ -19,6 +20,7 @@ object CompilerProjectFrame: TCompilerProjectFrame
     Font.Name = 'Courier New'
     Font.Pitch = fpFixed
     Font.Quality = fqNonAntialiased
+    Font.Style = [fsBold]
     ParentColor = False
     ParentFont = False
     TabOrder = 0
@@ -539,31 +541,34 @@ object CompilerProjectFrame: TCompilerProjectFrame
       end>
     Options = [eoAutoIndent, eoBracketHighlight, eoGroupUndo, eoHideRightMargin, eoScrollPastEol, eoSmartTabs, eoTabsToSpaces, eoTrimTrailingSpaces]
     VisibleSpecialChars = [vscSpace, vscTabAtLast]
-    SelectedColor.BackPriority = 50
     SelectedColor.ForePriority = 50
+    SelectedColor.BackPriority = 50
     SelectedColor.FramePriority = 50
-    SelectedColor.BoldPriority = 50
-    SelectedColor.ItalicPriority = 50
-    SelectedColor.UnderlinePriority = 50
-    SelectedColor.StrikeOutPriority = 50
+    SelectedColor.BoldPriority = 0
+    SelectedColor.ItalicPriority = 0
+    SelectedColor.UnderlinePriority = 0
+    SelectedColor.StrikeOutPriority = 0
+    SelectedColor.ExtendPastEol = True
+    IncrementColor.ExtendPastEol = False
     BracketHighlightStyle = sbhsBoth
-    BracketMatchColor.Background = clNone
     BracketMatchColor.Foreground = clNone
+    BracketMatchColor.Background = clNone
     BracketMatchColor.Style = [fsBold]
-    FoldedCodeColor.Background = clNone
     FoldedCodeColor.Foreground = clGray
+    FoldedCodeColor.Background = clNone
     FoldedCodeColor.FrameColor = clGray
-    MouseLinkColor.Background = clNone
     MouseLinkColor.Foreground = clBlue
-    LineHighlightColor.Background = clNone
+    MouseLinkColor.Background = clNone
     LineHighlightColor.Foreground = clNone
+    LineHighlightColor.Background = clNone
     TabWidth = 2
     inline SynGutterPartList1: TSynGutterPartList
       object SynGutterLineNumber1: TSynGutterLineNumber
         Width = 17
         MouseActions = <>
         MarkupInfo.Background = clBtnFace
-        MarkupInfo.Foreground = clNone
+        MarkupInfoCurrentLine.Foreground = clNone
+        MarkupInfoCurrentLine.Background = clNone
         DigitCount = 2
         ShowOnlyLineNumbersMultiplesOf = 1
         ZeroStart = False
@@ -572,97 +577,83 @@ object CompilerProjectFrame: TCompilerProjectFrame
       object SynGutterSeparator1: TSynGutterSeparator
         Width = 2
         MouseActions = <>
-        MarkupInfo.Background = clWhite
         MarkupInfo.Foreground = clGray
+        MarkupInfo.Background = clWhite
+        MarkupInfoCurrentLine.Foreground = clNone
+        MarkupInfoCurrentLine.Background = clNone
       end
     end
   end
   object ExpandPathsChk: TCheckBox
     Left = 11
-    Height = 19
-    Top = 152
-    Width = 96
+    Height = 21
+    Top = 130
+    Width = 104
     Caption = 'Expand pathes'
     TabOrder = 1
   end
   object ExpandPathsChk1: TCheckBox
     Left = 11
-    Height = 19
-    Top = 131
-    Width = 217
+    Height = 21
+    Top = 109
+    Width = 232
     Caption = 'Auto include files from included path'
     TabOrder = 2
   end
   object ExpandPathsChk2: TCheckBox
     Left = 11
-    Height = 19
-    Top = 111
-    Width = 203
+    Height = 21
+    Top = 89
+    Width = 220
     Caption = 'Auto include path from root folder'
     TabOrder = 3
   end
   object Label4: TLabel
     Left = 209
-    Height = 15
-    Top = 76
-    Width = 57
+    Height = 17
+    Top = 54
+    Width = 61
     Caption = 'Config File'
     ParentColor = False
   end
   object ConfigFileEdit: TEdit
     Left = 272
-    Height = 23
-    Top = 72
+    Height = 25
+    Top = 50
     Width = 185
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 4
   end
   object Label5: TLabel
     Left = 10
-    Height = 15
+    Height = 17
     Top = 14
-    Width = 57
+    Width = 61
     Caption = 'Output file'
     ParentColor = False
   end
   object OutputFileEdit: TEdit
     Left = 93
-    Height = 23
+    Height = 25
     Top = 11
     Width = 364
     Anchors = [akTop, akLeft, akRight]
     TabOrder = 5
   end
-  object Label6: TLabel
-    Left = 10
-    Height = 15
-    Top = 40
-    Width = 63
-    Caption = 'Run Params'
-    ParentColor = False
-  end
-  object RunParamsEdit: TEdit
-    Left = 93
-    Height = 23
-    Top = 37
-    Width = 364
-    Anchors = [akTop, akLeft, akRight]
-    TabOrder = 6
-  end
   object Bevel1: TBevel
     Left = 9
     Height = 2
-    Top = 66
+    Top = 44
     Width = 448
     Anchors = [akTop, akLeft, akRight]
     OnChangeBounds = Bevel1ChangeBounds
   end
   object SharedChk: TCheckBox
     Left = 12
-    Height = 19
-    Top = 76
-    Width = 97
+    Height = 21
+    Top = 54
+    Width = 104
     Caption = 'Shared (dll/so)'
-    TabOrder = 7
+    TabOrder = 6
   end
 end

@@ -51,7 +51,7 @@ type
     Command: string;
 
     Root: string; //cur dir for the project
-
+    Params: string;
     MainFile: string; //file to compile
     OutputFile: string; //file to generate
     RunFile: string; //file to run

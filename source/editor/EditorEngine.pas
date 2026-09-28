@@ -3708,6 +3708,10 @@ begin
         if ExtractFilePath(p.RunFile) = '' then
           p.RunFile := p.Root + p.RunFile;
 
+        p.Params := Engine.Session.Project.RunOptions.Params;
+        if p.Params = '' then
+          p.Params := RunOptions.Params;
+
         if (Engine.Session.Project.RunOptions.MainFile <> '') or (Engine.Files.Current = nil) or not Engine.Files.Current.Execute(p) then
           if (p.MainFile <> '') then
           begin
