@@ -23,7 +23,7 @@ type
   public
   end;
 
-  TLSFileCategory = class(TLuaFileCategory)
+  TTyroFileCategory = class(TLuaFileCategory)
   public
   end;
 
@@ -94,7 +94,7 @@ begin
   FHaveOptions := True;
   FName := 'Tyro';
   FTitle := 'Tyro project';
-  FDescription := 'Tyro Files, *.lua, *.ps *.ls';
+  FDescription := 'Tyro Files, *.tyro';
   FUseCFG := True;
   FImageIndex := -1;
   AddGroup('lua', TLuaFileCategory);
@@ -180,7 +180,7 @@ initialization
     //Categories.Add(TPSFileCategory.Create(TTyroTendency, 'ps', 'Pascal Script'));
     //Groups.Add(TPASFile, 'ps', 'Pascal Script', TPSFileCategory, ['.rops', '.ps', '.pascal'], [fgkAssociated, fgkFolding, fgkBrowsable], [capExecute, capDebug]);
 
-    Categories.Add(TLSFileCategory.Create(TTyroTendency, 'ls', 'Lua Script'));
-    Groups.Add(TLuaFile, 'ls', 'Lua Script', TLSFileCategory, ['.ls'], [fgkAssociated, fgkFolding, fgkBrowsable], [capExecute, capDebug]);
+    Categories.Add(TTyroFileCategory.Create(TTyroTendency, 'tyro', 'Lua Script'));
+    Groups.Add(TLuaFile, 'tyro', 'Tyro Lua Script', TTyroFileCategory, ['.tyro'], [fgkAssociated, fgkFolding, fgkBrowsable], [capExecute, capDebug]);
   end;
 end.
